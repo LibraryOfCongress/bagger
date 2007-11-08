@@ -1,0 +1,290 @@
+#!/usr/bin/env perl
+
+=head1 NAME
+
+inventory-loader - portable inventory file loader
+
+=head1 SYNOPSIS
+
+inventory-loader [OPTIONS] interchange_files
+
+  Options:
+    --help              brief help message
+    --repository        repository project where using these files
+
+=head1 DESCRIPTION
+
+inventory-loader reads a series of interchange files produced by various
+inventory programs and loads those files into the database.
+
+=cut
+
+##------------------------------------------------------------------
+
+use strict;
+use warnings;
+
+use File::Basename;
+use Getopt::Long;
+use Pod::Usage;
+use DBI;
+
+##------------------------------------------------------------------
+
+our %OPTIONS;
+our $dbh = DBI->connect("dbi:Pg:dbname=inventory", "", "");
+
+##------------------------------------------------------------------
+
+sub parse_criteria {
+    my $table = shift;
+    my %params = @_;
+    my @columns = sort keys %params;
+    my @values  = @params{@columns};
+    
+    return ($table, \@columns, \@values);
+}
+
+sub find_id {
+    my ($table, $columns, $values) = parse_criteria(@_);
+    
+    my $clause = join(" AND ", map {"$_ = ?"} @$columns);
+    
+    $dbh->selectall_arrayref(<<"    EOSQL", {}, @$values)->[0]->[0];
+        SELECT pkey
+          FROM $table
+         WHERE $clause;
+    EOSQL
+}
+
+sub find_or_create_id {
+    my $id = find_id(@_);
+    return $id unless !defined $id;
+    
+    insert(@_);
+    find_id(@_);
+}
+
+##------------------------------------------------------------------
+
+our %statements;
+
+sub execute($$$@) {
+    my ($table, $keys, $params, @values) = @_;
+    
+    my $sql = "INSERT INTO $table ($keys) VALUES ($params)";
+    my $stmt = $statements{$sql};
+
+    unless ($stmt) {
+        $statements{$sql} = $stmt = $dbh->prepare($sql);
+    }
+    $stmt->execute(@values);
+}
+
+sub insert($%) {
+    my ($table, $k, $v) = parse_criteria(@_);
+    my @params = map {"?"} @$v;
+    
+    my $keys   = join(", ", 'pkey', @$k);
+    my $params = join(", ", "nextval('hibernate_sequence')", @params);
+    
+    execute($table, $keys, $params, @$v)
+}
+
+sub insert_unique($%) {
+    my ($table, $k, $v) = parse_criteria(@_);
+    my @params = map {"?"} @$v;
+    
+    my $keys   = join(", ", @$k);
+    my $params = join(", ", @params);
+    
+    execute($table, $keys, $params, @$v)
+}
+
+##------------------------------------------------------------------
+
+sub load_location($) {
+    my $repo_id = shift;
+    my %location;
+    my $dummy = scalar(gmtime(0));
+    
+    while (<>) {
+        if (m/<(.*?)>(.*?)<\/\1>/) {
+            $location{$1} = $2;
+        } elsif (m/<file-instances>/){
+            my $pkg_id = find_id(packagemodeler_package =>
+                                 repository_key => $repo_id,
+                                 package_id => $location{'package-id'});
+                                 
+            my $pfl_id = find_id(packagemodeler_file_location =>
+                                 package_key => $pkg_id);
+
+            unless ($pfl_id) {
+                ## Create a file location for this instance of this package
+                insert(packagemodeler_file_location =>
+                       package_key => $pkg_id, 
+                       is_managed  => 1,
+                       create_timestamp => $dummy,
+                       update_timestamp => $dummy);
+
+                $pfl_id = find_id(packagemodeler_file_location =>
+                                  package_key => $pkg_id);
+            }
+
+            ## Get the agent ID for this storage service
+            my $storage_id = find_or_create_id(
+                agentmodeler_agent =>
+                agent_type => "storage",
+                agent_id   => $location{'storage-service'});
+                
+            ## Claim that this file location is on a 'storage system'
+            my $dirname = dirname($location{'base-path'});
+            my $relpath = basename($location{'base-path'});
+            insert_unique(packagemodeler_storagesystem_file_location =>
+                          pkey                  => $pfl_id, 
+                          storagesystem_key     => $storage_id, 
+                          base_path             => $dirname,
+                          relative_content_path => $relpath);
+            
+            load_location_files($pfl_id);
+        } elsif (m/<\/location>/) {
+            last;
+        }
+    }
+}
+
+sub load_location_files($) {
+    my $pfl_id = shift;
+    my (%file, $k, $v, $dirname, $basename, $ext, $file_id);
+    my $now = scalar localtime();
+    
+    while (<>) {
+        if (m/<file>/) {
+            %file = ();
+        } elsif (m/<(.*?)>(.*?)<\/\1>/) {
+            $file{$1} = $2;
+        } elsif (m/<fixity algorithm="(.*?)">(.*?)<\/fixity>/) {
+            $file{fixity}{$1} = $2;
+        } elsif (m/<\/file>/) {
+            $dirname = dirname($file{path});
+            $dirname = "" if $dirname eq ".";
+            $basename = basename($file{path});
+            ($ext) = $basename =~ m/\.([^.]+)$/;
+
+            insert(packagemodeler_fileinstance =>
+                   filelocation_key => $pfl_id,
+                   relative_path => $dirname,
+                   base_name     => $basename,
+                   extension     => $ext,
+                   file_create_timestamp => $file{created},
+                   create_timestamp => $now,
+                   update_timestamp => $now);
+                   
+            ## grab the id for this file
+            $file_id = find_id(packagemodeler_fileinstance =>
+                               filelocation_key => $pfl_id,
+                               relative_path => $dirname, 
+                               base_name     => $basename,
+                               extension     => $ext);
+            
+            while (($k, $v) = each %{$file{fixity}}) {
+                insert_unique(packagemodeler_fileinstance_fixity =>
+                              fileinstance_key => $file_id,
+                              algorithm => $k,
+                              fixity_value => $v);
+            }
+        } elsif (m/<\/file-instances>/) {
+            last;
+        }
+    }
+}
+
+##------------------------------------------------------------------
+
+sub load_package($) {
+    my $repo_id = shift;
+    my %package;
+    
+    while (<>) {
+        if (m/<(.*?)>(.*?)<\/\1>/) {
+            $package{$1} = $2;
+        } elsif (m/<canonical-files>/){
+            ## Package definition complete.  Load the data
+            ## and proceed to load the package's files
+            insert(packagemodeler_package => 
+                   repository_key => $repo_id,
+                   package_id     => $package{'package-name'},
+                   create_timestamp => $package{created},
+                   update_timestamp => $package{created});
+            my $pkg_id = find_id(packagemodeler_package =>
+                                 package_id => $package{'package-name'});
+            load_package_files($pkg_id)
+        } elsif (m/<\/package>/) {
+            last;
+        }
+    }
+}
+
+sub load_package_files($) {
+    my $pkg_id = shift;
+    my (%file, $k, $v, $dirname, $basename, $ext, $cfile_id);
+    my $now = scalar localtime();
+    
+    while (<>) {
+        if (m/<file>/) {
+            %file = ();
+        } elsif (m/<(.*?)>(.*?)<\/\1>/) {
+            $file{$1} = $2;
+        } elsif (m/<fixity algorithm="(.*?)">(.*?)<\/fixity>/) {
+            $file{fixity}{$1} = $2;
+        } elsif (m/<\/file>/) {
+            $dirname = dirname($file{path});
+            $dirname = "" if $dirname eq ".";
+            $basename = basename($file{path});
+            ($ext) = $basename =~ m/\.([^.]+)$/;
+            
+            insert(packagemodeler_canonicalfile =>
+                   package_key   => $pkg_id,
+                   relative_path => $dirname,
+                   base_name     => $basename,
+                   extension     => $ext,
+                   bytes         => $file{size},
+                   create_timestamp => $now,
+                   update_timestamp => $now);
+
+            $cfile_id = find_id(packagemodeler_canonicalfile =>
+                                package_key   => $pkg_id,
+                                relative_path => $dirname, 
+                                base_name     => $basename,
+                                extension     => $ext);
+
+            while (($k, $v) = each %{$file{fixity}}) {
+                insert_unique(packagemodeler_canonicalfile_fixity =>
+                              canonicalfile_key => $cfile_id,
+                              algorithm         => $k, 
+                              fixity_value     => $v);
+            }
+        } elsif (m/<\/canonical-files>/) {
+            last;
+        }
+    }
+}
+
+##------------------------------------------------------------------
+
+
+GetOptions \%OPTIONS, 'help', 'repository=s';
+
+pod2usage({exitval => 0, verbose => 1}) if $OPTIONS{help};
+
+unless ($OPTIONS{repository}) {
+    pod2usage {exitval => 1, verbose => 1};
+}
+
+my $repo_id = find_or_create_id(packagemodeler_repository => 
+                                repository_id => $OPTIONS{repository});
+
+while (<>) {
+    load_location($repo_id) if m/<location>/;
+    load_package($repo_id)  if m/<package>/;
+}

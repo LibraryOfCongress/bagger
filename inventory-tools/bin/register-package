@@ -1,0 +1,93 @@
+#!/usr/bin/env perl
+
+=head1 NAME
+
+register-package - Build a portable XML file describing a package definition
+
+=head1 SYNOPSIS
+
+inventory-loader [OPTIONS] interchange_files
+
+  Options:
+    --help              brief help message
+    --package-name      name of the package to create
+
+=head1 DESCRIPTION
+
+register-package looks for a LC manifest file (manifest-ALG.txt, for
+a variety of supported fixity algorithms), and converts the contents of
+that file into an inventory interchange XML format.
+
+=cut
+
+use strict;
+use warnings;
+
+use Pod::Usage;
+use Getopt::Long;
+
+# looks for LC manifest in current working directory
+# and converts it to inventory interchange format
+
+sub convert_manifest ($) {
+  my $alg = shift;
+  my $file = "manifest-$alg.txt";
+  return unless -f $file;
+  open(my $FH, $file) or die "Can't open '$file'";
+  chomp(my @entries = <$FH>);
+  
+  ## Add the manifest to the list of files we're recording
+  my $manifest_entry = `${alg}deep -l $file`;
+  chomp($manifest_entry);
+  unshift(@entries, $manifest_entry);
+  map {@_ = split("  "); {file => $_[1], $alg => $_[0]}} @entries;
+}
+
+sub make_block($) {
+    my $entry = shift;
+    my $fixities = "";
+    my $path = $entry->{file};
+    my $size = -s $path;
+    my $date = scalar(localtime((stat($path))[9])); ## mtime
+    delete $entry->{file};
+    
+    ## All remaining key/value pairs are algorithm=>fixity values
+    while (my ($k, $v) = each %$entry) {
+        $fixities .= "<fixity algorithm=\"$k\">$v</fixity>";
+    }
+    
+    return <<"EOBLOCK";
+   <file>
+    <path>$path</path>
+    <size>$size</size>
+    <date>$date</date>
+    $fixities
+   </file>
+EOBLOCK
+}
+
+##------------------------------------------------------------
+my ($package_name, $help);
+GetOptions("package-name=s", \$package_name,
+           "help", \$help);
+
+pod2usage({exitval => 0, verbose => 1}) if $help;
+pod2usage({exitval => 1, verbose => 1}) unless ($package_name);
+
+my @manifest;
+push(@manifest, convert_manifest($_)) for qw(md5 sha1 sha256);
+
+## chomp(my $package_id = `uuidgen`);
+my $created = scalar(localtime());
+my $body = join("", map {make_block $_} @manifest);
+
+print <<"EOF";
+<inventory>
+ <package>
+  <package-name>$package_name</package-name>
+  <created>$created</created>
+  <canonical-files>
+$body  </canonical-files>
+ </package>
+</inventory>
+EOF
