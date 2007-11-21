@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-inventory-loader - portable inventory file loader
+load-inventory - portable inventory file loader
 
 =head1 SYNOPSIS
 
-inventory-loader [OPTIONS] interchange_files
+load-inventory --repository repo interchange_files
 
   Options:
     --help              brief help message
@@ -255,8 +255,7 @@ sub load_package_files($) {
             $cfile_id = find_id(packagemodeler_canonicalfile =>
                                 package_key   => $pkg_id,
                                 relative_path => $dirname, 
-                                base_name     => $basename,
-                                extension     => $ext);
+                                base_name     => $basename);
 
             while (($k, $v) = each %{$file{fixity}}) {
                 insert_unique(packagemodeler_canonicalfile_fixity =>
