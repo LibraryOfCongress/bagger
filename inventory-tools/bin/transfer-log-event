@@ -1,0 +1,27 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Cwd;
+use DBI;
+
+$/ = undef;
+
+my ($id, $type, $status, $system_name, $hostname) = @ARGV;
+@ARGV = ();
+my $root = cwd();
+
+my $desc = <>;
+
+my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
+die "Cannot connect to database: $!" unless $dbh;
+
+my $stmt = $dbh->prepare(<<EOSQL);
+    INSERT INTO events (ticket_id, event_type, event_status, 
+                        system_name, hostname, root_directory,
+                        event_details)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+EOSQL
+
+$stmt->execute($id, $type, $status, $system_name, $hostname, $root, $desc)
+    or die("Cannot add event for ticket $id.\n");

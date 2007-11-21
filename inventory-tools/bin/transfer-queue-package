@@ -1,0 +1,250 @@
+#!/usr/bin/env perl
+
+
+=head1 NAME
+
+transfer-queue-package - register a package with transfer database for copying
+
+=head1 SYNOPSIS
+
+transfer-queue-package [OPTIONS]
+
+  Options:
+    --username      User's login name (default: current user)
+    --repository    Collection of content where this package belongs
+    --package       Unique package name within this repository
+                    (default: current directory)
+    --source        Current location of the package
+                    (default: current directory on the current host)
+    --workspace     Location of the scratch space on the remote server
+    --destination   Desired location of the package within the archive
+    --archive-owner Owner of the files in the archive
+    --help
+
+=head1 DESCRIPTION
+
+transfer-queue-package registers a package on the local system to be
+transferred to the archival server, possibly using an intermediate 
+workspace during copying.
+
+The user, local and remote systems must all be registered with the
+transfer system.  The archive owner must be:
+  - a valid account on the archive system
+  - an account with write permission to the desired archive location
+  - an account that grants access to the transfer account copy files
+
+=cut
+
+use strict;
+use warnings;
+use File::Basename;
+use Cwd qw(cwd abs_path);
+use Pod::Usage;
+use Getopt::Long;
+use DBI;
+use IPC::Open3;
+
+my %OPTIONS;
+my $login = getlogin();
+chomp(my $hostname = `hostname`);
+my $cwd = abs_path(cwd());
+
+my $path = abs_path(dirname($0));
+$ENV{PATH} .= ":$path" unless $ENV{PATH} =~ m/:$path:?/;
+
+my $script = basename($0);
+
+##------------------------------------------------------------
+
+sub present(@) {
+    my $ok = 1;
+    $ok &&= defined($OPTIONS{$_}) for @_;
+    $ok;
+}
+
+sub check_registry($$$$$){
+    my ($dbh,  $datum, $table, $column, $value) = @_;
+    my $stmt = $dbh->prepare("SELECT * FROM $table WHERE $column=?");
+    $stmt->execute($value);
+    unless ($stmt->rows()) {
+        print STDERR "$script: warning: no such $datum '$value'.\n";
+        return -1;
+    }
+    return;
+}
+
+sub parse_path($) {
+    my $path = shift;
+    my ($user, $host, $dir) = ($path =~ m/^(?:(.*?)@)?(?:(.*?):)?(.*)$/);
+    
+    ## Set defaults to the local user on the current machine
+    $user = $login    unless defined $user;
+    $host = $hostname unless defined $host;
+    return ($user, $host, $dir);
+}
+
+sub select_singleton($$;@) {
+    my $dbh = shift;
+    my $sql = shift;
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute(@_) or return;
+    $stmt->rows or return;
+    return $stmt->fetchrow_arrayref->[0];
+}
+
+##------------------------------------------------------------
+
+sub run($) {
+    my $cmd = shift;
+    my ($in, $out, $err);
+    $err++;
+    my $pid = open3($in, $out, $err, $cmd);
+    
+    close($in);
+    waitpid($pid, 0);
+    
+    local $/ = undef;
+    return <$err>;  ## Ignore output.  Check for STDERR
+}
+
+##------------------------------------------------------------
+
+sub create_ticket($) {
+    my $dbh = shift;
+
+    ## Create the ticket
+    my $stmt = $dbh->prepare("INSERT INTO tickets (requester, package_name, repository, estimated_size) VALUES (?, ?, ?, ?)");
+    my $result = $stmt->execute($OPTIONS{username}, $OPTIONS{package}, $OPTIONS{repository}, 0);
+
+    select_singleton($dbh, "SELECT currval('tickets_ticket_id_seq')");
+}
+
+##------------------------------------------------------------
+
+GetOptions \%OPTIONS, 'username=s', 'repository=s', 'package=s', 'source=s',
+                      'workspace=s', 'destination=s', 'archive-owner=s', 'help';
+
+# print help if appropriate
+pod2usage({exitval => 0, verbose => 2}) if $OPTIONS{help};
+
+my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
+die "Cannot connect to database: $!" unless $dbh;
+
+##-----------------------------------------------------------------
+## Set defaults, as promised
+$OPTIONS{username} = $login           unless defined $OPTIONS{username};
+## Repository will be created in the inventory database, if necessary
+$OPTIONS{package}  = basename($cwd)   unless defined $OPTIONS{package};
+$OPTIONS{source}   = "$hostname:$cwd" unless defined $OPTIONS{source};
+## workspace is optional
+## destination is required, and not defaulted
+## archive-owner can be inferred from destination, if fully specified
+
+my $all_present = present(qw(username repository package source destination));
+pod2usage({exitval => -1, verbose => 2}) unless ($all_present);
+
+##-----------------------------------------------------------------
+## Require 2 or 3 locations to perform a copy:
+## A source (manditory), a workspace (optional), and a destination (manditory)
+## Presume the current user and current host when none are specified
+my ($source_user, $source_host, $source_dir) = parse_path($OPTIONS{source});
+$source_dir = abs_path($source_dir);
+my ($work_user, $work_host, $work_dir);
+($work_user, $work_host, $work_dir) = parse_path($OPTIONS{workspace})
+    if defined $OPTIONS{workspace};
+my ($dest_user, $dest_host, $dest_dir) = parse_path($OPTIONS{destination});
+
+## Always use 'archive-owner' when specified.
+$dest_user = $OPTIONS{'archive-owner'} if defined $OPTIONS{'archive-owner'};
+
+
+##-----------------------------------------------------------------
+## All of these values must be registered in the transfer database.
+my @failed;
+push(@failed, check_registry($dbh, user => 'users', username => $OPTIONS{username}));
+push(@failed, check_registry($dbh, host => 'systems', short_name => $source_host));
+push(@failed, check_registry($dbh, host => 'systems', short_name => $work_host))
+    if defined $work_dir;  ## workspaces are optional
+push(@failed, check_registry($dbh, host => 'systems', short_name => $dest_host));
+
+exit(-1) if @failed;
+
+##-----------------------------------------------------------------
+## Convert aliases to hostnames
+my $sql = "SELECT hostname FROM systems WHERE short_name = ?";
+my ($source_hostname, $work_hostname, $dest_hostname);
+$source_hostname = select_singleton($dbh, $sql, $source_host);
+$work_hostname  = select_singleton($dbh, $sql, $work_host) if defined $work_dir;
+$dest_hostname  = select_singleton($dbh, $sql, $dest_host);
+
+my $id = create_ticket($dbh);
+
+print <<EOF;
+    Ticket ID: $id
+    Copying from
+        Requester:  $OPTIONS{username}
+        Host:       $source_host ($source_hostname)
+        Directory:  $source_dir
+EOF
+
+print <<EOF if $work_dir;
+    Copying via
+        Host:       $work_host ($work_hostname)
+        Directory:  $work_dir
+EOF
+
+print <<EOF;
+    Copying to
+        Host:       $dest_host ($dest_hostname)
+        Directory:  $dest_dir
+        Owner:      $dest_user
+        Repository: $OPTIONS{repository}
+        Package:    $OPTIONS{package}
+EOF
+
+## Create the locations
+my ($stmt, $result);
+$stmt = $dbh->prepare("INSERT INTO locations (ticket_id, file_owner,  system_name, hostname, root_directory, role) VALUES (?, ?, ?, ?, ?, ?)");
+
+$result = $stmt->execute($id, $source_user, $source_host, $source_hostname, $source_dir, 'source');
+$result &&= $stmt->execute($id, $work_user, $work_host, $work_hostname, $work_dir, 'workspace') if defined $work_dir;
+$result &&= $stmt->execute($id, $dest_user, $dest_host, $dest_hostname, $dest_dir, 'destination');
+
+die "Cannot create location records.\n" unless $result;
+
+##-----------------------------------------------------------------
+## Run the check script before the transfer is queued
+my $errors = 
+  run("transfer-check-package $id $source_host $source_hostname $OPTIONS{package} $OPTIONS{repository} $source_dir");
+
+my $name = basename($0);
+if ($errors) {
+    print STDERR "$name: Error checking package:\n";
+    print STDERR $errors;
+    print STDERR "$name: Marking package as 'failed'.\n";
+    
+    $stmt = $dbh->prepare(<<"    EOSQL");
+        UPDATE tickets 
+           SET status='failed', updated_timestamp=NOW()
+         WHERE ticket_id = ?
+    EOSQL
+    $stmt->execute($id);
+    
+    exit(-1);
+} else {
+    local $| = 1;
+    print "    Estimated size: ";
+    my $size = `du -sk $source_dir`;
+    ($size) = $size =~ m/(\d+)/;
+    print "$size KB\n";
+
+    $stmt = $dbh->prepare(<<"    EOSQL");
+        UPDATE tickets 
+           SET status='queued', updated_timestamp=NOW(), 
+               estimated_size = ?
+         WHERE ticket_id = ?
+    EOSQL
+    $stmt->execute($size, $id);
+
+    print "$name: Package marked as 'queued'.  Awaiting remote copy.\n"
+}

@@ -1,0 +1,88 @@
+#!/usr/bin/env perl
+
+
+=head1 NAME
+
+transfer-verify-package - verify a package with its manifest file
+
+=head1 SYNOPSIS
+
+transfer-verify-package directory
+
+=head1 DESCRIPTION
+
+transfer-verify-package is a wrapper around md5deep and friends.  It finds
+the specific manifest used within a package, verifies the package against
+the manifest, and returns the result from md5deep.
+
+=cut
+
+use strict;
+use warnings;
+use File::Basename;
+use Cwd qw(cwd abs_path);
+use IPC::Open3;
+
+my $dir = shift;
+chdir $dir;
+
+sub run($) {
+    my $cmd = shift;
+    my ($in, $out, $err);
+    $err++;
+    my $pid = open3($in, $out, $err, $cmd);
+    
+    close($in);
+    waitpid($pid, 0);
+    
+    local $/ = undef;    
+    return (<$out>, <$err>);
+}
+
+
+sub check_manifest($) {
+    my $algorithm = shift;
+    my $name = basename($0);
+    my $base = abs_path(cwd());
+    
+    my ($out, $err) = run("${algorithm}deep -rlx manifest-${algorithm}.txt .");
+    
+    if ($err) {
+        print STDERR "$name: Error running ${algorithm}deep:\n";
+        print STDERR $err;
+        print STDERR "$name: Exiting.\n";
+        exit(-1);
+    }
+    
+    ## Split out into warnings and errors
+    my @files = split("\n", $out);
+    my (@warnings, @errors);
+    foreach my $file (@files) {
+        if (abs_path(dirname($file)) eq $base) {
+            push(@warnings, $file);
+        } else {
+            push(@errors, $file);
+        }    
+    }
+    
+    print join("\n", @warnings, "");
+    
+    if (@errors) {
+        foreach (@errors) {
+            print STDERR "$name: verification failed for $_\n";
+        }
+        print STDERR "$name: Exiting.\n";
+        exit (-1);
+    }
+    
+    exit(0);
+}
+
+foreach my $algorithm (qw(md5 sha1 sha256 tiger whirlpool)) {
+    check_manifest($algorithm) if -f "manifest-${algorithm}.txt";
+}
+
+## No version of check_manifest() run.  No manifest found, so raise
+## an error and quit.
+my $name = basename($0);
+print STDERR "$name: No manifest file found.\n";

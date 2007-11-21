@@ -1,0 +1,81 @@
+#!/usr/bin/env perl
+
+
+=head1 NAME
+
+transfer-add-user - add a requester to the transfer database
+
+=head1 SYNOPSIS
+
+transfer-add-user --username ... --realname ... [OPTIONS]
+
+  Required values:
+    --username          User's login name
+    --realname          User's real name
+
+  Options:
+    --help
+    --email             Email Address
+
+=head1 DESCRIPTION
+
+transfer-add-user registers a user with the database.  Once registered,
+and after SSH keys have been distributed appropriately, this user will
+be able to initiate transfer requests with transfer-queue-package.
+
+=cut
+
+use strict;
+use warnings;
+use Pod::Usage;
+use Getopt::Long;
+use DBI;
+
+my %OPTIONS;
+
+GetOptions \%OPTIONS, 'username=s', 'realname=s', 'email=s', 'help';
+
+# print help if appropriate
+pod2usage({exitval => 0, verbose => 2}) if $OPTIONS{help};
+
+pod2usage({exitval => -1, verbose => 2}) 
+    unless (defined($OPTIONS{username}) && defined($OPTIONS{realname})
+           || @ARGV % 2 == 0);
+
+my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
+die "Cannot connect to database: $!" unless $dbh;
+
+##------------------------------------------------------------
+
+sub add_user {
+    my $user = shift;
+    my $real = shift;
+    my $email = shift;
+
+    my $stmt = $dbh->prepare("SELECT * FROM users WHERE username=?");
+    my $result = $stmt->execute($user);
+
+    if ($stmt->rows) {
+        print STDERR "Warning: user '$user' already exists.\n";
+        return;
+    }
+
+    $dbh->do("INSERT INTO users(username, realname, email) VALUES (?, ?, ?)", 
+            {},
+            $user, $real, $email);
+
+    print "Added user '$user' to the transfer database.\n";    
+}
+
+##------------------------------------------------------------
+
+while (@ARGV) {
+    my $username = shift(@ARGV);
+    my $realname = shift(@ARGV);
+    add_user($username, $realname);
+}
+
+if ($OPTIONS{username} && $OPTIONS{realname}) {
+    add_user($OPTIONS{username}, $OPTIONS{realname}, $OPTIONS{email});    
+}
+

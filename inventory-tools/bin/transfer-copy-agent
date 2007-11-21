@@ -1,0 +1,195 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Cwd qw(abs_path);
+use File::Basename;
+use IPC::Open3;
+
+my $path = abs_path(dirname($0));
+$ENV{PATH} .= ":$path" unless $ENV{PATH} =~ m/:$path:?/;
+
+my $verbose = 0;
+if (@ARGV && $ARGV[0] eq "-v") {
+    $verbose++;
+    shift(@ARGV);
+}
+
+my $ticket;
+my $system = shift(@ARGV);
+my $hostname = shift(@ARGV);
+chomp($system = `hostname`) unless $system;
+chomp($hostname = $system)  unless $hostname;
+
+my @current_event;
+
+my $script = basename($0);
+
+
+##-----------------------------------------------------------------
+
+sub run($;$) {
+    my $cmd = shift;
+    
+    if ($verbose) {
+        print STDERR "$script: \n\t$cmd\n";        
+    }
+    my $input = shift;
+    my ($in, $out, $err);
+    $err++;
+    my $pid = open3($in, $out, $err, $cmd);
+    
+    if ($input) {
+        print $in $input;
+    }
+    close($in);
+    waitpid($pid, 0);
+    
+    local $/ = undef;    
+    return (<$out>, <$err>);
+}
+
+sub log_event($$;$) {
+    my ($event, $status, $desc) = @_;
+    run("transfer-log-event $ticket '$event' $status $system $hostname", $desc)
+}
+
+sub start_event($;$) {
+    push (@current_event, $_[0]);
+    log_event($_[0], 'started', $_[1]);
+}
+
+sub finish_event($;$) {
+    pop(@current_event);
+    log_event($_[0], 'completed', $_[1]);    
+}
+
+sub fail_event($;$) {
+    log_event($_[0], 'fail', $_[1]);
+}
+
+sub pass_event($;$) {
+    log_event($_[0], 'pass', $_[1]);
+}
+
+sub warn_event($;$) {
+    log_event($_[0], 'warning', $_[1]);
+}
+
+##-----------------------------------------------------------------
+
+sub parse_path($) {
+    my $path = shift;
+    return ($path =~ m/^(?:(.*?)@)?(?:(.*?):)?(.*)$/);
+}
+
+##-----------------------------------------------------------------
+
+sub report_error($) {
+    my $err = shift;
+    
+    print STDERR "$script: \n";
+    print STDERR $err;
+    print STDERR "$script: Exiting.\n";
+    
+    fail_event($current_event[0], $err);
+    run("transfer-update-package $ticket failed");
+    
+    exit(-1);
+}
+
+sub make_copy($$$$$) {
+    my $event = shift;
+    my $src_host = shift;
+    my $src = shift;
+    my $dst_host = shift;
+    my $dst = shift;
+    
+    start_event($event);
+    my ($out, $err) = 
+        run("$src_host tar czf - -C $src . | $dst_host tar xzvf - -C $dst ");
+    raise_error($err) if ($err);
+    finish_event($event, $out);
+    pass_event($event);
+}
+
+sub check_copy($) {
+    my $dir = shift;
+    my $event = "fixity verification";
+    
+    start_event($event);
+    my ($out, $err) = run("transfer-verify-package $dir");
+    raise_error($err) if ($err);
+    warn_event($event, $out) if defined($out);
+    finish_event($event);
+    pass_event($event);
+}
+
+##-----------------------------------------------------------------
+
+
+my ($output, $error) = run("transfer-browse-queue");
+
+exit(0) unless $output;  ## Stop now if there's nothing to do
+exit(0) if $error;  ## Don't do anything if things are horribly wrong
+
+my $job = (split("\n\n", $output))[0];
+
+($ticket) = $job =~ m/^Ticket:\s+(\d+)$/m;
+my ($package) = $job =~ m/^Package:\s+(.*)$/m;
+my ($repo)    = $job =~ m/^Repository:\s+(.*)$/m;
+my ($size)    = $job =~ m/^Estimated-Size:\s+(.*)$/m;
+my ($source)  = $job =~ m/^Source:\s+(.*)$/m;
+my ($workspace) = $job =~ m/^Workspace:\s+(.*)$/m;
+my ($dest)    = $job =~ m/^Destination:\s+(.*)$/m;
+
+$workspace ||= "";
+
+run("transfer-update-package $ticket started");
+
+my ($src_user, $src_host, $src_dir);
+my ($dst_user, $dst_host, $dst_dir);
+my ($out, $err, $ssh);
+
+if ($workspace) {
+    ($src_user, $src_host, $src_dir) = parse_path($source);
+    ($dst_user, $dst_host, $dst_dir) = parse_path($workspace);
+ 
+    ($out, $err) = run("mkdir -p $dst_dir");
+    raise_error($err) if ($err);
+    make_copy("workspace copy", "ssh $src_host", $src_dir, "", $dst_dir);
+    check_copy($dst_dir);
+    
+    $src_dir = $dst_dir;
+    ($dst_user, $dst_host, $dst_dir) = parse_path($dest);
+    $ssh ="ssh $dst_user\@$dst_host";
+
+    ($out, $err) = run("$ssh mkdir -p $dst_dir");
+    raise_error($err) if $err;
+    make_copy("archive copy", "", $src_dir, $ssh, $dst_dir);
+    check_copy($dst_dir);
+
+    ## Don't purge the workspace immediately.  Wait until the tape finishes
+    ## spooling.  Figure out how to wait
+} else {
+    ($src_user, $src_host, $src_dir) = parse_path($source);
+    ($dst_user, $dst_host, $dst_dir) = parse_path($dest);
+    $ssh ="ssh $dst_user\@$dst_host";
+    
+    ($out, $err) = run("$ssh mkdir -p $dst_dir");
+    raise_error($err) if $err;
+    make_copy("archive copy", "", $src_dir, $ssh, $dst_dir);
+    check_copy($dst_dir);
+}
+
+## Take inventory on the copy
+my $event = "location registration";
+start_event($event);
+my $inventory = "inventory --package $package";
+my $load      = "load-inventory --repository $repo";
+($out, $err) = run("$ssh \"cd $dst_dir; $inventory | $load \"");
+raise_error($err) if $err;
+finish_event($event, $out);
+pass_event($event);
+
+run("transfer-update-package $ticket completed");    

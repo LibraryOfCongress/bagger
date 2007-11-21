@@ -1,0 +1,63 @@
+#!/usr/bin/env perl
+
+
+=head1 NAME
+
+transfer-add-user - add a storage system to the transfer database
+
+=head1 SYNOPSIS
+
+transfer-add-system --name ... --hostname ... [OPTIONS]
+
+  Required values:
+    --name          Short name for the system
+    --hostname      Hostname used to connect to the system
+
+  Options:
+    --description   Documentation of the role of this named system
+    --help
+
+=head1 DESCRIPTION
+
+transfer-add-system registers a short name for a storage system with
+the transfer database.  All storage systems must be registered, and all
+short names must be unique.  However, multiple short names can be associated
+with a single system.  
+
+=cut
+
+use strict;
+use warnings;
+use Pod::Usage;
+use Getopt::Long;
+use DBI;
+
+my %OPTIONS;
+
+GetOptions \%OPTIONS, 'name=s', 'hostname=s', 'description=s', 'help';
+
+# print help if appropriate
+pod2usage({exitval => 0, verbose => 2}) if $OPTIONS{help};
+
+# print help if appropriate
+pod2usage({exitval => -1, verbose => 2}) 
+    unless (defined($OPTIONS{name}) && defined($OPTIONS{hostname}));
+
+my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
+die "Cannot connect to database: $!" unless $dbh;
+
+
+my $stmt = $dbh->prepare("SELECT * FROM systems WHERE short_name=?");
+my $result = $stmt->execute($OPTIONS{name});
+
+if ($stmt->rows) {
+    print STDERR "Warning: system '$OPTIONS{name}' already exists. ";
+    print STDERR "Exiting.\n";
+    exit(-1);
+}
+
+$dbh->do("INSERT INTO systems(short_name, hostname, description) VALUES (?, ?, ?)", 
+        {},
+        $OPTIONS{name}, $OPTIONS{hostname}, $OPTIONS{description});
+
+print "Added system '$OPTIONS{name}' to the transfer database.\n";
