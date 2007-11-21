@@ -6,7 +6,7 @@ register-package - Build a portable XML file describing a package definition
 
 =head1 SYNOPSIS
 
-inventory-loader [OPTIONS] interchange_files
+register-package --package-name package
 
   Options:
     --help              brief help message
@@ -26,20 +26,42 @@ use warnings;
 use Pod::Usage;
 use Getopt::Long;
 
-# looks for LC manifest in current working directory
-# and converts it to inventory interchange format
+##------------------------------------------------------------
+# Look for a LC manifest in the current working directory
+# and convert it to inventory interchange format.
+##------------------------------------------------------------
+
+
+sub get_top_entries($) {
+    my $alg = shift;
+    my $file = "manifest-$alg.txt";
+
+    my $value = `${alg}deep -l $file`;
+    chomp($value);
+    return $value;
+}
 
 sub convert_manifest ($) {
   my $alg = shift;
   my $file = "manifest-$alg.txt";
   return unless -f $file;
+  
+  ## Read the manifest
   open(my $FH, $file) or die "Can't open '$file'";
   chomp(my @entries = <$FH>);
+
+  ## Add the top level entries
+  my $top_level = `${alg}deep -l * 2>/dev/null`;
+  
+  ## Merge the two
+  foreach my $entry (split("\n", $top_level)) {
+      my ($filename) = $entry =~ m/^[0-9a-f]+\s+(.*)$/;
+      unless (grep m<^[0-9a-f]+\s+(./)?${filename}$>, @entries) {
+          unshift(@entries, $entry);
+      }
+  }
   
   ## Add the manifest to the list of files we're recording
-  my $manifest_entry = `${alg}deep -l $file`;
-  chomp($manifest_entry);
-  unshift(@entries, $manifest_entry);
   map {@_ = split("  "); {file => $_[1], $alg => $_[0]}} @entries;
 }
 
