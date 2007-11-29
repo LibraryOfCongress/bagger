@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-diagram name="prototype1" width="523" height="677">
+  <node name="zip detected" x="123" y="41" width="-1" height="-1">
+    <transition name="continue">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="unzip" x="123" y="120" width="-1" height="-1">
+    <transition name="troubleshoot">
+      <label x="-26" y="-11"/>
+    </transition>
+    <transition name="continue">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="end1" x="217" y="636" width="140" height="40"/>
+  <node name="troubleshoot unzip" x="376" y="120" width="140" height="40"/>
+  <node name="validate" x="122" y="206" width="140" height="40">
+    <transition name="troubleshoot">
+      <label x="-28" y="-10"/>
+    </transition>
+    <transition name="continue">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="troubleshoot validate" x="381" y="208" width="-1" height="-1"/>
+  <node name="verify" x="122" y="283" width="140" height="40">
+    <transition name="troubleshoot">
+      <label x="-38" y="-11"/>
+    </transition>
+    <transition name="continue">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="troubleshoot verify" x="382" y="283" width="-1" height="-1"/>
+  <node name="fork1" x="133" y="441" width="298" height="26">
+    <transition name="continue2">
+      <label x="5" y="-10"/>
+    </transition>
+    <transition name="continue1">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="ingest" x="358" y="503" width="140" height="40">
+    <transition name="continue">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="join1" x="137" y="573" width="289" height="25">
+    <transition name="continue">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="quality review" x="124" y="356" width="140" height="40">
+    <transition name="continue">
+      <label x="5" y="-10"/>
+    </transition>
+    <transition name="troubleshoot">
+      <label x="-25" y="-12"/>
+    </transition>
+  </node>
+  <node name="troubeshoot quality" x="380" y="350" width="140" height="40"/>
+  <node name="backup" x="97" y="497" width="140" height="40">
+    <transition name="continue">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+</process-diagram>
