@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets TYPE="urn:library-of-congress:ndnp:mets:encyclopedia:encyclopediaEntry" PROFILE="urn:library-of-congress:mets:profiles:ndnp:encyclopediaEntry:v1.1" LABEL="National Forum Scope Note" 
+     xmlns:mods="http://www.loc.gov/mods/v3" xmlns="http://www.loc.gov/METS/" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+     <!--METS HEADER-->
+     <metsHdr CREATEDATE="2004-11-12T09:00:00">
+        <agent ROLE="CREATOR" TYPE="ORGANIZATION">
+            <name>Library of Congress</name>
+        </agent>
+    </metsHdr>
+
+    <!--Descriptive metadata for encyclopedia entry-->
+    <dmdSec ID="encyclopediaMods">                
+        <mdWrap MDTYPE="MODS" LABEL="Encyclopedia entry metadata">
+            <xmlData>
+                <mods:mods>
+                    <mods:name type="corporate">
+                            <mods:displayForm>Library of Congress</mods:displayForm>
+                    </mods:name>
+                    <mods:relatedItem>
+                        <mods:identifier type="lccn">sn82015056</mods:identifier>
+                        <mods:identifier type="lccn">sn82015057</mods:identifier>
+                    </mods:relatedItem>
+                </mods:mods>
+            </xmlData>
+        </mdWrap>
+    </dmdSec>
+                                
+    <!--FILE SECTION-->
+    <fileSec>
+        <fileGrp>
+            <file ID="encyclopediaEntryText">
+                <FContent>
+                    <xmlData>
+                        <xhtml:html xml:lang="en" lang="en">
+                           <xhtml:head>
+                              <xhtml:title>The National Forum (Washington, DC), 1910-19??</xhtml:title>
+                           </xhtml:head>
+                           
+                           <xhtml:body>
+                              <xhtml:p>
+                                 The first issue of the National Forum was likely released on
+                                 April 30, 1910 and the newspaper ran through at least November 12 of
+                                 that year. The four-page African-American weekly covered such local
+                                 events as Howard University graduations and Baptist church
+                                 activities, but its pages also included national news, sports, home
+                                 maintenance, women's news, science, editorial cartoons, and reprinted
+                                 stories from national newspapers. Its primary focus was on how the
+                                 news affected the city's black community. A unique feature was its
+                                 coverage of Elks Club meetings and activities.  Business manager John
+                                 H. Wills contributed the community-centered <xhtml:cite>Vanity Fair</xhtml:cite>
+                                 column that usually appeared on the front page of each issue. The
+                                 publisher and editor was Ralph W. White, who went on to publish another
+                                 African-American newspaper, the <xhtml:a href="info:lccn/sn86092050">McDowell
+                                 Times</xhtml:a> of Keystone, West Virginia. Originally located at 609 F
+                                 St., NW, the newspaper's offices moved in August to 1022 U Street, N.W.
+                                 to be closer to the African-American community it served.  No extant
+                                 first issue of the National Forum exists.
+                              </xhtml:p>
+                           </xhtml:body>
+                        </xhtml:html>
+                    </xmlData>
+                </FContent>
+            </file>
+        </fileGrp>
+    </fileSec>
+        
+    <!--STRUCTURAL MAP-->    
+    <structMap xmlns:np="urn:library-of-congress:ndnp:mets:newspaper">
+        <div TYPE="np:encyclopediaEntry" DMDID="encyclopediaMods">
+            <fptr FILEID="encyclopediaEntryText"/>
+        </div>
+    </structMap>    
+</mets>

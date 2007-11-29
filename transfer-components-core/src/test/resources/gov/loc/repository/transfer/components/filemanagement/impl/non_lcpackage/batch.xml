@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<batch xmlns:ndnp="http://www.loc.gov/ndnp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.loc.gov/ndnp">
+    <!--ENCYCLOPEDIA-->
+    <encyclopediaEntry>./encyclopedia/encyclopedia.xml</encyclopediaEntry>
+
+    <!--NEWSPAPER TITLE-->
+    <newspaperTitle lccn="75425165">./newspapertitle/newspapertitle.xml</newspaperTitle>
+    
+    <!--ISSUE-->
+    <issue lccn="sn83027091" issueDate="1903-04-11" editionOrder="1">./issue/issue.xml</issue>
+    
+    <!--REEL-->
+    <reel reelNumber="100493238">./reel/reel.xml</reel>
+</batch>
