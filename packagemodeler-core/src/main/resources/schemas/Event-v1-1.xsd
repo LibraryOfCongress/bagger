@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2005 OCLC Online Computer Library Center and RLG Research Libraries Group -->
+<!-- PREMIS Preservation Metadata Schema: Event  -->
+<!-- Version 1.1, September 27, 2005 -->
+<!-- Changes applied to this schema (since Version 1.0, May 17, 2005):
+- September 27, 2005.  Ray Denenberg, Library of Congress.
+- version changed to 1.1.
+- namespace changed (both xmlns and targetNamespace 
+from http://www.loc.gov/standards/premis 
+to http://www.loc.gov/standards/premis/v1.
+- version attribute added.
+- corrected xlink namespace URL to "http://www.w3.org/1999/xlink" (removed slash at end)
+- modified eventDateTime type attribute to type="dateType"
+  <xs:union memberTypes="xs:date xs:dateTime">
+-October 20, 2005. Rebecca Guenther, Library of Congress
+- modified eventDateTime: take out type="dateType" change to:
+	<xs:simpleType> 
+	<xs:union memberTypes="xs:date xs:dateTime" /> 
+	</xs:simpleType>	
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.loc.gov/standards/premis/v1" targetNamespace="http://www.loc.gov/standards/premis/v1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="event">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="eventIdentifier">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="eventIdentifierType" type="xs:string"/>
+							<xs:element name="eventIdentifierValue" type="xs:string"/>
+						</xs:sequence>
+						<xs:anyAttribute namespace="http://www.w3.org/1999/xlink"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="eventType" type="xs:string"/>
+			<xs:element name="eventDateTime" minOccurs="1" maxOccurs="1"> 
+<xs:simpleType> 
+  <xs:union memberTypes="xs:date xs:dateTime" /> 
+  </xs:simpleType>
+</xs:element>
+				<xs:element name="eventDetail" type="xs:string" minOccurs="0"/>
+				<xs:element name="eventOutcomeInformation" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="eventOutcome" type="xs:string" minOccurs="0"/>
+							<xs:element name="eventOutcomeDetail" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:any namespace="##any" processContents="lax"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="linkingAgentIdentifier" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="linkingAgentIdentifierType" type="xs:string"/>
+							<xs:element name="linkingAgentIdentifierValue" type="xs:string"/>
+							<xs:element name="linkingAgentRole" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+						<xs:attribute name="LinkAgentXmlID" type="xs:IDREF" use="optional"/>
+						<xs:anyAttribute namespace="http://www.w3.org/1999/xlink"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="linkingObjectIdentifier" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="linkingObjectIdentifierType" type="xs:string"/>
+							<xs:element name="linkingObjectIdentifierValue" type="xs:string"/>
+						</xs:sequence>
+						<xs:attribute name="LinkObjectXmlID" type="xs:IDREF" use="optional"/>
+						<xs:anyAttribute namespace="http://www.w3.org/1999/xlink"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="xmlID" type="xs:ID"/>
+			<xs:attribute name="version" use="optional">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="1.1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	
+</xs:schema>
