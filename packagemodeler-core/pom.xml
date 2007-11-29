@@ -14,11 +14,6 @@
   <build>
 	<extensions>
       <extension>
-	      <groupId>mysql</groupId>
-	      <artifactId>mysql-connector-java</artifactId>
-	      <version>${mysql.mysql-connector-java.version}</version>
-      </extension>
-      <extension>
 	      <groupId>postgresql</groupId>
 	      <artifactId>postgresql</artifactId>
 	      <version>${postgresql.postgresql.version}</version>
@@ -58,14 +53,6 @@
 	             <outputDirectory>src/main/scripts</outputDirectory>
 	           </component>
 	         </components>
-	         <!-- 
-	         <componentProperties>
-	           <configurationfile>src/main/resources/packagemodeler.core.hibernate.cfg.xml</configurationfile>
-	           <propertyfile>src/main/scripts/mysql.packagemodeler.core.hibernate.properties</propertyfile>
-	           <outputfilename>mysql.packagemodeler.core.script.sql</outputfilename>
-	           <export>false</export>
-	         </componentProperties>
-	         -->
 		         <componentProperties>
 		           <configurationfile>src/main/resources/packagemodeler.core.hibernate.cfg.xml</configurationfile>
 		           <propertyfile>src/main/scripts/postgresql.packagemodeler.core.hibernate.properties</propertyfile>

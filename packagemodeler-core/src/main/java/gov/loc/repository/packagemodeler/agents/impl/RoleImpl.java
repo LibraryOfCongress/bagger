@@ -9,7 +9,7 @@ import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;
 
 @Entity(name="Role")
-@Table(name="agentmodeler_role")
+@Table(name="role", schema="core")
 public class RoleImpl implements Role {
 
 	@Id @GeneratedValue

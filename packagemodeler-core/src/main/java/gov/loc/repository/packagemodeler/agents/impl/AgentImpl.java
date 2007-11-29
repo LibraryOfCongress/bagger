@@ -28,7 +28,7 @@ public abstract class AgentImpl implements Agent {
 	protected String identifier;
 
 	@ManyToMany(targetEntity=RoleImpl.class, fetch=FetchType.EAGER)
-	@JoinTable(name="agentmodeler_agent_role", joinColumns={@JoinColumn(name="agent_key")}, inverseJoinColumns={@JoinColumn(name="role_key")})
+	@JoinTable(name="agent_role", schema="core", joinColumns={@JoinColumn(name="agent_key")}, inverseJoinColumns={@JoinColumn(name="role_key")})
 	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	protected Set<Role> roleSet = new HashSet<Role>();
 	
