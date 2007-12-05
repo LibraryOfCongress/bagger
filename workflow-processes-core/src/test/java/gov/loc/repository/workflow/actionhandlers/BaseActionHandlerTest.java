@@ -2,6 +2,7 @@ package gov.loc.repository.workflow.actionhandlers;
 
 import static org.junit.Assert.*;
 
+import gov.loc.repository.transfer.components.test.TestComponent;
 import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
 import java.io.FileFilter;
@@ -42,12 +43,21 @@ public class BaseActionHandlerTest {
 		return "astring";
 	}
 
-	@Test
-	public void testCreateJmsProxyObject() throws Exception {
-		//FileFilter is just a random interface
+	@Test(expected=Exception.class)
+	public void testCreateBadJmsProxyObject() throws Exception {
+		//FileFilter is just a random interface, but does not implement Component
 		ConfigurationHelper.getConfiguration().addProperty("none.FileFilter.queue", "testqueue");
 		FileFilter fileFilter = actionHandler.createObject(FileFilter.class);
 		assertTrue(Proxy.getInvocationHandler(fileFilter) instanceof JmsInvocationHandler);
+		fileFilter.accept(null);
+	}
+
+	@Test
+	public void testCreateJmsProxyObject() throws Exception {
+		ConfigurationHelper.getConfiguration().addProperty("none.TestComponent.queue", "testqueue");
+		TestComponent testComponent = actionHandler.createObject(TestComponent.class);
+		assertTrue(Proxy.getInvocationHandler(testComponent) instanceof JmsInvocationHandler);
+		//testComponent.test("foo", true);
 	}
 	
 	

@@ -134,6 +134,7 @@ public abstract class BaseActionHandler implements ActionHandler
 	protected final <T> T createObject(Class<T> clazz) throws Exception
 	{
 		String key = "none";
+		Long processInstanceId = 0L;
 		if (this.executionContext != null)
 		{
 			key = this.executionContext.getProcessDefinition().getName();
@@ -141,6 +142,7 @@ public abstract class BaseActionHandler implements ActionHandler
 			{
 				key += "." + this.executionContext.getAction().getName();
 			}
+			processInstanceId = this.executionContext.getProcessInstance().getId();
 		}
 		key += "." + clazz.getSimpleName();		
 		log.debug("Key base is " + key);
@@ -162,10 +164,7 @@ public abstract class BaseActionHandler implements ActionHandler
 		{
 			String queueName = this.getConfiguration().getString(queueNameKey);
 			log.debug(MessageFormat.format("Configuration key {0} has value {1}", queueNameKey, queueName));
-			//Can node name be used instead of id?
-			//Check to see if there is a factory method for id in config
-			//Check to see if there is a queue name for id in config
-			return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, new JmsInvocationHandler());
+			return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, new JmsInvocationHandler(queueName, processInstanceId));
 		}
 		else
 		{
