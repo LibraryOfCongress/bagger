@@ -3,6 +3,7 @@ package gov.loc.repository.workflow.continuations.impl;
 import static org.junit.Assert.*;
 
 import org.jbpm.JbpmContext;
+import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
 
@@ -11,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
-import gov.loc.repository.workflow.processdefinitions.ProcessDefinitionHelper;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
 
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 public class SimpleContinuationControllerTest extends AbstractProcessDefinitionTest
 {
 
-	String processDefinition =
+	String processDefinitionString =
 	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
@@ -45,14 +45,25 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 	@Before
 	public void setUp() throws Exception
 	{
-		ProcessDefinitionHelper helper = new ProcessDefinitionHelper();
-		helper.setProcessDefinition(processDefinition);		
-		String processDefinitionName = helper.deploy();
+		String processDefinitionName;
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(processDefinitionString);
+			jbpmContext.deployProcessDefinition(processDefinition);
+			processDefinitionName = processDefinition.getName();
+			
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+		
 		this.optionalVariableMap.clear();
 		this.requiredVariableMap.clear();
 		this.variableMap.clear();
 		
-		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
 			//Normally the set-up would be performed by a monitor or scheduler

@@ -37,7 +37,7 @@ import gov.loc.repository.workflow.utilities.HandlerHelper;
  */
 public abstract class AbstractProcessDefinitionTest {
 
-	protected static JbpmConfiguration jbpmConfiguration;
+	protected static JbpmConfiguration jbpmConfiguration = JbpmConfiguration.getInstance();
 	protected DelegatingObjectFactoryImpl objectFactory;
 
 	protected TestFixtureHelper fixtureHelper = new TestFixtureHelper();
@@ -84,7 +84,6 @@ public abstract class AbstractProcessDefinitionTest {
 			session.getTransaction().commit();
 			isSetup = true;
 		}
-		objectFactory.clear();
 		
 		session = sessionFactory.openSession();
 		session.beginTransaction();
@@ -113,8 +112,6 @@ public abstract class AbstractProcessDefinitionTest {
 	public static void tearDownAfterClass() throws Exception
 	{
 		HibernateUtil.shutdown();
-		//DbPersistenceServiceFactory dbPersistenceServiceFactory = (DbPersistenceServiceFactory)jbpmConfiguration.getServiceFactory(Services.SERVICENAME_PERSISTENCE);
-		//dbPersistenceServiceFactory.dropSchema();	
 	}
 
 	protected void commitAndRestartTransaction() throws Exception
@@ -128,23 +125,7 @@ public abstract class AbstractProcessDefinitionTest {
 	
 	
 	public void setupJbpm() throws Exception
-	{
-		ObjectFactoryParser objectFactoryParser = new ObjectFactoryParser();
-	    ObjectFactoryImpl objectFactoryImpl = new ObjectFactoryImpl();
-	    objectFactoryParser.parseElementsFromResource("org/jbpm/default.jbpm.cfg.xml", objectFactoryImpl);
-	    
-	    InputStream jbpmCfgXmlStream = ClassLoaderUtil.getStream("jbpm.cfg.xml");
-	    objectFactoryParser.parseElementsStream(jbpmCfgXmlStream, objectFactoryImpl);
-	    
-		objectFactory = new DelegatingObjectFactoryImpl(objectFactoryImpl);
-		JbpmConfiguration.Configs.setDefaultObjectFactory(objectFactory);
-		jbpmConfiguration = JbpmConfiguration.getInstance();
-		ProcessDefinitionHelper.setJbpmConfiguration(jbpmConfiguration);
-
-		// now we make the bean jbpm.configuration always availble 
-		ObjectInfo jbpmConfigurationInfo = new ValueInfo("jbpmConfiguration", jbpmConfiguration);
-	    objectFactoryImpl.addObjectInfo(jbpmConfigurationInfo);
-		
+	{		
 		DbPersistenceServiceFactory dbPersistenceServiceFactory = (DbPersistenceServiceFactory)jbpmConfiguration.getServiceFactory(Services.SERVICENAME_PERSISTENCE);
 		dbPersistenceServiceFactory.createSchema();
 	}

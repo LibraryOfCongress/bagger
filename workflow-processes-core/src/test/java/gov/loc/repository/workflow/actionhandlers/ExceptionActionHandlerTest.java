@@ -5,11 +5,12 @@ import static org.junit.Assert.*;
 import java.util.Collection;
 
 import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
-import gov.loc.repository.workflow.processdefinitions.ProcessDefinitionHelper;
+import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ActionHandler;
 import org.jbpm.graph.def.Node;
+import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
@@ -18,7 +19,6 @@ import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 
 @RunWith(JMock.class)
@@ -26,21 +26,15 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 {
 	static Mockery context = new JUnit4Mockery();
 	static String tokenInstanceId;
-	private ProcessDefinitionHelper helper;
 	private long processInstanceId;
 	private JbpmContext jbpmContext;
 	
-	@Before
-	public void setup() throws Exception
-	{
-		helper = new ProcessDefinitionHelper();
-	}
 	
 	@Test
 	public void executeExceptionInSynActionHandler() throws Exception
 	{
-		helper.setProcessDefinition(
-	      "<process-definition name='test1'>" +
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+		  "<process-definition name='test1'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
 	      "  </start-state>" +
@@ -50,10 +44,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
-	      "      </factoryMethodMap>" +
+	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
@@ -62,8 +53,20 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
-	    String processDefinitionName = helper.deploy();
-	    
+
+		String processDefinitionName = processDefinition.getName();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+
+		ConfigurationHelper.getConfiguration().addProperty("test1.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -83,7 +86,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	@Test
 	public void executeExceptionInAsynActionHandler() throws Exception
 	{
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition name='test2'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -94,10 +97,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
-	      "      </factoryMethodMap>" +
+	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
@@ -106,8 +106,19 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
-	    String processDefinitionName = helper.deploy();
-	    
+		String processDefinitionName = processDefinition.getName();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+
+		ConfigurationHelper.getConfiguration().addProperty("test2.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -142,7 +153,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	public void executeExceptionInSynActionHandlerAfterTransition() throws Exception
 	{
 				
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition name='test3'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -153,10 +164,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
-	      "      </factoryMethodMap>" +
+	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
@@ -165,8 +173,19 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
-	    String processDefinitionName = helper.deploy();
-	    
+		String processDefinitionName = processDefinition.getName();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+
+		ConfigurationHelper.getConfiguration().addProperty("test3.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -188,7 +207,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	public void executeExceptionInAsynActionHandlerAfterTransition() throws Exception
 	{
 				
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition name='test4'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -199,10 +218,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
-	      "      </factoryMethodMap>" +
+	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
@@ -211,8 +227,19 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
-	    String processDefinitionName = helper.deploy();
-	    
+		String processDefinitionName = processDefinition.getName();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+
+		ConfigurationHelper.getConfiguration().addProperty("test4.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -250,7 +277,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	public void executeExceptionInSyncNodeEnterActionHandler() throws Exception
 	{
 				
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition name='test5'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -263,7 +290,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </state>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
 	      "      <factoryMethodMap>" +
 	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
 	      "      </factoryMethodMap>" +
@@ -275,8 +302,19 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
-	    String processDefinitionName = helper.deploy();
-	    
+		String processDefinitionName = processDefinition.getName();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+
+		ConfigurationHelper.getConfiguration().addProperty("test5.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -298,7 +336,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	public void executeExceptionInAsyncNodeEnterActionHandler() throws Exception
 	{
 				
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition name='test6'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -311,10 +349,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </state>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
-	      "      </factoryMethodMap>" +
+	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
@@ -323,8 +358,19 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
-	    String processDefinitionName = helper.deploy();
-	    
+		String processDefinitionName = processDefinition.getName();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+
+		ConfigurationHelper.getConfiguration().addProperty("test6.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -361,7 +407,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	public void executeExceptionInSyncNodeLeaveActionHandler() throws Exception
 	{
 				
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition name='test7'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -374,10 +420,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </state>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
-	      "      </factoryMethodMap>" +
+	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
@@ -386,8 +429,19 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
-	    String processDefinitionName = helper.deploy();
-	    
+		String processDefinitionName = processDefinition.getName();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+
+		ConfigurationHelper.getConfiguration().addProperty("test7.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+				
 	    jbpmContext = jbpmConfiguration.createJbpmContext();		
 		try
 		{
@@ -414,7 +468,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	public void executeExceptionInAsyncNodeLeaveActionHandler() throws Exception
 	{
 				
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition name='test8'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -427,10 +481,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
-	      "      </factoryMethodMap>" +
+	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
@@ -439,8 +490,19 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
-	    String processDefinitionName = helper.deploy();
+		String processDefinitionName = processDefinition.getName();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
 	    
+		ConfigurationHelper.getConfiguration().addProperty("test8.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+				
 	    jbpmContext = jbpmConfiguration.createJbpmContext();		
 		try
 		{
@@ -453,7 +515,8 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 		{
 			jbpmContext.close();
 		}
-		
+
+				
 		//Now lets start the JobExecutor
 		jbpmConfiguration.startJobExecutor();
 		Thread.sleep(1000);
@@ -479,7 +542,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	public void executeExceptionInTaskEndActionHandler() throws Exception
 	{
 				
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition name='test9'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -494,10 +557,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </task-node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
-	      "      </factoryMethodMap>" +
+	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
@@ -506,8 +566,19 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
-	    String processDefinitionName = helper.deploy();
+		String processDefinitionName = processDefinition.getName();
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
 	    
+		ConfigurationHelper.getConfiguration().addProperty("test9.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{

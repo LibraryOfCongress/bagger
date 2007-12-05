@@ -2,6 +2,10 @@ package gov.loc.repository.workflow.actionhandlers;
 
 import static org.junit.Assert.*;
 
+import gov.loc.repository.workflow.utilities.ConfigurationHelper;
+
+import java.io.FileFilter;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +31,25 @@ public class BaseActionHandlerTest {
 	}
 	
 	@Test
-	public void testCreateTestObject() throws Exception {
-		actionHandler.factoryMethodMap.put("String", "gov.loc.repository.workflow.actionhandlers.BaseActionHandlerTest.createAString");
+	public void testCreateFactoryObject() throws Exception {
+		ConfigurationHelper.getConfiguration().addProperty("none.String.factorymethod", "gov.loc.repository.workflow.actionhandlers.BaseActionHandlerTest.createAString");
 		String aString = actionHandler.createObject(String.class);
 		assertEquals("astring", aString);
 	}
+	
+	public static String createAString()
+	{
+		return "astring";
+	}
+
+	@Test
+	public void testCreateJmsProxyObject() throws Exception {
+		//FileFilter is just a random interface
+		ConfigurationHelper.getConfiguration().addProperty("none.FileFilter.queue", "testqueue");
+		FileFilter fileFilter = actionHandler.createObject(FileFilter.class);
+		assertTrue(Proxy.getInvocationHandler(fileFilter) instanceof JmsInvocationHandler);
+	}
+	
 	
 	@Test
 	public void testExecute() throws Exception {
@@ -202,10 +220,4 @@ public class BaseActionHandlerTest {
 	    
 	}
 		
-	public static String createAString()
-	{
-		return "astring";
-	}
-	
-	
 }

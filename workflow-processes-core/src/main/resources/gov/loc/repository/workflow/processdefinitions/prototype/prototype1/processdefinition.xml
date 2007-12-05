@@ -6,7 +6,7 @@
       <transition name="continue" to="unzip"></transition>
    </start-state>   
    <node name="unzip" async="true">
-      <action class="gov.loc.repository.workflow.actionhandlers.UnzipActionHandler" name="unzip action">
+      <action class="gov.loc.repository.workflow.actionhandlers.UnzipActionHandler" name="unzip">
          <baseDestinationDirectory>c:/temp</baseDestinationDirectory>
       </action>
       <transition name="troubleshoot" to="troubleshoot unzip"></transition>
@@ -20,7 +20,7 @@
    <end-state name="end1"></end-state>
    <task-node name="troubleshoot unzip"></task-node>
    <node name="validate">
-      <action class="gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler">
+      <action name="httpsync" class="gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler">
          <baseUrl>http://foo.com/bar.html</baseUrl>
          <variableList>packageDirectory</variableList>
       </action>
@@ -30,7 +30,7 @@
    <task-node name="troubleshoot validate"></task-node>
    <state name="verify">
       <event type="node-enter">
-         <action name="verify request" class="gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler">
+         <action name="httpasync" class="gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler">
             <baseUrl>http://localhost/request.html</baseUrl>
             <callbackBaseUrl>http://localhost/response.html</callbackBaseUrl>
          </action>

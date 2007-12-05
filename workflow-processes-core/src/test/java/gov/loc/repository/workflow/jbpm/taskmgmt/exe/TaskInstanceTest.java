@@ -2,9 +2,9 @@ package gov.loc.repository.workflow.jbpm.taskmgmt.exe;
 
 import static org.junit.Assert.*;
 import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
-import gov.loc.repository.workflow.processdefinitions.ProcessDefinitionHelper;
 
 import org.jbpm.JbpmContext;
+import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
@@ -16,8 +16,7 @@ public class TaskInstanceTest extends AbstractProcessDefinitionTest {
 	@Test
 	public void testTransition() throws Exception
 	{
-		ProcessDefinitionHelper helper = new ProcessDefinitionHelper();
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='a' />" +
@@ -35,10 +34,20 @@ public class TaskInstanceTest extends AbstractProcessDefinitionTest {
 	      "  <end-state name='b' />" +
 	      "  <end-state name='c' />" +
 	      "</process-definition>");
+		processDefinitionName = processDefinition.getName();
 
-		processDefinitionName = helper.deploy();
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{			
+			jbpmContext.deployProcessDefinition(processDefinition);
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+			
 		
-		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();		
+		jbpmContext = jbpmConfiguration.createJbpmContext();		
 		try
 		{			
 			//The Fedex guy hands Ray the drive, so he starts a process

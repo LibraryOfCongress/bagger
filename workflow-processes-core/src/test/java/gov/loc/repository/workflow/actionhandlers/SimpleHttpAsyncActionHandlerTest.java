@@ -15,6 +15,7 @@ import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 
 import gov.loc.repository.transfer.components.remote.GenericHttpClient;
+import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
 import java.util.Map;
 
@@ -29,13 +30,13 @@ public class SimpleHttpAsyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test1'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
 	      "  </start-state>" +
 	      "  <state name='remote'>" +
 	      "    <event type='node-enter'>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
+	      "      <action name='httpasync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
 	      "        <baseUrl>http://localhost/test.html</baseUrl>" +
 	      "        <callbackBaseUrl>http://localhost/response.html</callbackBaseUrl>" +	      
 	      "        <variableList>" +
@@ -46,9 +47,6 @@ public class SimpleHttpAsyncActionHandlerTest {
 	      "          <entry><key>v3</key><value>c</value></entry>" +
 	      "          <entry><key>v4</key><value>d</value></entry>" +
 	      "        </additionalParameterMap>" +	      
-	      "        <factoryMethodMap>" +
-	      "          <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClient</value></entry>" +
-	      "        </factoryMethodMap>" +
 	      "      </action>" +
 	      "    </event>" +
 	      "    <transition name='troubleshoot' to='end2' />" +
@@ -57,7 +55,9 @@ public class SimpleHttpAsyncActionHandlerTest {
 	      "  <end-state name='end1' />" +
 	      "  <end-state name='end2' />" +
 	      "</process-definition>");
-	    
+
+		ConfigurationHelper.getConfiguration().addProperty("test1.httpasync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClient");
+		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    tokenInstanceId = Long.toString(processInstance.getRootToken().getId());
 	    processInstance.getContextInstance().setVariable("v1", "a");
@@ -86,13 +86,13 @@ public class SimpleHttpAsyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-			      "<process-definition>" +
+			      "<process-definition name='test2'>" +
 			      "  <start-state>" +
 			      "    <transition to='remote' />" +
 			      "  </start-state>" +
 			      "  <state name='remote'>" +
 			      "    <event type='node-enter'>" +
-			      "      <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
+			      "      <action name='httpasync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
 			      "        <baseUrl>http://localhost/test.html</baseUrl>" +
 			      "        <callbackBaseUrl>http://localhost/response.html</callbackBaseUrl>" +	      
 			      "        <factoryMethodMap>" +
@@ -106,7 +106,9 @@ public class SimpleHttpAsyncActionHandlerTest {
 			      "  <end-state name='end1' />" +
 			      "  <end-state name='end2' />" +
 			      "</process-definition>");
-	    
+	
+		ConfigurationHelper.getConfiguration().addProperty("test2.httpasync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientWithNoParameters");
+				
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    tokenInstanceId = Long.toString(processInstance.getRootToken().getId());
 	    processInstance.getContextInstance().setVariable("v1", "a");
@@ -134,13 +136,13 @@ public class SimpleHttpAsyncActionHandlerTest {
 	public void executeFalse() throws Exception
 	{
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-			      "<process-definition>" +
+			      "<process-definition name='test3'>" +
 			      "  <start-state>" +
 			      "    <transition to='remote' />" +
 			      "  </start-state>" +
 			      "  <state name='remote'>" +
 			      "    <event type='node-enter'>" +
-			      "      <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
+			      "      <action name='httpasync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
 			      "        <baseUrl>http://localhost/test.html</baseUrl>" +
 			      "        <callbackBaseUrl>http://localhost/response.html</callbackBaseUrl>" +	      
 			      "        <variableList>" +
@@ -151,9 +153,6 @@ public class SimpleHttpAsyncActionHandlerTest {
 			      "          <entry><key>v3</key><value>c</value></entry>" +
 			      "          <entry><key>v4</key><value>d</value></entry>" +
 			      "        </additionalParameterMap>" +	      
-			      "        <factoryMethodMap>" +
-			      "          <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientFalse</value></entry>" +
-			      "        </factoryMethodMap>" +
 			      "      </action>" +
 			      "    </event>" +
 			      "    <transition name='continue' to='end1' />" +
@@ -164,7 +163,9 @@ public class SimpleHttpAsyncActionHandlerTest {
 			      "      </action>" +
 			      "  </exception-handler>" +	      			      
 			      "</process-definition>");
-	    
+
+		ConfigurationHelper.getConfiguration().addProperty("test3.httpasync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientFalse");		
+		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    tokenInstanceId = Long.toString(processInstance.getRootToken().getId());
 	    processInstance.getContextInstance().setVariable("v1", "a");
@@ -193,13 +194,13 @@ public class SimpleHttpAsyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-			      "<process-definition>" +
+			      "<process-definition name='test4'>" +
 			      "  <start-state>" +
 			      "    <transition to='remote' />" +
 			      "  </start-state>" +
 			      "  <state name='remote'>" +
 			      "    <event type='node-enter'>" +
-			      "      <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
+			      "      <action name='httpasync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
 			      "        <baseUrl>http://localhost/test.html</baseUrl>" +
 			      "        <callbackBaseUrl>http://localhost/response.html</callbackBaseUrl>" +	      
 			      "        <variableList>" +
@@ -210,9 +211,6 @@ public class SimpleHttpAsyncActionHandlerTest {
 			      "          <entry><key>v3</key><value>c</value></entry>" +
 			      "          <entry><key>v4</key><value>d</value></entry>" +
 			      "        </additionalParameterMap>" +	      
-			      "        <factoryMethodMap>" +
-			      "          <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientException</value></entry>" +
-			      "        </factoryMethodMap>" +
 			      "      </action>" +
 			      "    </event>" +
 			      "    <transition name='continue' to='end1' />" +
@@ -224,6 +222,8 @@ public class SimpleHttpAsyncActionHandlerTest {
 			      "  </exception-handler>" +	      			      
 			      "</process-definition>");
 	    
+		ConfigurationHelper.getConfiguration().addProperty("test4.httpasync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientException");		
+		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    tokenInstanceId = Long.toString(processInstance.getRootToken().getId());
 	    processInstance.getContextInstance().setVariable("v1", "a");
@@ -251,14 +251,13 @@ public class SimpleHttpAsyncActionHandlerTest {
 	public void executeNoBaseUrl() throws Exception
 	{
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(				
-	      "<process-definition>" +
+	      "<process-definition name='test5'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
 	      "  </start-state>" +
 	      "  <state name='remote'>" +
 	      "    <event type='node-enter'>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
-//	      "        <baseUrl>http://localhost/test.html</baseUrl>" +
+	      "      <action name='httpasync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
 	      "        <callbackBaseUrl>http://localhost/response.html</callbackBaseUrl>" +	      
 	      "        <variableList>" +
 	      "          <element>v1</element>" +
@@ -268,9 +267,6 @@ public class SimpleHttpAsyncActionHandlerTest {
 	      "          <entry><key>v3</key><value>c</value></entry>" +
 	      "          <entry><key>v4</key><value>d</value></entry>" +
 	      "        </additionalParameterMap>" +	      
-	      "        <factoryMethodMap>" +
-	      "          <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientNotCalled</value></entry>" +
-	      "        </factoryMethodMap>" +
 	      "      </action>" +
 	      "    </event>" +
 	      "    <transition name='troubleshoot' to='end2' />" +
@@ -280,6 +276,8 @@ public class SimpleHttpAsyncActionHandlerTest {
 	      "  <end-state name='end2' />" +
 	      "</process-definition>");
 	    
+		ConfigurationHelper.getConfiguration().addProperty("test5.httpasync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientNotCalled");
+		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    tokenInstanceId = Long.toString(processInstance.getRootToken().getId());
 	    processInstance.getContextInstance().setVariable("v1", "a");
@@ -295,15 +293,14 @@ public class SimpleHttpAsyncActionHandlerTest {
 	public void executeNoCallbackBaseUrl() throws Exception
 	{
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(				
-	      "<process-definition>" +
+	      "<process-definition name='test6'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
 	      "  </start-state>" +
 	      "  <state name='remote'>" +
 	      "    <event type='node-enter'>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
+	      "      <action name='httpasync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
 	      "        <baseUrl>http://localhost/test.html</baseUrl>" +
-//	      "        <callbackBaseUrl>http://localhost/response.html</callbackBaseUrl>" +	      
 	      "        <variableList>" +
 	      "          <element>v1</element>" +
 	      "          <element>v2</element>" +
@@ -312,9 +309,6 @@ public class SimpleHttpAsyncActionHandlerTest {
 	      "          <entry><key>v3</key><value>c</value></entry>" +
 	      "          <entry><key>v4</key><value>d</value></entry>" +
 	      "        </additionalParameterMap>" +	      
-	      "        <factoryMethodMap>" +
-	      "          <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientNotCalled</value></entry>" +
-	      "        </factoryMethodMap>" +
 	      "      </action>" +
 	      "    </event>" +
 	      "    <transition name='troubleshoot' to='end2' />" +
@@ -324,6 +318,8 @@ public class SimpleHttpAsyncActionHandlerTest {
 	      "  <end-state name='end2' />" +
 	      "</process-definition>");
 	    
+		ConfigurationHelper.getConfiguration().addProperty("test6.httpasync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientNotCalled");
+		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    tokenInstanceId = Long.toString(processInstance.getRootToken().getId());
 	    processInstance.getContextInstance().setVariable("v1", "a");
@@ -352,13 +348,13 @@ public class SimpleHttpAsyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(				
-			      "<process-definition>" +
+			      "<process-definition name='test7'>" +
 			      "  <start-state>" +
 			      "    <transition to='remote' />" +
 			      "  </start-state>" +
 			      "  <state name='remote'>" +
 			      "    <event type='node-enter'>" +
-			      "      <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
+			      "      <action name='httpasync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler'>" +
 			      "        <baseUrl>http://localhost/test.html</baseUrl>" +
 			      "        <callbackBaseUrl>http://localhost/response.html</callbackBaseUrl>" +	      
 			      "        <variableList>" +
@@ -369,9 +365,6 @@ public class SimpleHttpAsyncActionHandlerTest {
 			      "          <entry><key>v3</key><value>c</value></entry>" +
 			      "          <entry><key>v4</key><value>d</value></entry>" +
 			      "        </additionalParameterMap>" +	      
-			      "        <factoryMethodMap>" +
-			      "          <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientNotCalled</value></entry>" +
-			      "        </factoryMethodMap>" +
 			      "      </action>" +
 			      "    </event>" +
 			      "    <transition name='troubleshoot' to='end2' />" +
@@ -381,6 +374,8 @@ public class SimpleHttpAsyncActionHandlerTest {
 			      "  <end-state name='end2' />" +
 			      "</process-definition>");
 			    
+				ConfigurationHelper.getConfiguration().addProperty("test7.httpasync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandlerTest.createMockClientNotCalled");
+		
 			    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 			    tokenInstanceId = Long.toString(processInstance.getRootToken().getId());
 			    //processInstance.getContextInstance().setVariable("v1", "a");

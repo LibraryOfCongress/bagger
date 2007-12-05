@@ -1,10 +1,12 @@
 package gov.loc.repository.workflow.processdefinitions.prototype.prototype1;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.dom4j.io.SAXReader;
 import org.jmock.Expectations;
 import org.junit.Test;
 
@@ -19,11 +21,12 @@ import org.jmock.integration.junit4.JUnit4Mockery;
 import gov.loc.repository.transfer.components.packaging.Unpackager;
 import gov.loc.repository.transfer.components.remote.GenericHttpClient;
 import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
-import gov.loc.repository.workflow.processdefinitions.ProcessDefinitionHelper;
+import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
 import gov.loc.repository.workflow.continuations.impl.SimpleContinuationControllerImpl;
 
 import org.jbpm.JbpmContext;
+import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
 import org.jbpm.taskmgmt.exe.TaskInstance;
@@ -52,26 +55,34 @@ public class Prototype1Test extends AbstractProcessDefinitionTest
 	@Test
 	public void defaultFlow() throws Exception
 	{
-
-		//A helper for manipulating and deploying process definitions for testing
-		ProcessDefinitionHelper helper = new ProcessDefinitionHelper();
-		//A process definition that will be invoked by the primary process definition to demonstrate composability of process definitions
-		//The subprocess has to be deployed first
-		//This subprocess is intended to represent backup
-		helper.setProcessDefinitionResource(PROCESS_DEFINITION_RESOURCE_B);
-		helper.deploy();
-		
-		helper.clear();
-		
-		//The primary process definition
-		helper.setProcessDefinitionResource(PROCESS_DEFINITION_RESOURCE);
-		//Register mocks to be used by actionhandlers
-		helper.registerFactoryMethod("//action[@class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler']", "Unpackager", "gov.loc.repository.workflow.processdefinitions.prototype.prototype1.Prototype1Test.createMockUnpackager");
-		helper.registerFactoryMethod("//action[@class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler']", "GenericHttpClient", "gov.loc.repository.workflow.processdefinitions.prototype.prototype1.Prototype1Test.createMockSyncClient");
-		helper.registerFactoryMethod("//action[@class='gov.loc.repository.workflow.actionhandlers.SimpleHttpAsyncActionHandler']", "GenericHttpClient", "gov.loc.repository.workflow.processdefinitions.prototype.prototype1.Prototype1Test.createMockAsyncClient");
-		String processDefinitionName = helper.deploy();
-				
+		String processDefinitionName;
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			//A process definition that will be invoked by the primary process definition to demonstrate composability of process definitions
+			//The subprocess has to be deployed first
+			//This subprocess is intended to represent backup
+			ProcessDefinition processDefinitionB = ProcessDefinition.parseXmlResource(PROCESS_DEFINITION_RESOURCE_B);
+			jbpmContext.deployProcessDefinition(processDefinitionB);
+
+			//The primary process definition
+			ProcessDefinition processDefinitionA = ProcessDefinition.parseXmlResource(PROCESS_DEFINITION_RESOURCE);
+			jbpmContext.deployProcessDefinition(processDefinitionA);
+			processDefinitionName = processDefinitionA.getName();
+			
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+		
+		
+		//Register mocks to be used by actionhandlers
+		ConfigurationHelper.getConfiguration().addProperty("prototype1.unzip.Unpackager.factorymethod", "gov.loc.repository.workflow.processdefinitions.prototype.prototype1.Prototype1Test.createMockUnpackager");
+		ConfigurationHelper.getConfiguration().addProperty("prototype1.httpsync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.processdefinitions.prototype.prototype1.Prototype1Test.createMockSyncClient");
+		ConfigurationHelper.getConfiguration().addProperty("prototype1.httpasync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.processdefinitions.prototype.prototype1.Prototype1Test.createMockAsyncClient");
+
+		jbpmContext = jbpmConfiguration.createJbpmContext();
 		long tokenInstanceId;
 		long processInstanceId;
 		try

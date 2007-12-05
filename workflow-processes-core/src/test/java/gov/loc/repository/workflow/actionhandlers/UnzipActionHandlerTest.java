@@ -14,6 +14,7 @@ import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 
 import gov.loc.repository.transfer.components.packaging.Unpackager;
+import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
 import java.io.File;
 
@@ -29,18 +30,15 @@ public class UnzipActionHandlerTest {
 		//A simple process definition is used to test the action handler.
 		//Note no jbpmContext, so this process definition isn't being persisted.
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test1'>" +
 	      "  <start-state>" +
 	      "    <transition to='unzip' />" +
 	      "  </start-state>" +
 	      "  <node name='unzip'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
+	      "    <action name='unzip' class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
 	      "      <baseDestinationDirectory>c:\temp</baseDestinationDirectory>" +
 	      //Here's where the mock component is injected.
 	      //When createObject(Unpackager.class) is called, UnzipActionHandlerTest.createMockUnpackager (see below) will be invoked rather than createUnpackager().
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>Unpackager</key><value>gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createMockUnpackager</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='troubleshoot' to='c' />" +
 	      "    <transition name='continue' to='b' />" +
@@ -48,7 +46,7 @@ public class UnzipActionHandlerTest {
 	      "  <end-state name='b' />" +
 	      "  <end-state name='c' />" +
 	      "</process-definition>");
-
+		ConfigurationHelper.getConfiguration().addProperty("test1.unzip.Unpackager.factorymethod", "gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createMockUnpackager");				 
 
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("sourceFile", "c:\\test\\here.zip");
@@ -77,16 +75,13 @@ public class UnzipActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test2'>" +
 	      "  <start-state>" +
 	      "    <transition to='unzip' />" +
 	      "  </start-state>" +
 	      "  <node name='unzip'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
+	      "    <action name='unzip' class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
 	      "      <baseDestinationDirectory>c:\temp</baseDestinationDirectory>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>Unpackager</key><value>gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createThrowingMockUnpackager</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='b' />" +
 	      "  </node>" +
@@ -96,6 +91,7 @@ public class UnzipActionHandlerTest {
 	      "      </action>" +
 	      "  </exception-handler>" +	      	      
 	      "</process-definition>");
+		ConfigurationHelper.getConfiguration().addProperty("test2.unzip.Unpackager.factorymethod", "gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createThrowingMockUnpackager");				 
 	    
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("sourceFile", "c:\\test\\here.zip");
@@ -122,22 +118,20 @@ public class UnzipActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test3'>" +
 	      "  <start-state>" +
 	      "    <transition to='unzip' />" +
 	      "  </start-state>" +
 	      "  <node name='unzip'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
+	      "    <action name='unzip' class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
 	      "      <baseDestinationDirectory>c:\temp</baseDestinationDirectory>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>Unpackager</key><value>gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createThrowingMockUnpackager</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='troubleshoot' to='c' />" +
 	      "  </node>" +
 	      "  <end-state name='b' />" +
 	      "  <end-state name='c' />" +
 	      "</process-definition>");
+		ConfigurationHelper.getConfiguration().addProperty("test3.unzip.Unpackager.factorymethod", "gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createThrowingMockUnpackager");				 
 	    
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("sourceFile", "c:\\test\\here.zip");
@@ -152,12 +146,12 @@ public class UnzipActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test4'>" +
 	      "  <start-state>" +
 	      "    <transition to='unzip' />" +
 	      "  </start-state>" +
 	      "  <node name='unzip'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
+	      "    <action name='unzip' class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
 	      "      <factoryMethodMap>" +
 	      "        <entry><key>Unpackager</key><value>gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createMockUnpackager</value></entry>" +
 	      "      </factoryMethodMap>" +
@@ -168,6 +162,7 @@ public class UnzipActionHandlerTest {
 	      "  <end-state name='b' />" +
 	      "  <end-state name='c' />" +
 	      "</process-definition>");
+		ConfigurationHelper.getConfiguration().addProperty("test4.unzip.Unpackager.factorymethod", "gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createMockUnpackager");				 
 	    
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("sourceFile", "c:\\test\\here.zip");
@@ -181,16 +176,13 @@ public class UnzipActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test5'>" +
 	      "  <start-state>" +
 	      "    <transition to='unzip' />" +
 	      "  </start-state>" +
 	      "  <node name='unzip'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
+	      "    <action name='unzip' class='gov.loc.repository.workflow.actionhandlers.UnzipActionHandler'>" +
 	      "      <baseDestinationDirectory>c:\temp</baseDestinationDirectory>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>Unpackager</key><value>gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createMockUnpackager</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='troubleshoot' to='c' />" +
 	      "    <transition name='continue' to='b' />" +
@@ -198,6 +190,7 @@ public class UnzipActionHandlerTest {
 	      "  <end-state name='b' />" +
 	      "  <end-state name='c' />" +
 	      "</process-definition>");
+		ConfigurationHelper.getConfiguration().addProperty("test5.unzip.Unpackager.factorymethod", "gov.loc.repository.workflow.actionhandlers.UnzipActionHandlerTest.createMockUnpackager");				 
 	    
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.signal();

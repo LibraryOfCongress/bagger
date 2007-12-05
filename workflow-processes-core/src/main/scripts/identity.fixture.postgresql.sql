@@ -1,9 +1,3 @@
-USE jbpm32;
-
-TRUNCATE JBPM_ID_MEMBERSHIP;
-TRUNCATE JBPM_ID_GROUP;
-TRUNCATE JBPM_ID_USER; 
-
 INSERT INTO JBPM_ID_GROUP VALUES(1,'G','ndnp-qr','organisation',NULL);
 INSERT INTO JBPM_ID_GROUP VALUES(2,'G','ndnp-sysadmin','organisation',NULL);
 INSERT INTO JBPM_ID_GROUP VALUES(3,'G','ndnp-participant','security-role',NULL);

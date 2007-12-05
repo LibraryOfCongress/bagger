@@ -18,8 +18,7 @@ import gov.loc.repository.workflow.utilities.HandlerHelper;
 import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.HashMap;
+import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
 import java.util.Calendar;
 
@@ -36,7 +35,6 @@ public abstract class BaseActionHandler implements ActionHandler
 	//protected ExecutionContext executionContext; 
 	protected HandlerHelper helper;
 	protected Log reportingLog;
-	protected Map<String, String> factoryMethodMap = new HashMap<String, String>();
 	protected Calendar start;
 	protected PackageModelDAO dao;
 	protected ModelerFactory factory;
@@ -51,14 +49,15 @@ public abstract class BaseActionHandler implements ActionHandler
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		try
 		{
+			this.executionContext = executionContext;
+			this.helper = new HandlerHelper(executionContext, this.getConfiguration(), this);
+			this.reportingLog = LogFactory.getLog(this.getLoggerName());		
+
 			session.beginTransaction();
 			factory = this.createObject(ModelerFactory.class);
 			dao = this.createObject(PackageModelDAO.class);
 			dao.setSession(session);			
 
-			this.executionContext = executionContext;
-			this.helper = new HandlerHelper(executionContext, this.getConfiguration(), this);
-			this.reportingLog = LogFactory.getLog(this.getLoggerName());		
 			if (this.executionContext != null)
 			{
 				this.helper.checkConfigurationFields();
@@ -134,29 +133,39 @@ public abstract class BaseActionHandler implements ActionHandler
 	@SuppressWarnings("unchecked")
 	protected final <T> T createObject(Class<T> clazz) throws Exception
 	{
-		/*
-		if (log.isDebugEnabled())
+		String key = "none";
+		if (this.executionContext != null)
 		{
-			if (this.factoryMethodMap.isEmpty())
+			key = this.executionContext.getProcessDefinition().getName();
+			if (this.executionContext.getAction() != null && this.executionContext.getAction().getName() != null)
 			{
-				log.debug("factoryMethodMap is empty");
-			}
-			for(String key : this.factoryMethodMap.keySet())
-			{
-				log.debug(MessageFormat.format("factoryMethodMap has {0},{1}", key, this.factoryMethodMap.get(key)));
+				key += "." + this.executionContext.getAction().getName();
 			}
 		}
-		*/
-		if (factoryMethodMap.containsKey(clazz.getSimpleName()))
+		key += "." + clazz.getSimpleName();		
+		log.debug("Key base is " + key);
+		String factoryMethodKey = key + ".factorymethod";
+		String queueNameKey = key + ".queue";
+		if (this.getConfiguration().containsKey(factoryMethodKey))
 		{
-			String fullMethodName = factoryMethodMap.get(clazz.getSimpleName());
-			int i = fullMethodName.lastIndexOf(".");
-			String className = fullMethodName.substring(0, i);
-			String methodName = fullMethodName.substring(i+1);
+			String factoryMethodName = this.getConfiguration().getString(factoryMethodKey);
+			log.debug(MessageFormat.format("Configuration key {0} has value {1}", factoryMethodKey, factoryMethodName));
+			int i = factoryMethodName.lastIndexOf(".");
+			String className = factoryMethodName.substring(0, i);
+			String methodName = factoryMethodName.substring(i+1);
 			log.debug(MessageFormat.format("Creating object {0} with class {1} and method {2}", clazz.getSimpleName(), className, methodName));
 			Class factoryClazz = Class.forName(className);
 			Method method = factoryClazz.getMethod(methodName, (Class[])null);
 			return (T)method.invoke((Object)null, (Object[])null);
+		}
+		else if (this.getConfiguration().containsKey(queueNameKey))
+		{
+			String queueName = this.getConfiguration().getString(queueNameKey);
+			log.debug(MessageFormat.format("Configuration key {0} has value {1}", queueNameKey, queueName));
+			//Can node name be used instead of id?
+			//Check to see if there is a factory method for id in config
+			//Check to see if there is a queue name for id in config
+			return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, new JmsInvocationHandler());
 		}
 		else
 		{

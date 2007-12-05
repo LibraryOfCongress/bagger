@@ -8,7 +8,6 @@ import java.util.Map;
 import gov.loc.repository.workflow.listeners.JmsCompletedJobListener;
 import gov.loc.repository.workflow.listeners.impl.ActiveMQJmsCompletedJobListener;
 import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
-import gov.loc.repository.workflow.processdefinitions.ProcessDefinitionHelper;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -20,6 +19,7 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.jbpm.JbpmContext;
+import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.junit.After;
 import org.junit.Test;
@@ -53,8 +53,7 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		listener.start();
 		
 		//Setup the test
-		ProcessDefinitionHelper helper = new ProcessDefinitionHelper();
-		helper.setProcessDefinition(
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 			      "<process-definition name='test'>" +
 			      "  <start-state>" +
 			      "    <transition to='remote' />" +
@@ -69,8 +68,18 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 			      "  <end-state name='end' />" +
 			      "</process-definition>");
 
-		String processDefinitionName = helper.deploy();
+		String processDefinitionName = processDefinition.getName();
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);
+		}
+		finally
+		{
+			jbpmContext.close();
+		}	    
+		
+		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			
 			

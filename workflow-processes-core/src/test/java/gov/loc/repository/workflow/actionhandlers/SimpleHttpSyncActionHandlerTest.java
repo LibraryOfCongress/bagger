@@ -16,6 +16,7 @@ import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 
 import gov.loc.repository.transfer.components.remote.GenericHttpClient;
+import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
 import java.util.Map;
 
@@ -29,12 +30,12 @@ public class SimpleHttpSyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test1'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
 	      "  </start-state>" +
 	      "  <node name='remote'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
+	      "    <action name='httpsync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
 	      "      <baseUrl>http://localhost/test.html</baseUrl>" +
 	      "      <variableList>" +
 	      "        <element>v1</element>" +
@@ -44,9 +45,6 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "        <entry><key>v3</key><value>c</value></entry>" +
 	      "        <entry><key>v4</key><value>d</value></entry>" +
 	      "      </additionalParameterMap>" +	      
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClient</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='troubleshoot' to='end2' />" +
 	      "    <transition name='continue' to='end1' />" +
@@ -55,6 +53,8 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "  <end-state name='end2' />" +
 	      "</process-definition>");
 	    
+		ConfigurationHelper.getConfiguration().addProperty("test1.httpsync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClient");		
+		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("v1", "a");
 	    processInstance.getContextInstance().setVariable("v2", "b");
@@ -82,16 +82,13 @@ public class SimpleHttpSyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test2'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
 	      "  </start-state>" +
 	      "  <node name='remote'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
+	      "    <action name='httpsync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
 	      "      <baseUrl>http://localhost/test.html</baseUrl>" +
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientWithNoParameters</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='troubleshoot' to='end2' />" +
 	      "    <transition name='continue' to='end1' />" +
@@ -99,6 +96,7 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "  <end-state name='end1' />" +
 	      "  <end-state name='end2' />" +
 	      "</process-definition>");
+		ConfigurationHelper.getConfiguration().addProperty("test2.httpsync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientWithNoParameters");		
 	    
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("v1", "a");
@@ -126,12 +124,12 @@ public class SimpleHttpSyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test3'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
 	      "  </start-state>" +
 	      "  <node name='remote'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
+	      "    <action name='httpsync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
 	      "      <baseUrl>http://localhost/test.html</baseUrl>" +
 	      "      <variableList>" +
 	      "        <element>v1</element>" +
@@ -141,9 +139,6 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "        <entry><key>v3</key><value>c</value></entry>" +
 	      "        <entry><key>v4</key><value>d</value></entry>" +
 	      "      </additionalParameterMap>" +	      
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientFalse</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end1' />" +
 	      "  </node>" +
@@ -153,7 +148,8 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "      </action>" +
 	      "  </exception-handler>" +	      	      
 	      "</process-definition>");
-	    
+		ConfigurationHelper.getConfiguration().addProperty("test3.httpsync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientFalse");		
+
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("v1", "a");
 	    processInstance.getContextInstance().setVariable("v2", "b");
@@ -181,12 +177,12 @@ public class SimpleHttpSyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test4'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
 	      "  </start-state>" +
 	      "  <node name='remote'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
+	      "    <action name='httpsync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
 	      "      <baseUrl>http://localhost/test.html</baseUrl>" +
 	      "      <variableList>" +
 	      "        <element>v1</element>" +
@@ -196,9 +192,6 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "        <entry><key>v3</key><value>c</value></entry>" +
 	      "        <entry><key>v4</key><value>d</value></entry>" +
 	      "      </additionalParameterMap>" +	      
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientException</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end1' />" +
 	      "  </node>" +
@@ -208,6 +201,7 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "      </action>" +
 	      "  </exception-handler>" +	      	      
 	      "</process-definition>");
+		ConfigurationHelper.getConfiguration().addProperty("test4.httpsync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientException");		
 	    
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("v1", "a");
@@ -236,12 +230,12 @@ public class SimpleHttpSyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test5'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
 	      "  </start-state>" +
 	      "  <node name='remote'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
+	      "    <action name='httpsync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
 //	      "      <baseUrl>http://localhost/test.html</baseUrl>" +
 	      "      <variableList>" +
 	      "        <element>v1</element>" +
@@ -251,9 +245,6 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "        <entry><key>v3</key><value>c</value></entry>" +
 	      "        <entry><key>v4</key><value>d</value></entry>" +
 	      "      </additionalParameterMap>" +	      
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientNotCalled</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='troubleshoot' to='end2' />" +
 	      "    <transition name='continue' to='end1' />" +
@@ -261,6 +252,7 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "  <end-state name='end1' />" +
 	      "  <end-state name='end2' />" +
 	      "</process-definition>");
+		ConfigurationHelper.getConfiguration().addProperty("test5.httpsync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientNotCalled");		
 	    
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("v1", "a");
@@ -287,12 +279,12 @@ public class SimpleHttpSyncActionHandlerTest {
 	{
 				
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+	      "<process-definition name='test6'>" +
 	      "  <start-state>" +
 	      "    <transition to='remote' />" +
 	      "  </start-state>" +
 	      "  <node name='remote'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
+	      "    <action name='httpsync' class='gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandler'>" +
 	      "      <baseUrl>http://localhost/test.html</baseUrl>" +
 	      "      <variableList>" +
 	      "        <element>v1</element>" +
@@ -302,9 +294,6 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "        <entry><key>v3</key><value>c</value></entry>" +
 	      "        <entry><key>v4</key><value>d</value></entry>" +
 	      "      </additionalParameterMap>" +	      
-	      "      <factoryMethodMap>" +
-	      "        <entry><key>GenericHttpClient</key><value>gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientNotCalled</value></entry>" +
-	      "      </factoryMethodMap>" +
 	      "    </action>" +
 	      "    <transition name='troubleshoot' to='end2' />" +
 	      "    <transition name='continue' to='end1' />" +
@@ -312,7 +301,9 @@ public class SimpleHttpSyncActionHandlerTest {
 	      "  <end-state name='end1' />" +
 	      "  <end-state name='end2' />" +
 	      "</process-definition>");
-	    
+
+		ConfigurationHelper.getConfiguration().addProperty("test6.httpsync.GenericHttpClient.factorymethod", "gov.loc.repository.workflow.actionhandlers.SimpleHttpSyncActionHandlerTest.createMockClientNotCalled");		
+		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
 	    processInstance.getContextInstance().setVariable("v1", "a");
 //	    processInstance.getContextInstance().setVariable("v2", "b");
