@@ -10,7 +10,7 @@ public class TestComponentImpl implements TestComponent {
 	private static final Log log = LogFactory.getLog(TestComponentImpl.class);	
 	private static final long WAIT = 5000;
 	
-	public void test(String message) throws Exception {
+	public void test(String message, boolean istrue) throws Exception {
 		log.info("Test Component called with message: " + message);
 		log.debug("Starting wait");
 		Thread.sleep(WAIT);

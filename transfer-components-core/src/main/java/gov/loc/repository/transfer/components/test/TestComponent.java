@@ -7,5 +7,8 @@ import gov.loc.repository.transfer.components.annotations.MapParameter;
 public interface TestComponent extends Component {
 
 	@JobType(name="test")
-	public void test(@MapParameter(name="message") String message) throws Exception;
+	public void test(
+			@MapParameter(name="message") String message,
+			@MapParameter(name="istrue") boolean isTrue
+	) throws Exception;
 }
