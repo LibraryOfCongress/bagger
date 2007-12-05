@@ -18,7 +18,7 @@
 	<javax.persistence.persistence-api>1.0</javax.persistence.persistence-api>  	
 	<javax.servlet.servlet-api.version>2.5</javax.servlet.servlet-api.version>
   	<jaxen.jaxen.version>1.1.1</jaxen.jaxen.version>
-  	<jbpm.version>3.2</jbpm.version>
+  	<jbpm.version>3.2.2</jbpm.version>
   	<loc-repository.transfer-common.version>1.0-SNAPSHOT</loc-repository.transfer-common.version>
   	<loc-repository.packagemodeler.core.version>1.0-SNAPSHOT</loc-repository.packagemodeler.core.version>
     <loc-repository.packagemodeler.ndnp.version>1.0-SNAPSHOT</loc-repository.packagemodeler.ndnp.version>    
@@ -33,7 +33,7 @@
   	<org.beanshell.bsh.version>2.0b4</org.beanshell.bsh.version>
   	<org.hibernate.hibernate.version>3.2.1.ga</org.hibernate.hibernate.version>
     <org.hibernate.hibernate-annotations.version>3.3.0.ga</org.hibernate.hibernate-annotations.version>  	
-  	<org.springframework.version>2.0.5</org.springframework.version>
+  	<org.springframework.version>2.5</org.springframework.version>
     <postgresql.postgresql.version>8.1-407.jdbc3</postgresql.postgresql.version>  	
   </properties>
   <build>
