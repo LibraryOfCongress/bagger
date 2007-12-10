@@ -29,7 +29,7 @@
   	<loc-repository.workflow-processes.ndnp.version>1.0-SNAPSHOT</loc-repository.workflow-processes.ndnp.version>
    	<log4j.version>1.2.14</log4j.version>
     <mysql.mysql-connector-java.version>5.0.4</mysql.mysql-connector-java.version>   	
-	<org.apache.activemq.activemq-core.version>5.0-SNAPSHOT</org.apache.activemq.activemq-core.version>
+	<org.apache.activemq.activemq-core.version>5.0.0</org.apache.activemq.activemq-core.version>
   	<org.beanshell.bsh.version>2.0b4</org.beanshell.bsh.version>
   	<org.hibernate.hibernate.version>3.2.1.ga</org.hibernate.hibernate.version>
     <org.hibernate.hibernate-annotations.version>3.3.0.ga</org.hibernate.hibernate-annotations.version>  	
