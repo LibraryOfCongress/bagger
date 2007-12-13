@@ -3,15 +3,15 @@
 
 =head1 NAME
 
-transfer-verify-package - verify a package with its manifest file
+transport-verify-package - verify a package with its manifest file
 
 =head1 SYNOPSIS
 
-transfer-verify-package directory
+transport-verify-package directory
 
 =head1 DESCRIPTION
 
-transfer-verify-package is a wrapper around md5deep and friends.  It finds
+transport-verify-package is a wrapper around md5deep and friends.  It finds
 the specific manifest used within a package, verifies the package against
 the manifest, and returns the result from md5deep.
 

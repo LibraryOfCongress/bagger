@@ -3,11 +3,11 @@
 
 =head1 NAME
 
-transfer-queue-package - register a package with transfer database for copying
+transport-queue-package - register a package with transport database for copying
 
 =head1 SYNOPSIS
 
-transfer-queue-package [OPTIONS]
+transport-queue-package [OPTIONS]
 
   Options:
     --username      User's login name (default: current user)
@@ -23,12 +23,12 @@ transfer-queue-package [OPTIONS]
 
 =head1 DESCRIPTION
 
-transfer-queue-package registers a package on the local system to be
-transferred to the archival server, possibly using an intermediate 
+transport-queue-package registers a package on the local system to be
+copied to the archival server, possibly using an intermediate 
 workspace during copying.
 
 The user, local and remote systems must all be registered with the
-transfer system.  The archive owner must be:
+transport system.  The archive owner must be:
   - a valid account on the archive system
   - an account with write permission to the desired archive location
   - an account that grants access to the transfer account copy files
@@ -159,7 +159,7 @@ $dest_user = $OPTIONS{'archive-owner'} if defined $OPTIONS{'archive-owner'};
 
 
 ##-----------------------------------------------------------------
-## All of these values must be registered in the transfer database.
+## All of these values must be registered in the transport database.
 my @failed;
 push(@failed, check_registry($dbh, user => 'users', username => $OPTIONS{username}));
 push(@failed, check_registry($dbh, host => 'systems', short_name => $source_host));
@@ -213,9 +213,9 @@ $result &&= $stmt->execute($id, $dest_user, $dest_host, $dest_hostname, $dest_di
 die "Cannot create location records.\n" unless $result;
 
 ##-----------------------------------------------------------------
-## Run the check script before the transfer is queued
+## Run the check script before the transport is queued
 my $errors = 
-  run("transfer-check-package $id $source_host $source_hostname $OPTIONS{package} $OPTIONS{repository} $source_dir");
+  run("transport-check-package $id $source_host $source_hostname $OPTIONS{package} $OPTIONS{repository} $source_dir");
 
 my $name = basename($0);
 if ($errors) {

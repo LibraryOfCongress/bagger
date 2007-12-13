@@ -52,7 +52,7 @@ sub run($;$) {
     if ($errors) {
         my $name = basename($0);
         fail_event($current_event[0])
-            unless $cmd =~ m/transfer-log-event/;
+            unless $cmd =~ m/transport-log-event/;
         $cmd =~ s/ .*$//;
         print STDERR "$name: Error executing '$cmd'.\n";
         print STDERR $errors;
@@ -65,7 +65,7 @@ sub run($;$) {
 
 sub log_event($$;$) {
     my ($event, $status, $desc) = @_;
-    run("transfer-log-event $ticket '$event' $status $system $hostname", $desc)
+    run("transport-log-event $ticket '$event' $status $system $hostname", $desc)
 }
 
 sub start_event($;$) {
@@ -105,7 +105,7 @@ sub do_task($$) {
 }
 
 sub do_fixity_verification {
-    do_task("fixity verification", "transfer-verify-package $root");
+    do_task("fixity verification", "transport-verify-package $root");
 }
 
 sub do_package_registration {

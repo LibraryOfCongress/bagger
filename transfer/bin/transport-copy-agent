@@ -51,7 +51,7 @@ sub run($;$) {
 
 sub log_event($$;$) {
     my ($event, $status, $desc) = @_;
-    run("transfer-log-event $ticket '$event' $status $system $hostname", $desc)
+    run("transport-log-event $ticket '$event' $status $system $hostname", $desc)
 }
 
 sub start_event($;$) {
@@ -93,7 +93,7 @@ sub report_error($) {
     print STDERR "$script: Exiting.\n";
     
     fail_event($current_event[0], $err);
-    run("transfer-update-package $ticket failed");
+    run("transport-update-package $ticket failed");
     
     exit(-1);
 }
@@ -118,7 +118,7 @@ sub check_copy($) {
     my $event = "fixity verification";
     
     start_event($event);
-    my ($out, $err) = run("transfer-verify-package $dir");
+    my ($out, $err) = run("transport-verify-package $dir");
     raise_error($err) if ($err);
     warn_event($event, $out) if defined($out);
     finish_event($event);
@@ -128,7 +128,7 @@ sub check_copy($) {
 ##-----------------------------------------------------------------
 
 
-my ($output, $error) = run("transfer-browse-queue");
+my ($output, $error) = run("transport-browse-queue");
 
 exit(0) unless $output;  ## Stop now if there's nothing to do
 exit(0) if $error;  ## Don't do anything if things are horribly wrong
@@ -145,7 +145,7 @@ my ($dest)    = $job =~ m/^Destination:\s+(.*)$/m;
 
 $workspace ||= "";
 
-run("transfer-update-package $ticket started");
+run("transport-update-package $ticket started");
 
 my ($src_user, $src_host, $src_dir);
 my ($dst_user, $dst_host, $dst_dir);
@@ -192,4 +192,4 @@ raise_error($err) if $err;
 finish_event($event, $out);
 pass_event($event);
 
-run("transfer-update-package $ticket completed");    
+run("transport-update-package $ticket completed");    

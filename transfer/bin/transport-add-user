@@ -3,11 +3,11 @@
 
 =head1 NAME
 
-transfer-add-user - add a requester to the transfer database
+transport-add-user - add a requester to the transport database
 
 =head1 SYNOPSIS
 
-transfer-add-user --username ... --realname ... [OPTIONS]
+transport-add-user --username ... --realname ... [OPTIONS]
 
   Required values:
     --username          User's login name
@@ -19,9 +19,9 @@ transfer-add-user --username ... --realname ... [OPTIONS]
 
 =head1 DESCRIPTION
 
-transfer-add-user registers a user with the database.  Once registered,
+transport-add-user registers a user with the database.  Once registered,
 and after SSH keys have been distributed appropriately, this user will
-be able to initiate transfer requests with transfer-queue-package.
+be able to initiate transport requests with transport-queue-package.
 
 =cut
 
@@ -64,7 +64,7 @@ sub add_user {
             {},
             $user, $real, $email);
 
-    print "Added user '$user' to the transfer database.\n";    
+    print "Added user '$user' to the transport database.\n";    
 }
 
 ##------------------------------------------------------------
