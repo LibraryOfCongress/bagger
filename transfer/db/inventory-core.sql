@@ -1,3 +1,94 @@
+create table core.repository (
+	pkey int8 not null, 
+	repository_id varchar(255) not null, 
+	primary key (pkey), 
+	unique (repository_id)
+);
+
+create table core.package (
+	pkey int8 not null, 
+	package_id varchar(255) not null, 
+	processinstance_id int8, 
+	repository_key int8 not null, 
+	create_timestamp timestamp not null, 
+	update_timestamp timestamp not null, 
+	primary key (pkey), 
+	unique (repository_key, package_id)
+);
+
+create table core.canonicalfile (
+	pkey int8 not null, 
+	bytes int8, 
+	relative_path varchar(255) not null, 
+	base_name varchar(255) not null, 
+	extension varchar(10), 
+	package_key int8 not null, 
+	create_timestamp timestamp not null, 
+	update_timestamp timestamp not null, 
+	primary key (pkey), 
+	unique (package_key, relative_path, base_name, extension)
+);
+
+create table core.canonicalfile_fixity (
+	canonicalfile_key int8 not null, 
+	fixity_value varchar(255) not null, 
+	algorithm varchar(255) not null, 
+	primary key (canonicalfile_key, fixity_value, algorithm), 
+	unique (canonicalfile_key, algorithm)
+);
+
+
+create table core.filelocation (
+	pkey int8 not null, 
+	package_key int8 not null, 
+	is_managed bool not null, 
+	is_lc_package_structure bool not null, 
+	create_timestamp timestamp not null, 
+	update_timestamp timestamp not null, 
+	primary key (pkey)
+);
+
+create table core.fileinstance (
+	pkey int8 not null, 
+	file_create_timestamp timestamp, 
+	relative_path varchar(255) not null, 
+	base_name varchar(255) not null, 
+	extension varchar(10), 
+	filelocation_key int8 not null, 
+	create_timestamp timestamp not null, 
+	update_timestamp timestamp not null, 
+	primary key (pkey), 
+	unique (filelocation_key, relative_path, base_name, extension)
+);
+
+create table core.fileinstance_fixity (
+	fileinstance_key int8 not null, 
+	fixity_value varchar(255) not null, 
+	algorithm varchar(255) not null, 
+	primary key (fileinstance_key, fixity_value, algorithm), 
+	unique (fileinstance_key, algorithm)
+);
+
+-- 2007-12-13: use and meaning of this table under discussion
+create table core.storagesystem_filelocation (
+	pkey int8 not null, 
+	base_path varchar(255) not null, 
+	storagesystem_key int8 not null, 
+	primary key (pkey), 
+	unique (storagesystem_key, base_path)
+);
+
+-- 2007-12-13: use and meaning of this table under discussion
+create table core.external_filelocation (
+	pkey int8 not null, 
+	base_path varchar(255), 
+	identifier_type varchar(255), 
+	identifier_value varchar(255), 
+	media_type varchar(255), 
+	primary key (pkey), 
+	unique (identifier_value, identifier_type, media_type, base_path)
+);
+
 -- This table is deprecated, and will soon move to a separate namespace.
 create table agent.agent (
 	pkey int8 not null, 
@@ -21,27 +112,6 @@ create table agent.role (
 	pkey int8 not null, 
 	role_id varchar(255) not null, 
 	primary key (pkey)
-);
-
-create table core.canonicalfile (
-	pkey int8 not null, 
-	bytes int8, 
-	relative_path varchar(255) not null, 
-	base_name varchar(255) not null, 
-	extension varchar(10), 
-	package_key int8 not null, 
-	create_timestamp timestamp not null, 
-	update_timestamp timestamp not null, 
-	primary key (pkey), 
-	unique (package_key, relative_path, base_name, extension)
-);
-
-create table core.canonicalfile_fixity (
-	canonicalfile_key int8 not null, 
-	fixity_value varchar(255) not null, 
-	algorithm varchar(255) not null, 
-	primary key (canonicalfile_key, fixity_value, algorithm), 
-	unique (canonicalfile_key, algorithm)
 );
 
 -- This table deals with package audits, and is currently out-of-scope.
@@ -106,17 +176,6 @@ create table core.event_package (
 	primary key (pkey)
 );
 
--- 2007-12-13: use and meaning of this table under discussion
-create table core.external_filelocation (
-	pkey int8 not null, 
-	base_path varchar(255), 
-	identifier_type varchar(255), 
-	identifier_value varchar(255), 
-	media_type varchar(255), 
-	primary key (pkey), 
-	unique (identifier_value, identifier_type, media_type, base_path)
-);
-
 -- This table deals with package audits, and is currently out-of-scope.
 -- This table is deprecated, and will soon move to a separate namespace.
 create table core.fileexamination (
@@ -152,64 +211,6 @@ create table core.fileexamination_group (
 	create_timestamp timestamp not null, 
 	update_timestamp timestamp not null, 
 	primary key (pkey)
-);
-
-create table core.fileinstance (
-	pkey int8 not null, 
-	file_create_timestamp timestamp, 
-	relative_path varchar(255) not null, 
-	base_name varchar(255) not null, 
-	extension varchar(10), 
-	filelocation_key int8 not null, 
-	create_timestamp timestamp not null, 
-	update_timestamp timestamp not null, 
-	primary key (pkey), 
-	unique (filelocation_key, relative_path, base_name, extension)
-);
-
-create table core.fileinstance_fixity (
-	fileinstance_key int8 not null, 
-	fixity_value varchar(255) not null, 
-	algorithm varchar(255) not null, 
-	primary key (fileinstance_key, fixity_value, algorithm), 
-	unique (fileinstance_key, algorithm)
-);
-
-create table core.filelocation (
-	pkey int8 not null, 
-	package_key int8 not null, 
-	is_managed bool not null, 
-	is_lc_package_structure bool not null, 
-	create_timestamp timestamp not null, 
-	update_timestamp timestamp not null, 
-	primary key (pkey)
-);
-
-create table core.package (
-	pkey int8 not null, 
-	package_id varchar(255) not null, 
-	processinstance_id int8, 
-	repository_key int8 not null, 
-	create_timestamp timestamp not null, 
-	update_timestamp timestamp not null, 
-	primary key (pkey), 
-	unique (repository_key, package_id)
-);
-
-create table core.repository (
-	pkey int8 not null, 
-	repository_id varchar(255) not null, 
-	primary key (pkey), 
-	unique (repository_id)
-);
-
--- 2007-12-13: use and meaning of this table under discussion
-create table core.storagesystem_filelocation (
-	pkey int8 not null, 
-	base_path varchar(255) not null, 
-	storagesystem_key int8 not null, 
-	primary key (pkey), 
-	unique (storagesystem_key, base_path)
 );
 
 alter table agent.agent_role add constraint FKB98311709FB590E2 foreign key (role_key) references agent.role;
