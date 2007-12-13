@@ -1,3 +1,5 @@
+create schema core;
+
 create table core.repository (
 	pkey int8 not null, 
 	repository_id varchar(255) not null, 
@@ -90,6 +92,8 @@ create table core.external_filelocation (
 );
 
 -- This table is deprecated, and will soon move to a separate namespace.
+create schema agent; 
+
 create table agent.agent (
 	pkey int8 not null, 
 	agent_id varchar(255) not null, 

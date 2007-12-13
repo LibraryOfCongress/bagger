@@ -1,3 +1,5 @@
+create schema ndnp;
+
 create table ndnp.batch (
 	pkey int8 not null, 
 	awardee_key int8, 

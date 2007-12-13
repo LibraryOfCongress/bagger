@@ -1,3 +1,5 @@
+create schema webcapture;
+
 create table webcapture.collection (
 	pkey int8 not null, 
 	collection_id varchar(255) not null, 
