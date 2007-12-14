@@ -65,6 +65,10 @@ public interface Event extends Keyed, Timestamped, Comparable<Event> {
 
 	public boolean isSuccess();
 	
+	public String getMessage();
+	
+	public void setMessage(String message);
+	
 	public abstract String getName();
 	
 	public Document toPremis() throws Exception;	

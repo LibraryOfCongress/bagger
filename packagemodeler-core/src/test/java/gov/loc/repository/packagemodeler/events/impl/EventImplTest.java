@@ -48,7 +48,8 @@ public class EventImplTest extends AbstractModelersTest {
 		//A RequestingAgent for a PackageReceivedEvent doesn't make sense, but we're just testing EventImpl.
 		event.setRequestingAgent(person2);
 		cal.add(Calendar.HOUR, 1);
-		event.setEventEnd(cal.getTime());		
+		event.setEventEnd(cal.getTime());	
+		event.setMessage("foo");
 		session.save(event);
 
 		this.commitAndRestartTransaction();
@@ -66,6 +67,8 @@ public class EventImplTest extends AbstractModelersTest {
 		assertEquals(person2.getKey(), event.getRequestingAgent().getKey());		
 		//Check performing agent
 		assertEquals(person1.getKey(), event.getPerformingAgent().getKey());
+		//Check message
+		assertEquals("foo", event.getMessage());
 	}
 		
 	@Test(expected=InvalidStateException.class)

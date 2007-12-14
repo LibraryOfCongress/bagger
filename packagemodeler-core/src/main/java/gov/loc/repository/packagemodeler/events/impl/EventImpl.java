@@ -69,7 +69,11 @@ public abstract class EventImpl implements Event {
 		
 	@Column(name="is_success", nullable=false)
 	private boolean isSuccess = true;
-		
+
+	@Lob
+	@Column(name="message", nullable=true)	
+	private String message;
+	
 	public Long getKey() {
 		return key;
 	}
@@ -212,6 +216,14 @@ public abstract class EventImpl implements Event {
 		return false;
 	}
 	
+	public String getMessage() {
+		return this.message;
+	}
+	
+	public void setMessage(String message) {
+		this.message = message;
+		
+	}
 	
 	public String getName() {
 		String name = this.getClass().getSimpleName();
@@ -371,4 +383,5 @@ public abstract class EventImpl implements Event {
 		}
 		return this.eventStart.compareTo(other.getEventStart());
 	}
+	
 }
