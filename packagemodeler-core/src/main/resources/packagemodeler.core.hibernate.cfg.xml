@@ -50,7 +50,11 @@
 		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.FileLocationEventImpl" />
 		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.IngestEventImpl" />
 		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.QualityReviewEventImpl" />
-		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.VerifyEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.FileLocationAnomalyEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.InventoryFromFilesOnDiskEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.InventoryFromManifestEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.VerifyAgainstFileInstancesEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.VerifyAgainstManifestEventImpl" />
 		
 		<!-- File Examination Group Events -->
 		<mapping class="gov.loc.repository.packagemodeler.events.fileexaminationgroup.impl.FileExaminationEventImpl" />
