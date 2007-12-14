@@ -39,8 +39,7 @@ GetOptions \%OPTIONS, 'username=s', 'realname=s', 'email=s', 'help';
 pod2usage({exitval => 0, verbose => 2}) if $OPTIONS{help};
 
 pod2usage({exitval => -1, verbose => 2}) 
-    unless (defined($OPTIONS{username}) && defined($OPTIONS{realname})
-           || @ARGV % 2 == 0);
+    unless (defined($OPTIONS{username}) && defined($OPTIONS{realname}));
 
 my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
 die "Cannot connect to database: $!" unless $dbh;
@@ -69,13 +68,5 @@ sub add_user {
 
 ##------------------------------------------------------------
 
-while (@ARGV) {
-    my $username = shift(@ARGV);
-    my $realname = shift(@ARGV);
-    add_user($username, $realname);
-}
-
-if ($OPTIONS{username} && $OPTIONS{realname}) {
-    add_user($OPTIONS{username}, $OPTIONS{realname}, $OPTIONS{email});    
-}
+add_user($OPTIONS{username}, $OPTIONS{realname}, $OPTIONS{email});    
 
