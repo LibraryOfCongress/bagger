@@ -52,7 +52,7 @@ sub add_user {
     my $real = shift;
     my $email = shift;
 
-    my $stmt = $dbh->prepare("SELECT * FROM users WHERE username=?");
+    my $stmt = $dbh->prepare("SELECT * FROM transport.users WHERE username=?");
     my $result = $stmt->execute($user);
 
     if ($stmt->rows) {
@@ -60,7 +60,7 @@ sub add_user {
         return;
     }
 
-    $dbh->do("INSERT INTO users(username, realname, email) VALUES (?, ?, ?)", 
+    $dbh->do("INSERT INTO transport.users(username, realname, email) VALUES (?, ?, ?)", 
             {},
             $user, $real, $email);
 

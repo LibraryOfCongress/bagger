@@ -18,19 +18,19 @@ my $stmt;
 
 if ($status eq "started") {
     $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE tickets
+        UPDATE transport.tickets
         SET status=?, initiated_timestamp=NOW(), updated_timestamp=NOW()
         WHERE ticket_id = ?
     EOSQL
 } elsif ($status eq "completed") {
     $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE tickets
+        UPDATE transport.tickets
         SET status=?, completed_timestamp=NOW(), updated_timestamp=NOW()
         WHERE ticket_id = ?
     EOSQL
 } else {
     $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE tickets
+        UPDATE transport.tickets
         SET status=?, updated_timestamp=NOW()
         WHERE ticket_id = ?
     EOSQL

@@ -47,7 +47,7 @@ my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
 die "Cannot connect to database: $!" unless $dbh;
 
 
-my $stmt = $dbh->prepare("SELECT * FROM systems WHERE short_name=?");
+my $stmt = $dbh->prepare("SELECT * FROM transport.systems WHERE short_name=?");
 my $result = $stmt->execute($OPTIONS{name});
 
 if ($stmt->rows) {
@@ -56,7 +56,7 @@ if ($stmt->rows) {
     exit(-1);
 }
 
-$dbh->do("INSERT INTO systems(short_name, hostname, description) VALUES (?, ?, ?)", 
+$dbh->do("INSERT INTO transport.systems(short_name, hostname, description) VALUES (?, ?, ?)", 
         {},
         $OPTIONS{name}, $OPTIONS{hostname}, $OPTIONS{description});
 

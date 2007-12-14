@@ -113,10 +113,10 @@ sub create_ticket($) {
     my $dbh = shift;
 
     ## Create the ticket
-    my $stmt = $dbh->prepare("INSERT INTO tickets (requester, package_name, repository, estimated_size) VALUES (?, ?, ?, ?)");
+    my $stmt = $dbh->prepare("INSERT INTO transport.tickets (requester, package_name, repository, estimated_size) VALUES (?, ?, ?, ?)");
     my $result = $stmt->execute($OPTIONS{username}, $OPTIONS{package}, $OPTIONS{repository}, 0);
 
-    select_singleton($dbh, "SELECT currval('tickets_ticket_id_seq')");
+    select_singleton($dbh, "SELECT currval('transport.tickets_ticket_id_seq')");
 }
 
 ##------------------------------------------------------------
@@ -161,17 +161,17 @@ $dest_user = $OPTIONS{'archive-owner'} if defined $OPTIONS{'archive-owner'};
 ##-----------------------------------------------------------------
 ## All of these values must be registered in the transport database.
 my @failed;
-push(@failed, check_registry($dbh, user => 'users', username => $OPTIONS{username}));
-push(@failed, check_registry($dbh, host => 'systems', short_name => $source_host));
-push(@failed, check_registry($dbh, host => 'systems', short_name => $work_host))
+push(@failed, check_registry($dbh, user => 'transport.users', username => $OPTIONS{username}));
+push(@failed, check_registry($dbh, host => 'transport.systems', short_name => $source_host));
+push(@failed, check_registry($dbh, host => 'transport.systems', short_name => $work_host))
     if defined $work_dir;  ## workspaces are optional
-push(@failed, check_registry($dbh, host => 'systems', short_name => $dest_host));
+push(@failed, check_registry($dbh, host => 'transport.systems', short_name => $dest_host));
 
 exit(-1) if @failed;
 
 ##-----------------------------------------------------------------
 ## Convert aliases to hostnames
-my $sql = "SELECT hostname FROM systems WHERE short_name = ?";
+my $sql = "SELECT hostname FROM transport.systems WHERE short_name = ?";
 my ($source_hostname, $work_hostname, $dest_hostname);
 $source_hostname = select_singleton($dbh, $sql, $source_host);
 $work_hostname  = select_singleton($dbh, $sql, $work_host) if defined $work_dir;
@@ -204,7 +204,7 @@ EOF
 
 ## Create the locations
 my ($stmt, $result);
-$stmt = $dbh->prepare("INSERT INTO locations (ticket_id, file_owner,  system_name, hostname, root_directory, role) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt = $dbh->prepare("INSERT INTO transport.locations (ticket_id, file_owner,  system_name, hostname, root_directory, role) VALUES (?, ?, ?, ?, ?, ?)");
 
 $result = $stmt->execute($id, $source_user, $source_host, $source_hostname, $source_dir, 'source');
 $result &&= $stmt->execute($id, $work_user, $work_host, $work_hostname, $work_dir, 'workspace') if defined $work_dir;
@@ -224,7 +224,7 @@ if ($errors) {
     print STDERR "$name: Marking package as 'failed'.\n";
     
     $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE tickets 
+        UPDATE transport.tickets 
            SET status='failed', updated_timestamp=NOW()
          WHERE ticket_id = ?
     EOSQL
@@ -239,7 +239,7 @@ if ($errors) {
     print "$size KB\n";
 
     $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE tickets 
+        UPDATE transport.tickets 
            SET status='queued', updated_timestamp=NOW(), 
                estimated_size = ?
          WHERE ticket_id = ?

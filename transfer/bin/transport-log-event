@@ -17,7 +17,7 @@ my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
 die "Cannot connect to database: $!" unless $dbh;
 
 my $stmt = $dbh->prepare(<<EOSQL);
-    INSERT INTO events (ticket_id, event_type, event_status, 
+    INSERT INTO transport.events (ticket_id, event_type, event_status, 
                         system_name, hostname, root_directory,
                         event_details)
     VALUES (?, ?, ?, ?, ?, ?, ?)

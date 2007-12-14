@@ -32,7 +32,7 @@ use DBI;
 ##------------------------------------------------------------------
 
 our %OPTIONS;
-our $dbh = DBI->connect("dbi:Pg:dbname=inventory", "", "");
+our $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
 
 ##------------------------------------------------------------------
 
@@ -112,22 +112,22 @@ sub load_location($) {
         if (m/<(.*?)>(.*?)<\/\1>/) {
             $location{$1} = $2;
         } elsif (m/<file-instances>/){
-            my $pkg_id = find_id(packagemodeler_package =>
+            my $pkg_id = find_id('core.package' =>
                                  repository_key => $repo_id,
                                  package_id => $location{'package-id'});
                                  
-            my $pfl_id = find_id(packagemodeler_file_location =>
+            my $pfl_id = find_id('core.file_location' =>
                                  package_key => $pkg_id);
 
             unless ($pfl_id) {
                 ## Create a file location for this instance of this package
-                insert(packagemodeler_file_location =>
+                insert('core.file_location' =>
                        package_key => $pkg_id, 
                        is_managed  => 1,
                        create_timestamp => $dummy,
                        update_timestamp => $dummy);
 
-                $pfl_id = find_id(packagemodeler_file_location =>
+                $pfl_id = find_id('core.file_location' =>
                                   package_key => $pkg_id);
             }
 
@@ -140,7 +140,7 @@ sub load_location($) {
             ## Claim that this file location is on a 'storage system'
             my $dirname = dirname($location{'base-path'});
             my $relpath = basename($location{'base-path'});
-            insert_unique(packagemodeler_storagesystem_file_location =>
+            insert_unique('core.storagesystem_file_location' =>
                           pkey                  => $pfl_id, 
                           storagesystem_key     => $storage_id, 
                           base_path             => $dirname,
@@ -171,7 +171,7 @@ sub load_location_files($) {
             $basename = basename($file{path});
             ($ext) = $basename =~ m/\.([^.]+)$/;
 
-            insert(packagemodeler_fileinstance =>
+            insert('core.fileinstance' =>
                    filelocation_key => $pfl_id,
                    relative_path => $dirname,
                    base_name     => $basename,
@@ -181,14 +181,14 @@ sub load_location_files($) {
                    update_timestamp => $now);
                    
             ## grab the id for this file
-            $file_id = find_id(packagemodeler_fileinstance =>
+            $file_id = find_id('core.fileinstance' =>
                                filelocation_key => $pfl_id,
                                relative_path => $dirname, 
                                base_name     => $basename,
                                extension     => $ext);
             
             while (($k, $v) = each %{$file{fixity}}) {
-                insert_unique(packagemodeler_fileinstance_fixity =>
+                insert_unique('core.fileinstance_fixity' =>
                               fileinstance_key => $file_id,
                               algorithm => $k,
                               fixity_value => $v);
@@ -211,12 +211,12 @@ sub load_package($) {
         } elsif (m/<canonical-files>/){
             ## Package definition complete.  Load the data
             ## and proceed to load the package's files
-            insert(packagemodeler_package => 
+            insert('core.package' => 
                    repository_key => $repo_id,
                    package_id     => $package{'package-name'},
                    create_timestamp => $package{created},
                    update_timestamp => $package{created});
-            my $pkg_id = find_id(packagemodeler_package =>
+            my $pkg_id = find_id('core.package' =>
                                  package_id => $package{'package-name'});
             load_package_files($pkg_id)
         } elsif (m/<\/package>/) {
@@ -243,7 +243,7 @@ sub load_package_files($) {
             $basename = basename($file{path});
             ($ext) = $basename =~ m/\.([^.]+)$/;
             
-            insert(packagemodeler_canonicalfile =>
+            insert('core.canonicalfile' =>
                    package_key   => $pkg_id,
                    relative_path => $dirname,
                    base_name     => $basename,
@@ -252,13 +252,13 @@ sub load_package_files($) {
                    create_timestamp => $now,
                    update_timestamp => $now);
 
-            $cfile_id = find_id(packagemodeler_canonicalfile =>
+            $cfile_id = find_id('core.canonicalfile' =>
                                 package_key   => $pkg_id,
                                 relative_path => $dirname, 
                                 base_name     => $basename);
 
             while (($k, $v) = each %{$file{fixity}}) {
-                insert_unique(packagemodeler_canonicalfile_fixity =>
+                insert_unique('core.canonicalfile_fixity' =>
                               canonicalfile_key => $cfile_id,
                               algorithm         => $k, 
                               fixity_value     => $v);
@@ -280,7 +280,7 @@ unless ($OPTIONS{repository}) {
     pod2usage {exitval => 1, verbose => 1};
 }
 
-my $repo_id = find_or_create_id(packagemodeler_repository => 
+my $repo_id = find_or_create_id('core.repository' => 
                                 repository_id => $OPTIONS{repository});
 
 while (<>) {

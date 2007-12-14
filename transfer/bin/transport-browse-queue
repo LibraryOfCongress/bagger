@@ -12,14 +12,14 @@ die "Error: connect to database: $!" unless $dbh;
 sub status {
     my $tickets = $dbh->selectall_arrayref(<<"    EOSQL");
         SELECT ticket_id, package_name, repository, estimated_size
-        FROM tickets
+        FROM transport.tickets
         WHERE status = 'queued'
         ORDER BY created_timestamp;
     EOSQL
 
     my $stmt = $dbh->prepare(<<"    EOSQL");
         SELECT role, file_owner, hostname, root_directory
-        FROM locations
+        FROM transport.locations
         WHERE ticket_id = ?
         ORDER BY location_id;
     EOSQL
