@@ -1,5 +1,13 @@
 #!/usr/bin/env perl
 
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path cwd);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+##----------------------------------------------------------------------
+
 use strict;
 use warnings;
 use Cwd;
@@ -11,29 +19,22 @@ my ($id, $status) = @ARGV;
 @ARGV = ();
 my $root = cwd();
 
-my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
-die "Cannot connect to database: $!" unless $dbh;
+##----------------------------------------------------------------------
 
-my $stmt;
+use Transfer::DB;
 
-if ($status eq "started") {
-    $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE transport.tickets
-        SET status=?, initiated_timestamp=NOW(), updated_timestamp=NOW()
-        WHERE ticket_id = ?
-    EOSQL
-} elsif ($status eq "completed") {
-    $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE transport.tickets
-        SET status=?, completed_timestamp=NOW(), updated_timestamp=NOW()
-        WHERE ticket_id = ?
-    EOSQL
-} else {
-    $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE transport.tickets
-        SET status=?, updated_timestamp=NOW()
-        WHERE ticket_id = ?
-    EOSQL
-}
+my %addl = (
+	started => "initiated_timestamp=NOW()", 
+	copmleted => "completed_timestamp=NOW()"
+);
 
-$stmt->execute($status, $id) or die("Cannot update for ticket $id.\n");
+my @fields = ("status=?", "updated_timestamp=NOW()");
+push(@fields, $addl{$status}) if $addl{$status};
+
+my $fields = join(", ", $fields);
+
+
+my $dbh = dbhandle();
+$dbh->do("UPDATE transport.tickets SET $fields WHERE ticket_id=?", 
+	     {}, $status, $id) or die "Cannot update for ticket $id\n";;
+

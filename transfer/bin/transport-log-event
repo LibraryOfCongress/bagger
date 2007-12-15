@@ -1,9 +1,12 @@
 #!/usr/bin/env perl
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path cwd);
+	use lib abs_path(dirname($0) . "/../lib");
+}
 
 use strict;
 use warnings;
-use Cwd;
-use DBI;
 
 $/ = undef;
 
@@ -13,15 +16,20 @@ my $root = cwd();
 
 my $desc = <>;
 
-my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
-die "Cannot connect to database: $!" unless $dbh;
+##----------------------------------------------------------------------
 
-my $stmt = $dbh->prepare(<<EOSQL);
-    INSERT INTO transport.events (ticket_id, event_type, event_status, 
-                        system_name, hostname, root_directory,
-                        event_details)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-EOSQL
+use Transfer::Query;
 
-$stmt->execute($id, $type, $status, $system_name, $hostname, $root, $desc)
-    or die("Cannot add event for ticket $id.\n");
+add_row_or_die(
+	'transport.events',
+	ticket_id      => $id,
+	event_type     => $type,
+	event_status   => $status,
+	system_name    => $system_name, 
+	hostname       => $hostname, 
+	root_directory => $root,
+	event_details  => $desc,
+);
+
+##----------------------------------------------------------------------
+

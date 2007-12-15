@@ -1,5 +1,10 @@
 #!/usr/bin/env perl
 
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
 
 =head1 NAME
 
@@ -29,7 +34,9 @@ use strict;
 use warnings;
 use Pod::Usage;
 use Getopt::Long;
-use DBI;
+
+
+##----------------------------------------------------------------------
 
 my %OPTIONS;
 
@@ -41,32 +48,16 @@ pod2usage({exitval => 0, verbose => 2}) if $OPTIONS{help};
 pod2usage({exitval => -1, verbose => 2}) 
     unless (defined($OPTIONS{username}) && defined($OPTIONS{realname}));
 
-my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
-die "Cannot connect to database: $!" unless $dbh;
+##----------------------------------------------------------------------
 
-##------------------------------------------------------------
+use Transfer::Query;
 
-sub add_user {
-    my $user = shift;
-    my $real = shift;
-    my $email = shift;
+add_master(
+	"transport.users",
+	username => $OPTIONS{username},
+	realname => $OPTIONS{realname}, 
+	email    => $OPTIONS{email}
+);
 
-    my $stmt = $dbh->prepare("SELECT * FROM transport.users WHERE username=?");
-    my $result = $stmt->execute($user);
-
-    if ($stmt->rows) {
-        print STDERR "Warning: user '$user' already exists.\n";
-        return;
-    }
-
-    $dbh->do("INSERT INTO transport.users(username, realname, email) VALUES (?, ?, ?)", 
-            {},
-            $user, $real, $email);
-
-    print "Added user '$user' to the transport database.\n";    
-}
-
-##------------------------------------------------------------
-
-add_user($OPTIONS{username}, $OPTIONS{realname}, $OPTIONS{email});    
+##----------------------------------------------------------------------
 

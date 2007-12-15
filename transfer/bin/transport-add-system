@@ -1,5 +1,10 @@
 #!/usr/bin/env perl
 
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
 
 =head1 NAME
 
@@ -30,7 +35,8 @@ use strict;
 use warnings;
 use Pod::Usage;
 use Getopt::Long;
-use DBI;
+
+##----------------------------------------------------------------------
 
 my %OPTIONS;
 
@@ -43,21 +49,14 @@ pod2usage({exitval => 0, verbose => 2}) if $OPTIONS{help};
 pod2usage({exitval => -1, verbose => 2}) 
     unless (defined($OPTIONS{name}) && defined($OPTIONS{hostname}));
 
-my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
-die "Cannot connect to database: $!" unless $dbh;
+##----------------------------------------------------------------------
 
+use Transfer::Query qw(add_master);
 
-my $stmt = $dbh->prepare("SELECT * FROM transport.systems WHERE short_name=?");
-my $result = $stmt->execute($OPTIONS{name});
+add_master (
+	'transport.systems', 
+	short_name  => $OPTIONS{name},
+	hostname    => $OPTIONS{hostname},
+	description => $OPTIONS{description}
+);
 
-if ($stmt->rows) {
-    print STDERR "Warning: system '$OPTIONS{name}' already exists. ";
-    print STDERR "Exiting.\n";
-    exit(-1);
-}
-
-$dbh->do("INSERT INTO transport.systems(short_name, hostname, description) VALUES (?, ?, ?)", 
-        {},
-        $OPTIONS{name}, $OPTIONS{hostname}, $OPTIONS{description});
-
-print "Added system '$OPTIONS{name}' to the transport database.\n";
