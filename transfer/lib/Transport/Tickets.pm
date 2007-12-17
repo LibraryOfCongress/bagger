@@ -124,6 +124,8 @@ sub get_ticket_queue {
     my ($output, $error) = run($cmd);
     runtime_failure($cmd) if $error;
     
+    return unless $output;
+    
     my @tickets;
     
     foreach (split("\n\n", $output)) {

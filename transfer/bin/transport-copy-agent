@@ -8,9 +8,20 @@ BEGIN {
 
 use strict;
 use warnings;
+use Fcntl qw(:flock);  ## import LOCK_* style constants
 use Transfer::Process;
 use Transport::Events;
 use Transport::Tickets;
+
+## Before we begin, make sure no other copy agent processes are running.
+open(my $fh, ">/tmp/transport-copy-agent.lock");
+unless (flock($fh, LOCK_EX | LOCK_NB)) {
+    close($fh);
+    my $name = basename $0;
+    print "$name: Process already in use.  Exiting.\n";
+    exit(0);
+}
+
 
 ##----------------------------------------------------------------------
 
@@ -104,7 +115,12 @@ sub register($) {
 ## Get the first ticket in the queue
 my ($ticket) = get_ticket_queue();
 
-exit(0) unless $ticket;  ## Stop now if there's nothing to do
+## Stop now if there's nothing to do
+unless ($ticket) {
+    my $name = basename $0;
+    print "$name: No queued tickets.  Exiting.\n";
+    exit(0);
+}
 
 ## We have a ticket.  Mark this ticket as 'failed' if any errors occur 
 ## from here on.
