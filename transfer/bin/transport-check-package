@@ -1,20 +1,18 @@
 #!/usr/bin/env perl
 
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
 use strict;
 use warnings;
-use Cwd qw(abs_path);
-use File::Basename;
-use IPC::Open3;
+use Transport::Events;
 
-my $path = abs_path(dirname($0));
-$ENV{PATH} .= ":$path" unless $ENV{PATH} =~ m/:$path:?/;
+##----------------------------------------------------------------------
 
-my $ticket = shift(@ARGV);
-my $system = shift(@ARGV);
-my $hostname = shift(@ARGV);
-my $package = shift(@ARGV);
-my $repository = shift(@ARGV);
-my $root = shift(@ARGV);
+my ($ticket, $system, $hostname, $package, $repository, $root) = @ARGV;
 
 sub usage {
     my $name = basename($0);
@@ -25,98 +23,15 @@ die usage()
   unless ($ticket && $system && $hostname && 
           $package && $repository && $root);
 
-$root = abs_path($root);
-chdir $root;
+##----------------------------------------------------------------------
 
-my @current_event;
+chdir abs_path($root);
 
-##------------------------------------------------------------------------
+my $verify = "transport-verify-package $root";
+do_task($hostname, $system, "fixity verification", $ticket, $verify);
 
-sub run($;$) {
-    my $cmd = shift;
-    my $input = shift;
-    my ($in, $out, $err);
-    $err++;
-    my $pid = open3($in, $out, $err, $cmd);
-    
-    if ($input) {
-        print $in $input;
-    }
-    close($in);
-    
-    waitpid($pid, 0);
-    
-    local $/ = undef;
-    my $output = <$out>;
-    my $errors = <$err>;
-    if ($errors) {
-        my $name = basename($0);
-        fail_event($current_event[0])
-            unless $cmd =~ m/transport-log-event/;
-        $cmd =~ s/ .*$//;
-        print STDERR "$name: Error executing '$cmd'.\n";
-        print STDERR $errors;
-        print STDERR "$name: Exiting.\n";
-        exit(-1);
-    }
-    
-    return $output;
-}
+my $register = "register-package --package-name '$package'";
+my $load     = "load-inventory --repository '$repository'";
+my $cmd = "$register | $load";
 
-sub log_event($$;$) {
-    my ($event, $status, $desc) = @_;
-    run("transport-log-event $ticket '$event' $status $system $hostname", $desc)
-}
-
-sub start_event($;$) {
-    push (@current_event, $_[0]);
-    log_event($_[0], 'started', $_[1]);
-}
-
-sub finish_event($;$) {
-    pop(@current_event);
-    log_event($_[0], 'completed', $_[1]);    
-}
-
-sub fail_event($;$) {
-    log_event($_[0], 'fail', $_[1]);
-}
-
-sub pass_event($;$) {
-    log_event($_[0], 'pass', $_[1]);
-}
-
-sub warn_event($;$) {
-    log_event($_[0], 'warning', $_[1]);
-}
-
-##------------------------------------------------------------------------
-
-sub do_task($$) {
-    my $event = shift;
-    my $cmd = shift;
-    
-    ## Let the command determine if it encounters an error
-    ## Let run() handle error conditions and exit on failure    
-    start_event($event);
-    run($cmd);
-    finish_event($event);
-    pass_event($event);
-}
-
-sub do_fixity_verification {
-    do_task("fixity verification", "transport-verify-package $root");
-}
-
-sub do_package_registration {
-    my $register = "register-package --package-name '$package'";
-    my $load     = "load-inventory --repository '$repository'";
-    
-    do_task("package registration", "$register | $load");
-}
-
-
-##------------------------------------------------------------------------
-
-do_fixity_verification();
-do_package_registration();
+do_task($hostname, $system, "package registration", $ticket, $cmd);

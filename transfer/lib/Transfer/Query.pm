@@ -5,7 +5,7 @@ use warnings;
 
 require Exporter;
 our @ISA=qw(Exporter);
-our @EXPORT=qw(add_master add_row add_row_or_die);
+our @EXPORT=qw(add_master add_row add_row_or_die select_rows select_one);
 
 use Transfer::DB;
 
@@ -56,6 +56,25 @@ sub add_row_or_die {
 }
 
 ##----------------------------------------------------------------------
+my %stmt_cache;
+
+sub select_rows ($;@) {
+    my ($stmt, @params) = @_;
+    my $dbh = dbhandle();
+
+    my $sth = $stmt_cache{$stmt} ||= $dbh->prepare($stmt);
+    $sth->execute(@params);
+    $sth->fetchall_arrayref();
+}
+
+sub select_one ($;@) {
+    my ($stmt, @params) = @_;
+    select_rows($stmt, @params)->[0];
+}
+
+
+##----------------------------------------------------------------------
+
 
 1;
 

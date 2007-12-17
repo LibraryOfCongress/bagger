@@ -1,195 +1,125 @@
 #!/usr/bin/env perl
 
-use strict;
-use warnings;
-use Cwd qw(abs_path);
-use File::Basename;
-use IPC::Open3;
-
-my $path = abs_path(dirname($0));
-$ENV{PATH} .= ":$path" unless $ENV{PATH} =~ m/:$path:?/;
-
-my $verbose = 0;
-if (@ARGV && $ARGV[0] eq "-v") {
-    $verbose++;
-    shift(@ARGV);
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
 }
 
-my $ticket;
+use strict;
+use warnings;
+use Transfer::Process;
+use Transport::Events;
+use Transport::Tickets;
+
+##----------------------------------------------------------------------
+
 my $system = shift(@ARGV);
 my $hostname = shift(@ARGV);
 chomp($system = `hostname`) unless $system;
 chomp($hostname = $system)  unless $hostname;
 
-my @current_event;
+##----------------------------------------------------------------------
 
-my $script = basename($0);
-
-
-##-----------------------------------------------------------------
-
-sub run($;$) {
-    my $cmd = shift;
+sub make_copy($$$$$$) {
+    my ($event, $ticket, $src_host, $src, $dst_host, $dst) = @_;
     
-    if ($verbose) {
-        print STDERR "$script: \n\t$cmd\n";        
-    }
-    my $input = shift;
-    my ($in, $out, $err);
-    $err++;
-    my $pid = open3($in, $out, $err, $cmd);
-    
-    if ($input) {
-        print $in $input;
-    }
-    close($in);
-    waitpid($pid, 0);
-    
-    local $/ = undef;    
-    return (<$out>, <$err>);
+    my $cmd = "$src_host tar czf - -C $src . | $dst_host tar zxvf - -C $dst";  
+    do_task($hostname, $system, $event, $ticket, $cmd);
 }
 
-sub log_event($$;$) {
-    my ($event, $status, $desc) = @_;
-    run("transport-log-event $ticket '$event' $status $system $hostname", $desc)
-}
-
-sub start_event($;$) {
-    push (@current_event, $_[0]);
-    log_event($_[0], 'started', $_[1]);
-}
-
-sub finish_event($;$) {
-    pop(@current_event);
-    log_event($_[0], 'completed', $_[1]);    
-}
-
-sub fail_event($;$) {
-    log_event($_[0], 'fail', $_[1]);
-}
-
-sub pass_event($;$) {
-    log_event($_[0], 'pass', $_[1]);
-}
-
-sub warn_event($;$) {
-    log_event($_[0], 'warning', $_[1]);
-}
-
-##-----------------------------------------------------------------
-
-sub parse_path($) {
-    my $path = shift;
-    return ($path =~ m/^(?:(.*?)@)?(?:(.*?):)?(.*)$/);
-}
-
-##-----------------------------------------------------------------
-
-sub report_error($) {
-    my $err = shift;
-    
-    print STDERR "$script: \n";
-    print STDERR $err;
-    print STDERR "$script: Exiting.\n";
-    
-    fail_event($current_event[0], $err);
-    run("transport-update-package $ticket failed");
-    
-    exit(-1);
-}
-
-sub make_copy($$$$$) {
-    my $event = shift;
-    my $src_host = shift;
-    my $src = shift;
-    my $dst_host = shift;
-    my $dst = shift;
-    
-    start_event($event);
-    my ($out, $err) = 
-        run("$src_host tar czf - -C $src . | $dst_host tar xzvf - -C $dst ");
-    raise_error($err) if ($err);
-    finish_event($event, $out);
-    pass_event($event);
-}
-
-sub check_copy($) {
-    my $dir = shift;
+sub check_copy($$) {
+    my ($ticket, $dir) = @_;
     my $event = "fixity verification";
+    my $cmd = "transport-verify-package $dir";
     
-    start_event($event);
-    my ($out, $err) = run("transport-verify-package $dir");
-    raise_error($err) if ($err);
-    warn_event($event, $out) if defined($out);
-    finish_event($event);
-    pass_event($event);
+    do_task_with_warnings($hostname, $system, $event, $ticket, $cmd);
 }
 
-##-----------------------------------------------------------------
+##----------------------------------------------------------------------
 
-
-my ($output, $error) = run("transport-browse-queue");
-
-exit(0) unless $output;  ## Stop now if there's nothing to do
-exit(0) if $error;  ## Don't do anything if things are horribly wrong
-
-my $job = (split("\n\n", $output))[0];
-
-($ticket) = $job =~ m/^Ticket:\s+(\d+)$/m;
-my ($package) = $job =~ m/^Package:\s+(.*)$/m;
-my ($repo)    = $job =~ m/^Repository:\s+(.*)$/m;
-my ($size)    = $job =~ m/^Estimated-Size:\s+(.*)$/m;
-my ($source)  = $job =~ m/^Source:\s+(.*)$/m;
-my ($workspace) = $job =~ m/^Workspace:\s+(.*)$/m;
-my ($dest)    = $job =~ m/^Destination:\s+(.*)$/m;
-
-$workspace ||= "";
-
-run("transport-update-package $ticket started");
-
-my ($src_user, $src_host, $src_dir);
-my ($dst_user, $dst_host, $dst_dir);
-my ($out, $err, $ssh);
-
-if ($workspace) {
-    ($src_user, $src_host, $src_dir) = parse_path($source);
-    ($dst_user, $dst_host, $dst_dir) = parse_path($workspace);
- 
-    ($out, $err) = run("mkdir -p $dst_dir");
-    raise_error($err) if ($err);
-    make_copy("workspace copy", "ssh $src_host", $src_dir, "", $dst_dir);
-    check_copy($dst_dir);
+sub one_step_copy($) {
+    my $ticket = shift;
     
-    $src_dir = $dst_dir;
-    ($dst_user, $dst_host, $dst_dir) = parse_path($dest);
-    $ssh ="ssh $dst_user\@$dst_host";
+    my $source_ssh = "ssh $ticket->{source_user}\@$ticket->{source_host}";
+    my $dest_ssh   = "ssh $ticket->{dest_user}\@$ticket->{dest_host}";
+    
 
-    ($out, $err) = run("$ssh mkdir -p $dst_dir");
-    raise_error($err) if $err;
-    make_copy("archive copy", "", $src_dir, $ssh, $dst_dir);
-    check_copy($dst_dir);
+    run_or_fail($ticket->{id}, "$dest_ssh mkdir -p $ticket->{dest_dir}");
+    
+    make_copy("archive copy", $ticket->{id},
+              $source_ssh, $ticket->{source_dir}, 
+              $dest_ssh,   $ticket->{dest_dir});
+                            
+    ## Assume SSH to the destination was on the local system,
+    ## and only used to preserve ownership.  Assume further that
+    ## the current process can access this directory, and the
+    ## file owner does not have access to the transport tools
+    check_copy($ticket->{id}, $ticket->{dest_dir});
+}
 
-    ## Don't purge the workspace immediately.  Wait until the tape finishes
-    ## spooling.  Figure out how to wait
+sub two_step_copy($) {
+    my $ticket = shift;
+    
+    ## Assume transfer can log in as itself onto the source host
+    my $ssh = "ssh $ticket->{source_host}";
+    
+    run_or_fail($ticket->{id}, "mkdir -p $ticket->{work_dir}");
+    
+    make_copy("workspace copy", $ticket->{id},
+              $ssh, $ticket->{source_dir},
+              "",   $ticket->{work_dir});
+    check_copy($ticket->{id}, $ticket->{work_dir});
+
+    ## Log in as the destination's owner on the current machine
+    $ssh = "ssh $ticket->{dest_user}\@$ticket->{dest_host}";
+    run_or_fail($ticket->{id}, "$ssh mkdir -p $ticket->{dest_dir}");
+    
+    make_copy("archive copy", $ticket->{id}, 
+              "",   $ticket->{work_dir},
+              $ssh, $ticket->{dest_dir});
+
+    ## See above about checking the destination copy
+    check_copy($ticket->{id}, $ticket->{dest_dir});
+
+    ## The copy succeeded.  Purge the workspace _immediately_
+    run_or_fail($ticket->{id}, "rm -Rf $ticket->{work_dir}");
+}
+
+##----------------------------------------------------------------------
+
+sub register($) {
+    my $ticket = shift;
+    
+    my $event = "location registration";
+    my $inventory = "inventory --package $ticket->{package}";
+    my $load      = "load-inventory --repository $ticket->{repo}";
+    
+    my $cmd = "cd $ticket->{dest_dir}; $inventory | $load";
+    do_task($hostname, $system, "location registration", $ticket->{id}, $cmd);
+}
+
+##----------------------------------------------------------------------
+
+## Get the first ticket in the queue
+my ($ticket) = get_ticket_queue();
+
+exit(0) unless $ticket;  ## Stop now if there's nothing to do
+
+## We have a ticket.  Mark this ticket as 'failed' if any errors occur 
+## from here on.
+track_ticket_failures(1);
+
+$ticket->{workspace} ||= "";
+start_ticket($ticket->{id});
+
+if ($ticket->{workspace}) {
+    two_step_copy($ticket);
 } else {
-    ($src_user, $src_host, $src_dir) = parse_path($source);
-    ($dst_user, $dst_host, $dst_dir) = parse_path($dest);
-    $ssh ="ssh $dst_user\@$dst_host";
-    
-    ($out, $err) = run("$ssh mkdir -p $dst_dir");
-    raise_error($err) if $err;
-    make_copy("archive copy", "", $src_dir, $ssh, $dst_dir);
-    check_copy($dst_dir);
+    one_step_copy($ticket);
 }
 
-## Take inventory on the copy
-my $event = "location registration";
-start_event($event);
-my $inventory = "inventory --package $package";
-my $load      = "load-inventory --repository $repo";
-($out, $err) = run("$ssh \"cd $dst_dir; $inventory | $load \"");
-raise_error($err) if $err;
-finish_event($event, $out);
-pass_event($event);
+register($ticket);
 
-run("transport-update-package $ticket completed");    
+finish_ticket($ticket->{id});
+

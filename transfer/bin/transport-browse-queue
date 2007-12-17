@@ -1,54 +1,33 @@
 #!/usr/bin/env perl
 
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
 use strict;
 use warnings;
-use DBI;
+use Transport::Tickets;
 
 ##-----------------------------------------------------------------
 
-my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
-die "Error: connect to database: $!" unless $dbh;
-
-sub status {
-    my $tickets = $dbh->selectall_arrayref(<<"    EOSQL");
-        SELECT ticket_id, package_name, repository, estimated_size
-        FROM transport.tickets
-        WHERE status = 'queued'
-        ORDER BY created_timestamp;
-    EOSQL
-
-    my $stmt = $dbh->prepare(<<"    EOSQL");
-        SELECT role, file_owner, hostname, root_directory
-        FROM transport.locations
-        WHERE ticket_id = ?
-        ORDER BY location_id;
-    EOSQL
-
-    foreach (@$tickets) {
-        my ($id, $package, $repo, $size) = @$_;
-        $stmt->execute($id);
-        my $locations = $stmt->fetchall_arrayref();
-
-        print <<EOF;
-Ticket: $id
-Package: $package
-Repository: $repo
-Estimated-Size: $size
-EOF
-        foreach (@$locations) {
-            my ($role, $owner, $hostname, $dir) = @$_;
-
-            ## Ignore owners for workspace copies
-            $owner = undef if $role eq "workspace";
-
-            my $descriptor = "$hostname:$dir";
-            $descriptor = "$owner\@$descriptor" if $owner;
-            print <<EOF;
-\u$role: $descriptor
-EOF
-        }
-        print "\n"
-    }    
+foreach my $ticket (queued_tickets()) {
+    print <<"    EOF";
+Ticket: $ticket->{ticket}
+Package: $ticket->{package}
+Repository: $ticket->{repository}
+Estimated-Size: $ticket->{size}
+    EOF
+    
+    foreach my $location (@{$ticket->{locations}}) {
+        my $descriptor = "$location->{hostname}:$location->{dir}";
+        $descriptor = "$location->{owner}\@$descriptor"
+            unless $location->{role} eq "workspace";
+        print "\u$location->{role}: $descriptor\n"
+    }
+    print "\n";
 }
 
-status();
+##-----------------------------------------------------------------
+

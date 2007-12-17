@@ -10,10 +10,7 @@ BEGIN {
 
 use strict;
 use warnings;
-use Cwd;
-use DBI;
-
-$/ = undef;
+use Transfer::DB;
 
 my ($id, $status) = @ARGV;
 @ARGV = ();
@@ -21,20 +18,17 @@ my $root = cwd();
 
 ##----------------------------------------------------------------------
 
-use Transfer::DB;
-
 my %addl = (
-	started => "initiated_timestamp=NOW()", 
+	started   => "initiated_timestamp=NOW()", 
 	copmleted => "completed_timestamp=NOW()"
 );
 
 my @fields = ("status=?", "updated_timestamp=NOW()");
 push(@fields, $addl{$status}) if $addl{$status};
 
-my $fields = join(", ", $fields);
-
+my $fields = join(", ", @fields);
 
 my $dbh = dbhandle();
 $dbh->do("UPDATE transport.tickets SET $fields WHERE ticket_id=?", 
-	     {}, $status, $id) or die "Cannot update for ticket $id\n";;
+	     {}, $status, $id) or die "Cannot update for ticket $id.\n";
 

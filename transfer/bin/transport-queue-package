@@ -1,5 +1,24 @@
 #!/usr/bin/env perl
 
+BEGIN {
+	use File::Basename;
+	use Cwd qw(cwd abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+use strict;
+use warnings;
+use Pod::Usage;
+use Getopt::Long;
+
+use Transfer::DB;
+use Transfer::Process;
+use Transfer::Query;
+use Transport::Tickets;
+
+
+##-----------------------------------------------------------------
+
 
 =head1 NAME
 
@@ -35,43 +54,15 @@ transport system.  The archive owner must be:
 
 =cut
 
-use strict;
-use warnings;
-use File::Basename;
-use Cwd qw(cwd abs_path);
-use Pod::Usage;
-use Getopt::Long;
-use DBI;
-use IPC::Open3;
 
 my %OPTIONS;
 my $login = getlogin();
 chomp(my $hostname = `hostname`);
 my $cwd = abs_path(cwd());
 
-my $path = abs_path(dirname($0));
-$ENV{PATH} .= ":$path" unless $ENV{PATH} =~ m/:$path:?/;
-
 my $script = basename($0);
 
-##------------------------------------------------------------
-
-sub present(@) {
-    my $ok = 1;
-    $ok &&= defined($OPTIONS{$_}) for @_;
-    $ok;
-}
-
-sub check_registry($$$$$){
-    my ($dbh,  $datum, $table, $column, $value) = @_;
-    my $stmt = $dbh->prepare("SELECT * FROM $table WHERE $column=?");
-    $stmt->execute($value);
-    unless ($stmt->rows()) {
-        print STDERR "$script: warning: no such $datum '$value'.\n";
-        return -1;
-    }
-    return;
-}
+##-----------------------------------------------------------------
 
 sub parse_path($) {
     my $path = shift;
@@ -83,43 +74,41 @@ sub parse_path($) {
     return ($user, $host, $dir);
 }
 
-sub select_singleton($$;@) {
-    my $dbh = shift;
-    my $sql = shift;
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute(@_) or return;
-    $stmt->rows or return;
-    return $stmt->fetchrow_arrayref->[0];
-}
-
-##------------------------------------------------------------
-
-sub run($) {
-    my $cmd = shift;
-    my ($in, $out, $err);
-    $err++;
-    my $pid = open3($in, $out, $err, $cmd);
+sub check_registry($$$$){
+    my ($datum, $table, $column, $value) = @_;
     
-    close($in);
-    waitpid($pid, 0);
-    
-    local $/ = undef;
-    return <$err>;  ## Ignore output.  Check for STDERR
+    my $result = select_one("SELECT * FROM $table WHERE $column=?", $value);
+
+    unless ($result) {
+        runtime_error("", "No such $datum '$value'.\n");
+    }
 }
 
-##------------------------------------------------------------
+sub create_ticket() {
+    add_row('transport.tickets', 
+            requester      => $OPTIONS{username}, 
+            package_name   => $OPTIONS{package},
+            repository     => $OPTIONS{repository}, 
+            estimated_size => 0,
+    );
 
-sub create_ticket($) {
-    my $dbh = shift;
-
-    ## Create the ticket
-    my $stmt = $dbh->prepare("INSERT INTO transport.tickets (requester, package_name, repository, estimated_size) VALUES (?, ?, ?, ?)");
-    my $result = $stmt->execute($OPTIONS{username}, $OPTIONS{package}, $OPTIONS{repository}, 0);
-
-    select_singleton($dbh, "SELECT currval('transport.tickets_ticket_id_seq')");
+    select_one("SELECT currval('transport.tickets_ticket_id_seq')")->[0];
 }
 
-##------------------------------------------------------------
+sub create_location ($$$$$$) {
+    my ($id, $user, $host, $hostname, $dir, $role) = @_;
+
+    add_row_or_die('transport.locations',
+                   ticket_id      => $id, 
+                   file_owner     => $user,
+                   system_name    => $host, 
+                   hostname       => $hostname, 
+                   root_directory => $dir, 
+                   role           => $role, 
+    );
+}
+
+##-----------------------------------------------------------------
 
 GetOptions \%OPTIONS, 'username=s', 'repository=s', 'package=s', 'source=s',
                       'workspace=s', 'destination=s', 'archive-owner=s', 'help';
@@ -127,8 +116,7 @@ GetOptions \%OPTIONS, 'username=s', 'repository=s', 'package=s', 'source=s',
 # print help if appropriate
 pod2usage({exitval => 0, verbose => 2}) if $OPTIONS{help};
 
-my $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
-die "Cannot connect to database: $!" unless $dbh;
+my $dbh = dbhandle();
 
 ##-----------------------------------------------------------------
 ## Set defaults, as promised
@@ -139,6 +127,12 @@ $OPTIONS{source}   = "$hostname:$cwd" unless defined $OPTIONS{source};
 ## workspace is optional
 ## destination is required, and not defaulted
 ## archive-owner can be inferred from destination, if fully specified
+
+sub present(@) {
+    my $ok = 1;
+    $ok &&= defined($OPTIONS{$_}) for @_;
+    $ok;
+}
 
 my $all_present = present(qw(username repository package source destination));
 pod2usage({exitval => -1, verbose => 2}) unless ($all_present);
@@ -157,29 +151,34 @@ my ($dest_user, $dest_host, $dest_dir) = parse_path($OPTIONS{destination});
 ## Always use 'archive-owner' when specified.
 $dest_user = $OPTIONS{'archive-owner'} if defined $OPTIONS{'archive-owner'};
 
-
 ##-----------------------------------------------------------------
 ## All of these values must be registered in the transport database.
-my @failed;
-push(@failed, check_registry($dbh, user => 'transport.users', username => $OPTIONS{username}));
-push(@failed, check_registry($dbh, host => 'transport.systems', short_name => $source_host));
-push(@failed, check_registry($dbh, host => 'transport.systems', short_name => $work_host))
+check_registry(user => 'transport.users', username => $OPTIONS{username});
+check_registry(host => 'transport.systems', short_name => $source_host);
+check_registry(host => 'transport.systems', short_name => $work_host)
     if defined $work_dir;  ## workspaces are optional
-push(@failed, check_registry($dbh, host => 'transport.systems', short_name => $dest_host));
-
-exit(-1) if @failed;
+check_registry(host => 'transport.systems', short_name => $dest_host);
 
 ##-----------------------------------------------------------------
 ## Convert aliases to hostnames
 my $sql = "SELECT hostname FROM transport.systems WHERE short_name = ?";
 my ($source_hostname, $work_hostname, $dest_hostname);
-$source_hostname = select_singleton($dbh, $sql, $source_host);
-$work_hostname  = select_singleton($dbh, $sql, $work_host) if defined $work_dir;
-$dest_hostname  = select_singleton($dbh, $sql, $dest_host);
+$source_hostname = select_one($sql, $source_host)->[0];
+$work_hostname   = select_one($sql, $work_host)->[0] if defined $work_dir;
+$dest_hostname   = select_one($sql, $dest_host)->[0];
 
-my $id = create_ticket($dbh);
+my $id = create_ticket();
+
+create_location($id, 
+    $source_user, $source_host, $source_hostname, $source_dir, 'source');
+create_location($id, 
+    $work_user, $work_host, $work_hostname, $work_dir, 'workspace')
+    if defined $work_dir;
+create_location($id, 
+    $dest_user, $dest_host, $dest_hostname, $dest_dir, 'destination');
 
 print <<EOF;
+Creating ticket:
     Ticket ID: $id
     Copying from
         Requester:  $OPTIONS{username}
@@ -202,49 +201,23 @@ print <<EOF;
         Package:    $OPTIONS{package}
 EOF
 
-## Create the locations
-my ($stmt, $result);
-$stmt = $dbh->prepare("INSERT INTO transport.locations (ticket_id, file_owner,  system_name, hostname, root_directory, role) VALUES (?, ?, ?, ?, ?, ?)");
-
-$result = $stmt->execute($id, $source_user, $source_host, $source_hostname, $source_dir, 'source');
-$result &&= $stmt->execute($id, $work_user, $work_host, $work_hostname, $work_dir, 'workspace') if defined $work_dir;
-$result &&= $stmt->execute($id, $dest_user, $dest_host, $dest_hostname, $dest_dir, 'destination');
-
-die "Cannot create location records.\n" unless $result;
-
 ##-----------------------------------------------------------------
 ## Run the check script before the transport is queued
-my $errors = 
-  run("transport-check-package $id $source_host $source_hostname $OPTIONS{package} $OPTIONS{repository} $source_dir");
+my $cmd = "transport-check-package $id $source_host $source_hostname $OPTIONS{package} $OPTIONS{repository} $source_dir";
+my ($output, $errors) = run($cmd);
 
-my $name = basename($0);
 if ($errors) {
-    print STDERR "$name: Error checking package:\n";
-    print STDERR $errors;
-    print STDERR "$name: Marking package as 'failed'.\n";
-    
-    $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE transport.tickets 
-           SET status='failed', updated_timestamp=NOW()
-         WHERE ticket_id = ?
-    EOSQL
-    $stmt->execute($id);
-    
-    exit(-1);
+    track_ticket_failures(1);
+    fail_ticket($id);
+    runtime_error("transport-check-package", $errors);
 } else {
     local $| = 1;
-    print "    Estimated size: ";
     my $size = `du -sk $source_dir`;
     ($size) = $size =~ m/(\d+)/;
-    print "$size KB\n";
+    print "    Estimated size: $size KB\n";
 
-    $stmt = $dbh->prepare(<<"    EOSQL");
-        UPDATE transport.tickets 
-           SET status='queued', updated_timestamp=NOW(), 
-               estimated_size = ?
-         WHERE ticket_id = ?
-    EOSQL
-    $stmt->execute($size, $id);
-
+    update_ticket_size($id, $size);
+    queue_ticket($id);
+    my $name = basename($0);
     print "$name: Package marked as 'queued'.  Awaiting remote copy.\n"
 }
