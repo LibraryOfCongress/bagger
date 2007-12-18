@@ -17,6 +17,18 @@ import org.junit.Test;
 
 public class BatchHelperTest {
 	@Test
+	public void testNormalizePackageId() throws Exception {
+		String originalPackageId   = "batch_encyclopedia_20070808_barnard";
+		String normalizedPackageId = "batch_encyclopedia_barnard";
+
+		// packageIds without the date string should be unmolested
+		assertEquals(BatchHelper.normalizePackageId(normalizedPackageId), normalizedPackageId);
+
+		// packageIds with the date string should be normalized
+		assertEquals(BatchHelper.normalizePackageId(originalPackageId), normalizedPackageId);
+	}
+	
+	@Test
 	public void testDiscoverBatchFile() throws Exception {
 		File batchDir = new File(this.getFile((String)null), "batchDir");
 		try

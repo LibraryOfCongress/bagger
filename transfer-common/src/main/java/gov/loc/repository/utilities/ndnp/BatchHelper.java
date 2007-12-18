@@ -12,6 +12,13 @@ import org.dom4j.io.SAXReader;
 
 
 public class BatchHelper {
+	public static String normalizePackageId(String originalPackageId) 
+	{
+		// Remove date string from packageId, e.g.,
+		// convert batch_encyclopedia_20070808_barnard to batch_encyclopedia_barnard 	
+		return originalPackageId.replaceAll("_\\d{8}_", "_");
+	}
+
 	public static File discoverBatchFile(File batchDir)
 	{
 		File bestGuessFile = null;
@@ -112,5 +119,4 @@ public class BatchHelper {
 		}
 		return reelNumberList;					
 	}
-	
 }
