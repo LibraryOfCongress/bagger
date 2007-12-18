@@ -1,5 +1,12 @@
 #!/usr/bin/env perl
 
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+
 =head1 NAME
 
 load-inventory - portable inventory file loader
@@ -27,12 +34,12 @@ use warnings;
 use File::Basename;
 use Getopt::Long;
 use Pod::Usage;
-use DBI;
+use Transfer::DB;
 
 ##------------------------------------------------------------------
 
 our %OPTIONS;
-our $dbh = DBI->connect("dbi:Pg:dbname=transfer", "", "");
+our $dbh = dbhandle();
 
 ##------------------------------------------------------------------
 
