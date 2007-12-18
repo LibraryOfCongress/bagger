@@ -1,4 +1,4 @@
-package gov.loc.repository.transfer.components;
+package gov.loc.repository.transfer.components.utilities;
 
 
 import java.net.URL;

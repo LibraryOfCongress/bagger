@@ -1,4 +1,4 @@
-package gov.loc.repository.transfer.utilities;
+package gov.loc.repository.transfer.components.utilities;
 
 import java.io.InputStream;
 import java.io.Writer;

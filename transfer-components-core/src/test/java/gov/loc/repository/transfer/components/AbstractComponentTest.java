@@ -14,6 +14,7 @@ import gov.loc.repository.packagemodeler.DaoAwareModelerFactory;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.packagemodeler.impl.DaoAwareModelerFactoryImpl;
+import gov.loc.repository.transfer.components.utilities.ConfigurationHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.ResourceHelper;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
