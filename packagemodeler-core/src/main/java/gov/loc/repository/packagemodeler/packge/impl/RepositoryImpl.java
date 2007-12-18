@@ -55,4 +55,9 @@ public class RepositoryImpl implements Repository {
 		packge.setRepository(null);
 		this.packageSet.remove(packge);
 	}
+	
+	@Override
+	public String toString() {
+		return "Repository with id " + this.getId();
+	}
 }

@@ -20,6 +20,7 @@ import javax.persistence.*;
 import org.hibernate.annotations.Cascade;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -265,4 +266,8 @@ public class PackageImpl implements Package, Serializable {
 
 	}
 	
+	@Override
+	public String toString() {
+		return MessageFormat.format("Package with id {0} that is part of {1}", this.packageId, this.repository.toString());
+	}
 }

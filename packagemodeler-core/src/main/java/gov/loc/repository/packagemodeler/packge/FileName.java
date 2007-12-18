@@ -76,4 +76,8 @@ public class FileName {
 		return FilenameHelper.equals(fileName.getFilename(), this.getFilename());
 	}
 
+	@Override
+	public String toString() {
+		return this.getFilename();
+	}
 }

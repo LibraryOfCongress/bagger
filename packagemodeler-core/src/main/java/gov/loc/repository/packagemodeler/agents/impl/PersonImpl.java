@@ -1,5 +1,7 @@
 package gov.loc.repository.packagemodeler.agents.impl;
 
+import java.text.MessageFormat;
+
 import javax.persistence.*;
 
 import gov.loc.repository.packagemodeler.agents.Person;
@@ -47,4 +49,9 @@ public class PersonImpl extends AgentImpl implements Person {
 		return name;
 	}
 
+	@Override
+	public String toString() {
+		return MessageFormat.format("Person named {0} with id {1}", this.getName(), this.getId());
+	}
+	
 }

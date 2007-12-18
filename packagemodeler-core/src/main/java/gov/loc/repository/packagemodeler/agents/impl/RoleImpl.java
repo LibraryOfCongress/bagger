@@ -36,5 +36,10 @@ public class RoleImpl implements Role {
 
 	public Set<Agent> getAgentSet() {
 		return this.agentSet;
-	}	
+	}
+
+	@Override
+	public String toString() {		
+		return "Role with id " + this.getId();
+	}
 }

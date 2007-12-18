@@ -1,5 +1,6 @@
 package gov.loc.repository.packagemodeler.packge.impl;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -134,5 +135,9 @@ public class FileExaminationGroupImpl implements FileExaminationGroup {
 		this.eventSet.remove(event);		
 	}
 	
+	@Override
+	public String toString() {
+		return MessageFormat.format("File Examination Group that is part of {0}", this.fileLocation.toString());
+	}
 	
 }

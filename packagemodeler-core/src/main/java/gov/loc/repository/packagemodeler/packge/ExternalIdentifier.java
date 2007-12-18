@@ -1,5 +1,7 @@
 package gov.loc.repository.packagemodeler.packge;
 
+import java.text.MessageFormat;
+
 import javax.persistence.*;
 
 @Embeddable
@@ -67,5 +69,10 @@ public class ExternalIdentifier {
 	@Override
 	public int hashCode() {
 		return this.identifierValue.hashCode() + this.identifierType.hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return MessageFormat.format("External Identifier with value {0} and type {1}", this.identifierValue, this.identifierType.toString());
 	}
 }

@@ -1,5 +1,8 @@
 package gov.loc.repository.packagemodeler.events.filelocation.impl;
 
+import java.text.DateFormat;
+import java.text.MessageFormat;
+
 import javax.persistence.*;
 
 import gov.loc.repository.packagemodeler.events.filelocation.FileLocationEvent;
@@ -30,5 +33,19 @@ public class FileLocationEventImpl extends EventImpl implements
 		return "info:loc-repo/entity/filelocation/" + this.fileLocation.getKey();
 	}	
 
+	@Override
+	public String toString() {
+		String msg = MessageFormat.format("File Location Event of type {0}, associated with {1}, ", this.getClass().getName(), this.fileLocation.toString());
+		if (this.isUnknownEventStart())
+		{
+			msg += "and with an unknown event start";
+		}
+		else
+		{
+			msg += "and with an event start of " + DateFormat.getDateTimeInstance().format(this.getEventStart());
+		}
+		return msg;
+	}
+	
 
 }

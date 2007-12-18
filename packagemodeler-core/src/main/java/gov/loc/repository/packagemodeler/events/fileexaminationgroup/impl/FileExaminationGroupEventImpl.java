@@ -1,5 +1,8 @@
 package gov.loc.repository.packagemodeler.events.fileexaminationgroup.impl;
 
+import java.text.DateFormat;
+import java.text.MessageFormat;
+
 import javax.persistence.*;
 
 import gov.loc.repository.packagemodeler.events.fileexaminationgroup.FileExaminationGroupEvent;
@@ -31,4 +34,17 @@ public class FileExaminationGroupEventImpl extends EventImpl implements
 		this.fileExaminationGroup = fileExaminationGroup;
 	}
 
+	@Override
+	public String toString() {
+		String msg = MessageFormat.format("File Examination Group Event of type {0}, associated with {1}, ", this.getClass().getName(), this.fileExaminationGroup.toString());
+		if (this.isUnknownEventStart())
+		{
+			msg += "and with an unknown event start";
+		}
+		else
+		{
+			msg += "and with an event start of " + DateFormat.getDateTimeInstance().format(this.getEventStart());
+		}
+		return msg;
+	}
 }

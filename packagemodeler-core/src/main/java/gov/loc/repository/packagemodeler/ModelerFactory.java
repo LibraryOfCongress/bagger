@@ -38,6 +38,8 @@ public interface ModelerFactory {
 	
 	public abstract Collection<CanonicalFile> createCanonicalFiles(Package packge, ManifestReader reader) throws Exception;
 	
+	public abstract Collection<CanonicalFile> createCanonicalFilesFromFileInstances(Package packge, Collection<FileInstance> fileInstanceCollection) throws Exception;
+	
 	public abstract StorageSystemFileLocation createStorageSystemFileLocation(Package packge, System storageSystem, String basePath, boolean isManaged, boolean isLCPackageStructure);
 	
 	public abstract ExternalFileLocation createExternalFileLocation(Package packge, MediaType mediaType, ExternalIdentifier externalIdentifier, String basePath, boolean isManaged, boolean isLCPackageStructure);
@@ -53,10 +55,12 @@ public interface ModelerFactory {
 	 */
 	public abstract FileInstance createFileInstance(FileLocation fileLocation, FileName fileName);
 		
-	public abstract Collection<FileInstance> createFileInstancesFromCanonicalFiles(FileLocation fileLocation, Collection<CanonicalFile> canonicalFileCollection);
+	public abstract Collection<FileInstance> createFileInstancesFromCanonicalFiles(FileLocation fileLocation, Collection<CanonicalFile> canonicalFileCollection) throws Exception;
 
-	public abstract Collection<FileInstance> createFileInstancesFromFileExaminations(FileLocation fileLocation, Collection<FileExamination> fileExaminationCollection);
-		
+	public abstract Collection<FileInstance> createFileInstancesFromFileExaminations(FileLocation fileLocation, Collection<FileExamination> fileExaminationCollection) throws Exception;
+
+	public abstract Collection<FileInstance> createFileInstances(FileLocation fileLocation, ManifestReader reader) throws Exception;
+	
 	public abstract FileExaminationGroup createFileExaminationGroup(FileLocation fileLocation, boolean isComplete);
 	
 	public abstract <T extends FileExaminationGroupEvent> T createFileExaminationGroupEvent(Class<T> eventType, FileExaminationGroup fileExaminationGroup, Date eventStart, Agent reportingAgent) throws Exception;

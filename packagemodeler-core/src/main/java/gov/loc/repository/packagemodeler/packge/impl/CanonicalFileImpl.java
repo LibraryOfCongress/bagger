@@ -6,6 +6,7 @@ import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -116,4 +117,9 @@ public class CanonicalFileImpl implements CanonicalFile {
 		return FixityHelper.isConsistent(canonicalFile.getFixities(), this.fixitySet);
 	}
 	*/
+	
+	@Override
+	public String toString() {
+		return MessageFormat.format("Canonical File with filename {0} that is part of {1}", this.fileName.toString(), this.packge.toString());
+	}
 }

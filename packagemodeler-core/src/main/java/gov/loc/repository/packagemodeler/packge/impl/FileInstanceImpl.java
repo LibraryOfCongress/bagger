@@ -1,5 +1,6 @@
 package gov.loc.repository.packagemodeler.packge.impl;
 
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -167,5 +168,10 @@ public class FileInstanceImpl implements FileInstance {
 		}
 		return matchFound;
 		
+	}
+	
+	@Override
+	public String toString() {
+		return MessageFormat.format("File Instance with filename {0} that is part of {1}", this.fileName.toString(), this.fileLocation.toString());
 	}
 }

@@ -1,5 +1,7 @@
 package gov.loc.repository.packagemodeler.packge.impl;
 
+import java.text.MessageFormat;
+
 import javax.persistence.*;
 
 import gov.loc.repository.packagemodeler.packge.ExternalFileLocation;
@@ -42,5 +44,9 @@ public class ExternalFileLocationImpl extends FileLocationImpl implements Extern
 	public MediaType getMediaType() {
 		return mediaType;
 	}
-		
+	
+	@Override
+	public String toString() {
+		return MessageFormat.format("External File Location that is identified by {0} and is part of {1}", this.externalIdentifier.toString(), this.getPackage().toString());
+	}
 }

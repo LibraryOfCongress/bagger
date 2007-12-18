@@ -1,5 +1,7 @@
 package gov.loc.repository.packagemodeler.packge;
 
+import java.text.MessageFormat;
+
 import javax.persistence.*;
 
 @Embeddable
@@ -61,5 +63,10 @@ public class Fixity {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	@Override
+	public String toString() {		
+		return MessageFormat.format("Fixity with value {0} and type {1}", this.value, this.algorithm.toString());
 	}
 }

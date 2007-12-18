@@ -1,5 +1,7 @@
 package gov.loc.repository.packagemodeler.packge.impl;
 
+import java.text.MessageFormat;
+
 import gov.loc.repository.constants.Roles;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.agents.impl.SystemImpl;
@@ -50,4 +52,8 @@ public class StorageSystemFileLocationImpl extends FileLocationImpl implements
 		return basePath;
 	}
 	
+	@Override
+	public String toString() {
+		return MessageFormat.format("Storage System File Location with basepath {0} and is part of {1}", this.basePath, this.storageSystem);
+	}
 }
