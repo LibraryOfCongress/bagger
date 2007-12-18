@@ -7,7 +7,7 @@ import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
-import gov.loc.repository.packagemodeler.events.filelocation.VerifyEvent;
+import gov.loc.repository.packagemodeler.events.filelocation.VerifyAgainstManifestEvent;
 import gov.loc.repository.packagemodeler.packge.ExternalIdentifier;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.Package;
@@ -35,7 +35,7 @@ public class AddExternalFileLocationEventActionHandlerTest extends BaseHandlerTe
 	      "      <assignment actor-id='" + PERSON_ID1 + "' />" +
 	      "    <event type='task-end'>" +
 	      "      <action name='add verify event action' class='gov.loc.repository.workflow.actionhandlers.AddExternalFileLocationEventActionHandler'>" +
-	      "        <eventClassName>gov.loc.repository.packagemodeler.events.filelocation.VerifyEvent</eventClassName>" +	      
+	      "        <eventClassName>gov.loc.repository.packagemodeler.events.filelocation.VerifyAgainstManifestEvent</eventClassName>" +	      
 	      "      </action>" +
 	      "    </event>" +	      	      	      	      	      
 	      "    </task>" +	      
@@ -76,7 +76,7 @@ public class AddExternalFileLocationEventActionHandlerTest extends BaseHandlerTe
 	    FileLocation fileLocation = packge.getFileLocation(new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER));
 	    assertNotNull(fileLocation);
 	    assertEquals(1, fileLocation.getFileLocationEvents().size());
-	    VerifyEvent event = (VerifyEvent)fileLocation.getFileLocationEvents().iterator().next();
+	    VerifyAgainstManifestEvent event = (VerifyAgainstManifestEvent)fileLocation.getFileLocationEvents().iterator().next();
 	    assertEquals(taskInstance.getStart().getTime(), event.getEventStart().getTime());
 	    assertEquals(taskInstance.getEnd().getTime(), event.getEventEnd().getTime());
 	    assertEquals(PERSON_ID1, event.getPerformingAgent().getId());
