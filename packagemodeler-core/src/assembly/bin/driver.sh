@@ -36,4 +36,4 @@ APP_HOME=`cd "$APP_HOME" && pwd`
 
 cd "$saveddir"
 
-exec ${JAVA_HOME}/bin/java -Xmx$MAXMEM -classpath "$APP_HOME"/lib/classworlds-1.1.jar -Dclassworlds.conf=classworlds.conf "-Dapp.home=$APP_HOME" org.codehaus.classworlds.Launcher $*
+exec ${JAVA_HOME}/bin/java -Xmx$MAXMEM -classpath "$APP_HOME"/lib/classworlds-1.1.jar -Dclassworlds.conf="$APP_HOME"/bin/classworlds.conf "-Dapp.home=$APP_HOME" org.codehaus.classworlds.Launcher $*
