@@ -30,6 +30,14 @@ public class FileExaminerImplTest extends AbstractComponentTest{
 	private Package packge;
 	
 	@Override
+	public void createFixtures() throws Exception {
+		this.fixtureHelper.createRepository(REPOSITORY_ID1);
+		this.fixtureHelper.createStorageSystem(RDC);
+		this.fixtureHelper.createPerson(PERSON_ID1, PERSON_FIRSTNAME1, PERSON_SURNAME1);
+		
+	}
+	
+	@Override
 	public void setup() throws Exception {
 		examiner = new FileExaminerImpl();
 		examiner.setModelerFactory(new ModelerFactoryImpl());
@@ -38,11 +46,8 @@ public class FileExaminerImplTest extends AbstractComponentTest{
 		fixityHelper.setAlgorithm("MD5");
 		examiner.setFixityHelper(fixityHelper);
 		
-		this.fixtureHelper.createRepository(REPOSITORY_ID1);
 		packge = this.modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
 		this.session.save(packge);
-		this.fixtureHelper.createStorageSystem(RDC);
-		this.fixtureHelper.createPerson(PERSON_ID1, PERSON_FIRSTNAME1, PERSON_SURNAME1);
 	}	
 	
 	@Test

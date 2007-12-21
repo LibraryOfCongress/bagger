@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 import gov.loc.repository.packagemodeler.DaoAwareModelerFactory;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
@@ -22,7 +23,7 @@ import gov.loc.repository.utilities.persistence.TestFixtureHelper;
 public abstract class AbstractComponentTest {
 
 	protected TestFixtureHelper fixtureHelper = new TestFixtureHelper();
-	private boolean isSetup = false;
+	protected static boolean isSetup = false;
 	protected Session session;
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 	protected static int testCounter = 0;
@@ -35,13 +36,20 @@ public abstract class AbstractComponentTest {
 		this.modelerFactory.setPackageModelerDao(this.packageModelDao);
 	}
 	
+	@BeforeClass
+	public static void beforeClassSetup() throws Exception
+	{
+		HibernateUtil.createDatabase();
+		isSetup = false;
+		testCounter = 0;
+	}
+	
 	@Before
 	public void baseSetup() throws Exception
 	{		
 		testCounter++;
 		if (! isSetup)
 		{
-			HibernateUtil.createDatabase();
 			session = sessionFactory.getCurrentSession();
 			session.beginTransaction();
 	

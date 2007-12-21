@@ -24,8 +24,10 @@ import gov.loc.repository.transfer.components.filemanagement.filters.FileFilter;
 import gov.loc.repository.transfer.components.filemanagement.impl.FileCopierImpl;
 import gov.loc.repository.utilities.FixityHelper;
 import gov.loc.repository.utilities.impl.JavaSecurityFixityHelper;
+import gov.loc.repository.utilities.persistence.HibernateUtil;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Test;
 
 public class FileCopierImplTest extends AbstractComponentTest {
@@ -33,7 +35,14 @@ public class FileCopierImplTest extends AbstractComponentTest {
 	FileCopier copier;
 	Package packge;
 	FileExaminer examiner;
-	Agent requestingAgent;
+	protected static Agent requestingAgent;
+	
+	@Override
+	public void createFixtures() throws Exception {
+		this.fixtureHelper.createRepository(REPOSITORY_ID1);
+		this.fixtureHelper.createStorageSystem(RDC);
+		requestingAgent = this.fixtureHelper.createPerson(PERSON_ID1, PERSON_FIRSTNAME1, PERSON_SURNAME1);
+	}
 	
 	@Override
 	public void setup() throws Exception {
@@ -49,11 +58,8 @@ public class FileCopierImplTest extends AbstractComponentTest {
 		examiner.setFixityHelper(fixityHelper);
 		copier.setFileExaminer(examiner);
 				
-		this.fixtureHelper.createRepository(REPOSITORY_ID1);
 		packge = this.modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
 		this.session.save(packge);
-		this.fixtureHelper.createStorageSystem(RDC);
-		this.requestingAgent = this.fixtureHelper.createPerson(PERSON_ID1, PERSON_FIRSTNAME1, PERSON_SURNAME1);
 	}	
 
 	@Test
@@ -61,7 +67,7 @@ public class FileCopierImplTest extends AbstractComponentTest {
 		//Create a Source File Location and File Instances
 		File srcPackageDir = this.getFile("lcpackage");
 		StorageSystemFileLocation srcFileLocation = this.modelerFactory.createStorageSystemFileLocation(this.packge, RDC, srcPackageDir.toString(), true, true);
-		this.examiner.examine(srcFileLocation, this.requestingAgent, true);
+		this.examiner.examine(srcFileLocation, requestingAgent, true);
 		
 		//Create a Destination File Location
 		File destPackageDir = new File(srcPackageDir.getParent(), "copiedpackage" + testCounter);
@@ -99,12 +105,23 @@ public class FileCopierImplTest extends AbstractComponentTest {
 		assertEquals(srcFileLocation.getFileInstances().size(), destFileLocation.getFileInstances().size());
 	}
 
+	@After
+	public void reset() throws Exception
+	{
+		//Need to reset the db, otherwise have key constraint problems with File Locations
+		isSetup = false;
+		HibernateUtil.createDatabase();
+		
+	}
+	
 	@Test
 	public void testCopyNonLCFileLocationToNonLCFileLocation() throws Exception {
+		
+		
 		//Create a Source File Location and File Instances
 		File srcPackageDir = this.getFile("non_lcpackage");
 		StorageSystemFileLocation srcFileLocation = this.modelerFactory.createStorageSystemFileLocation(this.packge, RDC, srcPackageDir.toString(), true, false);
-		this.examiner.examine(srcFileLocation, this.requestingAgent, true);
+		this.examiner.examine(srcFileLocation, requestingAgent, true);
 		
 		//Create a Destination File Location
 		File destPackageDir = new File(srcPackageDir.getParent(), "copiedpackage" + testCounter);
@@ -146,7 +163,7 @@ public class FileCopierImplTest extends AbstractComponentTest {
 		//Create a Source File Location and File Instances
 		File srcPackageDir = this.getFile("lcpackage");
 		StorageSystemFileLocation srcFileLocation = this.modelerFactory.createStorageSystemFileLocation(this.packge, RDC, srcPackageDir.toString(), true, true);
-		this.examiner.examine(srcFileLocation, this.requestingAgent, true);
+		this.examiner.examine(srcFileLocation, requestingAgent, true);
 		
 		//Create a Destination File Location
 		File destPackageDir = new File(srcPackageDir.getParent(), "copiedpackage" + testCounter);
@@ -156,7 +173,9 @@ public class FileCopierImplTest extends AbstractComponentTest {
 		}
 		StorageSystemFileLocation destFileLocation = this.modelerFactory.createStorageSystemFileLocation(this.packge, RDC, destPackageDir.toString(), true, false);
 		
+		this.packageModelDao.save(this.packge);
 		this.commitAndRestartTransaction();
+		
 		this.session.refresh(srcFileLocation);
 		this.session.refresh(destFileLocation);
 		
@@ -169,7 +188,7 @@ public class FileCopierImplTest extends AbstractComponentTest {
 		//Create a Source File Location and File Instances
 		File srcPackageDir = this.getFile("non_lcpackage");
 		StorageSystemFileLocation srcFileLocation = this.modelerFactory.createStorageSystemFileLocation(this.packge, RDC, srcPackageDir.toString(), true, false);
-		this.examiner.examine(srcFileLocation, this.requestingAgent, true);
+		this.examiner.examine(srcFileLocation, requestingAgent, true);
 		
 		//Create a Destination File Location
 		File destPackageDir = new File(srcPackageDir.getParent(), "copiedpackage" + testCounter);
@@ -211,7 +230,7 @@ public class FileCopierImplTest extends AbstractComponentTest {
 		//Create a Source File Location and File Instances
 		File srcPackageDir = this.getFile("lcpackage");
 		StorageSystemFileLocation srcFileLocation = this.modelerFactory.createStorageSystemFileLocation(this.packge, RDC, srcPackageDir.toString(), true, true);
-		this.examiner.examine(srcFileLocation, this.requestingAgent, true);
+		this.examiner.examine(srcFileLocation, requestingAgent, true);
 		
 		//Create a Destination File Location
 		File destPackageDir = new File(srcPackageDir.getParent(), "copiedpackage" + testCounter);
