@@ -12,16 +12,25 @@ import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 public abstract class AbstractModelersTest {
 
 	protected TestFixtureHelper fixtureHelper = new TestFixtureHelper();
 	protected DaoAwareModelerFactory modelerFactory = new DaoAwareModelerFactoryImpl();
 	protected PackageModelDAO dao = new PackageModelDAOImpl();
-	private boolean isSetup = false;
+	private static boolean isSetup = false;
 	protected Session session;
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 	protected static int testCounter = 0;
+	
+	@BeforeClass
+	public static void beforeClassSetup() throws Exception
+	{
+		HibernateUtil.createDatabase();
+		testCounter = 0;
+		isSetup = false;		
+	}
 	
 	@Before
 	public void baseSetup() throws Exception
@@ -31,7 +40,6 @@ public abstract class AbstractModelersTest {
 		
 		if (! isSetup)
 		{
-			HibernateUtil.createDatabase();
 			session = sessionFactory.getCurrentSession();
 			session.beginTransaction();
 	

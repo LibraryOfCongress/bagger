@@ -21,7 +21,7 @@ import org.hibernate.validator.InvalidStateException;
 
 public class CanonicalFileImplTest extends AbstractModelersTest {
 	
-	protected Repository repository;	
+	protected static Repository repository;	
 	protected Package packge;
 	protected PackageModelDAO dao = new PackageModelDAOImpl();
 	

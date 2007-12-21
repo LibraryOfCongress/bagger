@@ -18,9 +18,9 @@ import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
 
 public class PackageScenarioTest extends AbstractModelersTest {
 	
-	private System rs25;
-	private System rs15;
-	private System rs5;
+	private static System rs25;
+	private static System rs15;
+	private static System rs5;
 	
 	@Override
 	public void createFixtures() throws Exception {

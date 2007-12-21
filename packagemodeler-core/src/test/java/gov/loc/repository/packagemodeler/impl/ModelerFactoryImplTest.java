@@ -19,8 +19,8 @@ import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 
 public class ModelerFactoryImplTest extends AbstractModelersTest {
 	
-	protected System storageSystem;
-	protected Repository repository;
+	protected static System storageSystem;
+	protected static Repository repository;
 
 	@Override
 	public void createFixtures() throws Exception {

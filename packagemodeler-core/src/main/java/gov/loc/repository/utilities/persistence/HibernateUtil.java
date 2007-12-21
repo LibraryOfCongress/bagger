@@ -13,8 +13,10 @@ import org.hibernate.tool.hbm2ddl.SchemaExport;
 import gov.loc.repository.packagemodeler.ConfigurationHelper;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
@@ -28,8 +30,7 @@ public class HibernateUtil {
 	
 	private static final String CFG_KEY = "hibernate.cfg.xml";
 	private static final String PROPS_KEY = "hibernate.properties";
-	private static final String CREATE_SCHEMA_SQL = "create schema ";
-	private static final String DROP_SCHEMA_SQL = "drop schema if exists ";
+	private static final String CREATE_SCHEMA_SQL = "create schema {0} authorization dba;";
 	
 	static
 	{
@@ -81,6 +82,7 @@ public class HibernateUtil {
 	}
 	
 	private static Connection prepareConnection() throws SQLException {
+		log.info("Preparing connection");
 		Properties cfgProperties = hibernateConfiguration.getProperties();
 		ConnectionProvider connectionProvider = ConnectionProviderFactory.newConnectionProvider( cfgProperties );
 		Connection connection = connectionProvider.getConnection();
@@ -91,28 +93,53 @@ public class HibernateUtil {
 		return connection;
 	}	
 	
-	private static void executeSchemaSql(Connection connection, String sqlStatement) throws Exception
+	private static boolean schemaExists(Connection connection, String schema) throws Exception
+	{
+		ResultSet schemaResultSet = connection.getMetaData().getSchemas();
+		while(schemaResultSet.next())
+		{
+			if (schema.equalsIgnoreCase(schemaResultSet.getString("TABLE_SCHEM")))
+			{
+				log.debug(MessageFormat.format("Schema {0} exists already", schema));
+				return true;
+			}
+		}
+		log.debug(MessageFormat.format("Schema {0} doesn't already exist", schema));
+		return false;
+	}
+	
+	private static void executeSchemaCreateSql(Connection connection) throws Exception
 	{
 		Statement statement = connection.createStatement();
-		Set<String> schemas = findSchemaDefinitions();		
+		Set<String> schemas = findSchemaDefinitions();
 		for(String schema : schemas)
 		{
-			String sql = sqlStatement + schema;
-			log.debug(sql);
-			statement.executeUpdate(sql);
+			if (! schemaExists(connection, schema))
+			{
+				String sql = MessageFormat.format(CREATE_SCHEMA_SQL, schema);
+				log.debug(sql);
+				statement.executeUpdate(sql);
+			}
 		}
 		
 	}
+	
 	
 	public static void createDatabase() throws Exception
 	{
 		
 		Connection connection = prepareConnection();
+		
+		log.info("Creating schemas");
+		executeSchemaCreateSql(connection);
+		
 		//Drop
-		executeSchemaSql(connection, DROP_SCHEMA_SQL);
+		log.info("Dropping database");
 		export.execute(false, true, true, false);
+		//executeSchemaDropSql(connection, DROP_SCHEMA_SQL);
+
 		//Create
-		executeSchemaSql(connection, CREATE_SCHEMA_SQL);
+		log.info("Creating database");		
 		export.execute(false, true, false, true);
 	}
 		

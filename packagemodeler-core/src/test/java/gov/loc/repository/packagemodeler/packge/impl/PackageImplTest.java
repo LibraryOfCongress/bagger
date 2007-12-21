@@ -36,9 +36,9 @@ import org.hibernate.PropertyValueException;
 
 public class PackageImplTest extends AbstractModelersTest {
 	
-	protected System storageSystem;
-	protected System workflowService;
-	protected Repository repository;
+	protected static System storageSystem;
+	protected static System workflowService;
+	protected static Repository repository;
 
 	@Override
 	public void createFixtures() throws Exception {
@@ -121,28 +121,28 @@ public class PackageImplTest extends AbstractModelersTest {
 		Package packge = modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
 
 		Calendar cal1 = Calendar.getInstance();
-		Event event1 = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal1.getTime(), this.workflowService);
+		Event event1 = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal1.getTime(), workflowService);
 		Calendar cal2 = Calendar.getInstance();
 		cal2.add(Calendar.HOUR, 1);
-		Event event2 = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal2.getTime(), this.workflowService);
+		Event event2 = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal2.getTime(), workflowService);
 		Calendar cal3 = Calendar.getInstance();
 		cal3.add(Calendar.HOUR, 2);
-		Event event3 = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal3.getTime(), this.workflowService);
+		Event event3 = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal3.getTime(), workflowService);
 		Calendar cal4 = Calendar.getInstance();
 		cal4.add(Calendar.HOUR, 3);
-		Event event4 = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal4.getTime(), this.workflowService);
+		Event event4 = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal4.getTime(), workflowService);
 		event4.setSuccess(false);
 		Calendar cal5 = Calendar.getInstance();
 		cal5.add(Calendar.HOUR, 5);
-		modelerFactory.createPackageEvent(PackageAcceptedEvent.class, packge, cal5.getTime(), this.workflowService);
+		modelerFactory.createPackageEvent(PackageAcceptedEvent.class, packge, cal5.getTime(), workflowService);
 
 		Calendar cal6 = Calendar.getInstance();
 		cal6.add(Calendar.HOUR, -1);		
 		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, storageSystem, BASEPATH_1 + testCounter, true, true);
-		Event event5 = modelerFactory.createFileLocationEvent(IngestEvent.class, fileLocation, cal6.getTime(), this.workflowService);
+		Event event5 = modelerFactory.createFileLocationEvent(IngestEvent.class, fileLocation, cal6.getTime(), workflowService);
 		
 		FileExaminationGroup fileExaminationGroup = modelerFactory.createFileExaminationGroup(fileLocation, false);
-		modelerFactory.createFileExaminationGroupEvent(FileExaminationEvent.class, fileExaminationGroup, cal4.getTime(), this.workflowService);
+		modelerFactory.createFileExaminationGroupEvent(FileExaminationEvent.class, fileExaminationGroup, cal4.getTime(), workflowService);
 
 		session.save(packge);
 		this.commitAndRestartTransaction();

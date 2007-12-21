@@ -31,9 +31,9 @@ import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 public class PackageModelDAOImplTest extends AbstractModelersTest {
 	private PackageModelDAO dao = new PackageModelDAOImpl();
 	
-	private Repository repository;
+	private static Repository repository;
 	private FileName fileName1;
-	private System rs25Service;
+	private static System rs25Service;
 	private FileLocation fileLocation1;
 	private FileExaminationGroup fileExaminationGroup1;
 	
@@ -59,7 +59,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 
 		modelerFactory.createCanonicalFile(packge, fileName1, new Fixity(FIXITY_1, Algorithm.MD5));
 		
-		fileLocation1 = modelerFactory.createStorageSystemFileLocation(packge, this.rs25Service, BASEPATH_1 + testCounter, true, true);
+		fileLocation1 = modelerFactory.createStorageSystemFileLocation(packge, rs25Service, BASEPATH_1 + testCounter, true, true);
 		
 		modelerFactory.createFileInstance(fileLocation1, fileName1, new Fixity(FIXITY_1, Algorithm.MD5));
 
@@ -206,7 +206,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		//Comparing file instances and file examinations
 		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID2 + testCounter);
 		dao.save(packge);
-		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_1, true, true);
+		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_1 + testCounter, true, true);
 		FileExaminationGroup fileExaminationGroup = modelerFactory.createFileExaminationGroup(fileLocation, true);
 			
 		//Add file instance for FILE1
@@ -336,7 +336,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		//Comparing canonical files and file instances
 		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID2 + testCounter);
 		dao.save(packge);
-		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_1, true, true);
+		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_1 + testCounter, true, true);
 		
 		//Add canonical file for FILE1
 		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));

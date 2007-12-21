@@ -18,10 +18,10 @@ import java.util.Calendar;
 
 public class EventImplTest extends AbstractModelersTest {
 
-	protected Package packge;
-	protected System workflow;
-	protected Person person1;
-	protected Person person2;
+	protected static Package packge;
+	protected static System workflow;
+	protected static Person person1;
+	protected static Person person2;
 	protected Calendar cal;
 	
 	@Override
@@ -43,7 +43,7 @@ public class EventImplTest extends AbstractModelersTest {
 	@Test
 	public void testEvent() throws Exception
 	{
-		PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, this.packge, cal.getTime(), this.workflow);
+		PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
 		event.setPerformingAgent(person1);
 		//A RequestingAgent for a PackageReceivedEvent doesn't make sense, but we're just testing EventImpl.
 		event.setRequestingAgent(person2);
@@ -60,7 +60,7 @@ public class EventImplTest extends AbstractModelersTest {
 		//Check package
 		assertEquals(packge.getKey(), event.getPackage().getKey());
 		//Check bi-directional
-		assertTrue(this.packge.getEvents().contains(event));		
+		assertTrue(packge.getEvents().contains(event));		
 		//Check reporting service
 		assertEquals(workflow.getKey(), event.getReportingAgent().getKey());
 		//Check requesting agent
@@ -76,7 +76,7 @@ public class EventImplTest extends AbstractModelersTest {
 	{
 		try
 		{
-			PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, this.packge, cal.getTime(), this.workflow);
+			PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
 			event.setPerformingAgent(person1);
 			event.setUnknownPerformingAgent(true);
 			session.save(event);
@@ -92,7 +92,7 @@ public class EventImplTest extends AbstractModelersTest {
 	{
 		try
 		{
-			PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, this.packge, cal.getTime(), this.workflow);
+			PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
 			event.setRequestingAgent(person1);
 			event.setUnknownRequestingAgent(true);
 			session.save(event);
@@ -109,7 +109,7 @@ public class EventImplTest extends AbstractModelersTest {
 	{
 		try
 		{
-			PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, this.packge, cal.getTime(), this.workflow);
+			PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
 			event.setUnknownEventStart(true);
 			session.save(event);
 		}
@@ -129,7 +129,7 @@ public class EventImplTest extends AbstractModelersTest {
 	@Test
 	public void testToPremis() throws Exception
 	{
-		PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, this.packge, cal.getTime(), this.workflow);
+		PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
 		cal.add(Calendar.HOUR, 1);
 		event.setEventEnd(cal.getTime());				
 		session.save(event);
