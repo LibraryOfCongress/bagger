@@ -9,46 +9,36 @@ import gov.loc.repository.packagemodeler.impl.ModelerFactoryImpl;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
 import gov.loc.repository.utilities.ResourceHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
+import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 import gov.loc.repository.packagemodeler.packge.Package;
 
 import java.io.File;
-import java.net.URL;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.DefaultConfigurationBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 public abstract class BaseHandlerTest {
 	protected TestFixtureHelper fixtureHelper = new TestFixtureHelper();
-	private boolean isSetup = false;
+	protected static boolean isSetup = false;
 	protected Session session;
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 	protected static int testCounter = 0;
 	protected PackageModelDAO dao = new PackageModelDAOImpl();
 	protected ModelerFactory factory = new ModelerFactoryImpl();
-
-	protected static Configuration configuration;
-	static
-	{
-		try
-		{
-			DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
-			URL url = BaseHandlerTest.class.getClassLoader().getResource("workflow.core.cfg.xml");
-			builder.setURL(url);
-			configuration = builder.getConfiguration(true);
-		}
-		catch(ConfigurationException ex)
-		{
-			throw new RuntimeException();
-		}
-	}	
 	
+	@BeforeClass
+	public static void beforeClassSetup() throws Exception
+	{
+		HibernateUtil.createDatabase();
+		isSetup = false;
+		testCounter = 0;
+	}
 	
 	@Before
 	public void baseSetup() throws Exception
@@ -57,9 +47,8 @@ public abstract class BaseHandlerTest {
 		
 		if (! isSetup)
 		{
-			HandlerHelper helper = new HandlerHelper(null, configuration, null);
+			HandlerHelper helper = new HandlerHelper(null, getConfiguration(), null);
 
-			HibernateUtil.createDatabase();
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			fixtureHelper.setSession(session);
@@ -135,5 +124,9 @@ public abstract class BaseHandlerTest {
 		return ResourceHelper.getFile(clazz, filename);
 	}
 	
+	protected Configuration getConfiguration()
+	{
+		return ConfigurationHelper.getConfiguration();
+	}
 		
 }

@@ -32,26 +32,10 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 	JmsCompletedJobListener listener;
 	Long tokenId;
 	Long processInstanceId;
+	private static String processDefinitionName;
 	
 	@Override
-	public void setup() throws Exception
-	{
-		//Setup a listener
-		//Create the connection
-		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(configuration.getString("jms.connection"));
-		connection = connectionFactory.createConnection();
-		connection.start();
-		
-		//Create the session
-		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createQueue(configuration.getString("jms.replytoqueue"));
-		
-		//Create the producer
-		producer = session.createProducer(destination);
-		
-		listener = new ActiveMQJmsCompletedJobListener();
-		listener.start();
-		
+	public void createFixtures() throws Exception {
 		//Setup the test
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 			      "<process-definition name='test'>" +
@@ -68,7 +52,8 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 			      "  <end-state name='end' />" +
 			      "</process-definition>");
 
-		String processDefinitionName = processDefinition.getName();
+		processDefinitionName = processDefinition.getName();
+		System.out.println("Process definition name is " + processDefinitionName);
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -78,17 +63,50 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		{
 			jbpmContext.close();
 		}	    
+	}
+	
+	@Override
+	public void setup() throws Exception
+	{
+		//Setup a listener
+		//Create the connection
+		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(this.getConfiguration().getString("jms.connection"));
+		connection = connectionFactory.createConnection();
+		connection.start();
 		
-		jbpmContext = jbpmConfiguration.createJbpmContext();
+		//Create the session
+		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		Destination destination = session.createQueue(this.getConfiguration().getString("jms.replytoqueue"));
+		
+		//Create the producer
+		producer = session.createProducer(destination);
+		
+		listener = new ActiveMQJmsCompletedJobListener();
+		listener.start();
+		
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			
 			
+			System.out.println("Process definition name is now " + processDefinitionName);
+
 			ProcessInstance processInstance = jbpmContext.newProcessInstance(processDefinitionName);
 			processInstanceId = processInstance.getId();
-			tokenId = processInstance.getRootToken().getId();	    
-		    processInstance.signal();
-		    
-		    //Waiting at remote for signal
+			tokenId = processInstance.getRootToken().getId();
+		}
+		finally
+		{
+			jbpmContext.close();
+		}	    
+		
+	    jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{			    
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+			processInstance.signal();
+
+			//Waiting at remote for signal
 		    assertEquals("remote", processInstance.getRootToken().getNode().getName());
 		}
 		finally

@@ -1,8 +1,6 @@
 package gov.loc.repository.workflow.processdefinitions;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.DefaultConfigurationBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -10,11 +8,6 @@ import org.jbpm.JbpmConfiguration;
 import org.jbpm.persistence.db.DbPersistenceServiceFactory;
 import org.jbpm.svc.Services;
 import org.jbpm.JbpmContext;
-import org.jbpm.configuration.ObjectFactoryParser;
-import org.jbpm.configuration.ObjectFactoryImpl;
-import org.jbpm.util.ClassLoaderUtil;
-import org.jbpm.configuration.ObjectInfo;
-import org.jbpm.configuration.ValueInfo;
 import org.jbpm.identity.Entity;
 import org.jbpm.identity.xml.IdentityXmlParser;
 
@@ -24,12 +17,10 @@ import org.junit.Before;
 
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
-import java.net.URL;
 
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
-import gov.loc.repository.workflow.actionhandlers.BaseActionHandler;
-import gov.loc.repository.workflow.jbpm.configuration.DelegatingObjectFactoryImpl;
+import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 
 /**
@@ -38,52 +29,26 @@ import gov.loc.repository.workflow.utilities.HandlerHelper;
 public abstract class AbstractProcessDefinitionTest {
 
 	protected static JbpmConfiguration jbpmConfiguration = JbpmConfiguration.getInstance();
-	protected DelegatingObjectFactoryImpl objectFactory;
 
 	protected TestFixtureHelper fixtureHelper = new TestFixtureHelper();
-	private boolean isSetup = false;
 	protected Session session;
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-	protected static int testCounter = 0;		
 	protected HandlerHelper helper;
-	
-	protected static Configuration configuration;
-	static
-	{
-		try
-		{
-			DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
-			URL url = BaseActionHandler.class.getClassLoader().getResource("workflow.core.cfg.xml");
-			builder.setURL(url);
-			configuration = builder.getConfiguration(true);
-		}
-		catch(ConfigurationException ex)
-		{
-			throw new RuntimeException();
-		}
-	}		
-	
+		
 	@Before
 	public void baseSetup() throws Exception
 	{
-		testCounter++;
+		setupJbpm();
+		HibernateUtil.createDatabase();
+					
+		helper = new HandlerHelper(null, getConfiguration(), null);			
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		fixtureHelper.setSession(session);
 		
-		if (! isSetup)
-		{
-			this.setupJbpm();
-			
-			helper = new HandlerHelper(null, configuration, null);
-			
-			HibernateUtil.createDatabase();
-			session = sessionFactory.openSession();
-			session.beginTransaction();
-			fixtureHelper.setSession(session);
-			
-			this.createFixtures();
-			
-			session.getTransaction().commit();
-			isSetup = true;
-		}
+		this.createFixtures();
+		
+		session.getTransaction().commit();
 		
 		session = sessionFactory.openSession();
 		session.beginTransaction();
@@ -138,20 +103,7 @@ public abstract class AbstractProcessDefinitionTest {
 		dbPersistenceServiceFactory.dropSchema();		
 	}
 	*/
-			
-	/**
-	 * Provide an object to be returned by jBPM's ObjectFactory.
-	 * <p>This can be used to provide mock objects.
-	 * <p>Note, however, that the ObjectFactory is not used to create ActionHandlers.
-	 * See jbpm.cfg.xml. 
-	 * @param name
-	 * @param mock
-	 */
-	public void registerObject(String name, Object obj)
-	{
-		objectFactory.registerObject(name, obj);
-	}
-	
+				
 	protected void loadIdentities(String identities) throws Exception
 	{
 		InputStream stream = new ByteArrayInputStream(identities.getBytes());
@@ -169,4 +121,8 @@ public abstract class AbstractProcessDefinitionTest {
 		
 	}
 	
+	protected Configuration getConfiguration()
+	{
+		return ConfigurationHelper.getConfiguration();
+	}
 }

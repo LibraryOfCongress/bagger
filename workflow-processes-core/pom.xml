@@ -128,12 +128,6 @@
     </dependency>
     <!-- Test dependencies -->
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${com.h2database.h2.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <version>${hsqldb.hsqldb.version}</version>
