@@ -1,7 +1,7 @@
 package gov.loc.repository.packagemodeler.drivers;
 
 
-import static gov.loc.repository.packagemodeler.drivers.MapDriver.*;
+import static gov.loc.repository.packagemodeler.drivers.MapDataDriver.*;
 
 import java.text.MessageFormat;
 
@@ -23,14 +23,14 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class CommandLineDriver {
+public class CommandLineDataDriver {
 	
 	
 	
 	private static Options options;
 	private static CommandLine line;
 		
-	private static final Log log = LogFactory.getLog(CommandLineDriver.class);	
+	private static final Log log = LogFactory.getLog(CommandLineDataDriver.class);	
 	
 	private static final int RETURN_SUCCESS = 0;
 	private static final int RETURN_ERROR = 1;
@@ -54,7 +54,7 @@ public class CommandLineDriver {
 			}
 			String action = (String)line.getArgList().get(0);
 			EnhancedHashMap<String,String> optionsMap = commandLineToEnhancedHashMap(line);
-			MapDriver componentDriver = new MapDriver();
+			MapDataDriver componentDriver = new MapDataDriver();
 			componentDriver.execute(action, optionsMap);
 			System.exit(RETURN_SUCCESS);
 		}
@@ -78,10 +78,13 @@ public class CommandLineDriver {
 	private static void printUsages()
 	{
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp(MessageFormat.format("driver {0}|{1}|{2}|{3}|{4} [options]", ACTION_PACKAGE, ACTION_FILELOCATION, ACTION_PACKAGE_EVENT, ACTION_FILELOCATION_EVENT, ACTION_INVENTORY_FROM_MANIFEST), options, false);
+		formatter.printHelp(MessageFormat.format("datadriver {0}|{1}|{2}|{3}|{4} [options]", ACTION_PACKAGE, ACTION_FILELOCATION, ACTION_PACKAGE_EVENT, ACTION_FILELOCATION_EVENT, ACTION_INVENTORY_FROM_MANIFEST), options, false);
 		System.out.println("Dates are in ISO 8601 format.  For example, 2001-12-05T12:24:55.  Remember that hours, minutes, and seconds are zero based.");
 		System.out.println(MessageFormat.format("Returns {0} for success.", RETURN_SUCCESS));
 		System.out.println(MessageFormat.format("Returns {0} for failure or error.", RETURN_ERROR));
+		System.out.println("To test the database connection, use:");
+		System.out.println(MessageFormat.format("driver {0}", 
+				ACTION_TEST));
 		System.out.println("To create a Package, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1} -{2} -{3}", 
 				ACTION_PACKAGE,

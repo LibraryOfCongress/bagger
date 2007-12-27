@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;
@@ -20,6 +21,8 @@ import gov.loc.repository.utilities.results.ResultIterator;
 public interface PackageModelDAO {
 
 	public void setSession(Session session);
+	
+	public void setSessionFactory(SessionFactory sessionFactory);
 	
 	//Package		
 	public <T> T findPackage(Class<T> packageType, Repository repository, String packageId) throws Exception;
@@ -39,7 +42,7 @@ public interface PackageModelDAO {
 	//CanonicalFile
 	public abstract Map<String,Long> countCanonicalFilesByExtension(Package packge) throws Exception;	
 
-	public abstract CanonicalFile findCanonicalFile(String repositoryId, String packageId, String filename);
+	public abstract CanonicalFile findCanonicalFile(String repositoryId, String packageId, String filename) throws Exception;
 	
 	//FileInstance
 	public abstract FileInstance findFileInstance(String repositoryId, String packageId, String storageServiceId, String basePath, String filename) throws Exception;

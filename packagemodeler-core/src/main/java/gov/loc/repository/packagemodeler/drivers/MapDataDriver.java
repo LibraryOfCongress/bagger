@@ -27,14 +27,13 @@ import gov.loc.repository.utilities.FilenameHelper;
 import gov.loc.repository.utilities.ManifestReader;
 import gov.loc.repository.utilities.PackageHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.packagemodeler.ConfigurationHelper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.joda.time.format.ISODateTimeFormat;
 
-public class MapDriver {
+public class MapDataDriver {
 
 	//Arg types
 	public static final String TYPE_TIMESTAMP = "timestamp";
@@ -49,6 +48,7 @@ public class MapDriver {
 	public static final String ACTION_PACKAGE = "createpackage";
 	public static final String ACTION_FILELOCATION_EVENT = "createfilelocationevent";
 	public static final String ACTION_INVENTORY_FROM_MANIFEST = "inventoryfrommanifest";
+	public static final String ACTION_TEST = "test";
 	
 	//Options
 	public static final String OPT_BASEPATH = "basepath";
@@ -125,56 +125,28 @@ public class MapDriver {
 	private static final String UNKNOWN = "unknown";
 	private static final String REPORTING_AGENT_KEY = "agent.packagemodeler.id";
 	private static final String FALSE = "false";
-	
-	/*
-	public static final String OPT_LCMANIFEST = "lcmanifest";
-	public static final String OPT_SOURCE_STORAGE_SYSTEM = "sourcestoragesystem";
-	public static final String OPT_CREATE_PACKAGE ="createpackage";
-	public static final String OPT_CREATE_FILE_INSTANCES = "createfileinstances";
-	public static final String OPT_ALGORITHM = "algorithm";	
-	public static final String OPT_SOURCE_BASEPATH = "sourcebasepath";
-	public static final String OPT_SOURCE = "source";
-	public static final String OPT_TARGET = "target";
-	public static final String ENUM_CANONICALFILES = "canonicalfiles";
-	public static final String ENUM_FILEINSTANCES = "fileinstances";
-	public static final String ENUM_FILEEXAMINATIONS = "fileexaminations";
-	public static final String OPT_FILEEXAMINATIONGROUP = "fileexaminationgroup";
-	public static final String ACTION_INVENTORY = "inventory";
-	public static final String ACTION_COMPLETE_EXAMINATION = "completeexamination";
-	public static final String ACTION_COMPARE = "compare";
-	*/
-
-	/*
-	options.addOption(OptionBuilder.withArgName("filename").hasArg().withDescription("filename of the lc manifest").create(OPT_LCMANIFEST));		
-	options.addOption(OPT_CREATE_PACKAGE, false, "create package if it doesn't exist.  Default is false");
-	options.addOption(OptionBuilder.withArgName("id").hasArg().withDescription("algorithm used to generate fixities.  Default is " + ALGORITHM).create(OPT_ALGORITHM));
-	options.addOption(OPT_CREATE_FILE_INSTANCES, false, "create file instances.  Default is false");
-	options.addOption(OptionBuilder.withArgName("id").hasArg().withDescription("id of the source storage system for a FileCopy Event").create(OPT_SOURCE_STORAGE_SYSTEM));
-	options.addOption(OptionBuilder.withArgName("path").hasArg().withDescription("basepath of the file location").create(OPT_BASEPATH));
-	options.addOption(OptionBuilder.withArgName("path").hasArg().withDescription("basepath of the source file location for a FileCopy Event").create(OPT_SOURCE_BASEPATH));
-	options.addOption(OptionBuilder.withArgName("timestamp").hasArg().withDescription("start timestamp an Event.  Default is now.  Use unknown for unknown").create(OPT_EVENT_START));
-	options.addOption(OptionBuilder.withArgName("timestamp").hasArg().withDescription("end timestamp an Event.  Default is none").create(OPT_EVENT_END));
-	options.addOption(OptionBuilder.withArgName(ENUM_CANONICALFILES + "|" + ENUM_FILEINSTANCES).hasArg().withDescription("source type of a comparison").create(OPT_SOURCE));
-	options.addOption(OptionBuilder.withArgName(ENUM_FILEINSTANCES + "|" + ENUM_FILEEXAMINATIONS).hasArg().withDescription("target type of a comparison").create(OPT_TARGET));
-	options.addOption(OptionBuilder.withArgName("index").hasArg().withDescription("index of the file examination group.  Default is most recent").create(OPT_FILEEXAMINATIONGROUP));
-	*/
-		
+			
 	private static PackageModelDAO dao = new PackageModelDAOImpl();
 	private static ModelerFactory factory = new ModelerFactoryImpl();
 
 	private EnhancedHashMap<String,String> options;
 	
-	private static final Log log = LogFactory.getLog(MapDriver.class);	
-
 	public void execute(String action, EnhancedHashMap<String,String> options) throws Exception
 	{
 		
 		this.options = options;
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Session session = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).getCurrentSession();
 		try
 		{					
-			session.beginTransaction();			
-			if (ACTION_PACKAGE.equalsIgnoreCase(action))
+			dao.setSession(session);
+			session.beginTransaction();
+			if (ACTION_TEST.equalsIgnoreCase(action))
+			{
+				dao.findRepository("foo");
+				java.lang.System.out.println("Database connection is good.");
+				
+			}
+			else if (ACTION_PACKAGE.equalsIgnoreCase(action))
 			{
 				createPackage();
 			}

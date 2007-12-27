@@ -48,6 +48,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 	public <T extends Agent> T createAgent(Class<T> agentType, String agentId) throws Exception {
 		Agent agent = (Agent)(Class.forName(getImplClassName(agentType))).newInstance();
 		agent.setId(agentId);
+		log.info("Created " + agent.toString());
 		return agentType.cast(agent);
 	}
 
@@ -265,6 +266,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 	public Role createRole(String roleId) {
 		Role role = new RoleImpl();
 		role.setId(roleId);
+		log.info("Created " + role.toString());
 		return role;
 	}
 

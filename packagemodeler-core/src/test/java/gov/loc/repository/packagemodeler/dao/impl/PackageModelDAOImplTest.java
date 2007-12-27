@@ -29,7 +29,6 @@ import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 
 public class PackageModelDAOImplTest extends AbstractModelersTest {
-	private PackageModelDAO dao = new PackageModelDAOImpl();
 	
 	private static Repository repository;
 	private FileName fileName1;

@@ -35,7 +35,7 @@ if %1a==a goto endInit
 goto Win9xApp
 
 :endInit
-"%JAVA%" -Xmx%MAXMEM% -classpath ../lib/classworlds-1.1.jar -Dclassworlds.conf=classworlds.conf -Dapp.home=.. org.codehaus.classworlds.Launcher %ARGS%
+"%JAVA%" -Xmx%MAXMEM% -classpath ../lib/classworlds-1.1.jar -Dclassworlds.conf=fixturedriver.classworlds.conf -Dapp.home=.. org.codehaus.classworlds.Launcher %ARGS%
 
 :end
 

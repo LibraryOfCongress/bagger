@@ -26,7 +26,6 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
-import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.results.ResultIterator;
 import gov.loc.repository.utilities.FilenameHelper;
 
@@ -38,16 +37,20 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 	private SessionFactory sessionFactory;
 	private Session session = null;
 	
-	public PackageModelDAOImpl()
-	{
-		sessionFactory = HibernateUtil.getSessionFactory();
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;		
 	}
 	
-	public Session getSession()
+	public Session getSession() throws Exception
 	{
 		if (session != null)
 		{
 			return session;
+		}
+		if (sessionFactory == null)
+		{
+			throw new Exception("Neither session nor session factory was provided to PackageModelDao");
 		}
 		return sessionFactory.getCurrentSession();
 	}
@@ -94,7 +97,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return this.find(agentType, agentId);
 	}
 
-	public CanonicalFile findCanonicalFile(String repositoryId, String packageId, String filename) {
+	public CanonicalFile findCanonicalFile(String repositoryId, String packageId, String filename) throws Exception {
 		String queryString =
 			"from CanonicalFile as cf " +
 			"where cf.fileName = :filename " +
@@ -305,7 +308,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return clazz.getName().substring(0, (clazz.getName().length()-clazz.getSimpleName().length())) + "impl." + clazz.getSimpleName() + "Impl";		
 	}
 
-	protected <T extends Ided> T find(Class<T> clazz, String id)
+	protected <T extends Ided> T find(Class<T> clazz, String id) throws Exception
 	{
 		if (id == null)
 		{

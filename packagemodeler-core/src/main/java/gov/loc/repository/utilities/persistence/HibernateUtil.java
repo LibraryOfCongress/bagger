@@ -12,78 +12,92 @@ import org.hibernate.tool.hbm2ddl.SchemaExport;
 
 import gov.loc.repository.packagemodeler.ConfigurationHelper;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 public class HibernateUtil {
+	
+	public enum DatabaseRole { SUPER_USER, DATA_WRITER, FIXTURE_WRITER, READ_ONLY };
+	
+	private static Map<DatabaseRole,SessionFactory> sessionFactoryMap = new HashMap<DatabaseRole,SessionFactory>();
+	private static Map<DatabaseRole,AnnotationConfiguration> hibernateConfigurationMap = new HashMap<DatabaseRole, AnnotationConfiguration>();
+	
 	private static final Log log = LogFactory.getLog(HibernateUtil.class);
-	private static SessionFactory sessionFactory;
-	private static AnnotationConfiguration hibernateConfiguration;
-	private static SchemaExport export;
 	
 	private static final String CFG_KEY = "hibernate.cfg.xml";
 	private static final String PROPS_KEY = "hibernate.properties";
 	private static final String CREATE_SCHEMA_SQL = "create schema {0} authorization dba;";
 	
-	static
+	private static AnnotationConfiguration getConfiguration(DatabaseRole databaseRole) throws ExceptionInInitializerError
 	{
-		try
+		if (! hibernateConfigurationMap.containsKey(databaseRole))
 		{
 			//Load configuration for modelers
 			Configuration modelerConfiguration = ConfigurationHelper.getConfiguration();
-			hibernateConfiguration = new AnnotationConfiguration();
-			if (modelerConfiguration.containsKey(CFG_KEY))
-			{
-				String cfg = modelerConfiguration.getString(CFG_KEY);
-				log.debug("hibernate.cfg.xml has value " + cfg);
-				hibernateConfiguration.configure(cfg);
-				if (modelerConfiguration.containsKey(PROPS_KEY))
-				{
-					String props = modelerConfiguration.getString(PROPS_KEY);
-					log.debug("hibernate.properties is " + props);
-					Properties properties = new Properties();
-					properties.load(HibernateUtil.class.getClassLoader().getResourceAsStream(props));
-					hibernateConfiguration.mergeProperties(properties);
-				}
-				
+			AnnotationConfiguration hibernateConfiguration = new AnnotationConfiguration();
+			if (! modelerConfiguration.containsKey(CFG_KEY))
+			{				
+				throw new ExceptionInInitializerError("Configuration does not contain key " + CFG_KEY);
 			}
-			else
+			String cfg = modelerConfiguration.getString(CFG_KEY);
+			log.debug("hibernate.cfg.xml has value " + cfg);
+			hibernateConfiguration.configure(cfg);
+			String propertyKey = databaseRole.toString().toLowerCase() + "." + PROPS_KEY;
+			String props = modelerConfiguration.getString(propertyKey);
+			if (props == null)
 			{
-				//Default
-				hibernateConfiguration.configure();
+				log.debug(MessageFormat.format("Propery with key {0} not found.  Defaulting to key {1}.", propertyKey, PROPS_KEY));
+				props = modelerConfiguration.getString(PROPS_KEY);
 			}
+			
+			log.debug("hibernate.properties is " + props);
+			Properties properties = new Properties();
+			try
+			{
+				properties.load(HibernateUtil.class.getClassLoader().getResourceAsStream(props));
+			}
+			catch(IOException ex)
+			{
+				throw new ExceptionInInitializerError(ex);
+			}
+			hibernateConfiguration.mergeProperties(properties);
 			hibernateConfiguration.setInterceptor(new TimestampedInterceptor());
-			sessionFactory = hibernateConfiguration.buildSessionFactory();
-			export = new SchemaExport(hibernateConfiguration);
+			hibernateConfigurationMap.put(databaseRole, hibernateConfiguration);
 		}
-		catch (Throwable ex)
-		{
-			log.error(ex);
-			throw new ExceptionInInitializerError(ex);
-		}
+		return hibernateConfigurationMap.get(databaseRole);
 		
 	}
 	
-	public static SessionFactory getSessionFactory()
+	public static SessionFactory getSessionFactory(DatabaseRole databaseRole) throws ExceptionInInitializerError
 	{
-		return sessionFactory;
+		if (! sessionFactoryMap.containsKey(databaseRole))
+		{
+			sessionFactoryMap.put(databaseRole, getConfiguration(databaseRole).buildSessionFactory());
+		}
+		return sessionFactoryMap.get(databaseRole);
 	}
 		
 	public static void shutdown()
 	{
-		sessionFactory.close();
+		for(SessionFactory factory : sessionFactoryMap.values())
+		{
+			factory.close();
+		}
+
 	}
 	
-	private static Connection prepareConnection() throws SQLException {
-		log.info("Preparing connection");
-		Properties cfgProperties = hibernateConfiguration.getProperties();
+	private static Connection prepareConnection(DatabaseRole databaseRole) throws Exception {
+		log.info("Preparing connection for " + databaseRole.toString());
+		Properties cfgProperties = getConfiguration(databaseRole).getProperties();
 		ConnectionProvider connectionProvider = ConnectionProviderFactory.newConnectionProvider( cfgProperties );
 		Connection connection = connectionProvider.getConnection();
 		if ( !connection.getAutoCommit() ) {
@@ -108,10 +122,10 @@ public class HibernateUtil {
 		return false;
 	}
 	
-	private static void executeSchemaCreateSql(Connection connection) throws Exception
+	private static void executeSchemaCreateSql(Connection connection, AnnotationConfiguration hibernateConfiguration) throws Exception
 	{
 		Statement statement = connection.createStatement();
-		Set<String> schemas = findSchemaDefinitions();
+		Set<String> schemas = findSchemaDefinitions(hibernateConfiguration);
 		for(String schema : schemas)
 		{
 			if (! schemaExists(connection, schema))
@@ -128,22 +142,22 @@ public class HibernateUtil {
 	public static void createDatabase() throws Exception
 	{
 		
-		Connection connection = prepareConnection();
-		
+		Connection connection = prepareConnection(DatabaseRole.SUPER_USER);
+		AnnotationConfiguration hibernateConfiguration = getConfiguration(DatabaseRole.SUPER_USER); 
+		SchemaExport export = new SchemaExport(hibernateConfiguration);
 		log.info("Creating schemas");
-		executeSchemaCreateSql(connection);
+		executeSchemaCreateSql(connection, hibernateConfiguration);
 		
 		//Drop
 		log.info("Dropping database");
 		export.execute(false, true, true, false);
-		//executeSchemaDropSql(connection, DROP_SCHEMA_SQL);
 
 		//Create
 		log.info("Creating database");		
 		export.execute(false, true, false, true);
 	}
 		
-	public static Set<String> findSchemaDefinitions()
+	public static Set<String> findSchemaDefinitions(AnnotationConfiguration hibernateConfiguration)
 	{
 		Set<String> schemas = new HashSet<String>();
 		Iterator each = hibernateConfiguration.getTableMappings();

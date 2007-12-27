@@ -13,6 +13,7 @@ import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.Software;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.packge.Repository;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,7 +26,7 @@ public class TestFixtureHelper {
 	
 	public TestFixtureHelper()
 	{
-		sessionFactory = HibernateUtil.getSessionFactory();
+		sessionFactory = HibernateUtil.getSessionFactory(DatabaseRole.SUPER_USER);
 	}
 	
 	protected Session getSession()

@@ -6,6 +6,7 @@ import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.packagemodeler.impl.DaoAwareModelerFactoryImpl;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -21,7 +22,7 @@ public abstract class AbstractModelersTest {
 	protected PackageModelDAO dao = new PackageModelDAOImpl();
 	private static boolean isSetup = false;
 	protected Session session;
-	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory(DatabaseRole.SUPER_USER);
 	protected static int testCounter = 0;
 	
 	@BeforeClass
@@ -35,6 +36,7 @@ public abstract class AbstractModelersTest {
 	@Before
 	public void baseSetup() throws Exception
 	{
+		dao.setSessionFactory(sessionFactory);
 		modelerFactory.setPackageModelerDao(this.dao);
 		testCounter++;
 		
