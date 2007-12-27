@@ -1,6 +1,5 @@
 package gov.loc.repository.workflow.listeners.impl;
 
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -15,43 +14,16 @@ import javax.jms.MessageListener;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import gov.loc.repository.workflow.actionhandlers.BaseActionHandler;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
 import gov.loc.repository.workflow.continuations.impl.SimpleContinuationControllerImpl;
 import gov.loc.repository.workflow.listeners.JmsCompletedJobListener;
+import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
 public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsCompletedJobListener {
 	private static final Log log = LogFactory.getLog(ActiveMQJmsCompletedJobListener.class);
-	protected static Configuration configuration;
-	static
-	{
-		try
-		{
-			DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
-			URL url = BaseActionHandler.class.getClassLoader().getResource("workflow.core.cfg.xml");
-			if (url != null)
-			{
-				log.debug("Loading configuration: " + url.toString());
-			}
-			else
-			{
-				log.error("workflow.cfg.xml is missing.");
-			}
-			builder.setURL(url);
-			configuration = builder.getConfiguration(true);
-		}
-		catch(ConfigurationException ex)
-		{
-			log.error("Error loading configuration", ex);
-			throw new RuntimeException();
-		}
-	}
 		
 	private Map<String, Map<String,String>> requiredParameters;
 	private Map<String, Map<String,String>> optionalParameters;
@@ -75,13 +47,13 @@ public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsComp
 		
 		//Setup a listener
 		//Create the connection
-		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(configuration.getString("jms.connection"));
+		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(ConfigurationHelper.getConfiguration().getString("jms.connection"));
 		connectionFactory.setCloseTimeout(2000);
 		connection = connectionFactory.createConnection();
 		
 		//Create the session
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createQueue(configuration.getString("jms.replytoqueue"));
+		Destination destination = session.createQueue(ConfigurationHelper.getConfiguration().getString("jms.replytoqueue"));
 		
 		//Create the consumer
 		consumer = session.createConsumer(destination);

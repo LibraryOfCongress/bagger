@@ -33,6 +33,7 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 	Long tokenId;
 	Long processInstanceId;
 	private static String processDefinitionName;
+	private static Long WAIT = 500L;
 	
 	@Override
 	public void createFixtures() throws Exception {
@@ -53,7 +54,6 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 			      "</process-definition>");
 
 		processDefinitionName = processDefinition.getName();
-		System.out.println("Process definition name is " + processDefinitionName);
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -81,16 +81,9 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		//Create the producer
 		producer = session.createProducer(destination);
 		
-		listener = new ActiveMQJmsCompletedJobListener();
-		listener.start();
-		
-		
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
-		{			
-			
-			System.out.println("Process definition name is now " + processDefinitionName);
-
+		{						
 			ProcessInstance processInstance = jbpmContext.newProcessInstance(processDefinitionName);
 			processInstanceId = processInstance.getId();
 			tokenId = processInstance.getRootToken().getId();
@@ -99,7 +92,10 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		{
 			jbpmContext.close();
 		}	    
-		
+				
+		listener = new ActiveMQJmsCompletedJobListener();
+		listener.start();
+				
 	    jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			    
@@ -160,7 +156,7 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		
 		producer.send(message);
 		
-		Thread.sleep(250);
+		Thread.sleep(WAIT);
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			
@@ -193,7 +189,7 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		
 		producer.send(message);
 		
-		Thread.sleep(100);
+		Thread.sleep(WAIT);
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			
@@ -219,7 +215,7 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		
 		producer.send(message);
 		
-		Thread.sleep(100);
+		Thread.sleep(WAIT);
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			
@@ -247,7 +243,7 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		
 		producer.send(message);
 		
-		Thread.sleep(100);
+		Thread.sleep(WAIT);
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			
@@ -275,7 +271,7 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		
 		producer.send(message);
 		
-		Thread.sleep(100);
+		Thread.sleep(WAIT);
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			
@@ -303,7 +299,7 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		
 		producer.send(message);
 		
-		Thread.sleep(100);
+		Thread.sleep(WAIT);
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			
@@ -344,7 +340,7 @@ public class ActiveMQJmsCompletedJobListenerTest extends AbstractProcessDefiniti
 		
 		producer.send(message);
 		
-		Thread.sleep(250);
+		Thread.sleep(WAIT);
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{			
