@@ -5,7 +5,7 @@
   <artifactId>transfer-maven</artifactId>
   <packaging>pom</packaging>
   <name>Master POM for transfer</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <properties>
   	<com.h2database.h2.version>1.0.62</com.h2database.h2.version>
   	<commons-collections.version>3.2</commons-collections.version>
@@ -20,13 +20,13 @@
   	<jaxen.jaxen.version>1.1.1</jaxen.jaxen.version>
   	<jbpm.version>3.2.2</jbpm.version>
   	<loc-repository.transfer-common.version>1.0-SNAPSHOT</loc-repository.transfer-common.version>
-  	<loc-repository.packagemodeler.core.version>1.0-SNAPSHOT</loc-repository.packagemodeler.core.version>
-    <loc-repository.packagemodeler.ndnp.version>1.0-SNAPSHOT</loc-repository.packagemodeler.ndnp.version>    
-    <loc-repository.packagemodeler.webcapture.version>1.0-SNAPSHOT</loc-repository.packagemodeler.webcapture.version>    
-  	<loc-repository.transfer-components.core.version>1.0-SNAPSHOT</loc-repository.transfer-components.core.version>
-  	<loc-repository.transfer-components.ndnp.version>1.0-SNAPSHOT</loc-repository.transfer-components.ndnp.version>
-  	<loc-repository.workflow-processes.core.version>1.0-SNAPSHOT</loc-repository.workflow-processes.core.version>
-  	<loc-repository.workflow-processes.ndnp.version>1.0-SNAPSHOT</loc-repository.workflow-processes.ndnp.version>
+  	<loc-repository.packagemodeler.core.version>1.0</loc-repository.packagemodeler.core.version>
+    <loc-repository.packagemodeler.ndnp.version>1.0</loc-repository.packagemodeler.ndnp.version>    
+    <loc-repository.packagemodeler.webcapture.version>1.0</loc-repository.packagemodeler.webcapture.version>    
+  	<loc-repository.transfer-components.core.version>1.0</loc-repository.transfer-components.core.version>
+  	<loc-repository.transfer-components.ndnp.version>1.0</loc-repository.transfer-components.ndnp.version>
+  	<loc-repository.workflow-processes.core.version>1.0</loc-repository.workflow-processes.core.version>
+  	<loc-repository.workflow-processes.ndnp.version>1.0</loc-repository.workflow-processes.ndnp.version>
    	<log4j.version>1.2.14</log4j.version>
     <mysql.mysql-connector-java.version>5.0.4</mysql.mysql-connector-java.version>   	
 	<org.apache.activemq.activemq-core.version>5.0.0</org.apache.activemq.activemq-core.version>
@@ -45,6 +45,27 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+      <!-- 
+	  <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[1.5]</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>      
+       -->
     </plugins>    
   </build>
   <repositories>
@@ -112,32 +133,6 @@
       <version>4.1</version>
       <scope>test</scope>
     </dependency>
-    <!-- 
-    <dependency>
-      <groupId>jmock</groupId>
-      <artifactId>jmock</artifactId>
-      <version>2.0.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>jmock</groupId>
-      <artifactId>jmock-junit4</artifactId>
-      <version>2.0.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>hamcrest</groupId>
-      <artifactId>hamcrest-api</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>hamcrest</groupId>
-      <artifactId>hamcrest-library</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
-    </dependency>	
-    -->
   </dependencies>
 </project>
 
