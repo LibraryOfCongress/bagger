@@ -229,7 +229,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		packge.addPackageEvent(event);
 		event.setEventStart(eventStart);
 		event.setReportingAgent(reportingAgent);
-		log.info("Created " + packge.toString());
+		log.info("Created " + event.toString());
 		return eventType.cast(event);
 	}
 

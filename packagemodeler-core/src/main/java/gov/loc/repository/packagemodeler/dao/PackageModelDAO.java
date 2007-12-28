@@ -16,6 +16,7 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.utilities.results.ResultIterator;
 
 public interface PackageModelDAO {
@@ -23,6 +24,8 @@ public interface PackageModelDAO {
 	public void setSession(Session session);
 	
 	public void setSessionFactory(SessionFactory sessionFactory);
+	
+	public void setSessionDatabaseRole(DatabaseRole databaseRole);
 	
 	//Package		
 	public <T> T findPackage(Class<T> packageType, Repository repository, String packageId) throws Exception;

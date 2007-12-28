@@ -26,6 +26,8 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
+import gov.loc.repository.utilities.persistence.HibernateUtil;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.utilities.results.ResultIterator;
 import gov.loc.repository.utilities.FilenameHelper;
 
@@ -42,6 +44,11 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		this.sessionFactory = sessionFactory;		
 	}
 	
+	public void setSessionDatabaseRole(DatabaseRole databaseRole) {
+		this.sessionFactory = HibernateUtil.getSessionFactory(databaseRole);
+		
+	}
+	
 	public Session getSession() throws Exception
 	{
 		if (session != null)
@@ -50,7 +57,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		}
 		if (sessionFactory == null)
 		{
-			throw new Exception("Neither session nor session factory was provided to PackageModelDao");
+			throw new Exception("Neither session, session factory, nor database role was provided to PackageModelDao");
 		}
 		return sessionFactory.getCurrentSession();
 	}

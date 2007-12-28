@@ -195,7 +195,7 @@ public class CommandLineDataDriver {
 		options.addOption(OptionBuilder.withArgName(OPT_EVENT_TYPE_TYPE).hasArg().withDescription(OPT_EVENT_TYPE_DESCRIPTION).create(OPT_EVENT_TYPE));
 		options.addOption(OptionBuilder.withArgName(OPT_IS_LC_PACKAGE_STRUCTURE_TYPE).hasArg().withDescription(OPT_IS_LC_PACKAGE_STRUCTURE_DESCRIPTION).create(OPT_IS_LC_PACKAGE_STRUCTURE));
 		options.addOption(OptionBuilder.withArgName(OPT_IS_MANAGED_TYPE).hasArg().withDescription(OPT_IS_MANAGED_DESCRIPTION).create(OPT_IS_MANAGED));		
-		options.addOption(OptionBuilder.withArgName(OPT_MESSAGE_TYPE).hasArgs().withDescription(OPT_MESSAGE_DESCRIPTION).create(OPT_MESSAGE_TYPE));
+		options.addOption(OptionBuilder.withArgName(OPT_MESSAGE_TYPE).hasArgs().withDescription(OPT_MESSAGE_DESCRIPTION).create(OPT_MESSAGE));
 		options.addOption(OptionBuilder.withArgName(OPT_PACKAGE_TYPE).hasArg().withDescription(OPT_PACKAGE_DESCRIPTION).create(OPT_PACKAGE));
 		options.addOption(OptionBuilder.withArgName(OPT_PACKAGE_CLASS_DESCRIPTION).hasArg().withDescription(OPT_PACKAGE_CLASS_DESCRIPTION).create(OPT_PACKAGE_CLASS));		
 		options.addOption(OptionBuilder.withArgName(OPT_PERFORMING_AGENT_TYPE).hasArg().withDescription(OPT_PERFORMING_AGENT_DESCRIPTION).create(OPT_PERFORMING_AGENT));

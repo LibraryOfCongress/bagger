@@ -54,7 +54,7 @@ public class PersonImpl extends AgentImpl implements Person {
 		String name = this.getName();
 		if (name == null || name.length() == 0)
 		{
-			return MessageFormat.format("yet to be named Person with id {1}", this.getId());
+			return MessageFormat.format("yet to be named Person with id {0}", this.getId());
 		}
 		return MessageFormat.format("Person named {0} with id {1}", name, this.getId());
 	}
