@@ -11,9 +11,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 
 import gov.loc.repository.packagemodeler.agents.Agent;
-import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.packagemodeler.events.filelocation.FileCopyEvent;
-import gov.loc.repository.packagemodeler.impl.ModelerFactoryImpl;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
 import gov.loc.repository.transfer.components.AbstractComponentTest;
@@ -47,12 +45,12 @@ public class FileCopierImplTest extends AbstractComponentTest {
 	@Override
 	public void setup() throws Exception {
 		copier = new FileCopierImpl();
-		copier.setModelerFactory(new ModelerFactoryImpl());
-		copier.setPackageModelDao(new PackageModelDAOImpl());
+		copier.setModelerFactory(this.modelerFactory);
+		copier.setPackageModelDao(this.packageModelDao);
 	
 		examiner = new FileExaminerImpl();
-		examiner.setModelerFactory(new ModelerFactoryImpl());
-		examiner.setPackageModelDao(new PackageModelDAOImpl());
+		examiner.setModelerFactory(this.modelerFactory);
+		examiner.setPackageModelDao(this.packageModelDao);
 		FixityHelper fixityHelper = new JavaSecurityFixityHelper();
 		fixityHelper.setAlgorithm("MD5");
 		examiner.setFixityHelper(fixityHelper);

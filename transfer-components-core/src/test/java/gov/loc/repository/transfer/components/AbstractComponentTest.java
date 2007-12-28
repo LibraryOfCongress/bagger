@@ -19,23 +19,20 @@ import gov.loc.repository.transfer.components.utilities.ConfigurationHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.ResourceHelper;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
 public abstract class AbstractComponentTest {
 
 	protected TestFixtureHelper fixtureHelper = new TestFixtureHelper();
 	protected static boolean isSetup = false;
 	protected Session session;
-	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory(DatabaseRole.SUPER_USER);
 	protected static int testCounter = 0;
 	protected DaoAwareModelerFactory modelerFactory = new DaoAwareModelerFactoryImpl();
 	protected PackageModelDAO packageModelDao = new PackageModelDAOImpl();
 	
 	private static final String REPORTING_AGENT_KEY = "components.agentid";
-			
-	public AbstractComponentTest() {
-		this.modelerFactory.setPackageModelerDao(this.packageModelDao);
-	}
-	
+				
 	@BeforeClass
 	public static void beforeClassSetup() throws Exception
 	{
@@ -48,6 +45,8 @@ public abstract class AbstractComponentTest {
 	public void baseSetup() throws Exception
 	{		
 		testCounter++;
+		this.packageModelDao.setSessionFactory(this.sessionFactory);
+		this.modelerFactory.setPackageModelerDao(this.packageModelDao);
 		if (! isSetup)
 		{
 			session = sessionFactory.getCurrentSession();

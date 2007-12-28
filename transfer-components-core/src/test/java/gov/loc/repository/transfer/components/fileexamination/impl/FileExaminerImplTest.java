@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.util.Date;
 
-import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
-import gov.loc.repository.packagemodeler.impl.ModelerFactoryImpl;
 import gov.loc.repository.packagemodeler.packge.FileExaminationGroup;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.Package;
@@ -40,8 +38,8 @@ public class FileExaminerImplTest extends AbstractComponentTest{
 	@Override
 	public void setup() throws Exception {
 		examiner = new FileExaminerImpl();
-		examiner.setModelerFactory(new ModelerFactoryImpl());
-		examiner.setPackageModelDao(new PackageModelDAOImpl());
+		examiner.setModelerFactory(this.modelerFactory);
+		examiner.setPackageModelDao(this.packageModelDao);
 		FixityHelper fixityHelper = new JavaSecurityFixityHelper();
 		fixityHelper.setAlgorithm("MD5");
 		examiner.setFixityHelper(fixityHelper);
