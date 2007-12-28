@@ -49,6 +49,10 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		
 	}
 	
+	public void setSessionDatabaseRole(String databaseRole) {
+		this.setSessionDatabaseRole(Enum.valueOf(DatabaseRole.class, databaseRole));		
+	}
+	
 	public Session getSession() throws Exception
 	{
 		if (session != null)

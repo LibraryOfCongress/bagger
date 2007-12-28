@@ -26,7 +26,9 @@ public interface PackageModelDAO {
 	public void setSessionFactory(SessionFactory sessionFactory);
 	
 	public void setSessionDatabaseRole(DatabaseRole databaseRole);
-	
+
+	public void setSessionDatabaseRole(String databaseRole);
+		
 	//Package		
 	public <T> T findPackage(Class<T> packageType, Repository repository, String packageId) throws Exception;
 
