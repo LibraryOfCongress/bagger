@@ -2,7 +2,7 @@
   <parent>
     <artifactId>transfer-maven</artifactId>
     <groupId>loc-repository</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <relativePath>../transfer-maven/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -131,7 +131,7 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>3.0.0.ga</version>
+      <version>${org.hibernate.hibernate-validator.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -173,7 +173,7 @@
     <dependency>
       <groupId>postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>8.1-407.jdbc3</version>
+      <version>${postgresql.postgresql.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
