@@ -9,6 +9,7 @@ import gov.loc.repository.packagemodeler.impl.ModelerFactoryImpl;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
 import gov.loc.repository.utilities.ResourceHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 import gov.loc.repository.packagemodeler.packge.Package;
@@ -27,7 +28,7 @@ public abstract class BaseHandlerTest {
 	protected TestFixtureHelper fixtureHelper = new TestFixtureHelper();
 	protected static boolean isSetup = false;
 	protected Session session;
-	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory(DatabaseRole.SUPER_USER);
 	protected static int testCounter = 0;
 	protected PackageModelDAO dao = new PackageModelDAOImpl();
 	protected ModelerFactory factory = new ModelerFactoryImpl();
@@ -43,8 +44,8 @@ public abstract class BaseHandlerTest {
 	@Before
 	public void baseSetup() throws Exception
 	{
-		testCounter++;
-		
+		dao.setSessionFactory(sessionFactory);
+		testCounter++;		
 		if (! isSetup)
 		{
 			HandlerHelper helper = new HandlerHelper(null, getConfiguration(), null);

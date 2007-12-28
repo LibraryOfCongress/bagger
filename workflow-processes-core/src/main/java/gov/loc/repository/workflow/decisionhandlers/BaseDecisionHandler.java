@@ -13,6 +13,7 @@ import org.jbpm.graph.node.DecisionHandler;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 
 import java.lang.reflect.Method;
@@ -65,7 +66,7 @@ public abstract class BaseDecisionHandler implements DecisionHandler
 	public final String decide(ExecutionContext executionContext) throws Exception
 	{
 		String decision = null;
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		Session session = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).openSession();
 		try
 		{
 			session.beginTransaction();

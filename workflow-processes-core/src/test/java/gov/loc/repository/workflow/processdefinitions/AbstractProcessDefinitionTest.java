@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 
@@ -32,7 +33,7 @@ public abstract class AbstractProcessDefinitionTest {
 
 	protected TestFixtureHelper fixtureHelper = new TestFixtureHelper();
 	protected Session session;
-	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory(DatabaseRole.SUPER_USER);
 	protected HandlerHelper helper;
 		
 	@Before

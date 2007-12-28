@@ -14,6 +14,7 @@ import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.packagemodeler.impl.ModelerFactoryImpl;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
+import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
@@ -46,7 +47,7 @@ public abstract class BaseActionHandler implements ActionHandler
  	 */	
 	public final void execute(ExecutionContext executionContext) throws Exception
 	{
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		Session session = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).openSession();
 		try
 		{
 			this.executionContext = executionContext;
