@@ -2,7 +2,7 @@
 
 BEGIN {
 	use File::Basename;
-	use Cwd qw(abs_path);
+	use Cwd qw(abs_path cwd);
 	use lib abs_path(dirname($0) . "/../lib");
 }
 
@@ -101,13 +101,32 @@ sub two_step_copy($) {
 
 sub register($) {
     my $ticket = shift;
-    
-    my $event = "location registration";
-    my $inventory = "inventory --package $ticket->{package}";
-    my $load      = "load-inventory --repository $ticket->{repo}";
-    
-    my $cmd = "cd $ticket->{dest_dir}; $inventory | $load";
-    do_task($hostname, $system, "location registration", $ticket->{id}, $cmd);
+	my $old_cwd = cwd();
+	chdir($ticket->{dest_dir});
+
+    do_task($hostname, $system, "location registration", 
+		$ticket->{id}, <<"    EOF");
+		datadriver createfilelocation \\
+			-repository    $ticket->{repo}\\
+			-package       $ticket->{package}\\
+			-storagesystem $ticket->{dest_host} \\
+			-basepath      $ticket->{dest_dir} \\
+			-ismanaged true \\
+			-islcpackagestructure true
+    EOF
+
+    do_task($hostname, $system, "location registration", 
+		$ticket->{id}, <<"    EOF");
+		datadriver inventoryfrommanifest \\
+			-repository    $ticket->{repo}\\
+			-package       $ticket->{package}\\
+			-storagesystem $ticket->{dest_host} \\
+			-basepath      $ticket->{dest_dir} \\
+			-requestingagent transport-1.0 \\
+			-createcanonicalfiles false
+    EOF
+
+	chdir($old_cwd);
 }
 
 ##----------------------------------------------------------------------

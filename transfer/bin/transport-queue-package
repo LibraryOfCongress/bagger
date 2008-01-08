@@ -202,14 +202,46 @@ print <<EOF;
 EOF
 
 ##-----------------------------------------------------------------
-## Run the check script before the transport is queued
-my $cmd = "transport-check-package $id $source_host $source_hostname $OPTIONS{package} $OPTIONS{repository} $source_dir";
-my ($output, $errors) = run($cmd);
+## Register the package with the inventory system.  If that succeeds,
+## then continue on and queue the package with the Transfer system.
+##
+## NOTE: The only error that can occur from the inventory system is
+## during inventoryfrommanifest, which *MUST* occur after the package
+## is created and registered to a file location.
+##-----------------------------------------------------------------
+
+my ($output, $errors);
+
+($output, $errors) = run(<<"EOF");
+	datadriver createpackage \\
+		-repository $OPTIONS{repository} \\
+		-package    $OPTIONS{package}
+EOF
+
+($output, $errors) = run(<<"EOF") unless $errors;
+	datadriver createfilelocation \\
+		-repository    $OPTIONS{repository} \\
+		-package       $OPTIONS{package} \\
+		-storagesystem $source_host \\
+		-basepath      $source_dir \\
+		-ismanaged     true \\
+		-islcpackagestructure true
+EOF
+
+($output, $errors) = run(<<"EOF") unless $errors;
+	datadriver inventoryfrommanifest \\
+		-repository    $OPTIONS{repository} \\
+		-package       $OPTIONS{package} \\
+		-storagesystem $source_host \\
+		-basepath      $source_dir \\
+		-requestingagent transport-1.0 \\
+		-createcanonicalfiles true
+EOF
 
 if ($errors) {
     track_ticket_failures(1);
     fail_ticket($id);
-    runtime_error("transport-check-package", $errors);
+    runtime_error("(inventory system)", $errors);
 } else {
     local $| = 1;
     my $size = `du -sk $source_dir`;
