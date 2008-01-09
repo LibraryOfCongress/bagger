@@ -21,7 +21,7 @@ sub get_connection_params() {
         open(my $fh, $conf);
         local $/ = undef;
         my $input = <$fh>;
-        %config = $input =~ m/^[ \t]*(\S+)[ \t]*=[ \t]*(.*?)[ \t]*$/mg;
+        %config = $input =~ m/^[ \t]*([^\s=]+)[ \t]*=[ \t]*(.*?)[ \t]*$/mg;
         close($fh);
     }
 
