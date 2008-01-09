@@ -12,12 +12,12 @@ READER_OWNER=package_modeler_reader_role
 WRITER_OWNER=package_modeler_data_writer_role
 
 .PHONY: reset core-database core-fixtures \
-	    ndnp-database ndnp-fixtures \
-		transport-database transport-fixtures
+	ndnp-database ndnp-fixtures \
+	transport-database transport-fixtures
 
 database: reset core-database core-fixtures \
-	    ndnp-database ndnp-fixtures \
-		transport-database transport-fixtures
+	ndnp-database ndnp-fixtures \
+	transport-database transport-fixtures
 
 ##----------------------------------------------------------------------
 
@@ -50,11 +50,12 @@ core-database:
 	@echo "CREATE DATABASE $(PREFIX)$(DATABASE) ENCODING = 'UTF8';" | psql
 	
 	## Load the DDL and set permissions
-	@psql $(PREFIX)$(DATABASE) < ../transfer/db/inventory-core.sql
-	@sed -e 's/$(ADMIN_OWNER)/$(PREFIX)$(ADMIN_OWNER)/g;\
-			s/$(READER_OWNER)/$(PREFIX)$(READER_OWNER)/g;\
-			s/$(WRITER_OWNER)/$(PREFIX)$(WRITER_OWNER)/g' \
-			../transfer/db/inventory-core.permissions.sql | psql $(PREFIX)$(DATABASE)
+	@cat ../transfer/db/inventory-core.sql | @psql $(PREFIX)$(DATABASE)
+	@cat ../transfer/db/inventory-core.permissions.sql | \
+	 sed -e 's/$(ADMIN_OWNER)/$(PREFIX)$(ADMIN_OWNER)/g'   | \
+	 sed -e 's/$(READER_OWNER)/$(PREFIX)$(READER_OWNER)/g' | \
+	 sed -e 's/$(WRITER_OWNER)/$(PREFIX)$(WRITER_OWNER)/g' | \
+	 psql $(PREFIX)$(DATABASE)
 	
 	## Add associations between users and roles
 	@echo "GRANT $(PREFIX)$(ADMIN_OWNER) TO $(PREFIX)$(ADMIN);" | psql
@@ -78,11 +79,12 @@ core-fixtures:
 
 ## See https://rdc.lctl.gov/trac/transfer/wiki/TransferCoreDeployment#NDNP
 ndnp-database:
-	@psql $(PREFIX)$(DATABASE) < ../transfer/db/inventory-ndnp.sql
-	@sed -e 's/$(ADMIN_OWNER)/$(PREFIX)$(ADMIN_OWNER)/g;\
-			s/$(READER_OWNER)/$(PREFIX)$(READER_OWNER)/g;\
-			s/$(WRITER_OWNER)/$(PREFIX)$(WRITER_OWNER)/g' \
-			../transfer/db/inventory-ndnp.permissions.sql | psql $(PREFIX)$(DATABASE)
+	@cat ../transfer/db/inventory-ndnp.sql | psql $(PREFIX)$(DATABASE)
+	@cat ../transfer/db/inventory-ndnp.permissions.sql | \
+	 sed -e 's/$(ADMIN_OWNER)/$(PREFIX)$(ADMIN_OWNER)/g'   | \
+	 sed -e 's/$(READER_OWNER)/$(PREFIX)$(READER_OWNER)/g' | \
+	 sed -e 's/$(WRITER_OWNER)/$(PREFIX)$(WRITER_OWNER)/g' | \
+	 psql $(PREFIX)$(DATABASE)
 
 ## See https://rdc.lctl.gov/trac/ndnptransfer/wiki/NTVersion1.0ReleaseNotes
 ## NOTE: The Java config files must be updated to point to 
@@ -111,11 +113,12 @@ ndnp-fixtures:
 
 transport-database:
 	## Creating Transport Schema
-	@psql $(PREFIX)$(DATABASE) < ../transfer/db/transport.sql
-	@sed -e 's/$(ADMIN_OWNER)/$(PREFIX)$(ADMIN_OWNER)/g;\
-			s/$(READER_OWNER)/$(PREFIX)$(READER_OWNER)/g;\
-			s/$(WRITER_OWNER)/$(PREFIX)$(WRITER_OWNER)/g' \
-			../transfer/db/transport.permissions.sql | psql $(PREFIX)$(DATABASE)
+	@cat ../transfer/db/transport.sql | psql $(PREFIX)$(DATABASE) 
+	@cat ../transfer/db/transport.permissions.sql  | \
+	 sed -e 's/$(ADMIN_OWNER)/$(PREFIX)$(ADMIN_OWNER)/g'   | \
+	 sed -e 's/$(READER_OWNER)/$(PREFIX)$(READER_OWNER)/g' | \
+	 sed -e 's/$(WRITER_OWNER)/$(PREFIX)$(WRITER_OWNER)/g' | \
+	 psql $(PREFIX)$(DATABASE)
 
 ## NOTE: The Java *and Perl* config files must be updated to point to 
 ##       the database we just created.
