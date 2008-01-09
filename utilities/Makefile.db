@@ -52,6 +52,7 @@ core-database:
 	## Load the DDL and set permissions
 	@cat ../transfer/db/inventory-core.sql | psql $(PREFIX)$(DATABASE)
 	@cat ../transfer/db/inventory-core.permissions.sql | \
+	 sed -e 's/DATABASE $(DATABASE)/DATABASE $(PREFIX)$(DATABASE)/g'   | \
 	 sed -e 's/$(ADMIN_OWNER)/$(PREFIX)$(ADMIN_OWNER)/g'   | \
 	 sed -e 's/$(READER_OWNER)/$(PREFIX)$(READER_OWNER)/g' | \
 	 sed -e 's/$(WRITER_OWNER)/$(PREFIX)$(WRITER_OWNER)/g' | \
