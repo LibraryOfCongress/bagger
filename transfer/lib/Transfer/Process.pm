@@ -8,7 +8,7 @@ use IPC::Open3;
 require Exporter;
 our $VERSION=1.0;
 our @ISA=qw(Exporter);
-our @EXPORT=qw(run run_or_die runtime_error);
+our @EXPORT=qw(run run_or_die runtime_error now);
 
 ##----------------------------------------------------------------------
 
@@ -29,6 +29,12 @@ sub run($;$) {
     my ($output) = <$out>;
     my ($errors) = <$err>;
     return ($output, $errors);
+}
+
+sub now() {
+    my ($time) = run("date +%Y-%m-%dT%H:%M:%S");
+    chomp($time);
+    return $time;
 }
 
 sub runtime_error($$) {

@@ -210,32 +210,68 @@ EOF
 ## is created and registered to a file location.
 ##-----------------------------------------------------------------
 
+## First, use transport-verify-package to make sure this package
+## *can* be verified.  The package will be re-verified (with 
+## transport-verify-package) after it is copied.  If it cannot
+## be verified now, it won't be able to be verified later.
+run_or_die("transport-verify-package $source_dir");
+
 my ($output, $errors);
+my $namespace  = "gov.loc.repository.packagemodeler.events";
 
-($output, $errors) = run(<<"EOF");
-	datadriver createpackage \\
-		-repository $OPTIONS{repository} \\
-		-package    $OPTIONS{package}
+## Create the package with the inventory system
+($output, $errors) = run(<<"EOF") unless $errors;
+    datadriver createpackage \\
+        -repository $OPTIONS{repository} \\
+        -package    $OPTIONS{package}
 EOF
 
+## Note that the package was created
 ($output, $errors) = run(<<"EOF") unless $errors;
-	datadriver createfilelocation \\
-		-repository    $OPTIONS{repository} \\
-		-package       $OPTIONS{package} \\
-		-storagesystem $source_host \\
-		-basepath      $source_dir \\
-		-ismanaged     true \\
-		-islcpackagestructure true
+    datadriver createpackageevent \\
+        -eventtype  $namespace.packge.PackageReceivedEvent \\
+        -repository $OPTIONS{repository} \\
+        -package    $OPTIONS{package} \\
+        -performingagent transport-1.0 \\
+        -message    "Package queued by $script"
 EOF
 
+## Create _this_ file location in the inventory system
+## (necessary to perform an inventory from manifest)
 ($output, $errors) = run(<<"EOF") unless $errors;
-	datadriver inventoryfrommanifest \\
-		-repository    $OPTIONS{repository} \\
-		-package       $OPTIONS{package} \\
-		-storagesystem $source_host \\
-		-basepath      $source_dir \\
-		-requestingagent transport-1.0 \\
-		-createcanonicalfiles true
+    datadriver createfilelocation \\
+        -repository    $OPTIONS{repository} \\
+        -package       $OPTIONS{package} \\
+        -storagesystem $source_host \\
+        -basepath      $source_dir \\
+        -ismanaged     true \\
+        -islcpackagestructure true
+EOF
+
+## Now perform inventory on the source
+my $start = now();
+($output, $errors) = run(<<"EOF") unless $errors;
+    datadriver inventoryfrommanifest \\
+        -repository    $OPTIONS{repository} \\
+        -package       $OPTIONS{package} \\
+        -storagesystem $source_host \\
+        -basepath      $source_dir \\
+        -requestingagent transport-1.0 \\
+        -createcanonicalfiles true
+EOF
+
+## Note that the file location was created
+my $end = now();
+($output, $errors) = run(<<"EOF") unless $errors;
+    datadriver createfilelocationevent \\
+        -eventtype     $namespace.filelocation.VerifyAgainstManifestEvent \\
+        -repository    $OPTIONS{repository} \\
+        -package       $OPTIONS{package} \\
+        -storagesystem $source_host \\
+        -basepath      $source_dir \\
+        -performingagent transport-1.0 \\
+        -eventstart    $start \\
+        -eventend      $end 
 EOF
 
 if ($errors) {

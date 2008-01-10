@@ -14,7 +14,8 @@ use Transport::Events;
 use Transport::Tickets;
 
 ## Before we begin, make sure no other copy agent processes are running.
-open(my $fh, ">/tmp/transport-copy-agent.lock");
+my $lockfile = "/tmp/transport-copy-agent.lock";
+open(my $fh, ">");
 unless (flock($fh, LOCK_EX | LOCK_NB)) {
     close($fh);
     my $name = basename $0;
@@ -99,32 +100,70 @@ sub two_step_copy($) {
 
 ##----------------------------------------------------------------------
 
-sub register($) {
-    my $ticket = shift;
+sub register($$$) {
+    my ($ticket, $start, $end) = @_;
 	my $old_cwd = cwd();
+    my $end_time = now();
+    my $namespace  = "gov.loc.repository.packagemodeler.events";
+
 	chdir($ticket->{dest_dir});
 
+    ## Register the file location
     do_task($hostname, $system, "location registration", 
 		$ticket->{id}, <<"    EOF");
-		datadriver createfilelocation \\
-			-repository    $ticket->{repo}\\
-			-package       $ticket->{package}\\
-			-storagesystem $ticket->{dest_host} \\
-			-basepath      $ticket->{dest_dir} \\
-			-ismanaged true \\
-			-islcpackagestructure true
+        datadriver createfilelocation \\
+            -repository    $ticket->{repo}\\
+            -package       $ticket->{package}\\
+            -storagesystem $ticket->{dest_host} \\
+            -basepath      $ticket->{dest_dir} \\
+            -ismanaged true \\
+            -islcpackagestructure true
     EOF
 
+    ## Note that this file location was from a copy
     do_task($hostname, $system, "location registration", 
 		$ticket->{id}, <<"    EOF");
-		datadriver inventoryfrommanifest \\
-			-repository    $ticket->{repo}\\
-			-package       $ticket->{package}\\
-			-storagesystem $ticket->{dest_host} \\
-			-basepath      $ticket->{dest_dir} \\
-			-requestingagent transport-1.0 \\
-			-createcanonicalfiles false
+        datadriver createfilelocationevent \\
+            -eventtype           $namespace.filelocation.FileCopyEvent \\
+            -repository          $ticket->{repo} \\
+            -package             $ticket->{package} \\
+            -sourcestoragesystem $ticket->{source_host} \\
+            -sourcebasepath      $ticket->{source_dir} \\
+            -storagesystem       $ticket->{dest_host} \\
+            -basepath            $ticket->{dest_dir} \\
+            -performingagent     transport-1.0 \\
+            -eventstart          $start \\
+            -eventend            $end
     EOF
+
+    ## Re-inventory the package in the new location
+    $start = now();
+    do_task($hostname, $system, "location registration", 
+		$ticket->{id}, <<"    EOF");
+        datadriver inventoryfrommanifest \\
+            -repository    $ticket->{repo}\\
+            -package       $ticket->{package}\\
+            -storagesystem $ticket->{dest_host} \\
+            -basepath      $ticket->{dest_dir} \\
+            -requestingagent transport-1.0 \\
+            -createcanonicalfiles false
+    EOF
+
+    ## Note the verification with an event
+    $end=now();
+    do_task($hostname, $system, "location registration", 
+		$ticket->{id}, <<"    EOF");
+        datadriver createfilelocationevent \\
+            -eventtype     $namespace.filelocation.VerifyAgainstManifestEvent \\
+            -repository    $ticket->{repo} \\
+            -package       $ticket->{package} \\
+            -storagesystem $ticket->{dest_host} \\
+            -basepath      $ticket->{dest_dir} \\
+            -performingagent transport-1.0 \\
+            -eventstart    $start \\
+            -eventend      $end 
+    EOF
+
 
 	chdir($old_cwd);
 }
@@ -145,6 +184,8 @@ unless ($ticket) {
 ## from here on.
 track_ticket_failures(1);
 
+my $start = now();
+
 $ticket->{workspace} ||= "";
 start_ticket($ticket->{id});
 
@@ -154,7 +195,11 @@ if ($ticket->{workspace}) {
     one_step_copy($ticket);
 }
 
-register($ticket);
+register($ticket, $start, now());
 
 finish_ticket($ticket->{id});
+
+flock($fh, LOCK_UN);
+close($fh);
+unlink($fh);
 
