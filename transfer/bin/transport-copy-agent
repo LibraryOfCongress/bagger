@@ -23,7 +23,6 @@ unless (flock($fh, LOCK_EX | LOCK_NB)) {
     exit(0);
 }
 
-
 ##----------------------------------------------------------------------
 
 my $system = shift(@ARGV);
@@ -35,9 +34,13 @@ chomp($hostname = $system)  unless $hostname;
 
 sub make_copy($$$$$$) {
     my ($event, $ticket, $src_host, $src, $dst_host, $dst) = @_;
-    
-    my $cmd = "$src_host tar zcf - -C $src . | $dst_host tar zxvf - -C $dst";  
-    do_task($hostname, $system, $event, $ticket, $cmd);
+
+	my $source = "(cd $src; tar cf - .)";
+	my $dest   = "(cd $dst; tar xvf - )";
+
+	$source = "$src_host \"$source\"" if $src_host;
+	$dest   = "$dst_host \"$dest\""   if $dst_host;
+    do_task($hostname, $system, $event, $ticket, "$source | $dest");
 }
 
 sub check_copy($$) {
