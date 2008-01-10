@@ -36,7 +36,7 @@ chomp($hostname = $system)  unless $hostname;
 sub make_copy($$$$$$) {
     my ($event, $ticket, $src_host, $src, $dst_host, $dst) = @_;
     
-    my $cmd = "$src_host tar czf - -C $src . | $dst_host tar zxvf - -C $dst";  
+    my $cmd = "$src_host tar cf - -C $src . | $dst_host tar xvf - -C $dst";  
     do_task($hostname, $system, $event, $ticket, $cmd);
 }
 
