@@ -3,6 +3,7 @@ create schema ndnp;
 create table ndnp.batch (
 	pkey int8 not null, 
 	awardee_key int8, 
+    awardphase_key int8,    
 	primary key (pkey)
 );
 
@@ -32,8 +33,16 @@ create table ndnp.reel (
 	unique (reelnumber)
 );
 
+create table ndnp.awardphase (
+    pkey int8 not null,
+    name varchar(255) not null,
+    primary key (pkey), 
+    unique (name)
+);
+
 alter table ndnp.batch add constraint FK592D73A37D75616 foreign key (pkey) references core.package;
 alter table ndnp.batch add constraint FK592D73AACF8C8E6 foreign key (awardee_key) references agent.agent;
+alter table ndnp.batch add constraint FK592D73AE9B33C6E foreign key (awardphase_key) references ndnp.awardphase;
 alter table ndnp.batch_lccn add constraint FKF001EE0711BAB3D6 foreign key (lccn_key) references ndnp.lccn;
 alter table ndnp.batch_lccn add constraint FKF001EE07446A83EE foreign key (package_key) references ndnp.batch;
 alter table ndnp.batch_reel add constraint FKF004AFFF446A83EE foreign key (package_key) references ndnp.batch;
