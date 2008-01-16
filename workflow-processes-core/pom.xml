@@ -47,7 +47,15 @@
 			        </configuration>
 	         </execution>
 	       </executions>
-      </plugin>    
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/bin.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>          
     </plugins>
   </build>
   <dependencies>
