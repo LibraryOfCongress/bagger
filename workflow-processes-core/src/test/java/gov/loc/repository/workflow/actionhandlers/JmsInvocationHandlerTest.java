@@ -65,7 +65,7 @@ public class JmsInvocationHandlerTest {
 		ConfigurationHelper.getConfiguration().addProperty("none.TestComponent.queue", QUEUE_1);
 		TestComponent testComponent = actionHandler.createObject(TestComponent.class);
 		assertTrue(Proxy.getInvocationHandler(testComponent) instanceof JmsInvocationHandler);
-		testComponent.test("foo", true);
+		testComponent.test("foo", true, 1L);
 		
 		Message message = consumer.receive(500);
 		assertNotNull(message);
@@ -76,6 +76,7 @@ public class JmsInvocationHandlerTest {
 		MapMessage mapMessage = (MapMessage)message;
 		assertEquals("foo", mapMessage.getString("message"));
 		assertTrue(mapMessage.getBoolean("istrue"));
+		assertEquals(1L, mapMessage.getLong("key"));
 		
 	}
 

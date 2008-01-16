@@ -106,9 +106,13 @@ public class JmsInvocationHandler implements InvocationHandler {
 				{
 					message.setBoolean(paramName, (Boolean)args[i]);
 				}
+				else if (paramType.equals(Long.class) || paramType.equals(Long.TYPE))
+				{
+					message.setLong(paramName, (Long)args[i]);
+				}				
 				else
 				{
-					throw new Exception("Attempt to pass a parameter other than a boolean or string");
+					throw new Exception("Attempt to pass a parameter other than a boolean, long, or string");
 				}
 				
 			}
