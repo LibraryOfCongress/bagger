@@ -6,6 +6,11 @@
   <packaging>pom</packaging>
   <name>Master POM for transfer</name>
   <version>1.1-SNAPSHOT</version>
+  <scm>
+        <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-maven</connection>
+        <tag>HEAD</tag>
+        <url>https://rdc.lctl.gov/trac/transfer/browser</url>
+  </scm>
   <properties>
   	<com.h2database.h2.version>1.0.62</com.h2database.h2.version>
   	<commons-cli.version>1.1</commons-cli.version>
