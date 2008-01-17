@@ -115,7 +115,7 @@ public class CommandLineDataDriver {
 				OPT_MESSAGE));
 		System.out.println("To record a VerifyAgainstManifest event, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1} {2} -{3} -{4} -{5} -{6} -{7} -{8} -{9} -{10} -{11} -{12}", 
-				ACTION_PACKAGE_EVENT,
+				ACTION_FILELOCATION_EVENT,
 				OPT_EVENT_TYPE, VerifyAgainstManifestEvent.class.getName(),
 				OPT_REPOSITORY,
 				OPT_PACKAGE,
@@ -129,7 +129,7 @@ public class CommandLineDataDriver {
 				OPT_MESSAGE));
 		System.out.println("To record a FileLocationAnomaly event, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1} {2} -{3} -{4} -{5} -{6} -{7} -{8} -{9} -{10} -{11} -{12}", 
-				ACTION_PACKAGE_EVENT,
+				ACTION_FILELOCATION_EVENT,
 				OPT_EVENT_TYPE, FileLocationAnomalyEvent.class.getName(),
 				OPT_REPOSITORY,
 				OPT_PACKAGE,
@@ -143,7 +143,7 @@ public class CommandLineDataDriver {
 				OPT_MESSAGE));
 		System.out.println("To record a FileCopy event, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1} {2} -{3} -{4} -{5} -{6} -{7} -{8} -{9} -{10} -{11} -{12} -{13} -{14}", 
-				ACTION_PACKAGE_EVENT,
+				ACTION_FILELOCATION_EVENT,
 				OPT_EVENT_TYPE, FileCopyEvent.class.getName(),
 				OPT_REPOSITORY,
 				OPT_PACKAGE,
@@ -159,7 +159,7 @@ public class CommandLineDataDriver {
 				OPT_MESSAGE));
 		System.out.println("To record a FileDelete event, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1} {2} -{3} -{4} -{5} -{6} -{7} -{8} -{9} -{10} -{11} -{12}", 
-				ACTION_PACKAGE_EVENT,
+				ACTION_FILELOCATION_EVENT,
 				OPT_EVENT_TYPE, FileDeleteEvent.class.getName(),
 				OPT_REPOSITORY,
 				OPT_PACKAGE,
@@ -197,7 +197,7 @@ public class CommandLineDataDriver {
 		options.addOption(OptionBuilder.withArgName(OPT_IS_MANAGED_TYPE).hasArg().withDescription(OPT_IS_MANAGED_DESCRIPTION).create(OPT_IS_MANAGED));		
 		options.addOption(OptionBuilder.withArgName(OPT_MESSAGE_TYPE).hasArgs().withDescription(OPT_MESSAGE_DESCRIPTION).create(OPT_MESSAGE));
 		options.addOption(OptionBuilder.withArgName(OPT_PACKAGE_TYPE).hasArg().withDescription(OPT_PACKAGE_DESCRIPTION).create(OPT_PACKAGE));
-		options.addOption(OptionBuilder.withArgName(OPT_PACKAGE_CLASS_DESCRIPTION).hasArg().withDescription(OPT_PACKAGE_CLASS_DESCRIPTION).create(OPT_PACKAGE_CLASS));		
+		options.addOption(OptionBuilder.withArgName(OPT_PACKAGE_CLASS_TYPE).hasArg().withDescription(OPT_PACKAGE_CLASS_DESCRIPTION).create(OPT_PACKAGE_CLASS));		
 		options.addOption(OptionBuilder.withArgName(OPT_PERFORMING_AGENT_TYPE).hasArg().withDescription(OPT_PERFORMING_AGENT_DESCRIPTION).create(OPT_PERFORMING_AGENT));
 		options.addOption(OptionBuilder.withArgName(OPT_REPOSITORY_TYPE).hasArg().withDescription(OPT_REPOSITORY_DESCRIPTION).create(OPT_REPOSITORY));
 		options.addOption(OptionBuilder.withArgName(OPT_REQUESTING_AGENT_TYPE).hasArg().withDescription(OPT_REQUESTING_AGENT_DESCRIPTION).create(OPT_REQUESTING_AGENT));
