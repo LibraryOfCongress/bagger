@@ -9,6 +9,11 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>transfer-common</artifactId>
   <name>Transfer Common</name>
+  <scm>
+    <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-common</connection>
+    <tag>HEAD</tag>
+    <url>https://rdc.lctl.gov/trac/transfer/browser</url>
+  </scm>
   <version>${loc-repository.transfer-common.version}</version>
   <dependencies>
     <dependency>
