@@ -96,7 +96,7 @@ public class JmsInvocationHandler implements InvocationHandler {
 				{
 					throw new Exception("MapParameter annotation is missing for param " + i);
 				}
-				log.debug(MessageFormat.format("Parameter type is {0}.  Parameter name is {0}", paramType.getName(), paramName));
+				log.debug(MessageFormat.format("Parameter type is {0}.  Parameter name is {1}", paramType.getName(), paramName));
 				
 				if (paramType.equals(String.class))
 				{
