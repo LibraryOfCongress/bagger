@@ -147,25 +147,25 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>jmock</groupId>
+      <groupId>org.jmock</groupId>
       <artifactId>jmock</artifactId>
       <version>${jmock.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>jmock</groupId>
+      <groupId>org.jmock</groupId>
       <artifactId>jmock-junit4</artifactId>
       <version>${jmock.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>hamcrest</groupId>
+      <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-api</artifactId>
       <version>${hamcrest.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>hamcrest</groupId>
+      <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-library</artifactId>
       <version>${hamcrest.version}</version>
       <scope>test</scope>
