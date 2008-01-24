@@ -34,6 +34,7 @@
   	<loc-repository.transfer-components.core.version>1.1-SNAPSHOT</loc-repository.transfer-components.core.version>
   	<loc-repository.transfer-components.ndnp.version>1.1-SNAPSHOT</loc-repository.transfer-components.ndnp.version>
     <loc-repository.transfer-console.core.version>1.1-SNAPSHOT</loc-repository.transfer-console.core.version>
+    <loc-repository.transfer-console.ndnp.version>1.1-SNAPSHOT</loc-repository.transfer-console.ndnp.version>
   	<loc-repository.workflow-processes.core.version>1.1-SNAPSHOT</loc-repository.workflow-processes.core.version>
   	<loc-repository.workflow-processes.ndnp.version>1.1-SNAPSHOT</loc-repository.workflow-processes.ndnp.version>    
    	<log4j.version>1.2.14</log4j.version>
@@ -47,6 +48,13 @@
     <postgresql.postgresql.version>8.1-407.jdbc3</postgresql.postgresql.version>  	
   </properties>
   <build>
+	<extensions>
+        <extension>
+          <groupId>org.apache.maven.wagon</groupId>
+          <artifactId>wagon-webdav</artifactId>
+          <version>1.0-beta-2</version>
+        </extension>
+      </extensions>  
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -79,51 +87,96 @@
     </plugins>    
   </build>
   <repositories>
+  <!-- 
     <repository>
       <id>rdc-repo</id>
       <name>RDC Maven 2 Repository</name>
       <url>http://beryllium.rdc.lctl.gov/maven2</url>
     </repository>
-    <repository>
-      <id>apache-snapshot</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-    </repository>
+	-->    
 	<repository>
-      <id>Codehaus Snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
+      <id>rdc-snapshots</id>
+      <name>RDC snapshots</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
-    </repository>                
-    <repository>
-      <id>h2-repo</id>
-      <name>H2 Database Repository</name>
-      <url>http://hsql.sourceforge.net/m2-repo/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>    
-  </repositories>
-    <pluginRepositories>
-    	<!-- This gives us the latest version of plugins -->
-        <pluginRepository>
-            <id>maven.shapshot</id>
-            <name>Maven snapshot repository</name>
-            <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-        </pluginRepository>
-    <pluginRepository>
-      <id>Codehaus Snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <snapshots>
+    
+	<repository>
+      <id>rdc-releases</id>
+      <name>RDC releases</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-releases/</url>
+      <releases>
         <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
       </snapshots>
+    </repository>    
+
+	<repository>
+      <id>local-releases</id>
+      <name>Local releases</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/local-releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>    
+    
+    <repository>
+      <id>proxy-releases</id>
+      <name>Proxy releases</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>proxy-snapshots</id>
+      <name>Proxy snapshots</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-snapshots/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>proxy-releases</id>
+      <name>Proxy releases</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </pluginRepository>
-        
-    </pluginRepositories>  
+    <pluginRepository>
+      <id>proxy-snapshots</id>
+      <name>Proxy snapshots</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>        
+  </pluginRepositories>  
   
   <dependencies>
     <dependency>
@@ -144,5 +197,17 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <distributionManagement>
+    <repository>
+      <id>rdc-releases</id>
+      <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-releases/</url>
+    </repository>
+	<snapshotRepository>
+      <id>rdc-snapshots</id>
+      <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
+    </snapshotRepository>    
+  </distributionManagement>
+  
 </project>
 
