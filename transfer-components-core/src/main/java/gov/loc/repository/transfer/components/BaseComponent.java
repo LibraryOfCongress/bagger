@@ -3,7 +3,7 @@ package gov.loc.repository.transfer.components;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
-import gov.loc.repository.transfer.components.utilities.ConfigurationHelper;
+import gov.loc.repository.utilities.ConfigurationFactory;
 
 import java.text.MessageFormat;
 
@@ -22,9 +22,9 @@ public abstract class BaseComponent implements ModelerAware {
 	protected PackageModelDAO dao;	
 	
 
-	protected Configuration getConfiguration()
+	protected Configuration getConfiguration() throws Exception
 	{
-		return ConfigurationHelper.getConfiguration();
+		return ConfigurationFactory.getConfiguration(ComponentConstants.PROPERTIES_NAME);
 	}
 	
 	protected Log getLog()

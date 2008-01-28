@@ -15,8 +15,8 @@ import gov.loc.repository.packagemodeler.DaoAwareModelerFactory;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.packagemodeler.impl.DaoAwareModelerFactoryImpl;
-import gov.loc.repository.transfer.components.utilities.ConfigurationHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
+import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.utilities.ResourceHelper;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
@@ -102,9 +102,9 @@ public abstract class AbstractComponentTest {
 		return ResourceHelper.getFile(this.getClass(), filename);
 	}
 	
-	protected Configuration getConfiguration()
+	protected Configuration getConfiguration() throws Exception
 	{
-		return ConfigurationHelper.getConfiguration();
+		return ConfigurationFactory.getConfiguration(ComponentConstants.PROPERTIES_NAME);
 	}
 	
 	protected String getReportingAgent() throws Exception

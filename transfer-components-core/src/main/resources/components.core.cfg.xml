@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-  <properties fileName="components.core.local.properties" optional="true" />
-  <properties fileName="components.core.properties"/>
-</configuration>
