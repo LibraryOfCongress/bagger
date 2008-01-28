@@ -14,13 +14,15 @@ import javax.jms.MessageListener;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import gov.loc.repository.utilities.ConfigurationFactory;
+import gov.loc.repository.workflow.WorkflowConstants;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
 import gov.loc.repository.workflow.continuations.impl.SimpleContinuationControllerImpl;
 import gov.loc.repository.workflow.listeners.JmsCompletedJobListener;
-import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
 public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsCompletedJobListener {
 	private static final Log log = LogFactory.getLog(ActiveMQJmsCompletedJobListener.class);
@@ -45,15 +47,18 @@ public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsComp
 		
 		this.stop();
 		
+		Configuration configuration = ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
+
+		
 		//Setup a listener
 		//Create the connection
-		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(ConfigurationHelper.getConfiguration().getString("jms.connection"));
+		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(configuration.getString("jms.connection"));
 		connectionFactory.setCloseTimeout(2000);
 		connection = connectionFactory.createConnection();
 		
 		//Create the session
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createQueue(ConfigurationHelper.getConfiguration().getString("jms.replytoqueue"));
+		Destination destination = session.createQueue(configuration.getString("jms.replytoqueue"));
 		
 		//Create the consumer
 		consumer = session.createConsumer(destination);

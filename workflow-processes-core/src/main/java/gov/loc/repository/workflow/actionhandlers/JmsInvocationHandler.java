@@ -2,7 +2,8 @@ package gov.loc.repository.workflow.actionhandlers;
 import gov.loc.repository.transfer.components.Component;
 import gov.loc.repository.transfer.components.annotations.JobType;
 import gov.loc.repository.transfer.components.annotations.MapParameter;
-import gov.loc.repository.workflow.utilities.ConfigurationHelper;
+import gov.loc.repository.utilities.ConfigurationFactory;
+import gov.loc.repository.workflow.WorkflowConstants;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -17,6 +18,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,10 +52,12 @@ public class JmsInvocationHandler implements InvocationHandler {
 		}
 		
 		Connection connection = null;
+		Configuration configuration = ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
+
 		try
 		{
 			//Create the connection
-			String connectionString = ConfigurationHelper.getConfiguration().getString(CONNECTION_STRING_KEY);
+			String connectionString = configuration.getString(CONNECTION_STRING_KEY);
 			if (connectionString == null)
 			{
 				throw new Exception(CONNECTION_STRING_KEY + " is missing from configuration");
@@ -65,7 +69,7 @@ public class JmsInvocationHandler implements InvocationHandler {
 			//Create the session
 			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			Destination destination = session.createQueue(queueName);
-			String replyToQueueName = ConfigurationHelper.getConfiguration().getString(REPLY_TO_QUEUENAME);
+			String replyToQueueName = configuration.getString(REPLY_TO_QUEUENAME);
 			if (replyToQueueName == null)
 			{
 				throw new Exception(REPLY_TO_QUEUENAME + " is missing from configuration");

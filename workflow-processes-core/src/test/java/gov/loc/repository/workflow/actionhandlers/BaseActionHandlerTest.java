@@ -3,13 +3,16 @@ package gov.loc.repository.workflow.actionhandlers;
 import static org.junit.Assert.*;
 
 import gov.loc.repository.transfer.components.test.TestComponent;
-import gov.loc.repository.workflow.utilities.ConfigurationHelper;
+import gov.loc.repository.utilities.ConfigurationFactory;
+import gov.loc.repository.workflow.WorkflowConstants;
 
 import java.io.FileFilter;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.Configuration;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.jbpm.graph.def.ProcessDefinition;
@@ -19,7 +22,14 @@ import org.jbpm.graph.exe.ProcessInstance;
 public class BaseActionHandlerTest {
 
 	DummyActionHandler actionHandler= new DummyActionHandler();
-		
+	Configuration configuration;
+	
+	@Before
+	public void setup() throws Exception
+	{
+		configuration = ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
+	}
+	
 	@Test
 	public void testCreateObject() throws Exception {
 		String aString = actionHandler.createObject(String.class);
@@ -33,7 +43,7 @@ public class BaseActionHandlerTest {
 	
 	@Test
 	public void testCreateFactoryObject() throws Exception {
-		ConfigurationHelper.getConfiguration().addProperty("none.String.factorymethod", "gov.loc.repository.workflow.actionhandlers.BaseActionHandlerTest.createAString");
+		configuration.addProperty("none.String.factorymethod", "gov.loc.repository.workflow.actionhandlers.BaseActionHandlerTest.createAString");
 		String aString = actionHandler.createObject(String.class);
 		assertEquals("astring", aString);
 	}
@@ -46,7 +56,7 @@ public class BaseActionHandlerTest {
 	@Test(expected=Exception.class)
 	public void testCreateBadJmsProxyObject() throws Exception {
 		//FileFilter is just a random interface, but does not implement Component
-		ConfigurationHelper.getConfiguration().addProperty("none.FileFilter.queue", "testqueue");
+		configuration.addProperty("none.FileFilter.queue", "testqueue");
 		FileFilter fileFilter = actionHandler.createObject(FileFilter.class);
 		assertTrue(Proxy.getInvocationHandler(fileFilter) instanceof JmsInvocationHandler);
 		fileFilter.accept(null);
@@ -54,7 +64,7 @@ public class BaseActionHandlerTest {
 
 	@Test
 	public void testCreateJmsProxyObject() throws Exception {
-		ConfigurationHelper.getConfiguration().addProperty("none.TestComponent.queue", "testqueue");
+		configuration.addProperty("none.TestComponent.queue", "testqueue");
 		TestComponent testComponent = actionHandler.createObject(TestComponent.class);
 		assertTrue(Proxy.getInvocationHandler(testComponent) instanceof JmsInvocationHandler);
 		//testComponent.test("foo", true);

@@ -13,10 +13,11 @@ import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.packagemodeler.impl.ModelerFactoryImpl;
+import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
+import gov.loc.repository.workflow.WorkflowConstants;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
-import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -91,9 +92,9 @@ public abstract class BaseActionHandler implements ActionHandler
 			
 	}
 
-	protected Configuration getConfiguration()
+	protected Configuration getConfiguration() throws Exception
 	{
-		return ConfigurationHelper.getConfiguration();
+		return ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
 	}
 	
 	/**

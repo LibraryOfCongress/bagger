@@ -4,9 +4,11 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 
+import gov.loc.repository.utilities.ConfigurationFactory;
+import gov.loc.repository.workflow.WorkflowConstants;
 import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
-import gov.loc.repository.workflow.utilities.ConfigurationHelper;
 
+import org.apache.commons.configuration.Configuration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ActionHandler;
 import org.jbpm.graph.def.Node;
@@ -18,6 +20,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,7 +31,13 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	static String tokenInstanceId;
 	private long processInstanceId;
 	private JbpmContext jbpmContext;
+	Configuration configuration;
 	
+	@Before
+	public void setup() throws Exception
+	{
+		configuration = ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
+	}
 	
 	@Test
 	public void executeExceptionInSynActionHandler() throws Exception
@@ -65,7 +74,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 			jbpmContext.close();
 		}
 
-		ConfigurationHelper.getConfiguration().addProperty("test1.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		configuration.addProperty("test1.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
 		
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -117,7 +126,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 			jbpmContext.close();
 		}
 
-		ConfigurationHelper.getConfiguration().addProperty("test2.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		configuration.addProperty("test2.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
 				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -184,7 +193,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 			jbpmContext.close();
 		}
 
-		ConfigurationHelper.getConfiguration().addProperty("test3.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		configuration.addProperty("test3.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
 				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -238,7 +247,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 			jbpmContext.close();
 		}
 
-		ConfigurationHelper.getConfiguration().addProperty("test4.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		configuration.addProperty("test4.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
 				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -313,7 +322,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 			jbpmContext.close();
 		}
 
-		ConfigurationHelper.getConfiguration().addProperty("test5.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		configuration.addProperty("test5.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
 				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -369,7 +378,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 			jbpmContext.close();
 		}
 
-		ConfigurationHelper.getConfiguration().addProperty("test6.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		configuration.addProperty("test6.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
 				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -440,7 +449,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 			jbpmContext.close();
 		}
 
-		ConfigurationHelper.getConfiguration().addProperty("test7.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		configuration.addProperty("test7.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
 				
 	    jbpmContext = jbpmConfiguration.createJbpmContext();		
 		try
@@ -501,7 +510,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 			jbpmContext.close();
 		}
 	    
-		ConfigurationHelper.getConfiguration().addProperty("test8.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		configuration.addProperty("test8.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
 				
 	    jbpmContext = jbpmConfiguration.createJbpmContext();		
 		try
@@ -577,7 +586,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 			jbpmContext.close();
 		}
 	    
-		ConfigurationHelper.getConfiguration().addProperty("test9.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
+		configuration.addProperty("test9.troubleshoot.ActionHandler.factorymethod", "gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler");
 				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try

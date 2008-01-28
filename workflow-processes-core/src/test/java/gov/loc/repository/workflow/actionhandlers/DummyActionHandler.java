@@ -65,7 +65,7 @@ public class DummyActionHandler extends BaseActionHandler
 		return "test";
 	}
 	
-	public String getTestProperty()
+	public String getTestProperty() throws Exception
 	{
 		return this.getConfiguration().getString("baseactionhandler.test");
 	}

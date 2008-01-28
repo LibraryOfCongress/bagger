@@ -2,9 +2,6 @@ package gov.loc.repository.workflow.decisionhandlers;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.DefaultConfigurationBuilder;
-import org.apache.commons.configuration.ConfigurationException;
 
 import org.hibernate.Session;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -12,44 +9,21 @@ import org.jbpm.graph.node.DecisionHandler;
 
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
+import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
+import gov.loc.repository.workflow.WorkflowConstants;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.HashMap;
 import java.text.MessageFormat;
-import java.net.URL;
 import java.util.Calendar;
 
 public abstract class BaseDecisionHandler implements DecisionHandler
 {
 	private static final Log log = LogFactory.getLog(BaseDecisionHandler.class);
-	protected static Configuration configuration;
-	static
-	{
-		try
-		{
-			DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
-			URL url = BaseDecisionHandler.class.getClassLoader().getResource("workflow.core.cfg.xml");
-			if (url != null)
-			{
-				log.debug("Loading configuration: " + url.toString());
-			}
-			else
-			{
-				log.error("workflow.cfg.xml is missing.");
-			}
-			builder.setURL(url);
-			configuration = builder.getConfiguration(true);
-		}
-		catch(ConfigurationException ex)
-		{
-			log.error("Error loading configuration", ex);
-			throw new RuntimeException();
-		}
-	}
 	
 	//protected ExecutionContext executionContext; 
 	protected HandlerHelper helper;
@@ -74,7 +48,7 @@ public abstract class BaseDecisionHandler implements DecisionHandler
 			dao.setSession(session);			
 
 			this.executionContext = executionContext;
-			this.helper = new HandlerHelper(executionContext, configuration, this);
+			this.helper = new HandlerHelper(executionContext, ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME), this);
 			this.reportingLog = LogFactory.getLog(this.getLoggerName());		
 			if (this.executionContext != null)
 			{

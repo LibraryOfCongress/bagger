@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-  <properties fileName="workflow.core.local.properties" optional="true" />  
-  <properties fileName="workflow.core.properties"/>
-</configuration>

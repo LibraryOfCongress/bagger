@@ -18,10 +18,11 @@ import org.junit.Before;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 
+import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
-import gov.loc.repository.workflow.utilities.ConfigurationHelper;
+import gov.loc.repository.workflow.WorkflowConstants;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 
 /**
@@ -122,8 +123,8 @@ public abstract class AbstractProcessDefinitionTest {
 		
 	}
 	
-	protected Configuration getConfiguration()
+	protected Configuration getConfiguration() throws Exception
 	{
-		return ConfigurationHelper.getConfiguration();
+		return ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
 	}
 }
