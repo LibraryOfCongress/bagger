@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import gov.loc.repository.packagemodeler.ModelerFactory;
+import gov.loc.repository.packagemodeler.PackageModelerConstants;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
@@ -22,13 +23,13 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
+import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.utilities.EnhancedHashMap;
 import gov.loc.repository.utilities.FilenameHelper;
 import gov.loc.repository.utilities.ManifestReader;
 import gov.loc.repository.utilities.PackageHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
-import gov.loc.repository.packagemodeler.ConfigurationHelper;
 
 import org.hibernate.Session;
 import org.joda.time.format.ISODateTimeFormat;
@@ -351,7 +352,7 @@ public class MapDataDriver {
 	
 	private Agent getReportingAgent() throws Exception
 	{
-		String reportingAgent = ConfigurationHelper.getConfiguration().getString(REPORTING_AGENT_KEY);
+		String reportingAgent = ConfigurationFactory.getConfiguration(PackageModelerConstants.PROPERTIES_NAME).getString(REPORTING_AGENT_KEY);
 		if (reportingAgent == null)
 		{
 			throw new Exception(MessageFormat.format("Property {0} is missing", REPORTING_AGENT_KEY));

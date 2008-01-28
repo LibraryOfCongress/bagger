@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-  <system />
-  <properties fileName="packagemodeler.core.local.properties" optional="true"/>
-  <properties fileName="packagemodeler.core.properties"/>
-</configuration>

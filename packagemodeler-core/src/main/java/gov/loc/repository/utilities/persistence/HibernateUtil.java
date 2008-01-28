@@ -1,6 +1,5 @@
 package gov.loc.repository.utilities.persistence;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
@@ -10,9 +9,10 @@ import org.hibernate.connection.ConnectionProviderFactory;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 
-import gov.loc.repository.packagemodeler.ConfigurationHelper;
+import gov.loc.repository.utilities.ConfigurationFactory;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -20,6 +20,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -32,38 +33,48 @@ public class HibernateUtil {
 	private static Map<DatabaseRole,AnnotationConfiguration> hibernateConfigurationMap = new HashMap<DatabaseRole, AnnotationConfiguration>();
 	
 	private static final Log log = LogFactory.getLog(HibernateUtil.class);
+
+	public static final String PROPS_RESOURCE = "packagemodeler.hibernate.properties";
 	
-	private static final String CFG_KEY = "hibernate.cfg.xml";
-	private static final String PROPS_KEY = "hibernate.properties";
 	private static final String CREATE_SCHEMA_SQL = "create schema {0} authorization dba;";
 	
 	private static AnnotationConfiguration getConfiguration(DatabaseRole databaseRole) throws ExceptionInInitializerError
 	{
 		if (! hibernateConfigurationMap.containsKey(databaseRole))
 		{
-			//Load configuration for modelers
-			Configuration modelerConfiguration = ConfigurationHelper.getConfiguration();
 			AnnotationConfiguration hibernateConfiguration = new AnnotationConfiguration();
-			if (! modelerConfiguration.containsKey(CFG_KEY))
-			{				
-				throw new ExceptionInInitializerError("Configuration does not contain key " + CFG_KEY);
-			}
-			String cfg = modelerConfiguration.getString(CFG_KEY);
-			log.debug("hibernate.cfg.xml has value " + cfg);
-			hibernateConfiguration.configure(cfg);
-			String propertyKey = databaseRole.toString().toLowerCase() + "." + PROPS_KEY;
-			String props = modelerConfiguration.getString(propertyKey);
-			if (props == null)
+			//Find packagemodeler.*.hibernate.cfg.xml
+			List<URL> resourceList;
+			try
 			{
-				log.debug(MessageFormat.format("Propery with key {0} not found.  Defaulting to key {1}.", propertyKey, PROPS_KEY));
-				props = modelerConfiguration.getString(PROPS_KEY);
+				resourceList = ConfigurationFactory.findWildcardResourceList("packagemodeler.*.hibernate.cfg.xml");
 			}
-			
-			log.debug("hibernate.properties is " + props);
+			catch(Exception ex)
+			{
+				throw new ExceptionInInitializerError(ex);
+			}
+			if (resourceList.isEmpty())
+			{
+				throw new ExceptionInInitializerError("No hibernate.cfg.xml files found");
+			}
+			for(URL resource : resourceList)
+			{
+				log.debug("Using hibernate.cfg.xml: " + resource.toString());
+				hibernateConfiguration.configure(resource);
+			}
+
+			//Find packagemodeler.hibernate.properties
+			//First try databaserole.packagemodeler.hibernate.properties
+			String resourceString = databaseRole.toString().toLowerCase() + "." + PROPS_RESOURCE;
+			if (HibernateUtil.class.getClassLoader().getResource(resourceString) == null)
+			{
+				resourceString = PROPS_RESOURCE;
+			}
+			log.debug("Using hibernate.properties: " + resourceString);
 			Properties properties = new Properties();
 			try
 			{
-				properties.load(HibernateUtil.class.getClassLoader().getResourceAsStream(props));
+				properties.load(HibernateUtil.class.getClassLoader().getResourceAsStream(resourceString));
 			}
 			catch(IOException ex)
 			{
