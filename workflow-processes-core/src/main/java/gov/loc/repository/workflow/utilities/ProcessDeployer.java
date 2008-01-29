@@ -70,12 +70,10 @@ public class ProcessDeployer {
 					ProcessDefinition processDefinition;
 					if(options.getOption(OPT_PROCESS_RESOURCE).getValue() != null)
 					{
-						System.out.println("FOO");
 						processDefinition = ProcessDefinition.parseXmlResource(options.getOption(OPT_PROCESS_RESOURCE).getValue());
 					}
 					else if (options.getOption(OPT_PROCESS_FILE).getValue() != null)
 					{
-						System.out.println("BAR");
 						processDefinition = ProcessDefinition.parseXmlInputStream(new FileInputStream(options.getOption(OPT_PROCESS_FILE).getValue()));
 					}
 					else
