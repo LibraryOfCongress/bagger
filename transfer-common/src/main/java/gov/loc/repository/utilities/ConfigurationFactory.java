@@ -108,17 +108,21 @@ public class ConfigurationFactory {
 		Enumeration<URL> jarResourceEnum = classLoader.getResources("META-INF");		
 		while(jarResourceEnum.hasMoreElements())
 		{
-			JarURLConnection conn = (JarURLConnection)jarResourceEnum.nextElement().openConnection();
-			JarFile jarFile = conn.getJarFile();
-			Enumeration<JarEntry> jarEntryEnum = jarFile.entries();
-			while(jarEntryEnum.hasMoreElements())
+			URL url = jarResourceEnum.nextElement();
+			if (url.toExternalForm().startsWith("jar:"))
 			{
-				JarEntry jarEntry = jarEntryEnum.nextElement();			
-				if (jarEntry.getName().indexOf('/') == -1)
+				JarURLConnection conn = (JarURLConnection)url.openConnection();
+				JarFile jarFile = conn.getJarFile();
+				Enumeration<JarEntry> jarEntryEnum = jarFile.entries();
+				while(jarEntryEnum.hasMoreElements())
 				{
-					
-					String entryURLString = conn.getURL().toExternalForm().substring(0, conn.getURL().toExternalForm().length()-8) + jarEntry.getName();
-					resourceList.add(new URL(entryURLString));
+					JarEntry jarEntry = jarEntryEnum.nextElement();			
+					if (jarEntry.getName().indexOf('/') == -1)
+					{
+						
+						String entryURLString = conn.getURL().toExternalForm().substring(0, conn.getURL().toExternalForm().length()-8) + jarEntry.getName();
+						resourceList.add(new URL(entryURLString));
+					}
 				}
 			}
 		}
