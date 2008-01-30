@@ -13,6 +13,7 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 public class TaskInstanceBean extends AbstractWorkflowBean {
 	
 	private TaskInstance taskInstance;
+	private String transition;
 	
 	public void setTaskInstance(TaskInstance taskInstance)
 	{
@@ -97,7 +98,7 @@ public class TaskInstanceBean extends AbstractWorkflowBean {
 	
 	public void setTransition(String transition)
 	{
-		this.taskInstance.end(transition);
+		this.transition = transition;
 	}
 
 	public boolean isEnded()
@@ -111,10 +112,21 @@ public class TaskInstanceBean extends AbstractWorkflowBean {
 
 	public void save()
 	{
-		if (this.taskInstance.getTask().getTaskController() != null)
+		if(this.isEnded())
 		{
-			this.taskInstance.getTask().getTaskController().submitParameters(this.taskInstance);
-		}		
+			return;
+		}
+		
+		if (this.taskInstance.getTask().getTaskController() != null)
+		{		
+			this.taskInstance.getTask().getTaskController().submitParameters(this.taskInstance);		
+		}
+		
+		if (this.transition != null)
+		{
+			this.taskInstance.end(this.transition);
+		}
+		
 		this.jbpmContext.save(this.taskInstance);
 	}
 	
