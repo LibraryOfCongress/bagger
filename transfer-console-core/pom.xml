@@ -199,29 +199,14 @@
     </dependency>  
     <dependency>
       <groupId>loc-repository</groupId>
-      <artifactId>packagemodeler-ndnp</artifactId>
-      <version>${loc-repository.packagemodeler.ndnp.version}</version>
-    </dependency>  
-    <dependency>
-      <groupId>loc-repository</groupId>
       <artifactId>transfer-components-core</artifactId>
       <version>${loc-repository.transfer-components.core.version}</version>
     </dependency>      
     <dependency>
       <groupId>loc-repository</groupId>
-      <artifactId>transfer-components-ndnp</artifactId>
-      <version>${loc-repository.transfer-components.ndnp.version}</version>
-    </dependency>          
-    <dependency>
-      <groupId>loc-repository</groupId>
       <artifactId>workflow-processes-core</artifactId>
       <version>${loc-repository.workflow-processes.core.version}</version>
     </dependency>      
-    <dependency>
-      <groupId>loc-repository</groupId>
-      <artifactId>workflow-processes-ndnp</artifactId>
-      <version>${loc-repository.workflow-processes.ndnp.version}</version>
-    </dependency>          
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
