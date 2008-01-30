@@ -8,43 +8,11 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>transfer-console-core</artifactId>
-  <packaging>war</packaging>
   <name>transfer-console-core</name>
   <version>${loc-repository.transfer-console.core.version}</version>
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <resource>
-        <filtering>true</filtering>
-        <directory>src/configuration/common</directory>
-      </resource>
-      <resource>
-        <filtering>true</filtering>
-        <directory>${configuration.directory}</directory>
-        <excludes>
-          <exclude>**/META-INF/**</exclude>
-        </excludes>
-      </resource>
-    </resources>
     <finalName>${application.name}</finalName>
     <plugins>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.0</version>
-        <configuration>
-          <webResources>
-            <resource>
-              <directory>${configuration.directory}</directory>
-              <filtering>true</filtering>
-              <includes>
-                <include>**/META-INF/**</include>
-              </includes>
-            </resource>
-          </webResources>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
@@ -84,6 +52,86 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>jar</id>
+      <properties>
+        <application.name>${project.artifactId}-${project.version}</application.name>
+      </properties>
+		<build>
+	    <resources>
+	      <resource>
+	        <directory>src/main/resources</directory>
+	      </resource>
+	    </resources>
+		
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.1</version>
+					<executions>
+						<execution>
+							<id>build-jar</id>
+							<phase>package</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</build>      
+    </profile>      
+    <profile>
+      <id>war</id>
+		<build>
+		    <resources>
+		      <resource>
+		        <directory>src/main/resources</directory>
+		      </resource>
+		      <resource>
+		        <filtering>true</filtering>
+		        <directory>src/configuration/common</directory>
+		      </resource>
+		      <resource>
+		        <filtering>true</filtering>
+		        <directory>${configuration.directory}</directory>
+		        <excludes>
+		          <exclude>**/META-INF/**</exclude>
+		        </excludes>
+		      </resource>
+		    </resources>		
+			<plugins>
+		      <plugin>
+		        <artifactId>maven-war-plugin</artifactId>
+		        <version>2.0</version>
+					<executions>
+						<execution>
+							<id>build-war</id>
+							<phase>package</phase>
+							<goals>
+								<goal>war</goal>
+							</goals>
+							<configuration>
+								<classifier>war</classifier>
+							</configuration>
+						</execution>
+					</executions>		        
+		        <configuration>
+		          <webResources>
+		            <resource>
+		              <directory>${configuration.directory}</directory>
+		              <filtering>true</filtering>
+		              <includes>
+		                <include>**/META-INF/**</include>
+		              </includes>
+		            </resource>
+		          </webResources>
+		        </configuration>
+		      </plugin>
+			</plugins>
+		</build>      
+    </profile>          
     <profile>
       <id>template</id>
       <activation>

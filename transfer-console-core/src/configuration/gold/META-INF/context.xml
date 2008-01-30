@@ -9,6 +9,4 @@
 	userCredCol="PASSWORD_"
 	userRoleTable="JBPM_ID_MEMBERSHIP" 
 	roleNameCol="ROLE_" />
-	<WatchedResource>WEB-INF/web.xml</WatchedResource>
-	<WatchedResource>WEB-INF/consoleapp-servlet.xml</WatchedResource>
 </Context>
