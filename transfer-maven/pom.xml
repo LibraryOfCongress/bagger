@@ -93,7 +93,8 @@
       <name>RDC Maven 2 Repository</name>
       <url>http://beryllium.rdc.lctl.gov/maven2</url>
     </repository>
-	-->    
+	-->
+	<!-- 
 	<repository>
       <id>rdc-snapshots</id>
       <name>RDC snapshots</name>
@@ -152,8 +153,10 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    -->
   </repositories>
   <pluginRepositories>
+  	<!-- 
     <pluginRepository>
       <id>proxy-releases</id>
       <name>Proxy releases</name>
@@ -176,6 +179,7 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>        
+    -->
   </pluginRepositories>  
   
   <dependencies>
@@ -208,6 +212,12 @@
       <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
     </snapshotRepository>    
   </distributionManagement>
-  
+  <developers>
+  	<developer>
+  		<id>justin</id>
+  		<name>Justin Littman</name>
+  		<email>jlit@loc.gov</email>
+  	</developer>
+  </developers>  
 </project>
 
