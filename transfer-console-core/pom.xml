@@ -8,8 +8,13 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>transfer-console-core</artifactId>
-  <name>transfer-console-core</name>
+  <name>Transfer Console (Core)</name>
   <version>${loc-repository.transfer-console.core.version}</version>
+  <scm>
+    <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-console-core</connection>
+    <tag>HEAD</tag>
+    <url>https://rdc.lctl.gov/trac/transfer/browser</url>
+  </scm>  
   <build>
     <finalName>${application.name}</finalName>
     <plugins>
