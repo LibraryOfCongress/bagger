@@ -10,6 +10,11 @@
   <artifactId>packagemodeler-core</artifactId>
   <name>Package Modeler (Core)</name>
   <version>${loc-repository.packagemodeler.core.version}</version>
+  <scm>
+        <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/packagemodeler-core</connection>
+        <tag>HEAD</tag>
+        <url>https://rdc.lctl.gov/trac/transfer/browser</url>
+  </scm>  
   <build>
     <extensions>
       <extension>
