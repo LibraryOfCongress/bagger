@@ -9,6 +9,11 @@
   <artifactId>transfer-components-core</artifactId>
   <name>Transfer Components (Core)</name>
   <version>${loc-repository.transfer-components.core.version}</version>
+  <scm>
+    <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-components-core</connection>
+    <tag>HEAD</tag>
+    <url>https://rdc.lctl.gov/trac/transfer/browser</url>
+  </scm>  
   <build>
     <resources>
       <resource>
