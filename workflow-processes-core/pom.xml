@@ -8,6 +8,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>workflow-processes-core</artifactId>
+  <name>Workflow Processes (Core)</name>
   <version>${loc-repository.workflow-processes.core.version}</version>
   <scm>
     <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/workflow-processes-core</connection>
