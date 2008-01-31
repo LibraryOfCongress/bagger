@@ -218,6 +218,11 @@
   		<name>Justin Littman</name>
   		<email>jlit@loc.gov</email>
   	</developer>
+  	<developer>
+  		<id>mgia</id>
+  		<name>Michael Giarlo</name>
+  		<email>mgia@loc.gov</email>
+  	</developer>  	
   </developers>  
 </project>
 
