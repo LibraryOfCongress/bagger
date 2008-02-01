@@ -19,10 +19,10 @@ public class GenerateLCManifestActionHandler extends BaseActionHandler {
 	@ConfigurationField
 	public String algorithmName;
 	
-	@ContextVariable(name="destMountPath")
+	@ContextVariable(name="stagingPackageLocation")
 	public String mountPath;
 
-	@ContextVariable(name="destStorageSystemId")
+	@ContextVariable(name="stagingStorageSystemId")
 	public String storageSystemId;
 
 	@ContextVariable(name="repositoryId")
