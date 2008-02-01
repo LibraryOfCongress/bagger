@@ -19,14 +19,20 @@ public class AddStorageSystemFileLocationActionHandler extends BaseActionHandler
 	@ConfigurationField
 	public String basePathVariable;
 	
-	@ContextVariable(configurationFieldName="basePathVariable")
-	public String basePath;
-
 	@ConfigurationField
 	public String storageSystemIdVariable;
-		
-	@ContextVariable(configurationFieldName="storageSystemIdVariable", isRequired=false)
-	public String storageSystemId = null;
+
+	@ConfigurationField(isRequired=false)
+	public boolean isLCPackageStructured = true;		
+	
+	@ConfigurationField(isRequired=false)
+	public boolean isManaged = true;		
+
+	@ContextVariable(configurationFieldName="basePathVariable")
+	public String basePath;
+	
+	@ContextVariable(configurationFieldName="storageSystemIdVariable")
+	public String storageSystemId;
 		
 	@ContextVariable(name="packageId")
 	public String packageId;
@@ -34,12 +40,6 @@ public class AddStorageSystemFileLocationActionHandler extends BaseActionHandler
 	@ContextVariable(name="repositoryId")
 	public String repositoryId;
 
-	@ConfigurationField(isRequired=false)
-	public boolean isLCPackageStructured = true;		
-	
-	@ConfigurationField(isRequired=false)
-	public boolean isManaged = true;		
-		
 	private System storageSystem;
 	
 	@Override
@@ -50,7 +50,7 @@ public class AddStorageSystemFileLocationActionHandler extends BaseActionHandler
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
-		Package packge = this.getDAO().findRequiredPackage(Package.class, this.repositoryId, this.packageId);				
+		Package packge = this.getDAO().findRequiredPackage(Package.class, this.repositoryId, this.packageId);
 		FileLocation fileLocation = packge.getFileLocation(this.storageSystemId, this.basePath);
 		if (fileLocation != null)
 		{

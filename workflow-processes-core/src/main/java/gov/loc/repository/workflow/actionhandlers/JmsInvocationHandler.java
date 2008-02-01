@@ -121,9 +121,32 @@ public class JmsInvocationHandler implements InvocationHandler {
 				
 			}
 			
-			log.debug("Sending message");
+			log.debug("Sending message: " + message.toString());
+			if (message == null)
+			{
+				log.debug("Message is null");
+			}
+			else
+			{
+				log.debug("Message is not null");
+			}
+			if (producer == null)
+			{
+				log.debug("Producer is null");
+			}
+			else
+			{
+				log.debug("Producer is not null");
+			}
+			
 			producer.send(message);
+			log.debug("Sent");
 			producer.close();
+			log.debug("closed");
+		}
+		catch(Exception ex)
+		{
+			log.error(ex);
 		}
 		finally
 		{
@@ -132,9 +155,11 @@ public class JmsInvocationHandler implements InvocationHandler {
 				connection.close();
 			}
 			catch(Throwable ignore)
-			{				
+			{	
+				log.error(ignore);
 			}
 		}
+		log.debug("Done");
 		return null;
 	}
 

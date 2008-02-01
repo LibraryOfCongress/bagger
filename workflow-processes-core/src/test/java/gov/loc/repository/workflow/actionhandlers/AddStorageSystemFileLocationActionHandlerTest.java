@@ -48,7 +48,7 @@ public class AddStorageSystemFileLocationActionHandlerTest extends BaseHandlerTe
 	    processInstance.signal();
 
 	    this.commitAndRestartTransaction();
-	    
+
 	    assertEquals("b", processInstance.getRootToken().getNode().getName());	    
 	    Package packge = dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter);
 	    assertNotNull(packge);
