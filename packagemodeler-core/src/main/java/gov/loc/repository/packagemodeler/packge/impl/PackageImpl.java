@@ -14,6 +14,7 @@ import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
 import gov.loc.repository.packagemodeler.packge.impl.FileLocationImpl;
 import gov.loc.repository.packagemodeler.packge.impl.RepositoryImpl;
+import gov.loc.repository.utilities.FilenameHelper;
 
 import javax.persistence.*;
 
@@ -205,7 +206,7 @@ public class PackageImpl implements Package, Serializable {
 			if (fileLocation instanceof StorageSystemFileLocation)
 			{
 				StorageSystemFileLocation storageSystemFileLocation = (StorageSystemFileLocation)fileLocation;
-				if (storageSystemId.equals(storageSystemFileLocation.getStorageSystem().getId()) && basePath.equals(fileLocation.getBasePath()))
+				if (storageSystemId.equals(storageSystemFileLocation.getStorageSystem().getId()) && FilenameHelper.normalize(basePath).equals(fileLocation.getBasePath()))
 				{
 					return storageSystemFileLocation;
 				}

@@ -6,6 +6,7 @@ import gov.loc.repository.constants.Roles;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.agents.impl.SystemImpl;
 import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
+import gov.loc.repository.utilities.FilenameHelper;
 
 import javax.persistence.*;
 
@@ -44,8 +45,8 @@ public class StorageSystemFileLocationImpl extends FileLocationImpl implements
 		return this.storageSystem.isInRole(Roles.STORAGE_SYSTEM);
 	}
 
-	public void setBasePath(String basePath) {
-		this.basePath = basePath;
+	public void setBasePath(String basePath) {		
+		this.basePath = FilenameHelper.normalize(basePath);
 	}
 
 	public String getBasePath() {
