@@ -98,7 +98,7 @@ public class ConfigurationFactory {
 				{
 					if (file.isFile())
 					{
-						resourceList.add(file.toURL());
+						resourceList.add(file.toURI().toURL());
 					}
 				}
 			}
