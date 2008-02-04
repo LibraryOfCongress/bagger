@@ -1,9 +1,9 @@
 package gov.loc.repository.transfer.components.fileexamination;
 
 import gov.loc.repository.packagemodeler.agents.Agent;
-import gov.loc.repository.packagemodeler.packge.ExternalFileLocation;
+//import gov.loc.repository.packagemodeler.packge.ExternalFileLocation;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
-import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
+//import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
 import gov.loc.repository.transfer.components.Component;
 import gov.loc.repository.transfer.components.ModelerAware;
 import gov.loc.repository.transfer.components.annotations.JobType;
