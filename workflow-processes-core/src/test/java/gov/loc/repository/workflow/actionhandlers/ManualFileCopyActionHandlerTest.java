@@ -1,16 +1,16 @@
 package gov.loc.repository.workflow.actionhandlers;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+//import static org.junit.Assert.*;
 
-import org.jbpm.graph.def.ProcessDefinition;
-import org.jbpm.graph.exe.ProcessInstance;
-import org.jbpm.taskmgmt.exe.TaskInstance;
+//import org.jbpm.graph.def.ProcessDefinition;
+//import org.jbpm.graph.exe.ProcessInstance;
+//import org.jbpm.taskmgmt.exe.TaskInstance;
 
-import gov.loc.repository.packagemodeler.packge.FileLocation;
-import static gov.loc.repository.workflow.constants.FixtureConstants.*;
-import static gov.loc.repository.constants.Agents.*;
-import gov.loc.repository.packagemodeler.packge.Package;
+//import gov.loc.repository.packagemodeler.packge.FileLocation;
+//import static gov.loc.repository.workflow.constants.FixtureConstants.*;
+//import static gov.loc.repository.constants.Agents.*;
+//import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.workflow.BaseHandlerTest;
 
 public class ManualFileCopyActionHandlerTest extends BaseHandlerTest{
