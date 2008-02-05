@@ -5,7 +5,7 @@
   <artifactId>transfer-maven</artifactId>
   <packaging>pom</packaging>
   <name>Master POM for transfer</name>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1</version>
   <scm>
         <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-maven</connection>
         <tag>HEAD</tag>
@@ -27,16 +27,16 @@
   	<jaxen.jaxen.version>1.1.1</jaxen.jaxen.version>
   	<jbpm.version>3.2.2</jbpm.version>
   	<jmock.version>2.0.0</jmock.version>
-  	<loc-repository.transfer-common.version>1.1-SNAPSHOT</loc-repository.transfer-common.version>
-  	<loc-repository.packagemodeler.core.version>1.1-SNAPSHOT</loc-repository.packagemodeler.core.version>
-    <loc-repository.packagemodeler.ndnp.version>1.1-SNAPSHOT</loc-repository.packagemodeler.ndnp.version>    
-    <loc-repository.packagemodeler.webcapture.version>1.1-SNAPSHOT</loc-repository.packagemodeler.webcapture.version>    
-  	<loc-repository.transfer-components.core.version>1.1-SNAPSHOT</loc-repository.transfer-components.core.version>
-  	<loc-repository.transfer-components.ndnp.version>1.1-SNAPSHOT</loc-repository.transfer-components.ndnp.version>
-    <loc-repository.transfer-console.core.version>1.1-SNAPSHOT</loc-repository.transfer-console.core.version>
-    <loc-repository.transfer-console.ndnp.version>1.1-SNAPSHOT</loc-repository.transfer-console.ndnp.version>
-  	<loc-repository.workflow-processes.core.version>1.1-SNAPSHOT</loc-repository.workflow-processes.core.version>
-  	<loc-repository.workflow-processes.ndnp.version>1.1-SNAPSHOT</loc-repository.workflow-processes.ndnp.version>    
+  	<loc-repository.transfer-common.version>1.1</loc-repository.transfer-common.version>
+  	<loc-repository.packagemodeler.core.version>1.1</loc-repository.packagemodeler.core.version>
+    <loc-repository.packagemodeler.ndnp.version>1.1</loc-repository.packagemodeler.ndnp.version>    
+    <loc-repository.packagemodeler.webcapture.version>1.1</loc-repository.packagemodeler.webcapture.version>    
+  	<loc-repository.transfer-components.core.version>1.1</loc-repository.transfer-components.core.version>
+  	<loc-repository.transfer-components.ndnp.version>1.1</loc-repository.transfer-components.ndnp.version>
+    <loc-repository.transfer-console.core.version>1.1</loc-repository.transfer-console.core.version>
+    <loc-repository.transfer-console.ndnp.version>1.1</loc-repository.transfer-console.ndnp.version>
+  	<loc-repository.workflow-processes.core.version>1.1</loc-repository.workflow-processes.core.version>
+  	<loc-repository.workflow-processes.ndnp.version>1.1</loc-repository.workflow-processes.ndnp.version>    
    	<log4j.version>1.2.14</log4j.version>
     <mysql.mysql-connector-java.version>5.0.4</mysql.mysql-connector-java.version>   	
 	<org.apache.activemq.activemq-core.version>5.0.0</org.apache.activemq.activemq-core.version>
