@@ -87,14 +87,6 @@
     </plugins>    
   </build>
   <repositories>
-  <!-- 
-    <repository>
-      <id>rdc-repo</id>
-      <name>RDC Maven 2 Repository</name>
-      <url>http://beryllium.rdc.lctl.gov/maven2</url>
-    </repository>
-	-->
-	<!-- 
 	<repository>
       <id>rdc-snapshots</id>
       <name>RDC snapshots</name>
@@ -153,10 +145,8 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    -->
   </repositories>
   <pluginRepositories>
-  	<!-- 
     <pluginRepository>
       <id>proxy-releases</id>
       <name>Proxy releases</name>
@@ -179,7 +169,6 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>        
-    -->
   </pluginRepositories>  
   
   <dependencies>
