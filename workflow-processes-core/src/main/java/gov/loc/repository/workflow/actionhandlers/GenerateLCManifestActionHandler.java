@@ -1,13 +1,9 @@
 package gov.loc.repository.workflow.actionhandlers;
 
 import java.text.MessageFormat;
-//import java.util.Iterator;
 
-//import gov.loc.repository.packagemodeler.packge.ExternalIdentifier;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
-//import gov.loc.repository.packagemodeler.packge.ExternalIdentifier.IdentifierType;
-//import gov.loc.repository.transfer.components.annotations.MapParameter;
 import gov.loc.repository.transfer.components.fileexamination.LCManifestGenerator;
 import gov.loc.repository.workflow.actionhandlers.annotations.ConfigurationField;
 import gov.loc.repository.workflow.actionhandlers.annotations.ContextVariable;

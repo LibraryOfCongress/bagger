@@ -37,8 +37,10 @@ public class InventoryFilesOnExternalFileLocation extends BaseActionHandler {
 	
 	@ContextVariable(configurationFieldName="mountPathVariable")
 	public String mountPath;
-
+		
 	private Long fileLocationKey;
+	
+	private String algorithm;
 	
 	@Override
 	protected void initialize() throws Exception {
@@ -49,12 +51,13 @@ public class InventoryFilesOnExternalFileLocation extends BaseActionHandler {
 			throw new Exception(MessageFormat.format("External file location with identifier value {0} and identifier {1} for {2} is not found", this.externalIdentifierValue, this.externalIdentifierType, packge.toString()));
 		}
 		this.fileLocationKey = externalFileLocation.getKey();
+		this.algorithm = helper.getRequiredConfigString("fixity.algorithm");
 	}	
 	
 	@Override
 	protected void execute() throws Exception {
 		FilesOnDiskInventorier inventorier = this.createObject(FilesOnDiskInventorier.class);
-		inventorier.inventory(this.fileLocationKey, this.mountPath, this.getWorkflowAgentId());
+		inventorier.inventory(this.fileLocationKey, this.mountPath, this.algorithm, this.getWorkflowAgentId());
 	}
 
 }

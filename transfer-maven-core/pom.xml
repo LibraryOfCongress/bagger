@@ -5,7 +5,7 @@
   <artifactId>transfer-maven-core</artifactId>
   <packaging>pom</packaging>
   <name>Transfer Master POM (Core)</name>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.2-SNAPSHOT</version>
   <scm>
         <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-maven-core</connection>
         <tag>HEAD</tag>
@@ -67,7 +67,6 @@
       <url>http://beryllium.rdc.lctl.gov/maven2</url>
     </repository>
 	-->
-	<!-- 
 	<repository>
       <id>rdc-snapshots</id>
       <name>RDC snapshots</name>
@@ -126,10 +125,8 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    -->
   </repositories>
   <pluginRepositories>
-  	<!-- 
     <pluginRepository>
       <id>proxy-releases</id>
       <name>Proxy releases</name>
@@ -152,7 +149,6 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>        
-    -->
   </pluginRepositories>  
   
   <dependencies>

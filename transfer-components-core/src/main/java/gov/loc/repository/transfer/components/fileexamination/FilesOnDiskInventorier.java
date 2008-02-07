@@ -1,6 +1,8 @@
 package gov.loc.repository.transfer.components.fileexamination;
 
 import gov.loc.repository.packagemodeler.agents.Agent;
+import gov.loc.repository.packagemodeler.packge.FileLocation;
+import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.transfer.components.Component;
 import gov.loc.repository.transfer.components.ModelerAware;
 import gov.loc.repository.transfer.components.annotations.JobType;
