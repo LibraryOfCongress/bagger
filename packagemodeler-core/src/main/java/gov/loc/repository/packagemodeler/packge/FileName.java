@@ -53,6 +53,7 @@ public class FileName {
 	}
 	
 	public void setFileName(String filename) {
+		filename = FilenameHelper.normalize(filename);
 		this.relativePath = FilenameHelper.getPath(filename);
 		this.baseName = FilenameHelper.getBaseName(filename);
 		if (FilenameHelper.hasExtension(filename))

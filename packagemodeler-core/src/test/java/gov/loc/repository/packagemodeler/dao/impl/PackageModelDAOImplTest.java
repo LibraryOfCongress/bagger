@@ -7,7 +7,6 @@ import java.util.Map;
 import org.junit.Test;
 
 import static gov.loc.repository.constants.Agents.*;
-import static gov.loc.repository.constants.Roles.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
 import gov.loc.repository.utilities.results.ResultIterator;
 import gov.loc.repository.packagemodeler.AbstractModelersTest;
@@ -33,6 +32,8 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 	private static System rs25Service;
 	private FileLocation fileLocation1;
 	private FileExaminationGroup fileExaminationGroup1;
+        
+    private static final String ROLE = "foo";
 	
 	@Override
 	public void createFixtures() throws Exception {
@@ -40,7 +41,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		rs25Service = fixtureHelper.createStorageSystem(RS25);
 		fixtureHelper.createStorageSystem(RDC);
 		fixtureHelper.createSystem(JBPM);
-		fixtureHelper.createOrganization(ORGANIZATION_ID1, ORGANIZATION_NAME1, new String[] {NDNP_AWARDEE});		
+		fixtureHelper.createOrganization(ORGANIZATION_ID1, ORGANIZATION_NAME1, new String[] {ROLE});		
 	}
 		
 	@Override
@@ -184,17 +185,17 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 	@Test
 	public void testFindRole() throws Exception
 	{
-		Role role = dao.findRole(NDNP_AWARDEE);
+		Role role = dao.findRole(ROLE);
 		assertNotNull(role);
 		assertEquals(1, role.getAgentSet().size());
 		
-		assertNull(dao.findRole("x" + NDNP_AWARDEE));
+		assertNull(dao.findRole("x" + ROLE));
 	}
 	
 	@Test(expected=Exception.class)
 	public void testFindRequiredRole() throws Exception
 	{
-		dao.findRequiredRole("x" + NDNP_AWARDEE);
+		dao.findRequiredRole("x" + ROLE);
 	}
 	
 	@Test
@@ -415,6 +416,18 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		assertEquals(1, result.fixityMismatchList.size());
 		assertEquals(new FileName(FILENAME_4), result.fixityMismatchList.get(0));
 		
+	}
+	
+	@Test
+	public void testLoadFileLocation() throws Exception
+	{
+		assertNotNull(dao.loadFileLocation(this.fileLocation1.getKey()));
+	}
+	
+	@Test(expected=Exception.class)
+	public void testLoadBadFileLocation() throws Exception
+	{
+		dao.loadFileLocation(10001L);
 	}
 	
 }

@@ -26,6 +26,8 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
+import gov.loc.repository.packagemodeler.packge.impl.ExternalFileLocationImpl;
+import gov.loc.repository.packagemodeler.packge.impl.StorageSystemFileLocationImpl;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.utilities.results.ResultIterator;
@@ -91,7 +93,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 				"group by cf.fileName.extension"					
 				);
 		query.setParameter("package", packge);
-		Iterator resultIter = query.list().iterator();
+		Iterator<?> resultIter = query.list().iterator();
 		while (resultIter.hasNext())
 		{
 			Object[] row = (Object[])resultIter.next();
@@ -220,14 +222,14 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Package> findPackages(Class packageType) throws Exception {
+	public List<Package> findPackages(Class<?> packageType) throws Exception {
 		Query query = this.getSession().createQuery(
 				"from " + getAlias(packageType)
 					);
 		return query.list();
 	}
 
-	public ResultIterator findPackagesWithFileCount(Class packageType, String extension) throws Exception {
+	public ResultIterator findPackagesWithFileCount(Class<Package> packageType, String extension) throws Exception {
   		Query query = this.getSession().createQuery(
   				"select p, " +
   				"( " +
@@ -239,7 +241,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
   				"from " + this.getAlias(packageType) + " as p"
   				);
 		query.setString("extension", extension);			
-		List resultList = query.list();
+		List<?> resultList = query.list();
 		String[] fieldNameArray = {"package", "file_count"};
 		return new ResultIterator(resultList, fieldNameArray);
 	}
@@ -309,12 +311,12 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		this.getSession().saveOrUpdate(object);		
 	}
 
-	protected String getAlias(Class clazz)
+	protected String getAlias(Class<?> clazz)
 	{
 		return clazz.getSimpleName();
 	}
 		
-	protected String getImplClassName(Class clazz)
+	protected String getImplClassName(Class<?> clazz)
 	{
 		return clazz.getName().substring(0, (clazz.getName().length()-clazz.getSimpleName().length())) + "impl." + clazz.getSimpleName() + "Impl";		
 	}
@@ -399,6 +401,20 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 				
 		return result;
 		
+	}	
+	
+	@Override
+	public FileLocation loadFileLocation(Long key) throws Exception {
+		FileLocation fileLocation = (FileLocation)this.getSession().get(StorageSystemFileLocationImpl.class, key);
+		if (fileLocation == null)
+		{
+			fileLocation = (FileLocation)this.getSession().get(ExternalFileLocationImpl.class, key);
+		}
+		if (fileLocation == null)
+		{
+			throw new Exception(MessageFormat.format("Could not load a FileLocation with key {0}", key));
+		}
+		return fileLocation;
 	}	
 	
 }

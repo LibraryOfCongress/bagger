@@ -38,16 +38,19 @@ public interface PackageModelDAO {
 
 	public <T> T findRequiredPackage(Class<T> packageType, String repositoryId, String packageId) throws Exception;
 		
-	public List<Package> findPackages(Class packageType) throws Exception;
+	public List<Package> findPackages(Class<?> packageType) throws Exception;
 	
 	public abstract Long calculatePackageSize(Package packge) throws Exception;	
 
-	public abstract ResultIterator findPackagesWithFileCount(Class packageType, String extension) throws Exception;	
+	public abstract ResultIterator findPackagesWithFileCount(Class<Package> packageType, String extension) throws Exception;	
 	
 	//CanonicalFile
 	public abstract Map<String,Long> countCanonicalFilesByExtension(Package packge) throws Exception;	
 
 	public abstract CanonicalFile findCanonicalFile(String repositoryId, String packageId, String filename) throws Exception;
+
+	//FileLocation
+	public abstract FileLocation loadFileLocation(Long key) throws Exception;
 	
 	//FileInstance
 	public abstract FileInstance findFileInstance(String repositoryId, String packageId, String storageServiceId, String basePath, String filename) throws Exception;
