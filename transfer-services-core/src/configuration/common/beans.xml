@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="test" class="gov.loc.repository.transfer.components.test.impl.TestComponentImpl" scope="prototype" />
+	
+	<!-- 
+	<bean id="batchverifier" class="gov.loc.repository.workflow.components.verification.ndnp.impl.EventingBatchVerifierImpl" scope="prototype">
+		<property name="packageModelDao">
+			<ref local="packageDao" />
+		</property>
+		<property name="batchVerifier">
+			<bean class="gov.loc.repository.workflow.components.verification.ndnp.impl.NDNPValidationLibraryVerifier" scope="prototype" />
+		</property>
+	</bean>
+	
+	<bean id="packagecopier" class="gov.loc.repository.workflow.components.filemanagement.impl.CommonsIOModelingEventingPackageCopier" scope="prototype">
+		<property name="fileCharacterizer">
+			<ref local="filecharacterizer" />
+		</property>
+		<property name="packageModelDao">
+			<ref local="packageDao" />
+		</property>
+	</bean>
+
+	<bean id="batchcopier" class="gov.loc.repository.workflow.components.filemanagement.ndnp.impl.CommonsIOModelingEventingFileListBatchCopier" scope="prototype">
+		<property name="fileCharacterizer">
+			<ref local="filecharacterizer" />
+		</property>
+		<property name="packageModelDao">
+			<ref local="packageDao" />
+		</property>
+	</bean>
+
+	<bean id="filecharacterizer" class="gov.loc.repository.workflow.components.characterization.impl.CommonsIOFileCharacterizer" scope="prototype">
+		<property name="fixityHelper">
+			<ref local="fixityhelper" />
+		</property>
+	</bean>
+	
+	<bean id="fixityhelper" class="gov.loc.repository.utilities.impl.JavaSecurityFixityHelper">
+		<property name="algorithm" value="${fixityhelper.algorithm}" />
+	</bean>
+	-->
+	<!--
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    	<property name="locations">
+        	<value>classpath:components.local.properties</value>
+    	</property>
+	</bean>	
+	-->
+	<!-- 
+	<bean id="packageDao" class="gov.loc.repository.modelers.packge.dao.impl.PackageModelDAOImpl" scope="prototype"/>
+	-->
+</beans>

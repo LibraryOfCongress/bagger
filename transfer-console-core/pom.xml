@@ -4,7 +4,6 @@
     <artifactId>transfer-maven-core</artifactId>
     <groupId>loc-repository</groupId>
     <version>1.2-SNAPSHOT</version>
-    <relativePath>../transfer-maven-core/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>transfer-console-core</artifactId>
