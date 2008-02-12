@@ -89,7 +89,7 @@
     <dependency>
       <groupId>loc-repository</groupId>
       <artifactId>transfer-common-core</artifactId>
-      <version>${project.version}</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.persistence</groupId>
