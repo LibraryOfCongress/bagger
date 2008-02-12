@@ -27,7 +27,6 @@ public class FilesOnDiskInventorierImpl extends BaseComponent implements
 		return COMPONENT_NAME;
 	}
 
-	@Override
 	public void inventory(long fileLocationKey, String mountPath,
 			String algorithm, String requestingAgentId) throws Exception {
 		this.inventory(this.dao.loadFileLocation(fileLocationKey), mountPath, Fixity.Algorithm.fromString(algorithm), this.dao.findRequiredAgent(Agent.class, requestingAgentId));
@@ -35,7 +34,6 @@ public class FilesOnDiskInventorierImpl extends BaseComponent implements
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public void inventory(FileLocation fileLocation, String mountPath, Fixity.Algorithm algorithm,
 			Agent requestingAgent) throws Exception {
 		InventoryFromFilesOnDiskEvent event = this.factory.createFileLocationEvent(InventoryFromFilesOnDiskEvent.class, fileLocation, Calendar.getInstance().getTime(), this.getReportingAgent());
