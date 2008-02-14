@@ -80,7 +80,7 @@ public class ActiveMQJmsMessenger implements Messenger {
 		producer.close();
 	}
 	
-	public void start(Set<String> jobTypeList) throws Exception
+	public void start(Set<String> jobTypeList, Set<String> queueList) throws Exception
 	{
 		this.stop();
 		
@@ -94,11 +94,10 @@ public class ActiveMQJmsMessenger implements Messenger {
 		connection = connectionFactory.createConnection();
 		connection.start();
 		
-		//Create the sessions
-		String[] queueArray = configuration.getStringArray("jms.queues");
-		consumerArray = new MessageConsumer[queueArray.length];
+		//Create the sessions		
+		consumerArray = new MessageConsumer[queueList.size()];
 		int i=0;
-		for(String queue : queueArray)
+		for(String queue : queueList)
 		{
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			log.debug("Queue is " + queue);
@@ -163,4 +162,5 @@ public class ActiveMQJmsMessenger implements Messenger {
 		return new JmsRequestMessageMemento((JmsRequestMessage)message);
 	}
 
+	
 }

@@ -83,13 +83,18 @@ public class MessageGeneratorServlet extends HttpServlet {
 		String numberOfMessages = req.getParameter("num");
 		String message = req.getParameter("message");
 		boolean isTrue = false;
+		Long key = 0L;
 		if (req.getParameter("istrue") != null && req.getParameter("istrue").equals("true"))
 		{
 			isTrue = true;
 		}
+		if (req.getParameter("key") != null)
+		{
+			key = Long.parseLong(req.getParameter("key"));
+		}
 		if (numberOfMessages != null && message != null)
 		{
-			int num = Integer.parseInt(numberOfMessages);
+			int num = Integer.parseInt(numberOfMessages);			
 			for(int i = 0; i < num; i++)
 			{
 				try
@@ -100,7 +105,7 @@ public class MessageGeneratorServlet extends HttpServlet {
 					mapMessage.setJMSCorrelationID(Integer.toString(i));
 					mapMessage.setString("message", message);
 					mapMessage.setBoolean("istrue", isTrue);
-					mapMessage.setLong("key", 1L);
+					mapMessage.setLong("key", key);
 					producer.send(mapMessage);
 				}
 				catch(Exception ex)
@@ -114,13 +119,21 @@ public class MessageGeneratorServlet extends HttpServlet {
 		writer.write("<form action='" + req.getRequestURI() + "' method='get'>");
 		writer.write("Message:  <input type='text' name='message' value='foo' /><br/>");
 		writer.write("<input type='checkbox' name='istrue' value='true' checked /> Is true<br/>");
+		writer.write("Key:  <select name='key'>");
+		writer.write("<option selected>1</option>");
+		for(int i=2; i <= 10; i++)
+		{
+			writer.write("<option>" + i + "</option>");
+		}
+		writer.write("</select>");
+		
 		writer.write("Number of messages:  <select name='num'>");
 		writer.write("<option selected>1</option>");
 		for(int i=2; i <= 10; i++)
 		{
 			writer.write("<option>" + i + "</option>");
 		}
-		writer.write("<br/><input type='submit' value='Generate' />");
+		writer.write("</select><br/><input type='submit' value='Generate' />");
 		writer.write("</body></html>");
 	}
 }

@@ -32,14 +32,14 @@
 		      </resource>	          
 			    <resource>
 			      <filtering>true</filtering>
-			      <directory>src/configuration/common</directory>
-			      <targetPath>WEB-INF/classes</targetPath>
-			    </resource>
-			    <resource>
-			      <filtering>true</filtering>
 			      <directory>${configuration.directory}</directory>
 			      <targetPath>WEB-INF/classes</targetPath>			      
 			    </resource>
+			    <resource>
+			      <filtering>true</filtering>
+			      <directory>src/configuration/common</directory>
+			      <targetPath>WEB-INF/classes</targetPath>
+			    </resource>			    
 	          </webResources>
 	         </configuration>
        </plugin>    

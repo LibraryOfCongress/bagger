@@ -49,6 +49,11 @@ public class ActiveMQJmsMessengerTest {
 		
 		//Create the producer
 		String[] queueArray = configuration.getStringArray("jms.queues"); 
+		Set<String> queueList = new HashSet<String>();
+		for(String queue : queueArray)
+		{
+			queueList.add(queue);
+		}
 		
 		Destination destination1 = session.createQueue(queueArray[0]);
 		producer1 = session.createProducer(destination1);
@@ -64,7 +69,7 @@ public class ActiveMQJmsMessengerTest {
 		messenger = new ActiveMQJmsMessenger();
 		Set<String> jobTypeList = new HashSet<String>();
 		jobTypeList.add("foo");
-		messenger.start(jobTypeList);
+		messenger.start(jobTypeList, queueList);
 		
 	}
 

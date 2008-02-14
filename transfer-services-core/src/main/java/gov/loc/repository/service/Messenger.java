@@ -8,7 +8,7 @@ public interface Messenger {
 	
 	public void sendResponseMessage(Memento memento, TaskResult taskResult) throws Exception;
 
-	public void start(Set<String> jobTypeList) throws Exception;
+	public void start(Set<String> jobTypeList, Set<String> queueList) throws Exception;
 	
 	public void stop() throws Exception;
 	

@@ -35,7 +35,7 @@ public class ServiceServlet extends HttpServlet {
 			service.setMementoStore(new FileSystemMementoStore());
 			
 			//Create a Bean Factory
-			BeanFactory beanFactory = new ClassPathXmlApplicationContext("beans.xml");
+			BeanFactory beanFactory = new ClassPathXmlApplicationContext("service-beans-*.xml");
 			
 			//And use to configure TaskFactory
 			SpringTaskFactory taskFactory = new SpringTaskFactory();
@@ -82,6 +82,12 @@ public class ServiceServlet extends HttpServlet {
 				writer.write(jobType + "<br/>");
 			}
 			writer.write("</p>");
+			writer.write("<p>This service will monitor:<br/>");
+			for(String queue : service.getQueueList())
+			{
+				writer.write(queue + "<br/>");
+			}
+			writer.write("</p>");			
 			writer.write("<p>Threads:<br/>");
 			for(int i=0; i < service.getThreadCount(); i++)
 			{

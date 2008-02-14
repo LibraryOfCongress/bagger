@@ -60,7 +60,7 @@ public class ServiceImplTest {
 		final Messenger messenger = context.mock(Messenger.class);
 		final Sequence seq = context.sequence("seq");
 		context.checking(new Expectations() {{
-			one(messenger).start(with(any(Set.class)));
+			one(messenger).start(with(any(Set.class)), with(any(Set.class)));
 			inSequence(seq);
 			one(messenger).sendResponseMessage(with(any(Memento.class)), with(any(TaskResult.class)));			
 			inSequence(seq);			

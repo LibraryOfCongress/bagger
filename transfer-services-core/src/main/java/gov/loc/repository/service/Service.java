@@ -28,4 +28,6 @@ public interface Service {
 	public boolean isThreadActive(int thread);
 	
 	public Set<String> getJobTypeList();
+
+	public Set<String> getQueueList();
 }

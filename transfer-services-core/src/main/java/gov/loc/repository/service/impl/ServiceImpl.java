@@ -12,6 +12,7 @@ import gov.loc.repository.utilities.ConfigurationFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,12 +34,19 @@ public class ServiceImpl implements Service, Runnable {
 	private int threadCount = 0;
 	private int pollInterval = 500;
 	private Status status = Status.STOPPED;
+	public Set<String> queueList = new HashSet<String>();
+	
 	
 	
 	public ServiceImpl() throws Exception {
 		Configuration configuration = ConfigurationFactory.getConfiguration(ServiceConstants.PROPERTIES_NAME);
 		threadCount = configuration.getInt("services.threads");		                                                    
-		pollInterval = configuration.getInt("services.pollinterval");		
+		pollInterval = configuration.getInt("services.pollinterval");	
+		String[] queueArray = configuration.getStringArray("jms.queues");
+		for(String queue : queueArray)
+		{
+			queueList.add(queue);
+		}
 	}	
 	
 	public void run() {
@@ -59,7 +67,7 @@ public class ServiceImpl implements Service, Runnable {
 			}
 			log.debug("Starting messenger");
 			status = Status.RUNNING;
-			this.messenger.start(this.taskFactory.getJobTypeList());
+			this.messenger.start(this.taskFactory.getJobTypeList(), this.queueList);
 			
 			//Check to see if anything is left over in the memento store
 			this.initializeMementoStore();
@@ -215,6 +223,11 @@ public class ServiceImpl implements Service, Runnable {
 		return this.threadCount;
 	}
 
+	public Set<String> getQueueList()
+	{
+		return this.queueList;
+	}
+	
 	public boolean isThreadActive(int thread) {
 		if (thread < futureList.size() && futureList.get(thread) != null)
 		{
