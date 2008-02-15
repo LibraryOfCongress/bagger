@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+<context:component-scan base-package="gov.loc.repository.transfer.ui.controllers" />
+
+<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+	<property name="basenames">
+		<list>
+			<value>messages</value>
+			<value>application</value>
+		</list>
+	</property>
+</bean>
+
+<!--
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref local="jbpmActorHandlerInterceptor" />
+			</list>
+		</property>
+        <property name="mappings">
+            <props>                        
+                <prop key="/processdefinition/*">processDefinitionController</prop>
+                <prop key="/user/*">userController</prop>
+                <prop key="/taskinstance/*">taskInstanceController</prop>                
+                <prop key="/login/*.html">loginController</prop>                
+                <prop key="/*">indexController</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="abstractRestController" class="gov.loc.repository.console.AbstractRestController" abstract="true">
+		<property name="applicationRoot" value="${root}" />    
+    </bean>
+    
+	<bean id="processDefinitionController" class="gov.loc.repository.console.processDefinition.ProcessDefinitionController" parent="abstractRestController">
+		<property name="urlParametersDescription" value="processdefinition/{processDefinitionId}" />
+	</bean>
+
+	<bean id="userController" class="gov.loc.repository.console.user.UserController" parent="abstractRestController">
+		<property name="urlParametersDescription" value="user/{user}" />
+	</bean>
+
+	<bean id="taskInstanceController" class="gov.loc.repository.console.taskInstance.TaskInstanceController" parent="abstractRestController">
+		<property name="urlParametersDescription" value="taskinstance/{taskInstanceId}" />
+        <property name="defaultTaskInstanceUpdateCommand">
+			<bean class="gov.loc.repository.console.taskInstance.DefaultTaskInstanceUpdateCommand" singleton="false" />        
+        </property>
+	</bean>			
+	
+	<bean id="loginController" class="gov.loc.repository.console.login.LoginController" />	
+    
+	<bean id="indexController" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+		<property name="viewName"><value>.resource.list.xhtml</value></property>
+	</bean>
+            
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:application.properties" />
+	</bean>
+    
+	<bean id="jbpmActorHandlerInterceptor" class="gov.loc.repository.console.utilities.jbpm.JbpmActorHandlerInterceptor" />
+    -->
+    <!-- Tiles-related setup -->
+    <!--
+	<bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+	   <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
+	   <property name="order" value="1" />
+	</bean>
+
+    <bean id="tilesConfigurer" class="gov.loc.repository.console.springframework.web.servlet.view.tiles2.TilesConfigurer">
+    	<property name="definitionPattern" value="tiles-layout*.xml" />
+    </bean>
+    -->
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="1000000"/>
+	</bean>
+
+	<bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+	  <property name="resourceLoaderPath" value="/WEB-INF/velocity/"/>
+	</bean>
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+	  <property name="cache" value="true"/>
+	  <property name="prefix" value=""/>
+	  <property name="suffix" value=".vm"/>
+	</bean>	
+</beans>

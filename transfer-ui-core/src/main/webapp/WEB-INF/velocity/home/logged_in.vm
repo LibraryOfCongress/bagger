@@ -1,0 +1,33 @@
+<html>
+	<body>
+		<h1>Group task list</h1>
+			<ul>
+				#foreach($taskInstanceBean in $groupTaskInstanceBeanList)
+					<li>${taskInstanceBean.taskBean.name} (${taskInstanceBean.id})
+						<form method="post" action="./taskinstance/${taskInstanceBean.id}?method=put">
+							<input type="hidden" name="user" value="$currentUser" />
+							<input type="submit" value="assign to me"/>
+						</form>					
+					</li>					
+				#end
+			</ul>
+		<h1>User task list</h1>
+			<ul>
+				#foreach($taskInstanceBean in $userTaskInstanceBeanList)
+					<li><a href="./taskinstance/${taskInstanceBean.id}">${taskInstanceBean.taskBean.name} (${taskInstanceBean.id})</a></li>					
+				#end
+			</ul>
+		<h1>Process definition list</h1>
+			<ul>
+				#foreach($processDefinitionBean in $processDefinitionBeanList)
+					#set ($code = "processdefinitions.${processDefinitionBean.id}")
+					<li>#springMessage($code) (${processDefinitionBean.id})
+						<form method="post" action="./processdefinition/${processDefinitionBean.id}">
+							<input type="submit" value="create"/>
+						</form>										
+					</li>					
+				#end
+			</ul>
+		
+	</body>
+</html>

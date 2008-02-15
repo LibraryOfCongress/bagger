@@ -288,7 +288,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return eventType.cast(event);
 	}
 	
-	protected String getImplClassName(Class clazz)
+	protected String getImplClassName(Class<?> clazz)
 	{
 		return clazz.getName().substring(0, (clazz.getName().length()-clazz.getSimpleName().length())) + "impl." + clazz.getSimpleName() + "Impl";		
 	}	

@@ -1,0 +1,66 @@
+<html>
+	<body>
+		<h1>Task Instance $taskInstanceBean.id</h1>
+		<p>task: $taskInstanceBean.taskBean.name</p>
+		<p>user:
+			#if ($taskInstanceBean.userBean) 
+				$taskInstanceBean.userBean.id
+			#end
+		</p>
+		<p>groups:
+			<ul>
+				#foreach($groupBean in $taskInstanceBean.groupBeanList)
+					<li>$groupBean.id</li>
+				#end
+			</ul>	
+		</p>
+		<p>has ended: $taskInstanceBean.ended</p>
+		#if ($taskInstanceBean.ended)
+			<p>end date: $taskInstanceBean.endDate</p>
+		#end
+		
+		#if ($canUpdateUser)
+			<p>reassign user:</p>
+			<form method="post" action="${requestURI}?method=put">
+				<select name="user">
+					<option value="null">none</option>
+					#foreach($userBean in $userBeanList)
+						<option value="$userBean.id">$userBean.id</option>					
+					#end				
+				</select>
+				<input type="submit" value="submit"/>
+			</form>
+		#end
+
+		#if ($formViewName)
+			<p>update task:</p>
+			#if ($instructionViewName)
+				<p>Instruction:</p>
+				#include("${instructionViewName}.vm")
+			#end
+			#if (! $errorList.empty)
+				<p>Errors:
+					<ul>
+						#foreach($error in $errorList)
+							<li>$error</li>
+						#end
+					</ul>
+				</p>
+			#end
+				<form method="post" action="${requestURI}?method=put" enctype="multipart/form-data">
+					#parse("${formViewName}.vm")			
+					<tiles:insertDefinition name="${model.taskFormView}"/>
+					<p>Transition:</p>
+					<select id="transition" name="transition">	
+						<option value="null">don't complete task</option>
+						#foreach ($transition in $taskInstanceBean.taskBean.leavingTransitionList)	
+							<option value="$transition">#springMessageText("transitions.${transition}" $transition)</option>
+						#end
+					</select>							
+					<input type="submit" value="submit"/>					
+				</form>
+			</div>
+		#end				
+	</body>
+	
+</html>
