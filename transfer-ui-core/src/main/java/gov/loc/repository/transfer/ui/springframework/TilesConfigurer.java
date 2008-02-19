@@ -1,4 +1,4 @@
-package gov.loc.repository.transfer.ui.springframework.web.servlet.view.tiles2;
+package gov.loc.repository.transfer.ui.springframework;
 
 import java.io.File;
 import java.util.ArrayList;

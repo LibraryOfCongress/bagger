@@ -76,7 +76,7 @@
 	   <property name="order" value="1" />
 	</bean>
 
-    <bean id="tilesConfigurer" class="gov.loc.repository.console.springframework.web.servlet.view.tiles2.TilesConfigurer">
+    <bean id="tilesConfigurer" class="gov.loc.repository.console.springframework.TilesConfigurer">
     	<property name="definitionPattern" value="tiles-layout*.xml" />
     </bean>
     -->

@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.commands.DefaultTaskInstanceUpdateCommand;
 import gov.loc.repository.transfer.ui.commands.TaskInstanceUpdateCommand;
-import gov.loc.repository.transfer.ui.springframework.web.servlet.ModelAndView;
-import gov.loc.repository.transfer.ui.workflow.beans.TaskInstanceBean;
-import gov.loc.repository.transfer.ui.workflow.beans.TaskInstanceHelper;
-import gov.loc.repository.transfer.ui.workflow.beans.UserHelper;
+import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
+import gov.loc.repository.transfer.ui.model.TaskInstanceHelper;
+import gov.loc.repository.transfer.ui.model.UserHelper;
+import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 
 @Controller
 public class TaskInstanceController extends AbstractRestController {

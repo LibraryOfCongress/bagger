@@ -1,4 +1,4 @@
-package gov.loc.repository.transfer.ui.utilities.jbpm;
+package gov.loc.repository.transfer.ui.filters;
 
 import java.io.IOException;
 

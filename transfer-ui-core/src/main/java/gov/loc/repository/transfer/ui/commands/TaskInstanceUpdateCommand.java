@@ -2,8 +2,8 @@ package gov.loc.repository.transfer.ui.commands;
 
 import javax.servlet.http.HttpServletRequest;
 
-import gov.loc.repository.transfer.ui.springframework.web.servlet.ModelAndView;
-import gov.loc.repository.transfer.ui.workflow.beans.TaskInstanceBean;
+import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
+import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 
 import org.jbpm.JbpmContext;
 

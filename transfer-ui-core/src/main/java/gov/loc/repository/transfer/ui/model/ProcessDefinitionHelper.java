@@ -1,16 +1,9 @@
-package gov.loc.repository.transfer.ui.workflow.beans;
+package gov.loc.repository.transfer.ui.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ProcessDefinition;
 

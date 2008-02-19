@@ -1,6 +1,6 @@
 package gov.loc.repository.transfer.ui.controllers;
 
-import gov.loc.repository.transfer.ui.workflow.beans.UserBean;
+import gov.loc.repository.transfer.ui.model.UserBean;
 
 import javax.servlet.http.HttpServletRequest;
 

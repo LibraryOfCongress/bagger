@@ -1,4 +1,4 @@
-package gov.loc.repository.transfer.ui.workflow.beans;
+package gov.loc.repository.transfer.ui.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;

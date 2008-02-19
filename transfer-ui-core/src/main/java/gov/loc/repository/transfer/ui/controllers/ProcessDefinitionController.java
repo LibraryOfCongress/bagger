@@ -2,11 +2,11 @@ package gov.loc.repository.transfer.ui.controllers;
 
 import java.util.Map;
 
-import gov.loc.repository.transfer.ui.springframework.web.servlet.ModelAndView;
-import gov.loc.repository.transfer.ui.workflow.beans.ProcessDefinitionBean;
-import gov.loc.repository.transfer.ui.workflow.beans.ProcessDefinitionHelper;
-import gov.loc.repository.transfer.ui.workflow.beans.ProcessInstanceBean;
-import gov.loc.repository.transfer.ui.workflow.beans.UserBean;
+import gov.loc.repository.transfer.ui.model.ProcessDefinitionBean;
+import gov.loc.repository.transfer.ui.model.ProcessDefinitionHelper;
+import gov.loc.repository.transfer.ui.model.ProcessInstanceBean;
+import gov.loc.repository.transfer.ui.model.UserBean;
+import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package gov.loc.repository.transfer.ui.workflow.beans;
+package gov.loc.repository.transfer.ui.model;
 
 public class GroupBean extends AbstractWorkflowBean{
 	private String id;

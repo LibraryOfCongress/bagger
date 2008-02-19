@@ -1,4 +1,4 @@
-package gov.loc.repository.transfer.ui.springframework.web.servlet;
+package gov.loc.repository.transfer.ui.springframework;
 
 public class ModelAndView extends org.springframework.web.servlet.ModelAndView {
 	private String msg = null;

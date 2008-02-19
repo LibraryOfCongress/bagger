@@ -1,6 +1,6 @@
 package gov.loc.repository.transfer.ui.controllers;
 
-import gov.loc.repository.transfer.ui.springframework.web.servlet.ModelAndView;
+import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.UrlParameterHelper;
 
 import java.text.MessageFormat;

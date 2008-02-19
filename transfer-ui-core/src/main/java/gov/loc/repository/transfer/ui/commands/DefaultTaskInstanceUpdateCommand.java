@@ -16,11 +16,11 @@ import org.jbpm.JbpmContext;
 
 import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.controllers.TaskInstanceController;
-import gov.loc.repository.transfer.ui.springframework.web.servlet.ModelAndView;
-import gov.loc.repository.transfer.ui.workflow.beans.TaskInstanceBean;
-import gov.loc.repository.transfer.ui.workflow.beans.UserBean;
-import gov.loc.repository.transfer.ui.workflow.beans.UserHelper;
-import gov.loc.repository.transfer.ui.workflow.beans.VariableBean;
+import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
+import gov.loc.repository.transfer.ui.model.UserBean;
+import gov.loc.repository.transfer.ui.model.UserHelper;
+import gov.loc.repository.transfer.ui.model.VariableBean;
+import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 
 public class DefaultTaskInstanceUpdateCommand implements
 		TaskInstanceUpdateCommand {
@@ -42,7 +42,6 @@ public class DefaultTaskInstanceUpdateCommand implements
 
 	}
 
-	@Override
 	public void setModelAndView(ModelAndView mav) {
 		this.mav = mav;		
 	}
