@@ -54,10 +54,10 @@
   </servlet-mapping>
 
 	<security-role>
-    	<role-name>ndnp-participant</role-name>
+    	<role-name>participant</role-name>
 	</security-role>
 	<security-role>
-    	<role-name>wdl-participant</role-name>
+    	<role-name>administrator</role-name>
 	</security-role>
 
 	<security-constraint>
@@ -67,8 +67,7 @@
  	      <http-method>GET</http-method>
 	    </web-resource-collection>
     	<auth-constraint>
-	      <role-name>ndnp-participant</role-name>
-	      <role-name>wdl-participant</role-name>
+	      <role-name>participant</role-name>
 	    </auth-constraint>
 	</security-constraint>
 

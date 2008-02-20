@@ -21,27 +21,17 @@
 		<tr>
 			<td>ray</td>
 			<td>ray</td>
-			<td>ndnp-participant</td>
+			<td>participant</td>
 		</tr>
 		<tr>
 			<td>myron</td>
 			<td>myron</td>
-			<td>ndnp-participant</td>
+			<td>participant</td>
 		</tr>
 		<tr>
 			<td>scott</td>
 			<td>scott</td>
-			<td>ndnp-participant<br/>ndnp-administrator<br/>wdl-participant<br/>wdl-administrator</td>
-		</tr>
-	    <tr>
-			<td>brian</td>
-			<td>brian</td>
-			<td>ndnp-participant</td>    
-	    </tr>
-		<tr>
-			<td>dan</td>
-			<td>dan</td>
-			<td>wdl-participant</td>
+			<td>participant<br/>administrator</td>
 		</tr>
 	</table>
 </body>

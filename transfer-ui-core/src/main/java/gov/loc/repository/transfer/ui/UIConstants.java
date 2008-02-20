@@ -6,4 +6,7 @@ public class UIConstants {
 	public static final String PARAMETER_TRANSITION = "transition";
 	public static final String PARAMETER_USER = "user";
 
+	public static final String ROLE_PARTICIPANT = "participant";
+	public static final String ROLE_ADMINISTRATOR = "administrator";	
+	
 }
