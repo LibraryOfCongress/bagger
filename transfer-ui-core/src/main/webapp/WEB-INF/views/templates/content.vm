@@ -1,0 +1,41 @@
+
+          <h2>Religion:  8 collections</h2>
+          <div id="searchnav">
+            <form action="/cgi-bin/query" method="post" id="sub_search" 
+              name="sub_search" onsubmit="var the_result = checkMandatory(); return the_result;">
+      	      <input type="hidden" name="directory" value="ammem" />
+      	      <input type="hidden" name="allwords" value="1" />
+              <label for="searchcolltext">Search selected collections</label> &nbsp;
+              <input name="querymdb" id="searchcolltext" size="18" type="text" />  &nbsp;
+              <input class="button" id="search_but" name="search_but" type="submit" value="SEARCH" />
+            </form>
+          </div>
+          <a name="page_content" id="page_content"></a>
+          <table width="660" border="0" summary="Search Categories results summary table">
+            <tr>
+              <td colspan="2">
+                <a href="./ListSome.php?nocheck=0&category=Religion">
+                  <strong>Select all</strong>
+                </a>
+                <span class="nav_text">&nbsp;|&nbsp;</span>
+                <a href="./ListSome.php?nocheck=1&&category=Religion">
+                  <strong>Clear all</strong>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td width="33" class="numtop">
+                <input id="" type= "checkbox" value= "mharendt:" 
+                  checked = "checked" name= "Group"/>
+              </td>
+              <td width="627" class="top">
+                <label for="c1">
+                  <a href="/ammem/arendthtml/arendthome.html">
+                    <strong>Arendt, Hannah </strong> ~ Papers ~ 1898-1977
+                  </a>
+                </label>
+                <p>The Hannah Arendt Papers at the Library of Congress</p>
+              </td>
+            </tr>
+          </table>
+          <p>* Collections with an asterisk are not searchable.  </p>

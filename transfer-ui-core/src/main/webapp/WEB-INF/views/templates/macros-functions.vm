@@ -1,0 +1,20 @@
+#*
+  - Blocks are just a simple way to reference view templates
+  - passed from the tiles page layouts.
+*#  
+#macro( block $name )
+  #parse($tiles.getAttribute($name))
+#end
+
+
+#*
+  -The i18n macro needs to be completed, but for now 
+  - simplifies providing default strings
+*#
+#macro( i18n  $string $default)
+  #if($string) 
+    $string 
+  #else
+   $default
+  #end 
+#end

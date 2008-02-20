@@ -1,0 +1,33 @@
+<div id="topnav">
+  <ul id="menu">
+    <li id="logo" title="The Library of Congress American Memory">
+      <a href="../index.html"></a>
+    </li>
+    <li id="home">
+      <a href="../index.html">
+        <img src="../images/home_off.gif" alt="home" width="45" height="20" />
+      </a>
+    </li>
+    <li id="browse">
+      <a href="index.html">
+        <img src="../images/browse_on.jpg" alt="browse" width="56" height="20" />
+      </a>
+    </li>
+    <li id="about">
+      <a href="../about/index.html">
+        <img src="../images/about_off.gif" alt="about" width="49" height="20" />
+      </a>
+    </li>
+    <li id="help">
+      <a href="../help/index.html" title="help">
+        <img src="../images/help_off.gif" alt="help" width="42" height="20" />
+      </a>
+    </li>
+    <li id="contact">
+      <a href="../contact/index.html">
+        <img src="../images/contact_off.gif" alt="contact" width="59" height="20" />
+      </a>
+    </li>
+    #block("search")
+  </ul>
+</div>

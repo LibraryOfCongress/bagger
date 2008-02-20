@@ -1,0 +1,133 @@
+body {
+	color:#333;
+	width: auto;
+	margin:0px;
+	padding:0px;
+	background: #fff;
+	font:12pt verdana, helvetica, sans-serif;
+}
+h1 {
+	margin:0;
+	text-align: left;
+	padding:0;
+}
+h2 {
+	margin:0;
+	text-align: left;
+	padding:0;
+}
+p {
+	font:85% verdana, helvetica, sans-serif;
+	margin:0;
+	text-align: left;
+	padding:0;
+}
+
+a {
+	color:#003366;
+	font-size:85%;
+	font-family:verdana, helvetica, sans-serif;
+	font-weight:600;
+	text-decoration: underline;
+}
+
+a:link {
+	color: #003366;
+	text-decoration: underline;
+}
+
+a:visited {
+	color:#003366;
+	text-decoration: underline;
+}
+a:hover {
+	color:#333;
+	text-decoration: underline;
+}
+
+div#topnav	{
+	display:none;
+}
+
+
+#container, #back_white, #content {
+	width: auto;
+	padding:0px 5px 0px 5px;
+	text-align: left;
+	float: none !important;
+	background: transparent none;
+	color:#333;
+	
+}
+#content #browse_cat, #content #mission, #content #right {
+	width: auto;
+	margin: 4px 0px 4px 0px;
+	padding: 0;
+	float: none !important;
+	border: 0;
+}
+#content #coll_high {
+	width: auto;
+	margin: 0;
+	padding:0;
+}
+
+#content #searchnav {
+	width: auto;
+	margin: 0;
+	padding: 0;
+	float: none !important;
+	border: 0;
+}
+#content #searchnav ul#cat_nav	{
+	
+	width: auto;
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+#content table {
+	width: auto !important;
+}
+/* collection pages  */
+#content #left_nav {
+	display: none;
+	float: none !important;
+	width: 0;
+	margin: 0;
+	padding:0;
+}
+
+#content #title, #content #browse_by, #content #browse_list {
+	width: auto;
+	float: none !important;
+	margin: 4px 0px 4px 0px;
+	padding: 0;
+}
+#content #title h1 {
+	padding: 0;
+}
+#content #image_table {
+	margin:0;
+}
+#content #timeline, #content #image_right, #content #text, #content #image_left {
+	width: auto;
+	float: none !important;
+	margin: 4px 0px 4px 0px;
+	padding: 0;
+}
+#content #text_bottom {
+	width: auto;
+	float: none !important;
+	margin: 4px 0px 4px 0px;
+	padding: 0;
+	position: relative;
+	top: 0;
+	left: 0;
+	
+}
+#content #text h2 {
+			
+	margin: 30px 0px 4px 0px;
+	padding: 0px 0px 20px 0px;
+}

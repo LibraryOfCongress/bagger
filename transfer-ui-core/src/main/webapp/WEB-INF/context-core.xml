@@ -9,89 +9,65 @@
         http://www.springframework.org/schema/context 
         http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-<context:component-scan base-package="gov.loc.repository.transfer.ui.controllers" />
+    <context:component-scan base-package="gov.loc.repository.transfer.ui.controllers" />
 
-<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-	<property name="basenames">
-		<list>
-			<value>messages</value>
-			<value>application</value>
-		</list>
-	</property>
-</bean>
-
-<!--
-    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="interceptors">
-			<list>
-				<ref local="jbpmActorHandlerInterceptor" />
-			</list>
-		</property>
-        <property name="mappings">
-            <props>                        
-                <prop key="/processdefinition/*">processDefinitionController</prop>
-                <prop key="/user/*">userController</prop>
-                <prop key="/taskinstance/*">taskInstanceController</prop>                
-                <prop key="/login/*.html">loginController</prop>                
-                <prop key="/*">indexController</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="abstractRestController" class="gov.loc.repository.console.AbstractRestController" abstract="true">
-		<property name="applicationRoot" value="${root}" />    
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    	<property name="basenames">
+    		<list>
+    			<value>messages</value>
+    			<value>application</value>
+    		</list>
+    	</property>
     </bean>
     
-	<bean id="processDefinitionController" class="gov.loc.repository.console.processDefinition.ProcessDefinitionController" parent="abstractRestController">
-		<property name="urlParametersDescription" value="processdefinition/{processDefinitionId}" />
-	</bean>
-
-	<bean id="userController" class="gov.loc.repository.console.user.UserController" parent="abstractRestController">
-		<property name="urlParametersDescription" value="user/{user}" />
-	</bean>
-
-	<bean id="taskInstanceController" class="gov.loc.repository.console.taskInstance.TaskInstanceController" parent="abstractRestController">
-		<property name="urlParametersDescription" value="taskinstance/{taskInstanceId}" />
-        <property name="defaultTaskInstanceUpdateCommand">
-			<bean class="gov.loc.repository.console.taskInstance.DefaultTaskInstanceUpdateCommand" singleton="false" />        
-        </property>
-	</bean>			
-	
-	<bean id="loginController" class="gov.loc.repository.console.login.LoginController" />	
+    <!--bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
+    	<property name="definitionPattern"  value="page-views*.xml" />
+    	<property name="definitionPath"     value="/WEB-INF/views" />
+    </bean-->
     
-	<bean id="indexController" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
-		<property name="viewName"><value>.resource.list.xhtml</value></property>
-	</bean>
-            
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:application.properties" />
-	</bean>
-    
-	<bean id="jbpmActorHandlerInterceptor" class="gov.loc.repository.console.utilities.jbpm.JbpmActorHandlerInterceptor" />
-    -->
-    <!-- Tiles-related setup -->
-    <!--
-	<bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-	   <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
-	   <property name="order" value="1" />
-	</bean>
-
-    <bean id="tilesConfigurer" class="gov.loc.repository.console.springframework.TilesConfigurer">
-    	<property name="definitionPattern" value="tiles-layout*.xml" />
-    </bean>
-    -->
+    <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles.TilesConfigurer">
+	    <property name="factoryClass" value="org.apache.struts.tiles.xmlDefinition.I18nFactorySet"/>
+  	    <property name="definitions"><list>
+  			<value>/WEB-INF/views/pages-core.xml</value>
+  	    </list></property>
+  </bean>
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="1000000"/>
 	</bean>
-
-	<bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
-	  <property name="resourceLoaderPath" value="/WEB-INF/velocity/"/>
-	</bean>
 	
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
-	  <property name="cache" value="true"/>
-	  <property name="prefix" value=""/>
-	  <property name="suffix" value=".vm"/>
+	<bean id="velocityConfig" 
+    class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/views/templates"/>
+		<property name="velocityProperties"> <props>
+				<prop key="input.encoding"                      >UTF-8</prop>
+				<prop key="output.encoding"                     >UTF-8</prop>
+				<prop key="runtime.log.logsystem.class"         >org.apache.velocity.runtime.log.SimpleLog4JLogSystem</prop>
+				<prop key="runtime.log.logsystem.log4j.category">org.apache.velocity.runtime.log.SimpleLog4JLogSystem</prop>
+				<prop key="runtime.log.error.stacktrace"        >false</prop>
+				<prop key="runtime.log.warn.stacktrace"         >false</prop>
+				<prop key="runtime.log.info.stacktrace"         >false</prop>
+				<prop key="runtime.log.invalid.reference"       >true</prop>
+		        <prop key="velocimacro.library"                 >macros-functions.vm</prop>
+				<prop key="velocimacro.permissions.allow.inline">true</prop>
+				<prop key="velocimacro.permissions.allow.inline.to.replace.global">false</prop>
+				<prop key="velocimacro.permissions.allow.inline.local.scope">false</prop>
+				<prop key="velocimacro.context.localscope"      >false</prop>
+				<prop key="velocimacro.library.autoreload"      >true</prop>
+				<prop key="file.resource.loader.cache"          >false</prop>
+				<prop key="directive.foreach.counter.name"      >velocityCount</prop>
+				<prop key="directive.foreach.counter.initial.value">1</prop>
+		</props> </property>
 	</bean>	
+
+  <bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+  	<property name="cache"                    value="true" />
+  	<property name="prefix"                   value="" />
+  	<property name="exposeSpringMacroHelpers" value="true" />
+  	<property name="order"                    value="1"/>
+  	<property name="contentType"              value="text/html; charset=utf-8"/>
+  	<property name="toolboxConfigLocation"    value="WEB-INF/velocity-toolbox.xml"/>
+    <property name="suffix"                   value="" />
+    <property name="viewClass"                value="gov.loc.repository.transfer.ui.springframework.VelocityTilesView" />
+  </bean>
 </beans>

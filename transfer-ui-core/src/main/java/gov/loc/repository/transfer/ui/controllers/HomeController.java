@@ -12,16 +12,16 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-	@RequestMapping("/*")
+	@RequestMapping("/index.html")
 	public ModelAndView home(HttpServletRequest req)
 	{
 		ModelAndView mav = new ModelAndView();
 		if (req.getUserPrincipal() == null)
 		{
-			mav.setViewName("/home/not_logged_in");
+			mav.setViewName("login");
 			return mav;
 		}
-		mav.setViewName("/home/logged_in");
+		mav.setViewName("tasks");
 		
 		UserBean userBean = new UserBean();
 		userBean.setId(req.getUserPrincipal().getName());

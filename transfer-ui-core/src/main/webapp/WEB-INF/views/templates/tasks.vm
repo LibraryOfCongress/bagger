@@ -1,0 +1,61 @@
+<div id="tasks">
+    <ul id="localNav">
+        <li><a href="#userTasks"            > User Tasks ( $userTaskInstanceBeanList.size() )   </a></li>
+        <li><a href="#groupTasks"           > Group Tasks ( $groupTaskInstanceBeanList.size() )  </a></li>
+        <li><a href="#processDefinitions"   > Process Definition  ( $processDefinitionBeanList.size() )  </a></li>
+        <li><a href="#localHelp"            > Help                  </a></li>
+    </ul>
+	<div id="userTasks">
+		<h1>User Tasks</h1>
+		<ul>
+			#foreach($taskInstanceBean in $userTaskInstanceBeanList)
+				<li><a href="./taskinstance/${taskInstanceBean.id}">
+				    ${taskInstanceBean.taskBean.name} (${taskInstanceBean.id})
+				</a></li>					
+			#end
+		</ul>
+	</div>
+    <div id="groupTasks">
+		<h1>Group Task List</h1>
+		<ul>
+			#foreach($taskInstanceBean in $groupTaskInstanceBeanList)
+			<li>${taskInstanceBean.taskBean.name} (${taskInstanceBean.id})
+                <fieldset title="Accept This Task">
+				    <form method="post" action="./taskinstance/${taskInstanceBean.id}?method=put">
+    					<input type="hidden" name="user" value="$currentUser" />
+    					<input type="submit"  class="button" value="Assign To Me"/>
+    				</form>	
+				</fieldset>				
+			</li>					
+			#end
+		</ul>
+	</div>
+	<div id="processDefinitions">
+		<h1>Process Definition List</h1>
+		<ul>
+			#foreach($processDefinitionBean in $processDefinitionBeanList)
+				#set ($code = "processdefinitions.${processDefinitionBean.id}")
+			<li>#springMessage($code) (${processDefinitionBean.id})
+                <fieldset title="Create a New Process">
+				    <form method="post" action="./processdefinition/${processDefinitionBean.id}">
+    					<input type="submit" class="button" value="create"/>
+    				</form>	
+				</fieldset>										
+			</li>					
+			#end
+		</ul>
+	</div>
+	<div id="localHelp">
+		<h1>Help        </h1>
+		<p>TODO: Explain each of the following...</p>
+		<h2>User Tasks  </h2>
+		<p>TODO: User Tasks are task that have been assigned to you or you have accepted from available group tasks...</p>
+		<h2>Group Tasks </h2>
+		<p>TODO: Group Tasks are task that are available to you by virtue of your group membership...</p>
+		<h2>Process Instances</h2>
+		<p>TODO: A Process Instance is a ...</p>
+		<h2>More Help   </h2>
+		<p>TODO: If you need more help, you can...</p>
+    </div>
+    
+</div>

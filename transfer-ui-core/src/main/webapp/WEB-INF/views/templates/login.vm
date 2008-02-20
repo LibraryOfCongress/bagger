@@ -1,0 +1,72 @@
+
+<div id="login" title="Please Log In" class="flora">
+    <ul id="localNav">
+        <li><a href="#loginForm"            > Login    </a></li>
+        <li><a href="#localHelp"            > Help      </a></li>
+    </ul>
+    <div id="loginForm" >
+        <form action="j_security_check"  method="post">
+            <fieldset title="Credentials">
+                    <table border="0" cellpadding="3" cellspacing="3"  >
+                        <tr>
+                            <td><label>Username</label>:</td>
+                            <td><input name="j_username" type="text" size="20"/></td>
+                        </tr>
+                        <tr>
+                            <td><label>Password</label>:</td>
+                            <td><input name="j_password" type="password" size="20"/></td>
+                        </tr>
+                        <tr align="right">
+                            <td colspan="2">
+                                <input type="submit" id="Login" value="  Login  "/> 
+                                <input type="button" class="button" id="CancelLogin" value="  Cancel  " />
+                            </td>
+                        </tr>
+                    </table>
+            </fieldset>
+        </form>
+        <a href="#loginHelp" class="helpLink" rel="#loginHelp" title="Login Help">
+            Login Help
+        </a>
+        <span id="loginMessage"></span>
+    </div>
+    <div id="loginHelp">
+        <p>
+            You can use the usernames and passwords below to get a feel for the system. 
+        </p>
+        <table>
+	        <thead>
+        		<tr>
+        			<th>Username</th>
+        			<th>Password</th>
+        			<th>Roles</th>
+        		</tr>
+        	</thead>
+        	<tr>
+        		<td>ray</td>
+        		<td>ray</td>
+        		<td>ndnp-participant</td>
+        	</tr>
+        	<tr>
+        		<td>myron</td>
+        		<td>myron</td>
+        		<td>ndnp-participant</td>
+        	</tr>
+        	<tr>
+        		<td>scott</td>
+        		<td>scott</td>
+        		<td>ndnp-participant<br/>ndnp-administrator<br/>wdl-participant<br/>wdl-administrator</td>
+        	</tr>
+            <tr>
+        		<td>brian</td>
+        		<td>brian</td>
+        		<td>ndnp-participant</td>    
+            </tr>
+        	<tr>
+        		<td>dan</td>
+        		<td>dan</td>
+        		<td>wdl-participant</td>
+        	</tr>
+        </table>
+    </div>
+</div>
