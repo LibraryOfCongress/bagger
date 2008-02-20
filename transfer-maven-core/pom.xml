@@ -426,7 +426,12 @@
   		<id>mgia</id>
   		<name>Michael Giarlo</name>
   		<email>mgia@loc.gov</email>
-  	</developer>  	
+  	</developer>
+    <developer>
+        <id>cthatcher</id>
+        <name>Chris Thatcher</name>
+        <email>christopher.thatcher@comcast.net</email>
+    </developer>        
   </developers>  
 </project>
 
