@@ -23,7 +23,7 @@ public class ComponentFactoryTest {
 	@Test
 	public void testGetComponent() throws Exception
 	{
-		assertNotNull(factory.getComponent("testcomponent"));
+		assertNotNull(factory.getComponent("test"));
 	}
 	
 	@Test(expected=Exception.class)
