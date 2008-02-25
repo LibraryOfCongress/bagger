@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<context:component-scan base-package="gov.loc.repository.transfer.components"/>
+	<context:component-scan base-package="gov.loc.repository.service"/>
+
+	<bean id="connectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
+	    <property name="connectionFactory">
+	      <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+	        <property name="brokerURL">
+	          <value>${jms.connection}</value>
+	        </property>
+	      </bean>
+	    </property>
+	  </bean>
+	
+	<bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer" scope="prototype" autowire="byName">
+	    <property name="destinationName" value="none" />
+	    <property name="concurrentConsumers" value="${jms.listeners}" />
+	    <property name="autoStartup" value="false" />
+	</bean>
+	
+	<bean id="propertyConfigurer" class="gov.loc.repository.springframework.PropertyPlaceholderConfigurer">
+		<property name="configurationName" value="services" />
+	</bean>
+		
+</beans>

@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,8 +30,8 @@ public class HibernateUtil {
 	
 	public enum DatabaseRole { SUPER_USER, DATA_WRITER, FIXTURE_WRITER, READ_ONLY };
 	
-	private static Map<DatabaseRole,SessionFactory> sessionFactoryMap = new HashMap<DatabaseRole,SessionFactory>();
-	private static Map<DatabaseRole,AnnotationConfiguration> hibernateConfigurationMap = new HashMap<DatabaseRole, AnnotationConfiguration>();
+	private static Map<DatabaseRole,SessionFactory> sessionFactoryMap = Collections.synchronizedMap(new HashMap<DatabaseRole,SessionFactory>());
+	private static Map<DatabaseRole,AnnotationConfiguration> hibernateConfigurationMap = Collections.synchronizedMap(new HashMap<DatabaseRole, AnnotationConfiguration>());
 	
 	private static final Log log = LogFactory.getLog(HibernateUtil.class);
 
@@ -88,10 +89,11 @@ public class HibernateUtil {
 		
 	}
 	
-	public static SessionFactory getSessionFactory(DatabaseRole databaseRole) throws ExceptionInInitializerError
+	public synchronized static SessionFactory getSessionFactory(DatabaseRole databaseRole) throws ExceptionInInitializerError
 	{
 		if (! sessionFactoryMap.containsKey(databaseRole))
 		{
+			log.debug("Adding sessionFactory for " + databaseRole);
 			sessionFactoryMap.put(databaseRole, getConfiguration(databaseRole).buildSessionFactory());
 		}
 		return sessionFactoryMap.get(databaseRole);
@@ -168,13 +170,14 @@ public class HibernateUtil {
 		export.execute(false, true, false, true);
 	}
 		
+	@SuppressWarnings("unchecked")
 	public static Set<String> findSchemaDefinitions(AnnotationConfiguration hibernateConfiguration)
 	{
 		Set<String> schemas = new HashSet<String>();
-		Iterator each = hibernateConfiguration.getTableMappings();
+		Iterator<Table> each = hibernateConfiguration.getTableMappings();
 		while ( each.hasNext() )
 		{
-			Table t = (Table)each.next();
+			Table t = each.next();
 			if ( t.isPhysicalTable() )
 			{
 				String schema = t.getQuotedSchema( );

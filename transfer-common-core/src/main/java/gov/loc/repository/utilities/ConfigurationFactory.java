@@ -45,13 +45,8 @@ public class ConfigurationFactory {
 		{
 			CompositeConfiguration configuration = new CompositeConfiguration();
 			configuration.addConfiguration(new SystemConfiguration());
-
-			List<URL> resourceList = findWildcardResourceList(configurationName + ".*.properties");
-			URL matchingResource = ConfigurationFactory.class.getClassLoader().getResource(configurationName + ".properties");
-			if (matchingResource != null)
-			{
-				resourceList.add(matchingResource);
-			}
+			
+			List<URL> resourceList = findPropertyResourceList(configurationName);
 			
 			for(URL resource : resourceList)
 			{
@@ -61,6 +56,17 @@ public class ConfigurationFactory {
 			configurationMap.put(configurationName, configuration);
 		}
 		return configurationMap.get(configurationName);
+	}
+	
+	public static List<URL> findPropertyResourceList(String configurationName) throws Exception
+	{
+		List<URL> resourceList = findWildcardResourceList(configurationName + ".*.properties");
+		URL matchingResource = ConfigurationFactory.class.getClassLoader().getResource(configurationName + ".properties");
+		if (matchingResource != null)
+		{
+			resourceList.add(matchingResource);
+		}
+		return resourceList;
 	}
 	
 	public static List<URL> findWildcardResourceList(String wildCard) throws Exception
@@ -88,7 +94,7 @@ public class ConfigurationFactory {
 	{
 		resourceList = new ArrayList<URL>();
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		Enumeration<URL> fileResourceEnum = classLoader.getResources("");		
+		Enumeration<URL> fileResourceEnum = classLoader.getResources("");
 		while(fileResourceEnum.hasMoreElements())
 		{
 			File dir = new File(fileResourceEnum.nextElement().getFile());
@@ -97,14 +103,28 @@ public class ConfigurationFactory {
 				for(File file : dir.listFiles())
 				{
 					if (file.isFile())
-					{
+					{						
 						resourceList.add(file.toURI().toURL());
 					}
 				}
 			}
-			
 		}
 		
+		fileResourceEnum = classLoader.getResources("conf");
+		while(fileResourceEnum.hasMoreElements())
+		{
+			File dir = new File(fileResourceEnum.nextElement().getFile());
+			if (dir.isDirectory())
+			{
+				for(File file : dir.listFiles())
+				{
+					if (file.isFile())
+					{						
+						resourceList.add(file.toURI().toURL());
+					}
+				}
+			}
+		}		
 		Enumeration<URL> jarResourceEnum = classLoader.getResources("META-INF");		
 		while(jarResourceEnum.hasMoreElements())
 		{

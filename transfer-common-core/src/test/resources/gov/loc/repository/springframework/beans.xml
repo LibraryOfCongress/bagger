@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<bean id="testBean" class="gov.loc.repository.springframework.TestBean">
+        <property name="foo1" value="${foo1}" />
+        <property name="foo2" value="${foo2}" />
+        <property name="foo3" value="${foo3}" />
+        <property name="foo4" value="${foo4}" />
+    </bean>
+
+	<bean id="propertyConfigurer" class="gov.loc.repository.springframework.PropertyPlaceholderConfigurer">
+		<property name="configurationName" value="test" />
+	</bean>
+
+</beans>

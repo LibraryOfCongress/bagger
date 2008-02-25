@@ -4,7 +4,7 @@ import java.io.File;
 
 public class ResourceHelper {
 
-	public static File getFile(Class clazz, String filename) throws Exception
+	public static File getFile(Class<?> clazz, String filename) throws Exception
 	{
 		String resourceName = clazz.getPackage().getName().replace('.', '/');
 		if (filename != null)

@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.stereotype.Component;
 
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.events.filelocation.InventoryFromFilesOnDiskEvent;
@@ -17,6 +18,7 @@ import gov.loc.repository.utilities.FilenameHelper;
 import gov.loc.repository.utilities.FixityHelper;
 import gov.loc.repository.utilities.PackageHelper;
 
+@Component("filesOnDiskInventorierComponent")
 public class FilesOnDiskInventorierImpl extends BaseComponent implements
 		FilesOnDiskInventorier {
 

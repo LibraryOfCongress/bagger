@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project>
   <parent>
     <artifactId>transfer-maven-core</artifactId>
     <groupId>loc-repository</groupId>
@@ -7,117 +6,24 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>transfer-services-core</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <name>Transfer Services Container (Core)</name>
   <scm>
     <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-services-core</connection>
-    <tag>HEAD</tag>
     <url>https://rdc.lctl.gov/trac/transfer/browser</url>
-  </scm>    
+  </scm>
   <build>
-  	<resources>
-	    <resource>
-	      <directory>src/main/resources</directory>
-	    </resource>
-    </resources>  
-   <finalName>${application.name}</finalName>   
-    <plugins>
+  	<plugins>
 		<plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-war-plugin</artifactId>
-	        <configuration>
-	          <webResources>
-		      <resource>
-		        <directory>src/main/resources</directory>
-		      </resource>	          
-			    <resource>
-			      <filtering>true</filtering>
-			      <directory>${configuration.directory}</directory>
-			      <targetPath>WEB-INF/classes</targetPath>			      
-			    </resource>
-			    <resource>
-			      <filtering>true</filtering>
-			      <directory>src/configuration/common</directory>
-			      <targetPath>WEB-INF/classes</targetPath>
-			    </resource>			    
-	          </webResources>
-	         </configuration>
-       </plugin>    
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
+        <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <container>
-            <containerId>tomcat5x</containerId>
-            <type>remote</type>
-          </container>
-          <configuration>
-            <type>runtime</type>
-            <properties>
-              <cargo.tomcat.manager.url>${tomcat.manager.url}</cargo.tomcat.manager.url>
-              <cargo.remote.username>${tomcat.remote.username}</cargo.remote.username>
-              <cargo.remote.password>${tomcat.remote.password}</cargo.remote.password>
-            </properties>
-          </configuration>
-          <deployer>
-            <type>remote</type>
-            <deployables>
-              <deployable>
-                <properties>
-                  <context>/${application.name}</context>
-                </properties>
-              </deployable>
-            </deployables>
-          </deployer>
+          <descriptors>
+            <descriptor>src/assembly/bin.xml</descriptor>
+          </descriptors>
         </configuration>
-      </plugin>
-     </plugins>  
+      </plugin>  	
+  	</plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>template</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>template</value>
-        </property>
-      </activation>
-      <properties>
-        <application.name>services</application.name>
-        <configuration.directory>src/configuration/common</configuration.directory>        
-      </properties>
-    </profile>    
-    <profile>
-      <id>local</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>local</value>
-        </property>
-      </activation>
-      <properties>
-        <tomcat.manager.url>http://localhost:8080/manager</tomcat.manager.url>
-        <tomcat.remote.username>admin</tomcat.remote.username>
-        <application.name>services</application.name>
-        <configuration.directory>src/configuration/local</configuration.directory>        
-      </properties>
-    </profile>
-    <profile>
-      <id>gold</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>au</value>
-        </property>
-      </activation>
-      <properties>
-        <tomcat.manager.url>http://gold.rdc.lctl.gov:8080/manager</tomcat.manager.url>
-        <tomcat.remote.username>admin</tomcat.remote.username>
-        <application.name>services</application.name>
-        <configuration.directory>src/configuration/gold</configuration.directory>        
-      </properties>
-    </profile>
-  </profiles>  
   <dependencies>
   	<dependency>
   		<groupId>loc-repository</groupId>
@@ -134,8 +40,10 @@
   		<artifactId>transfer-components-core</artifactId>
   		<version>${pom.version}</version>
   	</dependency>
-  	
-	<!-- Spring dependencies -->    
+    <dependency>
+      <groupId>classworlds</groupId>
+      <artifactId>classworlds</artifactId>
+    </dependency>      
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
@@ -144,38 +52,38 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
     </dependency>
-    <!-- Other dependencies -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jms</artifactId>
+      <version>2.5</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-core</artifactId>
     </dependency>
-    <!-- Test dependencies -->
     <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock</artifactId>
-      <scope>test</scope>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
+      <version>1.3</version>
     </dependency>
     <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock-junit4</artifactId>
-      <scope>test</scope>
+      <groupId>javax.transaction</groupId>
+      <artifactId>jta</artifactId>
+      <version>1.0.1B</version>
     </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-library</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <scope>test</scope>
-    </dependency>    
-    
+      <dependency>
+        <groupId>org.jmock</groupId>
+        <artifactId>jmock</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.jmock</groupId>
+        <artifactId>jmock-junit4</artifactId>
+      </dependency>
+      <dependency>
+	      <groupId>hsqldb</groupId>
+	      <artifactId>hsqldb</artifactId>
+	      <scope>test</scope>
+	  </dependency>    
+          
   </dependencies>
 </project>
-
