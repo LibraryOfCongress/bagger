@@ -22,6 +22,6 @@ public class JobTypeHelperTest {
 		ApplicationContext context = new ClassPathXmlApplicationContext("services-context-core.xml");
 		Map<String,String> jobTypeMap = JobTypeHelper.getJobTypeToBeanIdMap(context);
 		assertEquals(1, jobTypeMap.size());
-		assertEquals("testComponent", jobTypeMap.get("test"));
+		assertEquals("testcomponent", jobTypeMap.get("test"));
 	}
 }
