@@ -27,7 +27,7 @@ import org.junit.runner.RunWith;
 @RunWith(JMock.class)
 public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 {
-	static Mockery context = new JUnit4Mockery();
+	static Mockery context;
 	static String tokenInstanceId;
 	private long processInstanceId;
 	private JbpmContext jbpmContext;
@@ -37,6 +37,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	public void setup() throws Exception
 	{
 		configuration = ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
+		context = new JUnit4Mockery();
 	}
 	
 	@Test
