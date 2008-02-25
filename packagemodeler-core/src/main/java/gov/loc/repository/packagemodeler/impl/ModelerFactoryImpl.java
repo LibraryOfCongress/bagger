@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
@@ -41,6 +42,7 @@ import gov.loc.repository.utilities.FilenameHelper;
 import gov.loc.repository.utilities.ManifestReader;
 import gov.loc.repository.utilities.ManifestReader.FileFixity;
 
+@Component("modelerfactory")
 public class ModelerFactoryImpl implements ModelerFactory {
 
 	private static final Log log = LogFactory.getLog(ModelerFactoryImpl.class);

@@ -12,6 +12,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import gov.loc.repository.Ided;
 import gov.loc.repository.packagemodeler.agents.Agent;
@@ -33,6 +35,8 @@ import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.utilities.results.ResultIterator;
 import gov.loc.repository.utilities.FilenameHelper;
 
+@Component("packagemodeldao")
+@Scope("prototype")
 public class PackageModelDAOImpl implements PackageModelDAO {
 
 	@SuppressWarnings("unused")

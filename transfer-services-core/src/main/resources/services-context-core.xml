@@ -9,6 +9,8 @@
 
 	<context:component-scan base-package="gov.loc.repository.transfer.components"/>
 	<context:component-scan base-package="gov.loc.repository.service"/>
+	<context:component-scan base-package="gov.loc.repository.packagemodeler"/>
+	<context:component-scan base-package="gov.loc.repository.utilities"/>
 
 	<bean id="connectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
 	    <property name="connectionFactory">

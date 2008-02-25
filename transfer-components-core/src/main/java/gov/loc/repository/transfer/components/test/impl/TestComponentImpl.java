@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import gov.loc.repository.transfer.components.test.TestComponent;
 
-@Component("testComponent")
+@Component("testcomponent")
 public class TestComponentImpl implements TestComponent {
 
 	private static final Log log = LogFactory.getLog(TestComponentImpl.class);	

@@ -9,7 +9,11 @@ import java.io.FileInputStream;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component("fixityhelper")
+@Scope("prototype")
 public class JavaSecurityFixityHelper implements FixityHelper {
 
 	private static final Log log = LogFactory.getLog(JavaSecurityFixityHelper.class);	

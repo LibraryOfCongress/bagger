@@ -5,6 +5,9 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import gov.loc.repository.packagemodeler.agents.Agent;
@@ -18,7 +21,8 @@ import gov.loc.repository.utilities.FilenameHelper;
 import gov.loc.repository.utilities.FixityHelper;
 import gov.loc.repository.utilities.PackageHelper;
 
-@Component("filesOnDiskInventorierComponent")
+@Component("filesondiskinventoriercomponent")
+@Scope("prototype")
 public class FilesOnDiskInventorierImpl extends BaseComponent implements
 		FilesOnDiskInventorier {
 
@@ -71,7 +75,8 @@ public class FilesOnDiskInventorierImpl extends BaseComponent implements
 		this.dao.save(fileLocation);
 	}
 
-	public void setFixityHelper(FixityHelper fixityHelper) {
+	@Autowired
+	public void setFixityHelper(@Qualifier("fixityhelper") FixityHelper fixityHelper) {
 		this.fixityHelper = fixityHelper;
 
 	}

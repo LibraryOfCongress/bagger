@@ -10,6 +10,8 @@ import java.text.MessageFormat;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public abstract class BaseComponent implements ModelerAware {
 
@@ -62,12 +64,14 @@ public abstract class BaseComponent implements ModelerAware {
 		return this.dao.findRequiredAgent(Agent.class, this.getReportingAgentId());
 	}
 	
-	public void setModelerFactory(ModelerFactory factory) {
+	@Autowired
+	public void setModelerFactory(@Qualifier("modelerfactory") ModelerFactory factory) {
 		this.factory = factory;
 		
 	}
 	
-	public void setPackageModelDao(PackageModelDAO dao) {
+	@Autowired
+	public void setPackageModelDao(@Qualifier("packagemodeldao") PackageModelDAO dao) {
 		this.dao = dao;
 		
 	}
