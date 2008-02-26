@@ -1,10 +1,13 @@
-<script type="text/javascript" src="/#context()/javascript/src/jquery.js"></script>
-<script type="text/javascript" src="/#context()/javascript/src/jquery.dimensions.js"></script>
-<script type="text/javascript" src="/#context()/javascript/src/jquery.ui-all-1.5b.js"></script>
+<script type="text/javascript" src="${contextPath}/javascript/src/jquery.js"></script>
+<script type="text/javascript" src="${contextPath}/javascript/src/jquery.dimensions.js"></script>
+<script type="text/javascript" src="${contextPath}/javascript/src/jquery.ui-all-1.5b.js"></script>
 <script type="text/javascript">
     jQuery(document).ready(function(){
         //TABS
-        jQuery('#localNav').tabs();
+        $('#localNav').tabs();
+        
+        //TABLES
+        //$("#dataTable").tablesorter({sortList:[[0,0],[2,1]], widgets: ['zebra']});
         
         //HELP
         $("#helpTopics > li").click(function() {

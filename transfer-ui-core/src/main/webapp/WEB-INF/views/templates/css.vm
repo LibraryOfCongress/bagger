@@ -1,5 +1,5 @@
-<link rel="stylesheet" media="screen" type="text/css" href="/#context()/css/themes/flora/flora.all.css" title="Flora (Default)" />
+<link rel="stylesheet" media="screen" type="text/css" href="${contextPath}/css/themes/flora/flora.all.css" title="Flora (Default)" />
       
-<link rel="stylesheet" media="screen" type="text/css" href="/#context()/css/am15_global_ss.css">
-<link rel="stylesheet" media="screen" type="text/css" href="/#context()/css/subjects_ss.css">
-<link rel="stylesheet" media="print"  type="text/css" href="/#context()/css/am15_print1_ss.css">
+<link rel="stylesheet" media="screen" type="text/css" href="${contextPath}/css/am15_global_ss.css">
+<link rel="stylesheet" media="screen" type="text/css" href="${contextPath}/css/subjects_ss.css">
+<link rel="stylesheet" media="print"  type="text/css" href="${contextPath}/css/am15_print1_ss.css">

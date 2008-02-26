@@ -9,38 +9,44 @@
 	<div id="taskDetails">
         <h1>Details for Task: $taskInstanceBean.id</h1>
         <form action="null">
-	        <fieldset>
+            <fieldset>
                 <legend>Name: $taskInstanceBean.taskBean.name</legend>
-                <fieldset>
-                    <legend>This is currently assigned to:</legend>
-                    <label for="taskAssignee">User</label>
-                    <span id="taskAssignee">
-                        #if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end
-                    </span>
-                </fieldset>
-                <fieldset>
-                    <legend>This task is visible to the follwing groups</legend>
-                    <label for="taskVisibility">Groups</label>
-                    <span id="taskVisibility" >
-                        #foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.id #end
-                    </span>
-                </fieldset>
-                <fieldset>
-                    <legend>Current status of this task</legend>
-                    <label for="taskStatus">Status</label>
-                    <span id="taskStatus" >
-                        #if ( $taskInstanceBean.ended ) Completed #else Incomplete #end
-                    </span>
-                </fieldset>
-                #if ( $taskInstanceBean.ended )
-                <fieldset>
-                    <legend>When was this date completed</legend>
-                    <label for="taskCompletionDate">Date</label>
-                    <span id="taskCompletionDate" >
-                        $taskInstanceBean.endDate
-                    </span>
-                </fieldset>
-                #end
+    	        <table id="dataTable">
+    	            <thead><tr id="taskDetailsHeader">
+                            <td>Name</td>
+                            <td>Value</td>
+                            <td>Description</td>
+                    </tr></thead>
+                    <tfoot><tr id="taskDetailsHeader">
+                            <td>Name</td>
+                            <td>Value</td>
+                            <td>Description</td>
+                    </tr></tfoot>
+                    <tbody>
+                        <tr id="taskAssignee" >
+                            <td>User</td>
+                            <td>#if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end</td>
+                            <td>This persons this task is currently assigned to, if any.</td>
+                        </tr>
+                        <tr id="taskVisibility" >
+                            <td>Groups</td>
+                            <td>#foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.id #end</td>
+                            <td>The groups this task is available to, if any.</td>
+                        </tr>
+                        <tr id="taskStatus" >
+                            <td>Status</td>
+                            <td>#if ( $taskInstanceBean.ended ) Completed #else Incomplete #end</td>
+                            <td>The current status of this task.</td>
+                        </tr>
+                        #if ( $taskInstanceBean.ended )
+                        <tr id="taskCompletionDate" >
+                            <td>Date</td>
+                            <td>$taskInstanceBean.endDate</td>
+                            <td>The time at which this task was marked as completed.</td>
+                        </tr>
+                        #end
+                    </tbody>
+                </table>
             </fieldset>
         </form>
     </div>

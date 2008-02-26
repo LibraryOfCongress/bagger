@@ -12,10 +12,11 @@
 		<td><input id="variable${variableBean.name}"
 		    type="text" 
 		    name="variable.${variableBean.name}" 
-		    value="$variableValue" /></td>
+		    value="$variableValue" />
 		#if ($variableBean.required)
 			&nbsp;&nbsp;(Required)
 		#end
+		</td>
 	#else
 	    <td><label for="variable${variableBean.name}">
 	        $variableBean.name
@@ -25,6 +26,6 @@
 		</span></td>
 	#end
     </tr>
-	</fieldset>
-#end	
+#end
+</table>
 </fieldset>

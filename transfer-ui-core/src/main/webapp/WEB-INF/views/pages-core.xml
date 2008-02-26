@@ -5,7 +5,6 @@
   
 	<definition name="base"             page="base.vm">
 	    <put name="springXhtmlCompliant"  value="true"/>
-	    <put name="context"               value="transfer-ui-core"/>
 		<put name="meta"                  value="meta.vm" />
 		<put name="css"                   value="css.vm" />
 		<put name="javascript"            value="javascript.vm" />
