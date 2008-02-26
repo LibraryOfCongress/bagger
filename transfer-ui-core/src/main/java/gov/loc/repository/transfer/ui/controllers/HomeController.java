@@ -25,6 +25,7 @@ public class HomeController {
 		UserBean userBean = new UserBean();
 		userBean.setId(req.getUserPrincipal().getName());
 		userBean.setJbpmContext((JbpmContext)req.getAttribute("jbpmcontext"));
+		mav.addObject("contextPath", req.getContextPath());
 		mav.addObject("groupTaskInstanceBeanList", userBean.getGroupTaskInstanceBeanList());
 		mav.addObject("userTaskInstanceBeanList", userBean.getUserTaskInstanceBeanList());
 		mav.addObject("processDefinitionBeanList", userBean.getProcessDefinitionBeanList());

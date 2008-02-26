@@ -42,6 +42,7 @@ public class JmsCompletedJobListenerController
 		}
 		
 		ModelAndView mav = new ModelAndView();
+		mav.addObject("contextPath", req.getContextPath());
 		mav.addObject("listener", this.listener);
 		
 		if (req.isUserInRole(UIConstants.ROLE_ADMINISTRATOR))
