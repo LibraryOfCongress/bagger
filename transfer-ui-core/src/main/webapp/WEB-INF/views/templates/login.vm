@@ -1,12 +1,13 @@
 
-<div id="login" title="Please Log In" class="flora">
+<div id="login" title="Please Log In" >
     <ul id="localNav">
-        <li><a href="#loginForm"            > Login    </a></li>
-        <li><a href="#localHelp"            > Help      </a></li>
+        <li><a href="#loginForm" ><span> Login </span></a></li>
+        <li><a href="#loginHelp" ><span> Help  </span></a></li>
     </ul>
     <div id="loginForm" >
         <form action="j_security_check"  method="post">
             <fieldset title="Credentials">
+			        <legend>Login</legend>
                     <table border="0" cellpadding="3" cellspacing="3"  >
                         <tr>
                             <td><label>Username</label>:</td>
@@ -18,55 +19,64 @@
                         </tr>
                         <tr align="right">
                             <td colspan="2">
-                                <input type="submit" id="Login" value="  Login  "/> 
+                                <input type="submit" class="button" id="Login"  value="  Login  "/> 
                                 <input type="button" class="button" id="CancelLogin" value="  Cancel  " />
                             </td>
                         </tr>
                     </table>
             </fieldset>
         </form>
-        <a href="#loginHelp" class="helpLink" rel="#loginHelp" title="Login Help">
-            Login Help
-        </a>
         <span id="loginMessage"></span>
     </div>
     <div id="loginHelp">
-        <p>
-            You can use the usernames and passwords below to get a feel for the system. 
-        </p>
-        <table>
-	        <thead>
-        		<tr>
-        			<th>Username</th>
-        			<th>Password</th>
-        			<th>Roles</th>
-        		</tr>
-        	</thead>
-        	<tr>
-        		<td>ray</td>
-        		<td>ray</td>
-        		<td>ndnp-participant</td>
-        	</tr>
-        	<tr>
-        		<td>myron</td>
-        		<td>myron</td>
-        		<td>ndnp-participant</td>
-        	</tr>
-        	<tr>
-        		<td>scott</td>
-        		<td>scott</td>
-        		<td>ndnp-participant<br/>ndnp-administrator<br/>wdl-participant<br/>wdl-administrator</td>
-        	</tr>
-            <tr>
-        		<td>brian</td>
-        		<td>brian</td>
-        		<td>ndnp-participant</td>    
-            </tr>
-        	<tr>
-        		<td>dan</td>
-        		<td>dan</td>
-        		<td>wdl-participant</td>
-        	</tr>
-        </table>
+        <h1>Help        </h1>
+        <p>TODO: Explain each of the following...</p>
+	    <ul id="helpTopics">
+	        <li class="selected">
+	            <h2>Logging In  </h2>
+                <p>
+                    You can use the usernames and passwords below to get a feel for the system. 
+                </p>
+                    <table>
+            	        <thead>
+                    		<tr>
+                    			<th>Username</th>
+                    			<th>Password</th>
+                    			<th>Roles</th>
+                    		</tr>
+                    	</thead>
+                    	<tr>
+                    		<td>ray</td>
+                    		<td>ray</td>
+                    		<td>ndnp-participant</td>
+                    	</tr>
+                    	<tr>
+                    		<td>myron</td>
+                    		<td>myron</td>
+                    		<td>ndnp-participant</td>
+                    	</tr>
+                    	<tr>
+                    		<td>scott</td>
+                    		<td>scott</td>
+                    		<td>ndnp-participant<br/>ndnp-administrator<br/>wdl-participant<br/>wdl-administrator</td>
+                    	</tr>
+                        <tr>
+                    		<td>brian</td>
+                    		<td>brian</td>
+                    		<td>ndnp-participant</td>    
+                        </tr>
+                    	<tr>
+                    		<td>dan</td>
+                    		<td>dan</td>
+                    		<td>wdl-participant</td>
+                    	</tr>
+                    </table>
+            </li>
+            <li>
+	            <h2>More Help  </h2>
+	            <p> TODO: If you need more help, you can...</p>
+	            <p> TODO: For additional support please contact...</p>
+		    </li>
+        </ul>
     </div>
 </div>

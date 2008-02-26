@@ -37,14 +37,6 @@
 		<servlet-name>consoleapp</servlet-name>
 		<url-pattern>*.html</url-pattern>				
 	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>consoleapp</servlet-name>
-		<url-pattern>/processdefinition/*</url-pattern>				
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>consoleapp</servlet-name>
-		<url-pattern>/taskinstance/*</url-pattern>				
-	</servlet-mapping>
  
   <!-- jBPM DeployServlet -->
   <servlet>
@@ -68,7 +60,6 @@
     	<role-name>participant</role-name>
 	</security-role>
 	<security-role>
-<<<<<<< .mine
     	<role-name>administrator</role-name>
 	</security-role>
 
@@ -83,25 +74,6 @@
 	    </auth-constraint>
 	</security-constraint>
 
-=======
-    	<role-name>participant</role-name>
-	</security-role>
-	<security-role>
-    	<role-name>administrator</role-name>
-	</security-role>
-
-	<security-constraint>
-		<web-resource-collection>
-	      <web-resource-name>participants</web-resource-name>
-    	  <url-pattern>/login/login</url-pattern>    	      	  
- 	      <http-method>GET</http-method>
-	    </web-resource-collection>
-    	<auth-constraint>
-	      <role-name>participant</role-name>
-	    </auth-constraint>
-	</security-constraint>
-
->>>>>>> .r171
 	<login-config>
     	<auth-method>FORM</auth-method>
     	<realm-name>UserRealm</realm-name>
@@ -114,8 +86,7 @@
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
-	<!--
-	<error-page>
+	<!--<error-page>
 		<exception-type>java.lang.Exception</exception-type>
 		<location>/error.html</location>
 	</error-page>

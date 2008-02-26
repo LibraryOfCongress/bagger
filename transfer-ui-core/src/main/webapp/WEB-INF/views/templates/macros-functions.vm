@@ -6,6 +6,15 @@
   #parse($tiles.getAttribute($name))
 #end
 
+#*
+  - attr is just a convient way to get tiles.getAttribute($name)
+*#  
+#macro( attr $name )$tiles.getAttribute($name)#end
+
+#*
+  - context refers to the globally configured app context root
+*#  
+#macro( context )#attr('context')#end
 
 #*
   -The i18n macro needs to be completed, but for now 

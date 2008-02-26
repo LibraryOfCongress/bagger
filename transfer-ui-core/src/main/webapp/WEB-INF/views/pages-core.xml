@@ -1,6 +1,6 @@
-<!DOCTYPE tiles-definitions PUBLIC
+<!--DOCTYPE tiles-definitions PUBLIC
   "-//Apache Software Foundation//DTD Tiles Configuration 1.3//EN"
-  "http://struts.apache.org/dtds/tiles-config_1_3.dtd">
+  "http://struts.apache.org/dtds/tiles-config_1_3.dtd"-->
 <tiles-definitions>
   
 	<definition name="base"             page="base.vm">
@@ -28,6 +28,11 @@
 	<definition name="tasks" extends="base">
 		<put name="title"           value="Tasks" />
 		<put name="content"         value="tasks.vm" />
+	</definition>
+	
+	<definition name="taskinstance" extends="base">
+		<put name="title"           value="Current Task" />
+		<put name="content"         value="taskinstance.vm" />
 	</definition>
 
 </tiles-definitions> 

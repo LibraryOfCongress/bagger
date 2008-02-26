@@ -1,66 +1,106 @@
-<html>
-	<body>
-		<h1>Task Instance $taskInstanceBean.id</h1>
-		<p>task: $taskInstanceBean.taskBean.name</p>
-		<p>user:
-			#if ($taskInstanceBean.userBean) 
-				$taskInstanceBean.userBean.id
-			#end
-		</p>
-		<p>groups:
-			<ul>
-				#foreach($groupBean in $taskInstanceBean.groupBeanList)
-					<li>$groupBean.id</li>
-				#end
-			</ul>	
-		</p>
-		<p>has ended: $taskInstanceBean.ended</p>
-		#if ($taskInstanceBean.ended)
-			<p>end date: $taskInstanceBean.endDate</p>
-		#end
-		
-		#if ($canUpdateUser)
-			<p>reassign user:</p>
-			<form method="post" action="${requestURI}?method=put">
-				<select name="user">
-					<option value="null">none</option>
-					#foreach($userBean in $userBeanList)
-						<option value="$userBean.id">$userBean.id</option>					
-					#end				
-				</select>
-				<input type="submit" value="submit"/>
-			</form>
-		#end
+<div id="taskinstance">
+    <ul id="localNav">
+        <li><a href="#taskDetails" ><span> Details </span></a></li>
+        #if ($canUpdateUser)    <li><a href="#reassignTask"><span> Reassign </span></a></li> #end
+        #if ($formViewName)     <li><a href="#updateTask"  ><span> Update   </span></a></li> #end
+        <li><a href="#localHelp"><span> Help     </span></a></li>
+    </ul>
+    
+	<div id="taskDetails">
+        <h1>Details for Task: $taskInstanceBean.id</h1>
+        <form action="null">
+	        <fieldset>
+                <legend>Name: $taskInstanceBean.taskBean.name</legend>
+                <fieldset>
+                    <legend>This is currently assigned to:</legend>
+                    <label for="taskAssignee">User</label>
+                    <span id="taskAssignee">
+                        #if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end
+                    </span>
+                </fieldset>
+                <fieldset>
+                    <legend>This task is visible to the follwing groups</legend>
+                    <label for="taskVisibility">Groups</label>
+                    <span id="taskVisibility" >
+                        #foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.id #end
+                    </span>
+                </fieldset>
+                <fieldset>
+                    <legend>Current status of this task</legend>
+                    <label for="taskStatus">Status</label>
+                    <span id="taskStatus" >
+                        #if ( $taskInstanceBean.ended ) Completed #else Incomplete #end
+                    </span>
+                </fieldset>
+                #if ( $taskInstanceBean.ended )
+                <fieldset>
+                    <legend>When was this date completed</legend>
+                    <label for="taskCompletionDate">Date</label>
+                    <span id="taskCompletionDate" >
+                        $taskInstanceBean.endDate
+                    </span>
+                </fieldset>
+                #end
+            </fieldset>
+        </form>
+    </div>
 
-		#if ($formViewName)
-			<p>update task:</p>
-			#if ($instructionViewName)
-				<p>Instruction:</p>
-				#include("${instructionViewName}.vm")
-			#end
-			#if (! $errorList.empty)
-				<p>Errors:
-					<ul>
-						#foreach($error in $errorList)
-							<li>$error</li>
-						#end
-					</ul>
-				</p>
-			#end
-				<form method="post" action="${requestURI}?method=put" enctype="multipart/form-data">
-					#parse("${formViewName}.vm")			
-					<tiles:insertDefinition name="${model.taskFormView}"/>
-					<p>Transition:</p>
-					<select id="transition" name="transition">	
-						<option value="null">don't complete task</option>
-						#foreach ($transition in $taskInstanceBean.taskBean.leavingTransitionList)	
-							<option value="$transition">#springMessageText("transitions.${transition}" $transition)</option>
-						#end
-					</select>							
-					<input type="submit" value="submit"/>					
-				</form>
-			</div>
-		#end				
-	</body>
-	
-</html>
+    #if ($canUpdateUser)
+	<div id="reassignTask">
+	    <h1>Reassign Task</h1>
+	    <form method="post" action="${requestURI}?method=put">
+	        <fieldset>
+	            <legend>Reassign this task to another user</legend>
+	            <label for="taskReassingee">User</label>
+    		    <select id="taskReassignee" name="user">
+        			<option value="null">none</option>
+        			#foreach($userBean in $userBeanList)
+        				<option value="$userBean.id">$userBean.id</option>					
+        			#end				
+        		</select>
+        		<input class="button" type="submit" value="submit"/>
+	        </fieldset>
+    	</form>
+	</div>
+    #end
+
+    #if ($formViewName)
+    <div id="updateTask">
+	    <h1>Update</h1>
+    	#if ($errorList.size() > 0)
+    	<fieldset>
+		    <legend>Errors</legend>
+		    #foreach($error in $errorList)
+			<label for="error">$error</label>
+			<input id="error" 
+			    type="text"
+			    readonly="readonly"
+			    value="$error"/>
+		    #end
+		</fieldset>
+    	#end
+		<form method="post" action="${requestURI}?method=put" enctype="multipart/form-data">
+			#parse( "${formViewName}.vm" )
+			<fieldset>
+			    <legend>Transition</legend>
+    			<select id="transition" name="transition">	
+    				<option value="null">Leave task as incomplete.</option>
+    				#foreach ($transition in $taskInstanceBean.taskBean.leavingTransitionList)	
+    					<option value="$transition">#springMessageText("transitions.${transition}" $transition)</option>
+    				#end
+    			</select>							
+    			<input class="button" type="submit" value="submit"/>
+			</fieldset>
+		</form>
+	</div>
+    #end
+    
+    <div id="localHelp">
+		<h2>Help</h2>
+	#if ($instructionViewName)
+		#include("${instructionViewName}.vm")
+	#else
+	    <p>No help is currently available for this task.</p>
+	#end
+	</div>
+</div>

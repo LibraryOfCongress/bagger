@@ -30,7 +30,7 @@
   	    <property name="definitions"><list>
   			<value>/WEB-INF/views/pages-core.xml</value>
   	    </list></property>
-  </bean>
+    </bean>
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="1000000"/>
