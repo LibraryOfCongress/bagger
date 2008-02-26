@@ -14,13 +14,11 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 		return this.processDefinition.getName();
 	}
 
-	public void setProcessDefinition(ProcessDefinition definition)
-	{
+	public void setProcessDefinition(ProcessDefinition definition) {
 		this.processDefinition = definition;
 	}
 
-	public ProcessInstanceBean newInstance()
-	{
+	public ProcessInstanceBean newInstance() {
 		log.debug("Creating process instance for " + this.getId());
 		ProcessInstance processInstance = jbpmContext.newProcessInstance(this.getId());
 		processInstance.getRootToken().signal();
@@ -33,8 +31,8 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ProcessDefinitionBean && this.getId().equals(((ProcessDefinitionBean)obj).getId()))
-		{
+		if (obj instanceof ProcessDefinitionBean && 
+		    this.getId().equals(((ProcessDefinitionBean)obj).getId())) {
 			return true;
 		}
 		return false;
@@ -44,14 +42,17 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 	public List<ProcessInstanceBean> getProcessInstanceBeanList()
 	{
 		List<ProcessInstanceBean> processInstanceBeanList = new ArrayList<ProcessInstanceBean>();
-		List<ProcessDefinition> processDefinitionList = this.jbpmContext.getGraphSession().findAllProcessDefinitionVersions(this.processDefinition.getName());
-		for(ProcessDefinition processDefinition : processDefinitionList)
-		{
-			List<ProcessInstance> processInstanceList = this.jbpmContext.getGraphSession().findProcessInstances(processDefinition.getId());
-			for(ProcessInstance processInstance : processInstanceList)
-			{
-				if (! processInstance.hasEnded())
-				{
+		List<ProcessDefinition> processDefinitionList = 
+		    this.jbpmContext.getGraphSession().findAllProcessDefinitionVersions(
+		        this.processDefinition.getName()
+		    );
+		for(ProcessDefinition processDefinition : processDefinitionList) {
+			List<ProcessInstance> processInstanceList =
+			    this.jbpmContext.getGraphSession().findProcessInstances(
+			        processDefinition.getId()
+			    );
+			for(ProcessInstance processInstance : processInstanceList) {
+				if (! processInstance.hasEnded()) {
 					ProcessInstanceBean processInstanceBean = new ProcessInstanceBean();
 					processInstanceBean.setJbpmContext(this.jbpmContext);
 					processInstanceBean.setProcessInstance(processInstance);

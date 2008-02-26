@@ -16,8 +16,7 @@ public class HomeController {
 	public ModelAndView home(HttpServletRequest req)
 	{
 		ModelAndView mav = new ModelAndView();
-		if (req.getUserPrincipal() == null)
-		{
+		if (req.getUserPrincipal() == null) {
 			mav.setViewName("login");
 			return mav;
 		}

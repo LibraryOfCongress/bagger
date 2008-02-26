@@ -6,6 +6,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.jbpm.JbpmContext;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -24,21 +27,26 @@ import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 @Controller
 public class TaskInstanceController extends AbstractRestController {
 	
+	protected static final Log log = LogFactory.getLog(TaskInstanceController.class);
+	
 	public static final String NULL = "null";
 	public static final String VARIABLE_PREFIX = "variable.";
 	
 
-	private TaskInstanceUpdateCommand defaultCommand = new DefaultTaskInstanceUpdateCommand();;
-	private Map<String,TaskInstanceUpdateCommand> commandMap = new HashMap<String, TaskInstanceUpdateCommand>();
+	private TaskInstanceUpdateCommand defaultCommand 
+	    = new DefaultTaskInstanceUpdateCommand();
+	private Map<String,TaskInstanceUpdateCommand> commandMap 
+	    = new HashMap<String, TaskInstanceUpdateCommand>();
 		
 	@Override
 	public String getUrlParameterDescription() {
-		return "taskinstance/{taskInstanceId}";
+		return "taskinstance/{taskInstanceId}\\.{format}";
 	}
 	
-	@RequestMapping("/taskinstance/*")
 	@Override
-	public org.springframework.web.servlet.ModelAndView handleRequest(HttpServletRequest request,
+	@RequestMapping("/taskinstance/*.*")
+	public ModelAndView handleRequest(
+	        HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		return this.handleRequestInternal(request, response);
 	}
@@ -46,40 +54,42 @@ public class TaskInstanceController extends AbstractRestController {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void initApplicationContext() throws BeansException {
-		ApplicationContext applicationContext = this.getApplicationContext();
-		Map<String,TaskInstanceUpdateCommandMap<String, TaskInstanceUpdateCommand>> beanMap = applicationContext.getBeansOfType(TaskInstanceUpdateCommandMap.class);
-		for(TaskInstanceUpdateCommandMap<String, TaskInstanceUpdateCommand> map : beanMap.values())
-		{
+		ApplicationContext applicationContext = 
+		    this.getApplicationContext();
+		Map< String, TaskInstanceUpdateCommandMap< String,  TaskInstanceUpdateCommand>> beanMap =
+		        applicationContext.getBeansOfType(TaskInstanceUpdateCommandMap.class);
+		for(TaskInstanceUpdateCommandMap<String, TaskInstanceUpdateCommand> map : beanMap.values()){
 			this.commandMap.putAll(map);
 		}
 		super.initApplicationContext();
 	}
 	
-	public void setDefaultTaskInstanceUpdateCommand(TaskInstanceUpdateCommand defaultCommand)
-	{
+	public void setDefaultTaskInstanceUpdateCommand(
+	        TaskInstanceUpdateCommand defaultCommand ) {
 		this.defaultCommand = defaultCommand;
 	}
 	
-	private TaskInstanceUpdateCommand getTaskInstanceUpdateFormCommand(TaskInstanceBean taskInstanceBean) throws Exception
-	{
+	private TaskInstanceUpdateCommand getTaskInstanceUpdateFormCommand(
+	        TaskInstanceBean taskInstanceBean) throws Exception {
 		TaskInstanceUpdateCommand command = null;
-		for(String pattern : this.commandMap.keySet())
-		{
+		for(String pattern : this.commandMap.keySet()) {
 			String[] patternArray = pattern.split("\\.");
-			if (patternArray.length != 2)
-			{
+			if (patternArray.length != 2) {
 				throw new Exception("Invalid pattern: " + pattern);
 			}
-			if (PatternMatchUtils.simpleMatch(patternArray[0], taskInstanceBean.getProcessInstanceBean().getProcessDefinitionBean().getId()) && PatternMatchUtils.simpleMatch(patternArray[1], taskInstanceBean.getTaskBean().getName()))
-			{
+			if ( PatternMatchUtils.simpleMatch(
+			        patternArray[0],
+			        taskInstanceBean.getProcessInstanceBean().getProcessDefinitionBean().getId() ) 
+			    && PatternMatchUtils.simpleMatch(
+			        patternArray[1], 
+			        taskInstanceBean.getTaskBean().getName() )
+			){
 				command = this.commandMap.get(pattern);
 				break;
 			}
 		}
-		if (command == null)
-		{
-			if (this.defaultCommand == null)
-			{
+		if (command == null) {
+			if (this.defaultCommand == null){
 				throw new Exception("Default task instance update form command not configured.");
 			}
 			command = this.defaultCommand;
@@ -89,23 +99,31 @@ public class TaskInstanceController extends AbstractRestController {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void handleGet(HttpServletRequest request, ModelAndView mav, JbpmContext jbpmContext, Map<String, String> urlParameterMap) throws Exception {
+	protected void handleGet(
+	        HttpServletRequest request, 
+	        ModelAndView mav, 
+	        JbpmContext jbpmContext, 
+	        Map<String, String> urlParameterMap) throws Exception {
 		//If there is no taskinstanceid in urlParameterMap then 404
-		if (! urlParameterMap.containsKey(UIConstants.PARAMETER_TASKINSTANCEID))
-		{
+		if (! urlParameterMap.containsKey(UIConstants.PARAMETER_TASKINSTANCEID)) {
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
 		
 		//Otherwise handle taskinstanceid
 		String taskInstanceId = urlParameterMap.get(UIConstants.PARAMETER_TASKINSTANCEID);
-		if (! TaskInstanceHelper.exists(taskInstanceId, jbpmContext))
-		{
+		if (! TaskInstanceHelper.exists(taskInstanceId, jbpmContext)){
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
-		TaskInstanceBean taskInstanceBean = TaskInstanceHelper.getTaskInstanceBean(taskInstanceId, jbpmContext);
-		TaskInstanceUpdateCommand command = this.getTaskInstanceUpdateFormCommand(taskInstanceBean);
+		
+		TaskInstanceBean taskInstanceBean = 
+		    TaskInstanceHelper.getTaskInstanceBean(
+		        taskInstanceId, 
+		        jbpmContext
+		    );
+		TaskInstanceUpdateCommand command = 
+		    this.getTaskInstanceUpdateFormCommand(taskInstanceBean);
 		command.setTaskInstanceBean(taskInstanceBean);
 		command.setRequest(request);
 		command.setModelAndView(mav);
@@ -115,39 +133,44 @@ public class TaskInstanceController extends AbstractRestController {
 		
 		//Whether the task can be re-assigned
 		mav.addObject("canUpdateUser", command.canUpdateUser());
-		if (command.canUpdateUser())
-		{
+		if (command.canUpdateUser()) {
 			//This could be in the command, but why bother
 			mav.addObject("userBeanList", UserHelper.getUserBeanList(jbpmContext));
 		}
 		
-		if (command.canUpdateTaskInstance())
-		{			
+		if (command.canUpdateTaskInstance()) {			
 			command.prepareForm();
 			command.prepareInstruction();						
 		}		
 		
-		mav.setViewName("/taskinstance/taskinstance");
+		mav.setViewName("taskinstance");
 		
 	}
 		
 	@Override
-	protected void handlePut(HttpServletRequest request, ModelAndView mav, JbpmContext jbpmContext, Map<String, String> urlParameterMap) throws Exception {
-		if (! urlParameterMap.containsKey(UIConstants.PARAMETER_TASKINSTANCEID))
-		{			
+	protected void handlePut(
+	        HttpServletRequest request, 
+	        ModelAndView mav, 
+	        JbpmContext jbpmContext,
+	         Map<String, String> urlParameterMap ) throws Exception {
+		if (! urlParameterMap.containsKey(UIConstants.PARAMETER_TASKINSTANCEID)) {			
 			mav.setError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 			return;
 		}
 
 		String taskInstanceId = urlParameterMap.get(UIConstants.PARAMETER_TASKINSTANCEID);
-		if (! TaskInstanceHelper.exists(taskInstanceId, jbpmContext))
-		{
+		if (! TaskInstanceHelper.exists(taskInstanceId, jbpmContext)) {
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
-		TaskInstanceBean taskInstanceBean = TaskInstanceHelper.getTaskInstanceBean(taskInstanceId, jbpmContext);
+		TaskInstanceBean taskInstanceBean = 
+		    TaskInstanceHelper.getTaskInstanceBean(
+		        taskInstanceId, 
+		        jbpmContext
+		    );
 
-		TaskInstanceUpdateCommand command = this.getTaskInstanceUpdateFormCommand(taskInstanceBean);
+		TaskInstanceUpdateCommand command = 
+		    this.getTaskInstanceUpdateFormCommand(taskInstanceBean);
 		command.setTaskInstanceBean(taskInstanceBean);
 		command.setRequest(request);
 		command.setModelAndView(mav);
@@ -156,23 +179,22 @@ public class TaskInstanceController extends AbstractRestController {
 		command.bindPut();
 				
 		//Check to make sure an error wasn't reported by binding
-		if (mav.getStatusCode() != null)
-		{
-			return;
-		}
+		if (mav.getStatusCode() != null) { return; }
 		
 		//This will add an errorList to mav
 		command.validatePut();
 		
 		taskInstanceBean.save();
 
-		if (taskInstanceBean.isEnded())
-		{
+		if (taskInstanceBean.isEnded()) {
 			mav.setViewName("redirect:/");
-		}
-		else
-		{
-			this.handleGet(request, mav, jbpmContext, urlParameterMap);
+		}else{
+			this.handleGet(
+			    request, 
+			    mav, 
+			    jbpmContext, 
+			    urlParameterMap
+			);
 		}
 	}
 		

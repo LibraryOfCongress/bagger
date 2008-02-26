@@ -20,45 +20,36 @@ public class JbpmContextRequestFilter implements Filter {
 	static JbpmConfiguration jbpmConfiguration = JbpmConfiguration.getInstance();
 	private static final Log log = LogFactory.getLog(JbpmContextRequestFilter.class);
 		
-	public void destroy() {
+	public void destroy() { }
 
-	}
-
-	public void doFilter(ServletRequest req, ServletResponse resp,
+	public void doFilter(
+	        ServletRequest req, 
+	        ServletResponse resp,
 			FilterChain chain) throws IOException, ServletException {
 	
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		log.debug("Created new jbpmConfiguration for " + req.toString());
-		try
-		{
-			
+		try {
 			req.setAttribute("jbpmcontext", jbpmContext);
 			HttpServletRequest httpReq = (HttpServletRequest)req;
-			if (httpReq.getRemoteUser() != null)
-			{
+			if (httpReq.getRemoteUser() != null) {
 				log.debug("Setting actorId to " + httpReq.getRemoteUser());
 				jbpmContext.setActorId(httpReq.getRemoteUser());
 			}
-			
 			// Call the next filter (continue request processing)
 			chain.doFilter(req, resp);	
-		}
-		finally
-		{			
-			try
-			{
+		}catch(Exception e){
+		    log.error("Error creating jbpmContext for " + req.toString(), e);
+		}finally{			
+			try {
 				jbpmContext.close();
 				log.debug("Closed jbpmConfiguration for " + req.toString());
-			}
-			catch(Exception ex)
-			{
+			} catch(Exception ex) {
 				log.error("Error closing jbpmContext for " + req.toString(), ex);
 			}
 		}
 	}
 
-	public void init(FilterConfig config) throws ServletException {
-
-	}
+	public void init(FilterConfig config) throws ServletException { }
 
 }

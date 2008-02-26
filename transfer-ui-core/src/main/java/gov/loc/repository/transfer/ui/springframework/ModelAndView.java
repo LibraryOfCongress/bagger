@@ -4,24 +4,20 @@ public class ModelAndView extends org.springframework.web.servlet.ModelAndView {
 	private String msg = null;
 	private Integer sc = null;
 	
-	public void setError(int sc)
-	{
+	public void setError(int sc) {
 		this.sc = sc;
 	}
 	
-	public void setError(int sc, String msg)
-	{
+	public void setError(int sc, String msg) {
 		this.sc = sc;
 		this.msg = msg;
 	}
 	
-	public Integer getStatusCode()
-	{
+	public Integer getStatusCode() {
 		return this.sc;
 	}
 	
-	public String getMessage()
-	{
+	public String getMessage() {
 		return this.msg;
 	}
 }

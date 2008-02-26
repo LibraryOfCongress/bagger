@@ -8,8 +8,7 @@ public class TaskInstanceUpdateCommandMap<String,TaskInstanceUpdateCommand> exte
 
 	private static final long serialVersionUID = 1L;
 
-	public void setMap(Map<String,TaskInstanceUpdateCommand> map)
-	{
+	public void setMap(Map<String,TaskInstanceUpdateCommand> map) {
 		this.putAll(map);
 	}
 }

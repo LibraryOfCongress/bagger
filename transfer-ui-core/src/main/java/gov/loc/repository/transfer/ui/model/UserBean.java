@@ -55,8 +55,12 @@ public class UserBean extends AbstractWorkflowBean {
 		for(String processDefinitionId : processDefinitionIdSet)
 		{
 			ProcessDefinitionBean processDefinitionBean = new ProcessDefinitionBean();
-			processDefinitionBean.setJbpmContext(jbpmContext);
-			processDefinitionBean.setProcessDefinition(jbpmContext.getGraphSession().findLatestProcessDefinition(processDefinitionId));
+			processDefinitionBean.setJbpmContext(jbpmContext);			    
+			processDefinitionBean.setProcessDefinition(
+			    jbpmContext.getGraphSession().findLatestProcessDefinition(
+			        processDefinitionId
+			    )
+			);
 			processDefinitionBeanList.add(processDefinitionBean);
 		}
 		return processDefinitionBeanList;

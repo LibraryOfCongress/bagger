@@ -14,21 +14,18 @@ public class ProcessInstanceBean extends AbstractWorkflowBean {
 		return processInstance;
 	}
 
-	public String getPackageName()
-	{		
+	public String getPackageName() {		
 		return (String)this.processInstance.getContextInstance().getVariable("packageId");
 	}
 	
-	public ProcessDefinitionBean getProcessDefinitionBean()
-	{
+	public ProcessDefinitionBean getProcessDefinitionBean() {
 		ProcessDefinitionBean processDefinitionBean = new ProcessDefinitionBean();
 		processDefinitionBean.setJbpmContext(this.jbpmContext);
 		processDefinitionBean.setProcessDefinition(this.processInstance.getProcessDefinition());
 		return processDefinitionBean;
 	}
 	
-	public long getId()
-	{
+	public long getId() {
 		return this.processInstance.getId();
 	}
 	
@@ -75,8 +72,7 @@ public class ProcessInstanceBean extends AbstractWorkflowBean {
 	}
 	*/
 	
-	public void save()
-	{
+	public void save() {
 		this.jbpmContext.save(this.processInstance);
 	}
 	
@@ -94,8 +90,7 @@ public class ProcessInstanceBean extends AbstractWorkflowBean {
 		}
 	}
 	*/
-	public boolean isEnded()
-	{
+	public boolean isEnded() {
 		return this.processInstance.hasEnded();
 	}
 	/*

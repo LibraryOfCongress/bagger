@@ -9,8 +9,7 @@ public class AbstractWorkflowBean {
 
 	protected static final Log log = LogFactory.getLog(AbstractWorkflowBean.class);	
 	
-	public void setJbpmContext(JbpmContext jbpmContext)
-	{
+	public void setJbpmContext(JbpmContext jbpmContext) {
 		this.jbpmContext = jbpmContext;
 	}
 	

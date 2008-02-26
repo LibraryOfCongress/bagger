@@ -19,8 +19,7 @@ public class UserHelper {
 	public static boolean exists(String userId, JbpmContext jbpmContext)
 	{
 		IdentitySession identitySession = new IdentitySession(jbpmContext.getSession());
-		if (identitySession.getUserByName(userId) != null)
-		{
+		if (identitySession.getUserByName(userId) != null) {
 			return true;
 		}
 		return false;

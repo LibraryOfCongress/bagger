@@ -6,36 +6,28 @@ public class ConfigurableTaskInstanceUpdateCommand extends
 	private String formViewName = null;
 	private String instructionViewName = null;
 	
-	public void setFormViewName(String formViewName)
-	{
+	public void setFormViewName(String formViewName) {
 		this.formViewName = formViewName;
 	}
 	
-	public void setInstructionViewName(String instructionViewName)
-	{
+	public void setInstructionViewName(String instructionViewName) {
 		this.instructionViewName = instructionViewName;
 	}
 	
 	@Override
 	public void prepareForm() throws Exception {
-		if (formViewName != null)
-		{
+		if (formViewName != null) {
 			this.mav.addObject("formViewName", formViewName);
-		}
-		else
-		{
+		} else {
 			super.prepareForm();
 		}
 	}
 	
 	@Override
 	public void prepareInstruction() throws Exception {
-		if (instructionViewName != null)
-		{
+		if (instructionViewName != null) {
 			this.mav.addObject("instructionViewName", instructionViewName);
-		}
-		else
-		{
+		} else {
 			super.prepareInstruction();
 		}
 	}

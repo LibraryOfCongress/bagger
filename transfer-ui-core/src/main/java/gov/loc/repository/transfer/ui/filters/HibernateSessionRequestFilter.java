@@ -18,27 +18,22 @@ public class HibernateSessionRequestFilter implements Filter {
 
 	private SessionFactory factory;
 	
-	
 	public void destroy() {
 		this.factory.close();
-
 	}
 
-	public void doFilter(ServletRequest req, ServletResponse resp,
+	public void doFilter(
+	        ServletRequest req, 
+	        ServletResponse resp,
 			FilterChain chain) throws IOException, ServletException {
-      try
-      {
+      try {
     	  this.factory.getCurrentSession().beginTransaction();
 
           // Call the next filter (continue request processing)
           chain.doFilter(req, resp);
-
           this.factory.getCurrentSession().getTransaction().commit();
-      }
-      catch (Throwable ex)
-      {
-    	  if (this.factory.getCurrentSession().isOpen())
-    	  {
+      } catch (Throwable ex) {
+    	  if (this.factory.getCurrentSession().isOpen()) {
     		  this.factory.getCurrentSession().getTransaction().rollback();
     	  }
     	  throw new ServletException(ex);

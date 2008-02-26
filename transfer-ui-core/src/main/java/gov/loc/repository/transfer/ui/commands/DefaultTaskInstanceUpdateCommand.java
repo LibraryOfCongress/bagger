@@ -209,7 +209,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 	
 	public void prepareForm() throws Exception {
 		
-		mav.addObject("formViewName", "/taskinstance/default_form");
+		mav.addObject("formViewName", "default_form");
 	}	
 
 	public void prepareInstruction() throws Exception {
