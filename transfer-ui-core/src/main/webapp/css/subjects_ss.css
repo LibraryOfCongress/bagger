@@ -97,7 +97,7 @@ label.top {
 	padding: 0px 15px 15px 15px;
 	font-size: 90%;
 }
-#content table {
+#content table.simple {
 	color:#333;
 	background-color: #fff;
 	border-collapse:collapse;
@@ -105,7 +105,7 @@ label.top {
 	margin: 15px;
 	font:90% verdana, helvetica, sans-serif;
 }
-#content th {
+#content table.simple th {
 	text-align: left;
 	color: #ff6600;
 	padding: 0px 0px 20px 0px;
@@ -113,7 +113,7 @@ label.top {
 	border-width: 0px;
 	border-bottom-style: dotted;
 }
-#content td {
+#content table.simple td {
 	padding: 4px 15px 4px 0px;
 	font:100% verdana, helvetica, sans-serif;
 	color: #666;
@@ -122,51 +122,51 @@ label.top {
 	border-bottom-style: dotted;
 }
 
-#content td.top {
+#content table.simple td.top {
 	padding-top: 20px;
 }
-#content td.numtop {
+#content table.simple td.numtop {
 	padding: 20px 0px 0px 0px;
 	border-width: 0px;
 }
-#content td p {
+#content table.simple td p {
 	font:80% verdana, helvetica, sans-serif;
 	line-height: 12px;
 	margin:0px 0px 0px 0px;
 	text-align: left;
 	padding:2px 0px 2px 0px;
 }
-#content td.last {
+#content table.simple td.last {
 	font:100% verdana, helvetica, sans-serif;
 	padding: 4px 15px 4px 0px;
 	border-bottom-width: 0px;
 	}
-#content td.num {
+#content table.simple td.num {
 	padding: 0px 0px 0px 0px;
 	border-width: 0px;
 
 }
-#content td a, #content td.num a, #content td.last a {
+#content table.simple td a, #content td.num a, #content td.last a {
 
 	font-size: 80%;
 	font-weight:300;
 }
-#content td a:active {
+#content table.simple td a:active {
 	color: #003366;
 	font-size: 80%;
 	font-weight:300;
 }
-#content td a:visited {
+#content table.simple td a:visited {
 	color: #003366;
 	font-weight:300;
 	font-size: 80%;
 }
-#content td.collect a:active {
+#content table.simple td.collect a:active {
 	font-weight:300;
 	font-size: 80%;
 		
 }
-#content td.collect a:visited {
+#content table.simple td.collect a:visited {
 	font-weight:300;
 	font-size: 80%;
 	

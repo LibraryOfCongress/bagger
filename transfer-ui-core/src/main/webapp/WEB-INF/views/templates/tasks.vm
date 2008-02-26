@@ -6,17 +6,58 @@
         <li><a href="#localHelp"            ><span> Help                  </span></a></li>
     </ul>
 	<div id="userTasks">
-		<h1>User Tasks</h1>
-		<ul>
-			#foreach($taskInstanceBean in $userTaskInstanceBeanList)
-				<li><a href="./taskinstance/${taskInstanceBean.id}.html">
-				    ${taskInstanceBean.taskBean.name} (${taskInstanceBean.id})
-				</a></li>					
-			#end
-		</ul>
+		<h2>User Tasks</h2>
+        <fieldset>
+            <legend>Pending Tasks</legend>
+		    <table>
+		        <tbody><tr><td>
+                    <form id="pager" class="pager">
+                		<img src="${contextPath}/images/icons/first.png" class="first"/>
+                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
+                		<input type="text" class="pagedisplay"/>
+                		<img src="${contextPath}/images/icons/next.png" class="next"/>
+                		<img src="${contextPath}/images/icons/last.png" class="last"/>
+                		<select class="pagesize">
+                			<option selected="selected"  value="10">10</option>
+                			<option value="20">20</option>
+                			<option value="30">30</option>
+                			<option  value="40">40</option>
+                		</select>
+                    </form>
+                </td></tr></tbody>
+            </table>
+	        <table id="pageableDataTable" class="tablesorter"  >
+	            <thead>
+	                <tr id="taskDetailsHeader">
+                        <th>Name</th>
+                        <th>Id</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tfoot><tr id="taskDetailsFooter">
+                        <th>Name</th>
+                        <th>id</th>
+                        <th>Description</th>
+                </tr></tfoot>
+                <tbody>
+			        #foreach($taskInstanceBean in $userTaskInstanceBeanList)
+			        <tr id="task${taskInstanceBean.id}" >
+				        <td><a href="./taskinstance/${taskInstanceBean.id}.html">
+				            ${taskInstanceBean.taskBean.name}
+				        </a></td>
+				        <td><a href="./taskinstance/${taskInstanceBean.id}.html">
+				            ${taskInstanceBean.id}
+				        </a></td>
+				        <td></td>
+				    </tr>					
+			        #end
+			    </tbody>
+		    </table>
+		</fieldset>
+		
 	</div>
     <div id="groupTasks">
-		<h1>Group Task List</h1>
+		<h2>Group Task List</h2>
 		<ul>
 			#foreach($taskInstanceBean in $groupTaskInstanceBeanList)
 			<li>
@@ -33,7 +74,7 @@
 		</ul>
 	</div>
 	<div id="processDefinitions">
-		<h1>Process Definition List</h1>
+		<h2>Process Definition List</h2>
 		<ul>
 			#foreach($processDefinitionBean in $processDefinitionBeanList)
 				#set ($code = "processdefinitions.${processDefinitionBean.id}")

@@ -1,4 +1,9 @@
-<link rel="stylesheet" media="screen" type="text/css" href="${contextPath}/css/themes/flora/flora.all.css" title="Flora (Default)" />
+<link rel="stylesheet"  type="text/css" href="${contextPath}/css/themes/flora/flora.all.css" 
+    media="screen"/>	
+<link rel="stylesheet" href="${contextPath}/css/themes/blue/style.css" type="text/css"  
+    media="print, projection, screen" />
+<link rel="stylesheet" href="${contextPath}/css/jquery.tablesorter.pager.css" type="text/css" 
+    media="print, projection, screen" />
       
 <link rel="stylesheet" media="screen" type="text/css" href="${contextPath}/css/am15_global_ss.css">
 <link rel="stylesheet" media="screen" type="text/css" href="${contextPath}/css/subjects_ss.css">

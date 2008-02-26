@@ -1,13 +1,21 @@
 <script type="text/javascript" src="${contextPath}/javascript/src/jquery.js"></script>
 <script type="text/javascript" src="${contextPath}/javascript/src/jquery.dimensions.js"></script>
 <script type="text/javascript" src="${contextPath}/javascript/src/jquery.ui-all-1.5b.js"></script>
+<script type="text/javascript" src="${contextPath}/javascript/src/jquery.tablesorter.js"></script>
+<script type="text/javascript" src="${contextPath}/javascript/src/jquery.tablesorter.pager.js"></script>
 <script type="text/javascript">
     jQuery(document).ready(function(){
         //TABS
         $('#localNav').tabs();
         
         //TABLES
-        //$("#dataTable").tablesorter({sortList:[[0,0],[2,1]], widgets: ['zebra']});
+        $("#dataTable").tablesorter({widgets: ['zebra']});
+        $("#pageableDataTable").tablesorter({
+            widgets: ['zebra']
+        }).tablesorterPager({
+            positionFixed:false,
+            container: $("#pager")
+        });
         
         //HELP
         $("#helpTopics > li").click(function() {

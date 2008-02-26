@@ -26,12 +26,12 @@ public class LoginController {
 	@SuppressWarnings("unchecked")	
 	public String login() {		
 		
-		return "redirect:/";
+		return "redirect:/index.html";
 	}
 
 	@RequestMapping("/login/logout")
 	public String logout(HttpServletRequest req) throws Exception {
 		req.getSession().invalidate();
-		return "redirect:/";		
+		return "redirect:/index.html";		
 	}
 }

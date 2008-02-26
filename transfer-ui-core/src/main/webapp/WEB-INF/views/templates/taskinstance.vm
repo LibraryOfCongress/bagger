@@ -7,53 +7,53 @@
     </ul>
     
 	<div id="taskDetails">
-        <h1>Details for Task: $taskInstanceBean.id</h1>
-        <form action="null">
-            <fieldset>
-                <legend>Name: $taskInstanceBean.taskBean.name</legend>
-    	        <table id="dataTable">
-    	            <thead><tr id="taskDetailsHeader">
-                            <td>Name</td>
-                            <td>Value</td>
-                            <td>Description</td>
-                    </tr></thead>
-                    <tfoot><tr id="taskDetailsHeader">
-                            <td>Name</td>
-                            <td>Value</td>
-                            <td>Description</td>
-                    </tr></tfoot>
-                    <tbody>
-                        <tr id="taskAssignee" >
-                            <td>User</td>
-                            <td>#if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end</td>
-                            <td>This persons this task is currently assigned to, if any.</td>
-                        </tr>
-                        <tr id="taskVisibility" >
-                            <td>Groups</td>
-                            <td>#foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.id #end</td>
-                            <td>The groups this task is available to, if any.</td>
-                        </tr>
-                        <tr id="taskStatus" >
-                            <td>Status</td>
-                            <td>#if ( $taskInstanceBean.ended ) Completed #else Incomplete #end</td>
-                            <td>The current status of this task.</td>
-                        </tr>
-                        #if ( $taskInstanceBean.ended )
-                        <tr id="taskCompletionDate" >
-                            <td>Date</td>
-                            <td>$taskInstanceBean.endDate</td>
-                            <td>The time at which this task was marked as completed.</td>
-                        </tr>
-                        #end
-                    </tbody>
-                </table>
-            </fieldset>
-        </form>
+        <h2>Task: $taskInstanceBean.id</h2>
+        <fieldset>
+            <legend>$taskInstanceBean.taskBean.name</legend>
+	        <table id="dataTable" class="tablesorter"  >
+	            <thead>
+	                <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tfoot><tr id="taskDetailsHeader">
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                </tr></tfoot>
+                <tbody>
+                    <tr id="taskAssignee" >
+                        <td>User</td>
+                        <td>#if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end</td>
+                        <td>This persons this task is currently assigned to, if any.</td>
+                    </tr>
+                    <tr id="taskVisibility" >
+                        <td>Groups</td>
+                        <td>#foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.id #end</td>
+                        <td>The groups this task is available to, if any.</td>
+                    </tr>
+                    <tr id="taskStatus" >
+                        <td>Status</td>
+                        <td>#if ( $taskInstanceBean.ended ) Completed #else Incomplete #end</td>
+                        <td>The current status of this task.</td>
+                    </tr>
+                    #if ( $taskInstanceBean.ended )
+                    <tr id="taskCompletionDate" >
+                        <td>Date</td>
+                        <td>$taskInstanceBean.endDate</td>
+                        <td>The time at which this task was marked as completed.</td>
+                    </tr>
+                    #end
+                </tbody>
+            </table>
+        </fieldset>
     </div>
 
     #if ($canUpdateUser)
 	<div id="reassignTask">
-	    <h1>Reassign Task</h1>
+	    <h2>Reassign Task</h2>
 	    <form method="post" action="${requestURI}?method=put">
 	        <fieldset>
 	            <legend>Reassign this task to another user</legend>
@@ -72,7 +72,7 @@
 
     #if ($formViewName)
     <div id="updateTask">
-	    <h1>Update</h1>
+	    <h2>Update</h2>
     	#if ($errorList.size() > 0)
     	<fieldset>
 		    <legend>Errors</legend>

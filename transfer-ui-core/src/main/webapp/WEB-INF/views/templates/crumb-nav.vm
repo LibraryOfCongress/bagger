@@ -1,10 +1,11 @@
 <div id="crumb_nav">
     <a name="page_content"></a>
-    <h1>Religions</h1>
+    <h1>#i18n($tiles.getAttribute('title') 'Transfer')</h1>
     <div id="crumb">
       <a href="http://www.loc.gov/">The Library of Congress</a>
       <span>&nbsp;>&nbsp;</span>
-      <a href="../index.html">American Memory Home</a><span>&nbsp;>&nbsp;</span>
-      <a href="index.html">Browse Collections</a>
+      <a href="${contextPath}/index.html">American Memory Home</a>
+      <span>&nbsp;>&nbsp;</span>
+      <a href="${contextPath}/index.html">Browse Collections</a>
     </div>
 </div>
