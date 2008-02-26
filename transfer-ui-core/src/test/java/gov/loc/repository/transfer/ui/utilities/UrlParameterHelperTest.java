@@ -7,6 +7,7 @@ import java.util.Map;
 import org.junit.Test;
 
 public class UrlParameterHelperTest {
+    
 	
 	@Test
 	public void testParseNullDescription() throws Exception {
@@ -32,5 +33,14 @@ public class UrlParameterHelperTest {
 		parameterMap = UrlParameterHelper.parse("bar/100", "foo/{foo}");
 		assertTrue(parameterMap.isEmpty());
 		
+		parameterMap = UrlParameterHelper.parse("bar/100.html", "bar/100\\.{foo}");
+		assertEquals("html", parameterMap.get("foo"));
+		
+		parameterMap = UrlParameterHelper.parse("bar/100.html", "bar/{foo}\\.html");
+		assertEquals("100", parameterMap.get("foo"));
+		
+		parameterMap = UrlParameterHelper.parse("bar/100.html", "bar/{id}\\.{format}");
+		assertEquals("100", parameterMap.get("id"));
+		assertEquals("html", parameterMap.get("format"));
 	}
 }
