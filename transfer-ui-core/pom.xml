@@ -21,6 +21,7 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
         <configuration>
+            <scanIntervalSeconds>10</scanIntervalSeconds>
         	<userRealms>
         		<userRealm implementation="org.mortbay.jetty.security.JDBCUserRealm">
         			<name>UserRealm</name>
