@@ -154,6 +154,11 @@ public class TaskInstanceBean extends AbstractWorkflowBean {
 		return this.taskInstance.getEnd();
 	}
 	
+	public Date getCreateDate()
+	{
+		return this.taskInstance.getCreate();
+	}
+	
 	@Override
 	public String toString() {
 		return "Task Instance (" + this.taskInstance.getId() + ")";

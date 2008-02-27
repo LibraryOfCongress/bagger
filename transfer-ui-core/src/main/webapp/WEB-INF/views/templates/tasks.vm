@@ -30,24 +30,29 @@
 	            <thead>
 	                <tr id="taskDetailsHeader">
                         <th>Name</th>
-                        <th>Id</th>
-                        <th>Description</th>
+                        <th>Package</th>
+                        <th>Create date</th>
                     </tr>
                 </thead>
                 <tfoot><tr id="taskDetailsFooter">
                         <th>Name</th>
-                        <th>id</th>
-                        <th>Description</th>
+                        <th>Package</th>
+                        <th>Create date</th>
                 </tr></tfoot>
                 <tbody>
 			        #foreach($taskInstanceBean in $userTaskInstanceBeanList)
 			        <tr id="task${taskInstanceBean.id}" >
 				        <td><a href="./taskinstance/${taskInstanceBean.id}.html">
-				            ${taskInstanceBean.taskBean.name}
+				            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)
 				        </a></td>
-				        <td><a href="./taskinstance/${taskInstanceBean.id}.html">
-				            ${taskInstanceBean.id}
-				        </a></td>
+				        <td>
+				            #set($packageName = "none")
+				            #set($packageName = $taskInstanceBean.processInstanceBean.packageName)
+				            $packageName
+				        </td>
+				        <td>
+				            ${taskInstanceBean.createDate}
+				        </td>				        
 				        <td></td>
 				    </tr>					
 			        #end
