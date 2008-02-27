@@ -1,6 +1,7 @@
-<!--DOCTYPE tiles-definitions PUBLIC
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
   "-//Apache Software Foundation//DTD Tiles Configuration 1.3//EN"
-  "http://struts.apache.org/dtds/tiles-config_1_3.dtd"-->
+  "http://struts.apache.org/dtds/tiles-config_1_3.dtd">
 <tiles-definitions>
   
 	<definition name="base"             page="base.vm">

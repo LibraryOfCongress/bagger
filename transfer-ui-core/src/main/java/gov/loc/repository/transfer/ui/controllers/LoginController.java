@@ -4,32 +4,28 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class LoginController {
 
-	@RequestMapping("/login/login_form")
+	@RequestMapping("/login/login_*.html")
 	@SuppressWarnings("unchecked")	
-	public String login_form() {		
-		
-		return "login/login";
-	}
-
-	@RequestMapping("/login/login_error")
-	@SuppressWarnings("unchecked")	
-	public String login_error() {		
-		
-		return "login/login";
+	public ModelAndView login_form(HttpServletRequest req) {		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("contextPath", req.getContextPath());
+		mav.setViewName("login");
+		return mav;
 	}
 	
-	@RequestMapping("/login/login")
+	@RequestMapping("/login/login.html")
 	@SuppressWarnings("unchecked")	
 	public String login() {		
 		
 		return "redirect:/index.html";
 	}
 
-	@RequestMapping("/login/logout")
+	@RequestMapping("/login/logout.html")
 	public String logout(HttpServletRequest req) throws Exception {
 		req.getSession().invalidate();
 		return "redirect:/index.html";		

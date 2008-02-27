@@ -20,7 +20,7 @@
 
 	<filter-mapping>
 		<filter-name>jbpmcontextrequestfilter</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>*.html</url-pattern>
 	</filter-mapping>
 
 	<servlet>
@@ -66,7 +66,7 @@
 	<security-constraint>
 		<web-resource-collection>
 	      <web-resource-name>participants</web-resource-name>
-    	  <url-pattern>/login/login</url-pattern>    	      	  
+    	  <url-pattern>/login/login.html</url-pattern>    	      	  
  	      <http-method>GET</http-method>
 	    </web-resource-collection>
     	<auth-constraint>
@@ -78,8 +78,8 @@
     	<auth-method>FORM</auth-method>
     	<realm-name>UserRealm</realm-name>
 	    <form-login-config>
-    		<form-login-page>/login/login_form</form-login-page>
-		    <form-error-page>/login/login_error</form-error-page>
+    		<form-login-page>/login/login_form.html</form-login-page>
+		    <form-error-page>/login/login_error.html</form-error-page>
     	</form-login-config>
 	</login-config>		
 	

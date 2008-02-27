@@ -9,14 +9,46 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>transfer-ui-core</artifactId>
+  <packaging>war</packaging>
   <name>Transfer UI (Core)</name>
   <scm>
     <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-ui-core</connection>
     <url>https://rdc.lctl.gov/trac/transfer/browser</url>
   </scm>
   <build>
-    <finalName>${application.name}</finalName>
+    <!-- <finalName>${application.name}</finalName>-->
+       <resources>
+         <resource>
+           <directory>src/main/resources</directory>
+         </resource>
+         <resource>
+           <filtering>true</filtering>
+           <directory>src/configuration/common</directory>
+         </resource>
+         <resource>
+           <filtering>true</filtering>
+           <directory>${configuration.directory}</directory>
+           <excludes>
+             <exclude>**/META-INF/**</exclude>
+           </excludes>
+         </resource>
+       </resources>
     <plugins>
+     <plugin>
+       <artifactId>maven-war-plugin</artifactId>
+       <configuration>
+       	<classifier>${env}</classifier>
+         <webResources>
+           <resource>
+             <directory>${configuration.directory}</directory>
+             <filtering>true</filtering>
+             <includes>
+               <include>**/META-INF/**</include>
+             </includes>
+           </resource>
+         </webResources>
+       </configuration>
+     </plugin>    
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
@@ -25,10 +57,11 @@
         	<userRealms>
         		<userRealm implementation="org.mortbay.jetty.security.JDBCUserRealm">
         			<name>UserRealm</name>
-        			<config>${project.build.directory}/${application.name}/WEB-INF/classes/userrealm.properties</config>        			
+        			<!-- <config>${project.build.directory}/${application.name}/WEB-INF/classes/userrealm.properties</config>-->        			
+        			<config>${project.build.directory}/${project.build.finalName}/WEB-INF/classes/userrealm.properties</config>
         		</userRealm>
         	</userRealms>
-        	<webApp>${project.build.directory}/${application.name}-war.war</webApp>
+        	<webApp>${project.build.directory}/${project.build.finalName}.war</webApp>
         </configuration>
        <dependencies>
            <dependency>
@@ -36,15 +69,40 @@
 		      <artifactId>postgresql</artifactId>
 	          <version>8.1-407.jdbc3</version>		         	
 		</dependency>
-		<!-- 
-		<dependency>
-             <groupId>org.mortbay.jetty</groupId>
-             <artifactId>jetty-plus</artifactId>             
-             <version>6.1.5</version>
-           </dependency>
-          -->
          </dependencies>        
       </plugin>
+      <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-jar-plugin</artifactId>
+		<executions>
+			<execution>
+				<id>jar</id>
+				<phase>compile</phase>
+				<goals>
+					<goal>jar</goal>
+				</goals>
+			</execution>
+		</executions>
+      </plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-install-plugin</artifactId>
+			<executions>
+				<execution>
+					<phase>install</phase>
+					<goals>
+						<goal>install-file</goal>
+					</goals>
+					<configuration>
+						<packaging>jar</packaging>
+						<artifactId>${project.artifactId}</artifactId>
+						<groupId>${project.groupId}</groupId>
+						<version>${project.version}</version>
+						<file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
+					</configuration>
+				</execution>
+			</executions>
+	  </plugin>      
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
@@ -65,8 +123,9 @@
             <type>remote</type>
             <deployables>
               <deployable>
+              	<location>${project.build.directory}/${project.build.finalName}-${env}.war</location>
                 <properties>
-                  <context>/${application.name}</context>
+                  <context>/${application.context}</context>
                 </properties>
               </deployable>
             </deployables>
@@ -85,82 +144,6 @@
   </build>
   <profiles>
     <profile>
-      <id>jar</id>
-      <build>
-        <resources>
-          <resource>
-            <directory>src/main/resources</directory>
-          </resource>
-        </resources>
-        <plugins>
-          <plugin>
-            <artifactId>maven-jar-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>build-jar</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-      <properties>
-        <application.name>${project.artifactId}-${project.version}</application.name>
-      </properties>
-    </profile>
-    <profile>
-      <id>war</id>
-      <build>
-        <resources>
-          <resource>
-            <directory>src/main/resources</directory>
-          </resource>
-          <resource>
-            <filtering>true</filtering>
-            <directory>src/configuration/common</directory>
-          </resource>
-          <resource>
-            <filtering>true</filtering>
-            <directory>${configuration.directory}</directory>
-            <excludes>
-              <exclude>**/META-INF/**</exclude>
-            </excludes>
-          </resource>
-        </resources>
-        <plugins>
-          <plugin>
-            <artifactId>maven-war-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>build-war</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>war</goal>
-                </goals>
-                <configuration>
-                  <classifier>war</classifier>
-                </configuration>
-              </execution>
-            </executions>
-            <configuration>
-              <webResources>
-                <resource>
-                  <directory>${configuration.directory}</directory>
-                  <filtering>true</filtering>
-                  <includes>
-                    <include>**/META-INF/**</include>
-                  </includes>
-                </resource>
-              </webResources>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>template</id>
       <activation>
         <property>
@@ -169,7 +152,6 @@
         </property>
       </activation>
       <properties>
-        <application.name>transfer</application.name>
         <configuration.directory>src/configuration/common</configuration.directory>
       </properties>
     </profile>
@@ -184,7 +166,7 @@
       <properties>
         <tomcat.manager.url>http://localhost:8080/manager</tomcat.manager.url>
         <tomcat.remote.username>admin</tomcat.remote.username>
-        <application.name>transfer</application.name>
+        <application.context>transfer</application.context>
         <configuration.directory>src/configuration/local</configuration.directory>
       </properties>
     </profile>
@@ -199,7 +181,7 @@
       <properties>
         <tomcat.manager.url>http://gold.rdc.lctl.gov:8080/manager</tomcat.manager.url>
         <tomcat.remote.username>admin</tomcat.remote.username>
-        <application.name>transfer3</application.name>
+        <application.context>transfer3</application.context>
         <configuration.directory>src/configuration/gold</configuration.directory>
       </properties>
     </profile>
@@ -214,7 +196,7 @@
       <properties>
         <tomcat.manager.url>http://uranium.rdc.lctl.gov:8080/manager</tomcat.manager.url>
         <tomcat.remote.username>admin</tomcat.remote.username>
-        <application.name>transfer</application.name>
+        <application.context>transfer</application.context>
         <configuration.directory>src/configuration/uranium</configuration.directory>
       </properties>
     </profile>

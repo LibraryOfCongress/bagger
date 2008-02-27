@@ -18,8 +18,9 @@ public class HomeController {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("contextPath", req.getContextPath());
 		if (req.getUserPrincipal() == null) {
-			mav.setViewName("login");
+			mav.setViewName("redirect:/login/login.html");
 			return mav;
+			
 		}
 		mav.setViewName("tasks");
 		
