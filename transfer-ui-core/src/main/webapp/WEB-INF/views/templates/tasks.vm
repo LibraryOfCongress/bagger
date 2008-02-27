@@ -53,7 +53,6 @@
 				        <td>
 				            ${taskInstanceBean.createDate}
 				        </td>				        
-				        <td></td>
 				    </tr>					
 			        #end
 			    </tbody>

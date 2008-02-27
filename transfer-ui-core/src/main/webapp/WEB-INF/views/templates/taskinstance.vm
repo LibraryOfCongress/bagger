@@ -39,6 +39,11 @@
                         <td>#if ( $taskInstanceBean.ended ) Completed #else Incomplete #end</td>
                         <td>The current status of this task.</td>
                     </tr>
+                    <tr id="taskCreateDate" >
+                        <td>Date</td>
+                        <td>$taskInstanceBean.createDate</td>
+                        <td>The time at which this task was created.</td>
+                    </tr>                    
                     #if ( $taskInstanceBean.ended )
                     <tr id="taskCompletionDate" >
                         <td>Date</td>
