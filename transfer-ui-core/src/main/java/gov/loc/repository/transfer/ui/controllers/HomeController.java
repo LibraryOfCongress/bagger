@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-	@RequestMapping("/index.html")
+	@RequestMapping("/**")
 	public ModelAndView home(HttpServletRequest req)
 	{
 		ModelAndView mav = new ModelAndView();

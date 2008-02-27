@@ -211,13 +211,13 @@ form input.button {
 }
 #crumb_nav #crumb span {
 	color: #e1edf9;
-	font: 80% Verdana, Helvetica, sans-serif;
+	font: 100% Verdana, Helvetica, sans-serif;
 	font-weight: 100;
 }
 #crumb_nav #crumb {
 	color: #fff;
-	text-align: left;
-	padding: 0px 0px 0px 0px;
+	text-align: right;
+	padding: 0px 20px 0px 0px;
 	font:70% Verdana, Helvetica, sans-serif;
 	font-weight: 100;
 }
@@ -278,3 +278,8 @@ form input.button {
 	text-align: right;	
 	padding-left: 10px;
 }	
+
+.pagedisplay {
+    border:none;
+    width:30px;
+}

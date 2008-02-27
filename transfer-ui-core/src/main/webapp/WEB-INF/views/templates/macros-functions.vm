@@ -14,7 +14,11 @@
 #*
   - context refers to the globally configured app context root
 *#  
-#macro( context )#attr('context')#end
+#macro( context $contextPath )
+    #if ($contextPath)
+        $contextPath
+    #end
+#end
 
 #*
   -The i18n macro needs to be completed, but for now 

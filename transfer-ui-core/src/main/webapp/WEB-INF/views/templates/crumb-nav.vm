@@ -2,10 +2,15 @@
     <a name="page_content"></a>
     <h1>#i18n($tiles.getAttribute('title') 'Transfer')</h1>
     <div id="crumb">
-      <a href="http://www.loc.gov/">The Library of Congress</a>
-      <span>&nbsp;>&nbsp;</span>
-      <a href="${contextPath}/index.html">American Memory Home</a>
-      <span>&nbsp;>&nbsp;</span>
-      <a href="${contextPath}/index.html">Browse Collections</a>
+        #set( $user = $jbpmcontext.actorId)
+        #if ($user)
+            <span>&nbsp;|&nbsp;</span>
+            You are logged in as <span id="currentUser">$user</span>
+            <span>&nbsp;|&nbsp;</span>
+            <a href="${contextPath}/logout">logout</a>
+        #else
+            <span>&nbsp;|&nbsp;</span>
+            <a href="${contextPath}/login">login</a>
+        #end
     </div>
 </div>

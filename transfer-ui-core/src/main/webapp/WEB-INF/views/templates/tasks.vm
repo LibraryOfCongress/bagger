@@ -2,7 +2,7 @@
     <ul id="localNav">
         <li><a href="#userTasks"            ><span> User Tasks ( $userTaskInstanceBeanList.size() ) </span></a></li>
         <li><a href="#groupTasks"           ><span> Group Tasks ( $groupTaskInstanceBeanList.size() )  </span></a></li>
-        <li><a href="#processDefinitions"   ><span> Process Definition  ( $processDefinitionBeanList.size() )  </span></a></li>
+        <li><a href="#workflows"            ><span> Workflows  ( $processDefinitionBeanList.size() )  </span></a></li>
         <li><a href="#localHelp"            ><span> Help                  </span></a></li>
     </ul>
 	<div id="userTasks">
@@ -73,14 +73,14 @@
 			#end
 		</ul>
 	</div>
-	<div id="processDefinitions">
-		<h2>Process Definition List</h2>
+	<div id="workflows">
+		<h2>Workflows</h2>
 		<ul>
 			#foreach($processDefinitionBean in $processDefinitionBeanList)
 				#set ($code = "processdefinitions.${processDefinitionBean.id}")
 			<li>
 				<form method="post" action="./processdefinition/${processDefinitionBean.id}">
-                    <fieldset title="Create a New Process">
+                    <fieldset title="Create a New Workflow">
 			            <legend>#springMessage($code) (${processDefinitionBean.id})</legend>
     					<input type="submit" class="button" value="create"/>
     					<label>Creating a new Workflow allows tracking a new transfer process.</label>
