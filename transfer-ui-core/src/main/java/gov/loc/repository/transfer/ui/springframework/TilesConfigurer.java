@@ -3,15 +3,12 @@ package gov.loc.repository.transfer.ui.springframework;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.servlet.ServletContext;
-
-import org.apache.tiles.TilesException;
+import org.apache.struts.tiles.DefinitionsFactoryException;
 import org.springframework.util.PatternMatchUtils;
 
 public class TilesConfigurer extends
-		org.springframework.web.servlet.view.tiles2.TilesConfigurer {
+org.springframework.web.servlet.view.tiles.TilesConfigurer {
 	private String pattern = "*.*";
-	private File contextDir;
 	private String definitionPath = "/WEB-INF";
 	
 	public void setDefinitionPattern(String pattern)
@@ -23,18 +20,13 @@ public class TilesConfigurer extends
 	{
 		this.definitionPath = definitionPath;
 	}
-	
+		
 	@Override
-	public void setServletContext(ServletContext context) {
-		this.contextDir = new File(context.getRealPath("."));
-		super.setServletContext(context);
-	}
-	
-	@Override
-	public void afterPropertiesSet() throws TilesException {
+	public void afterPropertiesSet() throws DefinitionsFactoryException {
+		File contextDir = new File(this.getServletContext().getRealPath("."));
 		
 		ArrayList<String> definitionList = new ArrayList<String>();
-		File definitionDir = new File(this.contextDir, this.definitionPath);
+		File definitionDir = new File(contextDir, this.definitionPath);
 		for(File file : definitionDir.listFiles())
 		{
 			if (PatternMatchUtils.simpleMatch(this.pattern, file.getName()))

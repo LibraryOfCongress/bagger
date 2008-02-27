@@ -164,8 +164,6 @@
         </property>
       </activation>
       <properties>
-        <tomcat.manager.url>http://localhost:8080/manager</tomcat.manager.url>
-        <tomcat.remote.username>admin</tomcat.remote.username>
         <application.context>transfer</application.context>
         <configuration.directory>src/configuration/local</configuration.directory>
       </properties>
@@ -229,7 +227,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc-struts</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tiles</groupId>
