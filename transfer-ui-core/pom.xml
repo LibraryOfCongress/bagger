@@ -216,17 +216,23 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
+      <groupId>loc-repository</groupId>
+      <artifactId>transfer-ui-core-model</artifactId>
+      <version>${project.version}</version>
     </dependency>
+      <dependency>
+        <groupId>commons-dbcp</groupId>
+        <artifactId>commons-dbcp</artifactId>
+      </dependency>   
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc-struts</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tiles</groupId>
@@ -240,13 +246,45 @@
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-jsp</artifactId>
     </dependency>
-    <dependency>
-      <groupId>struts</groupId>
-      <artifactId>struts</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+      </dependency>    
+      <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-orm</artifactId>
+     </dependency>
+      <dependency>
+       <groupId>org.springframework.ws</groupId>
+       <artifactId>spring-oxm-tiger</artifactId>
+     </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+      </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc-struts</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.beanshell</groupId>
+      <artifactId>bsh</artifactId>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -256,11 +294,6 @@
     <dependency>
       <groupId>jbpm</groupId>
       <artifactId>jbpm-identity</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.beanshell</groupId>
-      <artifactId>bsh</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -278,6 +311,10 @@
     	<groupId>postgresql</groupId>
     	<artifactId>postgresql</artifactId>
 	    <scope>runtime</scope>    
+    </dependency>
+    <dependency>
+      <groupId>struts</groupId>
+      <artifactId>struts</artifactId>
     </dependency>
   </dependencies>
 </project>
