@@ -215,11 +215,11 @@
       <artifactId>workflow-processes-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>loc-repository</groupId>
       <artifactId>transfer-ui-core-model</artifactId>
       <version>${project.version}</version>
-    </dependency>
+    </dependency-->
       <dependency>
         <groupId>commons-dbcp</groupId>
         <artifactId>commons-dbcp</artifactId>
