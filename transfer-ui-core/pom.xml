@@ -15,6 +15,10 @@
     <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-ui-core</connection>
     <url>https://rdc.lctl.gov/trac/transfer/browser</url>
   </scm>
+  <properties>
+  	<env>template</env>
+	<configuration.directory>src/configuration/common</configuration.directory>  	
+  </properties>
   <build>
     <!-- <finalName>${application.name}</finalName>-->
        <resources>
@@ -143,18 +147,6 @@
     </plugins>
   </build>
   <profiles>
-    <profile>
-      <id>template</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>template</value>
-        </property>
-      </activation>
-      <properties>
-        <configuration.directory>src/configuration/common</configuration.directory>
-      </properties>
-    </profile>
     <profile>
       <id>local</id>
       <activation>
