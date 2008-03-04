@@ -371,7 +371,7 @@
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-commons-annotations</artifactId>
-        <version>3.3.0.ga</version>
+        <version>3.2.1.ga</version>
       </dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
