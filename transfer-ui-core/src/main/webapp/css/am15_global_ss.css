@@ -153,13 +153,13 @@ div#topnav ul#menu li a {
 	left:2px;
 	width: 200px;
 }	
-#home	{
+/*#home	{
 	left: 212px; 
 	width: 55px;
-}
-#browse	{left: 269px; width: 55px;}
-#about	{left: 330px; width: 55px;}
-#help {left: 387px; width: 50px;}
+}*/
+#home	{left: 269px; width: 55px;}
+#admin	{left: 330px; width: 55px;}
+#globalhelp {left: 387px; width: 50px;}
 #contact {left: 442px; width: 50px;}
 #searchmenu	{left: 507px; width: 180px;}
 
