@@ -1,32 +1,19 @@
 <div id="topnav">
   <ul id="menu">
-    <li id="logo" title="The Library of Congress American Memory">
+    <li id="logo" title="The Library of Congress - Transfer Application">
       <a href="${contextPath}/index.html"></a>
     </li>
     <li id="home">
-      <a href="${contextPath}/index.html">
-        <img src="${contextPath}/images/home_off.gif" alt="home" width="45" height="20" />
-      </a>
+      <a href="${contextPath}/index.html"> home </a>
     </li>
-    <li id="browse">
-      <a href="index.html">
-        <img src="${contextPath}/images/browse_on.jpg" alt="browse" width="56" height="20" />
-      </a>
+    <li id="admin">
+      <a href="${contextPath}/admin.html"> admin </a>
     </li>
-    <li id="about">
-      <a href="${contextPath}/about/index.html">
-        <img src="${contextPath}/images/about_off.gif" alt="about" width="49" height="20" />
-      </a>
-    </li>
-    <li id="help">
-      <a href="${contextPath}/help/index.html" title="help">
-        <img src="${contextPath}/images/help_off.gif" alt="help" width="42" height="20" />
-      </a>
+    <li id="globalHelp">
+      <a href="${contextPath}/help.html">  tasks </a>
     </li>
     <li id="contact">
-      <a href="${contextPath}/contact/index.html">
-        <img src="${contextPath}/images/contact_off.gif" alt="contact" width="59" height="20" />
-      </a>
+      <a href="${contextPath}/contact.html"> contact </a>
     </li>
     #block("search")
   </ul>
