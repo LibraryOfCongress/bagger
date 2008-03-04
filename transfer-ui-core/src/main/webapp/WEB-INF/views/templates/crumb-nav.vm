@@ -7,10 +7,10 @@
             <span>&nbsp;|&nbsp;</span>
             You are logged in as <span id="currentUser">$user</span>
             <span>&nbsp;|&nbsp;</span>
-            <a href="${contextPath}/logout">logout</a>
+            <a href="${contextPath}/login/logout.html">logout</a>
         #else
             <span>&nbsp;|&nbsp;</span>
-            <a href="${contextPath}/login">login</a>
+            <a href="${contextPath}/login/login.html">login</a>
         #end
     </div>
 </div>
