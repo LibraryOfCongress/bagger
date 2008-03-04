@@ -15,6 +15,6 @@
     <li id="contact">
       <a href="${contextPath}/contact.html"> contact </a>
     </li>
-    #block("search")
+    <!--block("search")-->
   </ul>
 </div>
