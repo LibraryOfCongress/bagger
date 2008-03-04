@@ -15,7 +15,7 @@
 
     <context:component-scan base-package="gov.loc.repository.transfer.ui.controllers" />
   
-    <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+    <!--bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPath" value="org.jvnet.hyperjaxb3.ejb.tests.po"/>
     </bean>
   
@@ -50,7 +50,7 @@
  
   <bean id="purchaseOrderDAO" class="gov.loc.repository.transfer.ui.dao.PurchaseOrderTypeDAO" />
 
-  <bean id="exampleController" class="gov.loc.repository.transfer.ui.controllers.ExampleController"/>
+  <bean id="exampleController" class="gov.loc.repository.transfer.ui.controllers.ExampleController"/-->
   
     
     
@@ -68,7 +68,7 @@
     	<property name="definitionPath"     value="/WEB-INF/views" />
     </bean-->
     
-    <!--bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
+    <bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
 	    <property name="factoryClass" value="org.apache.struts.tiles.xmlDefinition.I18nFactorySet"/>
 		<property name="definitionPath" value="/WEB-INF/views/" />
 		<property name="definitionPattern" value="pages-*.xml" />
@@ -111,5 +111,5 @@
   	<property name="toolboxConfigLocation"    value="WEB-INF/velocity-toolbox.xml"/>
     <property name="suffix"                   value="" />
     <property name="viewClass"                value="gov.loc.repository.transfer.ui.springframework.VelocityTilesView" />
-  </bean-->
+  </bean>
 </beans>
