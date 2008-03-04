@@ -65,7 +65,7 @@
         			<config>${project.build.directory}/${project.build.finalName}/WEB-INF/classes/userrealm.properties</config>
         		</userRealm>
         	</userRealms>
-        	<webApp>${project.build.directory}/${project.build.finalName}.war</webApp>
+        	<webApp>${project.build.directory}/${project.build.finalName}-${env}.war</webApp>
         </configuration>
        <dependencies>
            <dependency>
