@@ -9,7 +9,7 @@
     <li id="admin">
       <a href="${contextPath}/admin.html"> admin </a>
     </li>
-    <li id="globalHelp">
+    <li id="help">
       <a href="${contextPath}/help.html">  help </a>
     </li>
     <li id="contact">
