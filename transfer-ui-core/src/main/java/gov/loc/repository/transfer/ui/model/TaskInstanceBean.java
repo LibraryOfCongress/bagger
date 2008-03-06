@@ -87,7 +87,8 @@ public class TaskInstanceBean extends AbstractWorkflowBean {
 		return taskBean;
 	}
 	
-	public Map getVariableMap()
+	@SuppressWarnings("unchecked")
+	public Map<Object,Object> getVariableMap()
 	{
 		return this.taskInstance.getVariablesLocally();
 	}

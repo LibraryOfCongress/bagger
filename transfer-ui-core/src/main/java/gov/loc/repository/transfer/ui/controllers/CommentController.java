@@ -3,10 +3,8 @@ package gov.loc.repository.transfer.ui.controllers;
 import java.util.Map;
 
 import gov.loc.repository.transfer.ui.UIConstants;
-import gov.loc.repository.transfer.ui.model.ProcessDefinitionBean;
-import gov.loc.repository.transfer.ui.model.ProcessDefinitionHelper;
 import gov.loc.repository.transfer.ui.model.ProcessInstanceBean;
-import gov.loc.repository.transfer.ui.model.UserBean;
+import gov.loc.repository.transfer.ui.model.ProcessInstanceHelper;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,16 +15,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class ProcessDefinitionController extends AbstractRestController {
+public class CommentController extends AbstractRestController {
 
-	public static final String PROCESSDEFINITIONID = "processDefinitionId";
+	public static final String PROCESSINSTANCEID = "processInstanceId";
 
 	@Override
 	public String getUrlParameterDescription() {
-		return "processdefinition/{processDefinitionId}\\.{format}";
+		return "processinstance/{processInstanceId}/comment\\.{format}";
 	}
 
-	@RequestMapping("/processdefinition/*.*")
+	@RequestMapping("/processinstance/*/comment.*")
 	@Override
 	public ModelAndView handleRequest(
 			HttpServletRequest request, 
@@ -43,31 +41,35 @@ public class ProcessDefinitionController extends AbstractRestController {
 	        JbpmContext jbpmContext, 
 	        Map<String, String> urlParameterMap) throws Exception 
 	{
-		if (! urlParameterMap.containsKey(PROCESSDEFINITIONID)) {
-			mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Process definition id not provided");
+		if (request.getUserPrincipal() == null)
+		{
+			mav.setError(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
-		String processDefinitionId = urlParameterMap.get(PROCESSDEFINITIONID);
-		if (! ProcessDefinitionHelper.hasProcessDefinition(processDefinitionId, jbpmContext))
+		
+		if (! urlParameterMap.containsKey(PROCESSINSTANCEID)) {
+			mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Process instance id not provided");
+			return;
+		}
+		String processInstanceId = urlParameterMap.get(PROCESSINSTANCEID);		
+		if (! ProcessInstanceHelper.hasProcessInstance(Long.parseLong(processInstanceId), jbpmContext))
 		{
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
-		ProcessDefinitionBean processDefinitionBean = 
-		    ProcessDefinitionHelper.getProcessDefinitionBean(processDefinitionId, jbpmContext);
-
-		UserBean userBean = new UserBean();
-		userBean.setJbpmContext(jbpmContext);
-		userBean.setId(request.getUserPrincipal().getName());
-		
-		if(! userBean.getProcessDefinitionBeanList().contains(processDefinitionBean)) {
-			mav.setError(HttpServletResponse.SC_UNAUTHORIZED, "User not authorized to create processinstance");
-			return;			
+		ProcessInstanceBean processInstanceBean = ProcessInstanceHelper.getProcessInstanceBean(Long.parseLong(processInstanceId), jbpmContext);
+				
+		if (request.getParameter(UIConstants.PARAMETER_MESSAGE) == null)
+		{
+			mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Message not provided");
+			return;
+			
 		}
 		
-		ProcessInstanceBean processInstanceBean = processDefinitionBean.newInstance();
+		String message =  request.getParameter(UIConstants.PARAMETER_MESSAGE);
+		processInstanceBean.addComment(message);
 		processInstanceBean.save();
-		
+				
 		String redirect = "redirect:";
 		if (request.getParameter(UIConstants.PARAMETER_REFERER) != null)
 		{
@@ -75,7 +77,7 @@ public class ProcessDefinitionController extends AbstractRestController {
 		}
 		else
 		{
-			redirect += "/processinstance/" + processInstanceBean.getId() + ".html";
+			redirect += "/processinstance/" + processInstanceId + ".html";
 		}
 		mav.setViewName(redirect);
 		

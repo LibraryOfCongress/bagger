@@ -1,5 +1,10 @@
 package gov.loc.repository.transfer.ui.model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.jbpm.graph.exe.Comment;
 import org.jbpm.graph.exe.ProcessInstance;
 
 public class ProcessInstanceBean extends AbstractWorkflowBean {
@@ -27,6 +32,27 @@ public class ProcessInstanceBean extends AbstractWorkflowBean {
 	
 	public long getId() {
 		return this.processInstance.getId();
+	}
+	
+	public void addComment(String message)
+	{
+		this.processInstance.getRootToken().addComment(message);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CommentBean> getCommentBeanList()
+	{
+		List<Comment> commentList = this.processInstance.getRootToken().getComments();
+		List<CommentBean> commentBeanList = new ArrayList<CommentBean>();
+		Iterator<Comment> iter = commentList.iterator();
+		while (iter.hasNext())
+		{
+			CommentBean commentBean = new CommentBean();
+			commentBean.setComment((Comment)iter.next());
+			commentBeanList.add(commentBean);
+		}
+		return commentBeanList;
+
 	}
 	
 	/*

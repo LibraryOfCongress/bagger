@@ -138,10 +138,21 @@ public class TaskInstanceController extends AbstractRestController {
 			mav.addObject("userBeanList", UserHelper.getUserBeanList(jbpmContext));
 		}
 		
+		if (request.getUserPrincipal() != null)
+		{
+			mav.addObject("canAddComment", true);
+		}
+		else
+		{
+			mav.addObject("canAddComment", false);
+		}
+		
 		if (command.canUpdateTaskInstance()) {			
 			command.prepareForm();
 			command.prepareInstruction();						
 		}		
+		
+		
 		
 		mav.setViewName("taskinstance");
 		

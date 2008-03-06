@@ -83,9 +83,10 @@
 			#foreach($processDefinitionBean in $processDefinitionBeanList)
 				#set ($code = "processdefinitions.${processDefinitionBean.id}")
 			<li>
-				<form method="post" action="./processdefinition/${processDefinitionBean.id}">
+				<form method="post" action="./processdefinition/${processDefinitionBean.id}.html">
                     <fieldset title="Create a New Workflow">
 			            <legend>#springMessage($code) (${processDefinitionBean.id})</legend>
+			            <input type="hidden" name="referer" value="/index.html" />
     					<input type="submit" class="button" value="create"/>
     					<label>Creating a new Workflow allows tracking a new transfer process.</label>
 				    </fieldset>					

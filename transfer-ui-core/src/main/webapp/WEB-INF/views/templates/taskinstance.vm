@@ -75,6 +75,24 @@
 	</div>
     #end
 
+	<h2>Comments</h2>
+	#foreach($commentBean in $taskInstanceBean.processInstanceBean.commentBeanList)
+		<p>$commentBean.message<br/>
+		-- $commentBean.actorId ($commentBean.date)</p>
+	#end
+
+    #if ($canAddComment)
+	<div id="addComment">
+	    <h2>Add Comment</h2>
+			<form method="post" action="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}/comment.html">
+				<input type="hidden" name="referer" value="/taskinstance/${taskInstanceBean.id}.html" />
+				<textarea name="message"></textarea>				
+				<input type="submit" value="create"/>
+			</form>						
+	</div>
+    #end
+
+
     #if ($formViewName)
     <div id="updateTask">
 	    <h2>Update</h2>
