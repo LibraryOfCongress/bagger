@@ -102,11 +102,12 @@ public class ProcessInstanceBean extends AbstractWorkflowBean {
 		this.jbpmContext.save(this.processInstance);
 	}
 	
-	/*	
 	public boolean isSuspended()
 	{
 		return this.processInstance.isSuspended();
 	}
+
+	/*	
 	
 	public void resume()
 	{

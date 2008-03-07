@@ -95,6 +95,22 @@
 			#end
 		</ul>
 	</div>
+	
+	<div id="suspendedProcessInstances">
+		<h2>Suspended process instances</h2>
+		<!-- Chris -> This should probably be a table to support sorting -->
+		<ul>
+			#foreach($processInstanceBean in $suspendedProcessInstanceBeanList)
+				<li>
+		            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
+		            #set($packageName = "none")
+		            #set($packageName = $processInstanceBean.packageName)
+		            <a href="./processinstance/$processInstanceBean.id">#springMessage($code) (${processInstanceBean.id}) </a> - $packageName				
+				</li>	
+			#end	
+		</ul>
+		</ul>
+	
 	<div id="localHelp">
         <h1>Help        </h1>
         <p>TODO: Explain each of the following...</p>

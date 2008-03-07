@@ -1,5 +1,6 @@
 package gov.loc.repository.transfer.ui.controllers;
 
+import gov.loc.repository.transfer.ui.model.ProcessInstanceHelper;
 import gov.loc.repository.transfer.ui.model.UserBean;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ public class HomeController {
 	@RequestMapping("/**")
 	public ModelAndView home(HttpServletRequest req)
 	{
+		JbpmContext jbpmContext = (JbpmContext)req.getAttribute("jbpmcontext");
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("contextPath", req.getContextPath());
 		if (req.getUserPrincipal() == null) {
@@ -26,12 +28,13 @@ public class HomeController {
 		
 		UserBean userBean = new UserBean();
 		userBean.setId(req.getUserPrincipal().getName());
-		userBean.setJbpmContext((JbpmContext)req.getAttribute("jbpmcontext"));
+		userBean.setJbpmContext(jbpmContext);
 		
 		mav.addObject("groupTaskInstanceBeanList", userBean.getGroupTaskInstanceBeanList());
 		mav.addObject("userTaskInstanceBeanList", userBean.getUserTaskInstanceBeanList());
 		mav.addObject("processDefinitionBeanList", userBean.getProcessDefinitionBeanList());
 		mav.addObject("currentUser", req.getUserPrincipal().getName());
+		mav.addObject("suspendedProcessInstanceBeanList", ProcessInstanceHelper.getSuspendedProcessInstanceBeanList(jbpmContext));
 		
 		return mav;
 	}
