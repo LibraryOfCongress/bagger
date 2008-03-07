@@ -1,0 +1,13 @@
+<h2>Process instances</h2>
+<!-- Chris -> This should probably be a table to support sorting -->
+<ul>
+	#foreach($processInstanceBean in $processInstanceBeanList)
+		<li>
+            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
+            #set($packageName = "none")
+            #set($packageName = $processInstanceBean.packageName)
+            <a href="./${processInstanceBean.id}.html">#springMessage($code) (${processInstanceBean.id}) </a> - $packageName				
+		</li>	
+	#end	
+</ul>	
+	

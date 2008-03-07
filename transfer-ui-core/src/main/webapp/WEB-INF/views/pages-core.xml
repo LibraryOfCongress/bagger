@@ -35,4 +35,9 @@
 		<put name="content"         value="taskinstance.vm" />
 	</definition>
 
+	<definition name="processinstancelist" extends="base">
+		<put name="title"           value="Process Instance List" />
+		<put name="content"         value="processinstancelist.vm" />
+	</definition>
+
 </tiles-definitions> 

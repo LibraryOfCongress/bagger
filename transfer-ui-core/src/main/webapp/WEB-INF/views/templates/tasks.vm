@@ -105,12 +105,12 @@
 		            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
 		            #set($packageName = "none")
 		            #set($packageName = $processInstanceBean.packageName)
-		            <a href="./processinstance/$processInstanceBean.id">#springMessage($code) (${processInstanceBean.id}) </a> - $packageName				
+		            <a href="./processinstance/${processInstanceBean.id}.html">#springMessage($code) (${processInstanceBean.id}) </a> - $packageName				
 				</li>	
 			#end	
 		</ul>
-		</ul>
-	
+	</div>
+		
 	<div id="localHelp">
         <h1>Help        </h1>
         <p>TODO: Explain each of the following...</p>

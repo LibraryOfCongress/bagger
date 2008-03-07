@@ -71,8 +71,19 @@ public abstract class AbstractRestController extends AbstractController {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("contextPath", request.getContextPath());
 		mav.addObject("requestURI", request.getRequestURI());
-		if (METHOD_GET.equalsIgnoreCase(method)) {
-		    this.log.debug("Handling GET");
+		if (request.getRequestURI().endsWith("index.html"))
+		{
+		    log.debug("Handling index");
+			this.handleIndex(
+			    request, 
+			    mav, 
+			    jbpmContext, 
+			    urlParameterMap
+			);
+			
+		}		
+		else if (METHOD_GET.equalsIgnoreCase(method)) {
+		    log.debug("Handling GET");
 			this.handleGet(
 			    request, 
 			    mav, 
@@ -82,13 +93,13 @@ public abstract class AbstractRestController extends AbstractController {
 		}else if (METHOD_POST.equalsIgnoreCase(method))  {
 			//User must be logged in and able to post
 			if (request.getUserPrincipal() == null) {
-		        this.log.warn("User not Authenticated, ignoring POST");
+		        log.warn("User not Authenticated, ignoring POST");
 				mav.setError(
 				    HttpServletResponse.SC_UNAUTHORIZED, 
 				    "User not authenticated"
 				);
 			} else {
-		        this.log.debug("Handling POST");
+		        log.debug("Handling POST");
 				this.handlePost(
 				    request, 
 				    mav, 
@@ -99,13 +110,13 @@ public abstract class AbstractRestController extends AbstractController {
 		} else if (METHOD_PUT.equalsIgnoreCase(method)) {
 			//User must be logged in and able to put
 			if (request.getUserPrincipal() == null) {
-		        this.log.warn("User not Authenticated, ignoring PUT");
+		        log.warn("User not Authenticated, ignoring PUT");
 				mav.setError(
 				    HttpServletResponse.SC_UNAUTHORIZED,
 				    "User not authenticated"
 				);				
 			} else {
-		        this.log.debug("Handling PUT");
+		        log.debug("Handling PUT");
 				this.handlePut(
 				    request, 
 				    mav, 
@@ -119,7 +130,7 @@ public abstract class AbstractRestController extends AbstractController {
 
         //Decide whether or not we've run into an error condition
 		if (mav.getStatusCode() != null) {
-		    this.log.debug("Status code : " + mav.getStatusCode());
+		    log.debug("Status code : " + mav.getStatusCode());
 			if (mav.getMessage() != null) {
 				response.sendError(
 				    mav.getStatusCode(), 
@@ -132,6 +143,14 @@ public abstract class AbstractRestController extends AbstractController {
 		}
 		return mav;
 	}
+
+	protected void handleIndex(
+	        HttpServletRequest request, 
+	        ModelAndView mav, 
+	        JbpmContext jbpmContext,
+	        Map<String,String> urlParameterMap) throws Exception{
+		mav.setError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+	}	
 	
 	protected void handleGet(
 	        HttpServletRequest request, 
