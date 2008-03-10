@@ -45,11 +45,11 @@ init_vars () {
 
 sanity_checks () {
     # CHECK RBAC
-    if [[ `profiles |grep Postgres\ Administration; echo "$?"` -ne 0 ]]
-        then printf "ERROR: *** You must be assigned the 'Postgres Administration' profile ***\n"
-        usage
-        exit 1;
-    fi
+    #if [[ `profiles |grep Postgres\ Administration; echo "$?"` -ne 0 ]]
+    #    then printf "ERROR: *** You must be assigned the 'Postgres Administration' profile ***\n"
+    #    usage
+    #    exit 1;
+    #fi
   
     # CAN I CONNECT?
     if [[ `echo "\q" | $PSQL postgres 2>/dev/null; echo $?` -ne 0 ]]
