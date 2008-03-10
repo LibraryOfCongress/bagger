@@ -10,7 +10,7 @@ DB_PREFIX=""
 
 ROLE_PREFIX=""
 
-CLI_INSTALL_DIR="/opt"
+TRANSFER_INSTALL_DIR="/opt/transfer"
 
 PM_CORE_SQL="files/inventory-core.sql"
 
@@ -18,13 +18,18 @@ PM_NDNP_SQL="files/inventory-ndnp.sql"
 
 JBPM_SQL="files/jbpm.sql"
 
-CONSOLE_WAR="files/transfer.war"
+TRANSFER_UI_WAR="files/transfer-ui-ndnp-1.2-template.war"
 
-CLAYPOOL_WAR="files/Claypool.war"
+PM_CORE_CLI="files/packagemodeler-core-1.2-bin.zip"
 
-PM_CLI_TOOL="files/packagemodeler-core-1.1-bin.zip"
+PM_NDNP_CLI="packagemodeler-ndnp-1.2-bin.zip"
+
+WORKFLOW_CORE="files/workflow-processes-core-1.2-bin.zip"
+
+PROCESS_DEFINITION="files/processdefinition.xml"
 
 TOMCAT_HOME=""
 
+VERSION="1.1"
 
 

@@ -6,9 +6,17 @@ PREREQUISITES:
 You must have the PostgreSQL 8.2 database running
 Try:  /usr/sbin/svcadm enable postgresql:version_82
 
+You must be in the Postgres Administration role
+This role must be ordered above higher roles such as Primary Administartor
+
+e.g.
+/usr/sbin/usermod -P "Postgres Administration","Primary Administrator" scott
+
+
 HOWTOS:
 # Create PostgreSQL DB cluster
 CREATE_POSTGRES_CLUSTER="/usr/postgres/8.2/bin/initdb -D /var/postgres/8.2/data"
+(service will need to be DISABLED and ENABLED after this)
 
 # Start Postgresql
 START_POSTGRES="/usr/sbin/svcadm enable postgresql:version_82"
