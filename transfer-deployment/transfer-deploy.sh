@@ -13,12 +13,13 @@ init_vars () {
     export $PGUSER
     export $PGHOST
     #export $PGPORT
-    export PGPASSWORD=$PGPASSWORD
+    export $PGPASSWORD
     export $TOMCAT_HOME
     
-    if [$DB_PREFIX
-    DB_PREFIX="${DB_PREFIX}_"
-    ROLE_PREFIX="${ROLE_PREFIX}_"
+    if [[ $DB_PREFIX ]]; then
+        DB_PREFIX="${DB_PREFIX}_"
+        ROLE_PREFIX="${ROLE_PREFIX}_"
+    fi
 
     # DATABASES
     PM_DB="${DB_PREFIX}package_modeler"
@@ -44,15 +45,14 @@ init_vars () {
 
 sanity_checks () {
     # CHECK RBAC
-    if [ `profiles |grep Postgres\ Administration; echo "$?"` -ne 0]
+    if [[ `profiles |grep Postgres\ Administration; echo "$?"` -ne 0 ]]
         then printf "ERROR: *** You must be assigned the 'Postgres Administration' profile ***\n"
         usage
         exit 1;
     fi
   
     # CAN I CONNECT?
-    echo "\q" | $PGSQL
-    if [[ \$? != '0' ]]
+    if [[ `echo "\q" | $PSQL postgres 2>/dev/null; echo $?` -ne 0 ]]
         then printf "ERROR: *** Cannot connect to the PostgreSQL database\n"
         usage
         exit 1;
@@ -66,6 +66,7 @@ sanity_checks () {
             else 
                 mkdir -p $TRANSFER_INSTALL_DIR
             fi
+    fi
     #if [ `touch ${TRANSFER_INSTALL_DIR}/test 2> /dev/null; echo "$?"` -ne 0 ]
     #    then printf "ERROR: *** Package Modeler Command Line Tool install directory NOT WRITABLE\n"
     #    usage
@@ -99,7 +100,7 @@ sanity_checks () {
         then printf "\n!!! Can't read ${CLAYPOOL_WAR}\nPlease fix this and try again.\nExitintg....\n"
         exit 1;
     fi
-    }
+}
 
 #chech_manifest () {
 #  digest -a md5 -v << ./Manifest
@@ -113,7 +114,7 @@ sanity_checks () {
 # Create Databases
 create_dbs () {
     # Check if the databases exist
-    if
+    if [[ `echo "\l" | $PGSQL |grep $PM_DB ; echo $?` -ne 0  ]]
         then printf "ERROR: *** The ${PM_DB} database exists!\n"
         EXIT="true";
     fi
