@@ -21,19 +21,20 @@ init_vars () {
         ROLE_PREFIX="${ROLE_PREFIX}_"
     fi
 
-    # DATABASES
+    # DATABASES    
     PM_DB="${DB_PREFIX}package_modeler"
     JBPM_DB="${DB_PREFIX}jbpm32"
 
+    #TODO:  Make passwords configurable
     ROLE_PRIVS="NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE LOGIN"
     XFER_FIXTURE_WRITER="${ROLE_PREFIX}transfer_fixture_writer_user"
-    XFER_FIXTURE_WRITER_PASSWD=""
+    XFER_FIXTURE_WRITER_PASSWD="transfer_fixture_writer_user"
     XFER_READER="${ROLE_PREFIX}transfer_reader_user"
-    XFER_READER_PASSWD=""
+    XFER_READER_PASSWD="transfer_reader_user"
     XFER_WRITER="${ROLE_PREFIX}transfer_data_writer_user"
-    XFER_WRITER_PASSWD=""
+    XFER_WRITER_PASSWD="transfer_data_writer_user"
     JBPM="${ROLE_PREFIX}jbpm_user"
-    JBPM_PASSWD=""
+    JBPM_PASSWD="jbpm_user"
 
     # PACKAGE MODLER ROLES
     OWNER_PRIVS="NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE"
@@ -57,6 +58,8 @@ sanity_checks () {
         then printf "ERROR: *** Cannot connect to the PostgreSQL database\n"
         usage
         exit 1;
+    else
+        printf "Successfully connected to PostgreSQL database\n"
     fi
 
     # IS PM CLI DEPLOY DIR WRITABLE?
@@ -67,6 +70,8 @@ sanity_checks () {
             else 
                 mkdir -p $TRANSFER_INSTALL_DIR
             fi
+    else
+        printf "${TRANSFER_INSTALL_DIR} present.\n"            
     fi
     #if [ `touch ${TRANSFER_INSTALL_DIR}/test 2> /dev/null; echo "$?"` -ne 0 ]
     #    then printf "ERROR: *** Package Modeler Command Line Tool install directory NOT WRITABLE\n"
@@ -85,18 +90,26 @@ sanity_checks () {
     if [ -r $PM_CORE_SQL ]
        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_CORE_SQL
        exit 1;
+    else
+        printf "Can read %s.\n" $PM_CORE_SQL
     fi
     if [ -r $PM_NDNP_SQL ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_NDNP_SQL
         exit 1;
+    else
+        printf "Can read %s.\n" $PM_NDNP_SQL
     fi
     if [ -r $JBPM_SQL ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $JBPM_SQL
         exit 1;
+    else
+        printf "Can read %s.\n" $JBPM_SQL        
     fi
     if [ -r $TRANSFER_UI_WAR ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $TRANSFER_UI_WAR
         exit 1;
+    else
+        printf "Can read %s.\n" $TRANSFER_UI_WAR        
     fi
 }
 
@@ -111,21 +124,28 @@ sanity_checks () {
 
 # Create Databases
 create_dbs () {
+    export PGDATABASE="postgres"
+    EXIT="false"
     # Check if the databases exist
-    if [[ `echo "\l" | $PSQL postgres |grep $PM_DB ; echo $?` -eq 0  ]]
+    if [[ `echo "\l" | $PSQL |grep $PM_DB ; echo $?` -eq 0  ]]
         then printf "ERROR: *** The ${PM_DB} database exists!\n"
         EXIT="true";
+    else
+        printf "${PM_DB} database does not exist\n"
     fi
-    if [[ `echo "\l" | $PSQL postgres |grep $JBPM_DB ; echo $?` -eq 0 ]]
+    if [[ `echo "\l" | $PSQL |grep $JBPM_DB ; echo $?` -eq 0 ]]
         then printf "ERROR: *** The ${JBPM_DB} database exists!\n"
         EXIT="true";
+    else
+        printf "${JBPM_DB} database does not exist\n"        
     fi
-    if [[ $EXIT="true" ]]
-        then  
-        exit 1;
+    if [[ $EXIT -ne "false" ]]
+        then
+            printf "Exiting\n"        
+            exit 1;
     else
         echo "Creating Databases"
-        echo "CREATE DATABASE ${PM_DB} ENCODING = 'UTF8';" | $PSQL 
+        echo "CREATE DATABASE ${PM_DB} ENCODING = 'UTF8';" | $PSQL
         echo "CREATE DATABASE ${JBPM_DB} ENCODING = 'UTF8';" | $PSQL
     fi
 }
@@ -133,6 +153,7 @@ create_dbs () {
 
 # Create Database Roles 
 init_roles () {
+    export PGDATABASE="postgres"
     # OWNER ROLES FIRST
     echo "CREATE ROLE $PKG_MODEL_FIXTURE_WRITER $OWNER_PRIVS;" | $PSQL
     echo "CREATE ROLE $PKG_MODEL_READER $OWNER_PRIVS;" | $PSQL
@@ -140,10 +161,10 @@ init_roles () {
     echo "CREATE ROLE $JBPM_OWNER $OWNER_PRIVS;" | $PSQL
 
     # NOW USER ROLES
-    echo "CREATE ROLE $XFER_FIXTURE_WRITER WITH PASSWORD $XFER_FIXTURE_WRITER_PASSWD $ROLE_PRIVS;" | $PSQL
-    echo "CREATE ROLE $XFER_READER WITH PASSWORD $XFER_READER_PASSWD $ROLE_PRIVS;" | $PSQL
-    echo "CREATE ROLE $XFER_WRITER WITH PASSWORD $XFER_WRITER_PASSWORD $ROLE_PRIVS;" | $PSQL
-    echo "CREATE ROLE $JBPM WITH PASSWORD $JBPM_PASSWORD $ROLE_PRIVS;" | $PSQL
+    echo "CREATE ROLE $XFER_FIXTURE_WRITER WITH PASSWORD '$XFER_FIXTURE_WRITER_PASSWD' $ROLE_PRIVS;" | $PSQL
+    echo "CREATE ROLE $XFER_READER WITH PASSWORD '$XFER_READER_PASSWD' $ROLE_PRIVS;" | $PSQL
+    echo "CREATE ROLE $XFER_WRITER WITH PASSWORD '$XFER_WRITER_PASSWORD' $ROLE_PRIVS;" | $PSQL
+    echo "CREATE ROLE $JBPM WITH PASSWORD '$JBPM_PASSWORD' $ROLE_PRIVS;" | $PSQL
 
     # GRANT PERMISSIONS TO ROLES
     echo "GRANT $PKG_MODEL_FIXTURE_WRITER TO $XFER_FIXTURE_WRITER;" | $PSQL
@@ -216,12 +237,16 @@ init_ndnp_perms () {
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE ndnp.batch_reel TO GROUP $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE ndnp.lccn TO GROUP $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE ndnp.reel TO GROUP $PKG_MODEL_WRITER;" | $PSQL
+    echo "GRANT SELECT ON TABLE ndnp.awardphase TO GROUP $PKG_MODEL_WRITER;" | $PSQL
+    echo "GRANT USAGE ON SCHEMA ndnp TO $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
+    echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE ndnp.awardphase TO GROUP $PKG_MODEL_FIXTURE_WRITER;" | $PSQL        
     echo "GRANT USAGE ON SCHEMA ndnp TO $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE ndnp.batch TO GROUP $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE ndnp.batch_lccn TO GROUP $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE ndnp.batch_reel TO GROUP $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE ndnp.lccn TO GROUP $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE ndnp.reel TO GROUP $PKG_MODEL_READER;" | $PSQL
+    echo "GRANT SELECT ON TABLE ndnp.awardphase TO GROUP $PKG_MODEL_READER;" | $PSQL    
 }
 
 # Grant JBPM Permissions
