@@ -154,6 +154,7 @@ create_dbs () {
 # Create Database Roles 
 init_roles () {
     export PGDATABASE="postgres"
+    printf "Creating roles\n"
     # OWNER ROLES FIRST
     echo "CREATE ROLE $PKG_MODEL_FIXTURE_WRITER $OWNER_PRIVS;" | $PSQL
     echo "CREATE ROLE $PKG_MODEL_READER $OWNER_PRIVS;" | $PSQL
@@ -175,7 +176,9 @@ init_roles () {
 
 # Grant PM Core Permissions
 init_core_perms () {
-    export PGDATABASE=$PG_DB
+    export PGDATABASE=$PM_DB
+    printf "Granting privileges to core\n"
+    
     echo "GRANT CONNECT ON DATABASE $PG_DB TO $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT USAGE ON SCHEMA core TO $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT USAGE ON SCHEMA agent TO $PKG_MODEL_WRITER;" | $PSQL
@@ -230,7 +233,9 @@ init_core_perms () {
 
 # Grant PM NDNP Permissions
 init_ndnp_perms () {
-    export PGDATABASE=$PG_DB
+    export PGDATABASE=$PM_DB
+    printf "Granting privileges to ndnp\n"
+    
     echo "GRANT USAGE ON SCHEMA ndnp TO $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE ndnp.batch TO GROUP $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE ndnp.batch_lccn TO GROUP $PKG_MODEL_WRITER;" | $PSQL
@@ -291,18 +296,21 @@ init_jbpm_perms () {
 # Deploy The Package Modeler Core DB
 deploy_pm_core () {
     export PGDATABASE=$PM_DB
+    printf "Creating core tables\n"
     $PSQL -f $PM_CORE_SQL
 }
 
 # Deploy The Package Modeler NDNP 
 deploy_pm_ndnp () {
-    export PGDATABASE=$PM_DB  
+    export PGDATABASE=$PM_DB
+    printf "Creating ndnp tables\n"    
     $PSQL -f $PM_NDNP_SQL
 }
 
 # Deploy The Package Modeler NDNP 
 deploy_jbpm () {
     export PGDATABASE=$JBPM_DB
+    printf "Creating jbpm tables\n"
     $PSQL -f $JBPM_SQL
 }
 
