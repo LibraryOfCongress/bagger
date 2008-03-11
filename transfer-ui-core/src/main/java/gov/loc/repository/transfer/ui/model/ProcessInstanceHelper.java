@@ -41,7 +41,7 @@ public class ProcessInstanceHelper {
 		List<ProcessInstanceBean> suspendedProcessInstanceBeanList = new ArrayList<ProcessInstanceBean>();
 		for(ProcessInstanceBean processInstanceBean : processInstanceBeanList)
 		{
-			if (! processInstanceBean.isSuspended())
+			if (processInstanceBean.isSuspended())
 			{
 				suspendedProcessInstanceBeanList.add(processInstanceBean);
 			}

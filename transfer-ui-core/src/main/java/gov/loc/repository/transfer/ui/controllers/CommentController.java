@@ -39,9 +39,9 @@ public class CommentController extends AbstractRestController {
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
 	        JbpmContext jbpmContext, 
-	        Map<String, String> urlParameterMap) throws Exception 
+	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
-		if (request.getUserPrincipal() == null)
+		if (! permissionsHelper.canAddComment())
 		{
 			mav.setError(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
@@ -70,16 +70,7 @@ public class CommentController extends AbstractRestController {
 		processInstanceBean.addComment(message);
 		processInstanceBean.save();
 				
-		String redirect = "redirect:";
-		if (request.getParameter(UIConstants.PARAMETER_REFERER) != null)
-		{
-			redirect+=request.getParameter(UIConstants.PARAMETER_REFERER); 
-		}
-		else
-		{
-			redirect += "/processinstance/" + processInstanceId + ".html";
-		}
-		mav.setViewName(redirect);
+		mav.setViewName("redirect:/processinstance/" + processInstanceId + ".html");
 		
 	}
 	

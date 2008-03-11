@@ -1,8 +1,10 @@
 package gov.loc.repository.transfer.ui.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.jbpm.graph.def.Node;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 
@@ -88,15 +90,15 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 	}
 	*/
 	
-	/*
-	public List<NodeBean> getNodeList()
+	@SuppressWarnings("unchecked")
+	public List<NodeBean> getNodeBeanList()
 	{
 		List<NodeBean> nodeBeanList = new ArrayList<NodeBean>();
-		List nodeList = this.processDefinition.getNodes();
-		Iterator iter = nodeList.iterator();
+		List<Node> nodeList = this.processDefinition.getNodes();
+		Iterator<Node> iter = nodeList.iterator();
 		while(iter.hasNext())
 		{
-			Node node = (Node)iter.next();
+			Node node = iter.next();
 			NodeBean nodeBean = new NodeBean();
 			nodeBean.setNode(node);
 			nodeBeanList.add(nodeBean);
@@ -104,20 +106,17 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 		return nodeBeanList;
 	}
 	
-	public Map<String, NodeBean> getNodeMap()
+	public NodeBean getNodeBean(String nodeName)
 	{
-		Map<String, NodeBean> nodeBeanMap = new HashMap<String, NodeBean>();
-		List nodeList = this.processDefinition.getNodes();
-		Iterator iter = nodeList.iterator();
-		while(iter.hasNext())
+		Node node = this.processDefinition.findNode(nodeName);
+		if (node == null)
 		{
-			Node node = (Node)iter.next();
-			NodeBean nodeBean = new NodeBean();
-			nodeBean.setNode(node);
-			nodeBeanMap.put(nodeBean.getName(), nodeBean);
-		}		
-		return nodeBeanMap;
-		
+			return null;
+		}
+		NodeBean nodeBean = new NodeBean();
+		nodeBean.setJbpmContext(jbpmContext);
+		nodeBean.setNode(node);
+		return nodeBean;
+				
 	}
-	*/
 }

@@ -27,7 +27,8 @@ public class JmsCompletedJobListenerController
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/services/listener*")
 	public ModelAndView handleRequest(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-		if ((req.getParameter("start") != null || req.getParameter("stop") != null) && ! req.isUserInRole(UIConstants.ROLE_ADMINISTRATOR))			
+		PermissionsHelper permissionsHelper = new PermissionsHelper(req);
+		if ((req.getParameter("start") != null || req.getParameter("stop") != null) && ! permissionsHelper.canAdministerJobListener())			
 		{
 			resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 			return null;
@@ -44,16 +45,8 @@ public class JmsCompletedJobListenerController
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("contextPath", req.getContextPath());
 		mav.addObject("listener", this.listener);
-		
-		if (req.isUserInRole(UIConstants.ROLE_ADMINISTRATOR))
-		{
-			mav.addObject("canStart", true);
-		}
-		else
-		{
-			mav.addObject("canStart", false);
-		}
-		
+		mav.addObject("permissionsHelper", permissionsHelper);
+				
 		mav.setViewName("/services/listener");
 		return mav;		
 	}

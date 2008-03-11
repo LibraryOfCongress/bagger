@@ -5,11 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jbpm.JbpmContext;
-import org.jbpm.identity.Group;
 import org.jbpm.identity.User;
 import org.jbpm.identity.hibernate.IdentitySession;
 
 public class UserHelper {
+	@SuppressWarnings("unchecked")
 	public static List<UserBean> getUserBeanList(JbpmContext jbpmContext)
 	{
 		IdentitySession identitySession = new IdentitySession(jbpmContext.getSession());
@@ -36,12 +36,12 @@ public class UserHelper {
 	}
 	*/
 	
-	private static List<UserBean> toUserBeanList(Iterator iter, JbpmContext jbpmContext)
+	private static List<UserBean> toUserBeanList(Iterator<User> iter, JbpmContext jbpmContext)
 	{
 		List<UserBean> userBeanList = new ArrayList<UserBean>();
 		while(iter.hasNext())
 		{
-			User user = (User)iter.next();
+			User user = iter.next();
 			UserBean actorBean = new UserBean();
 			actorBean.setJbpmContext(jbpmContext);
 			actorBean.setId(user.getName());

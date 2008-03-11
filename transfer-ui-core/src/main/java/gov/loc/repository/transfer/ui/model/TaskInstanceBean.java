@@ -11,7 +11,7 @@ import java.util.Set;
 import org.jbpm.taskmgmt.exe.PooledActor;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
-public class TaskInstanceBean extends AbstractWorkflowBean {
+public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUpdatingBean {
 	
 	private TaskInstance taskInstance;
 	private String transition;
@@ -31,8 +31,12 @@ public class TaskInstanceBean extends AbstractWorkflowBean {
 		return this.taskInstance.getId();
 	}
 	
-	public void setUserBean(UserBean userBean)
+	public void setUserBean(UserBean userBean) throws Exception
 	{
+		if (! this.canUpdateUserBean())
+		{
+			throw new Exception("User for TaskInstance cannot be updated");
+		}
 		if (userBean == null)
 		{
 			this.taskInstance.setActorId(null);
@@ -55,6 +59,25 @@ public class TaskInstanceBean extends AbstractWorkflowBean {
 		return userBean;
 	}
 	
+	public boolean canUpdateUserBean()
+	{
+		if (! this.isEnded())
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean canUpdate()
+	{
+		if (! this.isEnded() && ! this.taskInstance.getProcessInstance().isSuspended() && ! this.taskInstance.getProcessInstance().hasEnded())
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<GroupBean> getGroupBeanList()
 	{
 		//Making assumption that pooled actors only includes groups.  This is not necessarily the case, as could include actors.
@@ -63,14 +86,14 @@ public class TaskInstanceBean extends AbstractWorkflowBean {
 		return groupBeanList;
 	}
 	
-	private void addPooledActors(Set pooledActors, List<GroupBean> groupBeanList)
+	private void addPooledActors(Set<PooledActor> pooledActors, List<GroupBean> groupBeanList)
 	{
 		if (pooledActors != null)
 		{
-			Iterator iter = pooledActors.iterator();
+			Iterator<PooledActor> iter = pooledActors.iterator();
 			while (iter.hasNext())
 			{				
-				PooledActor pooledActor = (PooledActor)iter.next();
+				PooledActor pooledActor = iter.next();
 				GroupBean groupBean = new GroupBean();
 				groupBean.setJbpmContext(jbpmContext);
 				groupBean.setId(pooledActor.getActorId());

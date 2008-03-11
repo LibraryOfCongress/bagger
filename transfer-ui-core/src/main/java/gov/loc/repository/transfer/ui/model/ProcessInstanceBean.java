@@ -1,13 +1,16 @@
 package gov.loc.repository.transfer.ui.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.jbpm.graph.exe.Comment;
 import org.jbpm.graph.exe.ProcessInstance;
+import org.jbpm.graph.exe.Token;
 
-public class ProcessInstanceBean extends AbstractWorkflowBean {
+public class ProcessInstanceBean extends AbstractWorkflowBean implements VariableUpdatingBean {
 	
 	private ProcessInstance processInstance;
 	
@@ -55,48 +58,36 @@ public class ProcessInstanceBean extends AbstractWorkflowBean {
 
 	}
 	
-	/*
+	@SuppressWarnings("unchecked")
 	public Map getVariableMap()
 	{
 		return this.processInstance.getContextInstance().getVariables();
 	}
-	
-	public boolean isVariableChange(String name, String value)
+		
+	public void setVariable(String name, Object value)
 	{
-		if (value.equals(this.processInstance.getContextInstance().getVariable(name)))
-		{
-			return false;
-		}
-		return true;
+		log.debug(MessageFormat.format("Setting variable {0} to {1}", name, value));
+		this.processInstance.getContextInstance().setVariable(name, value);
 	}
-	
-	public void setVariable(String name, String value)
-	{
-		if (this.isVariableChange(name, value))
-		{
-			log.debug(MessageFormat.format("Setting variable {0} to {1}", name, value));
-			this.processInstance.getContextInstance().setVariable(name, value);
-		}
-	}
-	*/
-	/*
-	public List<TokenBean> getTokenList()
+
+	@SuppressWarnings("unchecked")
+	public List<TokenBean> getTokenBeanList()
 	{
 		List<TokenBean> tokenBeanList = new ArrayList<TokenBean>();
-		List tokenList = this.processInstance.findAllTokens();
+		List<Token> tokenList = this.processInstance.findAllTokens();
 		log.debug("TokenList has " + tokenList.size());
-		Iterator iter = tokenList.iterator();
+		Iterator<Token> iter = tokenList.iterator();
 		while(iter.hasNext())
 		{			
 			TokenBean tokenBean = new TokenBean();
-			tokenBean.setToken((Token)iter.next());
+			tokenBean.setToken(iter.next());
 			tokenBean.setJbpmContext(jbpmContext);
 			tokenBeanList.add(tokenBean);
 		}
 		log.debug("TokenBeanList has " + tokenBeanList.size());
 		return tokenBeanList;
 	}
-	*/
+	
 	
 	public void save() {
 		this.jbpmContext.save(this.processInstance);
@@ -107,16 +98,18 @@ public class ProcessInstanceBean extends AbstractWorkflowBean {
 		return this.processInstance.isSuspended();
 	}
 
-	/*	
-	
-	public void resume()
+	public void suspended(boolean suspended)
 	{
-		if (this.isSuspended())
+		if (suspended && ! this.isSuspended())
+		{
+			this.processInstance.suspend();
+		}
+		else if (! suspended && this.isSuspended())
 		{
 			this.processInstance.resume();
 		}
 	}
-	*/
+		
 	public boolean isEnded() {
 		return this.processInstance.hasEnded();
 	}
@@ -126,9 +119,5 @@ public class ProcessInstanceBean extends AbstractWorkflowBean {
 		this.processInstance.end();
 	}
 	
-	public String getMessage()
-	{
-		return (String)this.processInstance.getContextInstance().getVariable("message");
-	}
 	*/
 }

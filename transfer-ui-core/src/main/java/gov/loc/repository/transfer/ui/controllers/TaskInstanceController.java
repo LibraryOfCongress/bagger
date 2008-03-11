@@ -29,9 +29,7 @@ public class TaskInstanceController extends AbstractRestController {
 	
 	protected static final Log log = LogFactory.getLog(TaskInstanceController.class);
 	
-	public static final String NULL = "null";
-	public static final String VARIABLE_PREFIX = "variable.";
-	
+	public static final String NULL = "null";	
 
 	private TaskInstanceUpdateCommand defaultCommand 
 	    = new DefaultTaskInstanceUpdateCommand();
@@ -103,7 +101,7 @@ public class TaskInstanceController extends AbstractRestController {
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
 	        JbpmContext jbpmContext, 
-	        Map<String, String> urlParameterMap) throws Exception {
+	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception {
 		//If there is no taskinstanceid in urlParameterMap then 404
 		if (! urlParameterMap.containsKey(UIConstants.PARAMETER_TASKINSTANCEID)) {
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
@@ -127,33 +125,18 @@ public class TaskInstanceController extends AbstractRestController {
 		command.setTaskInstanceBean(taskInstanceBean);
 		command.setRequest(request);
 		command.setModelAndView(mav);
+		command.setPermissionsHelper(permissionsHelper);
 
 		//This will give us access to the task instance details
 		mav.addObject("taskInstanceBean", taskInstanceBean);
 		
-		//Whether the task can be re-assigned
-		mav.addObject("canUpdateUser", command.canUpdateUser());
-		if (command.canUpdateUser()) {
-			//This could be in the command, but why bother
-			mav.addObject("userBeanList", UserHelper.getUserBeanList(jbpmContext));
-		}
-		
-		if (request.getUserPrincipal() != null)
-		{
-			mav.addObject("canAddComment", true);
-		}
-		else
-		{
-			mav.addObject("canAddComment", false);
-		}
-		
-		if (command.canUpdateTaskInstance()) {			
+		mav.addObject("userBeanList", UserHelper.getUserBeanList(jbpmContext));
+						
+		if (permissionsHelper.canUpdateTaskInstance(taskInstanceBean) && taskInstanceBean.canUpdate()) {			
 			command.prepareForm();
 			command.prepareInstruction();						
 		}		
-		
-		
-		
+						
 		mav.setViewName("taskinstance");
 		
 	}
@@ -163,7 +146,7 @@ public class TaskInstanceController extends AbstractRestController {
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
 	        JbpmContext jbpmContext,
-	         Map<String, String> urlParameterMap ) throws Exception {
+	         PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap ) throws Exception {
 		if (! urlParameterMap.containsKey(UIConstants.PARAMETER_TASKINSTANCEID)) {			
 			mav.setError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 			return;
@@ -186,6 +169,7 @@ public class TaskInstanceController extends AbstractRestController {
 		command.setRequest(request);
 		command.setModelAndView(mav);
 		command.setJbpmContext(jbpmContext);
+		command.setPermissionsHelper(permissionsHelper);
 		command.preprocessPut();
 		command.bindPut();
 				
@@ -204,7 +188,7 @@ public class TaskInstanceController extends AbstractRestController {
 			    request, 
 			    mav, 
 			    jbpmContext, 
-			    urlParameterMap
+			    permissionsHelper, urlParameterMap
 			);
 		}
 	}

@@ -40,4 +40,10 @@
 		<put name="content"         value="processinstancelist.vm" />
 	</definition>
 
+	<definition name="processinstance" extends="base">
+		<put name="title"           value="Process Instance" />
+		<put name="content"         value="processinstance.vm" />
+	</definition>
+
+
 </tiles-definitions> 

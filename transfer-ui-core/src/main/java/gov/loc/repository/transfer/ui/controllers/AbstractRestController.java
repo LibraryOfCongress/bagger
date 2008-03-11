@@ -1,5 +1,6 @@
 package gov.loc.repository.transfer.ui.controllers;
 
+import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.UrlParameterHelper;
 
@@ -67,10 +68,13 @@ public abstract class AbstractRestController extends AbstractController {
 		    method
 		));
 		
+		PermissionsHelper permissionsHelper = new PermissionsHelper(request); 
+		
 		//Add basic request context info to view map
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("contextPath", request.getContextPath());
 		mav.addObject("requestURI", request.getRequestURI());
+		mav.addObject("permissionsHelper", permissionsHelper);
 		if (request.getRequestURI().endsWith("index.html"))
 		{
 		    log.debug("Handling index");
@@ -78,7 +82,7 @@ public abstract class AbstractRestController extends AbstractController {
 			    request, 
 			    mav, 
 			    jbpmContext, 
-			    urlParameterMap
+			    permissionsHelper, urlParameterMap
 			);
 			
 		}		
@@ -88,42 +92,24 @@ public abstract class AbstractRestController extends AbstractController {
 			    request, 
 			    mav, 
 			    jbpmContext, 
-			    urlParameterMap
+			    permissionsHelper, urlParameterMap
 			);
 		}else if (METHOD_POST.equalsIgnoreCase(method))  {
-			//User must be logged in and able to post
-			if (request.getUserPrincipal() == null) {
-		        log.warn("User not Authenticated, ignoring POST");
-				mav.setError(
-				    HttpServletResponse.SC_UNAUTHORIZED, 
-				    "User not authenticated"
-				);
-			} else {
-		        log.debug("Handling POST");
-				this.handlePost(
-				    request, 
-				    mav, 
-				    jbpmContext, 
-				    urlParameterMap
-				);
-			}
+	        log.debug("Handling POST");
+			this.handlePost(
+			    request, 
+			    mav, 
+			    jbpmContext, 
+			    permissionsHelper, urlParameterMap
+			);
 		} else if (METHOD_PUT.equalsIgnoreCase(method)) {
-			//User must be logged in and able to put
-			if (request.getUserPrincipal() == null) {
-		        log.warn("User not Authenticated, ignoring PUT");
-				mav.setError(
-				    HttpServletResponse.SC_UNAUTHORIZED,
-				    "User not authenticated"
-				);				
-			} else {
-		        log.debug("Handling PUT");
-				this.handlePut(
-				    request, 
-				    mav, 
-				    jbpmContext, 
-				    urlParameterMap
-				);
-			}
+	        log.debug("Handling PUT");
+			this.handlePut(
+			    request, 
+			    mav, 
+			    jbpmContext, 
+			    permissionsHelper, urlParameterMap
+			);
 		} else {
 			mav.setError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 		}
@@ -141,6 +127,12 @@ public abstract class AbstractRestController extends AbstractController {
 			}
 			mav = null;
 		}
+		//Postprocess for referer
+		else if (request.getParameter(UIConstants.PARAMETER_REFERER) != null)
+		{
+			mav.setViewName("redirect:" + request.getParameter(UIConstants.PARAMETER_REFERER));
+		}
+				
 		return mav;
 	}
 
@@ -148,7 +140,7 @@ public abstract class AbstractRestController extends AbstractController {
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
 	        JbpmContext jbpmContext,
-	        Map<String,String> urlParameterMap) throws Exception{
+	        PermissionsHelper permissionsHelper, Map<String,String> urlParameterMap) throws Exception{
 		mav.setError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}	
 	
@@ -156,7 +148,7 @@ public abstract class AbstractRestController extends AbstractController {
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
 	        JbpmContext jbpmContext,
-	        Map<String,String> urlParameterMap) throws Exception{
+	        PermissionsHelper permissionsHelper, Map<String,String> urlParameterMap) throws Exception{
 		mav.setError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
 	
@@ -164,7 +156,7 @@ public abstract class AbstractRestController extends AbstractController {
 	        HttpServletRequest request,
 	        ModelAndView mav, 
 	        JbpmContext jbpmContext, 
-	        Map<String,String> urlParameterMap) throws Exception {
+	        PermissionsHelper permissionsHelper, Map<String,String> urlParameterMap) throws Exception {
 		mav.setError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);		
 	}
 
@@ -172,7 +164,7 @@ public abstract class AbstractRestController extends AbstractController {
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
 	        JbpmContext jbpmContext, 
-	        Map<String,String> urlParameterMap) throws Exception {
+	        PermissionsHelper permissionsHelper, Map<String,String> urlParameterMap) throws Exception {
 		mav.setError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
 	

@@ -26,22 +26,23 @@ public class UserBean extends AbstractWorkflowBean {
 		this.id = id;
 	}
 		
+	@SuppressWarnings("unchecked")
 	public List<ProcessDefinitionBean> getProcessDefinitionBeanList()
 	{
 		IdentitySession identitySession = new IdentitySession(this.jbpmContext.getSession());
-		List groupNameList = identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation");
-		Iterator iter = groupNameList.iterator();
+		List<String> groupNameList = identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation");
+		Iterator<String> iter = groupNameList.iterator();
 
 		Set<String> processDefinitionIdSet = new HashSet<String>();
 		Pattern pattern = Pattern.compile("processdefinition\\.(.+)\\.initiate");
 		while (iter.hasNext())
 		{
-			String groupName = (String)iter.next();
+			String groupName = iter.next();
 			Group group = identitySession.getGroupByName(groupName);
-			Iterator permissionsIter = group.getPermissions().iterator();
+			Iterator<Permission> permissionsIter = group.getPermissions().iterator();
 			while(permissionsIter.hasNext())
 			{
-				Permission permission = (Permission)permissionsIter.next();
+				Permission permission = permissionsIter.next();
 				Matcher matcher = pattern.matcher(permission.getName());
 				if (matcher.matches())
 				{
@@ -67,33 +68,35 @@ public class UserBean extends AbstractWorkflowBean {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<GroupBean> getGroupBeanList()
 	{
 		IdentitySession identitySession = new IdentitySession(this.jbpmContext.getSession());
-		List groupNameList = identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation");
+		List<String> groupNameList = identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation");
 		
 		List<GroupBean> groupBeanList = new ArrayList<GroupBean>();
-		Iterator iter = groupNameList.iterator();
+		Iterator<String> iter = groupNameList.iterator();
 		while (iter.hasNext())
 		{
 			GroupBean groupBean = new GroupBean();
 			groupBean.setJbpmContext(this.jbpmContext);
-			groupBean.setId((String)iter.next());
+			groupBean.setId(iter.next());
 			groupBeanList.add(groupBean);
 		}
 		return groupBeanList;
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<TaskInstanceBean> getUserTaskInstanceBeanList()
 	{
-		List taskList = jbpmContext.getTaskList(this.id);
+		List<TaskInstance> taskList = jbpmContext.getTaskList(this.id);
 		List<TaskInstanceBean> taskInstanceBeanList = new ArrayList<TaskInstanceBean>();
-		Iterator iter = taskList.iterator();
+		Iterator<TaskInstance> iter = taskList.iterator();
 		while (iter.hasNext())
 		{
 			TaskInstanceBean taskInstanceBean = new TaskInstanceBean();
-			taskInstanceBean.setTaskInstance((TaskInstance)iter.next());
+			taskInstanceBean.setTaskInstance(iter.next());
 			if (! taskInstanceBean.isEnded())
 			{
 				taskInstanceBeanList.add(taskInstanceBean);
@@ -102,18 +105,19 @@ public class UserBean extends AbstractWorkflowBean {
 		return taskInstanceBeanList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<TaskInstanceBean> getGroupTaskInstanceBeanList()
 	{
 
 		IdentitySession identitySession = new IdentitySession(this.jbpmContext.getSession());
 		
-		List taskList = jbpmContext.getGroupTaskList(identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation"));
+		List<TaskInstance> taskList = jbpmContext.getGroupTaskList(identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation"));
 		List<TaskInstanceBean> taskInstanceBeanList = new ArrayList<TaskInstanceBean>();
-		Iterator iter = taskList.iterator();
+		Iterator<TaskInstance> iter = taskList.iterator();
 		while (iter.hasNext())
 		{
 			TaskInstanceBean taskInstanceBean = new TaskInstanceBean();
-			taskInstanceBean.setTaskInstance((TaskInstance)iter.next());
+			taskInstanceBean.setTaskInstance(iter.next());
 			if (! taskInstanceBean.isEnded())
 			{
 				taskInstanceBeanList.add(taskInstanceBean);

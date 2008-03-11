@@ -2,6 +2,7 @@ package gov.loc.repository.transfer.ui.commands;
 
 import javax.servlet.http.HttpServletRequest;
 
+import gov.loc.repository.transfer.ui.controllers.PermissionsHelper;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 
@@ -26,9 +27,6 @@ public interface TaskInstanceUpdateCommand {
 	
 	public void setModelAndView(ModelAndView mav);
 	
-	public boolean canUpdateUser();
-	
-	public boolean canUpdateTaskInstance();
-	
-	
+	public void setPermissionsHelper(PermissionsHelper permissionsHelper);
+			
 }

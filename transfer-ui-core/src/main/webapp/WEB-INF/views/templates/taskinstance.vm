@@ -1,7 +1,7 @@
 <div id="taskinstance">
     <ul id="localNav">
         <li><a href="#taskDetails" ><span> Details </span></a></li>
-        #if ($canUpdateUser)    <li><a href="#reassignTask"><span> Reassign </span></a></li> #end
+        #if ($permissionsHelper.canUpdateTaskInstanceUser() && $taskInstanceBean.canUpdateUserBean())    <li><a href="#reassignTask"><span> Reassign </span></a></li> #end
         #if ($formViewName)     <li><a href="#updateTask"  ><span> Update   </span></a></li> #end
         <li><a href="#localHelp"><span> Help     </span></a></li>
     </ul>
@@ -24,6 +24,14 @@
                         <th>Description</th>
                 </tr></tfoot>
                 <tbody>
+                    <tr id="processInstance" >
+                        <td>Process instance</td>
+						#set ($code = "processdefinitions.${taskInstanceBean.processInstanceBean.processDefinitionBean.id}")
+            			#set($packageName = "none")
+            			#set($packageName = $taskInstanceBean.processInstanceBean.packageName)                        
+                        <td><a href="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}.html">#springMessage($code) (${taskInstanceBean.processInstanceBean.id}) </a> - $packageName</td>
+                        <td>The process instance that this task is part of.</td>
+                    </tr>
                     <tr id="taskAssignee" >
                         <td>User</td>
                         <td>#if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end</td>
@@ -56,7 +64,7 @@
         </fieldset>
     </div>
 
-    #if ($canUpdateUser)
+    #if ($permissionsHelper.canUpdateTaskInstanceUser() && $taskInstanceBean.canUpdateUserBean())
 	<div id="reassignTask">
 	    <h2>Reassign Task</h2>
 	    <form method="post" action="${requestURI}?method=put">
@@ -81,7 +89,7 @@
 		-- $commentBean.actorId ($commentBean.date)</p>
 	#end
 
-    #if ($canAddComment)
+    #if ($permissionsHelper.canAddComment())
 	<div id="addComment">
 	    <h2>Add Comment</h2>
 			<form method="post" action="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}/comment.html">
