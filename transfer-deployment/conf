@@ -4,7 +4,7 @@ PGPORT="5432"
 
 PGUSER="postgres"
 
-PGPASWORD=""
+PGPASSWORD="abc@123"
 
 DB_PREFIX=""
 
@@ -28,7 +28,7 @@ WORKFLOW_CORE="files/workflow-processes-core-1.2-bin.zip"
 
 PROCESS_DEFINITION="files/processdefinition.xml"
 
-TOMCAT_HOME=""
+TOMCAT_HOME="/opt/coolstack/tomcat"
 
 VERSION="1.1"
 

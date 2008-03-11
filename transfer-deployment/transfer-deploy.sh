@@ -10,11 +10,11 @@ init_vars () {
     PROCESS_DEPLOYER="${TRANSFER_INSTALL_DIR}/${WORKFLOW_CORE}/processdeployer"
 
     # ENVIRONMENT VARS
-    export $PGUSER
-    export $PGHOST
-    #export $PGPORT
-    export $PGPASSWORD
-    export $TOMCAT_HOME
+    export PGUSER=$PGUSER
+    export PGHOST=$PGHOST
+    export PGPORT=$PGPORT
+    export PGPASSWORD=$PGPASSWORD
+    export TOMCAT_HOME=$TOMCAT_HOME
     
     if [[ $DB_PREFIX ]]; then
         DB_PREFIX="${DB_PREFIX}_"
@@ -41,6 +41,7 @@ init_vars () {
     PKG_MODEL_READER="${ROLE_PREFIX}package_modeler_reader_role"
     PKG_MODEL_WRITER="${ROLE_PREFIX}package_modeler_data_writer_role"
     JBPM_OWNER="${ROLE_PREFIX}jbpm_role"
+    env
 }
 
 sanity_checks () {
@@ -59,9 +60,9 @@ sanity_checks () {
     fi
 
     # IS PM CLI DEPLOY DIR WRITABLE?
-    if [[ ! -f ${TRANSFER_INSTALL_DIR} ]]
+    if [[ ! -e ${TRANSFER_INSTALL_DIR} ]]
         then read -p "${TRANSFER_INSTALL_DIR} not present. Shall I create it? (Y/n)" MKDIR
-            if [[ $MKDIR -ne Y ]] 
+            if [[ $MKDIR -ne "Y" ]] 
                 then printf "Exiting...\n"
             else 
                 mkdir -p $TRANSFER_INSTALL_DIR
@@ -75,29 +76,26 @@ sanity_checks () {
     #fi
 
     # TOMCAT WRITABLE?
-    if [ ! -w $TOMCAT_HOME/webapps ]
-        then printf "\n!!! Can't write to ${$TOMCAT_HOME}/webapps\nPlease fix this and try again.\nExitintg....\n"
-    fi
+    #if [ ! -w $TOMCAT_HOME/webapps ]
+    #    then printf "\n!!! Can't write to ${TOMCAT_HOME}/webapps\nPlease fix this and try again.\nExitintg....\n" 
+    #   exit 1;
+    #fi
 
     # ARE REQUIRED FILES READABLE
     if [ -r $PM_CORE_SQL ]
-       then printf "\n!!! Can't read ${PM_CORE_SQL}\nPlease fix this and try again.\nExitintg....\n"
+       then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_CORE_SQL
        exit 1;
     fi
     if [ -r $PM_NDNP_SQL ]
-        then printf "\n!!! Can't read ${PM_NDNP_SQL}\nPlease fix this and try again.\nExitintg....\n"
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_NDNP_SQL
         exit 1;
     fi
     if [ -r $JBPM_SQL ]
-        then printf "\n!!! Can't read ${JBPM_SQL}\nPlease fix this and try again.\nExitintg....\n"
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $JBPM_SQL
         exit 1;
     fi
     if [ -r $TRANSFER_UI_WAR ]
-        then printf "\n!!! Can't read ${TRANSFER_UI_WAR}\nPlease fix this and try again.\nExitintg....\n"
-        exit 1;
-    fi
-    if [ -r $CLAYPOOL_WAR ]
-        then printf "\n!!! Can't read ${CLAYPOOL_WAR}\nPlease fix this and try again.\nExitintg....\n"
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $TRANSFER_UI_WAR
         exit 1;
     fi
 }
@@ -114,11 +112,11 @@ sanity_checks () {
 # Create Databases
 create_dbs () {
     # Check if the databases exist
-    if [[ `echo "\l" | $PGSQL |grep $PM_DB ; echo $?` -ne 0  ]]
+    if [[ `echo "\l" | $PSQL postgres |grep $PM_DB ; echo $?` -eq 0  ]]
         then printf "ERROR: *** The ${PM_DB} database exists!\n"
         EXIT="true";
     fi
-    if [[ `echo "\l" | $PGSQL |grep $JBPM_DB ; echo $?` -ne 0 ]]
+    if [[ `echo "\l" | $PSQL postgres |grep $JBPM_DB ; echo $?` -eq 0 ]]
         then printf "ERROR: *** The ${JBPM_DB} database exists!\n"
         EXIT="true";
     fi
@@ -126,7 +124,8 @@ create_dbs () {
         then  
         exit 1;
     else
-        echo "CREATE DATABASE ${PM_DB} ENCODING = 'UTF8';" | $PSQL 2>&1
+        echo "Creating Databases"
+        echo "CREATE DATABASE ${PM_DB} ENCODING = 'UTF8';" | $PSQL 
         echo "CREATE DATABASE ${JBPM_DB} ENCODING = 'UTF8';" | $PSQL
     fi
 }
@@ -399,3 +398,4 @@ deploy_pm_cli
 
 install_pm_fixtures
 install_jbpm_fixtures
+install_ndnp_fixtures
