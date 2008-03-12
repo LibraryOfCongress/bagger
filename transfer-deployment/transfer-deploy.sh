@@ -93,7 +93,7 @@ sanity_checks () {
         usage
         exit 1;
     else
-        printf "Java is all good!\n"
+        printf "INFO:  Java is all good!\n"
     fi
  
 
@@ -103,7 +103,7 @@ sanity_checks () {
         usage
         exit 1;
     else
-        printf "Successfully connected to PostgreSQL database\n"
+        printf "INFO:  Successfully connected to PostgreSQL database\n"
     fi
 
     # IS PM CLI DEPLOY DIR WRITABLE?
@@ -115,7 +115,7 @@ sanity_checks () {
                 mkdir -p $TRANSFER_INSTALL_DIR
             fi
     else
-        printf "${TRANSFER_INSTALL_DIR} present.\n"            
+        printf "INFO:  ${TRANSFER_INSTALL_DIR} present.\n"            
     fi
     #if [ `touch ${TRANSFER_INSTALL_DIR}/test 2> /dev/null; echo "$?"` -ne 0 ]
     #    then printf "ERROR: *** Package Modeler Command Line Tool install directory NOT WRITABLE\n"
@@ -135,49 +135,49 @@ sanity_checks () {
        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_CORE_SQL
        exit 1;
     else
-        printf "Can read %s.\n" $PM_CORE_SQL
+        printf "INFO:  Can read %s.\n" $PM_CORE_SQL
     fi
     if [ ! -r $PM_NDNP_SQL ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_NDNP_SQL
         exit 1;
     else
-        printf "Can read %s.\n" $PM_NDNP_SQL
+        printf "INFO:  Can read %s.\n" $PM_NDNP_SQL
     fi
     if [ ! -r $JBPM_SQL ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $JBPM_SQL
         exit 1;
     else
-        printf "Can read %s.\n" $JBPM_SQL        
+        printf "INFO:  Can read %s.\n" $JBPM_SQL        
     fi
     if [ ! -r $PM_CORE_CLI_PKG ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_CORE_CLI_PKG
         exit 1;
     else
-        printf "Can read %s.\n" $PM_CORE_CLI_PKG        
+        printf "INFO:  Can read %s.\n" $PM_CORE_CLI_PKG        
     fi
     if [ ! -r $PM_NDNP_CLI_PKG ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_NDNP_CLI_PKG
         exit 1;
     else
-        printf "Can read %s.\n" $PM_NDNP_CLI_PKG        
+        printf "INFO:  Can read %s.\n" $PM_NDNP_CLI_PKG        
     fi
     if [ ! -r $PROCESS_DEPLOYER_PKG ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PROCESS_DEPLOYER_PKG
         exit 1;
     else
-        printf "Can read %s.\n" $PROCESS_DEPLOYER_PKG        
+        printf "INFO:  Can read %s.\n" $PROCESS_DEPLOYER_PKG        
     fi
     if [ ! -r $PROCESS_DEFINITION ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PROCESS_DEFINITION
         exit 1;
     else
-        printf "Can read %s.\n" $PROCESS_DEFINITION        
+        printf "INFO:  Can read %s.\n" $PROCESS_DEFINITION        
     fi
     if [ ! -r $TRANSFER_UI_WAR ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $TRANSFER_UI_WAR
         exit 1;
     else
-        printf "Can read %s.\n" $TRANSFER_UI_WAR        
+        printf "INFO:  Can read %s.\n" $TRANSFER_UI_WAR        
     fi
 }
 
@@ -196,13 +196,13 @@ create_dbs () {
     EXIT="false"
     # Check if the databases exist
     if [[ `echo "\l" | $PSQL |grep $PM_DB ; echo $?` -eq 0  ]]
-        then printf "ERROR: *** The ${PM_DB} database exists!\n"
+        then printf "ERROR:  *** The ${PM_DB} database exists!\n"
         EXIT="true";
     else
         printf "${PM_DB} database does not exist\n"
     fi
     if [[ `echo "\l" | $PSQL |grep $JBPM_DB ; echo $?` -eq 0 ]]
-        then printf "ERROR: *** The ${JBPM_DB} database exists!\n"
+        then printf "ERROR:  *** The ${JBPM_DB} database exists!\n"
         EXIT="true";
     else
         printf "${JBPM_DB} database does not exist\n"        
@@ -212,7 +212,7 @@ create_dbs () {
             printf "Exiting\n"        
             exit 1;
     else
-        echo "Creating Databases"
+        echo "INFO:  Creating Databases"
         echo "CREATE DATABASE ${PM_DB} ENCODING = 'UTF8';" | $PSQL
         echo "CREATE DATABASE ${JBPM_DB} ENCODING = 'UTF8';" | $PSQL
     fi
@@ -222,7 +222,7 @@ create_dbs () {
 # Create Database Roles 
 init_roles () {
     export PGDATABASE="postgres"
-    printf "Creating roles\n"
+    printf "INFO:  Creating roles\n"
     # OWNER ROLES FIRST
     echo "CREATE ROLE $PKG_MODEL_FIXTURE_WRITER $OWNER_PRIVS;" | $PSQL
     echo "CREATE ROLE $PKG_MODEL_READER $OWNER_PRIVS;" | $PSQL
@@ -261,7 +261,7 @@ create_jbpm_schema () {
 # Grant PM Core Permissions
 init_core_perms () {
     export PGDATABASE=$PM_DB
-    printf "Granting privileges to core\n"
+    printf "INFO:  Granting privileges to core\n"
     
     echo "GRANT CONNECT ON DATABASE $PG_DB TO $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT USAGE ON SCHEMA core TO $PKG_MODEL_WRITER;" | $PSQL
@@ -318,7 +318,7 @@ init_core_perms () {
 # Grant PM NDNP Permissions
 init_ndnp_perms () {
     export PGDATABASE=$PM_DB
-    printf "Granting privileges to ndnp\n"
+    printf "INFO:  Granting privileges to ndnp\n"
     
     echo "GRANT USAGE ON SCHEMA ndnp TO $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE ndnp.batch TO GROUP $PKG_MODEL_WRITER;" | $PSQL
@@ -402,33 +402,34 @@ deploy_jbpm () {
 #TODO  ************** Test the setup by invoking the commandline driver ***********
 # Deploy the Package Modeler Command Line Tool
 deploy_pm_core_cli () {
-    printf "Deploying Pakage Modler Core CLI Package\n"
+    printf "INFO:  Deploying Pakage Modler Core CLI Package\n"
     unzip $PM_CORE_CLI_PKG -d $TRANSFER_INSTALL_DIR
-    printf "Making %s executable\n" $PM_CORE_CLI
+    printf "INFO:  Making %s executable\n" $PM_CORE_CLI
     chmod +x $PM_CORE_CLI
     echo -e $PM_HIBERNATE_PROPS > $PM_CORE_HIBERNATE_CONF
 }
 
 # Deploy the Package Modler NDNP Zip
 deploy_pm_ndnp_cli () {
-    printf "Deploying Pakage Modler NDNP CLI Package\n"
+    printf "INFO:  Deploying Pakage Modler NDNP CLI Package\n"
     unzip $PM_NDNP_CLI_PKG -d $TRANSFER_INSTALL_DIR 
-    printf "Making %s executable\n" $PM_NDNP_CLI
+    printf "INFO:  Making %s executable\n" $PM_NDNP_CLI
     chmod +x $PM_NDNP_CLI
     echo -e $PM_HIBERNATE_PROPS > $PM_NDNP_HIBERNATE_CONF
 }
 
 # Deploy the Workflow Processes Core Zip
 deploy_workflow_core () {
-    printf "Deploying Workflow Core Package\n"
+    printf "INFO:  Deploying Workflow Core Package\n"
     unzip $WORKFLOW_CORE_PKG -d $TRANSFER_INSTALL_DIR 
-    printf "Making %s executable\n" $PROCESS_DEPLOYER
+    printf "INFO:  Making %s executable\n" $PROCESS_DEPLOYER
     chmod +x $PROCESS_DEPLOYER
     echo -e $JBPM_HIBERNATE_PROPS > $JBPM_HIBERNATE_CONF
 }
 
 # Create the package modler database fixtures
 install_pm_fixtures () {
+    printf "INFO:  Installing package modler database fixtures\n"
     $PM_CORE_CLI createrepository -id ndnp
     $PM_CORE_CLI createperson -id ray -firstname Ray -surname Murray
     $PM_CORE_CLI createperson -id myron -firstname Myron -surname Briggs
@@ -449,12 +450,14 @@ install_pm_fixtures () {
 
 # Create the package modler NDNP database fixtures
 install_pm_ndnp_fixtures () {
+    printf "INFO:  Installing package modler NDNP database fixtures\n"
     $PM_NDNP_CLI createawardphase -name "Phase 1"
     $PM_NDNP_CLI createawardphase -name "Phase 2"    
 }
 
 # Create the JBPM identity fixtures
 install_jbpm_fixtures () {
+    printf "INFO:  Installing JBPM database fixtures\n"
     export PGDATABASE=$JBPM_DB
     echo "INSERT INTO JBPM_ID_GROUP VALUES(1,'G','ndnp-qr','organisation',NULL);" | $PSQL
     echo "INSERT INTO JBPM_ID_GROUP VALUES(2,'G','ndnp-sysadmin','organisation',NULL);" | $PSQL
@@ -475,6 +478,7 @@ install_jbpm_fixtures () {
 
 # Deploy NDNP Process Definition
 install_ndnp_fixtures () {
+    printf "INFO:  Deploying the NDNP Process Definition\n"
     $PROCESS_DEPLOYER deploy -file $PROCESS_DEFINITION
 }
 
