@@ -24,7 +24,10 @@ init_vars () {
     TRANSFER_UI_WAR="files/transfer-ui-ndnp-${VERSION}-template.war"
     PROCESS_DEFINITION="files/processdefinition.xml"
     PM_CORE_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_CORE}-${VERSION}/conf/data_writer.packagemodeler.hibernate.properties"
-    PM_NDNP_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_CORE}-${VERSION}/conf/fixture_writer.packagemodeler.hibernate.properties"
+    PM_CORE_FIXTURE_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_CORE}-${VERSION}/conf/fixture_writer.packagemodeler.hibernate.properties"
+    PM_NDNP_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_NDNP}-${VERSION}/conf/data_writer.packagemodeler.hibernate.properties"
+    PM_NDNP_FIXTURE_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_NDNP}-${VERSION}/conf/fixture_writer.packagemodeler.hibernate.properties"
+
     JBPM_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${WORKFLOW_CORE}-${VERSION}/conf/jbpm.hibernate.properties"
 
     # ENVIRONMENT VARS
@@ -69,7 +72,14 @@ hibernate.connection.driver_class=org.postgresql.Driver\n
 hibernate.connection.url=jdbc:postgresql://${PGHOST}:${PGPORT}/${PM_DB}\n
 hibernate.connection.username=${XFER_WRITER}\n
 hibernate.connection.password=${XFER_WRITER_PASSWD}"
-    
+
+    PM_FIXTURE_HIBERNATE_PROPS="#Hibernate Core Settings\n
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\n
+hibernate.connection.driver_class=org.postgresql.Driver\n
+hibernate.connection.url=jdbc:postgresql://${PGHOST}:${PGPORT}/${PM_DB}\n
+hibernate.connection.username=${XFER_FIXTURE_WRITER}\n
+hibernate.connection.password=${XFER_FIXTURE_WRITER_PASSWD}"
+
     # JBPM HIBERNATE PROPERTIES
     JBPM_HIBERNATE_PROPS="hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\n
 hibernate.connection.driver_class=org.postgresql.Driver\n
@@ -391,6 +401,7 @@ deploy_pm_core_cli () {
     printf "INFO:  Making %s executable\n" $PM_CORE_CLI
     chmod +x $PM_CORE_CLI
     echo -e $PM_HIBERNATE_PROPS > $PM_CORE_HIBERNATE_CONF
+    echo -e $PM_FIXTURE_HIBERNATE_PROPS > $PM_CORE_FIXTURE_HIBERNATE_CONF
 }
 
 # Deploy the Package Modler NDNP Zip
@@ -400,6 +411,7 @@ deploy_pm_ndnp_cli () {
     printf "INFO:  Making %s executable\n" $PM_NDNP_CLI
     chmod +x $PM_NDNP_CLI
     echo -e $PM_HIBERNATE_PROPS > $PM_NDNP_HIBERNATE_CONF
+    echo -e $PM_FIXTURE_HIBERNATE_PROPS > $PM_NDNP_FIXTURE_HIBERNATE_CONF
 }
 
 # Deploy the Workflow Processes Core Zip
@@ -461,7 +473,7 @@ install_jbpm_fixtures () {
 }
 
 # Deploy NDNP Process Definition
-install_ndnp_fixtures () {
+install_process_definition () {
     printf "INFO:  Deploying the NDNP Process Definition\n"
     $PROCESS_DEPLOYER deploy -file $PROCESS_DEFINITION
 }
@@ -520,4 +532,4 @@ deploy_workflow_core
 
 install_pm_fixtures
 install_jbpm_fixtures
-install_ndnp_fixtures
+install_process_definition
