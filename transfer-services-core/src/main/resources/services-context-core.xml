@@ -31,5 +31,9 @@
 	<bean id="propertyConfigurer" class="gov.loc.repository.springframework.PropertyPlaceholderConfigurer">
 		<property name="configurationName" value="services" />
 	</bean>
+	
+	<bean id="packagemodeldao" class="gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl" scope="prototype">
+		<property name="sessionDatabaseRole" value="DATA_WRITER" />
+	</bean>
 		
 </beans>

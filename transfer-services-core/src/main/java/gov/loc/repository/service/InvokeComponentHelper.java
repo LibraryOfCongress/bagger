@@ -32,6 +32,10 @@ public class InvokeComponentHelper {
 	public boolean invoke() throws Exception
 	{
 		this.findJobTypeMethod();
+		if (this.jobTypeMethod == null)
+		{
+			throw new Exception("Unable to find jobTypeMethod");
+		}
 		this.findResultMethod();
 		this.jobTypeMethod.invoke(this.component, this.jobTypeParameters);
 		if (this.resultMethod != null)
