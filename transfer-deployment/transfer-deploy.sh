@@ -21,7 +21,7 @@ init_vars () {
     PM_CORE_SQL="files/inventory-core.sql"
     PM_NDNP_SQL="files/inventory-ndnp.sql"
     JBPM_SQL="files/jbpm.sql"
-    TRANSFER_UI_WAR="files/transfer.war"
+    TRANSFER_UI_WAR="files/transfer-ui-ndnp-${VERSION}-template.war"
     PROCESS_DEFINITION="files/processdefinition.xml"
     PM_CORE_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_CORE}-${VERSION}/conf/data_writer.packagemodeler.hibernate.properties"
     PM_NDNP_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_CORE}-${VERSION}/conf/fixture_writer.packagemodeler.hibernate.properties"
@@ -161,11 +161,11 @@ sanity_checks () {
     else
         printf "INFO:  Can read %s.\n" $PM_NDNP_CLI_PKG        
     fi
-    if [ ! -r $PROCESS_DEPLOYER_PKG ]
-        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PROCESS_DEPLOYER_PKG
+    if [ ! -r $WORKFLOW_CORE_PKG ]
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $WORKFLOW_CORE_PKG
         exit 1;
     else
-        printf "INFO:  Can read %s.\n" $PROCESS_DEPLOYER_PKG        
+        printf "INFO:  Can read %s.\n" $WORKFLOW_CORE_PKG        
     fi
     if [ ! -r $PROCESS_DEFINITION ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PROCESS_DEFINITION
@@ -232,8 +232,8 @@ init_roles () {
     # NOW USER ROLES
     echo "CREATE ROLE $XFER_FIXTURE_WRITER WITH PASSWORD '$XFER_FIXTURE_WRITER_PASSWD' $ROLE_PRIVS;" | $PSQL
     echo "CREATE ROLE $XFER_READER WITH PASSWORD '$XFER_READER_PASSWD' $ROLE_PRIVS;" | $PSQL
-    echo "CREATE ROLE $XFER_WRITER WITH PASSWORD '$XFER_WRITER_PASSWORD' $ROLE_PRIVS;" | $PSQL
-    echo "CREATE ROLE $JBPM WITH PASSWORD '$JBPM_PASSWORD' $ROLE_PRIVS;" | $PSQL
+    echo "CREATE ROLE $XFER_WRITER WITH PASSWORD '$XFER_WRITER_PASSWD' $ROLE_PRIVS;" | $PSQL
+    echo "CREATE ROLE $JBPM WITH PASSWORD '$JBPM_PASSWD' $ROLE_PRIVS;" | $PSQL
 
     # GRANT PERMISSIONS TO ROLES
     echo "GRANT $PKG_MODEL_FIXTURE_WRITER TO $XFER_FIXTURE_WRITER;" | $PSQL
@@ -242,33 +242,17 @@ init_roles () {
     echo "GRANT $JBPM_OWNER TO $JBPM;" | $PSQL
 }
 
-# Create PM CORE Schema
-create_core_schema () {
-    $PSQL -f $PM_CORE_SQL
-}
-
-# Create PM NDNP Schema
-create_ndnp_schema () {
-    $PSQL -f $PM_NDNP_SQL
-}
-
-# Create JBPM Schema
-create_jbpm_schema () {
-    $PSQL -f $JBPM_SQL
-}
-
-
 # Grant PM Core Permissions
 init_core_perms () {
     export PGDATABASE=$PM_DB
     printf "INFO:  Granting privileges to core\n"
     
-    echo "GRANT CONNECT ON DATABASE $PG_DB TO $PKG_MODEL_WRITER;" | $PSQL
+    echo "GRANT CONNECT ON DATABASE $PM_DB TO $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT USAGE ON SCHEMA core TO $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT USAGE ON SCHEMA agent TO $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT ON TABLE agent.agent TO GROUP $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT ON TABLE agent.agent_role TO GROUP $PKG_MODEL_WRITER;" | $PSQL
-    echo "GRANT SELECT ON TABLE agent.'role' TO GROUP $PKG_MODEL_WRITER;" | $PSQL
+    echo "GRANT SELECT ON TABLE agent.role TO GROUP $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT ON TABLE core.repository TO GROUP $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.canonicalfile TO GROUP $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.canonicalfile_fixity TO GROUP $PKG_MODEL_WRITER;" | $PSQL
@@ -284,14 +268,14 @@ init_core_perms () {
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.filelocation TO GROUP $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.package TO GROUP $PKG_MODEL_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.storagesystem_filelocation TO GROUP $PKG_MODEL_WRITER;" | $PSQL
-    echo "GRANT CONNECT ON DATABASE package_modeler TO $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
+    echo "GRANT CONNECT ON DATABASE $PM_DB TO $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
     echo "GRANT USAGE ON SCHEMA core TO $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
     echo "GRANT USAGE ON SCHEMA agent TO $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE agent.agent TO GROUP $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE agent.agent_role TO GROUP $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
-    echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE agent.'role' TO GROUP $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
+    echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE agent.role TO GROUP $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
     echo "GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.repository TO GROUP $PKG_MODEL_FIXTURE_WRITER;" | $PSQL
-    echo "GRANT CONNECT ON DATABASE package_modeler TO $PKG_MODEL_READER;" | $PSQL
+    echo "GRANT CONNECT ON DATABASE $PM_DB TO $PKG_MODEL_READER;" | $PSQL
     echo "GRANT USAGE ON SCHEMA core TO $PKG_MODEL_READER;" | $PSQL
     echo "GRANT USAGE ON SCHEMA agent TO $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE agent.agent TO GROUP $PKG_MODEL_READER;" | $PSQL
@@ -341,7 +325,7 @@ init_ndnp_perms () {
 # Grant JBPM Permissions
 init_jbpm_perms () {  
     export PGDATABASE=$JBPM_DB
-    echo "GRANT CONNECT ON DATABASE jbpm32 TO $JBPM;" | $PGSQL
+    echo "GRANT CONNECT ON DATABASE $JBPM_DB TO $JBPM;" | $PGSQL
     echo "GRANT ALL ON TABLE hibernate_sequence TO GROUP $JBPM_OWNER;" | $PSQL
     echo "GRANT ALL ON TABLE jbpm_action TO GROUP $JBPM_OWNER;" | $PSQL
     echo "GRANT ALL ON TABLE jbpm_bytearray TO GROUP $JBPM_OWNER;" | $PSQL
@@ -484,7 +468,7 @@ install_ndnp_fixtures () {
 
 # Deploy the Transfer UI App
 deploy_console () {
-    cp $TRANSFER_UI_WAR $TOMCAT_HOME/webapps
+    cp $TRANSFER_UI_WAR $TOMCAT_HOME/webapps/transfer.war
 }
 
 process_opts () {
@@ -522,17 +506,13 @@ sanity_checks
 create_dbs
 init_roles
 
-create_core_schema
-create_ndnp_schema
-create_jbpm_schema
+deploy_pm_core
+deploy_pm_ndnp
+deploy_jbpm
 
 init_core_perms
 init_ndnp_perms
 init_jbpm_perms
-
-deploy_pm_core
-deploy_pm_ndnp
-deploy_jbpm
 
 deploy_pm_core_cli
 deploy_pm_ndnp_cli
