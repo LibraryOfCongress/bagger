@@ -3,17 +3,36 @@
 . ./conf
 
 init_vars () {
+    # BASE TRUNK NAMES
+    PM_CORE="packagemodeler-core"
+    PM_NDNP="packagemodeler-ndnp"
+    WORKFLOW_CORE="workflow-processes-core"
+
     # PROGRAMS TO USE
     PSQL="/usr/bin/psql"
-    PM_CORE_CLI="${TRANSFER_INSTALL_DIR}/${PM_CORE_CLI}/fixturedriver"
-    PM_NDNP_CLI="${TRANSFER_INSTALL_DIR}/${PM_NDNP_CLI}/fixturedriver"
-    PROCESS_DEPLOYER="${TRANSFER_INSTALL_DIR}/${WORKFLOW_CORE}/processdeployer"
+    PM_CORE_CLI="${TRANSFER_INSTALL_DIR}/${PM_CORE}-${VERSION}/bin/fixturedriver"
+    PM_NDNP_CLI="${TRANSFER_INSTALL_DIR}/${PM_NDNP}-${VERSION}/bin/fixturedriver"
+    PROCESS_DEPLOYER="${TRANSFER_INSTALL_DIR}/${WORKFLOW_CORE}-${VERSION}/bin/processdeployer"
+    
+    # FILE LOCATIONS 
+    PM_CORE_CLI_PKG="files/${PM_CORE}-${VERSION}-bin.zip"
+    PM_NDNP_CLI_PKG="files/${PM_NDNP}-${VERSION}-bin.zip"
+    WORKFLOW_CORE_PKG="files/${WORKFLOW_CORE}-${VERSION}-bin.zip"
+    PM_CORE_SQL="files/inventory-core.sql"
+    PM_NDNP_SQL="files/inventory-ndnp.sql"
+    JBPM_SQL="files/jbpm.sql"
+    TRANSFER_UI_WAR="files/transfer.war"
+    PROCESS_DEFINITION="files/processdefinition.xml"
+    PM_CORE_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_CORE}-${VERSION}/conf/data_writer.packagemodeler.hibernate.properties"
+    PM_NDNP_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_CORE}-${VERSION}/conf/fixture_writer.packagemodeler.hibernate.properties"
+    JBPM_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${WORKFLOW_CORE}-${VERSION}/conf/jbpm.hibernate.properties"
 
     # ENVIRONMENT VARS
     export PGUSER=$PGUSER
     export PGHOST=$PGHOST
     export PGPORT=$PGPORT
     export PGPASSWORD=$PGPASSWORD
+    export JAVA_HOME=$JAVA_HOME
     export TOMCAT_HOME=$TOMCAT_HOME
     
     if [[ $DB_PREFIX ]]; then
@@ -42,7 +61,22 @@ init_vars () {
     PKG_MODEL_READER="${ROLE_PREFIX}package_modeler_reader_role"
     PKG_MODEL_WRITER="${ROLE_PREFIX}package_modeler_data_writer_role"
     JBPM_OWNER="${ROLE_PREFIX}jbpm_role"
-    env
+
+    # PACKAGE MODELER HIBERNATE PROPERTIES
+    PM_HIBERNATE_PROPS="#Hibernate Core Settings\n
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\n
+hibernate.connection.driver_class=org.postgresql.Driver\n
+hibernate.connection.url=jdbc:postgresql://${PGHOST}:${PGPORT}/${PM_DB}\n
+hibernate.connection.username=${XFER_WRITER}\n
+hibernate.connection.password=${XFER_WRITER_PASSWD}"
+    
+    # JBPM HIBERNATE PROPERTIES
+    JBPM_HIBERNATE_PROPS="hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\n
+hibernate.connection.driver_class=org.postgresql.Driver\n
+hibernate.connection.url=jdbc:postgresql://${PGHOST}:${PGPORT}/${JBPM_DB}\n
+hibernate.connection.username=${JBPM}\n
+hibernate.connection.password=${JBPM_PASSWD}\n
+hibernate.cache.provider_class=org.hibernate.cache.HashtableCacheProvider"
 }
 
 sanity_checks () {
@@ -53,6 +87,16 @@ sanity_checks () {
     #    exit 1;
     #fi
   
+    # CAN I FIND JAVA?
+   if [[ ! -e ${JAVA_HOME}/bin/java ]]
+        then printf "ERROR: *** Cannot locate java.\nPlease set JAVA_HOME correctly in the config\n"
+        usage
+        exit 1;
+    else
+        printf "Java is all good!\n"
+    fi
+ 
+
     # CAN I CONNECT?
     if [[ `echo "\q" | $PSQL postgres 2>/dev/null; echo $?` -ne 0 ]]
         then printf "ERROR: *** Cannot connect to the PostgreSQL database\n"
@@ -86,26 +130,50 @@ sanity_checks () {
     #   exit 1;
     #fi
 
-    # ARE REQUIRED FILES READABLE
-    if [ -r $PM_CORE_SQL ]
+    # ARE REQUIRED FILES READABLE?
+    if [ ! -r $PM_CORE_SQL ]
        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_CORE_SQL
        exit 1;
     else
         printf "Can read %s.\n" $PM_CORE_SQL
     fi
-    if [ -r $PM_NDNP_SQL ]
+    if [ ! -r $PM_NDNP_SQL ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_NDNP_SQL
         exit 1;
     else
         printf "Can read %s.\n" $PM_NDNP_SQL
     fi
-    if [ -r $JBPM_SQL ]
+    if [ ! -r $JBPM_SQL ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $JBPM_SQL
         exit 1;
     else
         printf "Can read %s.\n" $JBPM_SQL        
     fi
-    if [ -r $TRANSFER_UI_WAR ]
+    if [ ! -r $PM_CORE_CLI_PKG ]
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_CORE_CLI_PKG
+        exit 1;
+    else
+        printf "Can read %s.\n" $PM_CORE_CLI_PKG        
+    fi
+    if [ ! -r $PM_NDNP_CLI_PKG ]
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_NDNP_CLI_PKG
+        exit 1;
+    else
+        printf "Can read %s.\n" $PM_NDNP_CLI_PKG        
+    fi
+    if [ ! -r $PROCESS_DEPLOYER_PKG ]
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PROCESS_DEPLOYER_PKG
+        exit 1;
+    else
+        printf "Can read %s.\n" $PROCESS_DEPLOYER_PKG        
+    fi
+    if [ ! -r $PROCESS_DEFINITION ]
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PROCESS_DEFINITION
+        exit 1;
+    else
+        printf "Can read %s.\n" $PROCESS_DEFINITION        
+    fi
+    if [ ! -r $TRANSFER_UI_WAR ]
         then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $TRANSFER_UI_WAR
         exit 1;
     else
@@ -169,10 +237,26 @@ init_roles () {
 
     # GRANT PERMISSIONS TO ROLES
     echo "GRANT $PKG_MODEL_FIXTURE_WRITER TO $XFER_FIXTURE_WRITER;" | $PSQL
-    echo "GRANT $PKG_MODEL_READER TO $XFER_FIXTURE_READER;" | $PSQL
+    echo "GRANT $PKG_MODEL_READER TO $XFER_READER;" | $PSQL
     echo "GRANT $PKG_MODEL_WRITER TO $XFER_WRITER;" | $PSQL
     echo "GRANT $JBPM_OWNER TO $JBPM;" | $PSQL
 }
+
+# Create PM CORE Schema
+create_core_schema () {
+    $PSQL -f $PM_CORE_SQL
+}
+
+# Create PM NDNP Schema
+create_ndnp_schema () {
+    $PSQL -f $PM_NDNP_SQL
+}
+
+# Create JBPM Schema
+create_jbpm_schema () {
+    $PSQL -f $JBPM_SQL
+}
+
 
 # Grant PM Core Permissions
 init_core_perms () {
@@ -212,7 +296,7 @@ init_core_perms () {
     echo "GRANT USAGE ON SCHEMA agent TO $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE agent.agent TO GROUP $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE agent.agent_role TO GROUP $PKG_MODEL_READER;" | $PSQL
-    echo "GRANT SELECT ON TABLE agent.'role' TO GROUP $PKG_MODEL_READER;" | $PSQL
+    echo "GRANT SELECT ON TABLE agent.role TO GROUP $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE core.repository TO GROUP $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE core.canonicalfile TO GROUP $PKG_MODEL_READER;" | $PSQL
     echo "GRANT SELECT ON TABLE core.canonicalfile_fixity TO GROUP $PKG_MODEL_READER;" | $PSQL
@@ -314,21 +398,34 @@ deploy_jbpm () {
     $PSQL -f $JBPM_SQL
 }
 
+#TODO  ************** Configure log4j for all three below ***********
+#TODO  ************** Test the setup by invoking the commandline driver ***********
 # Deploy the Package Modeler Command Line Tool
-deploy_pm_cli () {
-    unzip -d $TRANSFER_INSTALL_DIR $PM_CORE_CLI
-}
-
-# Deploy the Workflow Processes Core Zip
-deploy_pm_cli () {
-    unzip -d $TRANSFER_INSTALL_DIR $WORKFLOW_CORE
+deploy_pm_core_cli () {
+    printf "Deploying Pakage Modler Core CLI Package\n"
+    unzip $PM_CORE_CLI_PKG -d $TRANSFER_INSTALL_DIR
+    printf "Making %s executable\n" $PM_CORE_CLI
+    chmod +x $PM_CORE_CLI
+    echo -e $PM_HIBERNATE_PROPS > $PM_CORE_HIBERNATE_CONF
 }
 
 # Deploy the Package Modler NDNP Zip
-deploy_pm_cli () {
-    unzip -d $TRANSFER_INSTALL_DIR $PM_NDNP_CLI
+deploy_pm_ndnp_cli () {
+    printf "Deploying Pakage Modler NDNP CLI Package\n"
+    unzip $PM_NDNP_CLI_PKG -d $TRANSFER_INSTALL_DIR 
+    printf "Making %s executable\n" $PM_NDNP_CLI
+    chmod +x $PM_NDNP_CLI
+    echo -e $PM_HIBERNATE_PROPS > $PM_NDNP_HIBERNATE_CONF
 }
 
+# Deploy the Workflow Processes Core Zip
+deploy_workflow_core () {
+    printf "Deploying Workflow Core Package\n"
+    unzip $WORKFLOW_CORE_PKG -d $TRANSFER_INSTALL_DIR 
+    printf "Making %s executable\n" $PROCESS_DEPLOYER
+    chmod +x $PROCESS_DEPLOYER
+    echo -e $JBPM_HIBERNATE_PROPS > $JBPM_HIBERNATE_CONF
+}
 
 # Create the package modler database fixtures
 install_pm_fixtures () {
@@ -420,6 +517,11 @@ sanity_checks
 
 create_dbs
 init_roles
+
+create_core_schema
+create_ndnp_schema
+create_jbpm_schema
+
 init_core_perms
 init_ndnp_perms
 init_jbpm_perms
@@ -427,7 +529,10 @@ init_jbpm_perms
 deploy_pm_core
 deploy_pm_ndnp
 deploy_jbpm
-deploy_pm_cli
+
+deploy_pm_core_cli
+deploy_pm_ndnp_cli
+deploy_workflow_core
 
 install_pm_fixtures
 install_jbpm_fixtures

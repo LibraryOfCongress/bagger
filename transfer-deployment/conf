@@ -4,32 +4,18 @@ PGPORT="5432"
 
 PGUSER="postgres"
 
-PGPASSWORD="abc@123"
+PGPASSWORD=""
 
 DB_PREFIX=""
 
 ROLE_PREFIX=""
 
-TRANSFER_INSTALL_DIR="/opt/transfer"
+TRANSFER_INSTALL_DIR=""
 
-PM_CORE_SQL="files/inventory-core.sql"
-
-PM_NDNP_SQL="files/inventory-ndnp.sql"
-
-JBPM_SQL="files/jbpm.sql"
-
-TRANSFER_UI_WAR="files/transfer-ui-ndnp-1.2-template.war"
-
-PM_CORE_CLI="files/packagemodeler-core-1.2-bin.zip"
-
-PM_NDNP_CLI="packagemodeler-ndnp-1.2-bin.zip"
-
-WORKFLOW_CORE="files/workflow-processes-core-1.2-bin.zip"
-
-PROCESS_DEFINITION="files/processdefinition.xml"
+JAVA_HOME=/usr/jdk/latest
 
 TOMCAT_HOME="/opt/coolstack/tomcat"
 
-VERSION="1.1"
+VERSION="1.2"
 
 
