@@ -2,7 +2,9 @@ package gov.loc.repository.transfer.ui.commands;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +31,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 	protected TaskInstanceBean taskInstanceBean;
 	protected HttpServletRequest request;
 	protected JbpmContext jbpmContext;
+	protected Map<String,Object> additionalParameterMap = new HashMap<String,Object>();
 	protected ModelAndView mav;
 	protected PermissionsHelper permissionsHelper;
 	
@@ -109,7 +112,12 @@ public class DefaultTaskInstanceUpdateCommand implements
 				return;				
 			}
 
-			VariableUpdateHelper.update(request, taskInstanceBean);			
+			VariableUpdateHelper.update(request, taskInstanceBean);
+			for(String key : additionalParameterMap.keySet())
+			{
+				taskInstanceBean.setVariable(key, additionalParameterMap.get(key));
+				log.debug(MessageFormat.format("Setting variable {0} with value {1}", key, additionalParameterMap.get(key).toString()));				
+			}			
 		}
 		
 		//If update transition
@@ -167,6 +175,10 @@ public class DefaultTaskInstanceUpdateCommand implements
 	@SuppressWarnings("unchecked")
 	private boolean requestUpdatesVariables()
 	{
+		if (! this.additionalParameterMap.isEmpty())
+		{
+			return true;
+		}
 		return VariableUpdateHelper.requestUpdatesVariables(request);
 	}
 	
