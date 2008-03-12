@@ -27,8 +27,10 @@ init_vars () {
     PM_CORE_FIXTURE_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_CORE}-${VERSION}/conf/fixture_writer.packagemodeler.hibernate.properties"
     PM_NDNP_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_NDNP}-${VERSION}/conf/data_writer.packagemodeler.hibernate.properties"
     PM_NDNP_FIXTURE_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_NDNP}-${VERSION}/conf/fixture_writer.packagemodeler.hibernate.properties"
-
     JBPM_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${WORKFLOW_CORE}-${VERSION}/conf/jbpm.hibernate.properties"
+    TRANSFER_DW_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/data_writer.packagemodeler.hibernate.properties"
+    TRANSFER_RO_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/read_only.packagemodeler.core.hibernate.properties"
+    TRANSFER_JBPM_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/jbpm.hibernate.properties"
 
     # ENVIRONMENT VARS
     export PGUSER=$PGUSER
@@ -36,7 +38,7 @@ init_vars () {
     export PGPORT=$PGPORT
     export PGPASSWORD=$PGPASSWORD
     export JAVA_HOME=$JAVA_HOME
-    export TOMCAT_HOME=$TOMCAT_HOME
+    export CATALINA_HOME=$CATALINA_HOME
     
     if [[ $DB_PREFIX ]]; then
         DB_PREFIX="${DB_PREFIX}_"
@@ -50,13 +52,9 @@ init_vars () {
     #TODO:  Make passwords configurable
     ROLE_PRIVS="NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE LOGIN"
     XFER_FIXTURE_WRITER="${ROLE_PREFIX}transfer_fixture_writer_user"
-    XFER_FIXTURE_WRITER_PASSWD="transfer_fixture_writer_user"
     XFER_READER="${ROLE_PREFIX}transfer_reader_user"
-    XFER_READER_PASSWD="transfer_reader_user"
     XFER_WRITER="${ROLE_PREFIX}transfer_data_writer_user"
-    XFER_WRITER_PASSWD="transfer_data_writer_user"
     JBPM="${ROLE_PREFIX}jbpm_user"
-    JBPM_PASSWD="jbpm_user"
 
     # PACKAGE MODLER ROLES
     OWNER_PRIVS="NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE"
@@ -87,6 +85,20 @@ hibernate.connection.url=jdbc:postgresql://${PGHOST}:${PGPORT}/${JBPM_DB}\n
 hibernate.connection.username=${JBPM}\n
 hibernate.connection.password=${JBPM_PASSWD}\n
 hibernate.cache.provider_class=org.hibernate.cache.HashtableCacheProvider"
+
+    # TRANSFER APP CONTEXT DEFINITION
+    TRANSFER_CONTEXT="<Context reloadable='true' antiJARLocking='true'>\n
+<Realm className='org.apache.catalina.realm.JDBCRealm'\n
+	driverName='org.postgresql.Driver'\n
+	connectionURL='jdbc:postgresql://:${PGHOST}:${PGPORT}/${JBPM_DB}\n'
+	connectionName='${JBPM}'\n 
+	connectionPassword='${JBPM_PASSWORD}'\n
+	userTable='JBPM_ID_USER'\n
+	userNameCol='NAME_'\n
+	userCredCol='PASSWORD_'\n
+	userRoleTable='JBPM_ID_MEMBERSHIP'\n 
+	roleNameCol='ROLE_' />\n
+</Context>"
 }
 
 sanity_checks () {
@@ -127,18 +139,12 @@ sanity_checks () {
     else
         printf "INFO:  ${TRANSFER_INSTALL_DIR} present.\n"            
     fi
-    #if [ `touch ${TRANSFER_INSTALL_DIR}/test 2> /dev/null; echo "$?"` -ne 0 ]
-    #    then printf "ERROR: *** Package Modeler Command Line Tool install directory NOT WRITABLE\n"
-    #    usage
-    #else
-    #    rm $TRANSFER_INSTALL_DIR/test
-    #fi
-
+    
     # TOMCAT WRITABLE?
-    #if [ ! -w $TOMCAT_HOME/webapps ]
-    #    then printf "\n!!! Can't write to ${TOMCAT_HOME}/webapps\nPlease fix this and try again.\nExitintg....\n" 
-    #   exit 1;
-    #fi
+    if [ ! -w $CATALINA_HOME/webapps ]
+        then printf "\n!!! Can't write to %s/webapps\nPlease fix this and try again.\nExitintg....\n" $CATALINA_HOME
+       exit 1;
+    fi
 
     # ARE REQUIRED FILES READABLE?
     if [ ! -r $PM_CORE_SQL ]
@@ -480,7 +486,16 @@ install_process_definition () {
 
 # Deploy the Transfer UI App
 deploy_console () {
-    cp $TRANSFER_UI_WAR $TOMCAT_HOME/webapps/transfer.war
+    svcadm disable svc:/application/csk-tomcat
+    cp $TRANSFER_UI_WAR $CATALINA_HOME/webapps/transfer.war
+    svcadm enable svc:/application/csk-tomcat
+    sleep 10
+    svcadm disable svc:/application/csk-tomcat
+    echo -e $PM_HIBERNATE_PROPS > $TRANSFER_DW_HIBERNATE_CONF
+    echo -e $PM_HIBERNATE_PROPS > $TRANSFER_RO_HIBERNATE_CONF
+    echo -e $PM_HIBERNATE_PROPS > $TRANSFER_JBPM_HIBERNATE_CONF
+    echo -e $TRANSFER_CONTEXT > ${CATALINA_HOME}/conf/Catalina/localhost/transfer.xml
+    svcadm enable svc:/application/csk-tomcat
 }
 
 process_opts () {
@@ -533,3 +548,4 @@ deploy_workflow_core
 install_pm_fixtures
 install_jbpm_fixtures
 install_process_definition
+deploy_console

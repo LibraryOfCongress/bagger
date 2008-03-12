@@ -10,11 +10,19 @@ DB_PREFIX=""
 
 ROLE_PREFIX=""
 
+XFER_FIXTURE_WRITER_PASSWD="transfer_fixture_writer_user"
+
+XFER_READER_PASSWD="transfer_reader_user"
+
+XFER_WRITER_PASSWD="transfer_data_writer_user"
+
+JBPM_PASSWD="jbpm_user"
+
 TRANSFER_INSTALL_DIR=""
 
 JAVA_HOME=/usr/jdk/latest
 
-TOMCAT_HOME="/opt/coolstack/tomcat"
+CATALINA_HOME="/opt/coolstack/tomcat"
 
 VERSION="1.2"
 
