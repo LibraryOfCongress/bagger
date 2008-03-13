@@ -78,7 +78,7 @@ public class CommandLineDataDriver {
 	private static void printUsages()
 	{
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp(MessageFormat.format("datadriver {0}|{1}|{2}|{3}|{4} [options]", ACTION_PACKAGE, ACTION_FILELOCATION, ACTION_PACKAGE_EVENT, ACTION_FILELOCATION_EVENT, ACTION_INVENTORY_FROM_MANIFEST), options, false);
+		formatter.printHelp(MessageFormat.format("datadriver {0}|{1}|{2}|{3}|{4}|{5} [options]", ACTION_PACKAGE, ACTION_FILELOCATION, ACTION_PACKAGE_EVENT, ACTION_FILELOCATION_EVENT, ACTION_INVENTORY_FROM_MANIFEST, ACTION_CANONICALIZE_FROM_FILELOCATION), options, false);
 		System.out.println("Dates are in ISO 8601 format.  For example, 2001-12-05T12:24:55.  Remember that hours, minutes, and seconds are zero based.");
 		System.out.println(MessageFormat.format("Returns {0} for success.", RETURN_SUCCESS));
 		System.out.println(MessageFormat.format("Returns {0} for failure or error.", RETURN_ERROR));
@@ -170,7 +170,14 @@ public class CommandLineDataDriver {
 				OPT_SUCCESS,
 				OPT_EVENT_START,
 				OPT_EVENT_END,
-				OPT_MESSAGE));		
+				OPT_MESSAGE));
+		System.out.println("To canonicalize from a File Location, use:");
+		System.out.println(MessageFormat.format("driver {0} -{1} -{2} -{3} -{4}", 
+				ACTION_CANONICALIZE_FROM_FILELOCATION,
+				OPT_REPOSITORY,
+				OPT_PACKAGE,
+				OPT_STORAGE_SYSTEM,
+				OPT_BASEPATH));		
 		System.out.println("To inventory against an LC manifest and record an InventoryAgainstManifest event, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1} {2} -{3} -{4} -{5} -{6}", 
 				ACTION_INVENTORY_FROM_MANIFEST,

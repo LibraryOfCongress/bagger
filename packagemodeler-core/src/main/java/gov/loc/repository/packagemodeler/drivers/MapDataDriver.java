@@ -50,6 +50,7 @@ public class MapDataDriver {
 	public static final String ACTION_FILELOCATION_EVENT = "createfilelocationevent";
 	public static final String ACTION_INVENTORY_FROM_MANIFEST = "inventoryfrommanifest";
 	public static final String ACTION_TEST = "test";
+	public static final String ACTION_CANONICALIZE_FROM_FILELOCATION = "canonicalizefromfilelocation";
 	
 	//Options
 	public static final String OPT_BASEPATH = "basepath";
@@ -166,6 +167,10 @@ public class MapDataDriver {
 			else if (ACTION_INVENTORY_FROM_MANIFEST.equalsIgnoreCase(action))
 			{
 				inventoryFromManifest();
+			}
+			else if (ACTION_CANONICALIZE_FROM_FILELOCATION.equalsIgnoreCase(action))
+			{
+				canonicalizeFromFileLocation();
 			}
 			else
 			{
@@ -397,6 +402,15 @@ public class MapDataDriver {
 			factory.createCanonicalFilesFromFileInstances(fileLocation.getPackage(), fileLocation.getFileInstances());
 		}
 				
+		dao.save(fileLocation.getPackage());
+		
+	}
+	
+	private void canonicalizeFromFileLocation() throws Exception
+	{
+		FileLocation fileLocation = getFileLocation();
+		factory.createCanonicalFilesFromFileInstances(fileLocation.getPackage(), fileLocation.getFileInstances());
+		
 		dao.save(fileLocation.getPackage());
 		
 	}
