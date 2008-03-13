@@ -463,18 +463,18 @@ install_jbpm_fixtures () {
     export PGDATABASE=$JBPM_DB
     echo "INSERT INTO JBPM_ID_GROUP VALUES(1,'G','ndnp-qr','organisation',NULL);" | $PSQL
     echo "INSERT INTO JBPM_ID_GROUP VALUES(2,'G','ndnp-sysadmin','organisation',NULL);" | $PSQL
-    echo "INSERT INTO JBPM_ID_GROUP VALUES(3,'G','ndnp-participant','security-role',NULL);" | $PSQL
-    echo "INSERT INTO JBPM_ID_GROUP VALUES(4,'G','ndnp-administrator','security-role',NULL);" | $PSQL
+    echo "INSERT INTO JBPM_ID_GROUP VALUES(3,'G','participant','security-role',NULL);" | $PSQL
+    echo "INSERT INTO JBPM_ID_GROUP VALUES(4,'G','administrator','security-role',NULL);" | $PSQL
     echo "INSERT INTO JBPM_ID_USER VALUES(1,'U','ray','foo@loc.gov','ray');" | $PSQL
     echo "INSERT INTO JBPM_ID_USER VALUES(2,'U','myron','foo@loc.gov','myron');" | $PSQL
     echo "INSERT INTO JBPM_ID_USER VALUES(3,'U','scott','foo@loc.gov','scott');" | $PSQL
-    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(1,'M','ray','ndnp-participant',1,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(1,'M','ray','participant',1,3);" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(2,'M','ray','ndnp-qr',1,1);" | $PSQL
-    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(3,'M','myron','ndnp-participant',2,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(3,'M','myron','participant',2,3);" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(4,'M','myron','ndnp-qr',2,1);" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(5,'M','scott','ndnp-sysadmin',3,2);" | $PSQL
-    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(6,'M','scott','ndnp-participant',3,3);" | $PSQL
-    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(7,'M','scott','ndnp-administrator',3,4);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(6,'M','scott','participant',3,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(7,'M','scott','administrator',3,4);" | $PSQL
     echo "INSERT INTO jbpm_id_permissions(entity_, class_, name_) VALUES (1, 'java.lang.RuntimePermission', 'processdefinition.ndnp1.initiate');" | $PSQL
 }
 
