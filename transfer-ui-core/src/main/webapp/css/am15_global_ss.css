@@ -126,6 +126,16 @@ div#topnav	{
 	border: 0;
 	background: #fff url(../images/line_top.gif) top left no-repeat;
 }
+div#topnav h2{
+	float:left;
+	margin-left:10px;
+	font-size: 240%;
+	font-weight: bold;
+	font-family: verdana, Helvetica, sans-serif;
+}
+div#topnav h2 a{
+	text-decoration:none;
+}
 div#topnav ul#menu	{
 	height: 40px;
 	width: 750px;
@@ -142,7 +152,6 @@ div#topnav ul#menu li {
 }
 ul#menu li, ul#menu a {
 	height: 40px;
-	padding-top:16px;
 	display: block;
 }
 div#topnav ul#menu li a {

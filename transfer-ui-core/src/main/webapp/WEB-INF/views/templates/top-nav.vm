@@ -1,8 +1,8 @@
 <div id="topnav">
+  <h2>
+      <a href="${contextPath}/index.html"> Transfer UI </a>
+  </h2>
   <ul id="menu">
-    <li id="logo" title="The Library of Congress - Transfer Application">
-      <a href="${contextPath}/index.html"></a>
-    </li>
     <li id="home">
       <a href="${contextPath}/index.html"> home </a>
     </li>
