@@ -1,12 +1,12 @@
 <div id="tasks">
     <ul id="localNav">
-        <li><a href="#userTasks"            ><span> User Tasks ( $userTaskInstanceBeanList.size() ) </span></a></li>
-        <li><a href="#groupTasks"           ><span> Group Tasks ( $groupTaskInstanceBeanList.size() )  </span></a></li>
+        <li><a href="#userTasks"            ><span> My Tasks ( $userTaskInstanceBeanList.size() ) </span></a></li>
+        <li><a href="#groupTasks"           ><span> Unassigned Tasks ( $groupTaskInstanceBeanList.size() )  </span></a></li>
         <li><a href="#workflows"            ><span> Workflows  ( $processDefinitionBeanList.size() )  </span></a></li>
         <li><a href="#localHelp"            ><span> Help                  </span></a></li>
     </ul>
 	<div id="userTasks">
-		<h2>User Tasks</h2>
+		<h2>My Tasks</h2>
         <fieldset>
             <legend>Pending Tasks</legend>
 		    <table>
@@ -14,10 +14,12 @@
                     <form id="pager" class="pager">
                 		<img src="${contextPath}/images/icons/first.png" class="first"/>
                 		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-                		<input type="text" class="pagedisplay"/>
+                		<label for="myTasks_pagedisplay">Showing page </label>
+                		<input id="myTasks_pagedisplay" type="text" class="pagedisplay"/>
                 		<img src="${contextPath}/images/icons/next.png" class="next"/>
                 		<img src="${contextPath}/images/icons/last.png" class="last"/>
-                		<select class="pagesize">
+                		<label for="myTasks_pagesize">Results per page: </label>
+                		<select id="myTasks_pagesize" class="pagesize">
                 			<option selected="selected"  value="10">10</option>
                 			<option value="20">20</option>
                 			<option value="30">30</option>
@@ -51,7 +53,7 @@
 				            $packageName
 				        </td>
 				        <td>
-				            ${taskInstanceBean.createDate}
+				            ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
 				        </td>				        
 				    </tr>					
 			        #end
@@ -61,21 +63,68 @@
 		
 	</div>
     <div id="groupTasks">
-		<h2>Group Task List</h2>
-		<ul>
-			#foreach($taskInstanceBean in $groupTaskInstanceBeanList)
-			<li>
-				<form method="post" action="./taskinstance/${taskInstanceBean.id}?method=put">
-				    <fieldset title="Accept This Task">
-			            <legend>${taskInstanceBean.taskBean.name} (${taskInstanceBean.id})</legend>
-    					<input type="hidden" name="user" value="$currentUser" />
-    					<input type="submit"  class="button" value="Assign To Me"/>
-    					<label>Accepting this task will move it into your User Task's.</label>
-		            </fieldset>				
-    			</form>	
-			</li>					
-			#end
-		</ul>
+		<h2>Unassigned Tasks</h2>
+		<fieldset>
+            <legend>Unassigned Tasks</legend>
+		    <table>
+		        <tbody><tr><td>
+                    <form id="pager" class="pager">
+                		<img src="${contextPath}/images/icons/first.png" class="first"/>
+                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
+                		<label for="unassignedTasks_pagedisplay">Showing page </label>
+                		<input id="unassignedTasks_pagedisplay" type="text" class="pagedisplay"/>
+                		<img src="${contextPath}/images/icons/next.png" class="next"/>
+                		<img src="${contextPath}/images/icons/last.png" class="last"/>
+                		<label for="unassignedTasks_pagesize">Results per page: </label>
+                		<select id="unassignedTasks_pagesize" class="pagesize">
+                			<option selected="selected"  value="10">10</option>
+                			<option value="20">20</option>
+                			<option value="30">30</option>
+                			<option  value="40">40</option>
+                		</select>
+                    </form>
+                </td></tr></tbody>
+            </table>
+	        <table id="pageableDataTable" class="tablesorter"  >
+	            <thead>
+	                <tr id="taskDetailsHeader">
+                        <th>Name</th>
+                        <th>Package</th>
+                        <th>Create Date</th>
+                        <th>Accept This Task</th>
+                    </tr>
+                </thead>
+                <tfoot><tr id="taskDetailsFooter">
+                        <th>Name</th>
+                        <th>Package</th>
+                        <th>Create Date</th>
+                        <th>Accept This Task</th>
+                </tr></tfoot>
+                <tbody>
+                    #foreach($taskInstanceBean in $groupTaskInstanceBeanList)
+			        <tr id="task${taskInstanceBean.id}" >
+				        <td><a href="./taskinstance/${taskInstanceBean.id}.html">
+				            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)
+				        </a></td>
+				        <td>
+				            #set($packageName = "none")
+				            #set($packageName = $taskInstanceBean.processInstanceBean.packageName)
+				            $packageName
+				        </td>
+				        <td>
+				            ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
+				        </td>
+				        <td>
+				            <form method="post" action="./taskinstance/${taskInstanceBean.id}?method=put">
+                					<input type="hidden" name="user" value="$currentUser" />
+                					<input type="submit"  class="button" value="Assign To Me"/>
+                			</form>	
+				        </td>				        
+				    </tr>					
+			        #end
+			    </tbody>
+		    </table>
+		</fieldset>
 	</div>
 	<div id="workflows">
 		<h2>Workflows</h2>
@@ -84,10 +133,10 @@
 				#set ($code = "processdefinitions.${processDefinitionBean.id}")
 			<li>
 				<form method="post" action="./processdefinition/${processDefinitionBean.id}.html">
-                    <fieldset title="Create a New Workflow">
+                    <fieldset title="Start a New Workflow">
 			            <legend>#springMessage($code) (${processDefinitionBean.id})</legend>
 			            <input type="hidden" name="referer" value="/index.html" />
-    					<input type="submit" class="button" value="create"/>
+    					<input type="submit" class="button" value="start"/>
     					<label>Creating a new Workflow allows tracking a new transfer process.</label>
 				    </fieldset>					
     			</form>						

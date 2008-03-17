@@ -13,6 +13,7 @@
         $("#pageableDataTable").tablesorter({
             widgets: ['zebra']
         }).tablesorterPager({
+            seperator:" of ",
             positionFixed:false,
             container: $("#pager")
         });
