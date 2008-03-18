@@ -32,9 +32,7 @@ public class HomeController {
 		
 		mav.addObject("groupTaskInstanceBeanList", userBean.getGroupTaskInstanceBeanList());
 		mav.addObject("userTaskInstanceBeanList", userBean.getUserTaskInstanceBeanList());
-		mav.addObject("processDefinitionBeanList", userBean.getProcessDefinitionBeanList());
 		mav.addObject("currentUser", req.getUserPrincipal().getName());
-		mav.addObject("suspendedProcessInstanceBeanList", ProcessInstanceHelper.getSuspendedProcessInstanceBeanList(jbpmContext));
 		
 		return mav;
 	}

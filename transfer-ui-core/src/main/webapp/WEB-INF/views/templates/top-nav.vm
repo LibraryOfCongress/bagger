@@ -3,17 +3,20 @@
       <a href="${contextPath}/index.html"> Transfer UI </a>
   </h2>
   <ul id="menu">
-    <li id="home">
+    <li id="global_home">
       <a href="${contextPath}/index.html"> home </a>
     </li>
-    <li id="admin">
-      <a href="${contextPath}/admin.html"> admin </a>
+    <li id="global_tasks">
+      <a href="${contextPath}/tasks/index.html"> tasks </a>
     </li>
-    <li id="help">
-      <a href="${contextPath}/help.html">  help </a>
+    <li id="global_workflows">
+      <a href="${contextPath}/processinstance/index.html"> workflows </a>
     </li>
-    <li id="contact">
-      <a href="${contextPath}/contact.html"> contact </a>
+    <li id="global_admin">
+      <a href="${contextPath}/admin/index.html"> admin </a>
+    </li>
+    <li id="global_help">
+      <a href="${contextPath}/help/index.html">  help </a>
     </li>
     <!--block("search")-->
   </ul>

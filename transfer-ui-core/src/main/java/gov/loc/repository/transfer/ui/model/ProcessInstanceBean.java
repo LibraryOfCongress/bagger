@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import org.jbpm.graph.exe.Comment;
 import org.jbpm.graph.exe.ProcessInstance;
@@ -112,6 +113,15 @@ public class ProcessInstanceBean extends AbstractWorkflowBean implements Variabl
 		
 	public boolean isEnded() {
 		return this.processInstance.hasEnded();
+	}
+	
+	public Date getEndDate(){
+		return this.processInstance.getEnd();
+	}
+	
+	public Date getStartDate()
+	{
+		return this.processInstance.getStart();
 	}
 	/*
 	public void end()

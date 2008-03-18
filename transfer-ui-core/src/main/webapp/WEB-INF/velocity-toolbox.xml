@@ -23,7 +23,7 @@
  </tool><tool>
    <scope>request</scope>
    <key>parser</key>
-   <class>org.apache.velocity.generic.ValueParser</class>
+   <class>org.apache.velocity.tools.generic.ValueParser</class>
  </tool><tool>
   <key>math</key>
   <scope>application</scope>

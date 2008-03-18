@@ -1,13 +1,152 @@
-<h2>Process instances</h2>
-<!-- Chris -> This should probably be a table to support sorting -->
-<ul>
-	#foreach($processInstanceBean in $processInstanceBeanList)
-		<li>
-            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
-            #set($packageName = "none")
-            #set($packageName = $processInstanceBean.packageName)
-            <a href="./${processInstanceBean.id}.html">#springMessage($code) (${processInstanceBean.id}) </a> - $packageName				
-		</li>	
-	#end	
-</ul>	
+<div id="workflows">
+    
+    <ul id="localNav">
+        <li><a href="#activeWorkflows">
+            <span> Active  ( $processInstanceBeanList.size() )  </span>
+        </a></li>
+        <li><a href="#suspendedWorkflows">
+            <span> Suspended  ( $suspendedProcessInstanceBeanList.size() )  </span>
+        </a></li>
+        <li><a href="#newWorkflow">
+            <span> Start New </span>
+        </a></li>
+        <li><a href="#localHelp">
+            <span> Help </span>
+        </a></li>
+    </ul>
+    
+	<div id="activeWorkflows">
+		<h2>Active Workflows</h2>
+        <fieldset>
+            <legend>These workflows are currenlty active.</legend>
+            #if( $processInstanceBeanList.size() > 10 )
+		    <table>
+		        <tbody><tr><td>
+                    <form id="activeWorkflows_pager" class="pager">
+                		<img src="${contextPath}/images/icons/first.png" class="first"/>
+                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
+                		<label for="activeWorkflows_pagedisplay">Showing page </label>
+                		<input id="activeWorkflows_pagedisplay" type="text" class="pagedisplay"/>
+                		<img src="${contextPath}/images/icons/next.png" class="next"/>
+                		<img src="${contextPath}/images/icons/last.png" class="last"/>
+                		<label for="activeWorkflows_pagesize">Results per page: </label>
+                		<select id="activeWorkflows_pagesize" class="pagesize">
+                			<option selected="selected"  value="10">10</option>
+                			<option value="20">20</option>
+                			<option value="30">30</option>
+                			<option  value="40">40</option>
+                		</select>
+                    </form>
+                </td></tr></tbody>
+            </table>
+            #end
+	        <table id="activeWorkflows_table" class="tablesorter pageable"  >
+	            <thead><tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Start date</th>
+                </tr></thead>
+                <tfoot><tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Start date</th>
+                </tr></tfoot>
+                <tbody>
+			        #foreach($processInstanceBean in $processInstanceBeanList)
+			        <tr id="workflow_${processInstanceBean.id}" >
+				        <td>
+                            #set($packageName = "none")
+                            #set($packageName = $processInstanceBean.packageName)
+				            $packageName
+				        </td>
+				        <td>
+                            <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
+				            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
+                            #springMessage($code) (${processInstanceBean.id}) </a>
+                        </td>
+				        <td>
+				            ${date.format('yyyy-MM-dd hh:mm', $processInstanceBean.startDate)}
+				        </td>				        
+				    </tr>					
+			        #end
+			    </tbody>
+		    </table>
+		</fieldset>
+		
+	</div>
 	
+	
+	<div id="suspendedWorkflows">
+		<h2>Suspended Workflows</h2>
+		<fieldset>
+            <legend>These unassigned tasks are available for anyone to pickup.</legend>
+            #if( $suspendedProcessInstanceBeanList.size() > 10)
+            <table>
+		        <tbody><tr><td>
+                    <form id="suspendedWorkflows_pager" class="pager">
+                		<img src="${contextPath}/images/icons/first.png" class="first"/>
+                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
+                		<label for="suspendedWorkflows_pagedisplay">Showing page </label>
+                		<input id="suspendedWorkflows_pagedisplay" type="text" class="pagedisplay"/>
+                		<img src="${contextPath}/images/icons/next.png" class="next"/>
+                		<img src="${contextPath}/images/icons/last.png" class="last"/>
+                		<label for="suspendedWorkflows_pagesize">Results per page: </label>
+                		<select id="suspendedWorkflows_pagesize" class="pagesize">
+                			<option selected="selected"  value="10">10</option>
+                			<option value="20">20</option>
+                			<option value="30">30</option>
+                			<option  value="40">40</option>
+                		</select>
+                    </form>
+                </td></tr></tbody>
+            </table>
+            #end
+		    <table id="suspendedWorkflows_table" class="tablesorter pageable"  >
+	            <thead>
+	                <tr>
+                        <th>Name</th>
+                        <th>Package</th>
+                    </tr>
+                </thead>
+                <tfoot><tr>
+                        <th>Name</th>
+                        <th>Package</th>
+                </tr></tfoot>
+                <tbody>
+		    	#foreach($processInstanceBean in $suspendedProcessInstanceBeanList)
+		    	    <tr>
+    				    <td> $packageName </td>
+        				<td>
+        		            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
+        		            #set($packageName = "none")
+        		            #set($packageName = $processInstanceBean.packageName)
+        		            <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
+        		                #springMessage($code) (${processInstanceBean.id})
+        		            </a>				
+        				</td>	
+    				</tr>
+    			#end	
+                </tbody>
+            </table>
+        </fieldset>
+	</div>
+	
+	
+	<div id="newWorkflow">
+		<h2>Workflows Types</h2>
+			#foreach($processDefinitionBean in $processDefinitionBeanList)
+				#set ($code = "processdefinitions.${processDefinitionBean.id}")
+			<li>
+				<form method="post" action="${contextPath}/processdefinition/${processDefinitionBean.id}.html">
+                    <fieldset title="Start a New Transfer Workflow">
+			            <legend>#springMessage($code) (${processDefinitionBean.id})</legend>
+			            <input type="hidden" name="referer" value="/index.html" />
+    					<input type="submit" class="button" value="start"/>
+    					<label>Creating a new Transfer Workflow allows tracking a new transfer process.</label>
+				    </fieldset>					
+    			</form>						
+			</li>					
+			#end
+		</ul>
+	</div>
+</div>

@@ -3,6 +3,7 @@ package gov.loc.repository.transfer.ui.controllers;
 import java.util.Map;
 
 import gov.loc.repository.transfer.ui.UIConstants;
+import gov.loc.repository.transfer.ui.model.UserBean;
 import gov.loc.repository.transfer.ui.model.ProcessInstanceBean;
 import gov.loc.repository.transfer.ui.model.ProcessInstanceHelper;
 import gov.loc.repository.transfer.ui.model.UserHelper;
@@ -35,33 +36,56 @@ public class ProcessInstanceController extends AbstractRestController {
 	}
 		
 	@Override
-	protected void handleIndex(HttpServletRequest request, ModelAndView mav,
-			JbpmContext jbpmContext, PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap)
-			throws Exception {
-		mav.addObject("processInstanceBeanList", ProcessInstanceHelper.getProcessInstanceBeanList(jbpmContext));
+	protected void handleIndex(
+	        HttpServletRequest request, 
+	        ModelAndView mav,
+			JbpmContext jbpmContext, 
+			PermissionsHelper permissionsHelper, 
+			Map<String, String> urlParameterMap) throws Exception 
+	{
+		UserBean userBean = new UserBean();
+		userBean.setId(request.getUserPrincipal().getName());
+		userBean.setJbpmContext(jbpmContext);
+		
 		mav.setViewName("processinstancelist");
+		mav.addObject(
+		    "processInstanceBeanList", 
+		    ProcessInstanceHelper.getProcessInstanceBeanList(jbpmContext)
+		);
+		mav.addObject(
+		    "suspendedProcessInstanceBeanList", 
+		    ProcessInstanceHelper.getSuspendedProcessInstanceBeanList(jbpmContext)
+		);
+		mav.addObject(
+		    "processDefinitionBeanList", 
+		    userBean.getProcessDefinitionBeanList()
+		);
 	}
 
 	@Override
-	protected void handleGet(HttpServletRequest request, ModelAndView mav,
-			JbpmContext jbpmContext, PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap)
-			throws Exception {
-		
+	protected void handleGet(
+	        HttpServletRequest request, 
+	        ModelAndView mav,
+			JbpmContext jbpmContext, 
+			PermissionsHelper permissionsHelper,
+			 Map<String, String> urlParameterMap) throws Exception 
+	{
 		ProcessInstanceBean processInstanceBean = processProcessInstance(mav, jbpmContext, urlParameterMap);
-		if (processInstanceBean == null)
-		{
-			return;
-		}
+		if (processInstanceBean == null) { return; }
+		
 		mav.addObject("processInstanceBean", processInstanceBean);
-		if (permissionsHelper.canUpdateTaskInstanceUser())
-		{
-			mav.addObject("userBeanList", UserHelper.getUserBeanList(jbpmContext));
+		if (permissionsHelper.canUpdateTaskInstanceUser()) {
+			mav.addObject(
+			    "userBeanList", 
+			    UserHelper.getUserBeanList(jbpmContext)
+			);
 		}
-		if (permissionsHelper.canMoveToken())
-		{
-			mav.addObject("nodeBeanList", processInstanceBean.getProcessDefinitionBean().getNodeBeanList());
+		if (permissionsHelper.canMoveToken()) {
+			mav.addObject(
+			    "nodeBeanList", 
+			    processInstanceBean.getProcessDefinitionBean().getNodeBeanList()
+			);
 		}
-				
 		mav.setViewName("processinstance");
 	}
 	

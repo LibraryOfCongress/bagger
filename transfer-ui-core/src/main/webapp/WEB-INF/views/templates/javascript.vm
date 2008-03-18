@@ -26,13 +26,22 @@
             positionFixed:false,
             container: $("#groupTasks_pager")
         });
+        
         //TABLE suspendedProcessInstances
-        $("#suspendedProcessInstances_table").tablesorter({
+        $("#activeWorkflows_table").tablesorter({
             widgets: ['zebra']
         }).tablesorterPager({
             seperator:" of ",
             positionFixed:false,
-            container: $("#suspendedProcessInstances_pager")
+            container: $("#activeWorkflows_pager")
+        });
+        //TABLE suspendedProcessInstances
+        $("#suspendedWorkflows_table").tablesorter({
+            widgets: ['zebra']
+        }).tablesorterPager({
+            seperator:" of ",
+            positionFixed:false,
+            container: $("#suspendedWorkflows_pager")
         });
         
         //HELP

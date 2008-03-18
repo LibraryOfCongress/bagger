@@ -1,11 +1,7 @@
 <div id="tasks">
     <ul id="localNav">
         <li><a href="#userTasks"            ><span> My Tasks ( $userTaskInstanceBeanList.size() ) </span></a></li>
-        <li><a href="#groupTasks"           ><span> Unassigned Tasks ( $groupTaskInstanceBeanList.size() )  </span></a></li>
-        <li><a href="#workflows"            ><span> Workflows  ( $processDefinitionBeanList.size() )  </span></a></li>
-        <li><a href="#suspendedProcessInstances">
-            <span> Suspended Workflows  ( $suspendedProcessInstanceBeanList.size() )  </span>
-        </a></li>
+        <li><a href="#groupTasks"           ><span> Unassigned ( $groupTaskInstanceBeanList.size() )  </span></a></li>
         <li><a href="#localHelp"            ><span> Help                  </span></a></li>
     </ul>
 	<div id="userTasks">
@@ -133,78 +129,9 @@
 		    </table>
 		</fieldset>
 	</div>
-	<div id="workflows">
-		<h2>Workflows</h2>
-			#foreach($processDefinitionBean in $processDefinitionBeanList)
-				#set ($code = "processdefinitions.${processDefinitionBean.id}")
-			<li>
-				<form method="post" action="./processdefinition/${processDefinitionBean.id}.html">
-                    <fieldset title="Start a New Workflow">
-			            <legend>#springMessage($code) (${processDefinitionBean.id})</legend>
-			            <input type="hidden" name="referer" value="/index.html" />
-    					<input type="submit" class="button" value="start"/>
-    					<label>Creating a new Workflow allows tracking a new transfer process.</label>
-				    </fieldset>					
-    			</form>						
-			</li>					
-			#end
-		</ul>
-	</div>
 	
-	<div id="suspendedProcessInstances">
-		<h2>Suspended Workflows</h2>
-		<fieldset>
-            <legend>These unassigned tasks are available for anyone to pickup.</legend>
-            #if( $suspendedProcessInstanceBeanList.size() > 10)
-            <table>
-		        <tbody><tr><td>
-                    <form id="suspendedProcessInstances_pager" class="pager">
-                		<img src="${contextPath}/images/icons/first.png" class="first"/>
-                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-                		<label for="suspendedProcessInstances_pagedisplay">Showing page </label>
-                		<input id="suspendedProcessInstances_pagedisplay" type="text" class="pagedisplay"/>
-                		<img src="${contextPath}/images/icons/next.png" class="next"/>
-                		<img src="${contextPath}/images/icons/last.png" class="last"/>
-                		<label for="suspendedProcessInstances_pagesize">Results per page: </label>
-                		<select id="suspendedProcessInstances_pagesize" class="pagesize">
-                			<option selected="selected"  value="10">10</option>
-                			<option value="20">20</option>
-                			<option value="30">30</option>
-                			<option  value="40">40</option>
-                		</select>
-                    </form>
-                </td></tr></tbody>
-            </table>
-            #end
-		    <table id="suspendedProcessInstances_table" class="tablesorter pageable"  >
-	            <thead>
-	                <tr>
-                        <th>Name</th>
-                        <th>Package</th>
-                    </tr>
-                </thead>
-                <tfoot><tr>
-                        <th>Name</th>
-                        <th>Package</th>
-                </tr></tfoot>
-                <tbody>
-		    	#foreach($processInstanceBean in $suspendedProcessInstanceBeanList)
-		    	    <tr>
-    				    <td> $packageName </td>
-        				<td>
-        		            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
-        		            #set($packageName = "none")
-        		            #set($packageName = $processInstanceBean.packageName)
-        		            <a href="./processinstance/${processInstanceBean.id}.html">
-        		                #springMessage($code) (${processInstanceBean.id})
-        		            </a>				
-        				</td>	
-    				</tr>
-    			#end	
-                </tbody>
-            </table>
-        </fieldset>
-	</div>
+	
+	
 		
 	<div id="localHelp">
         <h1>Help        </h1>

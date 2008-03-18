@@ -6,7 +6,7 @@
         #if ($permissionsHelper.canUpdateTaskInstanceUser() && $taskInstanceBean.canUpdateUserBean())
         <li><a href="#reassignTask"><span> Reassign </span></a></li> 
         #end
-        <li><a href="#taskComments" ><span> Comments </span></a></li>
+        <li><a href="#comments" ><span> Comments </span></a></li>
         <li><a href="#localHelp"><span> Help     </span></a></li>
     </ul>
     
@@ -45,10 +45,10 @@
         <h2>Details</h2>
         <fieldset>
             <legend>Examine details for this Task</legend>
-            <table cellspacing="5" cellpadding="5">
+            <table cellspacing="3" cellpadding="7">
                 <tr id="taskID" >
-                    <td><label for="taskName_value">Tracking ID</label></td>
-                    <td><span id="taskName_value">
+                    <td><label for="taskID_value">Tracking ID</label></td>
+                    <td><span id="taskID_value">
                         ${taskInstanceBean.id}
                     </span></td>
                     <td><span class="description">
@@ -126,7 +126,7 @@
 	</div>
     #end
 
-    <div id="taskComments">
+    <div id="comments">
 	    <h2>Comments</h2>
     	#foreach($commentBean in $taskInstanceBean.processInstanceBean.commentBeanList)
 	    <fieldset>
@@ -144,7 +144,9 @@
 			     action="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}/comment.html">
 			    <table style="width:100%">
 			        <tr><td align="center">
-				        <input type="hidden" name="referer" value="/taskinstance/${taskInstanceBean.id}.html" />
+				        <input type="hidden" 
+				            name="referer" 
+				            value="/taskinstance/${taskInstanceBean.id}.html#comments" />
 				        <textarea name="message" cols="50" rows="15"></textarea>				
 				    </td></tr>
 				    <tr><td align="right">

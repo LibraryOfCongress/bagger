@@ -1,106 +1,201 @@
-<h2>Process instance</h2>
+<div id="processinstance">
+    
+    <ul id="localNav">
+        <li><a href="#workflowActions" ><span> Update </span></a></li>
+        <li><a href="#workflowTokens" ><span> Tokens </span></a></li>
+        <li><a href="#comments" ><span> Comments </span></a></li>
+        <li><a href="#localHelp"><span> Help     </span></a></li>
+    </ul>
 
-<p>Id: ${processInstanceBean.id}</p>
-#set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
-<p>Process definition: #springMessage($code)</p>
-#set($packageName = "none")
-#set($packageName = $processInstanceBean.packageName)
-<p>Package name: $packageName</p>
-<p>Suspended: $processInstanceBean.suspended</p>
-#if ($permissionsHelper.canSuspendProcessInstance())
-    <form method="post" action="${requestURI}?method=put">    		
-	#if ($processInstanceBean.suspended)
-		<input type="hidden" name="suspended" value="false" />
-		<input type="submit" value="resume" />
-	#else
-		<input type="hidden" name="suspended" value="true" />
-		<input type="submit" value="suspend" />
-	#end
-	</form>
-#end
-<h3>Variables</h3>
-<ul>
-	#foreach($key in $processInstanceBean.variableMap.keySet())
-		#set($value = $processInstanceBean.variableMap.get($key))
-		<li>
-			##At least for now, until allow update of strings
-			#if ($permissionsHelper.canUpdateVariables() && $value.class.simpleName == "String")
-			    <form method="post" action="${requestURI}?method=put">    		
-					$key = <input type="text" name="variable.${key}" value="$value" />
-					<input type="submit" value="update" />
-				</form>
-			#else
-				$key = $value			
-			#end
-		</li>
-	#end	
-</ul>	
-<h3>Comments</h3>
-	#foreach($commentBean in $processInstanceBean.commentBeanList)
-		<p>$commentBean.message<br/>
-		-- $commentBean.actorId ($commentBean.date)</p>
-	#end
-    #if ($permissionsHelper.canAddComment())
-	<div id="addComment">
-	    <h4>Add Comment</h4>
-			<form method="post" action="${contextPath}/processinstance/${processInstanceBean.id}/comment.html">
-				<textarea name="message"></textarea>				
-				<input type="submit" value="create"/>
+    <div id="workflowActions">
+        <h2>Details</h2>
+        <fieldset>
+            <legend>Examine details regarding this workflows status</legend>
+            <table cellspacing="3" cellpadding="7">
+                <tr id="workflowID" >
+                    <td><label for="workflowID_value">Tracking ID</label></td>
+                    <td><span id="workflowID_value">
+                        ${processInstanceBean.id}
+                    </span></td>
+                    <td><span class="description">
+                    </span></td>
+                </tr>
+                <tr id="workflowType" >
+                    <td><label for="workflowType_value">Type</label></td>
+                    <td><span id="workflowType_value">
+                        #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
+                        #springMessage($code)
+                    </span></td>
+                    <td><span class="description">
+                    </span></td>
+                </tr>
+                <tr id="packageName" >
+                    <td><label for="packageName_value">Package Name</label></td>
+                    <td><span id="packageName_value">
+                        #set($packageName = "none")
+                        #set($packageName = $processInstanceBean.packageName)
+                        $packageName
+                    </span></td>
+                    <td><span class="description">
+                    </span></td>
+                </tr>
+                
+                <tr id="workflowStatus" >
+                    <td><label for="workflowStatus_value">Status</label></td>
+                    <td>
+                        <span id="workflowStatus_value">
+                        #if ($processInstanceBean.suspended)
+                            Suspended
+                        #else
+                            In Progress
+                        #end
+                        </span>
+                    </td>
+                    <td><span class="description">
+                        #if ($permissionsHelper.canSuspendProcessInstance())
+                            <form method="post" action="${requestURI}?method=put">    		
+                        	#if ($processInstanceBean.suspended)
+                        		<input type="hidden" name="suspended" value="false" />
+                        		<input class="button" type="submit" value="resume" />
+                        	#else
+                        		<input type="hidden" name="suspended" value="true" />
+                        		<input class="button" type="submit" value="suspend" />
+                        	#end
+                        	</form>
+                        #end
+                    </span></td>
+                </tr>
+            </table>
+        </fieldset>
+        <h3>Variables</h3>
+        <fieldset>
+            <legend>Examine variables and their values specific to this workflow.</legend>
+            <table cellspacing="3" cellpadding="7">
+                <thead><tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                    <th>(* Modifiable)</th>
+                </tr></thead>
+                <tbody>
+            	#foreach($key in $processInstanceBean.variableMap.keySet())
+            		#set($value = $processInstanceBean.variableMap.get($key))
+            		<tr>
+            			##At least for now, until allow update of strings
+            			#if ($permissionsHelper.canUpdateVariables() && $value.class.simpleName == "String")
+            			<form method="post" action="${requestURI}?method=put">    		
+            					<td><label for="variable.${key}">$key<label></td>
+            					<td><input id="variable.${key}" type="text" name="variable.${key}" value="$value" /></td>
+            					<td><input class="button" type="submit" value="update" />*</td>
+            			</form>
+            			#else
+            				<td><label for="variable.${key}">$key</label></td>
+            			    <td><span id="variable.${key}">$value</span></td>
+            			    <td></td>
+            			#end
+            		</tr>
+            	#end
+        	    </tbody>
+            </table>
+        </fieldset>
+    </div>
+    
+    <div id="comments">
+	    <h2>Comments</h2>
+    	#foreach($commentBean in $processInstanceBean.commentBeanList)
+	    <fieldset>
+	        <legend><b>$commentBean.actorId</b></legend>
+	        <p>$commentBean.message</p>
+	        <span style="float:right;">${date.format('yyyy-MM-dd hh:mm', $commentBean.date)}</span>
+	    </fieldset>
+	    <hr/>
+    	#end
+
+        #if ($permissionsHelper.canAddComment())
+    	<div id="addComment">
+    	    <h2>Add Comment</h2>
+			<form method="post"
+			     action="${contextPath}/processinstance/${processInstanceBean.id}/comment.html">
+			    <table style="width:100%">
+			        <tr><td align="center">
+				        <input type="hidden" 
+				            name="referer" 
+				            value="/processinstance/${processInstanceBean.id}.html#comments" />
+				        <textarea name="message" cols="50" rows="15"></textarea>				
+				    </td></tr>
+				    <tr><td align="right">
+				        <input class="button" type="submit" value="create"/>
+				    </td></tr>
+				</table>
 			</form>						
-	</div>
-    #end
+    	</div>
+        #end
+    </div>
 	
-<h3>Tokens</h3>
-	#foreach($tokenBean in $processInstanceBean.tokenBeanList)
-		<h4>Token</h4>
-		<p>Id: $tokenBean.id</p>
-		#if ($tokenBean.movable && $permissionsHelper.canMoveToken())
-			<form method="post" action="${contextPath}/token/${tokenBean.id}.html?method=put">
-				<input type="hidden" name="referer" value="/processinstance/${processInstanceBean.id}.html" />		    	
-			    <select name="node">
-	    			#foreach($nodeBean in $nodeBeanList)
-	    				<option value="$nodeBean.name" #if ($tokenBean.nodeBean.name == $nodeBean.name) selected #end>$nodeBean.name</option>					
-	    			#end				
-	    		</select>				
-				<input type="submit" value="move"/>
-			</form>
-		#else
-			<p>Node: $tokenBean.nodeBean.name</p>			
-		#end		
-		<p>Ended: $tokenBean.ended</p>
-		#if ($tokenBean.child)
-			<p>Parent: $tokenBean.parentTokenBean.id</p>
-		#end
-		<h5>Log entries</h5>
-			<ol>
-				#foreach($entry in $tokenBean.logEntryList)
-					<li>$entry</li>
-				#end				
-			</ol>
-		<h5>Task instances</h5>
-		#foreach($taskInstanceBean in $tokenBean.taskInstanceBeanList)
-			<h6><a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">Task instance</a></h6>
-			<p>Id: $taskInstanceBean.id</p>
-			<p>Task:  $taskInstanceBean.taskBean.name</p>
-			<p>User:  #if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end</p>
-			#if ($permissionsHelper.canUpdateTaskInstanceUser())
+	<div id="workflowTokens">
+        <h3>Tokens</h3>
+        	#foreach($tokenBean in $processInstanceBean.tokenBeanList)
+        		<h4>Token</h4>
+        		<p>Id: $tokenBean.id</p>
+        		#if ($tokenBean.movable && $permissionsHelper.canMoveToken())
+        			<form method="post" action="${contextPath}/token/${tokenBean.id}.html?method=put">
+        				<input type="hidden" 
+        				    name="referer" 
+        				    value="${contextPath}/processinstance/${processInstanceBean.id}.html" />		    	
+        			    <select name="node">
+        	    			#foreach($nodeBean in $nodeBeanList)
+        	    				<option value="$nodeBean.name" 
+        	    				    #if ($tokenBean.nodeBean.name == $nodeBean.name) selected #end>
+        	    				    $nodeBean.name
+        	    				</option>					
+        	    			#end				
+        	    		</select>				
+        				<input class="button" type="submit" value="move"/>
+        			</form>
+        		#else
+        			<p>Node: $tokenBean.nodeBean.name</p>			
+        		#end		
+        		<p>Ended: $tokenBean.ended</p>
+        		#if ($tokenBean.child)
+        			<p>Parent: $tokenBean.parentTokenBean.id</p>
+        		#end
+        		<h5>Log entries</h5>
+        			<ol>
+        				#foreach($entry in $tokenBean.logEntryList)
+        					<li>$entry</li>
+        				#end				
+        			</ol>
+        		<h5>Task instances</h5>
+        		#foreach($taskInstanceBean in $tokenBean.taskInstanceBeanList)
+        			<h6><a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">Task instance</a></h6>
+        			<p>Id: $taskInstanceBean.id</p>
+        			<p>Task:  $taskInstanceBean.taskBean.name</p>
+        			<p>User:  #if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end</p>
+        			#if ($permissionsHelper.canUpdateTaskInstanceUser())
 			
-			    <form method="post" action="${contextPath}/taskinstance/${taskInstanceBean.id}.html?method=put">
-					<input type="hidden" name="referer" value="/processinstance/${processInstanceBean.id}.html" />		    	
-				    <select name="user">
-		    			<option value="null">none</option>
-		    			#foreach($userBean in $userBeanList)
-		    				<option value="$userBean.id" #if ($taskInstanceBean.userBean.id == $userBean.id) selected #end>$userBean.id</option>					
-		    			#end				
-		    		</select>
-		    		<input type="submit" value="reassign"/>
-		    	</form>
-			#end						
-			<p>Groups:  #foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.id #end</p>
-			<p>Status:  #if ( $taskInstanceBean.ended ) Completed #else Incomplete #end</p>
-			<p>Create date:  $taskInstanceBean.createDate</p>
-            #if ( $taskInstanceBean.ended )
-	            <p>Completion date: $taskInstanceBean.endDate</p>
-            #end						
-		#end
-	#end
+        			    <form method="post" action="${contextPath}/taskinstance/${taskInstanceBean.id}.html?method=put">
+        					<input type="hidden" 
+        					    name="referer" 
+        					    value="/processinstance/${processInstanceBean.id}.html" />		    	
+        				    <select name="user">
+        		    			<option value="null">none</option>
+        		    			#foreach($userBean in $userBeanList)
+        		    				<option value="$userBean.id"
+        		    				     #if ($taskInstanceBean.userBean.id == $userBean.id) selected #end>
+        		    				     $userBean.id
+        		    				</option>					
+        		    			#end				
+        		    		</select>
+        		    		<input type="submit" value="reassign"/>
+        		    	</form>
+        			#end						
+        			<p>Groups:  #foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.id #end</p>
+        			<p>Status:  #if ( $taskInstanceBean.ended ) Completed #else Incomplete #end</p>
+        			<p>Create date:  $taskInstanceBean.createDate</p>
+                    #if ( $taskInstanceBean.ended )
+        	            <p>Completion date: $taskInstanceBean.endDate</p>
+                    #end						
+        		#end
+        	#end
+    </div>
+    
+</div>

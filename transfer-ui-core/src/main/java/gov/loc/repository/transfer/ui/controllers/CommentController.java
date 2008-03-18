@@ -57,7 +57,11 @@ public class CommentController extends AbstractRestController {
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
-		ProcessInstanceBean processInstanceBean = ProcessInstanceHelper.getProcessInstanceBean(Long.parseLong(processInstanceId), jbpmContext);
+		ProcessInstanceBean processInstanceBean = 
+		    ProcessInstanceHelper.getProcessInstanceBean(
+		        Long.parseLong(processInstanceId), 
+		        jbpmContext
+		    );
 				
 		if (request.getParameter(UIConstants.PARAMETER_MESSAGE) == null)
 		{
@@ -73,11 +77,11 @@ public class CommentController extends AbstractRestController {
 		String redirect = "redirect:";
 		if (request.getParameter(UIConstants.PARAMETER_REFERER) != null)
 		{
-			redirect+=request.getParameter(UIConstants.PARAMETER_REFERER)+"#taskComments"; 
+			redirect+=request.getParameter(UIConstants.PARAMETER_REFERER); 
 		}
 		else
 		{
-			redirect += "/processinstance/" + processInstanceId + ".html#taskComments";
+			redirect += "/processinstance/" + processInstanceId + ".html";
 		}
 		mav.setViewName(redirect);
 		

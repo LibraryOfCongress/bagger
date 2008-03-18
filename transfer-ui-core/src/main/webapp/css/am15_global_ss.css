@@ -166,11 +166,11 @@ div#topnav ul#menu li a {
 	left: 212px; 
 	width: 55px;
 }*/
-#home	{left: 277px; width: 55px;}
-#admin	{left: 338px; width: 55px;}
-#help {left: 395px; width: 50px;}
-#contact {left: 450px; width: 50px;}
-#searchmenu	{left: 507px; width: 180px;}
+#global_home	{left: 200px; width: 55px;}
+#global_tasks	{left: 255px; width: 55px;}
+#global_workflows	{left: 318px; width: 55px;}
+#global_admin {left: 395px; width: 50px;}
+#global_help {left: 450px; width: 50px;}
 
 label {
 	margin-left: -85px;

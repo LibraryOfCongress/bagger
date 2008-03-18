@@ -36,12 +36,12 @@
 	</definition>
 
 	<definition name="processinstancelist" extends="base">
-		<put name="title"           value="Process Instance List" />
+		<put name="title"           value="Workflows" />
 		<put name="content"         value="processinstancelist.vm" />
 	</definition>
 
 	<definition name="processinstance" extends="base">
-		<put name="title"           value="Process Instance" />
+		<put name="title"           value="Current Workflow" />
 		<put name="content"         value="processinstance.vm" />
 	</definition>
 
