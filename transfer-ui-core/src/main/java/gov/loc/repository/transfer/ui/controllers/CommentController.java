@@ -70,7 +70,16 @@ public class CommentController extends AbstractRestController {
 		processInstanceBean.addComment(message);
 		processInstanceBean.save();
 				
-		mav.setViewName("redirect:/processinstance/" + processInstanceId + ".html#taskComments");
+		String redirect = "redirect:";
+		if (request.getParameter(UIConstants.PARAMETER_REFERER) != null)
+		{
+			redirect+=request.getParameter(UIConstants.PARAMETER_REFERER)+"#taskComments"; 
+		}
+		else
+		{
+			redirect += "/processinstance/" + processInstanceId + ".html#taskComments";
+		}
+		mav.setViewName(redirect);
 		
 	}
 	

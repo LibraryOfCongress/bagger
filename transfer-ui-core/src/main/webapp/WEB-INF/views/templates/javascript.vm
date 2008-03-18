@@ -10,12 +10,29 @@
         
         //TABLES
         $("#dataTable").tablesorter({widgets: ['zebra']});
-        $("#pageableDataTable").tablesorter({
+        //TABLE userTasks
+        $("#userTasks_table").tablesorter({
             widgets: ['zebra']
         }).tablesorterPager({
             seperator:" of ",
             positionFixed:false,
-            container: $("#pager")
+            container: $("#userTasks_pager")
+        });
+        //TABLE groupTasks
+        $("#groupTasks_table").tablesorter({
+            widgets: ['zebra']
+        }).tablesorterPager({
+            seperator:" of ",
+            positionFixed:false,
+            container: $("#groupTasks_pager")
+        });
+        //TABLE suspendedProcessInstances
+        $("#suspendedProcessInstances_table").tablesorter({
+            widgets: ['zebra']
+        }).tablesorterPager({
+            seperator:" of ",
+            positionFixed:false,
+            container: $("#suspendedProcessInstances_pager")
         });
         
         //HELP

@@ -3,15 +3,19 @@
         <li><a href="#userTasks"            ><span> My Tasks ( $userTaskInstanceBeanList.size() ) </span></a></li>
         <li><a href="#groupTasks"           ><span> Unassigned Tasks ( $groupTaskInstanceBeanList.size() )  </span></a></li>
         <li><a href="#workflows"            ><span> Workflows  ( $processDefinitionBeanList.size() )  </span></a></li>
+        <li><a href="#suspendedProcessInstances">
+            <span> Suspended Workflows  ( $suspendedProcessInstanceBeanList.size() )  </span>
+        </a></li>
         <li><a href="#localHelp"            ><span> Help                  </span></a></li>
     </ul>
 	<div id="userTasks">
 		<h2>My Tasks</h2>
         <fieldset>
-            <legend>Pending Tasks</legend>
+            <legend>These pending tasks still require completion.</legend>
+            #if( $userTaskInstanceBeanList.size() > 10 )
 		    <table>
 		        <tbody><tr><td>
-                    <form id="pager" class="pager">
+                    <form id="userTasks_pager" class="pager">
                 		<img src="${contextPath}/images/icons/first.png" class="first"/>
                 		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
                 		<label for="myTasks_pagedisplay">Showing page </label>
@@ -28,7 +32,8 @@
                     </form>
                 </td></tr></tbody>
             </table>
-	        <table id="pageableDataTable" class="tablesorter"  >
+            #end
+	        <table id="userTasks_table" class="tablesorter pageable"  >
 	            <thead>
 	                <tr id="taskDetailsHeader">
                         <th>Name</th>
@@ -65,10 +70,11 @@
     <div id="groupTasks">
 		<h2>Unassigned Tasks</h2>
 		<fieldset>
-            <legend>Unassigned Tasks</legend>
+            <legend>These unassigned tasks are available for anyone to complete.</legend>
+            #if( $groupTaskInstanceBeanList.size() > 10)
 		    <table>
 		        <tbody><tr><td>
-                    <form id="pager" class="pager">
+                    <form id="unassignedTasks_pager" class="pager">
                 		<img src="${contextPath}/images/icons/first.png" class="first"/>
                 		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
                 		<label for="unassignedTasks_pagedisplay">Showing page </label>
@@ -85,16 +91,17 @@
                     </form>
                 </td></tr></tbody>
             </table>
-	        <table id="pageableDataTable" class="tablesorter"  >
+            #end
+	        <table id="groupTasks_table" class="tablesorter pageable"  >
 	            <thead>
-	                <tr id="taskDetailsHeader">
+	                <tr >
                         <th>Name</th>
                         <th>Package</th>
                         <th>Create Date</th>
                         <th>Accept This Task</th>
                     </tr>
                 </thead>
-                <tfoot><tr id="taskDetailsFooter">
+                <tfoot><tr >
                         <th>Name</th>
                         <th>Package</th>
                         <th>Create Date</th>
@@ -128,7 +135,6 @@
 	</div>
 	<div id="workflows">
 		<h2>Workflows</h2>
-		<ul>
 			#foreach($processDefinitionBean in $processDefinitionBeanList)
 				#set ($code = "processdefinitions.${processDefinitionBean.id}")
 			<li>
@@ -146,18 +152,58 @@
 	</div>
 	
 	<div id="suspendedProcessInstances">
-		<h2>Suspended process instances</h2>
-		<!-- Chris -> This should probably be a table to support sorting -->
-		<ul>
-			#foreach($processInstanceBean in $suspendedProcessInstanceBeanList)
-				<li>
-		            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
-		            #set($packageName = "none")
-		            #set($packageName = $processInstanceBean.packageName)
-		            <a href="./processinstance/${processInstanceBean.id}.html">#springMessage($code) (${processInstanceBean.id}) </a> - $packageName				
-				</li>	
-			#end	
-		</ul>
+		<h2>Suspended Workflows</h2>
+		<fieldset>
+            <legend>These unassigned tasks are available for anyone to pickup.</legend>
+            #if( $suspendedProcessInstanceBeanList.size() > 10)
+            <table>
+		        <tbody><tr><td>
+                    <form id="suspendedProcessInstances_pager" class="pager">
+                		<img src="${contextPath}/images/icons/first.png" class="first"/>
+                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
+                		<label for="suspendedProcessInstances_pagedisplay">Showing page </label>
+                		<input id="suspendedProcessInstances_pagedisplay" type="text" class="pagedisplay"/>
+                		<img src="${contextPath}/images/icons/next.png" class="next"/>
+                		<img src="${contextPath}/images/icons/last.png" class="last"/>
+                		<label for="suspendedProcessInstances_pagesize">Results per page: </label>
+                		<select id="suspendedProcessInstances_pagesize" class="pagesize">
+                			<option selected="selected"  value="10">10</option>
+                			<option value="20">20</option>
+                			<option value="30">30</option>
+                			<option  value="40">40</option>
+                		</select>
+                    </form>
+                </td></tr></tbody>
+            </table>
+            #end
+		    <table id="suspendedProcessInstances_table" class="tablesorter pageable"  >
+	            <thead>
+	                <tr>
+                        <th>Name</th>
+                        <th>Package</th>
+                    </tr>
+                </thead>
+                <tfoot><tr>
+                        <th>Name</th>
+                        <th>Package</th>
+                </tr></tfoot>
+                <tbody>
+		    	#foreach($processInstanceBean in $suspendedProcessInstanceBeanList)
+		    	    <tr>
+    				    <td> $packageName </td>
+        				<td>
+        		            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
+        		            #set($packageName = "none")
+        		            #set($packageName = $processInstanceBean.packageName)
+        		            <a href="./processinstance/${processInstanceBean.id}.html">
+        		                #springMessage($code) (${processInstanceBean.id})
+        		            </a>				
+        				</td>	
+    				</tr>
+    			#end	
+                </tbody>
+            </table>
+        </fieldset>
 	</div>
 		
 	<div id="localHelp">

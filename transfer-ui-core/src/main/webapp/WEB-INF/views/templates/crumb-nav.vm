@@ -9,8 +9,10 @@
             <span>&nbsp;|&nbsp;</span>
             <a href="${contextPath}/login/logout.html">logout</a>
         #else
+            #if($tiles.getAttribute('title') != 'Login')
             <span>&nbsp;|&nbsp;</span>
             <a href="${contextPath}/login/login.html">login</a>
+            #end
         #end
     </div>
 </div>
