@@ -173,8 +173,7 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 		return tokenBean;
 	}
 	*/
-	public Date getEndDate()
-	{
+	public Date getEndDate(){
 		return this.taskInstance.getEnd();
 	}
 	
