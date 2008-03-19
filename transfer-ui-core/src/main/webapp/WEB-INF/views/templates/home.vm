@@ -4,8 +4,9 @@
         <tbody valign="top"><tr>
             <td><fieldset>
                 <legend>Tasks</legend>
-                <img style="float:left;"
-                     src="${contextPath}/images/chart_00.png"/>
+                <a href="${contextPath}/taskinstance/index.html">
+                    <img style="float:left;" src="${contextPath}/images/chart_00.png" />
+                </a>
                 <ul class="homeNav">
                     <li><a href="${contextPath}/taskinstance/index.html#userTasks">
                         See all of my current tasks.</a><br/></li>
@@ -17,8 +18,9 @@
             </fieldset><hr/></td>
             <td><fieldset>
                 <legend>Workflows</legend>
-                <img style="float:left;"
-                     src="${contextPath}/images/chart_01.png"/>
+                <a href="${contextPath}/processinstance/index.html">
+                    <img style="float:left;" src="${contextPath}/images/chart_01.png" />
+                </a>
                 <ul class="homeNav">
                     <li><a href="${contextPath}/processinstance/index.html#activeWorkflows">
                         See all of the active workflows.</a><br/></li>
@@ -33,7 +35,9 @@
         </tr><tr>
             <td><fieldset>
                 <legend>Administer</legend>
-                <img style="float:left;" src="${contextPath}/images/chart_02.png" />
+                <a href="${contextPath}/admin/index.html">
+                    <img style="float:left;" src="${contextPath}/images/chart_02.png" />
+                </a>
                 <ul class="homeNav">
                     <li><a href="${contextPath}/admin/index.html#viewStats">
                         View vital statics.</a><br/></li>
@@ -45,8 +49,9 @@
             </fieldset><hr/></td>
             <td><fieldset>
                 <legend>Reports</legend>
-                <img style="float:left;"
-                     src="${contextPath}/images/chart_03.png"/>
+                <a href="${contextPath}/reports/index.html">
+                    <img style="float:left;" src="${contextPath}/images/chart_03.png" />
+                </a>
                 <ul class="homeNav">
                     <li><a href="${contextPath}/reports/index.html#viewReports">
                         View my current and past reports.</a><br/></li>
