@@ -24,13 +24,13 @@ public class HomeController {
 			return mav;
 		}
 		
-		UserBean userBean = new UserBean();
+		/*UserBean userBean = new UserBean();
 		userBean.setId(req.getUserPrincipal().getName());
 		userBean.setJbpmContext(jbpmContext);
 		
 		mav.addObject("groupTaskInstanceBeanList", userBean.getGroupTaskInstanceBeanList());
 		mav.addObject("userTaskInstanceBeanList", userBean.getUserTaskInstanceBeanList());
-		mav.addObject("currentUser", req.getUserPrincipal().getName());
+		mav.addObject("currentUser", req.getUserPrincipal().getName());*/
 		
 		return mav;
 	}
