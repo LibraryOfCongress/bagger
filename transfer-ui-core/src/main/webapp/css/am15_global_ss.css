@@ -148,14 +148,21 @@ div#topnav ul#menu li {
 	padding: 0;
 	list-style: none;
 	position: absolute;
-	top: -1px;
+	top: -10px;
 }
 ul#menu li, ul#menu a {
-	height: 40px;
+	height: 20px;
 	display: block;
+	margin: 37px 0 0 0;
 }
 div#topnav ul#menu li a {
 	text-decoration: none;
+}
+div#topnav form {
+    float:right;
+    height:50px;
+    padding:0 0 0 0;
+    width:235px;
 }
 #logo { 
 	background: transparent url(../images/logo.gif) no-repeat;
@@ -173,17 +180,13 @@ div#topnav ul#menu li a {
 #global_help {left: 450px; width: 50px;}
 
 label {
-	margin-left: -85px;
+    margin:0 0 0 -155px;
+    padding: 0 0 0 0;
 	font-family: verdana, Helvetica, sans-serif;
 	font-size: 80%;
 	color: #666;
 }
-div#topnav form {
-	padding-top: 13px;
-	height:50px;
-	width: 235px;
-}
-form input.button {
+form input.button,  form td input.button{
 		background-color: #fff;
 		font-weight: bold;
 		color: #ff6600;
@@ -291,4 +294,9 @@ form input.button {
 .pagedisplay {
     border:none;
     width:50px;
+}
+
+ul.homeNav li{
+    padding: 0px 0 0px 0;
+    margin: 5px 0 5px 12px;
 }

@@ -21,6 +21,7 @@ import gov.loc.repository.transfer.ui.commands.DefaultTaskInstanceUpdateCommand;
 import gov.loc.repository.transfer.ui.commands.TaskInstanceUpdateCommand;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
 import gov.loc.repository.transfer.ui.model.TaskInstanceHelper;
+import gov.loc.repository.transfer.ui.model.UserBean;
 import gov.loc.repository.transfer.ui.model.UserHelper;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 
@@ -93,6 +94,30 @@ public class TaskInstanceController extends AbstractRestController {
 			command = this.defaultCommand;
 		}
 		return command;
+	}
+	
+	@Override
+	protected void handleIndex(
+	        HttpServletRequest request, 
+	        ModelAndView mav,
+			JbpmContext jbpmContext, 
+			PermissionsHelper permissionsHelper, 
+			Map<String, String> urlParameterMap) throws Exception 
+	{
+		mav.addObject("contextPath", request.getContextPath());
+		if (request.getUserPrincipal() == null) {
+			mav.setViewName("redirect:/login/login.html");
+			return;
+		}
+		mav.setViewName("tasks");
+		
+		UserBean userBean = new UserBean();
+		userBean.setId(request.getUserPrincipal().getName());
+		userBean.setJbpmContext(jbpmContext);
+		
+		mav.addObject("groupTaskInstanceBeanList", userBean.getGroupTaskInstanceBeanList());
+		mav.addObject("userTaskInstanceBeanList", userBean.getUserTaskInstanceBeanList());
+		mav.addObject("currentUser", request.getUserPrincipal().getName());
 	}
 	
 	@SuppressWarnings("unchecked")

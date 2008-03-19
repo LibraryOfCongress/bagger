@@ -128,7 +128,7 @@
 
     <div id="comments">
 	    <h2>Comments</h2>
-    	#foreach($commentBean in $taskInstanceBean.processInstanceBean.commentBeanList)
+    	#foreach($commentBean in $sorter.sort($taskInstanceBean.processInstanceBean.commentBeanList, 'date:desc'))
 	    <fieldset>
 	        <legend><b>$commentBean.actorId</b></legend>
 	        <p>$commentBean.message</p>

@@ -70,6 +70,7 @@
         <h3>Variables</h3>
         <fieldset>
             <legend>Examine variables and their values specific to this workflow.</legend>
+            <form method="post" action="${requestURI}?method=put">    		
             <table cellspacing="3" cellpadding="7">
                 <thead><tr>
                     <th>Name</th>
@@ -82,26 +83,25 @@
             		<tr>
             			##At least for now, until allow update of strings
             			#if ($permissionsHelper.canUpdateVariables() && $value.class.simpleName == "String")
-            			<form method="post" action="${requestURI}?method=put">    		
-            					<td><label for="variable.${key}">$key<label></td>
-            					<td><input id="variable.${key}" type="text" name="variable.${key}" value="$value" /></td>
-            					<td><input class="button" type="submit" value="update" />*</td>
-            			</form>
+            			<td><label for="variable.${key}">$key<label></td>
+            			<td><input id="variable.${key}" type="text" name="variable.${key}" value="$value" /></td>
+            			<td><input class="button" type="submit" value="update" />*</td>
             			#else
-            				<td><label for="variable.${key}">$key</label></td>
-            			    <td><span id="variable.${key}">$value</span></td>
-            			    <td></td>
+            			<td><label for="variable.${key}">$key</label></td>
+            			<td><span id="variable.${key}">$value</span></td>
+            			<td></td>
             			#end
             		</tr>
             	#end
         	    </tbody>
             </table>
+            </form>
         </fieldset>
     </div>
     
     <div id="comments">
 	    <h2>Comments</h2>
-    	#foreach($commentBean in $processInstanceBean.commentBeanList)
+    	#foreach($commentBean in $sorter.sort($processInstanceBean.commentBeanList, 'date:desc'))
 	    <fieldset>
 	        <legend><b>$commentBean.actorId</b></legend>
 	        <p>$commentBean.message</p>

@@ -18,13 +18,11 @@ public class HomeController {
 	{
 		JbpmContext jbpmContext = (JbpmContext)req.getAttribute("jbpmcontext");
 		ModelAndView mav = new ModelAndView();
+		mav.setViewName("home");
 		mav.addObject("contextPath", req.getContextPath());
 		if (req.getUserPrincipal() == null) {
-			mav.setViewName("redirect:/login/login.html");
 			return mav;
-			
 		}
-		mav.setViewName("tasks");
 		
 		UserBean userBean = new UserBean();
 		userBean.setId(req.getUserPrincipal().getName());

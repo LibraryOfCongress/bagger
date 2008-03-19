@@ -43,6 +43,12 @@ public class ProcessInstanceController extends AbstractRestController {
 			PermissionsHelper permissionsHelper, 
 			Map<String, String> urlParameterMap) throws Exception 
 	{
+		mav.addObject("contextPath", request.getContextPath());
+		if (request.getUserPrincipal() == null) {
+			mav.setViewName("redirect:/login/login.html");
+			return;
+		}
+		
 		UserBean userBean = new UserBean();
 		userBean.setId(request.getUserPrincipal().getName());
 		userBean.setJbpmContext(jbpmContext);

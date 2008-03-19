@@ -7,8 +7,7 @@ public class TokenHelper {
 	public static TokenBean getTokenBean(long tokenId, JbpmContext jbpmContext)
 	{
 		Token token = jbpmContext.getToken(tokenId);
-		if (token == null)
-		{
+		if (token == null) {
 			return null;
 		}
 		TokenBean tokenBean = new TokenBean();
@@ -19,8 +18,7 @@ public class TokenHelper {
 	
 	public static boolean hasToken(long tokenId, JbpmContext jbpmContext)
 	{
-		if (jbpmContext.getToken(tokenId) != null)
-		{
+		if (jbpmContext.getToken(tokenId) != null){
 			return true;
 		}
 		return false;

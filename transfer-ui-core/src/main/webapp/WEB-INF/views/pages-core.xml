@@ -15,9 +15,9 @@
 		<put name="footer"                value="footer.vm" />
 	</definition>
 
-	<definition name="test" extends="base">
-		<put name="title"           value="Test" />
-		<put name="content"         value="content.vm" />
+	<definition name="home" extends="base">
+		<put name="title"           value="Home" />
+		<put name="content"         value="home.vm" />
 	</definition>
 	
 	<definition name="login" extends="base">
@@ -26,7 +26,7 @@
 	</definition>
 	
 	<definition name="tasks" extends="base">
-		<put name="title"           value="Home" />
+		<put name="title"           value="Tasks" />
 		<put name="content"         value="tasks.vm" />
 	</definition>
 	

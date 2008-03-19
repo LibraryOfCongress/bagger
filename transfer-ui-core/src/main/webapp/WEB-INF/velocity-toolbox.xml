@@ -50,5 +50,11 @@
    <key>context</key>
    <scope>request</scope>
    <class>org.apache.velocity.tools.view.tools.ContextTool</class>
+ </tool><tool>
+   <key>i18n</key>
+   <scope>request</scope>
+   <class>org.apache.velocity.tools.view.tools.ViewResourceTool</class>
+   <parameter name="bundles" value="resources"/>
  </tool>
+
 </toolbox>

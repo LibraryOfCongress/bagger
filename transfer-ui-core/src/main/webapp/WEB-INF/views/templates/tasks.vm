@@ -45,7 +45,7 @@
                 <tbody>
 			        #foreach($taskInstanceBean in $userTaskInstanceBeanList)
 			        <tr id="task${taskInstanceBean.id}" >
-				        <td><a href="./taskinstance/${taskInstanceBean.id}.html">
+				        <td><a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">
 				            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)
 				        </a></td>
 				        <td>
@@ -106,7 +106,7 @@
                 <tbody>
                     #foreach($taskInstanceBean in $groupTaskInstanceBeanList)
 			        <tr id="task${taskInstanceBean.id}" >
-				        <td><a href="./taskinstance/${taskInstanceBean.id}.html">
+				        <td><a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">
 				            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)
 				        </a></td>
 				        <td>
@@ -118,7 +118,7 @@
 				            ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
 				        </td>
 				        <td>
-				            <form method="post" action="./taskinstance/${taskInstanceBean.id}?method=put">
+				            <form method="post" action="${contextPath}/taskinstance/${taskInstanceBean.id}?method=put">
                 					<input type="hidden" name="user" value="$currentUser" />
                 					<input type="submit"  class="button" value="Assign To Me"/>
                 			</form>	
@@ -134,8 +134,9 @@
 	
 		
 	<div id="localHelp">
-        <h1>Help        </h1>
-        <p>TODO: Explain each of the following...</p>
+	    <h2>Help</h2>
+	    <fieldset>
+        <legend>Help topics related to tasks.</legend>
 	    <ul id="helpTopics">
 	        <li class="selected">
 	            <h2>User Tasks  </h2>
@@ -143,13 +144,9 @@
                      you have accepted from available group tasks...</p>
 		    </li>
             <li>
-	            <h2>Group Tasks  </h2>
-	            <p> TODO: Group Tasks are task that are available to you by
+	            <h2>Unassigned Tasks  </h2>
+	            <p> TODO: Unassigned Tasks are task that are available to you by
 		             virtue of your group membership...</p>
-		    </li>
-            <li>
-	            <h2>Process Instances  </h2>
-	            <p> TODO: A Process Instance is a ...</p>
 		    </li>
             <li>
 	            <h2>More Help  </h2>
@@ -157,6 +154,7 @@
 	            <p> TODO: For additional support please contact...</p>
 		    </li>
         </ul>
+        </fieldset>
     </div>
     
 </div>
