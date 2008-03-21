@@ -1,5 +1,4 @@
 <div id="home">
-    #set( $user = $jbpmcontext.actorId)
     <table style="height:300px;width:100%">
         <tbody valign="top"><tr>
             <td><fieldset>
@@ -40,7 +39,7 @@
                 </a>
                 <ul class="homeNav">
                     <li><a href="${contextPath}/admin/index.html#viewStats">
-                        View vital statics.</a><br/></li>
+                        View vital statistics.</a><br/></li>
                     <li><a href="${contextPath}/admin/index.html#manageSystem">
                         Manage the system processes.</a><br/></li>
                     <li><a href="${contextPath}/admin/index.html#localHelp">

@@ -1,20 +1,6 @@
 package gov.loc.repository.transfer.ui.commands;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jbpm.JbpmContext;
-
 import gov.loc.repository.transfer.ui.UIConstants;
-import gov.loc.repository.transfer.ui.controllers.PermissionsHelper;
 import gov.loc.repository.transfer.ui.controllers.TaskInstanceController;
 import gov.loc.repository.transfer.ui.controllers.VariableUpdateHelper;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
@@ -22,6 +8,18 @@ import gov.loc.repository.transfer.ui.model.UserBean;
 import gov.loc.repository.transfer.ui.model.UserHelper;
 import gov.loc.repository.transfer.ui.model.VariableBean;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
+import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jbpm.JbpmContext;
+
 
 public class DefaultTaskInstanceUpdateCommand implements
 		TaskInstanceUpdateCommand {
@@ -41,7 +39,6 @@ public class DefaultTaskInstanceUpdateCommand implements
 	
 	public void setTaskInstanceBean(TaskInstanceBean taskInstanceBean) {
 		this.taskInstanceBean = taskInstanceBean;
-
 	}
 
 	public void setModelAndView(ModelAndView mav) {
@@ -55,7 +52,6 @@ public class DefaultTaskInstanceUpdateCommand implements
 	
 	public void setPermissionsHelper(PermissionsHelper permissionsHelper) {
 		this.permissionsHelper = permissionsHelper;
-		
 	}
 	
 	public void preprocessPut() throws Exception {
@@ -65,10 +61,11 @@ public class DefaultTaskInstanceUpdateCommand implements
 	@SuppressWarnings("unchecked")
 	public void bindPut() throws Exception {
 		//Updating task's user
+		UserBean userBean = null;
 		if (request.getParameterMap().containsKey(UIConstants.PARAMETER_USER))
 		{
 			log.debug("Updating user");
-			if (! permissionsHelper.canUpdateTaskInstanceUser())
+			if (! permissionsHelper.canReassignTask())
 			{
 				mav.setError(HttpServletResponse.SC_FORBIDDEN);
 				return;
@@ -81,7 +78,6 @@ public class DefaultTaskInstanceUpdateCommand implements
 			}
 			
 			String userId = request.getParameter(UIConstants.PARAMETER_USER);
-			UserBean userBean = null;
 			if (! TaskInstanceController.NULL.equals(userId))
 			{
 				if (! UserHelper.exists(userId, jbpmContext))
@@ -101,8 +97,8 @@ public class DefaultTaskInstanceUpdateCommand implements
 		{
 			log.debug("Updating variables");
 			//Check that can update
-			if (! permissionsHelper.canUpdateTaskInstance(taskInstanceBean))
-			{
+			if (! permissionsHelper.canUpdateTask(
+			        userBean!=null?userBean.getId():"")){
 				mav.setError(HttpServletResponse.SC_FORBIDDEN);
 				return;				
 			}
@@ -116,7 +112,10 @@ public class DefaultTaskInstanceUpdateCommand implements
 			for(String key : additionalParameterMap.keySet())
 			{
 				taskInstanceBean.setVariable(key, additionalParameterMap.get(key));
-				log.debug(MessageFormat.format("Setting variable {0} with value {1}", key, additionalParameterMap.get(key).toString()));				
+				log.debug(MessageFormat.format(
+				    "Setting variable {0} with value {1}", 
+				    key, additionalParameterMap.get(key).toString()
+				));				
 			}			
 		}
 		
@@ -125,13 +124,12 @@ public class DefaultTaskInstanceUpdateCommand implements
 		{
 			log.debug("Updating transition");
 			//Check that can update
-			if (! permissionsHelper.canUpdateTaskInstance(taskInstanceBean))
-			{
+			if (! permissionsHelper.canUpdateTask(
+			        userBean!=null?userBean.getId():"")){
 				mav.setError(HttpServletResponse.SC_FORBIDDEN);
 				return;				
 			}
-			if (! taskInstanceBean.canUpdate())
-			{
+			if (! taskInstanceBean.canUpdate()){
 				mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Invalid transition");
 				return;				
 			}
@@ -144,7 +142,10 @@ public class DefaultTaskInstanceUpdateCommand implements
 				return;
 			}
 			taskInstanceBean.setTransition(transition);
-			log.debug(MessageFormat.format("Setting transition {0} for task instance {1}", transition, taskInstanceBean.getId()));
+			log.debug(MessageFormat.format(
+			    "Setting transition {0} for task instance {1}", 
+			    transition, taskInstanceBean.getId())
+			);
 			
 		}		
 	}

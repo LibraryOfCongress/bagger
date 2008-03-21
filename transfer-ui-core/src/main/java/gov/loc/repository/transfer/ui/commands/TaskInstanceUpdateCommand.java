@@ -2,9 +2,9 @@ package gov.loc.repository.transfer.ui.commands;
 
 import javax.servlet.http.HttpServletRequest;
 
-import gov.loc.repository.transfer.ui.controllers.PermissionsHelper;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
+import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
 
 import org.jbpm.JbpmContext;
 

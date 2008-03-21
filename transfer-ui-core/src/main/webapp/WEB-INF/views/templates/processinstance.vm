@@ -52,7 +52,7 @@
                         </span>
                     </td>
                     <td><span class="description">
-                        #if ($permissionsHelper.canSuspendProcessInstance())
+                        #if ($permissions.canSuspendProcess())
                             <form method="post" action="${requestURI}?method=put">    		
                         	#if ($processInstanceBean.suspended)
                         		<input type="hidden" name="suspended" value="false" />
@@ -104,13 +104,13 @@
     	#foreach($commentBean in $sorter.sort($processInstanceBean.commentBeanList, 'date:desc'))
 	    <fieldset>
 	        <legend><b>$commentBean.actorId</b></legend>
-	        <p>$commentBean.message</p>
+	        <p>$escape.html($commentBean.message)</p>
 	        <span style="float:right;">${date.format('yyyy-MM-dd hh:mm', $commentBean.date)}</span>
 	    </fieldset>
 	    <hr/>
     	#end
 
-        #if ($permissionsHelper.canAddComment())
+        #if ($permissions.canAddComment())
     	<div id="addComment">
     	    <h2>Add Comment</h2>
 			<form method="post"
@@ -136,7 +136,7 @@
         	#foreach($tokenBean in $processInstanceBean.tokenBeanList)
         		<h4>Token</h4>
         		<p>Id: $tokenBean.id</p>
-        		#if ($tokenBean.movable && $permissionsHelper.canMoveToken())
+        		#if ($tokenBean.movable && $permissions.canMoveToken())
         			<form method="post" action="${contextPath}/token/${tokenBean.id}.html?method=put">
         				<input type="hidden" 
         				    name="referer" 
@@ -170,7 +170,7 @@
         			<p>Id: $taskInstanceBean.id</p>
         			<p>Task:  $taskInstanceBean.taskBean.name</p>
         			<p>User:  #if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end</p>
-        			#if ($permissionsHelper.canUpdateTaskInstanceUser())
+        			#if ($permissions.canReassignTask())
 			
         			    <form method="post" action="${contextPath}/taskinstance/${taskInstanceBean.id}.html?method=put">
         					<input type="hidden" 

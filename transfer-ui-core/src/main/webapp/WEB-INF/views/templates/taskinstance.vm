@@ -3,10 +3,10 @@
     <ul id="localNav">
         #if ($formViewName)     <li><a href="#updateTask"  ><span> Update   </span></a></li> #end
         <li><a href="#taskDetails" ><span> Details </span></a></li>
-        #if ($permissionsHelper.canUpdateTaskInstanceUser() && $taskInstanceBean.canUpdateUserBean())
+        #if ($permissions.canReassignTask() && $task.isReassignable())
         <li><a href="#reassignTask"><span> Reassign </span></a></li> 
         #end
-        <li><a href="#comments" ><span> Comments </span></a></li>
+        <li><a href="#comments" ><span> Comments ($comments.size())</span></a></li>
         <li><a href="#localHelp"><span> Help     </span></a></li>
     </ul>
     
@@ -31,8 +31,10 @@
 			    <legend>Assign a transition for this task.</legend>
     			<select id="transition" name="transition">	
     				<option value="null">leave task as incomplete</option>
-    				#foreach ($transition in $taskInstanceBean.taskBean.leavingTransitionList)	
-    					<option value="$transition">#springMessageText("transitions.${transition}" $transition)</option>
+    				#foreach ($transition in $task.possibleTransitionNames)	
+    					<option value="$transition">
+    					    #springMessageText("transitions.${transition}" $transition)
+    					</option>
     				#end
     			</select>							
     			<input class="button" type="submit" value="submit"/>
@@ -46,68 +48,72 @@
         <fieldset>
             <legend>Examine details for this Task</legend>
             <table cellspacing="3" cellpadding="7">
-                <tr id="taskID" >
-                    <td><label for="taskID_value">Tracking ID</label></td>
-                    <td><span id="taskID_value">
-                        ${taskInstanceBean.id}
+                <tr>
+                    <td><label for="taskID">Tracking ID</label></td>
+                    <td><span id="taskID">
+                        ${task.id}
                     </span></td>
                     <td><span class="description">
                         The tasks tracking ID.
                     </span></td>
                 </tr>
-                <tr id="taskName" >
-                    <td><label for="taskName_value">Name</label></td>
-                    <td><span id="taskName_value">
-                        ${taskInstanceBean.taskBean.name}
+                <tr>
+                    <td><label for="taskName">Name</label></td>
+                    <td><span id="taskName">
+                        ${task.name}
                     </span></td>
                     <td><span class="description">
                         The title of this task.
                     </span></td>
                 </tr>
-                <tr id="taskAssignee" >
-                    <td><label for="taskAssignee_value">Task Owner</label></td>
-                    <td><span id="taskAssignee_value">
-                        #if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end
+                <tr>
+                    <td><label for="taskAssignee">Task Owner</label></td>
+                    <td><span id="taskAssignee">
+                        #if ($task.assignedUserName) $task.assignedUserName #else UNASSIGNED #end
                     </span></td>
                     <td><span class="description">
                         This persons this task is currently assigned to, if any.
                     </span></td>
                 </tr>
-                <tr id="taskVisibility" >
-                    <td><label for="taskVisibility_value">Groups</label></td>
+                <tr>
+                    <td><label for="taskVisibility_value">Groups ($groupNames.size())</label></td>
                     <td><span id="taskVisibility_value">
-                        #foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.id #end
+                        #foreach($groupName in $task.groupNames) $groupName | #end
                     </span></td>
-                    <td><span class="description">The groups this task is available to, if any.</span></td>
+                    <td><span class="description">
+                        The groups this task is available to, if any.
+                    </span></td>
                 </tr>
                 <tr id="taskStatus" >
                     <td><label for="taskStatus_value">Status</label></td>
                     <td><span id="taskStatus_value">
-                        #if ( $taskInstanceBean.ended ) Completed #else Incomplete #end
+                        #if ( $task.ended ) Completed #else Incomplete #end
                     </span></td>
                     <td><span class="description">The current status of this task.</span></td>
                 </tr>
                 <tr id="taskCreateDate" >
                     <td><label for="taskCreateDate_value">Date Created</label></td>
                     <td><span id="taskCreateDate_value">
-                        ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
+                        ${date.format('yyyy-MM-dd hh:mm', $task.dateCreated)}
                     </span></td>
                     <td><span class="description">The time at which this task was created.</span></td>
                 </tr>                    
-                #if ( $taskInstanceBean.ended )
+                #if ( $task.ended )
                 <tr id="taskCompletionDate" >
                     <td><label for="taskCompletionDate_value">Date Ended</label></td>
                     <td><span id="taskCompletionDate_value" >
-                        ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.endDate)}
+                        ${date.format('yyyy-MM-dd hh:mm', $task.dateEnded)}
                     </span></td>
-                    <td><span class="description">The time at which this task was marked as completed.</span></td>
+                    <td><span class="description">
+                        The time at which this task was marked as completed.
+                    </span></td>
                 </tr>
                 #end
             </table>
         </fieldset>
     </div>
 
-    #if ($permissionsHelper.canUpdateTaskInstanceUser() && $taskInstanceBean.canUpdateUserBean())
+    #if ($permissions.canReassignTask() && $task.isReassignable())
 	<div id="reassignTask">
 	    <h2>Reassign Task</h2>
 	    <form method="post" action="${requestURI}?method=put">
@@ -116,8 +122,8 @@
 	            <label for="taskReassingee">User</label>
     		    <select id="taskReassignee" name="user">
         			<option value="null">none</option>
-        			#foreach($userBean in $userBeanList)
-        				<option value="$userBean.id">$userBean.id</option>					
+        			#foreach($user in $users)
+        				<option value="$user.id">$user.name</option>					
         			#end				
         		</select>
         		<input class="button" type="submit" value="submit"/>
@@ -128,25 +134,25 @@
 
     <div id="comments">
 	    <h2>Comments</h2>
-    	#foreach($commentBean in $sorter.sort($taskInstanceBean.processInstanceBean.commentBeanList, 'date:desc'))
+    	#foreach($comment in $sorter.sort($comments, 'dateCreated:desc'))
 	    <fieldset>
-	        <legend><b>$commentBean.actorId</b></legend>
-	        <p>$commentBean.message</p>
-	        <span style="float:right;">${date.format('yyyy-MM-dd hh:mm', $commentBean.date)}</span>
+	        <legend><b>$comment.userName</b></legend>
+	        <p>$escape.html($comment.message)</p>
+	        <span style="float:right;">${date.format('yyyy-MM-dd hh:mm', $comment.dateCreated)}</span>
 	    </fieldset>
 	    <hr/>
     	#end
 
-    #if ($permissionsHelper.canAddComment())
+    #if ($permissions.canAddComment())
     	<div id="addComment">
     	    <h2>Add Comment</h2>
 			<form method="post"
-			     action="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}/comment.html">
+			     action="${contextPath}/processinstance/${task.processIdRef}/comment.html">
 			    <table style="width:100%">
 			        <tr><td align="center">
 				        <input type="hidden" 
 				            name="referer" 
-				            value="/taskinstance/${taskInstanceBean.id}.html#comments" />
+				            value="/taskinstance/${task.id}.html#comments" />
 				        <textarea name="message" cols="50" rows="15"></textarea>				
 				    </td></tr>
 				    <tr><td align="right">

@@ -3,7 +3,9 @@
   - passed from the tiles page layouts.
 *#  
 #macro( block $name )
-  #parse($tiles.getAttribute($name))
+  #if ($tiles.getAttribute($name))
+    #parse($tiles.getAttribute($name))
+  #end
 #end
 
 #*

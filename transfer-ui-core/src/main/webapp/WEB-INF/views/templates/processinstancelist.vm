@@ -55,9 +55,7 @@
 			        #foreach($processInstanceBean in $processInstanceBeanList)
 			        <tr id="workflow_${processInstanceBean.id}" >
 				        <td>
-                            #set($packageName = "none")
-                            #set($packageName = $processInstanceBean.packageName)
-				            $packageName
+				            #i18n( $processInstanceBean.packageName "none")
 				        </td>
 				        <td>
                             <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
@@ -115,11 +113,10 @@
                 <tbody>
 		    	#foreach($processInstanceBean in $suspendedProcessInstanceBeanList)
 		    	    <tr>
-    				    <td> $packageName </td>
+    				    <td>#i18n($processInstanceBean.packageName  "none")</td>
         				<td>
         		            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
-        		            #set($packageName = "none")
-        		            #set($packageName = $processInstanceBean.packageName)
+        		            
         		            <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
         		                #springMessage($code) (${processInstanceBean.id})
         		            </a>				

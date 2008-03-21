@@ -2,7 +2,7 @@
   <form action="/cgi-bin/query" method="post" id="search">
     <label for="searchtext">search site</label>
     <br/>
-    <input name="search" id="searchtext" size="18" type="text" value="  Not Yet Available  " disabled="disabled"></input>
+    <input name="search" id="searchtext" size="16" type="text" value="  Not Yet Available  " disabled="disabled"></input>
     <input class="button" id="search_button" name="search_button" type="submit" value="SEARCH" disabled="disabled"/>
   </form>
 </li>

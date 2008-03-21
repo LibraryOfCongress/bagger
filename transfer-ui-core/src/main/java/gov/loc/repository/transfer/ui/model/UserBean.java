@@ -111,7 +111,9 @@ public class UserBean extends AbstractWorkflowBean {
 
 		IdentitySession identitySession = new IdentitySession(this.jbpmContext.getSession());
 		
-		List<TaskInstance> taskList = jbpmContext.getGroupTaskList(identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation"));
+		List<TaskInstance> taskList =  jbpmContext.getGroupTaskList(
+		    identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation")
+		);
 		List<TaskInstanceBean> taskInstanceBeanList = new ArrayList<TaskInstanceBean>();
 		Iterator<TaskInstance> iter = taskList.iterator();
 		while (iter.hasNext())

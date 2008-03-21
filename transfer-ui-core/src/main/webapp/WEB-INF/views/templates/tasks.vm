@@ -1,14 +1,20 @@
 <div id="tasks">
     <ul id="localNav">
-        <li><a href="#userTasks"            ><span> My Tasks ( $userTaskInstanceBeanList.size() ) </span></a></li>
-        <li><a href="#groupTasks"           ><span> Unassigned ( $groupTaskInstanceBeanList.size() )  </span></a></li>
-        <li><a href="#localHelp"            ><span> Help                  </span></a></li>
+        <li><a href="#userTasks">
+            <span> My Tasks ( $userTasks.size() ) </span>
+        </a></li>
+        <li><a href="#groupTasks">
+            <span> Unassigned ( $groupTasks.size() )  </span>
+        </a></li>
+        <li><a href="#localHelp">
+            <span> Help                  </span>
+        </a></li>
     </ul>
 	<div id="userTasks">
 		<h2>My Tasks</h2>
         <fieldset>
             <legend>These pending tasks still require completion.</legend>
-            #if( $userTaskInstanceBeanList.size() > 10 )
+            #if( $userTasks.size() > 10 )
 		    <table>
 		        <tbody><tr><td>
                     <form id="userTasks_pager" class="pager">
@@ -34,27 +40,25 @@
 	                <tr id="taskDetailsHeader">
                         <th>Name</th>
                         <th>Package</th>
-                        <th>Create date</th>
+                        <th>Date Created</th>
                     </tr>
                 </thead>
                 <tfoot><tr id="taskDetailsFooter">
                         <th>Name</th>
                         <th>Package</th>
-                        <th>Create date</th>
+                        <th>Date Created</th>
                 </tr></tfoot>
                 <tbody>
-			        #foreach($taskInstanceBean in $userTaskInstanceBeanList)
-			        <tr id="task${taskInstanceBean.id}" >
-				        <td><a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">
-				            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)
+			        #foreach($task in $userTasks)
+			        <tr id="task${task.id}" >
+				        <td><a href="${contextPath}/taskinstance/${task.id}.html">
+				            ${task.name} ($task.id)
 				        </a></td>
 				        <td>
-				            #set($packageName = "none")
-				            #set($packageName = $taskInstanceBean.processInstanceBean.packageName)
-				            $packageName
+				            #i18n($task.packageName 'unnamed')
 				        </td>
 				        <td>
-				            ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
+				            ${date.format('yyyy-MM-dd hh:mm', $task.dateCreated)}
 				        </td>				        
 				    </tr>					
 			        #end
@@ -67,7 +71,7 @@
 		<h2>Unassigned Tasks</h2>
 		<fieldset>
             <legend>These unassigned tasks are available for anyone to complete.</legend>
-            #if( $groupTaskInstanceBeanList.size() > 10)
+            #if( $groupTasks.size() > 10)
 		    <table>
 		        <tbody><tr><td>
                     <form id="unassignedTasks_pager" class="pager">
@@ -104,22 +108,20 @@
                         <th>Accept This Task</th>
                 </tr></tfoot>
                 <tbody>
-                    #foreach($taskInstanceBean in $groupTaskInstanceBeanList)
-			        <tr id="task${taskInstanceBean.id}" >
-				        <td><a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">
-				            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)
+                    #foreach($task in $groupTasks)
+			        <tr id="task${task.id}" >
+				        <td><a href="${contextPath}/taskinstance/${task.id}.html">
+				            ${task.name} ($task.id)
 				        </a></td>
 				        <td>
-				            #set($packageName = "none")
-				            #set($packageName = $taskInstanceBean.processInstanceBean.packageName)
-				            $packageName
+				            #i18n( $task.packageName 'unnamed' )
 				        </td>
 				        <td>
-				            ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
+				            ${date.format('yyyy-MM-dd hh:mm', $task.dateCreated)}
 				        </td>
 				        <td>
-				            <form method="post" action="${contextPath}/taskinstance/${taskInstanceBean.id}?method=put">
-                					<input type="hidden" name="user" value="$currentUser" />
+				            <form method="post" action="${contextPath}/taskinstance/${task.id}?method=put">
+                					<input type="hidden" name="user" value="${user.name}" />
                 					<input type="submit"  class="button" value="Assign To Me"/>
                 			</form>	
 				        </td>				        

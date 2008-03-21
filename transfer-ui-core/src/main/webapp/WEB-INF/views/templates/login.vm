@@ -26,7 +26,8 @@
                     </table>
             </fieldset>
         </form>
-        <span id="loginMessage"></span>
+        <span id="loginMessage">
+        </span>
     </div>
     <div id="loginHelp">
         <h1>Help        </h1>

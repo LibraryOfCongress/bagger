@@ -1,7 +1,6 @@
-package gov.loc.repository.transfer.ui.controllers;
+package gov.loc.repository.transfer.ui.utilities ;
 
 import gov.loc.repository.transfer.ui.UIConstants;
-import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,57 +10,42 @@ public class PermissionsHelper {
 		this.req = req;
 	}
 	
-	public boolean canAddComment()
-	{
+	public boolean canAddComment() {
 		return isLoggedIn();
 	}
-	
-	public boolean canAdministerJobListener()
-	{
+	public boolean canAdministerJobListener() {
 		return isAdministrator();
 	}
-	
-	public boolean canCreateProcessInstance()
-	{
+	public boolean canStartProcess() {
 		return isLoggedIn();
 	}
-	
-	public boolean canUpdateTaskInstanceUser()
-	{
+	public boolean canReassignTask() {
 		return isLoggedIn();
 	}
-	
-	public boolean canUpdateVariables()
-	{
+	public boolean canUpdateVariables() {
 		return isAdministrator();
 	}
-	
-	public boolean canMoveToken()
-	{
+	public boolean canMoveToken() {
 		return isAdministrator();
 	}
-	
-	public boolean canSuspendProcessInstance()
-	{
-		return this.isAdministrator();
+	public boolean canSuspendProcess() {
+		return isAdministrator();
 	}
-	
-	public boolean canUpdateTaskInstance(TaskInstanceBean taskInstanceBean)
-	{
-		return (isAdministrator() || (isLoggedIn() && taskInstanceBean.getUserBean() != null && req.getUserPrincipal().getName().equals(taskInstanceBean.getUserBean().getId())));
+	public boolean canUpdateTask(String userName){
+		return ( 
+		    isAdministrator()  || (  
+		    isLoggedIn()  &&
+		    req.getUserPrincipal().getName().equals(
+		        userName
+		    ))
+		);
 	}
-	
-	private boolean isAdministrator()
-	{
+	private boolean isAdministrator() {
 		return req.isUserInRole(UIConstants.ROLE_ADMINISTRATOR);
 	}
-	
-	private boolean isLoggedIn()
-	{
-		if (req.getUserPrincipal() != null)
-		{
+	private boolean isLoggedIn() {
+		if (req.getUserPrincipal() != null){
 			return true;
-		}
-		return false;
+		} return false;
 	}
 }
