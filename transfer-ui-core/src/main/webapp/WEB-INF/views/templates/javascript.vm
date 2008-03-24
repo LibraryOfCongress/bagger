@@ -10,6 +10,7 @@
         
         //TABLES
         $("#dataTable").tablesorter({widgets: ['zebra']});
+        
         //TABLE userTasks
         $("#userTasks_table").tablesorter({
             widgets: ['zebra']
@@ -18,6 +19,7 @@
             positionFixed:false,
             container: $("#userTasks_pager")
         });
+        
         //TABLE groupTasks
         $("#groupTasks_table").tablesorter({
             widgets: ['zebra']
@@ -27,7 +29,7 @@
             container: $("#groupTasks_pager")
         });
         
-        //TABLE suspendedProcessInstances
+        //TABLE activeProcessInstances
         $("#activeWorkflows_table").tablesorter({
             widgets: ['zebra']
         }).tablesorterPager({
@@ -35,6 +37,7 @@
             positionFixed:false,
             container: $("#activeWorkflows_pager")
         });
+        
         //TABLE suspendedProcessInstances
         $("#suspendedWorkflows_table").tablesorter({
             widgets: ['zebra']
@@ -43,6 +46,19 @@
             positionFixed:false,
             container: $("#suspendedWorkflows_pager")
         });
+        
+        //TABLE systemProcesses
+        $("#systemProcesses_table").tablesorter({
+            widgets: ['zebra']
+        }).tablesorterPager({
+            seperator:" of ",
+            positionFixed:false,
+            container: $("#systemProcesses_pager")
+        });
+        //TABLE systemProcesses
+        $("#systemInfo_table").tablesorter({
+            widgets: ['zebra']
+        })
         
         //HELP
         $("#helpTopics > li").click(function() {

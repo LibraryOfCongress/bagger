@@ -23,31 +23,29 @@ public class JmsCompletedJobListenerController
 	}	
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/services/listener*")
+	@RequestMapping("/admin/listener*")
 	public ModelAndView handleRequest(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-		PermissionsHelper permissionsHelper = new PermissionsHelper(req);
+		PermissionsHelper permissions = new PermissionsHelper(req);
 		if ((req.getParameter("start") != null || req.getParameter("stop") != null)
-		    && ! permissionsHelper.canAdministerJobListener())			
-		{
+		    && ! permissions.canAdministerJobListener()){
 			resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		if (req.getParameter("start") != null && ! this.listener.isStarted())
-		{
+		if (req.getParameter("start") != null && ! this.listener.isStarted()) {
 			this.listener.start();
 		}
-		else if (req.getParameter("stop") != null && this.listener.isStarted())
-		{
+		else if (req.getParameter("stop") != null && this.listener.isStarted()) {
 			this.listener.stop();
 		}
 		
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("contextPath", req.getContextPath());
 		mav.addObject("listener", this.listener);
-		mav.addObject("permissionsHelper", permissionsHelper);
+		mav.addObject("permissions", permissions);
 				
-		mav.setViewName("/services/listener");
+		mav.setViewName("redirect:/admin/index.html");
 		return mav;		
 	}
 
+    
 }

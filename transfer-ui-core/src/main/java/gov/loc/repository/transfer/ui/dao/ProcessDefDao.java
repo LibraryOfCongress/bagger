@@ -15,18 +15,19 @@ import org.springframework.stereotype.Repository;
  * @version $Rev$
  */
 @Repository
-public class ProcessDefDao extends JbpmDao<ProcessDef, String>{
+public class ProcessDefDao extends JbpmDao<ProcessDef, Long>{
     
     protected static final Log log = LogFactory.getLog(ProcessDefDao.class);	
 	
     public ProcessDefDao() { }
     
-    public ProcessDef find(String id){
+    public ProcessDef find(Long id){
         this.log.debug("Looking for process definition with id "+ id);
         ProcessDef processDef = null;
-        try{
+        try{//TODO FIXME: this shouldnt' be id.toString it should be the name of the processDef OR we
+            //need a different method from jbpm to get it by its hibernate id
             org.jbpm.graph.def.ProcessDefinition jbpmProcessDef = 
-                getJbpmContext().getGraphSession().findLatestProcessDefinition(id);
+                getJbpmContext().getGraphSession().findLatestProcessDefinition(id.toString()); 
             processDef = toProcessDef(jbpmProcessDef);
         }catch(Exception e){
             log.error(e.getMessage());

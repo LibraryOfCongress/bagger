@@ -6,6 +6,6 @@ package gov.loc.repository.transfer.ui.models;
  * @author Chris Thatcher &lt;&gt;
  * @version $Rev$
  */
-public class ProcessDef extends Base<String>{
+public class ProcessDef extends Base<Long>{
     
 }

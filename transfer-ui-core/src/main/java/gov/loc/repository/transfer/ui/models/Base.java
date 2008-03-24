@@ -9,14 +9,14 @@ import java.io.Serializable;
  */
 public class Base<K extends Serializable> {
     
-	protected Long id;
+	protected K id;
 	protected String name;
 	
-	public Long getId() {
+	public K getId() {
 		return this.id;
 	}
 	
-	public void setId(Long id) {
+	public void setId(K id) {
 		this.id = id;
 	}
 	

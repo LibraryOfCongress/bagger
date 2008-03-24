@@ -7,7 +7,7 @@
     <div id="loginForm" >
         <form action="j_security_check"  method="post">
             <fieldset title="Credentials">
-			        <legend>Login</legend>
+			        <legend><b>Login</b></legend>
                     <table border="0" cellpadding="3" cellspacing="3"  >
                         <tr>
                             <td><label>Username</label>:</td>
@@ -35,43 +35,41 @@
 	    <ul id="helpTopics">
 	        <li class="selected">
 	            <h2>Logging In  </h2>
-                <p>
-                    You can use the usernames and passwords below to get a feel for the system. 
-                </p>
-                    <table>
-            	        <thead>
-                    		<tr>
-                    			<th>Username</th>
-                    			<th>Password</th>
-                    			<th>Roles</th>
-                    		</tr>
-                    	</thead>
-                    	<tr>
-                    		<td>ray</td>
-                    		<td>ray</td>
-                    		<td>ndnp-participant</td>
-                    	</tr>
-                    	<tr>
-                    		<td>myron</td>
-                    		<td>myron</td>
-                    		<td>ndnp-participant</td>
-                    	</tr>
-                    	<tr>
-                    		<td>scott</td>
-                    		<td>scott</td>
-                    		<td>ndnp-participant<br/>ndnp-administrator<br/>wdl-participant<br/>wdl-administrator</td>
-                    	</tr>
-                        <tr>
-                    		<td>brian</td>
-                    		<td>brian</td>
-                    		<td>ndnp-participant</td>    
-                        </tr>
-                    	<tr>
-                    		<td>dan</td>
-                    		<td>dan</td>
-                    		<td>wdl-participant</td>
-                    	</tr>
-                    </table>
+                <p> You can use the usernames and passwords below to get a feel for the system.  </p>
+                <table>
+        	        <thead>
+                		<tr>
+                			<th>Username</th>
+                			<th>Password</th>
+                			<th>Roles</th>
+                		</tr>
+                	</thead>
+                	<tr>
+                		<td>ray</td>
+                		<td>ray</td>
+                		<td>ndnp-participant</td>
+                	</tr>
+                	<tr>
+                		<td>myron</td>
+                		<td>myron</td>
+                		<td>ndnp-participant</td>
+                	</tr>
+                	<tr>
+                		<td>scott</td>
+                		<td>scott</td>
+                		<td>ndnp-participant<br/>ndnp-administrator<br/>wdl-participant<br/>wdl-administrator</td>
+                	</tr>
+                    <tr>
+                		<td>brian</td>
+                		<td>brian</td>
+                		<td>ndnp-participant</td>    
+                    </tr>
+                	<tr>
+                		<td>dan</td>
+                		<td>dan</td>
+                		<td>wdl-participant</td>
+                	</tr>
+                </table>
             </li>
             <li>
 	            <h2>More Help  </h2>

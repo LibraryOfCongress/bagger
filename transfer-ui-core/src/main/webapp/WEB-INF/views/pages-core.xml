@@ -45,5 +45,13 @@
 		<put name="content"         value="processinstance.vm" />
 	</definition>
 
-
+	<definition name="admin" extends="base">
+		<put name="title"           value="Admin Panel" />
+		<put name="content"         value="admin.vm" />
+	</definition>
+	
+	<definition name="reports" extends="base">
+		<put name="title"           value="Reports" />
+		<put name="content"         value="reports.vm" />
+	</definition>
 </tiles-definitions> 

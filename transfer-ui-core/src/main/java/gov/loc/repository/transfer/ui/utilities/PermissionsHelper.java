@@ -40,10 +40,10 @@ public class PermissionsHelper {
 		    ))
 		);
 	}
-	private boolean isAdministrator() {
+	public boolean isAdministrator() {
 		return req.isUserInRole(UIConstants.ROLE_ADMINISTRATOR);
 	}
-	private boolean isLoggedIn() {
+	public boolean isLoggedIn() {
 		if (req.getUserPrincipal() != null){
 			return true;
 		} return false;
