@@ -59,7 +59,7 @@
 				        </td>
 				        <td>
                             <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
-				            #I18N( "processdefinitions" ${processInstanceBean.processDefinitionBean.id} )
+				            #springMessageText("processdefinitions.${processInstanceBean.processDefinitionBean.id}" "???")
                             (${processInstanceBean.id}) </a>
                         </td>
 				        <td>
@@ -136,7 +136,7 @@
 				<form method="post" action="${contextPath}/processdefinition/${processDefinitionBean.id}.html">
                     <fieldset title="Start a New Transfer Workflow">
 			            <legend>
-        		            #I18N( "processdefinitions" ${processInstanceBean.processDefinitionBean.id} )
+        		            #springMessageText( "processdefinitions.${processInstanceBean.processDefinitionBean.id}" "???")
         		            (${processDefinitionBean.id})
         		        </legend>
 			            <input type="hidden" name="referer" value="/index.html" />

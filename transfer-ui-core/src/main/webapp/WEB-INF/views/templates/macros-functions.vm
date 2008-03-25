@@ -27,5 +27,5 @@
 *#
 #macro( I18N  $resourceMessageBase $resourceMessageCode)
     #set ($code = "${resourceMessageBase}.${resourceMessageCode}")
-    #springMessage($code)
+    #springMessageText($code)
 #end
