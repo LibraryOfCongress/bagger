@@ -1,4 +1,4 @@
-<Context reloadable="true" antiJARLocking="true">
+<Context reloadable="true" antiJARLocking="true" antiResourceLocking="true">
 <Realm className="org.apache.catalina.realm.JDBCRealm" 
 	driverName="org.postgresql.Driver"
 	connectionURL="jdbc:postgresql://ac:5432/justin2_jbpm32"

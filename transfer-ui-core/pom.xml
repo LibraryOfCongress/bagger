@@ -28,6 +28,9 @@
          <resource>
            <filtering>true</filtering>
            <directory>src/configuration/common</directory>
+           <excludes>
+             <exclude>**/META-INF/**</exclude>
+           </excludes>           
          </resource>
          <resource>
            <filtering>true</filtering>
