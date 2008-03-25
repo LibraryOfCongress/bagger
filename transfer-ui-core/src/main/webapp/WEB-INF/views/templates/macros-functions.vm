@@ -23,13 +23,9 @@
 #end
 
 #*
-  -The i18n macro needs to be completed, but for now 
-  - simplifies providing default strings
+  -The i18n macro to simplify working with spring and providing defaults
 *#
-#macro( i18n  $string $default)
-  #if($string) 
-    $string 
-  #else
-   $default
-  #end 
+#macro( I18N  $resourceMessageBase $resourceMessageCode)
+    #set ($code = "${resourceMessageBase}.${resourceMessageCode}")
+    #springMessage($code)
 #end

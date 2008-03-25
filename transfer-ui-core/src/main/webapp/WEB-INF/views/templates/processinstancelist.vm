@@ -55,12 +55,12 @@
 			        #foreach($processInstanceBean in $processInstanceBeanList)
 			        <tr id="workflow_${processInstanceBean.id}" >
 				        <td>
-				            #i18n( $processInstanceBean.packageName "none")
+    				    #if($processInstanceBean.packageName) $processInstanceBean.packageName #else none #end
 				        </td>
 				        <td>
                             <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
-				            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
-                            #springMessage($code) (${processInstanceBean.id}) </a>
+				            #I18N( "processdefinitions" ${processInstanceBean.processDefinitionBean.id} )
+                            (${processInstanceBean.id}) </a>
                         </td>
 				        <td>
 				            ${date.format('yyyy-MM-dd hh:mm', $processInstanceBean.startDate)}
@@ -113,12 +113,12 @@
                 <tbody>
 		    	#foreach($processInstanceBean in $suspendedProcessInstanceBeanList)
 		    	    <tr>
-    				    <td>#i18n($processInstanceBean.packageName  "none")</td>
+    				    <td>
+    				    #if($processInstanceBean.packageName) $processInstanceBean.packageName #else none #end
+    				    </td>
         				<td>
-        		            #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
-        		            
         		            <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
-        		                #springMessage($code) (${processInstanceBean.id})
+        		                (${processInstanceBean.id})
         		            </a>				
         				</td>	
     				</tr>
@@ -132,11 +132,13 @@
 	<div id="newWorkflow">
 		<h2>Workflows Types</h2>
 			#foreach($processDefinitionBean in $processDefinitionBeanList)
-				#set ($code = "processdefinitions.${processDefinitionBean.id}")
 			<li>
 				<form method="post" action="${contextPath}/processdefinition/${processDefinitionBean.id}.html">
                     <fieldset title="Start a New Transfer Workflow">
-			            <legend>#springMessage($code) (${processDefinitionBean.id})</legend>
+			            <legend>
+        		            #I18N( "processdefinitions" ${processInstanceBean.processDefinitionBean.id} )
+        		            (${processDefinitionBean.id})
+        		        </legend>
 			            <input type="hidden" name="referer" value="/index.html" />
     					<input type="submit" class="button" value="start"/>
     					<label>Creating a new Transfer Workflow allows tracking a new transfer process.</label>

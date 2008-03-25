@@ -1,0 +1,111 @@
+<div id="tasks">
+    <ul id="localNav">
+        <li><a href="#reports">
+            <span>Reports </span>
+        </a></li>
+        <li><a href="#createReport">
+            <span>Create </span>
+        </a></li>
+        <li><a href="#localHelp">
+            <span> Help  </span>
+        </a></li>
+    </ul>
+	<div id="reports">
+		<h2>Reports</h2>
+        <fieldset>
+            <legend><b>Available Basic Reports</b></legend>
+            #if( $reports.size() > 10 )
+		    <table>
+		        <tbody><tr><td>
+                    <form id="reports_pager" class="pager">
+                		<img src="${contextPath}/images/icons/first.png" class="first"/>
+                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
+                		<label for="reports_pagedisplay">Showing page </label>
+                		<input id="reports_pagedisplay" type="text" class="pagedisplay"/>
+                		<img src="${contextPath}/images/icons/next.png" class="next"/>
+                		<img src="${contextPath}/images/icons/last.png" class="last"/>
+                		<label for="reports_pagesize">Results per page: </label>
+                		<select id="reports_pagesize" class="pagesize">
+                			<option selected="selected"  value="10">10</option>
+                			<option value="20">20</option>
+                			<option value="30">30</option>
+                			<option  value="40">40</option>
+                		</select>
+                    </form>
+                </td></tr></tbody>
+            </table>
+            #end
+	        <table id="reports_table" class="tablesorter pageable"  >
+	            <thead><tr>
+                    <th> Name </th>
+                    <th> Description </th>
+                </tr></thead>
+                <tfoot><tr>
+                    <th> Name </th>
+                    <th> Description </th>
+                </tr></tfoot>
+                <tbody>
+			        #foreach($report in $reports)
+			        <tr id="report_${report.id}" >
+				        <td><a href="${contextPath}/report/${report.id}.html">
+				            <b>${report.name} ($report.id)</b></a>
+				        </td>
+				        <td><p>${report.description}</p></td>     
+				    </tr>					
+			        #end
+			    </tbody>
+		    </table>
+		</fieldset>
+	</div>
+   		
+   	<div id="createReport">
+        <table style="height:300px;width:100%">
+            <tbody valign="top"><tr>
+                <td><fieldset>
+                    <legend><b>Create a New Report (* Not Yet Available *)</b></legend>
+                    <img style="float:left;" src="${contextPath}/images/chart_03.png"/>
+                    <form action="${contextPath}/reports/create" method="post">
+                        <table><tbody>
+                            <tr>
+                                <td><label for="newReportName">New Report Name</label></td>
+                                <td><input id="newReportName" name="name" type="text" value=""
+                                    disabled="disabled"/></td>
+                            </tr>
+                            <tr>
+                                <td><label for="newReportDescription">Description</label></td>
+                                <td><input id="newReportDescription" name="description" type="text" value=""
+                                    disabled="disabled"/></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input id="createReportButton" type="submit" class="button" value="create" 
+                                    disabled="disabled"/></td>
+                            </tr>
+                        </tbody></table>
+                    </form>
+                </fieldset></td>
+                <hr/>
+            </tr></tbody>
+        </table>
+    </div>
+		
+	
+	<div id="localHelp">
+	    <h2>Help</h2>
+	    <fieldset>
+        <legend><b>Help topics related to Reports.</b></legend>
+	    <ul id="helpTopics">
+	        <li class="selected">
+	            <h2>Reports  </h2>
+	            <p> TODO: Reports are ...</p>
+		    </li>
+            <li>
+	            <h2>More Help  </h2>
+	            <p> TODO: If you need more help, you can...</p>
+	            <p> TODO: For additional support please contact...</p>
+		    </li>
+        </ul>
+        </fieldset>
+    </div>
+    
+</div>

@@ -23,8 +23,7 @@
                 <tr id="workflowType" >
                     <td><label for="workflowType_value">Type</label></td>
                     <td><span id="workflowType_value">
-                        #set ($code = "processdefinitions.${processInstanceBean.processDefinitionBean.id}")
-                        #springMessage($code)
+                        #I18N("processdefinitions" ${processInstanceBean.processDefinitionBean.id})
                     </span></td>
                     <td><span class="description">
                     </span></td>
