@@ -124,7 +124,7 @@ div#topnav	{
 	margin: 0 0 0 0px;
 	padding-top: 10px;
 	border: 0;
-	background: #fff url(../images/line_top.gif) top left no-repeat;
+	background: #fff url(../images/line_bottom.gif) top left no-repeat;
 }
 div#topnav h2{
 	float:left;
@@ -138,22 +138,21 @@ div#topnav h2 a{
 }
 div#topnav ul#menu	{
 	height: 40px;
-	width: 750px;
 	margin: 0;
-	padding: 0;
+	padding: 0 10px 10px 0;
 	position: relative;
+	float:right;
 }
 div#topnav ul#menu li {
-	margin: 0;
-	padding: 0;
 	list-style: none;
-	position: absolute;
-	top: -10px;
+	position: relative;
+	display:inline;
+	width: 40px;
 }
 ul#menu li, ul#menu a {
-	height: 20px;
+	/*height: 20px;
 	display: block;
-	margin: 37px 0 0 0;
+	margin: 37px 0 0 0;*/
 }
 div#topnav ul#menu li a {
 	text-decoration: none;
@@ -173,11 +172,11 @@ div#topnav form {
 	left: 212px; 
 	width: 55px;
 }*/
-#global_home	{left: 200px; width: 55px;}
+/*#global_home	{left: 200px; width: 55px;}
 #global_tasks	{left: 255px; width: 55px;}
 #global_workflows	{left: 318px; width: 55px;}
 #global_admin {left: 395px; width: 50px;}
-#global_help {left: 450px; width: 50px;}
+#global_help {left: 450px; width: 50px;}*/
 
 label {
     margin:0 0 0 -150px;
@@ -197,7 +196,7 @@ form input.button,  form td input.button{
 /* bread crumb  navigation  */
 #crumb_nav {
 	clear: both;
-	height: 46px;
+	height: 31px;
 	padding: 0px 0px 0px 15px;
 	color: #fff;
 	background-color: #6699cc;
@@ -232,6 +231,7 @@ form input.button,  form td input.button{
 	padding: 0px 20px 0px 0px;
 	font:70% Verdana, Helvetica, sans-serif;
 	font-weight: 100;
+	margin:-15px 0 0 0;
 }
 /* crumb nav ends*/
 

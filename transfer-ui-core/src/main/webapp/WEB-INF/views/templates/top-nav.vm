@@ -18,6 +18,6 @@
     <li id="global_help">
       <a href="${contextPath}/reports/index.html"> ${i18n.reports} </a>
     </li>
-    #block("search")
+    ##block("search")
   </ul>
 </div>

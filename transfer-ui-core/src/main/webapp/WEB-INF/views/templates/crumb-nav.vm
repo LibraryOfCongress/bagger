@@ -1,6 +1,11 @@
 <div id="crumb_nav">
     <a name="page_content"></a>
-    <h1> $tiles.getAttribute('title') </h1>
+    <h1> 
+        $tiles.getAttribute('title') 
+        #if ($task)
+            &nbsp;&gt;&nbsp;  ${task.id}
+        #end
+    </h1>
     <div id="crumb">
         #if ($jbpmcontext.actorId)
             <span>&nbsp;|&nbsp;</span>
