@@ -41,34 +41,34 @@
                 		<tr>
                 			<th>Username</th>
                 			<th>Password</th>
-                			<th>Roles</th>
+                			<th>Security Roles</th>
+                			<th>Groups</th>
                 		</tr>
                 	</thead>
                 	<tr>
                 		<td>ray</td>
                 		<td>ray</td>
-                		<td>ndnp-participant</td>
+                		<td>participant</td>
+                		<td>ndnp-qr</td>
                 	</tr>
                 	<tr>
                 		<td>myron</td>
                 		<td>myron</td>
-                		<td>ndnp-participant</td>
+                		<td>participant</td>
+                		<td>ndnp-qr</td>
                 	</tr>
                 	<tr>
                 		<td>scott</td>
                 		<td>scott</td>
-                		<td>ndnp-participant<br/>ndnp-administrator<br/>wdl-participant<br/>wdl-administrator</td>
+                		<td>participant<br/>administrator</td>
+                		<td>ndnp-sysadmin</td>                		
                 	</tr>
                     <tr>
                 		<td>brian</td>
                 		<td>brian</td>
-                		<td>ndnp-participant</td>    
+                		<td>participant</td>
+                		<td>ndnp-ingest</td>                		                		    
                     </tr>
-                	<tr>
-                		<td>dan</td>
-                		<td>dan</td>
-                		<td>wdl-participant</td>
-                	</tr>
                 </table>
             </li>
             <li>
