@@ -55,7 +55,7 @@
 				            ${task.name} ($task.id)
 				        </a></td>
 				        <td>
-    				    #if( $task.packageName)  $task.packageName #{else} unnamed #end
+    				    #if( $task.packageName)  $task.packageName #else unnamed #end
 				        </td>
 				        <td>
 				            ${date.format('yyyy-MM-dd hh:mm', $task.dateCreated)}
@@ -114,7 +114,7 @@
 				            ${task.name} ($task.id)
 				        </a></td>
 				        <td>
-    				    #if( $task.packageName)  $task.packageName #{else} unnamed #end
+    				    #if( $task.packageName)  $task.packageName #else unnamed #end
 				        </td>
 				        <td>
 				            ${date.format('yyyy-MM-dd hh:mm', $task.dateCreated)}
