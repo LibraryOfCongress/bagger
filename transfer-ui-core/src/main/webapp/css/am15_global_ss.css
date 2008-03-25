@@ -119,7 +119,7 @@ img {
 	color:#333;
 }/*  top navigation    */	
 div#topnav	{
-	height: 55px;
+	height: 45px;
 	width: 750px;
 	margin: 0 0 0 0px;
 	padding-top: 10px;
@@ -137,9 +137,8 @@ div#topnav h2 a{
 	text-decoration:none;
 }
 div#topnav ul#menu	{
-	height: 40px;
 	margin: 0;
-	padding: 0 10px 10px 0;
+	padding: 25px 10px 0 0;
 	position: relative;
 	float:right;
 }
