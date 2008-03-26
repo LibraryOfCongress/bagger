@@ -13,6 +13,8 @@ import gov.loc.repository.transfer.ui.models.Task;
 import gov.loc.repository.transfer.ui.models.User;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
+
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -55,11 +57,6 @@ public class TaskInstanceController extends AbstractRestController {
 			PermissionsHelper permissionsHelper, 
 			Map<String, String> urlParameterMap) throws Exception 
 	{   
-		mav.addObject("contextPath", request.getContextPath());
-		if (request.getUserPrincipal() == null) {
-			mav.setViewName("redirect:/login/login.html");
-			return;
-		}
 		mav.setViewName("tasks");
 		//Add the user to the view
 		Map params = new HashMap();

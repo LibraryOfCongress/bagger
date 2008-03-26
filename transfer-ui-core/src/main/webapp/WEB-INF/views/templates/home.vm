@@ -7,11 +7,11 @@
                     <img style="float:left;" src="${contextPath}/images/chart_00.png" />
                 </a>
                 <ul class="homeNav">
-                    <li><a href="${contextPath}/taskinstance/index.html#userTasks">
+                    <li><a href="${contextPath}/taskinstance/index.html?ref=userTasks#userTasks">
                         See all of my current tasks.</a><br/></li>
-                    <li><a href="${contextPath}/taskinstance/index.html#groupTasks">
+                    <li><a href="${contextPath}/taskinstance/index.html?ref=groupTasks#groupTasks">
                         See all tasks that are unassigned.</a><br/></li>
-                    <li><a href="${contextPath}/taskinstance/index.html#localHelp">
+                    <li><a href="${contextPath}/taskinstance/index.html?ref=localHelp#localHelp">
                         Read the available help docs.</a><br/></li>
                 </ul>
             </fieldset><hr/></td>
@@ -21,13 +21,13 @@
                     <img style="float:left;" src="${contextPath}/images/chart_01.png" />
                 </a>
                 <ul class="homeNav">
-                    <li><a href="${contextPath}/processinstance/index.html#activeWorkflows">
+                    <li><a href="${contextPath}/processinstance/index.html?ref=activeWorkflows#activeWorkflows">
                         See all of the active workflows.</a><br/></li>
-                    <li><a href="${contextPath}/processinstance/index.html#suspendedWorkflows">
+                    <li><a href="${contextPath}/processinstance/index.html?ref=suspendedWorkflows#suspendedWorkflows">
                         See all of the suspended workflows.</a><br/></li>
-                    <li><a href="${contextPath}/processinstance/index.html#newWorkflow">
+                    <li><a href="${contextPath}/processinstance/index.html?ref=newWorkflow#newWorkflow">
                         Start a new workflow.</a><br/></li>
-                    <li><a href="${contextPath}/processinstance/index.html#localHelp">
+                    <li><a href="${contextPath}/processinstance/index.html?ref=localHelp#localHelp">
                         Read the available help docs.</a><br/></li>
                 </ul>
             </fieldset><hr/></td>
@@ -38,13 +38,13 @@
                     <img style="float:left;" src="${contextPath}/images/chart_02.png" />
                 </a>
                 <ul class="homeNav">
-                    <li><a href="${contextPath}/admin/index.html#systemProcesses">
+                    <li><a href="${contextPath}/admin/index.html?ref=systemProcesses#systemProcesses">
                         Manage the system processes.</a><br/></li>
-                    <li><a href="${contextPath}/admin/index.html#vitalStatistics">
+                    <li><a href="${contextPath}/admin/index.html?ref=vitalStatistics#vitalStatistics">
                         View vital statistics.</a><br/></li>
-                    <li><a href="${contextPath}/admin/index.html#systemInfo">
+                    <li><a href="${contextPath}/admin/index.html?ref=systemInfo#systemInfo">
                         System details.</a><br/></li>
-                    <li><a href="${contextPath}/admin/index.html#localHelp">
+                    <li><a href="${contextPath}/admin/index.html?ref=localHelp#localHelp">
                         Read the available help docs.</a><br/></li>
                 </ul>
             </fieldset><hr/></td>
@@ -54,11 +54,11 @@
                     <img style="float:left;" src="${contextPath}/images/chart_03.png" />
                 </a>
                 <ul class="homeNav">
-                    <li><a href="${contextPath}/reports/index.html#viewReports">
+                    <li><a href="${contextPath}/reports/index.html?ref=viewReports#viewReports">
                         View my current and past reports.</a><br/></li>
-                    <li><a href="${contextPath}/reports/index.html#newReports">
+                    <li><a href="${contextPath}/reports/index.html?ref=newReports#newReports">
                         Create new reports.</a><br/></li>
-                    <li><a href="${contextPath}/reports/index.html#localHelp">
+                    <li><a href="${contextPath}/reports/index.html?ref=localHelp#localHelp">
                         Read the available help docs.</a><br/></li>
                 </ul>
             </fieldset><hr/></td>

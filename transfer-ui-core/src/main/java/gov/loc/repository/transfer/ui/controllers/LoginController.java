@@ -1,5 +1,7 @@
 package gov.loc.repository.transfer.ui.controllers;
 
+import gov.loc.repository.transfer.ui.UIConstants;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
@@ -20,8 +22,12 @@ public class LoginController {
 	
 	@RequestMapping("/login/login.html")
 	@SuppressWarnings("unchecked")	
-	public String login() {		
+	public String login(HttpServletRequest req) {		
 		
+		if (req.getParameter(UIConstants.PARAMETER_REFERER) != null)
+		{
+			return "redirect:" + req.getParameter(UIConstants.PARAMETER_REFERER);
+		}
 		return "redirect:/index.html";
 	}
 

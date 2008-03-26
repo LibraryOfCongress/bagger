@@ -9,6 +9,8 @@ import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.UrlParameterHelper;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
+
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,15 +117,32 @@ public abstract class AbstractRestController extends AbstractController {
 		mav.addObject("contextPath", request.getContextPath());
 		mav.addObject("requestURI", request.getRequestURI());
 		mav.addObject("permissions", permissions);
+
+		String referer = request.getRequestURI().substring(request.getContextPath().length());
+		if (request.getQueryString() != null)
+		{
+			referer +=  "?" + request.getQueryString();
+		}
+		if (request.getParameter(UIConstants.PARAMETER_REF) != null)
+		{
+			referer += "#" + request.getParameter(UIConstants.PARAMETER_REF);
+		}
+		mav.addObject("referer", referer);
+		
 		if (request.getRequestURI().endsWith("index.html")){
 		    log.debug("Handling index");
-			this.handleIndex(
-			    request, 
-			    mav, 
-			    jbpmContext, 
-			    permissions, 
-			    urlParameterMap
-			);
+			if (request.getUserPrincipal() == null) {
+				mav.setViewName("redirect:/login/login.html?referer=" + URLEncoder.encode((String)mav.getModel().get("referer"), "utf-8"));
+			}
+			else {
+				this.handleIndex(
+				    request, 
+				    mav, 
+				    jbpmContext, 
+				    permissions, 
+				    urlParameterMap
+				);
+			}
 		} else if (METHOD_GET.equalsIgnoreCase(method)) {
 		    log.debug("Handling GET");
 			this.handleGet(
