@@ -161,7 +161,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 			{
 				if (variableBean.isRequired())
 				{
-					if ((! taskInstanceBean.getVariableMap().containsKey(variableBean.getName())) || (taskInstanceBean.getVariableMap().get(variableBean.getName()) == null))
+					if ((! taskInstanceBean.getVariableMap().containsKey(variableBean.getId())) || (taskInstanceBean.getVariableMap().get(variableBean.getId()) == null))
 					{
 						errorList.add("Required variables are missing: " + variableBean.getName());
 					}

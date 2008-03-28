@@ -120,7 +120,7 @@
 				            ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
 				        </td>
 				        <td>
-				            <form method="post" action="${contextPath}/taskinstance/${taskInstanceBean.id}?method=put">
+				            <form method="post" action="${contextPath}/taskinstance/${taskInstanceBean.id}.html?method=put">
                 					<input type="hidden" name="user" value="${userBean.id}" />
                 					<input type="submit"  class="button" value="Assign To Me"/>
                 			</form>	

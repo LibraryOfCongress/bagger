@@ -16,13 +16,11 @@
     	#if ($errorList.size() > 0)
     	<fieldset>
 		    <legend>Errors</legend>
+		    <ul>
 		    #foreach($error in $errorList)
-			<label for="error">$error</label>
-			<input id="error" 
-			    type="text"
-			    readonly="readonly"
-			    value="$error"/>
+		    	<li>$error</li>
 		    #end
+		    </ul>
 		</fieldset>
     	#end
 		<form method="post" action="${requestURI}?method=put" enctype="multipart/form-data">
@@ -30,12 +28,12 @@
 			<fieldset>
 			    <legend>Assign a transition for this task.</legend>
     			<select id="transition" name="transition">	
-    				<option value="null">leave task as incomplete</option>
     				#foreach($transitionBean in $taskInstanceBean.taskBean.leavingTransitionBeanList)	
     					<option value="$transitionBean.id">
     					    $transitionBean.name
     					</option>
     				#end
+    				<option value="null">leave task as incomplete</option>    				
     			</select>							
     			<input class="button" type="submit" value="submit"/>
 			</fieldset>
@@ -134,7 +132,8 @@
 
     <div id="comments">
 	    <h2>Comments</h2>
-    	#foreach($commentBean in $sorter.sort($taskInstanceBean.processInstanceBean.commentBeanList, 'dateCreated:desc'))
+    	##foreach($commentBean in $sorter.sort($taskInstanceBean.processInstanceBean.commentBeanList, 'dateCreated:desc'))
+    	#foreach($commentBean in $sorter.sort($taskInstanceBean.processInstanceBean.commentBeanList, 'createDate:desc'))
 	    <fieldset>
 	        <legend><b>$commentBean.userBean.name</b></legend>
 	        <p>$escape.html($commentBean.message)</p>
@@ -146,8 +145,7 @@
     #if ($permissions.canAddComment())
     	<div id="addComment">
     	    <h2>Add Comment</h2>
-			<form method="post"
-			     action="${contextPath}/processinstance/${task.processIdRef}/comment.html">
+			<form method="post" action="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}/comment.html">
 			    <table style="width:100%">
 			        <tr><td align="center">
 				        <input type="hidden" 
