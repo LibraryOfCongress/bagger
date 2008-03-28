@@ -1,22 +1,22 @@
 <div id="topnav">
   <h2 style="background:url('${contextPath}/images/chart_logo.png');">
-      <a href="${contextPath}/index.html"> ${i18n.Transfer_UI} </a>
+      <a href="${contextPath}/index.html">Transfer_UI</a>
   </h2>
   <ul id="menu">
     <li id="global_home">
-      <a href="${contextPath}/index.html"> ${i18n.home} </a>
+      <a href="${contextPath}/index.html">home</a>
     </li>
     <li id="global_tasks">
-      <a href="${contextPath}/taskinstance/index.html"> ${i18n.tasks} </a>
+      <a href="${contextPath}/taskinstance/index.html">tasks</a>
     </li>
     <li id="global_workflows">
-      <a href="${contextPath}/processinstance/index.html"> ${i18n.workflows} </a>
+      <a href="${contextPath}/processinstance/index.html">workflows</a>
     </li>
     <li id="global_admin">
-      <a href="${contextPath}/admin/index.html"> ${i18n.admin} </a>
+      <a href="${contextPath}/admin/index.html">admin</a>
     </li>
     <li id="global_help">
-      <a href="${contextPath}/reports/index.html"> ${i18n.reports} </a>
+      <a href="${contextPath}/reports/index.html">reports</a>
     </li>
     ##block("search")
   </ul>

@@ -19,13 +19,7 @@
     <context:component-scan base-package="gov.loc.repository.transfer.ui"/>
 	  <!--aop:aspectj-autoproxy /-->
   
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-    	<property name="basenames">
-    		<list>
-    			<value>messages</value>
-    			<value>application</value>
-    		</list>
-    	</property>
+    <bean id="messageSource" class="gov.loc.repository.transfer.ui.springframework.ResourceBundleMessageSource">
     </bean>
     
     <!--bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">

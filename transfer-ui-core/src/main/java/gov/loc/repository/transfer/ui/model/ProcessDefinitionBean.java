@@ -16,19 +16,12 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 		return this.processDefinition.getName();
 	}
 
-	public void setProcessDefinition(ProcessDefinition definition) {
-		this.processDefinition = definition;
+	public String getName() {
+		return this.getMessage("processdefinition." + this.getId(), this.getId());
 	}
-
-	public ProcessInstanceBean newInstance() {
-		log.debug("Creating process instance for " + this.getId());
-		ProcessInstance processInstance = jbpmContext.newProcessInstance(this.getId());
-		processInstance.getRootToken().signal();
-		//processInstance.getTaskMgmtInstance().createStartTaskInstance().end("continue");
-		ProcessInstanceBean processInstanceBean = new ProcessInstanceBean();
-		processInstanceBean.setProcessInstance(processInstance);
-		processInstanceBean.setJbpmContext(jbpmContext);
-		return processInstanceBean;
+	
+	void setProcessDefinition(ProcessDefinition definition) {
+		this.processDefinition = definition;
 	}
 	
 	@Override
@@ -55,9 +48,8 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 			    );
 			for(ProcessInstance processInstance : processInstanceList) {
 				if (! processInstance.hasEnded()) {
-					ProcessInstanceBean processInstanceBean = new ProcessInstanceBean();
-					processInstanceBean.setJbpmContext(this.jbpmContext);
-					processInstanceBean.setProcessInstance(processInstance);
+					
+					ProcessInstanceBean processInstanceBean = this.factory.createProcessInstanceBean(processInstance);
 					processInstanceBeanList.add(processInstanceBean);
 				}
 			}
@@ -98,9 +90,7 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 		Iterator<Node> iter = nodeList.iterator();
 		while(iter.hasNext())
 		{
-			Node node = iter.next();
-			NodeBean nodeBean = new NodeBean();
-			nodeBean.setNode(node);
+			NodeBean nodeBean = this.factory.createNodeBean(iter.next());
 			nodeBeanList.add(nodeBean);
 		}		
 		return nodeBeanList;
@@ -113,10 +103,7 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 		{
 			return null;
 		}
-		NodeBean nodeBean = new NodeBean();
-		nodeBean.setJbpmContext(jbpmContext);
-		nodeBean.setNode(node);
-		return nodeBean;
+		return this.factory.createNodeBean(node);
 				
 	}
 }

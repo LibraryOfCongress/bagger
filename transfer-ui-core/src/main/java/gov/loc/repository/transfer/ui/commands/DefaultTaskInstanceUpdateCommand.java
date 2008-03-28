@@ -3,10 +3,11 @@ package gov.loc.repository.transfer.ui.commands;
 import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.controllers.TaskInstanceController;
 import gov.loc.repository.transfer.ui.controllers.VariableUpdateHelper;
+import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
 import gov.loc.repository.transfer.ui.model.UserBean;
-import gov.loc.repository.transfer.ui.model.UserHelper;
 import gov.loc.repository.transfer.ui.model.VariableBean;
+import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
 import java.text.MessageFormat;
@@ -18,8 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jbpm.JbpmContext;
-
 
 public class DefaultTaskInstanceUpdateCommand implements
 		TaskInstanceUpdateCommand {
@@ -28,13 +27,20 @@ public class DefaultTaskInstanceUpdateCommand implements
 	
 	protected TaskInstanceBean taskInstanceBean;
 	protected HttpServletRequest request;
-	protected JbpmContext jbpmContext;
 	protected Map<String,Object> additionalParameterMap = new HashMap<String,Object>();
 	protected ModelAndView mav;
 	protected PermissionsHelper permissionsHelper;
+	protected WorkflowDao dao;
+	protected WorkflowBeanFactory factory;
 	
-	public void setJbpmContext(JbpmContext jbpmContext) {
-		this.jbpmContext = jbpmContext;
+	public void setWorkflowBeanFactory(WorkflowBeanFactory factory)
+	{
+		this.factory = factory;
+	}
+
+	public void setWorkflowDao(WorkflowDao dao)
+	{
+		this.dao = dao;
 	}
 	
 	public void setTaskInstanceBean(TaskInstanceBean taskInstanceBean) {
@@ -65,7 +71,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 		if (request.getParameterMap().containsKey(UIConstants.PARAMETER_USER))
 		{
 			log.debug("Updating user");
-			if (! permissionsHelper.canReassignTask())
+			if (! permissionsHelper.canUpdateTaskInstanceUser())
 			{
 				mav.setError(HttpServletResponse.SC_FORBIDDEN);
 				return;
@@ -79,16 +85,14 @@ public class DefaultTaskInstanceUpdateCommand implements
 			
 			String userId = request.getParameter(UIConstants.PARAMETER_USER);
 			if (! TaskInstanceController.NULL.equals(userId))
-			{
-				if (! UserHelper.exists(userId, jbpmContext))
+			{				
+				if (! dao.userBeanExists(userId))
 				{
 					mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Unknown user");
 					return;
 				}
 
-				userBean = new UserBean();
-				userBean.setJbpmContext(jbpmContext);
-				userBean.setId(userId);
+				userBean = factory.createUserBean(userId);
 			}
 			taskInstanceBean.setUserBean(userBean);
 		}
@@ -97,8 +101,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 		{
 			log.debug("Updating variables");
 			//Check that can update
-			if (! permissionsHelper.canUpdateTask(
-			        userBean!=null?userBean.getId():"")){
+			if (! permissionsHelper.canUpdateTaskInstance(taskInstanceBean)){
 				mav.setError(HttpServletResponse.SC_FORBIDDEN);
 				return;				
 			}
@@ -124,8 +127,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 		{
 			log.debug("Updating transition");
 			//Check that can update
-			if (! permissionsHelper.canUpdateTask(
-			        userBean!=null?userBean.getId():"")){
+			if (! permissionsHelper.canUpdateTaskInstance(taskInstanceBean)){
 				mav.setError(HttpServletResponse.SC_FORBIDDEN);
 				return;				
 			}
@@ -136,7 +138,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 			
 			//Make sure that task has transition
 			String transition = request.getParameter(UIConstants.PARAMETER_TRANSITION);
-			if (! taskInstanceBean.getTaskBean().getLeavingTransitionList().contains(transition))
+			if (! taskInstanceBean.getTaskBean().hasLeavingTransition(transition))
 			{
 				mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Invalid transition");
 				return;

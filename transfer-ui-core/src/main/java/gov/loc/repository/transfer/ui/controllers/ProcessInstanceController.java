@@ -3,9 +3,8 @@ package gov.loc.repository.transfer.ui.controllers;
 import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.model.UserBean;
 import gov.loc.repository.transfer.ui.model.ProcessInstanceBean;
-import gov.loc.repository.transfer.ui.model.ProcessInstanceHelper;
-import gov.loc.repository.transfer.ui.model.UserHelper;
-import gov.loc.repository.transfer.ui.dao.ProcessDao;
+import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
+import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
 import java.util.Map;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jbpm.JbpmContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -42,23 +40,19 @@ public class ProcessInstanceController extends AbstractRestController {
 	protected void handleIndex(
 	        HttpServletRequest request, 
 	        ModelAndView mav,
-			JbpmContext jbpmContext, 
-			PermissionsHelper permissionsHelper, 
-			Map<String, String> urlParameterMap) throws Exception 
+			WorkflowBeanFactory factory, 
+			WorkflowDao dao, 
+			PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
 		
-		UserBean userBean = new UserBean();
-		userBean.setId(request.getUserPrincipal().getName());
-		userBean.setJbpmContext(jbpmContext);
+		UserBean userBean = factory.createUserBean(request.getUserPrincipal().getName());
 		
 		mav.setViewName("processinstancelist");
 		mav.addObject(
-		    "processInstanceBeanList", 
-		    ProcessInstanceHelper.getProcessInstanceBeanList(jbpmContext)
+		    "processInstanceBeanList", dao.getProcessInstanceBeanList() 
 		);
 		mav.addObject(
-		    "suspendedProcessInstanceBeanList", 
-		    ProcessInstanceHelper.getSuspendedProcessInstanceBeanList(jbpmContext)
+		    "suspendedProcessInstanceBeanList", dao.getSuspendedProcessInstanceBeanList() 
 		);
 		mav.addObject(
 		    "processDefinitionBeanList", 
@@ -70,18 +64,18 @@ public class ProcessInstanceController extends AbstractRestController {
 	protected void handleGet(
 	        HttpServletRequest request, 
 	        ModelAndView mav,
-			JbpmContext jbpmContext, 
-			PermissionsHelper permissionsHelper,
-			 Map<String, String> urlParameterMap) throws Exception 
+			WorkflowBeanFactory factory, 
+			WorkflowDao dao,
+			 PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
-		ProcessInstanceBean processInstanceBean = processProcessInstance(mav, jbpmContext, urlParameterMap);
+		ProcessInstanceBean processInstanceBean = processProcessInstance(mav, dao, urlParameterMap);
 		if (processInstanceBean == null) { return; }
 		
 		mav.addObject("processInstanceBean", processInstanceBean);
-		if (permissionsHelper.canReassignTask()) {
+		if (permissionsHelper.canUpdateTaskInstanceUser()) {
 			mav.addObject(
 			    "userBeanList", 
-			    UserHelper.getUserBeanList(jbpmContext)
+			    dao.getUserBeanList()
 			);
 		}
 		if (permissionsHelper.canMoveToken()) {
@@ -97,12 +91,12 @@ public class ProcessInstanceController extends AbstractRestController {
 	protected void handlePut(
 	        HttpServletRequest request, 
 	        ModelAndView mav,
-			JbpmContext jbpmContext, 
-			PermissionsHelper permissionsHelper, 
-			Map<String, String> urlParameterMap) throws Exception 
+			WorkflowBeanFactory factory, 
+			WorkflowDao dao, 
+			PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
 		ProcessInstanceBean processInstanceBean = 
-		    processProcessInstance(mav, jbpmContext, urlParameterMap);
+		    processProcessInstance(mav, dao, urlParameterMap);
 		    
 		if (processInstanceBean == null) { return; }
 	
@@ -115,13 +109,13 @@ public class ProcessInstanceController extends AbstractRestController {
 			        request.getParameter(UIConstants.PARAMETER_SUSPENDED))) {
 				if (! processInstanceBean.isSuspended()) {
 					processInstanceBean.suspended(true);					
-					processInstanceBean.save();
+					dao.save(processInstanceBean);
 				}
 			} else if (UIConstants.VALUE_FALSE.equalsIgnoreCase(
 			            request.getParameter(UIConstants.PARAMETER_SUSPENDED))) {
 				if (processInstanceBean.isSuspended()) {
 					processInstanceBean.suspended(false);
-					processInstanceBean.save();
+					dao.save(processInstanceBean);
 				}
 			} 
 		}
@@ -131,14 +125,14 @@ public class ProcessInstanceController extends AbstractRestController {
 				return;
 			}
 			VariableUpdateHelper.update(request, processInstanceBean);
-			processInstanceBean.save();
+			dao.save(processInstanceBean);
 		}
-		this.handleGet(request, mav, jbpmContext, permissionsHelper, urlParameterMap);
+		this.handleGet(request, mav, null, null, permissionsHelper, urlParameterMap);
 	}
 	
 	private ProcessInstanceBean processProcessInstance(
 	        ModelAndView mav, 
-	        JbpmContext jbpmContext, 
+	        WorkflowDao dao,
 	        Map<String, String> urlParameterMap )
 	{
 		//If there is no processInstanceId in urlParameterMap then 404
@@ -149,18 +143,13 @@ public class ProcessInstanceController extends AbstractRestController {
 		
 		//Otherwise handle processinstanceid
 		String processInstanceId = urlParameterMap.get(PROCESSINSTANCEID);
-		if (! ProcessInstanceHelper.hasProcessInstance(
-		        Long.parseLong(processInstanceId), 
-		        jbpmContext
-		    )){
+		ProcessInstanceBean processInstanceBean = dao.getProcessInstanceBean(processInstanceId);
+		if (processInstanceBean == null){
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
 		
-		return ProcessInstanceHelper.getProcessInstanceBean(
-		    Long.parseLong(processInstanceId), 
-		    jbpmContext
-		);
+		return processInstanceBean;
 		
 	}
 }

@@ -3,26 +3,19 @@ package gov.loc.repository.transfer.ui.controllers;
 import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.commands.DefaultTaskInstanceUpdateCommand;
 import gov.loc.repository.transfer.ui.commands.TaskInstanceUpdateCommand;
+import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
-import gov.loc.repository.transfer.ui.model.TaskInstanceHelper;
 import gov.loc.repository.transfer.ui.model.UserBean;
-import gov.loc.repository.transfer.ui.model.UserHelper;
-import gov.loc.repository.transfer.ui.models.Comment;
-import gov.loc.repository.transfer.ui.models.ProcessDef;
-import gov.loc.repository.transfer.ui.models.Task;
-import gov.loc.repository.transfer.ui.models.User;
+import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jbpm.JbpmContext;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -53,26 +46,14 @@ public class TaskInstanceController extends AbstractRestController {
 	protected void handleIndex(
 	        HttpServletRequest request, 
 	        ModelAndView mav,
-			JbpmContext jbpmContext, 
-			PermissionsHelper permissionsHelper, 
-			Map<String, String> urlParameterMap) throws Exception 
+			WorkflowBeanFactory factory, 
+			WorkflowDao dao, 
+			PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{   
 		mav.setViewName("tasks");
 		//Add the user to the view
-		Map params = new HashMap();
-	    params.put( "name", request.getUserPrincipal().getName() );
-	    User user = userDao.findByUserName(params);
-		mav.addObject("user", user);
-		//Add the userTasks to the view
-		params = new HashMap();
-	    params.put( "name", user.getName() );
-	    List<Task> userTasks = taskDao.findCurrentByUserName(params);
-		mav.addObject("userTasks", userTasks);
-		//Add the groupTasks to the view
-		params = new HashMap();
-	    params.put( "groupNames", user.getGroupNames() );
-	    List<Task> groupTasks = taskDao.findCurrentByGroupNames(params);
-		mav.addObject("groupTasks", groupTasks);
+		UserBean userBean = factory.createUserBean(request.getUserPrincipal().getName());		
+		mav.addObject("userBean", userBean);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -80,9 +61,9 @@ public class TaskInstanceController extends AbstractRestController {
 	protected void handleGet(
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
-	        JbpmContext jbpmContext, 
-	        PermissionsHelper permissionsHelper, 
-	        Map<String, String> urlParameterMap) throws Exception 
+	        WorkflowBeanFactory factory, 
+	        WorkflowDao dao, 
+	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
 		//If there is no taskinstanceid in urlParameterMap then 404
 		if (! urlParameterMap.containsKey(UIConstants.PARAMETER_TASKINSTANCEID)) {
@@ -91,43 +72,24 @@ public class TaskInstanceController extends AbstractRestController {
 		}
 		//Otherwise handle taskinstanceid
 		String taskId = urlParameterMap.get(UIConstants.PARAMETER_TASKINSTANCEID);
-		if (! TaskInstanceHelper.exists(taskId, jbpmContext)){
+		TaskInstanceBean taskInstanceBean = dao.getTaskInstanceBean(taskId);
+		if (taskInstanceBean == null){
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}	
 		
 		//Configure the view
 		mav.setViewName("taskinstance");
-        Task task                   = taskDao.find(Long.parseLong(taskId));
-		mav.addObject( "task",      task );
-        List<User> users            = userDao.findAll();
-		mav.addObject( "users",     users );
-        Map params = new HashMap();
-	    params.put( "processId",    task.getProcessIdRef() );
-        List<Comment> comments      = commentDao.findAllByProcessId(params);
-		mav.addObject( "comments",  comments );
-        ProcessDef processDef       = processDefDao.findByProcessId(params);			
-		
-		//Trying to refactor the *Beans out right now the command
-		//still holds a reference to it
-		TaskInstanceBean taskInstanceBean = 
-		    TaskInstanceHelper.getTaskInstanceBean(
-		        taskId, 
-		        jbpmContext
-		    );
-		    
 		mav.addObject("taskInstanceBean", taskInstanceBean);
-		mav.addObject("userBeanList", UserHelper.getUserBeanList(jbpmContext));
+		mav.addObject("userBeanList", dao.getUserBeanList());
+		    
 		TaskInstanceUpdateCommand command = 
-		    getTaskInstanceUpdateFormCommand(
-		        task.getName(), 
-		        processDef.getId().toString()
-		    );
+		    getTaskInstanceUpdateFormCommand(taskInstanceBean);
 		command.setTaskInstanceBean(taskInstanceBean);
 		command.setRequest(request);
 		command.setModelAndView(mav);
 		command.setPermissionsHelper(permissionsHelper);
-		if (permissionsHelper.canUpdateTask(task.getAssignedUserName()) && task.isUpdateable()) {			
+		if (permissionsHelper.canUpdateTaskInstance(taskInstanceBean) && taskInstanceBean.canUpdate()) {			
 			command.prepareForm();
 			command.prepareInstruction();						
 		}	
@@ -137,39 +99,27 @@ public class TaskInstanceController extends AbstractRestController {
 	protected void handlePut(
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
-	        JbpmContext jbpmContext,
-	        PermissionsHelper permissionsHelper, 
-	        Map<String, String> urlParameterMap ) throws Exception 
+	        WorkflowBeanFactory factory,
+	        WorkflowDao dao, 
+	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap ) throws Exception 
 	{
 		if (! urlParameterMap.containsKey(UIConstants.PARAMETER_TASKINSTANCEID)) {			
 			mav.setError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 			return;
 		}
-		String taskId = urlParameterMap.get(UIConstants.PARAMETER_TASKINSTANCEID);
-		if (! TaskInstanceHelper.exists(taskId, jbpmContext)) {
+		String taskInstanceId = urlParameterMap.get(UIConstants.PARAMETER_TASKINSTANCEID);
+		TaskInstanceBean taskInstanceBean = dao.getTaskInstanceBean(taskInstanceId);
+		if (taskInstanceBean == null) {
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
 		
-		Task task                   = taskDao.find(Long.parseLong(taskId));
-		Map params                  = new HashMap();
-	    params.put( "processId",    task.getProcessIdRef() );
-        ProcessDef processDef       = processDefDao.findByProcessId(params);
-        
-		TaskInstanceBean taskInstanceBean = 
-		    TaskInstanceHelper.getTaskInstanceBean(
-		        taskId, 
-		        jbpmContext
-		    );
-		TaskInstanceUpdateCommand command = 
-		    this.getTaskInstanceUpdateFormCommand(
-		        task.getName(),
-		        processDef.getId().toString()
-		    );
+		TaskInstanceUpdateCommand command = this.getTaskInstanceUpdateFormCommand(taskInstanceBean);
 		command.setTaskInstanceBean(taskInstanceBean);
 		command.setRequest(request);
 		command.setModelAndView(mav);
-		command.setJbpmContext(jbpmContext);
+		command.setWorkflowDao(dao);
+		command.setWorkflowBeanFactory(factory);
 		command.setPermissionsHelper(permissionsHelper);
 		command.preprocessPut();
 		command.bindPut();
@@ -177,16 +127,16 @@ public class TaskInstanceController extends AbstractRestController {
 		if (mav.getStatusCode() != null) { return; }
 		//This will add an errorList to mav
 		command.validatePut();
-		taskInstanceBean.save();
+		dao.save(taskInstanceBean);
 		if (taskInstanceBean.isEnded()) {
 			mav.setViewName("redirect:/");
 		}else{
 			this.handleGet(
 			    request, 
 			    mav, 
-			    jbpmContext, 
-			    permissionsHelper, 
-			    urlParameterMap
+			    factory, 
+			    dao, 
+			    permissionsHelper, urlParameterMap
 			);
 		}
 	}
@@ -194,13 +144,13 @@ public class TaskInstanceController extends AbstractRestController {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void initApplicationContext() throws BeansException {
-		ApplicationContext applicationContext = 
-		    this.getApplicationContext();
-		Map< String, TaskInstanceUpdateCommandMap< String,  TaskInstanceUpdateCommand>> beanMap =
-		        applicationContext.getBeansOfType(TaskInstanceUpdateCommandMap.class);
-		for(TaskInstanceUpdateCommandMap<String, TaskInstanceUpdateCommand> map : beanMap.values()){
-			this.commandMap.putAll(map);
-		} super.initApplicationContext();
+		ApplicationContext applicationContext = this.getApplicationContext();
+		Map<String, ProcessDefinitionConfiguration> beanMap = applicationContext.getBeansOfType(ProcessDefinitionConfiguration.class);
+		for(ProcessDefinitionConfiguration processDefinitionConfiguration : beanMap.values())
+		{
+			this.commandMap.putAll(processDefinitionConfiguration.getTaskInstanceUpdateCommandMap());
+		}
+		super.initApplicationContext();
 	}
 	
 	private TaskInstanceUpdateCommand defaultCommand 
@@ -214,9 +164,7 @@ public class TaskInstanceController extends AbstractRestController {
 		this.defaultCommand = defaultCommand;
 	}
 	
-	private TaskInstanceUpdateCommand getTaskInstanceUpdateFormCommand(
-	        String taskName,
-	        String processDefId ) throws Exception 
+	private TaskInstanceUpdateCommand getTaskInstanceUpdateFormCommand(TaskInstanceBean taskInstanceBean) throws Exception 
 	{
 		TaskInstanceUpdateCommand command = null;
 		for(String pattern : this.commandMap.keySet()) {
@@ -226,10 +174,10 @@ public class TaskInstanceController extends AbstractRestController {
 			}
 			if ( PatternMatchUtils.simpleMatch(
 			        patternArray[0],
-			        processDefId ) 
+			        taskInstanceBean.getProcessInstanceBean().getProcessDefinitionBean().getId() ) 
 			    && PatternMatchUtils.simpleMatch(
 			        patternArray[1], 
-			        taskName )){
+			        taskInstanceBean.getTaskBean().getId() )){
 				command = this.commandMap.get(pattern);
 				break;
 			}

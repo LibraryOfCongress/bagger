@@ -13,7 +13,7 @@
             <legend>Examine details regarding this workflows status</legend>
             <table cellspacing="3" cellpadding="7">
                 <tr id="workflowID" >
-                    <td><label for="workflowID_value">Tracking ID</label></td>
+                    <td><label for="workflowID_value">Workflow Id</label></td>
                     <td><span id="workflowID_value">
                         ${processInstanceBean.id}
                     </span></td>
@@ -23,7 +23,7 @@
                 <tr id="workflowType" >
                     <td><label for="workflowType_value">Type</label></td>
                     <td><span id="workflowType_value">
-                        #springMessageText("processdefinitions.${processInstanceBean.processDefinitionBean.id}" "???")
+						${processInstanceBean.processDefinitionBean.name}                        
                     </span></td>
                     <td><span class="description">
                     </span></td>
@@ -102,9 +102,9 @@
 	    <h2>Comments</h2>
     	#foreach($commentBean in $sorter.sort($processInstanceBean.commentBeanList, 'date:desc'))
 	    <fieldset>
-	        <legend><b>$commentBean.actorId</b></legend>
+	        <legend><b>$commentBean.userBean.name</b></legend>
 	        <p>$escape.html($commentBean.message)</p>
-	        <span style="float:right;">${date.format('yyyy-MM-dd hh:mm', $commentBean.date)}</span>
+	        <span style="float:right;">${date.format('yyyy-MM-dd hh:mm', $commentBean.createDate)}</span>
 	    </fieldset>
 	    <hr/>
     	#end
@@ -134,7 +134,7 @@
         <h3>Tokens</h3>
         	#foreach($tokenBean in $processInstanceBean.tokenBeanList)
         		<h4>Token</h4>
-        		<p>Id: $tokenBean.id</p>
+        		<p>Token Id: $tokenBean.id</p>
         		#if ($tokenBean.movable && $permissions.canMoveToken())
         			<form method="post" action="${contextPath}/token/${tokenBean.id}.html?method=put">
         				<input type="hidden" 
@@ -142,8 +142,8 @@
         				    value="${contextPath}/processinstance/${processInstanceBean.id}.html" />		    	
         			    <select name="node">
         	    			#foreach($nodeBean in $nodeBeanList)
-        	    				<option value="$nodeBean.name" 
-        	    				    #if ($tokenBean.nodeBean.name == $nodeBean.name) selected #end>
+        	    				<option value="$nodeBean.id" 
+        	    				    #if ($tokenBean.nodeBean.id == $nodeBean.id) selected #end>
         	    				    $nodeBean.name
         	    				</option>					
         	    			#end				
@@ -155,7 +155,7 @@
         		#end		
         		<p>Ended: $tokenBean.ended</p>
         		#if ($tokenBean.child)
-        			<p>Parent: $tokenBean.parentTokenBean.id</p>
+        			<p>Parent id: $tokenBean.parentTokenBean.id</p>
         		#end
         		<h5>Log entries</h5>
         			<ol>
@@ -166,7 +166,7 @@
         		<h5>Task instances</h5>
         		#foreach($taskInstanceBean in $tokenBean.taskInstanceBeanList)
         			<h6><a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">Task instance</a></h6>
-        			<p>Id: $taskInstanceBean.id</p>
+        			<p>Task instance Id: $taskInstanceBean.id</p>
         			<p>Task:  $taskInstanceBean.taskBean.name</p>
         			<p>User:  #if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.id #else UNASSIGNED #end</p>
         			#if ($permissions.canReassignTask())

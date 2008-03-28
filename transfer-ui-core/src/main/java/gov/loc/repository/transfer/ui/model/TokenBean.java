@@ -4,34 +4,37 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
 import org.jbpm.logging.log.ProcessLog;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
 public class TokenBean extends AbstractWorkflowBean {
-	private static final Log log = LogFactory.getLog(TokenBean.class);
 	
 	private Token token;
 	
-	public void setToken(Token token)
+	public Token getToken()
+	{
+		return this.token;
+	}
+	
+	void setToken(Token token)
 	{
 		this.token = token;
 	}
 		
-	public long getId()
+	public String getId()
 	{
-		return this.token.getId();
+		return Long.toString(this.token.getId());
+	}
+	
+	public String getName() {
+		return "Token " + this.getId();
 	}
 	
 	public NodeBean getNodeBean()
 	{
-		NodeBean nodeBean = new NodeBean();
-		nodeBean.setJbpmContext(jbpmContext);
-		nodeBean.setNode(this.token.getNode());
-		return nodeBean;
+		return this.factory.createNodeBean(this.token.getNode());
 	}
 	
 	public boolean isChild()
@@ -50,10 +53,7 @@ public class TokenBean extends AbstractWorkflowBean {
 		{
 			return null;
 		}
-		TokenBean parentTokenBean = new TokenBean();
-		parentTokenBean.setJbpmContext(jbpmContext);
-		parentTokenBean.setToken(this.token.getParent());
-		return parentTokenBean;
+		return this.factory.createTokenBean(this.token.getParent());
 		
 	}
 		
@@ -76,14 +76,12 @@ public class TokenBean extends AbstractWorkflowBean {
 	@SuppressWarnings("unchecked")
 	public List<TaskInstanceBean> getTaskInstanceBeanList()
 	{
-		List<TaskInstance> taskInstanceList = this.jbpmContext.getTaskMgmtSession().findTaskInstancesByToken(this.getId());
+		List<TaskInstance> taskInstanceList = this.jbpmContext.getTaskMgmtSession().findTaskInstancesByToken(this.token.getId());
 		List<TaskInstanceBean> taskInstanceBeanList = new ArrayList<TaskInstanceBean>();
 		Iterator<TaskInstance> iter = taskInstanceList.iterator();
 		while (iter.hasNext())
 		{
-			TaskInstanceBean taskInstanceBean = new TaskInstanceBean();
-			taskInstanceBean.setJbpmContext(this.jbpmContext);
-			taskInstanceBean.setTaskInstance(iter.next());			
+			TaskInstanceBean taskInstanceBean = this.factory.createTaskInstanceBean(iter.next());
 			taskInstanceBeanList.add(taskInstanceBean);
 		}
 		return taskInstanceBeanList;
@@ -91,10 +89,7 @@ public class TokenBean extends AbstractWorkflowBean {
 	
 	public ProcessInstanceBean getProcessInstanceBean()
 	{
-		ProcessInstanceBean processInstanceBean = new ProcessInstanceBean();
-		processInstanceBean.setJbpmContext(this.jbpmContext);
-		processInstanceBean.setProcessInstance(this.token.getProcessInstance());
-		return processInstanceBean;
+		return this.factory.createProcessInstanceBean(this.token.getProcessInstance());
 	}
 	
 	public boolean isMovable()
@@ -118,8 +113,4 @@ public class TokenBean extends AbstractWorkflowBean {
 		nodeBean.getNode().enter(new ExecutionContext(this.token));
 	}
 	
-	public void save()
-	{
-		this.jbpmContext.save(this.token);
-	}
 }

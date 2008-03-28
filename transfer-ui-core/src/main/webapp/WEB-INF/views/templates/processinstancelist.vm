@@ -18,7 +18,7 @@
 	<div id="activeWorkflows">
 		<h2>Active Workflows</h2>
         <fieldset>
-            <legend>These workflows are currenlty active.</legend>
+            <legend>These workflows are currently active.</legend>
             #if( $processInstanceBeanList.size() > 10 )
 		    <table>
 		        <tbody><tr><td>
@@ -42,13 +42,13 @@
             #end
 	        <table id="activeWorkflows_table" class="tablesorter pageable"  >
 	            <thead><tr>
-                        <th>Name</th>
-                        <th>Type</th>
+                        <th>Package</th>
+                        <th>Workflow</th>
                         <th>Start date</th>
                 </tr></thead>
                 <tfoot><tr>
-                        <th>Name</th>
-                        <th>Type</th>
+                        <th>Package</th>
+                        <th>Workflow</th>
                         <th>Start date</th>
                 </tr></tfoot>
                 <tbody>
@@ -59,7 +59,7 @@
 				        </td>
 				        <td>
                             <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
-				            #springMessageText("processdefinitions.${processInstanceBean.processDefinitionBean.id}" "???")
+				            ${processInstanceBean.processDefinitionBean.name}
                             (${processInstanceBean.id}) </a>
                         </td>
 				        <td>
@@ -102,26 +102,26 @@
 		    <table id="suspendedWorkflows_table" class="tablesorter pageable"  >
 	            <thead>
 	                <tr>
-                        <th>Name</th>
                         <th>Package</th>
+                        <th>Workflow</th>
                     </tr>
                 </thead>
                 <tfoot><tr>
-                        <th>Name</th>
                         <th>Package</th>
+                        <th>Workflow</th>
                 </tr></tfoot>
                 <tbody>
 		    	#foreach($processInstanceBean in $suspendedProcessInstanceBeanList)
-		    	    <tr>
-    				    <td>
+			        <tr id="workflow_${processInstanceBean.id}" >
+				        <td>
     				    #if($processInstanceBean.packageName) $processInstanceBean.packageName #else none #end
-    				    </td>
-        				<td>
-        		            <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
-        		                (${processInstanceBean.id})
-        		            </a>				
-        				</td>	
-    				</tr>
+				        </td>
+				        <td>
+                            <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
+				            ${processInstanceBean.processDefinitionBean.name}
+                            (${processInstanceBean.id}) </a>
+                        </td>
+				    </tr>					
     			#end	
                 </tbody>
             </table>
@@ -136,7 +136,7 @@
 				<form method="post" action="${contextPath}/processdefinition/${processDefinitionBean.id}.html">
                     <fieldset title="Start a New Transfer Workflow">
 			            <legend>
-        		            #springMessageText( "processdefinitions.${processInstanceBean.processDefinitionBean.id}" "???")
+        		            ${processInstanceBean.processDefinitionBean.name}
         		            (${processDefinitionBean.id})
         		        </legend>
 			            <input type="hidden" name="referer" value="/index.html" />

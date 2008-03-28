@@ -16,7 +16,12 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 	private TaskInstance taskInstance;
 	private String transition;
 	
-	public void setTaskInstance(TaskInstance taskInstance)
+	public TaskInstance getTaskInstance()
+	{
+		return this.taskInstance;
+	}
+	
+	void setTaskInstance(TaskInstance taskInstance)
 	{
 		this.taskInstance = taskInstance;
 		if (this.taskInstance.getTask().getTaskController() != null)
@@ -26,9 +31,14 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 				
 	}
 		
-	public long getId()
+	public String getId()
 	{
-		return this.taskInstance.getId();
+		return Long.toString(this.taskInstance.getId());
+	}
+	
+	public String getName()
+	{
+		return "Task instance " + this.getId();
 	}
 	
 	public void setUserBean(UserBean userBean) throws Exception
@@ -53,10 +63,7 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 		{
 			return null;
 		}
-		UserBean userBean = new UserBean();
-		userBean.setId(this.taskInstance.getActorId());
-		userBean.setJbpmContext(jbpmContext);
-		return userBean;
+		return this.factory.createUserBean(this.taskInstance.getActorId());
 	}
 	
 	public boolean canUpdateUserBean()
@@ -93,10 +100,8 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 			Iterator<PooledActor> iter = pooledActors.iterator();
 			while (iter.hasNext())
 			{				
-				PooledActor pooledActor = iter.next();
-				GroupBean groupBean = new GroupBean();
-				groupBean.setJbpmContext(jbpmContext);
-				groupBean.setId(pooledActor.getActorId());
+				PooledActor pooledActor = iter.next();				
+				GroupBean groupBean = this.factory.createGroupBean(pooledActor.getActorId());
 				groupBeanList.add(groupBean);
 			}
 		}		
@@ -104,10 +109,7 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 	
 	public TaskBean getTaskBean()
 	{
-		TaskBean taskBean = new TaskBean();
-		taskBean.setTask(this.taskInstance.getTask());
-		taskBean.setJbpmContext(jbpmContext);
-		return taskBean;
+		return this.factory.createTaskBean(this.taskInstance.getTask());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -127,6 +129,11 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 		this.transition = transition;
 	}
 
+	public String getTransition()
+	{
+		return this.transition;
+	}
+	
 	public boolean isEnded()
 	{
 		if (this.taskInstance.hasEnded() || this.getProcessInstanceBean().isEnded())
@@ -135,34 +142,10 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 		}
 		return false;
 	}
-
-	public void save()
-	{
-		log.debug("Saving " + this.toString());
-		if(this.isEnded())
-		{
-			return;
-		}
-		
-		if (this.taskInstance.getTask().getTaskController() != null)
-		{		
-			this.taskInstance.getTask().getTaskController().submitParameters(this.taskInstance);		
-		}
-		
-		if (this.transition != null)
-		{
-			this.taskInstance.end(this.transition);
-		}
-		
-		this.jbpmContext.save(this.taskInstance);
-	}
 	
 	public ProcessInstanceBean getProcessInstanceBean()
 	{
-		ProcessInstanceBean processInstanceBean = new ProcessInstanceBean();
-		processInstanceBean.setJbpmContext(jbpmContext);
-		processInstanceBean.setProcessInstance(this.taskInstance.getProcessInstance());
-		return processInstanceBean;
+		return this.factory.createProcessInstanceBean(this.taskInstance.getProcessInstance());
 	}
 	/*
 	public TokenBean getToken()
@@ -184,6 +167,6 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 	
 	@Override
 	public String toString() {
-		return "Task Instance (" + this.taskInstance.getId() + ")";
+		return this.getName();
 	}
 }

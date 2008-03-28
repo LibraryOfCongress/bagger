@@ -1,6 +1,7 @@
 package gov.loc.repository.transfer.ui.utilities ;
 
 import gov.loc.repository.transfer.ui.UIConstants;
+import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,9 +20,12 @@ public class PermissionsHelper {
 	public boolean canStartProcess() {
 		return isLoggedIn();
 	}
-	public boolean canReassignTask() {
+
+	public boolean canUpdateTaskInstanceUser()
+	{
 		return isLoggedIn();
 	}
+
 	public boolean canUpdateVariables() {
 		return isAdministrator();
 	}
@@ -31,12 +35,13 @@ public class PermissionsHelper {
 	public boolean canSuspendProcess() {
 		return isAdministrator();
 	}
-	public boolean canUpdateTask(String userName){
+	public boolean canUpdateTaskInstance(TaskInstanceBean taskInstanceBean){
 		return ( 
 		    isAdministrator()  || (  
 		    isLoggedIn()  &&
+		    taskInstanceBean.getUserBean() != null &&
 		    req.getUserPrincipal().getName().equals(
-		        userName
+		        taskInstanceBean.getUserBean().getId()
 		    ))
 		);
 	}

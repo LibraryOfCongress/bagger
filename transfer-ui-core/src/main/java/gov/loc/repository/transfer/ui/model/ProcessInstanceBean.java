@@ -15,12 +15,13 @@ public class ProcessInstanceBean extends AbstractWorkflowBean implements Variabl
 	
 	private ProcessInstance processInstance;
 	
-	public void setProcessInstance(ProcessInstance processInstance) {
-		this.processInstance = processInstance;
+	public ProcessInstance getProcessInstance()
+	{
+		return this.processInstance;
 	}
-
-	public ProcessInstance getProcessInstance() {
-		return processInstance;
+	
+	void setProcessInstance(ProcessInstance processInstance) {
+		this.processInstance = processInstance;
 	}
 
 	public String getPackageName() {		
@@ -28,14 +29,15 @@ public class ProcessInstanceBean extends AbstractWorkflowBean implements Variabl
 	}
 	
 	public ProcessDefinitionBean getProcessDefinitionBean() {
-		ProcessDefinitionBean processDefinitionBean = new ProcessDefinitionBean();
-		processDefinitionBean.setJbpmContext(this.jbpmContext);
-		processDefinitionBean.setProcessDefinition(this.processInstance.getProcessDefinition());
-		return processDefinitionBean;
+		return this.factory.createProcessDefinitionBean(this.processInstance.getProcessDefinition());
 	}
 	
-	public long getId() {
-		return this.processInstance.getId();
+	public String getName() {
+		return "Process instance " + this.getId();
+	}
+	
+	public String getId() {
+		return Long.toString(this.processInstance.getId());
 	}
 	
 	public void addComment(String message)
@@ -51,8 +53,7 @@ public class ProcessInstanceBean extends AbstractWorkflowBean implements Variabl
 		Iterator<Comment> iter = commentList.iterator();
 		while (iter.hasNext())
 		{
-			CommentBean commentBean = new CommentBean();
-			commentBean.setComment((Comment)iter.next());
+			CommentBean commentBean = this.factory.createCommentBean(iter.next());
 			commentBeanList.add(commentBean);
 		}
 		return commentBeanList;
@@ -80,20 +81,13 @@ public class ProcessInstanceBean extends AbstractWorkflowBean implements Variabl
 		Iterator<Token> iter = tokenList.iterator();
 		while(iter.hasNext())
 		{			
-			TokenBean tokenBean = new TokenBean();
-			tokenBean.setToken(iter.next());
-			tokenBean.setJbpmContext(jbpmContext);
+			TokenBean tokenBean = this.factory.createTokenBean(iter.next());
 			tokenBeanList.add(tokenBean);
 		}
 		log.debug("TokenBeanList has " + tokenBeanList.size());
 		return tokenBeanList;
 	}
-	
-	
-	public void save() {
-		this.jbpmContext.save(this.processInstance);
-	}
-	
+		
 	public boolean isSuspended()
 	{
 		return this.processInstance.isSuspended();

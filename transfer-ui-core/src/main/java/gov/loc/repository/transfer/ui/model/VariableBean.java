@@ -4,9 +4,14 @@ import org.jbpm.context.def.VariableAccess;
 
 public class VariableBean extends AbstractWorkflowBean{
 	private VariableAccess variable;
+	private TaskBean taskBean;
+	
+	public String getId() {
+		return this.variable.getVariableName();
+	}
 	
 	public String getName() {
-		return this.variable.getVariableName();
+		return this.getMessage("variable." + this.taskBean.getProcessDefinitionBean().getId() + "." + this.getId(), this.getId());
 	}
 
 	public boolean isWritable() {
@@ -21,8 +26,12 @@ public class VariableBean extends AbstractWorkflowBean{
 		return this.variable.isRequired();
 	}
 
-	public void setVariable(VariableAccess variable) {
+	void setVariable(VariableAccess variable) {
 		this.variable = variable;
 	}
-		
+	
+	void setTaskBean(TaskBean taskBean)
+	{
+		this.taskBean = taskBean;
+	}
 }

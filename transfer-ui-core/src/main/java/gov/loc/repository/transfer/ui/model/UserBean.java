@@ -25,7 +25,11 @@ public class UserBean extends AbstractWorkflowBean {
 	{
 		this.id = id;
 	}
-		
+	
+	public String getName() {
+		return this.id;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<ProcessDefinitionBean> getProcessDefinitionBeanList()
 	{
@@ -55,13 +59,7 @@ public class UserBean extends AbstractWorkflowBean {
 		List<ProcessDefinitionBean> processDefinitionBeanList = new ArrayList<ProcessDefinitionBean>();
 		for(String processDefinitionId : processDefinitionIdSet)
 		{
-			ProcessDefinitionBean processDefinitionBean = new ProcessDefinitionBean();
-			processDefinitionBean.setJbpmContext(jbpmContext);			    
-			processDefinitionBean.setProcessDefinition(
-			    jbpmContext.getGraphSession().findLatestProcessDefinition(
-			        processDefinitionId
-			    )
-			);
+			ProcessDefinitionBean processDefinitionBean = this.factory.createProcessDefinitionBean(jbpmContext.getGraphSession().findLatestProcessDefinition(processDefinitionId));
 			processDefinitionBeanList.add(processDefinitionBean);
 		}
 		return processDefinitionBeanList;
@@ -78,9 +76,7 @@ public class UserBean extends AbstractWorkflowBean {
 		Iterator<String> iter = groupNameList.iterator();
 		while (iter.hasNext())
 		{
-			GroupBean groupBean = new GroupBean();
-			groupBean.setJbpmContext(this.jbpmContext);
-			groupBean.setId(iter.next());
+			GroupBean groupBean = this.factory.createGroupBean(iter.next());
 			groupBeanList.add(groupBean);
 		}
 		return groupBeanList;
@@ -95,8 +91,7 @@ public class UserBean extends AbstractWorkflowBean {
 		Iterator<TaskInstance> iter = taskList.iterator();
 		while (iter.hasNext())
 		{
-			TaskInstanceBean taskInstanceBean = new TaskInstanceBean();
-			taskInstanceBean.setTaskInstance(iter.next());
+			TaskInstanceBean taskInstanceBean = this.factory.createTaskInstanceBean(iter.next());
 			if (! taskInstanceBean.isEnded())
 			{
 				taskInstanceBeanList.add(taskInstanceBean);
@@ -118,8 +113,7 @@ public class UserBean extends AbstractWorkflowBean {
 		Iterator<TaskInstance> iter = taskList.iterator();
 		while (iter.hasNext())
 		{
-			TaskInstanceBean taskInstanceBean = new TaskInstanceBean();
-			taskInstanceBean.setTaskInstance(iter.next());
+			TaskInstanceBean taskInstanceBean = this.factory.createTaskInstanceBean(iter.next());
 			if (! taskInstanceBean.isEnded())
 			{
 				taskInstanceBeanList.add(taskInstanceBean);

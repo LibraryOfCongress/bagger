@@ -1,5 +1,7 @@
 package gov.loc.repository.transfer.ui.controllers;
 
+import gov.loc.repository.transfer.ui.dao.WorkflowDao;
+import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 import gov.loc.repository.transfer.ui.models.SystemProcess;
 import gov.loc.repository.transfer.ui.models.Variable;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
@@ -14,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jbpm.JbpmContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -43,9 +44,9 @@ public class AdminController extends AbstractRestController {
 	protected void handleIndex(
 	        HttpServletRequest request, 
 	        ModelAndView mav,
-			JbpmContext jbpmContext, 
-			PermissionsHelper permissions, 
-			Map<String, String> urlParameterMap) throws Exception 
+			WorkflowBeanFactory factory, 
+			WorkflowDao dao, 
+			PermissionsHelper permissions, Map<String, String> urlParameterMap) throws Exception 
 	{
 		log.debug("Handling request at /admin/index.html");
 		
@@ -99,9 +100,9 @@ public class AdminController extends AbstractRestController {
 	protected void handleGet(
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
-	        JbpmContext jbpmContext, 
-	        PermissionsHelper permissionsHelper, 
-	        Map<String, String> urlParameterMap) throws Exception 
+	        WorkflowBeanFactory factory, 
+	        WorkflowDao dao, 
+	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
 		//If there is no reportId in urlParameterMap then 404
 		if (! urlParameterMap.containsKey(this.SERVICE_ID)) {
@@ -119,9 +120,9 @@ public class AdminController extends AbstractRestController {
 	protected void handlePut(
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
-	        JbpmContext jbpmContext,
-	        PermissionsHelper permissionsHelper, 
-	        Map<String, String> urlParameterMap ) throws Exception 
+	        WorkflowBeanFactory factory,
+	        WorkflowDao dao, 
+	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap ) throws Exception 
 	{
 		//If there is no reportId in urlParameterMap then 404
 		if (! urlParameterMap.containsKey(this.SERVICE_ID)) {

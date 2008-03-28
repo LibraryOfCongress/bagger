@@ -11,39 +11,62 @@ import org.jbpm.taskmgmt.def.Task;
 public class TaskBean extends AbstractWorkflowBean {
 	private Task task;
 	
-	public void setTask(Task task)
+	void setTask(Task task)
 	{
 		this.task = task;
 	}
 	
-	public String getName()
-	{
+	public String getId() {
 		return this.task.getName();
 	}
 	
-	public List<String> getLeavingTransitionList()
+	public String getName()
 	{
-		List<String> transitionList = new ArrayList<String>();
-		Iterator iter = this.task.getTaskNode().getLeavingTransitions().iterator();
+		return this.getMessage("task." + this.getProcessDefinitionBean().getId() + "." + this.getId(), this.getId());
+	}
+	
+	public ProcessDefinitionBean getProcessDefinitionBean()
+	{
+		return this.factory.createProcessDefinitionBean(this.task.getProcessDefinition());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<TransitionBean> getLeavingTransitionBeanList()
+	{
+		List<TransitionBean> transitionBeanList = new ArrayList<TransitionBean>();
+		Iterator<Transition> iter = this.task.getTaskNode().getLeavingTransitions().iterator();
 		while (iter.hasNext())
 		{
-			Transition transition = (Transition)iter.next();
-			transitionList.add(transition.getName());
+			TransitionBean transitionBean = this.factory.createTransitionBean(iter.next());
+			transitionBeanList.add(transitionBean);
 		}
-		return transitionList;
+		return transitionBeanList;
 	}
 
+	@SuppressWarnings("unchecked")
+	public boolean hasLeavingTransition(String transition)
+	{
+		Iterator<Transition> iter = this.task.getTaskNode().getLeavingTransitions().iterator();
+		while (iter.hasNext())
+		{
+			if (iter.next().getName().equals(transition))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<VariableBean> getVariableBeanList()
 	{
 		List<VariableBean> variableBeanList = new ArrayList<VariableBean>();
 		if (this.task.getTaskController() != null)
 		{
-			Iterator iter = this.task.getTaskController().getVariableAccesses().iterator();
+			Iterator<VariableAccess> iter = this.task.getTaskController().getVariableAccesses().iterator();
 			while(iter.hasNext())
 			{
-				VariableBean variableBean = new VariableBean();
-				variableBean.setVariable((VariableAccess)iter.next());
-				variableBean.setJbpmContext(jbpmContext);
+				VariableBean variableBean = this.factory.createVariableBean(iter.next(), this);
 				variableBeanList.add(variableBean);			
 			}
 		}

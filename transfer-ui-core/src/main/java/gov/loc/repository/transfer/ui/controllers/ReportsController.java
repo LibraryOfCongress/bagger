@@ -5,6 +5,8 @@ import gov.loc.repository.packagemodeler.DaoAwareModelerFactory;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.packagemodeler.impl.DaoAwareModelerFactoryImpl;
+import gov.loc.repository.transfer.ui.dao.WorkflowDao;
+import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 import gov.loc.repository.transfer.ui.models.Report;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
@@ -18,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jbpm.JbpmContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.context.ApplicationContext;
@@ -54,9 +55,9 @@ public class ReportsController extends AbstractRestController {
 	protected void handleIndex(
 	        HttpServletRequest request, 
 	        ModelAndView mav,
-			JbpmContext jbpmContext, 
-			PermissionsHelper permissions, 
-			Map<String, String> urlParameterMap) throws Exception 
+			WorkflowBeanFactory factory, 
+			WorkflowDao dao, 
+			PermissionsHelper permissions, Map<String, String> urlParameterMap) throws Exception 
 	{
 		mav.setViewName("reports");
 		mav.addObject("permissions", permissions);
@@ -71,9 +72,9 @@ public class ReportsController extends AbstractRestController {
 	protected void handleGet(
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
-	        JbpmContext jbpmContext, 
-	        PermissionsHelper permissionsHelper, 
-	        Map<String, String> urlParameterMap) throws Exception 
+	        WorkflowBeanFactory factory, 
+	        WorkflowDao dao, 
+	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
 		//If there is no reportId in urlParameterMap then 404
 		if (! urlParameterMap.containsKey(this.REPORT_ID)) {
@@ -95,13 +96,17 @@ public class ReportsController extends AbstractRestController {
 			return;
 		}
 		
-		packageModelDao.setSession(jbpmContext.getSession());
+		//The session for packageModelDao should be set in an interceptor or filter
+	    //packageModelDao.setSession(jbpmContext.getSession());
 		//Throws Caused by: org.hibernate.hql.ast.QuerySyntaxException: Repository is not mapped [from Repository]
 		//List<Repository> repositories = packageModelDao.findRepositories();
-		List<Repository> repositories = jbpmContext.getSession().createQuery(
+		/*
+	    List<Repository> repositories = jbpmContext.getSession().createQuery(
 				    "from gov.loc.repository.packagemodeler.packge.Repository"
 				).list();
+
 		mav.addObject("results",repositories);
+				*/
 		
 	}
 		
@@ -109,9 +114,9 @@ public class ReportsController extends AbstractRestController {
 	protected void handlePut(
 	        HttpServletRequest request, 
 	        ModelAndView mav, 
-	        JbpmContext jbpmContext,
-	        PermissionsHelper permissionsHelper, 
-	        Map<String, String> urlParameterMap ) throws Exception 
+	        WorkflowBeanFactory factory,
+	        WorkflowDao dao, 
+	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap ) throws Exception 
 	{
 		//If there is no reportId in urlParameterMap then 404
 		if (! urlParameterMap.containsKey(this.REPORT_ID)) {

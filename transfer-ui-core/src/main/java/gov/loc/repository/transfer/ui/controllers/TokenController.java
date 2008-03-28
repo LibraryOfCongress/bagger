@@ -1,15 +1,15 @@
 package gov.loc.repository.transfer.ui.controllers;
 
 import gov.loc.repository.transfer.ui.UIConstants;
+import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.model.NodeBean;
 import gov.loc.repository.transfer.ui.model.TokenBean;
-import gov.loc.repository.transfer.ui.model.TokenHelper;
+import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jbpm.JbpmContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -34,8 +34,8 @@ public class TokenController extends AbstractRestController {
 	
 	@Override
 	protected void handlePut(HttpServletRequest request, ModelAndView mav,
-			JbpmContext jbpmContext, PermissionsHelper permissionsHelper,
-			Map<String, String> urlParameterMap) throws Exception {
+			WorkflowBeanFactory factory, WorkflowDao dao,
+			PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception {
 		if (! permissionsHelper.canMoveToken())
 		{
 			mav.setError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -48,13 +48,12 @@ public class TokenController extends AbstractRestController {
 		}
 		
 		String tokenId = urlParameterMap.get(TOKENID);
-		if (! TokenHelper.hasToken(Long.parseLong(tokenId), jbpmContext))
+		TokenBean tokenBean = dao.getTokenBean(tokenId);
+		if (tokenBean == null)
 		{
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
-		TokenBean tokenBean = TokenHelper.getTokenBean(Long.parseLong(tokenId), jbpmContext);
-
 		if (! tokenBean.isMovable())
 		{
 			mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Token id not movable");
