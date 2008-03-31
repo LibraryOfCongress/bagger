@@ -63,7 +63,7 @@ public class FileCopyEventActionHandler extends BaseActionHandler {
 			event.setSuccess(false);
 		}
 		
-		log.debug(MessageFormat.format("Adding Verify Event to package {0}.  Event success: {1}", this.packageId, event.isSuccess()));		
+		log.debug(MessageFormat.format("Adding File Copy Event to package {0}.  Event success: {1}", this.packageId, event.isSuccess()));		
 	}
 
 }
