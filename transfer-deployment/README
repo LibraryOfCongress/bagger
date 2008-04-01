@@ -32,7 +32,7 @@ http://cooltools.sunsource.net/coolstack/
     # bzip2 -d CSKtomcat_1.2_x86.pkg.bz2
 
 3.  Install the package:
-    (NOTE: If you only want the package installed ion the current zone add a '-G' flag)
+    (NOTE: If you only want the package installed in the current zone add a '-G' flag)
     # pkgadd -d CSKtomcat_1.2_x86.pkg
 
 4.  Use svccfg to configure the appropriate amount of memory:
@@ -63,5 +63,4 @@ http://cooltools.sunsource.net/coolstack/
   <user username="admin" password="password" roles="admin,manager"/>
   <user username="tomcat" password="tomcat" roles="tomcat"/>
 </tomcat-users>
-
 

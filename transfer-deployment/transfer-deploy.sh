@@ -29,8 +29,9 @@ init_vars () {
     PM_NDNP_FIXTURE_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_NDNP}-${VERSION}/conf/fixture_writer.packagemodeler.hibernate.properties"
     JBPM_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${WORKFLOW_CORE}-${VERSION}/conf/jbpm.hibernate.properties"
     TRANSFER_DW_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/data_writer.packagemodeler.hibernate.properties"
-    TRANSFER_RO_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/read_only.packagemodeler.core.hibernate.properties"
+    TRANSFER_RO_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/read_only.packagemodeler.hibernate.properties"
     TRANSFER_JBPM_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/jbpm.hibernate.properties"
+    TRANSFER_CONTEXT_CONF="${CATALINA_HOME}/conf/Catalina/localhost/transfer.xml"
 
     # ENVIRONMENT VARS
     export PGUSER=$PGUSER
@@ -49,7 +50,6 @@ init_vars () {
     PM_DB="${DB_PREFIX}package_modeler"
     JBPM_DB="${DB_PREFIX}jbpm32"
 
-    #TODO:  Make passwords configurable
     ROLE_PRIVS="NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE LOGIN"
     XFER_FIXTURE_WRITER="${ROLE_PREFIX}transfer_fixture_writer_user"
     XFER_READER="${ROLE_PREFIX}transfer_reader_user"
@@ -64,13 +64,22 @@ init_vars () {
     JBPM_OWNER="${ROLE_PREFIX}jbpm_role"
 
     # PACKAGE MODELER HIBERNATE PROPERTIES
-    PM_HIBERNATE_PROPS="#Hibernate Core Settings\n
+    PM_WRITER_HIBERNATE_PROPS="#Hibernate Core Settings\n
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\n
 hibernate.connection.driver_class=org.postgresql.Driver\n
 hibernate.connection.url=jdbc:postgresql://${PGHOST}:${PGPORT}/${PM_DB}\n
 hibernate.connection.username=${XFER_WRITER}\n
 hibernate.connection.password=${XFER_WRITER_PASSWD}"
 
+    # PACKAGE MODELER HIBERNATE PROPERTIES
+    PM_READER_HIBERNATE_PROPS="#Hibernate Core Settings\n
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\n
+hibernate.connection.driver_class=org.postgresql.Driver\n
+hibernate.connection.url=jdbc:postgresql://${PGHOST}:${PGPORT}/${PM_DB}\n
+hibernate.connection.username=${XFER_READER}\n
+hibernate.connection.password=${XFER_READER_PASSWD}"
+
+    # PACKAGE MODELER HIBERNATE PROPERTIES
     PM_FIXTURE_HIBERNATE_PROPS="#Hibernate Core Settings\n
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\n
 hibernate.connection.driver_class=org.postgresql.Driver\n
@@ -406,7 +415,7 @@ deploy_pm_core_cli () {
     unzip $PM_CORE_CLI_PKG -d $TRANSFER_INSTALL_DIR
     printf "INFO:  Making %s executable\n" $PM_CORE_CLI
     chmod +x $PM_CORE_CLI
-    echo -e $PM_HIBERNATE_PROPS > $PM_CORE_HIBERNATE_CONF
+    echo -e $PM_WRITER_HIBERNATE_PROPS > $PM_CORE_HIBERNATE_CONF
     echo -e $PM_FIXTURE_HIBERNATE_PROPS > $PM_CORE_FIXTURE_HIBERNATE_CONF
 }
 
@@ -416,7 +425,7 @@ deploy_pm_ndnp_cli () {
     unzip $PM_NDNP_CLI_PKG -d $TRANSFER_INSTALL_DIR 
     printf "INFO:  Making %s executable\n" $PM_NDNP_CLI
     chmod +x $PM_NDNP_CLI
-    echo -e $PM_HIBERNATE_PROPS > $PM_NDNP_HIBERNATE_CONF
+    echo -e $PM_WRITER_HIBERNATE_PROPS > $PM_NDNP_HIBERNATE_CONF
     echo -e $PM_FIXTURE_HIBERNATE_PROPS > $PM_NDNP_FIXTURE_HIBERNATE_CONF
 }
 
@@ -465,7 +474,7 @@ install_jbpm_fixtures () {
     echo "INSERT INTO JBPM_ID_GROUP VALUES(2,'G','ndnp-sysadmin','organisation',NULL);" | $PSQL
     echo "INSERT INTO JBPM_ID_GROUP VALUES(3,'G','participant','security-role',NULL);" | $PSQL
     echo "INSERT INTO JBPM_ID_GROUP VALUES(4,'G','administrator','security-role',NULL);" | $PSQL
-    echo "INSERT INTO JBPM_ID_GROUP VALUES(5,'G','ndnp-ingest','organisation',NULL);" | $PSQL    
+    echo "INSERT INTO JBPM_ID_GROUP VALUES(5,'G','ndnp-ingest','organisation',NULL);" | $PSQL
     echo "INSERT INTO JBPM_ID_USER VALUES(1,'U','ray','foo@loc.gov','ray');" | $PSQL
     echo "INSERT INTO JBPM_ID_USER VALUES(2,'U','myron','foo@loc.gov','myron');" | $PSQL
     echo "INSERT INTO JBPM_ID_USER VALUES(3,'U','scott','foo@loc.gov','scott');" | $PSQL
@@ -478,7 +487,7 @@ install_jbpm_fixtures () {
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(6,'M','scott','participant',3,3);" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(7,'M','scott','administrator',3,4);" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(8,'M','brian','ndnp-ingest',4,5);" | $PSQL
-    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(9,'M','brian','participant',4,3);" | $PSQL    
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(9,'M','brian','participant',4,3);" | $PSQL
     echo "INSERT INTO jbpm_id_permissions(entity_, class_, name_) VALUES (1, 'java.lang.RuntimePermission', 'processdefinition.ndnp1.initiate');" | $PSQL
 }
 
@@ -495,10 +504,11 @@ deploy_console () {
     svcadm enable svc:/application/csk-tomcat
     sleep 10
     svcadm disable svc:/application/csk-tomcat
-    echo -e $PM_HIBERNATE_PROPS > $TRANSFER_DW_HIBERNATE_CONF
-    echo -e $PM_HIBERNATE_PROPS > $TRANSFER_RO_HIBERNATE_CONF
-    echo -e $PM_HIBERNATE_PROPS > $TRANSFER_JBPM_HIBERNATE_CONF
-    echo -e $TRANSFER_CONTEXT > ${CATALINA_HOME}/conf/Catalina/localhost/transfer.xml
+    sleep 10
+    echo -e $PM_WRITER_HIBERNATE_PROPS > $TRANSFER_DW_HIBERNATE_CONF
+    echo -e $PM_READER_HIBERNATE_PROPS > $TRANSFER_RO_HIBERNATE_CONF
+    echo -e $PM_WRITER_HIBERNATE_PROPS > $TRANSFER_JBPM_HIBERNATE_CONF
+    echo -e $TRANSFER_CONTEXT > $TRANSFER_CONTEXT_CONF
     svcadm enable svc:/application/csk-tomcat
 }
 
