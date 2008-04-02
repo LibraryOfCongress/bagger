@@ -19,7 +19,7 @@
     <context:component-scan base-package="gov.loc.repository.transfer.ui"/>
 	  <!--aop:aspectj-autoproxy /-->
   
-<<<<<<< .mine
+
     <bean id="packageDao" class="gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl">
 		<property name="sessionDatabaseRole">
 			<value>READ_ONLY</value>
@@ -33,9 +33,8 @@
     			<value>application</value>
     		</list>
     	</property>
-=======
+
     <bean id="messageSource" class="gov.loc.repository.transfer.ui.springframework.ResourceBundleMessageSource">
->>>>>>> .r293
     </bean>
     
     <!--bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
