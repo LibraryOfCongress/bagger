@@ -100,8 +100,20 @@ public class ReportsController extends AbstractRestController {
 		report.prepareReport();
 		mav.addObject("report",report);
 		mav.setViewName("report");
+
+		//The session for packageModelDao should be set in an interceptor or filter
+	    //packageModelDao.setSession(jbpmContext.getSession());
+		//Throws Caused by: org.hibernate.hql.ast.QuerySyntaxException: Repository is not mapped [from Repository]
+		//List<Repository> repositories = packageModelDao.findRepositories();
+		/*
+	    List<Repository> repositories = jbpmContext.getSession().createQuery(
+				    "from gov.loc.repository.packagemodeler.packge.Repository"
+				).list();
+
+		mav.addObject("results",repositories);
+				*/
 		
-		
+		//Throws Caused by: org.hibernate.hql.ast.QuerySyntaxException: Package is not mapped
 	}
 		
 	@Override

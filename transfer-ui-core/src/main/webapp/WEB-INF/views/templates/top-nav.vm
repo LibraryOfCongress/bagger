@@ -1,6 +1,6 @@
 <div id="topnav">
   <h2 style="background:url('${contextPath}/images/chart_logo.png');">
-      <a href="${contextPath}/index.html">Transfer_UI</a>
+      <a href="${contextPath}/index.html">Transfer UI</a>
   </h2>
   <ul id="menu">
     <li id="global_home">
