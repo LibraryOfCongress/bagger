@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class Report extends Base<Long> {
     protected String description;
-    protected List<String> filters;
+    protected Map<String, List<String>> filters;
     protected List<String> sorters;
     protected String query;
     protected Map<String, String> parameters;
@@ -21,10 +21,10 @@ public class Report extends Base<Long> {
     public void setDescription(String description){
         this.description = description;
     }
-    public List<String> getFilters(){
+    public Map<String, List<String>> getFilters(){
         return this.filters;
     }
-    public void setFilters(List<String> filters){
+    public void setFilters(Map<String, List<String>> filters){
         this.filters = filters;
     }
     public List<String> getSorters(){

@@ -54,4 +54,9 @@
 		<put name="title"           value="Reports" />
 		<put name="content"         value="reports.vm" />
 	</definition>
+	
+	<definition name="report" extends="base">
+		<put name="title"           value="Report" />
+		<put name="content"         value="abstract-report.vm" />
+	</definition>
 </tiles-definitions> 

@@ -37,18 +37,23 @@
             #end
 	        <table id="reports_table" class="tablesorter pageable"  >
 	            <thead><tr>
+                    <th> ID </th>
                     <th> Name </th>
                     <th> Description </th>
                 </tr></thead>
                 <tfoot><tr>
+                    <th> ID </th>
                     <th> Name </th>
                     <th> Description </th>
                 </tr></tfoot>
                 <tbody>
 			        #foreach($report in $reports)
 			        <tr id="report_${report.id}" >
-				        <td><a href="${contextPath}/report/${report.id}.html">
-				            <b>${report.name} ($report.id)</b></a>
+				        <td><a href="${contextPath}/reports/${report.namespace}_${report.id}.html">
+				            <b>${report.namespace.toUpperCase()} ${report.id}</b></a>
+				        </td>
+				        <td><a href="${contextPath}/reports/${report.namespace}_${report.id}.html">
+				            <b>${report.name}</b></a>
 				        </td>
 				        <td><p>${report.description}</p></td>     
 				    </tr>					

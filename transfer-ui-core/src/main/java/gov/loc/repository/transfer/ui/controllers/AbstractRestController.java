@@ -31,6 +31,7 @@ public abstract class AbstractRestController extends AbstractController {
 		
 	public abstract String getUrlParameterDescription();
 		
+	
 	//Subclass method should annotate with @RequestMethod and call handleRequestInternal().
 	public abstract ModelAndView handleRequest(
 	        HttpServletRequest request, 

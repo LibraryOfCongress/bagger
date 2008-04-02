@@ -1,0 +1,68 @@
+<div id="report">
+    <ul id="localNav">
+        <li><a href="#report_${report.id}">
+            <span> Report  </span>
+        </a></li>
+        <li><a href="#filters">
+            <span> Filters  </span>
+        </a></li>
+        <li><a href="#customize">
+            <span> Customize  </span>
+        </a></li>
+        <li><a href="#localHelp">
+            <span> Help                  </span>
+        </a></li>
+    </ul>
+	<div id="report_${report.id}">
+		<h2>${report.namespace.toUpperCase()} REPORT ${report.id}</h2>
+        <fieldset>
+            <legend><b>${report.name} ${report.data.size()}</b></legend>
+            <p>${report.description}</p>
+            #if( $report.data.size() > 10 )
+		    <table>
+		        <tbody><tr><td>
+                    <form id="reportData_pager" class="pager">
+                		<img src="${contextPath}/images/icons/first.png" class="first"/>
+                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
+                		<label for="reportData_pagedisplay">Showing page </label>
+                		<input id="reportData_pagedisplay" type="text" class="pagedisplay"/>
+                		<img src="${contextPath}/images/icons/next.png" class="next"/>
+                		<img src="${contextPath}/images/icons/last.png" class="last"/>
+                		<label for="reportData_pagesize">Results per page: </label>
+                		<select id="reportData_pagesize" class="pagesize">
+                			<option selected="selected"  value="10">10</option>
+                			<option value="20">20</option>
+                			<option value="30">30</option>
+                			<option  value="40">40</option>
+                		</select>
+                    </form>
+                </td></tr></tbody>
+            </table>
+            #end
+	        <table id="reportData_table" class="tablesorter pageable"  >
+	            <thead>
+	                <tr >
+                        <th>Package Id</th>
+                        <th>No. of ${report.fileType.toUpperCase()}</th>
+                    </tr>
+                </thead>
+                <tfoot><tr >
+                        <th>Package Id</th>
+                        <th>No. of ${report.fileType.toUpperCase()}</th>
+                </tr></tfoot>
+                <tbody>
+			        #foreach($item in $report.data)
+			        <tr >
+				        <td><a href="${contextPath}/taskinstance/${task.id}.html">
+				            ${item.key}
+				        </a></td>
+				        <td>
+    				        ${item.value}
+				        </td>			        
+				    </tr>					
+			        #end
+			    </tbody>
+		    </table>
+		</fieldset>
+	</div>
+</div>
