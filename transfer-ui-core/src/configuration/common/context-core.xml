@@ -19,7 +19,23 @@
     <context:component-scan base-package="gov.loc.repository.transfer.ui"/>
 	  <!--aop:aspectj-autoproxy /-->
   
+<<<<<<< .mine
+    <bean id="packageDao" class="gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl">
+		<property name="sessionDatabaseRole">
+			<value>READ_ONLY</value>
+		</property>
+	</bean>
+	
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    	<property name="basenames">
+    		<list>
+    			<value>messages</value>
+    			<value>application</value>
+    		</list>
+    	</property>
+=======
     <bean id="messageSource" class="gov.loc.repository.transfer.ui.springframework.ResourceBundleMessageSource">
+>>>>>>> .r293
     </bean>
     
     <!--bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
@@ -39,7 +55,7 @@
 	
 	<bean id="velocityConfig" 
     class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
-		<property name="resourceLoaderPath" value="/WEB-INF/views/templates"/>
+		<property name="resourceLoaderPath" value="/WEB-INF/views/templates,/WEB-INF/views/reports"/>
 		<property name="velocityProperties"> <props>
 				<prop key="input.encoding"                      >UTF-8</prop>
 				<prop key="output.encoding"                     >UTF-8</prop>
