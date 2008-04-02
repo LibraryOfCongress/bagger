@@ -25,14 +25,6 @@
 			<value>READ_ONLY</value>
 		</property>
 	</bean>
-	
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-    	<property name="basenames">
-    		<list>
-    			<value>messages</value>
-    			<value>application</value>
-    		</list>
-    	</property>
 
     <bean id="messageSource" class="gov.loc.repository.transfer.ui.springframework.ResourceBundleMessageSource">
     </bean>
