@@ -7,17 +7,18 @@
             <span> Filters  </span>
         </a></li>
         <li><a href="#customize">
-            <span> Customize  </span>
+            <span> Customize </span>
         </a></li>
         <li><a href="#localHelp">
-            <span> Help                  </span>
+            <span> Help     </span>
         </a></li>
     </ul>
 	<div id="report_${report.id}">
-		<h2>${report.namespace.toUpperCase()} REPORT ${report.id}</h2>
         <fieldset>
-            <legend><b>${report.name} ${report.data.size()}</b></legend>
+            <legend><b>${report.name}</b></legend>
             <p>${report.description}</p>
+            <img rel="${report.namespace}_${report.id}"
+                 src="http://chart.apis.google.com/chart?chs=400x75&chco=4d89f9&${report.chartUri}"/>
             #if( $report.data.size() > 10 )
 		    <table>
 		        <tbody><tr><td>
@@ -52,12 +53,12 @@
                 </tr></tfoot>
                 <tbody>
 			        #foreach($item in $report.data)
-			        <tr >
-				        <td><a href="${contextPath}/taskinstance/${task.id}.html">
-				            ${item.key}
+			        <tr>
+				        <td><a>
+				            ${item.package.packageId}
 				        </a></td>
 				        <td>
-    				        ${item.value}
+    				        ${item.file_count}
 				        </td>			        
 				    </tr>					
 			        #end

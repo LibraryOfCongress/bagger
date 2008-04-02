@@ -12,11 +12,7 @@ import java.util.HashMap;
  */
 abstract class CoreReport extends AbstractReport {
     
-    protected String namespace = "core";
-    public String getNamespace(){
-        return this.namespace;
-    }
-    public void setNamespace(String namespace){
-        this.namespace = namespace;
+    public CoreReport(){
+        setNamespace("core");
     }
 }

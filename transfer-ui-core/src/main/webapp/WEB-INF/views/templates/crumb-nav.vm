@@ -4,6 +4,8 @@
         $tiles.getAttribute('title') 
         #if ($task)
             &nbsp;&gt;&nbsp;  ${task.id}
+        #elseif ($report)
+            &nbsp;&gt;&nbsp; ${report.namespace.toUpperCase()} ${report.id}
         #end
     </h1>
     <div id="crumb">
