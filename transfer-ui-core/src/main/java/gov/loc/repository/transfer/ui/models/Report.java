@@ -15,6 +15,10 @@ public class Report extends Base<Long> {
     protected List<String> sorters;
     protected String query;
     protected Map<String, String> parameters;
+	protected String namespace;
+	//the hash should hold report data in the hash map similar
+	//to the way a ModelAndView holds objects for the view to render
+	protected Map<String, Object> data;
     public String getDescription(){
         return this.description;
     }
@@ -44,5 +48,21 @@ public class Report extends Base<Long> {
     }
     public void setParameters(Map<String,String> parameters){
         this.parameters = parameters;
+    }
+    //collections of reports should follow this pattern
+    //so that report templates can be added by say, ndnp,
+    //and we can minimized the likelyhood of report template 
+    //name conflict, eg see CoreReport.
+    public String getNamespace(){
+        return this.namespace;
+    }
+    public void setNamespace(String namespace){
+        this.namespace = namespace;
+    }
+    public Map<String, Object> getData(){
+        return this.data;
+    }
+    public void setData(Map<String, Object> data){
+        this.data = data;
     }
 }

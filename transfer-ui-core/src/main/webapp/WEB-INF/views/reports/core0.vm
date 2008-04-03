@@ -1,69 +1,187 @@
 <div id="report">
+    #set ($reportID = "${report.namespace}_${report.id}")
     <ul id="localNav">
         <li><a href="#report_${report.id}">
             <span> Report  </span>
         </a></li>
-        <li><a href="#filters">
-            <span> Filters  </span>
-        </a></li>
-        <li><a href="#customize">
-            <span> Customize </span>
+        <li><a href="#export">
+            <span> Export  </span>
         </a></li>
         <li><a href="#localHelp">
             <span> Help     </span>
         </a></li>
     </ul>
 	<div id="report_${report.id}">
+	    <fieldset>
+	        <legend><b>Add or remove filters to modify the report.</b></legend>
+	        <form action="${contextPath}/reports/${reportID}.html" method="post">
+	            <input type="hidden" name="action" value="filter"/>
+	            <table>
+        	        <tbody>
+        	            <tr>
+        	               <td><label for="fileTypeFilter">File Type</label></td>
+        	               <td><select id="fileTypeFilter" name="fileType">
+        	                   #foreach ( $filter in ${report.filters.fileType})
+        	                        #if( $filter == $report.data.fileType )
+        	                    <option selected="selected"> $filter </option>
+        	                        #else
+        	                    <option> $filter </option>
+        	                        #end
+        	                   #end
+        	               </select></td>
+        	            </tr>
+        	        </tbody>
+        	    </table>
+        	    <input type="button" class="button" value="refresh" style="float:right"/>
+	        </form>
+	    </fieldset>
         <fieldset>
             <legend><b>${report.name}</b></legend>
             <p>${report.description}</p>
-            <img rel="${report.namespace}_${report.id}"
-                 src="http://chart.apis.google.com/chart?chs=400x75&chco=4d89f9&${report.chartUri}"/>
-            #if( $report.data.size() > 10 )
-		    <table>
-		        <tbody><tr><td>
-                    <form id="reportData_pager" class="pager">
-                		<img src="${contextPath}/images/icons/first.png" class="first"/>
-                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-                		<label for="reportData_pagedisplay">Showing page </label>
-                		<input id="reportData_pagedisplay" type="text" class="pagedisplay"/>
-                		<img src="${contextPath}/images/icons/next.png" class="next"/>
-                		<img src="${contextPath}/images/icons/last.png" class="last"/>
-                		<label for="reportData_pagesize">Results per page: </label>
-                		<select id="reportData_pagesize" class="pagesize">
-                			<option selected="selected"  value="10">10</option>
-                			<option value="20">20</option>
-                			<option value="30">30</option>
-                			<option  value="40">40</option>
-                		</select>
-                    </form>
-                </td></tr></tbody>
-            </table>
-            #end
-	        <table id="reportData_table" class="tablesorter pageable"  >
+            #foreach ( $fileType in $report.data )
+                #if( $fileType.fileType=="xml"||$fileType.fileType=="jp2"||$fileType.fileType=="tif"||$fileType.fileType=="pdf")
+                <hr/>
+                <b>$fileType.fileType.toUpperCase()</b>
+                #set ($stats    = $fileType.stats)
+                #set ($cht      = "cht=bvg")                    <!--chart type-->
+                #if ( $fileType.fileType == 'tif')
+                    #set ($chco     = "chco=4D89F9")                <!--bar color-->
+                #elseif ( $fileType.fileType == 'xml')
+                    #set ($chco     = "chco=7FC659")   
+                #elseif ( $fileType.fileType == 'jp2')
+                    #set ($chco     = "chco=FF9955")   
+                #elseif ( $fileType.fileType == 'pdf')
+                    #set ($chco     = "chco=FF7F7F")   
+                #else
+                    #set ($chco     = "chco=4D89F9")      
+                #end        
+                #set ($chs      = "chs=$math.add($math.mul($stats.count,8),200)x100")   <!--max size of graph-->
+                #set ($chbh     = "chbh=8")                    <!--width of bars-->
+                #set ($chxl     = "chxl=0:|min|average|max")    <!--labels for x-axis (0)-->
+                <!-- //positions for x-axis labels (0) values still need to be set -->
+                #set ($chxp     = "chxp=0,${stats.minpercent},${stats.avgpercent},100")
+                #set ($chxt     = "chxt=y,r")                   <!--axis label types to be included-->
+                #set ($chxr     = "chxr=1,0,${stats.max}") <!-- range for right axis labels (max still needs to be set)-->
+                #set ($chm      = "chm=B,C6D9FD,0,0,0|D,4D89F9,0,0,1,1")
+                #set ($chd      = "chd=t:${stats.joinedpoints}")  <!--text encoded data (use simple encoding to reduce url size)-->
+                #set ($chds     = "chds=0,${stats.max}")    <!--//data scale( still need to set max)"-->
+                #set ($charturi = "${cht}&${chco}&${chs}&${chbh}&${chxl}&${chxp}&${chxt}&${chxr}&${chm}&${chd}&${chds}")
+                <div style="overflow:auto;">
+                <img rel="${reportID}" 
+                     src="http://chart.apis.google.com/chart?${charturi}"/>
+                </div>
+                #if( $fileType.results.size() > 10 )
+    		    <table>
+    		        <tbody><tr><td>
+                        <form id="reportData_pager" class="pager">
+                    		<img   src="${contextPath}/images/icons/first.png" class="first"/>
+                    		<img   src="${contextPath}/images/icons/prev.png" class="prev"/>
+                    		<label for="reportData_pagedisplay">Showing page </label>
+                    		<input id="reportData_pagedisplay" type="text" class="pagedisplay"/>
+                    		<img   src="${contextPath}/images/icons/next.png" class="next"/>
+                    		<img   src="${contextPath}/images/icons/last.png" class="last"/>
+                    		<label for="reportData_pagesize">Results per page: </label>
+                    		<select id="reportData_pagesize" class="pagesize">
+                    			<option selected="selected"  value="10">10</option>
+                    			<option value="20">20</option>
+                    			<option value="30">30</option>
+                    			<option value="40">40</option>
+                    		</select>
+                        </form>
+                    </td></tr></tbody>
+                </table>
+                #end
+    	        <table id="reportData_table" class="tablesorter pageable"  >
+    	            <thead>
+    	                <tr >
+                            <th>Package Id</th>
+                            <th>No. of ${fileType.fileType.toUpperCase()}</th>
+                        </tr>
+                    </thead>
+                    <tfoot><tr >
+                            <th>Subtotal for ${fileType.fileType.toUpperCase()}s</th>
+                            <th>$fileType.stats.subtotal</th>
+                    </tr></tfoot>
+                    <tbody>
+    			        #foreach($item in $fileType.results)
+    			        <tr>
+    				        <td><a href="${contextPath}/reports/${reportID}.html?packageKey=${item.package.key}">
+    				            ${item.package.packageId}
+    				        </a></td>
+    				        <td>
+        				        ${item.file_count}
+    				        </td>			        
+    				    </tr>					
+    			        #end
+    			    </tbody>
+    		    </table>
+    		    #end
+    		#end
+		</fieldset>
+		<hr/><hr/>
+    	<fieldset>
+		    <legend><b>Summary: Distribution of Files by Type for Transfered Packages.</b></legend>
+                #set ($tifpie     = "$math.div($math.mul($report.data.tif.stats.subtotal,100),$report.data.globalStats.total)") 
+                #set ($xmlpie     = "$math.div($math.mul($report.data.xml.stats.subtotal,100),$report.data.globalStats.total)") 
+                #set ($jp2pie     = "$math.div($math.mul($report.data.jp2.stats.subtotal,100),$report.data.globalStats.total)") 
+                #set ($pdfpie     = "$math.div($math.mul($report.data.pdf.stats.subtotal,100),$report.data.globalStats.total)") 
+		        #set ($cht      = "cht=p")                    <!--chart type-->
+                #set ($chs      = "chs=400x200")   <!--max size of graph-->
+                #set ($chco     = "chco=4D89F9,7FC659,FF9955,FF7F7F")    <!--colors -->
+                #set ($chl      = "chl=TIF|XML|JP2|PDF")    <!--labels -->
+                <!--text encoded data (use simple encoding to reduce url size)-->
+                #set ($chd      = "chd=t:$!{tifpie},$!{xmlpie},$!{jp2pie},$!{pdfpie}")  
+                #set ($summarycharturi = "${cht}&${chs}&${chl}&${chco}&${chd}")
+                <div style="overflow:auto;margin:auto;text-align:center;">
+                <img rel="${reportID}" 
+                     src="http://chart.apis.google.com/chart?${summarycharturi}"/>
+                </div>
+		    <table id="reportData_table" class="tablesorter pageable"  >
 	            <thead>
 	                <tr >
-                        <th>Package Id</th>
-                        <th>No. of ${report.fileType.toUpperCase()}</th>
+                        <th>File Type</th>
+                        <th>Subtotal</th>
                     </tr>
                 </thead>
                 <tfoot><tr >
-                        <th>Package Id</th>
-                        <th>No. of ${report.fileType.toUpperCase()}</th>
+                        <th>Total for all packages</th>
+                        <th>$report.data.globalStats.total</th>
                 </tr></tfoot>
                 <tbody>
-			        #foreach($item in $report.data)
+		#foreach ( $fileType in $report.data )
+            #if( $fileType.fileType=="xml"||$fileType.fileType=="jp2"||$fileType.fileType=="tif"||$fileType.fileType=="pdf")
 			        <tr>
-				        <td><a>
-				            ${item.package.packageId}
-				        </a></td>
-				        <td>
-    				        ${item.file_count}
-				        </td>			        
-				    </tr>					
-			        #end
+				        <td>${fileType.fileType.toUpperCase()}</td>
+				        <td>${fileType.stats.subtotal}</td>			        
+				    </tr>			
+            #end
+        #end
 			    </tbody>
 		    </table>
-		</fieldset>
+        </fieldset>
 	</div>
+	<div id="export">
+	    <fieldset>
+	        <legend><b>Export this report.</b>(* This feature is not yet available. *)</legend>
+	        <form action="${contextPath}/reports/${reportID}.html" method="post">
+	            <input type="hidden" name="action" value="export"/>
+	            <table>
+        	        <tbody>
+        	            <tr>
+        	               <td><label for="exportTypeFilter">Export Type</label></td>
+        	               <td><select id="exportTypeFilter" name="exportType">
+        	                    <option selected="selected"> xls </option>
+        	                    <option > csv </option>
+        	                    <option > pdf </option>
+        	                    <option > html </option>
+        	               </select></td>
+        	            </tr>
+        	        </tbody>
+        	    </table>
+        	    <input type="button" class="button" value="export" 
+        	        style="float:right" disabled="disabled"/>
+	        </form>
+	    </fieldset>
+	</div>
+	<div id="localHelp"></div>
 </div>

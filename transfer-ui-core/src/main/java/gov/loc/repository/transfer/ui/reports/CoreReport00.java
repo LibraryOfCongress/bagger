@@ -18,10 +18,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CoreReport00 extends CoreReport {
     
-    protected String fileType = "tif";//default
+    protected String fileType = "all";//default
     protected ResultIterator resultSet;
-    protected Map<String, String> chart;
-    protected String chartUri;
     
     public CoreReport00(){
         super();
@@ -30,6 +28,7 @@ public class CoreReport00 extends CoreReport {
         setDescription("This report allows you to view the number of files of a specified type for all transfered packages.");
         Map filters = new HashMap<String, List<String>>();
         List<String> fileTypeFilters = new ArrayList<String>(); 
+        fileTypeFilters.add("all");
         fileTypeFilters.add("xml");
         fileTypeFilters.add("jp2");
         fileTypeFilters.add("tif");
@@ -39,84 +38,109 @@ public class CoreReport00 extends CoreReport {
     }
     
     protected void gatherData() throws Exception{
-         this.resultSet = this.packageDao.findPackagesWithFileCount(
-            Package.class,
-            this.fileType
-        );
+        this.data = new HashMap<String, Object>();
+        log.debug("Gathering Data for Core Report 00");
+        if(this.fileType.equals("all") || this.fileType.equals("xml")){
+            this.data.put("xml", this.packageDao.findPackagesWithFileCount(
+                Package.class, "xml"
+            ));
+        }
+        if(this.fileType.equals("all") || this.fileType.equals("jp2")) {
+             this.data.put("jp2", this.packageDao.findPackagesWithFileCount(
+                Package.class, "jp2"
+            ));
+        }
+        if(this.fileType.equals("all") || this.fileType.equals("tif")) {
+             this.data.put("tif", this.packageDao.findPackagesWithFileCount(
+                Package.class, "tif"
+            ));
+        }
+        if(this.fileType.equals("all") || this.fileType.equals("pdf")) {
+             this.data.put("pdf", this.packageDao.findPackagesWithFileCount(
+                Package.class, "pdf"
+            ));
+        }
         log.debug("Gathered Data for Core Report 00");
     }
     
     protected void processData(){
-        chart = new HashMap<String, String>();
-        chart.put("cht","bvg");//vertical bar graph
-        chart.put("chd","t:");//text encoded data (use simple encoding to reduce url size)
-        chart.put("chds","0,");//data scale( still need to set max)"
-        chart.put("chbh","10");//width of bars in pixels
-        chart.put("chxt","y,r");//axis label types to be included
-        chart.put("chxr","1,0,");//range for right axis labels (max still needs to be set)
-        chart.put("chxl","0:|min|average|max");//labels for x-axis (0)
-        chart.put("chxp","0,");//positions for x-axis labels (0) values still need to be set
+        log.debug("Processing Data for Core Report 00");
+        Map<String, Object> globalStatistics = new HashMap<String, Object>();
+        long total = 0;
+        for(String filterType:this.data.keySet()){//think $report.data.jp2.stats
+            ResultIterator resultSet = (ResultIterator)this.data.get(filterType);
+            Map<String, Object> dataByFileType = new HashMap<String, Object>();
+            List results = new ArrayList();
+            List datapoints = new ArrayList();
+            Map<String, Object> statistics = new HashMap<String, Object>();
+            long subtotal = 0;
+            long maxValue = 0;
+            long minValue = -1;
+            long avgValue = 0;
+            long i = 0;
+            
+            //Save the resultSet as is
+            while(resultSet.hasNext()){
+    			Map<String, Object> result = resultSet.next();
+    			results.add(result);
+    			Package packge = (Package)result.get("package");
+    			Long fileCount =  (Long)result.get("file_count");
+    			datapoints.add(fileCount.longValue());
+    			subtotal    += fileCount.longValue();
+    			total       += fileCount.longValue();
+    			avgValue    += fileCount.longValue();
+    			if(fileCount.longValue() > maxValue){ maxValue = fileCount.longValue();}
+    			if(minValue == -1 || (fileCount.longValue() < minValue) ){ 
+    			    minValue = fileCount.longValue();
+    			}
+    			i++;
+    			log.debug("Processing Data for Core Report 00. Added " + 
+    			            "\n\tpackage: " + packge +
+    			            "\n\tfileCount: " + fileCount );
+    		}
+    		dataByFileType.put("fileType", filterType);
+            dataByFileType.put("results", results);
         
-        this.data = new HashMap<String, Object>();
-        long maxValue = 0;
-        long minValue = -1;
-        long avgValue = 0;
-        long i = 0;
-        String chd = chart.get("chd");
-        while(this.resultSet.hasNext()){
-			Map<String, Object> result = this.resultSet.next();
-			Package packge = (Package)result.get("package");
-			Long fileCount =  (Long)result.get("file_count");
-			chd += fileCount.toString() + (resultSet.hasNext()?",":"");
-			chart.put("chd", chd);
-			avgValue += fileCount.longValue();
-			if(fileCount.longValue() > maxValue){ maxValue = fileCount.longValue();}
-			if(minValue == -1 || (fileCount.longValue() < minValue) ){ 
-			    minValue = fileCount.longValue();
-			}
-			data.put(packge.getPackageId(), result);
-			i++;
-			log.debug("Processing Data for Core Report 00. Added " + 
-			            "\n\tpackage: " + packge +
-			            "\n\tfileCount: " + fileCount +
-			            "\n\tchartUri: " + chart2uri(this.chart));
+    		avgValue = avgValue/i;
+    		log.debug("\n\tMaximum value: "  + maxValue 
+    		        +"\n\tAverage value: " + avgValue
+    		        +"\n\tMinimum value: " + minValue);
+    		statistics.put("max", maxValue);
+    		statistics.put("avg", avgValue);
+    		statistics.put("min", minValue);
+    		statistics.put("maxpercent", 100);
+    		statistics.put("avgpercent", avgValue*100/(maxValue>0?maxValue:1));
+    		statistics.put("minpercent", minValue*100/(maxValue>0?maxValue:1));
+    		statistics.put("count", i);
+    		statistics.put("subtotal", subtotal);
+    		statistics.put("joinedpoints", join(datapoints,","));
+    		dataByFileType.put("stats", statistics);
+    		//replace the results iterator with the processed map of data
+    		this.data.put(filterType, dataByFileType);
 		}
-		avgValue = avgValue/i;
-		log.debug("Average value: " + avgValue);
-		String chds = chart.get("chds");
-		chds +=  maxValue;
-		chart.put("chds", chds);
-		String chxr = chart.get("chxr");
-		chxr += new Long(maxValue).toString();
-		chart.put("chxr", chxr);
-		String chxp = chart.get("chxp");
-		chxp += new Long((minValue*100/maxValue)).toString()+",";
-		chxp += new Long((avgValue*100/maxValue)).toString()+",";
-		chxp += 100;
-		chart.put("chxp", chxp);
-	    setChartUri( chart2uri(this.chart) );
-		log.debug("chart uri: " + getChartUri());
+		globalStatistics.put("total", total);
+        this.data.put("globalStats", globalStatistics);
+        this.data.put("fileType", this.fileType);//the selected filetype (* may be 'all' or should allow multi selection)!
+        log.debug("Completed Processing Data for Core Report 00");
     }
     
-    private String chart2uri(Map<String,String> chart){
-        String url = "";
-        for(String key:chart.keySet()){
-            url+="&"+key;
-            url+="="+chart.get(key);
+    
+    private String join(List datapoints, String seperator){
+        String joined = "";
+        log.debug("Joining data points:" + datapoints.toString());
+        for(int i= 0; i < datapoints.size(); i++){
+            joined+= datapoints.get(i) + (((i+1)<datapoints.size())?seperator:"");
         }
-        return url;
+        log.debug("Joined data points:" + joined);
+        return joined;
     }
     
-    public String getChartUri(){
-        return this.chartUri;
-    }
-    public void setChartUri(String chartUri){
-        this.chartUri = chartUri;
-    }
+    
     public String getFileType(){
         return this.fileType;
     }
     public void setFileType(String fileType){
         this.fileType = fileType;
     }
+    
 }

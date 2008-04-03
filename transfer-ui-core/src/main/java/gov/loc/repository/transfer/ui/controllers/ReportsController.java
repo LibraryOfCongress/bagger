@@ -98,7 +98,7 @@ public class ReportsController extends AbstractRestController {
 		}
 		
 		report.prepareReport();
-		mav.addObject("report",report);
+		mav.addObject("report",(Report)report);
 		mav.setViewName("report");
 
 		//The session for packageModelDao should be set in an interceptor or filter

@@ -17,11 +17,6 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractReport extends Report {
     
 	protected static final Log log = LogFactory.getLog(AbstractReport.class);
-	protected String namespace = "fixme";
-	
-	//the hash should hold report data in the hash map similar
-	//to the way a ModelAndView holds objects for the view to render
-	protected Map<String, Object> data = new HashMap<String, Object>();
 	
     public AbstractReport(){}
     
@@ -39,23 +34,7 @@ public abstract class AbstractReport extends Report {
     abstract void gatherData() throws Exception;
     abstract void processData();
     
-    //collections of reports should follow this pattern
-    //so that report templates can be added by say, ndnp,
-    //and we can minimized the likelyhood of report template 
-    //name conflict, eg see CoreReport.
-    public String getNamespace(){
-        return this.namespace;
-    }
-    public void setNamespace(String namespace){
-        this.namespace = namespace;
-    }
     
-    public Map<String, Object> getData(){
-        return this.data;
-    }
-    public void setData(Map<String, Object> data){
-        this.data = data;
-    }
     
     //Can't autowire because this dao isnt instantiated by app framework
     //See AbstractRestController and ReportsController.handleGet
