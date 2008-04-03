@@ -120,12 +120,12 @@
 		</fieldset>
 		<hr/><hr/>
     	<fieldset>
-		    <legend><b>Summary: Distribution of Files by Type for Transfered Packages.</b></legend>
+		    <legend><b>Summary: Distribution of the Number of Files by Type.</b></legend>
                 #set ($tifpie     = "$math.div($math.mul($report.data.tif.stats.subtotal,100),$report.data.globalStats.total)") 
                 #set ($xmlpie     = "$math.div($math.mul($report.data.xml.stats.subtotal,100),$report.data.globalStats.total)") 
                 #set ($jp2pie     = "$math.div($math.mul($report.data.jp2.stats.subtotal,100),$report.data.globalStats.total)") 
                 #set ($pdfpie     = "$math.div($math.mul($report.data.pdf.stats.subtotal,100),$report.data.globalStats.total)") 
-		        #set ($cht      = "cht=p")                    <!--chart type-->
+		        #set ($cht      = "cht=p3")                    <!--chart type-->
                 #set ($chs      = "chs=400x200")   <!--max size of graph-->
                 #set ($chco     = "chco=4D89F9,7FC659,FF9955,FF7F7F")    <!--colors -->
                 #set ($chl      = "chl=TIF|XML|JP2|PDF")    <!--labels -->
