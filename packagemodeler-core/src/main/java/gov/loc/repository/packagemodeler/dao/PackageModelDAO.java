@@ -42,7 +42,9 @@ public interface PackageModelDAO {
 	
 	public abstract Long calculatePackageSize(Package packge) throws Exception;	
 
-	public abstract ResultIterator findPackagesWithFileCount(Class<Package> packageType, String extension) throws Exception;	
+	public abstract ResultIterator findPackagesWithFileCount(Class<Package> packageType, String extension) throws Exception;
+	
+	public Package loadRequiredPackage(Long key) throws Exception;
 	
 	//CanonicalFile
 	public abstract Map<String,Long> countCanonicalFilesByExtension(Package packge) throws Exception;	
@@ -50,7 +52,7 @@ public interface PackageModelDAO {
 	public abstract CanonicalFile findCanonicalFile(String repositoryId, String packageId, String filename) throws Exception;
 
 	//FileLocation
-	public abstract FileLocation loadFileLocation(Long key) throws Exception;
+	public abstract FileLocation loadRequiredFileLocation(Long key) throws Exception;
 	
 	//FileInstance
 	public abstract FileInstance findFileInstance(String repositoryId, String packageId, String storageServiceId, String basePath, String filename) throws Exception;
@@ -84,7 +86,7 @@ public interface PackageModelDAO {
 	public abstract void save(Object object) throws Exception;
 	
 	public abstract void delete(Object object) throws Exception;
-
+	
 	//Comparison
 	public abstract FileListComparisonResult compare(FileLocation fileLocation, FileExaminationGroup fileExaminationGroup) throws Exception;
 	

@@ -27,6 +27,7 @@ import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.impl.ExternalFileLocationImpl;
+import gov.loc.repository.packagemodeler.packge.impl.PackageImpl;
 import gov.loc.repository.packagemodeler.packge.impl.StorageSystemFileLocationImpl;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
@@ -320,6 +321,12 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 	{
 		return clazz.getName().substring(0, (clazz.getName().length()-clazz.getSimpleName().length())) + "impl." + clazz.getSimpleName() + "Impl";		
 	}
+	
+	protected Class<?> getImplClass(Class<?> clazz) throws ClassNotFoundException
+	{
+		String implClassName = this.getImplClassName(clazz);
+		return Class.forName(implClassName);
+	}
 
 	protected <T extends Ided> T find(Class<T> clazz, String id) throws Exception
 	{
@@ -403,7 +410,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		
 	}	
 	
-	public FileLocation loadFileLocation(Long key) throws Exception {
+	public FileLocation loadRequiredFileLocation(Long key) throws Exception {
 		FileLocation fileLocation = (FileLocation)this.getSession().get(StorageSystemFileLocationImpl.class, key);
 		if (fileLocation == null)
 		{
@@ -416,4 +423,12 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return fileLocation;
 	}	
 	
+	public Package loadRequiredPackage(Long key) throws Exception {
+		Package packge = (Package)this.getSession().get(PackageImpl.class, key);
+		if (packge == null)
+		{
+			throw new Exception(MessageFormat.format("Could not load a Package with key {0}", key));
+		}
+		return packge;
+	}	
 }

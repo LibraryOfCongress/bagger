@@ -421,13 +421,13 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 	@Test
 	public void testLoadFileLocation() throws Exception
 	{
-		assertNotNull(dao.loadFileLocation(this.fileLocation1.getKey()));
+		assertNotNull(dao.loadRequiredFileLocation(this.fileLocation1.getKey()));
 	}
 	
 	@Test(expected=Exception.class)
 	public void testLoadBadFileLocation() throws Exception
 	{
-		dao.loadFileLocation(10001L);
+		dao.loadRequiredFileLocation(10001L);
 	}
 	
 }
