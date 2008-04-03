@@ -8,8 +8,7 @@ from optparse import OptionParser
 def generate_package_identifier():
     """Assume no more than one of these packages per second, and 
        use MIME-encoded seconds-since-epoch"""
-    from base64 import encodestring
-    return encodestring(str(int(time.time()))).strip()
+    return str(int(time.time())).strip()
 
 
 def get_options_and_args():
@@ -51,13 +50,13 @@ def retrieve_package(options):
                     
     # distribute the contents of the retrieval order file into 
     # num_processes buckets, round-robin-like.
-    retrieval_orders = tuple([ [] for i in range(options.num_processes) ])
+    retrieval_orders = ([],) * options.num_processes
     counter = 0
     for line in file(options.retrieval_order).readlines():
         retrieval_orders[counter % options.num_processes].append(tuple(line.strip().split()))
         counter = counter + 1
 
-    logfile = file(os.path.join(package_directory, "rsync.logfile"), "w")
+    logfile = file(os.path.join(package_directory, "retrieval.log"), "w")
     pids = []
     for i in range(options.num_processes):
         pid = os.fork()
@@ -69,7 +68,10 @@ def retrieve_package(options):
                     os.makedirs(os.path.dirname(filename))
                 except OSError:
                     pass
-                ret = os.spawnlp(os.P_WAIT, "rsync", "rsync", "-ar", url, filename)
+                if url.startswith('rsync'):
+                    ret = os.spawnlp(os.P_WAIT, "rsync", "rsync", "-ar", url, filename)
+                else:
+                    ret = os.spawnlp(os.P_WAIT, "wget", "wget", "-q", "-O", filename, url)
                 logfile.write("%d: %s\n" % (ret, filename))
             sys.exit(0)
         else:
