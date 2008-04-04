@@ -95,10 +95,12 @@
     	            <thead>
     	                <tr >
                             <th>Package Id</th>
+                            <th>Storage Locations</th>
                             <th>No. of ${fileType.fileType.toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tfoot><tr >
+                            <th> </th>
                             <th>Subtotal for ${fileType.fileType.toUpperCase()}s</th>
                             <th>$fileType.stats.subtotal</th>
                     </tr></tfoot>
@@ -108,6 +110,29 @@
     				        <td><a href="${contextPath}/reports/${reportID}.html?packageKey=${item.package.key}">
     				            ${item.package.packageId}
     				        </a></td>
+    				        <td>
+    				            <table class="tablesorter">
+    				                <thead>
+    				                    <tr>
+    				                        <th>foo</th>
+    				                        <th>goo</th>
+    				                        <th>bar</th>
+    				                    </tr>
+    				                </thead>
+    				                <tbody>
+    				                    <tr>
+    				                        <td>aawegwa</td>
+    				                        <td>bweggwe wgwe</td>
+    				                        <td>werg34t wgwe</td>
+    				                    </tr>
+    				                    <tr>
+    				                        <td>dawe 233443</td>
+    				                        <td>cserg 235235</td>
+    				                        <td>cs35y 3435</td>
+    				                    </tr>
+    				                </tbody>
+    				            </table>
+    				        </td>
     				        <td>
         				        ${item.file_count}
     				        </td>			        
