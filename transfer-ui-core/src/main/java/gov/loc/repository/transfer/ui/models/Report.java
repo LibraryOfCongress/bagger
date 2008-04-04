@@ -10,20 +10,44 @@ import java.util.Map;
  * @version $Rev$
  */
 public class Report extends Base<Long> {
-    protected String description;
-    protected Map<String, List<String>> filters;
-    protected List<String> sorters;
-    protected String query;
-    protected Map<String, String> parameters;
 	protected String namespace;
+    protected String description;
 	//the hash should hold report data in the hash map similar
 	//to the way a ModelAndView holds objects for the view to render
-	protected Map<String, Object> data;
+	protected Map<String, Map> data;//can be nested
+	protected Map<String, Object> summary;//should not be nested
+    protected Map<String, List<String>> filters;
+    protected List<String> sorters;
+    //If applicable the query may exist and may be customizable
+    protected String query;
+    protected Map<String, String> parameters;
+    //collections of reports should follow this pattern
+    //so that report templates can be added by say, ndnp,
+    //and we can minimized the likelyhood of report template 
+    //name conflict, eg see CoreReport.
+    public String getNamespace(){
+        return this.namespace;
+    }
+    public void setNamespace(String namespace){
+        this.namespace = namespace;
+    }
     public String getDescription(){
         return this.description;
     }
     public void setDescription(String description){
         this.description = description;
+    }
+    public Map<String, Map> getData(){
+        return this.data;
+    }
+    public void setData(Map<String, Map> data){
+        this.data = data;
+    }
+    public Map<String, Object> getSummary(){
+        return this.summary;
+    }
+    public void setSummary(Map<String, Object> summary){
+        this.summary = summary;
     }
     public Map<String, List<String>> getFilters(){
         return this.filters;
@@ -48,21 +72,5 @@ public class Report extends Base<Long> {
     }
     public void setParameters(Map<String,String> parameters){
         this.parameters = parameters;
-    }
-    //collections of reports should follow this pattern
-    //so that report templates can be added by say, ndnp,
-    //and we can minimized the likelyhood of report template 
-    //name conflict, eg see CoreReport.
-    public String getNamespace(){
-        return this.namespace;
-    }
-    public void setNamespace(String namespace){
-        this.namespace = namespace;
-    }
-    public Map<String, Object> getData(){
-        return this.data;
-    }
-    public void setData(Map<String, Object> data){
-        this.data = data;
     }
 }

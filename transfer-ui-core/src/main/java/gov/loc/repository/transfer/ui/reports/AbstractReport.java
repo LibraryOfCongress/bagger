@@ -34,8 +34,6 @@ public abstract class AbstractReport extends Report {
     abstract void gatherData() throws Exception;
     abstract void processData();
     
-    
-    
     //Can't autowire because this dao isnt instantiated by app framework
     //See AbstractRestController and ReportsController.handleGet
 	protected PackageModelDAO packageDao;

@@ -13,6 +13,10 @@
     </ul>
 	<div id="report_${report.id}">
 	    <fieldset>
+            <legend><b>${report.name}</b></legend>
+            <p><b>${report.description}</b></p>
+        </fieldset><br/>
+	    <fieldset>
 	        <legend><b>Add or remove filters to modify the report.</b></legend>
 	        <form action="${contextPath}/reports/${reportID}.html" method="post">
 	            <input type="hidden" name="action" value="filter"/>
@@ -34,7 +38,8 @@
         	    </table>
         	    <input type="button" class="button" value="refresh" style="float:right"/>
 	        </form>
-	    </fieldset>
+	    </fieldset><br/>
+	    
         <fieldset>
             <legend><b>${report.name}</b></legend>
             <p>${report.description}</p>
@@ -55,7 +60,7 @@
                 #else
                     #set ($chco     = "chco=4D89F9")      
                 #end        
-                #set ($chs      = "chs=$math.add($math.mul($stats.count,8),200)x100")   <!--max size of graph-->
+                #set ($chs      = "chs=$math.add($math.mul($stats.filecount,8),200)x100")   <!--max size of graph-->
                 #set ($chbh     = "chbh=8")                    <!--width of bars-->
                 #set ($chxl     = "chxl=0:|min|average|max")    <!--labels for x-axis (0)-->
                 <!-- //positions for x-axis labels (0) values still need to be set -->
@@ -114,22 +119,21 @@
     				            <table class="tablesorter">
     				                <thead>
     				                    <tr>
-    				                        <th>foo</th>
-    				                        <th>goo</th>
-    				                        <th>bar</th>
+    				                        <th>Location Key</th>
+    				                        <th>Base Path</th>
+    				                        <th>Date Created</th>
+    				                        <th>Date Modified</th>
     				                    </tr>
     				                </thead>
     				                <tbody>
+    				                    #foreach( $filelocation in $item.package.fileLocations) 
     				                    <tr>
-    				                        <td>aawegwa</td>
-    				                        <td>bweggwe wgwe</td>
-    				                        <td>werg34t wgwe</td>
+    				                        <td>$filelocation.key</td>
+    				                        <td>$filelocation.basePath</td>
+    				                        <td>$filelocation.createTimestamp</td>
+    				                        <td>$filelocation.updateTimestamp</td>
     				                    </tr>
-    				                    <tr>
-    				                        <td>dawe 233443</td>
-    				                        <td>cserg 235235</td>
-    				                        <td>cs35y 3435</td>
-    				                    </tr>
+    				                    #end
     				                </tbody>
     				            </table>
     				        </td>
@@ -143,14 +147,14 @@
     		    #end
     		#end
 		</fieldset>
-		<hr/><hr/>
-    	<fieldset>
+		<br/><hr/><hr/><br/>
+    	<fieldset>$report.data.tif.stats.subtotal<br/>
 		    <legend><b>Summary: Distribution of the Number of Files by Type.</b></legend>
-                #set ($tifpie     = "$math.div($math.mul($report.data.tif.stats.subtotal,100),$report.data.globalStats.total)") 
-                #set ($xmlpie     = "$math.div($math.mul($report.data.xml.stats.subtotal,100),$report.data.globalStats.total)") 
-                #set ($jp2pie     = "$math.div($math.mul($report.data.jp2.stats.subtotal,100),$report.data.globalStats.total)") 
-                #set ($pdfpie     = "$math.div($math.mul($report.data.pdf.stats.subtotal,100),$report.data.globalStats.total)") 
-		        #set ($cht      = "cht=p3")                    <!--chart type-->
+                #set ($tifpie     = "$math.div($math.mul($report.data.tif.stats.subtotal,100),$report.summary.globalfilecount)") 
+                #set ($xmlpie     = "$math.div($math.mul($report.data.xml.stats.subtotal,100),$report.summary.globalfilecount)") 
+                #set ($jp2pie     = "$math.div($math.mul($report.data.jp2.stats.subtotal,100),$report.summary.globalfilecount)") 
+                #set ($pdfpie     = "$math.div($math.mul($report.data.pdf.stats.subtotal,100),$report.summary.globalfilecount)") 
+		        #set ($cht      = "cht=p")                    <!--chart type-->
                 #set ($chs      = "chs=400x200")   <!--max size of graph-->
                 #set ($chco     = "chco=4D89F9,7FC659,FF9955,FF7F7F")    <!--colors -->
                 #set ($chl      = "chl=TIF|XML|JP2|PDF")    <!--labels -->
@@ -170,7 +174,7 @@
                 </thead>
                 <tfoot><tr >
                         <th>Total for all packages</th>
-                        <th>$report.data.globalStats.total</th>
+                        <th>$report.summary.globalfilecount</th>
                 </tr></tfoot>
                 <tbody>
 		#foreach ( $fileType in $report.data )
