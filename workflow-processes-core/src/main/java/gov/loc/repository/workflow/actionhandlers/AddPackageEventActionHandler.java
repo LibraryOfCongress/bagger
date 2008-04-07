@@ -7,8 +7,7 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.agents.Person;
 import gov.loc.repository.packagemodeler.events.packge.PackageEvent;
-import gov.loc.repository.workflow.actionhandlers.annotations.ConfigurationField;
-import gov.loc.repository.workflow.actionhandlers.annotations.ContextVariable;
+import static gov.loc.repository.workflow.WorkflowConstants.*;
 
 import java.util.Calendar;
 import java.util.Collection;
@@ -18,30 +17,35 @@ public class AddPackageEventActionHandler extends BaseActionHandler {
 
 	private static final long serialVersionUID = 1L;
 	private static final Log log = LogFactory.getLog(AddPackageEventActionHandler.class);
+	private static String CLASS_PREFIX = "gov.loc.repository.packagemodeler.events.packge.";
+
+	@SuppressWarnings("unchecked")
 	private Class eventClass;
 	
-	@ConfigurationField
+	private Package packge;
+	
 	public String eventClassName;
 	
-	@ContextVariable(name="packageId")
-	public String packageId;
-	
-	@ContextVariable(name="repositoryId")
-	public String repositoryId;
-	
+	public String packageKey;
+
+	public AddPackageEventActionHandler(String actionHandlerConfiguration) {
+		super(actionHandlerConfiguration);
+	}
 	
 	@Override
 	protected void initialize() throws Exception
 	{
+		if (! eventClassName.contains("."))
+		{
+			this.eventClassName = CLASS_PREFIX + eventClassName;
+		}		
 		this.eventClass = Class.forName(eventClassName);
+		this.packge = this.getDAO().loadRequiredPackage(Long.parseLong(this.packageKey));
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
-		
-
-		Package packge = this.getDAO().findRequiredPackage(Package.class, this.repositoryId, this.packageId);
 		PackageEvent event = this.getFactory().createPackageEvent(this.eventClass, packge, Calendar.getInstance().getTime(), this.getWorkflowAgent());
 		event.setReportingAgent(this.getWorkflowAgent());
 		TaskInstance taskInstance = this.executionContext.getTaskInstance();
@@ -80,12 +84,12 @@ public class AddPackageEventActionHandler extends BaseActionHandler {
 		//PerformingAgent
 		event.setPerformingAgent(this.getDAO().findRequiredAgent(Person.class, taskInstance.getActorId()));
 		//Success
-		if (! "continue".equals((String)this.executionContext.getContextInstance().getTransientVariable("transition")))
+		if (! TRANSITION_CONTINUE.equals((String)this.executionContext.getContextInstance().getTransientVariable(VARIABLE_TRANSITION)))
 		{
 			event.setSuccess(false);
 		}
 
-		log.debug(MessageFormat.format("Adding event of type {0} to package {1}.  Event success: {2}", eventClass.getName(), this.packageId, event.isSuccess()));				
+		log.debug(MessageFormat.format("Adding event of type {0} to {1}.  Event success: {2}", eventClass.getName(), this.packge.toString(), event.isSuccess()));				
 	}
 
 }

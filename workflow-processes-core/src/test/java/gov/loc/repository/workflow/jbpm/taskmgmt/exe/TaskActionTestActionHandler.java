@@ -8,11 +8,15 @@ public class TaskActionTestActionHandler extends BaseActionHandler {
 
 	private static final long serialVersionUID = 1L;
 
+	public TaskActionTestActionHandler(String actionHandlerConfig) {
+		super(actionHandlerConfig);
+	}
+	
 	@Override
 	protected void initialize() throws Exception {
 		assertEquals("continue", this.executionContext.getContextInstance().getTransientVariable("transition"));
 		assertEquals("bar", this.executionContext.getContextInstance().getVariable("foo"));
-		assertEquals("bar", (String)helper.getRequiredVariable("foo"));
+		assertEquals("bar", (String)helper.getContextVariable("foo"));
 	}
 	
 	@Override

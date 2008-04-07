@@ -72,6 +72,8 @@
     <mapping resource="org/jbpm/graph/def/Transition.hbm.xml"/>
     <mapping resource="org/jbpm/graph/def/Event.hbm.xml"/>
     <mapping resource="org/jbpm/graph/def/Action.hbm.xml"/>
+    <!-- Added own version of Action -->
+    <mapping resource="gov/loc/repository/workflow/jbpm/graph/def/Action.hbm.xml"/>
     <mapping resource="org/jbpm/graph/def/SuperState.hbm.xml"/>
     <mapping resource="org/jbpm/graph/def/ExceptionHandler.hbm.xml"/>
     <mapping resource="org/jbpm/instantiation/Delegation.hbm.xml"/>

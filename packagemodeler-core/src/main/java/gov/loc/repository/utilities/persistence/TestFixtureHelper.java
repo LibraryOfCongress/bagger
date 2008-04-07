@@ -91,6 +91,11 @@ public class TestFixtureHelper {
 		return this.create(System.class, systemId);
 	}
 
+	public System createSystem(String systemId, String[] roles) throws Exception
+	{
+		return this.createAgent(System.class, systemId, roles);
+	}	
+	
 	public Software createSoftware(String softwareId) throws Exception
 	{
 		return this.create(Software.class, softwareId);
@@ -122,7 +127,7 @@ public class TestFixtureHelper {
 		Organization organization = this.createAgent(Organization.class, organizationId, roles);
 		organization.setName(name);
 		return organization;
-	}
+	}	
 	
 	public Person createPerson(String personId, String firstName, String surname) throws Exception
 	{

@@ -9,7 +9,9 @@ import gov.loc.repository.workflow.WorkflowConstants;
 import java.io.FileFilter;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
 import org.junit.Before;
@@ -21,7 +23,7 @@ import org.jbpm.graph.exe.ProcessInstance;
 
 public class BaseActionHandlerTest {
 
-	DummyActionHandler actionHandler= new DummyActionHandler();
+	DummyActionHandler actionHandler= new DummyActionHandler(null);
 	Configuration configuration;
 	
 	@Before
@@ -43,7 +45,7 @@ public class BaseActionHandlerTest {
 	
 	@Test
 	public void testCreateFactoryObject() throws Exception {
-		configuration.addProperty("none.String.factorymethod", "gov.loc.repository.workflow.actionhandlers.BaseActionHandlerTest.createAString");
+		configuration.addProperty("none.String.factorymethod", this.getClass().getName() + ".createAString");
 		String aString = actionHandler.createObject(String.class);
 		assertEquals("astring", aString);
 	}
@@ -76,19 +78,10 @@ public class BaseActionHandlerTest {
 		actionHandler.execute((ExecutionContext)null);
 		assertEquals(3, actionHandler.i);
 	}
-	
-	@Test
-	public void testProperty() throws Exception {
-		actionHandler.execute((ExecutionContext)null);
-		assertEquals("foo", actionHandler.getTestProperty());
-		assertEquals("foo", actionHandler.propertyField);
-		assertEquals("foo", actionHandler.listField.get(0));
-		assertEquals("foo", actionHandler.mapField.get("dummy"));
-	}
 
-	@SuppressWarnings("unchecked")
+	//Test configuration field
 	@Test
-	public void testAnnotations() throws Exception
+	public void testConfigurationField() throws Exception
 	{
 	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition>" +
@@ -96,124 +89,25 @@ public class BaseActionHandlerTest {
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
 	      "  <node name='a'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.DummyActionHandler'>" +
-	      "      <configField>contextField</configField>" +
+	      "    <action class='DummyActionHandler'>" +
+	      "      <configField>foo</configField>" +
 	      "    </action>" +
 	      "    <transition name='b' to='end' />" +
 	      "    <transition name='c' to='end' />" +
 	      "  </node>" +		      
 	      "  <end-state name='end' />" +
-	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
-	      "      </action>" +
-	      "  </exception-handler>" +	      		      
 	      "</process-definition>");
 
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.getContextInstance().setVariable("contextField", "bar");
-	    List<String> list = new ArrayList<String>();
-	    list.add("foo");
-	    list.add("bar");
-	    processInstance.getContextInstance().setVariable("contextListField", list);
-	    assertNotNull(processInstance.getContextInstance().getVariable("contextListField"));
 	    processInstance.signal();
-	    assertFalse(processInstance.isSuspended());
+	    
 	    assertEquals("end", processInstance.getRootToken().getNode().getName());
-		assertEquals("contextField", processInstance.getContextInstance().getVariable("configField"));
-	    assertEquals("bar", processInstance.getContextInstance().getVariable("requiredContextField"));
-		assertNull(processInstance.getContextInstance().getVariable("optionalContextField"));
-		assertEquals("bar", processInstance.getContextInstance().getVariable("indirectContextField"));
-	    assertTrue(processInstance.getContextInstance().getVariable("listContextField") instanceof List);
-	    assertEquals(2, ((List<String>)processInstance.getContextInstance().getVariable("listContextField")).size());
+	    assertEquals("foo", processInstance.getContextInstance().getVariable("configField"));
 	}
 
-	@Test
-	public void testMissingTransition() throws Exception
-	{
-		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-			      "<process-definition>" +
-			      "  <start-state>" +
-			      "    <transition to='a' />" +
-			      "  </start-state>" +
-			      "  <node name='a'>" +
-			      "    <action class='gov.loc.repository.workflow.actionhandlers.DummyActionHandler'>" +
-			      "      <configField>contextField</configField>" +
-			      "    </action>" +
-			      "    <transition name='b' to='end' />" +
-			      "  </node>" +		      
-			      "  <end-state name='end' />" +
-			      "  <exception-handler>" +
-			      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
-			      "      </action>" +
-			      "  </exception-handler>" +	      		      
-			      "</process-definition>");
-
-		    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-		    processInstance.getContextInstance().setVariable("contextField", "bar");
-		    processInstance.signal();
-		    assertTrue(processInstance.isSuspended());
-		    
-	}
-
-	@Test
-	public void testMissingContextVariable() throws Exception
-	{
-		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-			      "<process-definition>" +
-			      "  <start-state>" +
-			      "    <transition to='a' />" +
-			      "  </start-state>" +
-			      "  <node name='a'>" +
-			      "    <action class='gov.loc.repository.workflow.actionhandlers.DummyActionHandler'>" +
-			      "      <configField>contextField</configField>" +
-			      "    </action>" +
-			      "    <transition name='b' to='end' />" +
-			      "    <transition name='c' to='end' />" +
-			      "  </node>" +		      
-			      "  <end-state name='end' />" +
-			      "  <exception-handler>" +
-			      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
-			      "      </action>" +
-			      "  </exception-handler>" +	      		      
-			      "</process-definition>");
-
-		    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-		    //processInstance.getContextInstance().setVariable("contextField", "bar");
-		    processInstance.signal();
-		    assertTrue(processInstance.isSuspended());
-			    
-	}
-
-	@Test
-	public void testMissingIndirectContextVariable() throws Exception
-	{
-		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-			      "<process-definition>" +
-			      "  <start-state>" +
-			      "    <transition to='a' />" +
-			      "  </start-state>" +
-			      "  <node name='a'>" +
-			      "    <action class='gov.loc.repository.workflow.actionhandlers.DummyActionHandler'>" +
-			      "      <configField>xcontextField</configField>" +
-			      "    </action>" +
-			      "    <transition name='b' to='end' />" +
-			      "    <transition name='c' to='end' />" +
-			      "  </node>" +		      
-			      "  <end-state name='end' />" +
-			      "  <exception-handler>" +
-			      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
-			      "      </action>" +
-			      "  </exception-handler>" +	      		      
-			      "</process-definition>");
-
-		    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-		    processInstance.getContextInstance().setVariable("contextField", "bar");
-		    processInstance.signal();
-		    assertTrue(processInstance.isSuspended());
-	}
-
-	@Test
-	public void testMissingConfiguration() throws Exception
+	//Test missing required field
+	@Test(expected=Exception.class)
+	public void testMissingRequiredField() throws Exception
 	{
 	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
 	      "<process-definition>" +
@@ -221,23 +115,170 @@ public class BaseActionHandlerTest {
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
 	      "  <node name='a'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.DummyActionHandler'>" +
+	      "    <action class='DummyActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='b' to='end' />" +
 	      "    <transition name='c' to='end' />" +
 	      "  </node>" +		      
 	      "  <end-state name='end' />" +
-	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
-	      "      </action>" +
-	      "  </exception-handler>" +	      		      
 	      "</process-definition>");
 
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.getContextInstance().setVariable("contextField", "bar");
 	    processInstance.signal();
-	    assertTrue(processInstance.isSuspended());
 	    
 	}
-		
+	
+	
+	//Test configuration field with context variable placeholder
+	@Test
+	public void testConfigurationFieldWithContextVariablePlaceholder() throws Exception
+	{
+	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+	      "<process-definition>" +
+	      "  <start-state>" +
+	      "    <transition to='a' />" +
+	      "  </start-state>" +
+	      "  <node name='a'>" +
+	      "    <action class='DummyActionHandler'>" +
+	      "      <configField>${contextvariable}</configField>" +
+	      "    </action>" +
+	      "    <transition name='b' to='end' />" +
+	      "    <transition name='c' to='end' />" +
+	      "  </node>" +		      
+	      "  <end-state name='end' />" +
+	      "</process-definition>");
+
+	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
+	    processInstance.getContextInstance().setVariable("contextvariable", "foo");
+	    processInstance.signal();
+	    
+	    assertEquals("end", processInstance.getRootToken().getNode().getName());
+	    assertEquals("foo", processInstance.getContextInstance().getVariable("configField"));
+	}
+
+	//Test configuration field with configuration placeholder
+	@Test
+	public void testConfigurationFieldWithConfigurationPlaceholder() throws Exception
+	{
+	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+	      "<process-definition>" +
+	      "  <start-state>" +
+	      "    <transition to='a' />" +
+	      "  </start-state>" +
+	      "  <node name='a'>" +
+	      "    <action class='DummyActionHandler'>" +
+	      "      <configField>$#{config}</configField>" +
+	      "    </action>" +
+	      "    <transition name='b' to='end' />" +
+	      "    <transition name='c' to='end' />" +
+	      "  </node>" +		      
+	      "  <end-state name='end' />" +
+	      "</process-definition>");
+
+		this.configuration.addProperty("config", "foo");
+		ProcessInstance processInstance = new ProcessInstance(processDefinition);
+	    processInstance.signal();
+	    
+	    assertEquals("end", processInstance.getRootToken().getNode().getName());
+	    assertEquals("foo", processInstance.getContextInstance().getVariable("configField"));
+	}
+	
+	//Test not allowed transition
+	@Test(expected=Exception.class)
+	public void testDeclaringBadTransition() throws Exception
+	{
+	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+	      "<process-definition>" +
+	      "  <start-state>" +
+	      "    <transition to='a' />" +
+	      "  </start-state>" +
+	      "  <node name='a'>" +
+	      "    <action class='DummyActionHandler'>" +
+	      "      <configField>foo</configField>" +
+	      "    </action>" +
+	      "    <transition name='b' to='end' />" +
+	      "    <transition name='d' to='end' />" +
+	      "  </node>" +		      
+	      "  <end-state name='end' />" +
+	      "</process-definition>");
+
+	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
+	    processInstance.signal();	    
+	}
+	
+	//Test configuration list field with context variable placeholder
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testListConfigurationField() throws Exception
+	{
+	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+	      "<process-definition>" +
+	      "  <start-state>" +
+	      "    <transition to='a' />" +
+	      "  </start-state>" +
+	      "  <node name='a'>" +
+	      "    <action class='DummyActionHandler'>" +
+	      "      <configField>foo</configField>" +
+	      "      <listConfigField>${listContextVariable}</listConfigField>" +
+	      "    </action>" +
+	      "    <transition name='b' to='end' />" +
+	      "    <transition name='c' to='end' />" +
+	      "  </node>" +		      
+	      "  <end-state name='end' />" +
+	      "</process-definition>");
+
+	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
+	    List<String> list = new ArrayList<String>();
+	    list.add("foo");
+	    list.add("${contextVariable}");
+	    processInstance.getContextInstance().setVariable("listContextVariable", list);
+	    processInstance.getContextInstance().setVariable("contextVariable", "bar");
+	    processInstance.signal();
+	    	    
+	    assertEquals("end", processInstance.getRootToken().getNode().getName());
+	    assertNotNull(processInstance.getContextInstance().getVariable("listConfigField"));
+	    list = (List<String>)processInstance.getContextInstance().getVariable("listConfigField");
+	    assertEquals(2, list.size());
+	    assertTrue(list.contains("foo"));
+	    assertTrue(list.contains("bar"));
+	}
+	
+	//Test configuration map field with context variable placeholder
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testMapConfigurationField() throws Exception
+	{
+	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+	      "<process-definition>" +
+	      "  <start-state>" +
+	      "    <transition to='a' />" +
+	      "  </start-state>" +
+	      "  <node name='a'>" +
+	      "    <action class='DummyActionHandler'>" +
+	      "      <configField>foo</configField>" +
+	      "      <mapConfigField>${mapContextVariable}</mapConfigField>" +
+	      "    </action>" +
+	      "    <transition name='b' to='end' />" +
+	      "    <transition name='c' to='end' />" +
+	      "  </node>" +		      
+	      "  <end-state name='end' />" +
+	      "</process-definition>");
+
+	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
+	    Map<String,String> map = new HashMap<String, String>();
+	    map.put("v1", "foo");
+	    map.put("v2", "${contextVariable}");
+	    processInstance.getContextInstance().setVariable("mapContextVariable", map);
+	    processInstance.getContextInstance().setVariable("contextVariable", "bar");
+	    processInstance.signal();
+	    
+	    
+	    assertEquals("end", processInstance.getRootToken().getNode().getName());
+	    assertNotNull(processInstance.getContextInstance().getVariable("mapConfigField"));
+	    map = (Map<String,String>)processInstance.getContextInstance().getVariable("mapConfigField");
+	    assertEquals(2, map.size());
+	    assertTrue("foo".equals(map.get("v1")));
+	    assertTrue("bar".equals(map.get("v2")));
+	}
+
 }

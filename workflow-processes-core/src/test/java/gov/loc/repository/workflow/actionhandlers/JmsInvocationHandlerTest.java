@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JmsInvocationHandlerTest {
-	DummyActionHandler actionHandler= new DummyActionHandler();
+	DummyActionHandler actionHandler= new DummyActionHandler(null);
 
 	Connection connection;
 	MessageConsumer consumer;

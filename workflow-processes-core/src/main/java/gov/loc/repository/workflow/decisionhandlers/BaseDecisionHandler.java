@@ -52,12 +52,10 @@ public abstract class BaseDecisionHandler implements DecisionHandler
 			this.reportingLog = LogFactory.getLog(this.getLoggerName());		
 			if (this.executionContext != null)
 			{
-				this.helper.checkConfigurationFields();
-				this.helper.initializeContextVariables();
-				this.helper.initializeIndirectContextVariables();
 				this.helper.checkRequiredTransitions();
+				this.helper.replacePlaceholdersInFields();
+				this.helper.checkRequiredFields();
 			}
-			this.helper.replacePropertiesInFields();
 					
 			this.initialize();
 			this.start = Calendar.getInstance();		

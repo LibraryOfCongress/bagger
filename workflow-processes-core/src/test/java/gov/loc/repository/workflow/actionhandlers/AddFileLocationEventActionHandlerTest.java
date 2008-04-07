@@ -16,13 +16,19 @@ import gov.loc.repository.packagemodeler.packge.ExternalIdentifier.IdentifierTyp
 import gov.loc.repository.workflow.BaseHandlerTest;
 import static gov.loc.repository.workflow.constants.FixtureConstants.*;
 
-public class AddExternalFileLocationEventActionHandlerTest extends BaseHandlerTest {
+public class AddFileLocationEventActionHandlerTest extends BaseHandlerTest {
 
 	//Everything goes according to plan
 	@Test
 	public void executeDefault() throws Exception
 	{
 				
+		//Create the FileLocation
+	    Package packge = dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter);
+	    FileLocation fileLocation = this.factory.createExternalFileLocation(packge, MediaType.EXTERNAL_HARDDRIVE, new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER), "/", false, false);
+	    this.dao.save(packge);
+	    this.commitAndRestartTransaction();
+
 		//A simple process definition is used to test the action handler.
 		//Note no jbpmContext, so this process definition isn't being persisted.
 		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
@@ -34,8 +40,9 @@ public class AddExternalFileLocationEventActionHandlerTest extends BaseHandlerTe
 	      "    <task name='a task'>" +
 	      "      <assignment actor-id='" + PERSON_ID1 + "' />" +
 	      "    <event type='task-end'>" +
-	      "      <action name='add verify event action' class='gov.loc.repository.workflow.actionhandlers.AddExternalFileLocationEventActionHandler'>" +
-	      "        <eventClassName>gov.loc.repository.packagemodeler.events.filelocation.VerifyAgainstManifestEvent</eventClassName>" +	      
+	      "      <action name='add verify event action' class='AddFileLocationEventActionHandler'>" +
+	      "        <eventClassName>VerifyAgainstManifestEvent</eventClassName>" +
+	      "        <fileLocationKey>" + fileLocation.getKey() + "</fileLocationKey>" +
 	      "      </action>" +
 	      "    </event>" +	      	      	      	      	      
 	      "    </task>" +	      
@@ -45,18 +52,8 @@ public class AddExternalFileLocationEventActionHandlerTest extends BaseHandlerTe
 	      "  <end-state name='b' />" +
 	      "  <end-state name='c' />" +
 	      "</process-definition>");
-
-		//Create the FileLocation
-	    Package packge = dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter);
-	    this.factory.createExternalFileLocation(packge, MediaType.EXTERNAL_HARDDRIVE, new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER), "/", false, false);
-	    this.dao.save(packge);
-	    this.commitAndRestartTransaction();
 		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.getContextInstance().setVariable("repositoryId", REPOSITORY_ID);
-	    processInstance.getContextInstance().setVariable("packageId", PACKAGE_ID1 + testCounter);
-	    processInstance.getContextInstance().setVariable("externalIdentifierValue", SERIAL_NUMBER_1);
-	    processInstance.getContextInstance().setVariable("externalIdentifierType", IdentifierType.SERIAL_NUMBER.toString());
 	    
 	    //Gets out of start state
 	    processInstance.signal();
@@ -73,7 +70,7 @@ public class AddExternalFileLocationEventActionHandlerTest extends BaseHandlerTe
 	    assertEquals("b", processInstance.getRootToken().getNode().getName());	    
 	    packge = dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter);
 	    assertNotNull(packge);
-	    FileLocation fileLocation = packge.getFileLocation(new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER));
+	    fileLocation = packge.getFileLocation(new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER));
 	    assertNotNull(fileLocation);
 	    assertEquals(1, fileLocation.getFileLocationEvents().size());
 	    VerifyAgainstManifestEvent event = (VerifyAgainstManifestEvent)fileLocation.getFileLocationEvents().iterator().next();

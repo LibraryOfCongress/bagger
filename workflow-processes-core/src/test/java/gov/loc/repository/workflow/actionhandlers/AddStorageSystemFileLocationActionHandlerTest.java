@@ -12,7 +12,6 @@ import gov.loc.repository.workflow.BaseHandlerTest;
 import static gov.loc.repository.workflow.constants.FixtureConstants.*;
 import static gov.loc.repository.constants.Agents.*;
 
-
 public class AddStorageSystemFileLocationActionHandlerTest extends BaseHandlerTest {
 
 	//Everything goes according to plan
@@ -27,9 +26,11 @@ public class AddStorageSystemFileLocationActionHandlerTest extends BaseHandlerTe
 	      "  <start-state>" +
 	      "    <transition to='b' />" +
 	      "    <event type='node-leave'>" +
-	      "      <action name='add staging file location' class='gov.loc.repository.workflow.actionhandlers.AddStorageSystemFileLocationActionHandler'>" +
-	      "        <basePathVariable>stagingBasePath</basePathVariable>" +
-	      "        <storageSystemIdVariable>stagingStorageSystemId</storageSystemIdVariable>" +
+	      "      <action name='add staging file location' class='AddStorageSystemFileLocationActionHandler'>" +
+	      "        <basePath>" + BASEPATH_1 + "</basePath>" +
+	      "        <storageSystemId>" + RDC + "</storageSystemId>" +
+	      "        <packageKey>" + this.packageKey + "</packageKey>" +
+	      "        <keyVariable>stagingFileLocationKey</keyVariable>" +
 	      "      </action>" +
 	      "    </event>" +	      	      	      	      	      	      
 	      "  </start-state>" +
@@ -37,10 +38,6 @@ public class AddStorageSystemFileLocationActionHandlerTest extends BaseHandlerTe
 	      "</process-definition>");
 		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.getContextInstance().setVariable("repositoryId", REPOSITORY_ID);
-	    processInstance.getContextInstance().setVariable("packageId", PACKAGE_ID1 + testCounter);
-	    processInstance.getContextInstance().setVariable("stagingBasePath", BASEPATH_1);
-	    processInstance.getContextInstance().setVariable("stagingStorageSystemId", RDC);
 	    
 	    this.commitAndRestartTransaction();
 	    
@@ -56,6 +53,7 @@ public class AddStorageSystemFileLocationActionHandlerTest extends BaseHandlerTe
 	    assertNotNull(fileLocation);
 	    assertTrue(fileLocation.isManaged());
 	    assertTrue(fileLocation.isLCPackageStructure());
+	    assertEquals(fileLocation.getKey().toString(), (String)processInstance.getContextInstance().getVariable("stagingFileLocationKey"));
 	}
 
 	

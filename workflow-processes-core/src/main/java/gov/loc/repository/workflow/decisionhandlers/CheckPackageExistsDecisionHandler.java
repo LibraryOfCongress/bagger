@@ -1,18 +1,19 @@
 package gov.loc.repository.workflow.decisionhandlers;
 
 import gov.loc.repository.packagemodeler.packge.Package;
-import gov.loc.repository.workflow.actionhandlers.annotations.ContextVariable;
+import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 import gov.loc.repository.workflow.actionhandlers.annotations.Transitions;
+import static gov.loc.repository.workflow.WorkflowConstants.*;
 
-@Transitions(transitions={"continue", "retry"})
+@Transitions(transitions={TRANSITION_CONTINUE, TRANSITION_RETRY})
 public class CheckPackageExistsDecisionHandler extends BaseDecisionHandler {
 
 	private static final long serialVersionUID = 1L;
 
-	@ContextVariable(name="packageId")
+	@Required
 	public String packageId;
 	
-	@ContextVariable(name="repositoryId")
+	@Required
 	public String repositoryId;
 			
 	@Override
@@ -21,10 +22,10 @@ public class CheckPackageExistsDecisionHandler extends BaseDecisionHandler {
 
 		if (packge == null || (packge.getProcessInstanceId() != null && packge.getProcessInstanceId() == this.executionContext.getProcessInstance().getId()))
 		{
-			return "continue";
+			return TRANSITION_CONTINUE;
 		}
 		this.executionContext.getContextInstance().setVariable("message", "The package already exists.");
-		return "retry";
+		return TRANSITION_RETRY;
 	}	
 	
 }

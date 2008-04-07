@@ -2,16 +2,10 @@ package gov.loc.repository.workflow.actionhandlers;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jbpm.taskmgmt.exe.TaskInstance;
 
-import gov.loc.repository.packagemodeler.agents.Person;
-import gov.loc.repository.packagemodeler.events.filelocation.FileLocationEvent;
-import gov.loc.repository.packagemodeler.packge.ExternalIdentifier;
-import gov.loc.repository.packagemodeler.packge.Package;
+import gov.loc.repository.packagemodeler.events.filelocation.FileCopyEvent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
-import gov.loc.repository.packagemodeler.packge.ExternalIdentifier.IdentifierType;
-import gov.loc.repository.workflow.actionhandlers.annotations.ConfigurationField;
-import gov.loc.repository.workflow.actionhandlers.annotations.ContextVariable;
+import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 
 import java.util.Calendar;
 import java.text.MessageFormat;
@@ -20,50 +14,41 @@ public class FileCopyEventActionHandler extends BaseActionHandler {
 
 	private static final long serialVersionUID = 1L;
 	private static final Log log = LogFactory.getLog(FileCopyEventActionHandler.class);
-	private Class eventClass;
-	private ExternalIdentifier identifier;
-	
-	@ContextVariable(name="externalIdentifierValue")
-	public String externalIdentifierValue;
 
-	@ContextVariable(name="externalIdentifierType")
-	public String externalIdentifierType;
+	@Required
+	public String srcFileLocationKey;
 	
-	@ConfigurationField
-	public String eventClassName;
-		
-	@ContextVariable(name="packageId")
-	public String packageId;
+	@Required
+	public String destFileLocationKey;
 	
-	@ContextVariable(name="repositoryId")
-	public String repositoryId;
-
+	private FileLocation srcFileLocation;
+	
+	private FileLocation destFileLocation;
+	
+	public FileCopyEventActionHandler(String actionHandlerConfiguration) {
+		super(actionHandlerConfiguration);
+	}
+	
 	@Override
 	protected void initialize() throws Exception
 	{
-		this.eventClass = Class.forName(eventClassName);
-		this.identifier = new ExternalIdentifier(this.externalIdentifierValue, IdentifierType.valueOf(this.externalIdentifierType));
+		this.srcFileLocation = this.getDAO().loadRequiredFileLocation(Long.parseLong(this.srcFileLocationKey));
+		this.destFileLocation = this.getDAO().loadRequiredFileLocation(Long.parseLong(this.destFileLocationKey));
 	}
 		
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
 		
-		Package packge = this.getDAO().findRequiredPackage(Package.class, this.repositoryId, this.packageId);				
-		FileLocation externalFileLocation = packge.getFileLocation(identifier);
-		if (externalFileLocation == null)
-		{
-			throw new Exception(MessageFormat.format("External File Location with identifier value {0} and identifier type {1} is not found for package {2} from repository {3}", this.externalIdentifierValue, this.externalIdentifierType, this.packageId, this.repositoryId));
-		}
-		FileLocationEvent event = this.getFactory().createFileLocationEvent(this.eventClass, externalFileLocation, Calendar.getInstance().getTime(), this.getWorkflowAgent());
-
+		FileCopyEvent event = this.getFactory().createFileLocationEvent(FileCopyEvent.class, destFileLocation, Calendar.getInstance().getTime(), this.getWorkflowAgent());
+		event.setFileLocationSource(srcFileLocation);
 		//Success
 		if (! "continue".equals((String)this.executionContext.getContextInstance().getTransientVariable("transition")))
 		{
 			event.setSuccess(false);
 		}
 		
-		log.debug(MessageFormat.format("Adding File Copy Event to package {0}.  Event success: {1}", this.packageId, event.isSuccess()));		
+		log.debug(MessageFormat.format("Adding File Copy Event to {0}.  Event success: {1}", this.destFileLocation.toString(), event.isSuccess()));		
 	}
 
 }

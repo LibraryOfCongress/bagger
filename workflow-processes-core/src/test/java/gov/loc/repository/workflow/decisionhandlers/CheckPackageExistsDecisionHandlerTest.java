@@ -19,7 +19,10 @@ public class CheckPackageExistsDecisionHandlerTest extends BaseHandlerTest {
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
 	      "  <decision name='a'>" +
-	   	  "    <handler class='gov.loc.repository.workflow.decisionhandlers.CheckPackageExistsDecisionHandler' />" +
+	   	  "    <handler class='gov.loc.repository.workflow.decisionhandlers.CheckPackageExistsDecisionHandler'>" +
+	   	  "      <repositoryId>" + REPOSITORY_ID + "</repositoryId>" +
+	   	  "      <packageId>" + PACKAGE_ID1 + testCounter + "x" + "</packageId>" +
+	   	  "    </handler>" +	   	  
 	      "      <transition name='continue' to='b' />" +
 	      "      <transition name='retry' to='c' />" +
 	      "  </decision>" +   
@@ -30,8 +33,6 @@ public class CheckPackageExistsDecisionHandlerTest extends BaseHandlerTest {
 	    assertNull(this.dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter + "x"));
 		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.getContextInstance().setVariable("repositoryId", REPOSITORY_ID);
-	    processInstance.getContextInstance().setVariable("packageId", PACKAGE_ID1 + testCounter + "x");
 	    
 	    this.commitAndRestartTransaction();
 	    
@@ -49,7 +50,10 @@ public class CheckPackageExistsDecisionHandlerTest extends BaseHandlerTest {
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
 	      "  <decision name='a'>" +
-	   	  "    <handler class='gov.loc.repository.workflow.decisionhandlers.CheckPackageExistsDecisionHandler' />" +
+	   	  "    <handler class='gov.loc.repository.workflow.decisionhandlers.CheckPackageExistsDecisionHandler'>" +
+	   	  "      <repositoryId>" + REPOSITORY_ID + "</repositoryId>" +
+	   	  "      <packageId>" + PACKAGE_ID1 + testCounter + "</packageId>" +
+	   	  "    </handler>" +	   	  	   	  
 	      "      <transition name='continue' to='b' />" +
 	      "      <transition name='retry' to='c' />" +
 	      "  </decision>" +   
@@ -59,10 +63,7 @@ public class CheckPackageExistsDecisionHandlerTest extends BaseHandlerTest {
 
 	    assertNotNull(this.dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter));
 
-	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.getContextInstance().setVariable("repositoryId", REPOSITORY_ID);
-	    processInstance.getContextInstance().setVariable("packageId", PACKAGE_ID1 + testCounter);
-	    
+	    ProcessInstance processInstance = new ProcessInstance(processDefinition);	    
 	    this.commitAndRestartTransaction();
 	    
 	    //Gets out of start state
@@ -79,7 +80,10 @@ public class CheckPackageExistsDecisionHandlerTest extends BaseHandlerTest {
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
 	      "  <decision name='a'>" +
-	   	  "    <handler class='gov.loc.repository.workflow.decisionhandlers.CheckPackageExistsDecisionHandler' />" +
+	   	  "    <handler class='gov.loc.repository.workflow.decisionhandlers.CheckPackageExistsDecisionHandler' >" +
+	   	  "      <repositoryId>" + REPOSITORY_ID + "</repositoryId>" +
+	   	  "      <packageId>" + PACKAGE_ID1 + testCounter + "</packageId>" +
+	   	  "    </handler>" +	   	  	   	  
 	      "      <transition name='continue' to='b' />" +
 	      "      <transition name='retry' to='c' />" +
 	      "  </decision>" +   

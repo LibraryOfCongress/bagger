@@ -32,6 +32,7 @@ public abstract class BaseHandlerTest {
 	protected static int testCounter = 0;
 	protected PackageModelDAO dao = new PackageModelDAOImpl();
 	protected ModelerFactory factory = new ModelerFactoryImpl();
+	protected Long packageKey;
 	
 	@BeforeClass
 	public static void beforeClassSetup() throws Exception
@@ -75,6 +76,7 @@ public abstract class BaseHandlerTest {
 		fixtureHelper.setSession(session);
 		Package packge = factory.createPackage(Package.class, dao.findRequiredRepository(REPOSITORY_ID), PACKAGE_ID1 + testCounter);
 		dao.save(packge);
+		this.packageKey = packge.getKey();
 		this.setup();
 	}
 	

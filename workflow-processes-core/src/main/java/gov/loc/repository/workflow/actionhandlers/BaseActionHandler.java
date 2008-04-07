@@ -17,6 +17,7 @@ import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.workflow.WorkflowConstants;
+import gov.loc.repository.workflow.jbpm.instantiation.FieldInstantiator;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 
 import java.lang.reflect.Method;
@@ -41,13 +42,21 @@ public abstract class BaseActionHandler implements ActionHandler
 	protected PackageModelDAO dao;
 	protected ModelerFactory factory;
 	protected ExecutionContext executionContext;
+	protected String actionHandlerConfiguration;
 	
+	public BaseActionHandler(String actionHandlerConfiguration) {
+		this.actionHandlerConfiguration = actionHandlerConfiguration;
+	}
+
 	/**
 	 * Calls initialize() and then execute().
 	 * @throws Exception
  	 */	
 	public final void execute(ExecutionContext executionContext) throws Exception
 	{
+		FieldInstantiator instantiator = new FieldInstantiator();
+		instantiator.configure(this, this.actionHandlerConfiguration, executionContext);
+		
 		Session session = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).openSession();
 		try
 		{
@@ -62,12 +71,10 @@ public abstract class BaseActionHandler implements ActionHandler
 
 			if (this.executionContext != null)
 			{
-				this.helper.checkConfigurationFields();
-				this.helper.initializeContextVariables();
-				this.helper.initializeIndirectContextVariables();
 				this.helper.checkRequiredTransitions();
+				this.helper.replacePlaceholdersInFields();
+				this.helper.checkRequiredFields();
 			}
-			this.helper.replacePropertiesInFields();
 					
 			this.initialize();
 			this.start = Calendar.getInstance();		
@@ -91,10 +98,31 @@ public abstract class BaseActionHandler implements ActionHandler
 		}
 			
 	}
-
+	
+	protected void leave(String transitionName) throws Exception
+	{
+		log.debug("Requested to leave node via " + transitionName);
+		if (this.executionContext == null)
+		{
+			return;
+		}
+		
+		//Make sure that transition is OK
+		this.helper.checkTransition(transitionName);
+		this.executionContext.leaveNode(transitionName);
+	}
+	
 	protected Configuration getConfiguration() throws Exception
 	{
 		return ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
+	}
+	
+	protected void setVariable(String name, Object value)
+	{
+		if (this.executionContext != null)
+		{
+			this.executionContext.getContextInstance().setVariable(name, value);
+		}
 	}
 	
 	/**
@@ -225,5 +253,5 @@ public abstract class BaseActionHandler implements ActionHandler
 	{
 		return this.getDAO().findRequiredAgent(Agent.class, this.getWorkflowAgentId());
 	}
-	
+
 }

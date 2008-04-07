@@ -6,6 +6,10 @@ public class MockingActionHandler extends BaseActionHandler {
 
 	private static final long serialVersionUID = 1L;
 
+	public MockingActionHandler(String actionHandlerConfig) {
+		super(actionHandlerConfig);
+	}
+	
 	@Override
 	protected void execute() throws Exception {
 		this.createObject(ActionHandler.class).execute(this.executionContext);

@@ -49,17 +49,17 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "    <transition name='continue1' to='a' />" +
 	      "  </start-state>" +
 	      "  <node name='a'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.ExceptionThrowingActionHandler' />" +
+	      "    <action class='ExceptionThrowingActionHandler' />" +
 	      "    <transition name='continue2' to='end' />" +
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
 	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
+	      "      <action class='ExceptionActionHandler'>" +
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
@@ -102,17 +102,17 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "    <transition name='continue1' to='a' />" +
 	      "  </start-state>" +
 	      "  <node name='a' aync='true'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.ExceptionThrowingActionHandler' />" +
+	      "    <action class='ExceptionThrowingActionHandler' />" +
 	      "    <transition name='continue2' to='end' />" +
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
 	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
+	      "      <action class='ExceptionActionHandler'>" +
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
@@ -169,17 +169,17 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "    <transition name='continue1' to='a' />" +
 	      "  </start-state>" +
 	      "  <node name='a'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.ExceptionThrowingAfterTransitionActionHandler' />" +
+	      "    <action class='ExceptionThrowingAfterTransitionActionHandler' />" +
 	      "    <transition name='continue2' to='end' />" +
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
 	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
+	      "      <action class='ExceptionActionHandler'>" +
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
@@ -223,17 +223,17 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "    <transition name='continue1' to='a' />" +
 	      "  </start-state>" +
 	      "  <node name='a' async='true'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.ExceptionThrowingAfterTransitionActionHandler' />" +
+	      "    <action class='ExceptionThrowingAfterTransitionActionHandler' />" +
 	      "    <transition name='continue2' to='end' />" +
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
 	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
+	      "      <action class='ExceptionActionHandler'>" +
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
@@ -294,13 +294,13 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </start-state>" +
 	      "  <state name='a'>" +
 	      "	 <event type='node-enter'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.ExceptionThrowingActionHandler' />" +
+	      "    <action class='ExceptionThrowingActionHandler' />" +
 	      "  </event>" +
 	      "    <transition name='continue2' to='end' />" +
 	      "  </state>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='MockingActionHandler'>" +
 	      "      <factoryMethodMap>" +
 	      "        <entry><key>ActionHandler</key><value>gov.loc.repository.workflow.actionhandlers.ExceptionActionHandlerTest.createMockActionHandler</value></entry>" +
 	      "      </factoryMethodMap>" +
@@ -308,7 +308,7 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
 	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
+	      "      <action class='ExceptionActionHandler'>" +
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
@@ -353,18 +353,18 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </start-state>" +
 	      "  <state name='a' async='true'>" +
 	      "	 <event type='node-enter'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.ExceptionThrowingActionHandler' />" +
+	      "    <action class='ExceptionThrowingActionHandler' />" +
 	      "  </event>" +
 	      "    <transition name='continue2' to='end' />" +
 	      "  </state>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
 	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
+	      "      <action class='ExceptionActionHandler'>" +
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
@@ -424,18 +424,18 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </start-state>" +
 	      "  <state name='a'>" +
 	      "	 <event type='node-leave'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.ExceptionThrowingActionHandler' />" +
+	      "    <action class='ExceptionThrowingActionHandler' />" +
 	      "  </event>" +
 	      "    <transition name='continue2' to='end' />" +
 	      "  </state>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
 	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
+	      "      <action class='ExceptionActionHandler'>" +
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
@@ -485,18 +485,18 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  </start-state>" +
 	      "  <node name='a' async='true'>" +
 	      "	 <event type='node-leave'>" +
-	      "    <action class='gov.loc.repository.workflow.actionhandlers.ExceptionThrowingActionHandler' />" +
+	      "    <action class='ExceptionThrowingActionHandler' />" +
 	      "  </event>" +
 	      "    <transition name='continue2' to='end' />" +
 	      "  </node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
 	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
+	      "      <action class='ExceptionActionHandler'>" +
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");
@@ -560,19 +560,19 @@ public class ExceptionActionHandlerTest extends AbstractProcessDefinitionTest
 	      "  <task-node name='a'>" +
 	      "    <task name='a task'>" +
 	      "      <event type='task-end'>" +
-	      "        <action class='gov.loc.repository.workflow.actionhandlers.ExceptionThrowingActionHandler' />" +
+	      "        <action class='ExceptionThrowingActionHandler' />" +
 		  "  	 </event>" +	      	      	      	      	               		 
 	      "    </task>" +
 	      "    <transition name='continue2' to='end'></transition>" +
 	      "  </task-node>" +
 	      "  <end-state name='end' />" +
 	      "  <node name='troubleshoot'>" +
-	      "    <action name='troubleshoot' class='gov.loc.repository.workflow.actionhandlers.MockingActionHandler'>" +
+	      "    <action name='troubleshoot' class='MockingActionHandler'>" +
 	      "    </action>" +
 	      "    <transition name='continue' to='end' />" +
 	      "  </node>" +	      
 	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
+	      "      <action class='ExceptionActionHandler'>" +
 	      "      </action>" +
 	      "  </exception-handler>" +	      
 	      "</process-definition>");

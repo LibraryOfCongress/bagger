@@ -11,6 +11,7 @@ import gov.loc.repository.packagemodeler.events.Event;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.workflow.BaseHandlerTest;
 import static gov.loc.repository.workflow.constants.FixtureConstants.*;
+import static gov.loc.repository.workflow.WorkflowConstants.*;
 
 public class AddPackageEventActionHandlerTest extends BaseHandlerTest{
 	
@@ -30,8 +31,9 @@ public class AddPackageEventActionHandlerTest extends BaseHandlerTest{
 	      "    <task name='a task'>" +
 	      "      <assignment actor-id='" + PERSON_ID1 + "' />" +
 	      "    <event type='task-end'>" +
-	      "      <action name='add generic event action' class='gov.loc.repository.workflow.actionhandlers.AddPackageEventActionHandler'>" +
-	      "        <eventClassName>gov.loc.repository.packagemodeler.events.packge.PackageReceivedEvent</eventClassName>" +
+	      "      <action name='add generic event action' class='AddPackageEventActionHandler'>" +
+	      "        <eventClassName>PackageReceivedEvent</eventClassName>" +
+	      "        <packageKey>${packageKey}</packageKey>" +
 	      "      </action>" +
 	      "    </event>" +	      	      	      	      	      
 	      "    </task>" +	      
@@ -43,8 +45,8 @@ public class AddPackageEventActionHandlerTest extends BaseHandlerTest{
 	      "</process-definition>");
 
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.getContextInstance().setVariable("repositoryId", REPOSITORY_ID);
-	    processInstance.getContextInstance().setVariable("packageId", PACKAGE_ID1 + testCounter);
+	    Package packge = dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter);
+	    processInstance.getContextInstance().setVariable(VARIABLE_PACKAGEKEY, packge.getKey().toString());
 	    
 	    this.commitAndRestartTransaction();
 	    
@@ -62,7 +64,7 @@ public class AddPackageEventActionHandlerTest extends BaseHandlerTest{
 
 	    this.commitAndRestartTransaction();
 	    
-	    Package packge = dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter);
+	    packge = dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter);
 	    assertNotNull(packge);
 	    assertEquals(1, packge.getPackageEvents().size());
 	    Event event = packge.getPackageEvents().iterator().next();

@@ -28,8 +28,12 @@ public class AddExternalFileLocationActionHandlerTest extends BaseHandlerTest {
 	      "  <start-state>" +
 	      "    <transition to='b' />" +
 	      "    <event type='node-leave'>" +
-	      "      <action name='add external file location' class='gov.loc.repository.workflow.actionhandlers.AddExternalFileLocationActionHandler'>" +
-	      "        <mediaType>" + MediaType.EXTERNAL_HARDDRIVE.toString() + "</mediaType>" +	      	      
+	      "      <action name='add external file location' class='AddExternalFileLocationActionHandler'>" +
+	      "        <externalIdentifierValue>" + SERIAL_NUMBER_1 + "</externalIdentifierValue>" +
+	      "        <externalIdentifierType>" + IdentifierType.SERIAL_NUMBER.toString() + "</externalIdentifierType>" +	   
+	      "        <mediaType>" + MediaType.EXTERNAL_HARDDRIVE.toString() + "</mediaType>" +
+	      "        <packageKey>" + this.packageKey + "</packageKey>" +
+	      "        <keyVariable>externalFileLocationKey</keyVariable>" +
 	      "      </action>" +
 	      "    </event>" +	      	      	      	      	      	      
 	      "  </start-state>" +
@@ -37,10 +41,6 @@ public class AddExternalFileLocationActionHandlerTest extends BaseHandlerTest {
 	      "</process-definition>");
 		
 	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.getContextInstance().setVariable("repositoryId", REPOSITORY_ID);
-	    processInstance.getContextInstance().setVariable("packageId", PACKAGE_ID1 + testCounter);
-	    processInstance.getContextInstance().setVariable("externalIdentifierValue", SERIAL_NUMBER_1);
-	    processInstance.getContextInstance().setVariable("externalIdentifierType", IdentifierType.SERIAL_NUMBER.toString());
 	    
 	    this.commitAndRestartTransaction();
 	    
@@ -48,7 +48,7 @@ public class AddExternalFileLocationActionHandlerTest extends BaseHandlerTest {
 	    processInstance.signal();	    
 	    
 	    assertEquals("b", processInstance.getRootToken().getNode().getName());	    
-	    Package packge = dao.findPackage(Package.class, REPOSITORY_ID, PACKAGE_ID1 + testCounter);
+	    Package packge = dao.loadRequiredPackage(this.packageKey);
 	    assertNotNull(packge);
 	    ExternalFileLocation fileLocation = packge.getFileLocation(new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER));
 	    assertNotNull(fileLocation);
@@ -56,6 +56,7 @@ public class AddExternalFileLocationActionHandlerTest extends BaseHandlerTest {
 	    assertEquals("/", fileLocation.getBasePath());
 	    assertFalse(fileLocation.isManaged());
 	    assertFalse(fileLocation.isLCPackageStructure());
+	    assertEquals(fileLocation.getKey().toString(), (String)processInstance.getContextInstance().getVariable("externalFileLocationKey"));
 	}
 
 	
