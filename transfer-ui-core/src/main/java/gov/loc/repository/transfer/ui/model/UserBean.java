@@ -103,20 +103,22 @@ public class UserBean extends AbstractWorkflowBean {
 	@SuppressWarnings("unchecked")
 	public List<TaskInstanceBean> getGroupTaskInstanceBeanList()
 	{
+		List<TaskInstanceBean> taskInstanceBeanList = new ArrayList<TaskInstanceBean>();
 
 		IdentitySession identitySession = new IdentitySession(this.jbpmContext.getSession());
-		
-		List<TaskInstance> taskList =  jbpmContext.getGroupTaskList(
-		    identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation")
-		);
-		List<TaskInstanceBean> taskInstanceBeanList = new ArrayList<TaskInstanceBean>();
-		Iterator<TaskInstance> iter = taskList.iterator();
-		while (iter.hasNext())
+
+		List<String> groupNameList = identitySession.getGroupNamesByUserAndGroupType(this.id, "organisation");
+		if (! groupNameList.isEmpty())
 		{
-			TaskInstanceBean taskInstanceBean = this.factory.createTaskInstanceBean(iter.next());
-			if (! taskInstanceBean.isEnded())
+			List<TaskInstance> taskList =  jbpmContext.getGroupTaskList(groupNameList);
+			Iterator<TaskInstance> iter = taskList.iterator();
+			while (iter.hasNext())
 			{
-				taskInstanceBeanList.add(taskInstanceBean);
+				TaskInstanceBean taskInstanceBean = this.factory.createTaskInstanceBean(iter.next());
+				if (! taskInstanceBean.isEnded())
+				{
+					taskInstanceBeanList.add(taskInstanceBean);
+				}
 			}
 		}
 		return taskInstanceBeanList;
