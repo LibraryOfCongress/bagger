@@ -37,6 +37,20 @@ public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsComp
 	private Connection connection;
 	private MessageConsumer consumer;
 	private boolean isStarted = false;
+
+	public void init()
+	{
+		//Try starting, but swallow exception if thrown
+		try
+		{
+			this.start();
+		}
+		catch(Exception ex)
+		{
+			log.error("Failed initializing ActiveMQJmsCompletedJobListener", ex);
+		}
+	}
+	
 	
 	public void start() throws Exception
 	{
@@ -52,19 +66,28 @@ public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsComp
 		
 		//Setup a listener
 		//Create the connection
-		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(configuration.getString("jms.connection"));
+		String connectionString = configuration.getString("jms.connection");
+		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(connectionString);
 		connectionFactory.setCloseTimeout(2000);
+		log.debug("Creating connection to " + connectionString);
 		connection = connectionFactory.createConnection();
+		log.debug("Connection created");
 		
 		//Create the session
+		log.debug("Creating session");
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		Destination destination = session.createQueue(configuration.getString("jms.replytoqueue"));
+		log.debug("Session created");
 		
 		//Create the consumer
+		log.debug("Creating consumer");
 		consumer = session.createConsumer(destination);
 		consumer.setMessageListener(this);
+		log.debug("Consumer created");
 		
-		connection.start();		
+		log.debug("Starting connection to " + connectionString);
+		connection.start();
+		log.debug("Connection started");
 		this.isStarted = true;
 	}
 	
@@ -197,6 +220,7 @@ public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsComp
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Map<String,String> handleVariableMap(MapMessage mapMessage) throws Exception
 	{
 		Map<String,String> variableMap = new HashMap<String, String>();

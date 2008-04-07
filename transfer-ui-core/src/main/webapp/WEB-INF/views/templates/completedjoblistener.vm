@@ -1,0 +1,82 @@
+<div id="tasks">
+    <ul id="localNav">
+        <li><a href="#status">
+            <span>Status </span>
+        </a></li>
+        #if ($permissions.canAdministerJobListener())
+	        <li><a href="#administer">
+	            <span>Administer </span>
+	        </a></li>
+        #end
+        <li><a href="#localHelp">
+            <span> Help                  </span>
+        </a></li>
+    </ul>
+	<div id="status">
+		<h2>Status</h2>
+        <fieldset>
+            <legend>Status of listener</legend>
+	        <table cellspacing="3" cellpadding="7">
+                <tr id="status" >
+                <td><label for="status_value">Status</label></td>
+                <td><span id="status_value">
+                	#if (${listener.isStarted()})
+                		running
+                	#else
+                		stopped
+	                #end
+                </span></td>
+                <td><span class="description">Whether the listener is currently running.
+                </span></td>
+		    </table>
+		</fieldset>
+	</div>
+
+    #if ($permissions.canAdministerJobListener())
+		<div id="administer">
+			<h2>Administer</h2>
+			<form method="get" action="${contextPath}/admin/completedjoblistener.html">
+				#if (${listener.isStarted()})
+	                <fieldset title="Stop listener">
+			            <legend>
+			            	Job listener
+	    		        </legend>
+			            <input type="hidden" name="stop" value="true" />
+						<input type="submit" class="button" value="stop"/>
+						<label>Stop the job listener.</label>
+				    </fieldset>
+			   #else
+	                <fieldset title="Start listener">
+			            <legend>
+			            	Job listener
+	    		        </legend>
+			            <input type="hidden" name="start" value="true" />
+						<input type="submit" class="button" value="start"/>
+						<label>Start the job listener.</label>
+				    </fieldset>
+			   #end					
+			</form>						
+		</div>
+    	
+    #end
+
+   			
+	<div id="localHelp">
+	    <h2>Help</h2>
+	    <fieldset>
+        <legend><b>Help topics related to the Admin Panel.</b></legend>
+	    <ul id="helpTopics">
+	        <li class="selected">
+	            <h2>System Processes  </h2>
+	            <p> TODO: System Processes are ...</p>
+		    </li>
+            <li>
+	            <h2>More Help  </h2>
+	            <p> TODO: If you need more help, you can...</p>
+	            <p> TODO: For additional support please contact...</p>
+		    </li>
+        </ul>
+        </fieldset>
+    </div>
+    
+</div>

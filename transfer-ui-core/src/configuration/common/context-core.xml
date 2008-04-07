@@ -25,6 +25,8 @@
 			<value>READ_ONLY</value>
 		</property>
 	</bean>
+	
+	<bean id="jmsCompletedJobListener" class="gov.loc.repository.workflow.listeners.impl.ActiveMQJmsCompletedJobListener" init-method="init" />
 
     <bean id="messageSource" class="gov.loc.repository.transfer.ui.springframework.ResourceBundleMessageSource">
     </bean>

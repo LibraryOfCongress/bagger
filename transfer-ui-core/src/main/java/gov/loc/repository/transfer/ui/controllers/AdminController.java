@@ -20,61 +20,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class AdminController extends AbstractRestController {
+public class AdminController {
 
 	protected static final Log log = LogFactory.getLog(AdminController.class);
-	public static final String SERVICE_ID = "serviceId";
-	
-	@Override
-	public String getUrlParameterDescription() {
-		return "admin/{service}\\.{format}";
-	}
 
-	@RequestMapping("/admin/*.*")
-	@Override
-	public ModelAndView handleRequest(
-			HttpServletRequest request, 
-			HttpServletResponse response) throws Exception 
+	@RequestMapping("/admin/index.html")
+	public ModelAndView handleIndex(HttpServletRequest request) 
 	{
-	    log.debug("Handling request at /admin/*.*");
-		return this.handleRequestInternal(request, response);
-	}
-	
-	@Override
-	protected void handleIndex(
-	        HttpServletRequest request, 
-	        ModelAndView mav,
-			WorkflowBeanFactory factory, 
-			WorkflowDao dao, 
-			PermissionsHelper permissions, Map<String, String> urlParameterMap) throws Exception 
-	{
+		ModelAndView mav = new ModelAndView();
 		log.debug("Handling request at /admin/index.html");
 		
 		mav.setViewName("admin");
-		mav.addObject("permissions", permissions);
-		//This is a naive implementation for now.  The only system process I
-		//know of is a the active mq 'job listener'.  I think the best solution
-		//here is to use a Dao that loads xml based system process descriptions
-		//from a specific path.
-		List<SystemProcess> systemProcesses = new ArrayList<SystemProcess>();
-		SystemProcess systemProcess = new SystemProcess();
-		JmsCompletedJobListener listener = new ActiveMQJmsCompletedJobListener();	
-		systemProcess.setId("amq-jsl");
-		systemProcess.setName("Automated Task Monitor");
-		systemProcess.setSuspended(new Boolean(!listener.isStarted()));
-		systemProcess.setDescription(
-		    "\n\tMany tasks, though configured manually, run automatically.  For example, the network " +
-		    "transport, or verification of file checksums.  The Automated Task Monitor listens on a " +
-		    "special network called a Message Queue so the manual workflow steps can continue when " + 
-		    "the automated steps are completed." + 
-		    "\n\tAdministrators should be able to start/stop/restart this network connection in the event "+
-		    "that the Message Queue was brought down unexpectedly or requires scheduled maintenence."
-		);
-		systemProcesses.add(systemProcess);
-		mav.addObject(
-		    "systemProcesses", 
-		    systemProcesses
-		);
+		mav.addObject("contextPath", request.getContextPath());
 		
 		Runtime runtime = Runtime.getRuntime();
 		mav.addObject("totalMemory", runtime.totalMemory()/1024);
@@ -93,46 +50,7 @@ public class AdminController extends AbstractRestController {
 		    systemInfo.add(info);
 		}
 		mav.addObject("systemInfo", systemInfo);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	protected void handleGet(
-	        HttpServletRequest request, 
-	        ModelAndView mav, 
-	        WorkflowBeanFactory factory, 
-	        WorkflowDao dao, 
-	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
-	{
-		//If there is no reportId in urlParameterMap then 404
-		if (! urlParameterMap.containsKey(this.SERVICE_ID)) {
-			mav.setError(HttpServletResponse.SC_NOT_FOUND);
-			return;
-		}
-		//Otherwise handle reportId
-		String serviceId = urlParameterMap.get(this.SERVICE_ID);
-		//TODO make sure report exists based on the reportId
-		
-		
-	}
-		
-	@Override
-	protected void handlePut(
-	        HttpServletRequest request, 
-	        ModelAndView mav, 
-	        WorkflowBeanFactory factory,
-	        WorkflowDao dao, 
-	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap ) throws Exception 
-	{
-		//If there is no reportId in urlParameterMap then 404
-		if (! urlParameterMap.containsKey(this.SERVICE_ID)) {
-			mav.setError(HttpServletResponse.SC_NOT_FOUND);
-			return;
-		}
-		//Otherwise handle reportId
-		String serviceId = urlParameterMap.get(this.SERVICE_ID);
-		//TODO make sure report exists based on the reportId
-		
+		return mav;
 	}
 	
 }

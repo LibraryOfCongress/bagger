@@ -1,7 +1,7 @@
 <div id="tasks">
     <ul id="localNav">
         <li><a href="#systemProcesses">
-            <span>System Processes ( $systemProcesses.size() ) </span>
+            <span>System Processes</span>
         </a></li>
         <li><a href="#vitalStatistics">
             <span>Vital Statistics </span>
@@ -17,77 +17,24 @@
 		<h2>System Processes</h2>
         <fieldset>
             <legend><b>A Summary of System Processes</b></legend>
-            #if( $systemProcesses.size() > 10 )
-		    <table>
-		        <tbody><tr><td>
-                    <form id="systemProcesses_pager" class="pager">
-                		<img src="${contextPath}/images/icons/first.png" class="first"/>
-                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-                		<label for="systemProcesses_pagedisplay">Showing page </label>
-                		<input id="systemProcesses_pagedisplay" type="text" class="pagedisplay"/>
-                		<img src="${contextPath}/images/icons/next.png" class="next"/>
-                		<img src="${contextPath}/images/icons/last.png" class="last"/>
-                		<label for="systemProcesses_pagesize">Results per page: </label>
-                		<select id="systemProcesses_pagesize" class="pagesize">
-                			<option selected="selected"  value="10">10</option>
-                			<option value="20">20</option>
-                			<option value="30">30</option>
-                			<option  value="40">40</option>
-                		</select>
-                    </form>
-                </td></tr></tbody>
-            </table>
-            #end
 	        <table id="systemProcesses_table" class="tablesorter pageable"  >
 	            <thead>
 	                <tr>
-                        <th></th>
-                        <th> Name </th>
-                        <th>Status</th>
+                        <th>Name</th>
                     </tr>
                 </thead>
                 <tfoot><tr>
-                        <th></th>
                         <th>Name</th>
-                        <th>Status</th>
                 </tr></tfoot>
                 <tbody>
-			        #foreach($systemProcess in $systemProcesses)
-			        <tr id="systemProcess${systemProcess.id}" >
-				        <td>
-				            &nbsp;&nbsp;&nbsp;&nbsp;
-				            #if( $systemProcess.isSuspended() )
-				                <img
-				               src="http://chart.apis.google.com/chart?cht=v&chs=20x20&chd=t:100&chco=FF9955"/>
-				               <br/>
-				               #if( $permissions.isAdministrator() )
-				                <a href=""> start </a>
-				               #end
-				            #else
-				                <img
-				               src="http://chart.apis.google.com/chart?cht=v&chs=20x20&chd=t:100&chco=7FC659"/>
-				               #if( $permissions.isAdministrator() )
-				                <a href=""> stop </a>
-				               #end
-				            #end
-				            &nbsp;&nbsp;&nbsp;&nbsp;
-				        </td>
-				        <td><a href="${contextPath}/admin/${systemProcess.id}.html">
-				            <b>${systemProcess.name} ($systemProcess.id)</b>
+			        <tr>
+				        <td><a href="${contextPath}/admin/completedjoblistener.html">
+				            <b>Completed Job Listener</b>
 				        </a><p>
-				            ${systemProcess.description}
+				            Listens for messages from remote services to indicate that jobs are completed.				            
 				        </p>
 				        </td>
-				        <td>&nbsp;&nbsp;&nbsp;&nbsp;
-				            #if( $systemProcess.isSuspended() )
-				                Suspended
-				            #else
-				                Running
-				            #end
-				            &nbsp;&nbsp;&nbsp;&nbsp;
-				        </td>     
 				    </tr>					
-			        #end
 			    </tbody>
 		    </table>
 		</fieldset>
