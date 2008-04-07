@@ -54,7 +54,7 @@ public class CoreReport01 extends CoreReport {
         chart.put("chxl","0:|min|average|max");//labels for x-axis (0)
         chart.put("chxp","0,");//positions for x-axis labels (0) values still need to be set
         
-        this.data = new HashMap<String, Object>();
+        this.data = new HashMap<String, Map>();
         long maxValue = 0;
         long minValue = -1;
         long avgValue = 0;

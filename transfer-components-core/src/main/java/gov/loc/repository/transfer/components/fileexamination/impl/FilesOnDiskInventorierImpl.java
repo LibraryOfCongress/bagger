@@ -35,7 +35,7 @@ public class FilesOnDiskInventorierImpl extends BaseComponent implements
 
 	public void inventory(long fileLocationKey, String mountPath,
 			String algorithm, String requestingAgentId) throws Exception {
-		this.inventory(this.dao.loadFileLocation(fileLocationKey), mountPath, Fixity.Algorithm.fromString(algorithm), this.dao.findRequiredAgent(Agent.class, requestingAgentId));
+		this.inventory(this.dao.loadRequiredFileLocation(fileLocationKey), mountPath, Fixity.Algorithm.fromString(algorithm), this.dao.findRequiredAgent(Agent.class, requestingAgentId));
 
 	}
 
