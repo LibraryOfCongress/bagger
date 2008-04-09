@@ -514,9 +514,10 @@ deploy_console () {
 
 process_opts () {
     CALLER=`basename $0`
-    while getopts iuh:d:r:t: ARG
+    while getopts ut ARG
         do case ${ARG} in
         u)  UPGRADE="true";;
+        t)  TRUNCATE="true";;
       [?])  usage;;
         *)  usage;;  
         esac
