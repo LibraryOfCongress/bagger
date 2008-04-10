@@ -31,7 +31,7 @@ init_vars () {
     TRANSFER_DW_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/data_writer.packagemodeler.hibernate.properties"
     TRANSFER_RO_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/read_only.packagemodeler.hibernate.properties"
     TRANSFER_JBPM_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/jbpm.hibernate.properties"
-    TRANSFER_CONTEXT_CONF="${CATALINA_HOME}/conf/Catalina/localhost/transfer.xml"
+    TRANSFER_CONTEXT_CONF="${CATALINA_HOME}/webapps/transfer/META-INF/context.xml"
 
     # ENVIRONMENT VARS
     export PGUSER=$PGUSER
@@ -99,7 +99,7 @@ hibernate.cache.provider_class=org.hibernate.cache.HashtableCacheProvider"
     TRANSFER_CONTEXT="<Context reloadable='true' antiJARLocking='true'>\n
 <Realm className='org.apache.catalina.realm.JDBCRealm'\n
 	driverName='org.postgresql.Driver'\n
-	connectionURL='jdbc:postgresql://:${PGHOST}:${PGPORT}/${JBPM_DB}\n'
+	connectionURL='jdbc:postgresql://:${PGHOST}:${PGPORT}/${JBPM_DB}'\n
 	connectionName='${JBPM}'\n 
 	connectionPassword='${JBPM_PASSWORD}'\n
 	userTable='JBPM_ID_USER'\n
@@ -500,11 +500,9 @@ install_process_definition () {
 # Deploy the Transfer UI App
 deploy_console () {
     svcadm disable svc:/application/csk-tomcat
-    cp $TRANSFER_UI_WAR $CATALINA_HOME/webapps/transfer.war
-    svcadm enable svc:/application/csk-tomcat
     sleep 10
-    svcadm disable svc:/application/csk-tomcat
-    sleep 10
+    mkdir $CATALINA_HOME/webapps/transfer
+    unzip -q -d  $CATALINA_HOME/webapps/transfer $TRANSFER_UI_WAR 
     echo -e $PM_WRITER_HIBERNATE_PROPS > $TRANSFER_DW_HIBERNATE_CONF
     echo -e $PM_READER_HIBERNATE_PROPS > $TRANSFER_RO_HIBERNATE_CONF
     echo -e $PM_WRITER_HIBERNATE_PROPS > $TRANSFER_JBPM_HIBERNATE_CONF
