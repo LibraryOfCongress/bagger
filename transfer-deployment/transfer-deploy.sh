@@ -31,6 +31,7 @@ init_vars () {
     TRANSFER_DW_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/data_writer.packagemodeler.hibernate.properties"
     TRANSFER_RO_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/read_only.packagemodeler.hibernate.properties"
     TRANSFER_JBPM_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/jbpm.hibernate.properties"
+    TRANSFER_LOG4J_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/log4j.properties"
     TRANSFER_CONTEXT_CONF="${CATALINA_HOME}/webapps/transfer/META-INF/context.xml"
 
     # ENVIRONMENT VARS
@@ -95,11 +96,39 @@ hibernate.connection.username=${JBPM}\n
 hibernate.connection.password=${JBPM_PASSWD}\n
 hibernate.cache.provider_class=org.hibernate.cache.HashtableCacheProvider"
 
+    # TRANSFER LOG4J PROPERTIES
+    LOG4J_PROPS="# Set root logger level to DEBUG and its only appender to CONSOLE\n
+log4j.rootLogger=DEBUG, CONSOLE, R\n
+# CONSOLE\n
+log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender\n
+log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout\n
+log4j.appender.CONSOLE.layout.ConversionPattern=%d{HH:mm:ss,SSS} [%t] %-5p %C{1} : %m%n\n
+log4j.appender.R=org.apache.log4j.RollingFileAppender\n
+log4j.appender.R.File=${CATALINA_HOME}/logs/transfer-console.log\n
+log4j.appender.R.MaxFileSize=10000KB\n
+# Keep one backup file\n
+log4j.appender.R.MaxBackupIndex=1\n
+log4j.appender.R.layout=org.apache.log4j.PatternLayout\n
+log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n\n
+# LIMIT CATEGORIES\n
+log4j.logger=WARN\n
+log4j.logger.gov.loc.repository.workflow.actionhandlers.BaseActionHandler=WARN\n
+log4j.logger.gov.loc.repository=DEBUG\n
+log4j.logger.gov.loc.ndnp=WARN\n
+log4j.logger.components=INFO\n
+log4j.logger.org.jbpm=WARN\n
+log4j.logger.org.hibernate=WARN\n
+#log4j.logger.org.hibernate.SQL=DEBUG\n
+#log4j.logger.org.hibernate.type=DEBUG\n
+log4j.logger.org.apache=WARN\n
+log4j.logger.org.jcp=WARN\n
+log4j.logger.org.springframework=WARN"
+
     # TRANSFER APP CONTEXT DEFINITION
     TRANSFER_CONTEXT="<Context reloadable='true' antiJARLocking='true'>\n
 <Realm className='org.apache.catalina.realm.JDBCRealm'\n
 	driverName='org.postgresql.Driver'\n
-	connectionURL='jdbc:postgresql://:${PGHOST}:${PGPORT}/${JBPM_DB}'\n
+	connectionURL='jdbc:postgresql://${PGHOST}:${PGPORT}/${JBPM_DB}'\n
 	connectionName='${JBPM}'\n 
 	connectionPassword='${JBPM_PASSWORD}'\n
 	userTable='JBPM_ID_USER'\n
@@ -506,6 +535,7 @@ deploy_console () {
     echo -e $PM_WRITER_HIBERNATE_PROPS > $TRANSFER_DW_HIBERNATE_CONF
     echo -e $PM_READER_HIBERNATE_PROPS > $TRANSFER_RO_HIBERNATE_CONF
     echo -e $JBPM_HIBERNATE_PROPS > $TRANSFER_JBPM_HIBERNATE_CONF
+    echo -e $LOG4J_PROPS > $TRANSFER_LOG4J_CONF
     echo -e $TRANSFER_CONTEXT > $TRANSFER_CONTEXT_CONF
     svcadm enable svc:/application/csk-tomcat
 }
