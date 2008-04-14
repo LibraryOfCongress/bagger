@@ -65,6 +65,11 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 	@Test
 	public void testGenerateAndValidate() throws Exception
 	{
+		if (! this.canRunTest)
+		{
+			return;
+		}
+		
 		FileLocation fileLocation = this.modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_1, true, true);
 		
 		assertEquals(0, fileLocation.getFileLocationEvents().size());
@@ -87,6 +92,11 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 	@Test
 	public void testBadValidate() throws Exception
 	{
+		if (! this.canRunTest)
+		{
+			return;
+		}
+
 		FileLocation fileLocation = this.modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_2, true, true);
 		
 		assertEquals(0, fileLocation.getFileLocationEvents().size());
