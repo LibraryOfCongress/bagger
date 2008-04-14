@@ -39,7 +39,7 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 	@Override
 	public void setup() throws Exception {
 		//Look for md5deep
-		for(String command : new String[] {"c:/md5deep/md5deep.exe", "c:/Program Files/md5deep\\md5deep.exe"})
+	        for (String command : new String[] {"c:/md5deep/md5deep.exe", "c:/Program Files/md5deep\\md5deep.exe", "/usr/bin/md5deep"})
 		{
 			File file = new File(command);
 			if (file.exists())
