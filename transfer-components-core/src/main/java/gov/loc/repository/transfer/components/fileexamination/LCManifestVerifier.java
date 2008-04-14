@@ -6,6 +6,7 @@ import gov.loc.repository.transfer.components.Component;
 import gov.loc.repository.transfer.components.ModelerAware;
 import gov.loc.repository.transfer.components.annotations.JobType;
 import gov.loc.repository.transfer.components.annotations.MapParameter;
+import gov.loc.repository.transfer.components.annotations.Result;
 
 public interface LCManifestVerifier extends Component, ModelerAware {
 	
@@ -26,4 +27,6 @@ public interface LCManifestVerifier extends Component, ModelerAware {
 	
 	public void verify(FileLocation fileLocation, String mountPath, Agent requestingAgent) throws Exception;
 	
+	@Result(jobType="verifylcmanifest")
+	public boolean verifyResult();
 }

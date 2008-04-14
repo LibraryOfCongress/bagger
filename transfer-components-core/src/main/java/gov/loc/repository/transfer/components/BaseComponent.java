@@ -24,7 +24,7 @@ public abstract class BaseComponent implements ModelerAware {
 	protected PackageModelDAO dao;	
 	
 
-	protected Configuration getConfiguration() throws Exception
+	protected Configuration getConfiguration()
 	{
 		return ConfigurationFactory.getConfiguration(ComponentConstants.PROPERTIES_NAME);
 	}

@@ -96,6 +96,11 @@ public class PackageHelper {
 		return manifestFile;
 	}
 	
+	public static File getManifest(File packageDirectory, String algorithm)
+	{
+		return new File(packageDirectory, "manifest-" + algorithm.toLowerCase() + ".txt");
+	}
+	
 	public static File discoverPackageInformation(File packageDirectory)
 	{
 		for (File file : packageDirectory.listFiles())

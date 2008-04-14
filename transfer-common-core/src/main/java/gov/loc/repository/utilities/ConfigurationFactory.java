@@ -1,9 +1,12 @@
 package gov.loc.repository.utilities;
 
+import gov.loc.repository.exceptions.ConfigurationException;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -39,7 +42,7 @@ public class ConfigurationFactory {
 	 * The order of configuration properties that match configurationName.*.properties is not determinate.
 	 * All matching is case-insensitive. 
 	 */	
-	public static Configuration getConfiguration(String configurationName) throws Exception
+	public static Configuration getConfiguration(String configurationName)
 	{
 		if (! configurationMap.containsKey(configurationName))
 		{
@@ -51,14 +54,21 @@ public class ConfigurationFactory {
 			for(URL resource : resourceList)
 			{
 				log.debug("Adding configuration: " + resource.toString());
-				configuration.addConfiguration(new PropertiesConfiguration(resource));				
+				try
+				{
+					configuration.addConfiguration(new PropertiesConfiguration(resource));
+				}
+				catch(org.apache.commons.configuration.ConfigurationException ex)
+				{
+					throw new ConfigurationException(ex);
+				}
 			}
 			configurationMap.put(configurationName, configuration);
 		}
 		return configurationMap.get(configurationName);
 	}
 	
-	public static List<URL> findPropertyResourceList(String configurationName) throws Exception
+	public static List<URL> findPropertyResourceList(String configurationName)
 	{
 		List<URL> resourceList = findWildcardResourceList(configurationName + ".*.properties");
 		URL matchingResource = ConfigurationFactory.class.getClassLoader().getResource(configurationName + ".properties");
@@ -69,8 +79,9 @@ public class ConfigurationFactory {
 		return resourceList;
 	}
 	
-	public static List<URL> findWildcardResourceList(String wildCard) throws Exception
+	public static List<URL> findWildcardResourceList(String wildCard)
 	{
+		log.debug(MessageFormat.format("Finding resource list for {0}", wildCard));
 		if (resourceList == null)
 		{
 			loadResourceList();
@@ -79,10 +90,12 @@ public class ConfigurationFactory {
 		FileFilter wildcardFileFilter = new WildcardFileFilter(wildCard, IOCase.INSENSITIVE);
 		for(URL url : resourceList)
 		{
+			log.debug(MessageFormat.format("Checking {0} to see if matches wildcard", url));
 			String fileString = url.toExternalForm().substring(url.toExternalForm().lastIndexOf('/')+1);
 			File file = new File(fileString);
 			if (wildcardFileFilter.accept(file))
 			{
+				log.debug(MessageFormat.format("{0} matches wildcard", url));
 				resourceMatchList.add(url);
 			}
 		}
@@ -90,61 +103,75 @@ public class ConfigurationFactory {
 	}
 	
 	
-	private static void loadResourceList() throws Exception
+	private static void loadResourceList()
 	{
-		resourceList = new ArrayList<URL>();
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		Enumeration<URL> fileResourceEnum = classLoader.getResources("");
-		while(fileResourceEnum.hasMoreElements())
+		try
 		{
-			File dir = new File(fileResourceEnum.nextElement().getFile());
-			if (dir.isDirectory())
+			log.debug("Loading resource list");
+			resourceList = new ArrayList<URL>();
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			log.debug("Getting resources in \"\"");
+			Enumeration<URL> fileResourceEnum = classLoader.getResources("");
+			while(fileResourceEnum.hasMoreElements())
 			{
-				for(File file : dir.listFiles())
+				File dir = new File(fileResourceEnum.nextElement().getFile());
+				if (dir.isDirectory())
 				{
-					if (file.isFile())
-					{						
-						resourceList.add(file.toURI().toURL());
+					for(File file : dir.listFiles())
+					{
+						if (file.isFile())
+						{						
+							log.debug(MessageFormat.format("Adding {0} to resource list", file.toURI().toURL()));
+							resourceList.add(file.toURI().toURL());
+						}
+					}
+				}
+			}
+			
+			log.debug("Getting resources in conf");
+			fileResourceEnum = classLoader.getResources("conf");
+			while(fileResourceEnum.hasMoreElements())
+			{
+				File dir = new File(fileResourceEnum.nextElement().getFile());
+				if (dir.isDirectory())
+				{
+					for(File file : dir.listFiles())
+					{
+						if (file.isFile())
+						{						
+							log.debug(MessageFormat.format("Adding {0} to resource list", file.toURI().toURL()));
+							resourceList.add(file.toURI().toURL());
+						}
+					}
+				}
+			}		
+			Enumeration<URL> jarResourceEnum = classLoader.getResources("META-INF");		
+			while(jarResourceEnum.hasMoreElements())
+			{
+				URL url = jarResourceEnum.nextElement();
+				if (url.toExternalForm().startsWith("jar:"))
+				{
+					JarURLConnection conn = (JarURLConnection)url.openConnection();
+					JarFile jarFile = conn.getJarFile();
+					Enumeration<JarEntry> jarEntryEnum = jarFile.entries();
+					while(jarEntryEnum.hasMoreElements())
+					{
+						JarEntry jarEntry = jarEntryEnum.nextElement();			
+						if (jarEntry.getName().indexOf('/') == -1)
+						{
+							
+							String entryURLString = conn.getURL().toExternalForm().substring(0, conn.getURL().toExternalForm().length()-8) + jarEntry.getName();
+							URL entryUrl = new URL(entryURLString);
+							log.debug(MessageFormat.format("Adding {0} to resource list", entryUrl));
+							resourceList.add(entryUrl);
+						}
 					}
 				}
 			}
 		}
-		
-		fileResourceEnum = classLoader.getResources("conf");
-		while(fileResourceEnum.hasMoreElements())
+		catch(Exception ex)
 		{
-			File dir = new File(fileResourceEnum.nextElement().getFile());
-			if (dir.isDirectory())
-			{
-				for(File file : dir.listFiles())
-				{
-					if (file.isFile())
-					{						
-						resourceList.add(file.toURI().toURL());
-					}
-				}
-			}
-		}		
-		Enumeration<URL> jarResourceEnum = classLoader.getResources("META-INF");		
-		while(jarResourceEnum.hasMoreElements())
-		{
-			URL url = jarResourceEnum.nextElement();
-			if (url.toExternalForm().startsWith("jar:"))
-			{
-				JarURLConnection conn = (JarURLConnection)url.openConnection();
-				JarFile jarFile = conn.getJarFile();
-				Enumeration<JarEntry> jarEntryEnum = jarFile.entries();
-				while(jarEntryEnum.hasMoreElements())
-				{
-					JarEntry jarEntry = jarEntryEnum.nextElement();			
-					if (jarEntry.getName().indexOf('/') == -1)
-					{
-						
-						String entryURLString = conn.getURL().toExternalForm().substring(0, conn.getURL().toExternalForm().length()-8) + jarEntry.getName();
-						resourceList.add(new URL(entryURLString));
-					}
-				}
-			}
+			throw new ConfigurationException(ex);
 		}
 	}
 	
