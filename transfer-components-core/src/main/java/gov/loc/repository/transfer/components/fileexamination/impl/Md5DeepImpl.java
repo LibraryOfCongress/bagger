@@ -8,6 +8,9 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Calendar;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import gov.loc.repository.exceptions.ConfigurationException;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.events.filelocation.VerifyAgainstManifestEvent;
@@ -19,6 +22,8 @@ import gov.loc.repository.transfer.components.fileexamination.LCManifestVerifier
 import gov.loc.repository.utilities.ManifestHelper;
 import gov.loc.repository.utilities.PackageHelper;
 
+@Component("md5deepcomponent")
+@Scope("prototype")
 public class Md5DeepImpl extends BaseComponent implements LCManifestGenerator, LCManifestVerifier {
 
 	private boolean result = true;
