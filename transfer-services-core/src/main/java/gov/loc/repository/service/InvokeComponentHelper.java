@@ -34,7 +34,7 @@ public class InvokeComponentHelper {
 		this.findJobTypeMethod();
 		if (this.jobTypeMethod == null)
 		{
-			throw new Exception("Unable to find jobTypeMethod");
+			throw new Exception("Unable to find jobTypeMethod for jobType " + jobType);
 		}
 		this.findResultMethod();
 		this.jobTypeMethod.invoke(this.component, this.jobTypeParameters);
@@ -72,18 +72,30 @@ public class InvokeComponentHelper {
 				log.debug("Is not annotated for jobType " + this.jobType);
 				continue;
 			}
+			log.debug("Is annotated for jobType " + this.jobType);
 			Object[] parameters = new Object[method.getParameterTypes().length];
 			//For each parameter
 			Annotation[][] parameterAnnotations = superMethod.getParameterAnnotations();
+			int satisfiedParameterCount = 0;
 			//For each parameter				
 			for(int i=0; i < parameterAnnotations.length; i++)
 			{
 				Annotation[] annotationArray = parameterAnnotations[i];
-				parameters[i] = this.getSatisfyingValue(annotationArray);
+				if (this.hasSatisfyingValue(annotationArray))
+				{
+					satisfiedParameterCount++;
+				}
 			}
-			//If all parameters are filled
-			if (areParametersSatisfied(parameters))
+			log.debug(MessageFormat.format("{0} of {1} parameters are satisfied", satisfiedParameterCount, parameters.length));
+			if (satisfiedParameterCount == parameters.length)
 			{
+				log.debug("All parameters are satisfied");
+				//For each parameter				
+				for(int i=0; i < parameterAnnotations.length; i++)
+				{
+					Annotation[] annotationArray = parameterAnnotations[i];
+					parameters[i] = this.getSatisfyingValue(annotationArray);
+				}
 				this.jobTypeMethod = method;
 				this.jobTypeParameters = parameters;
 				return;
@@ -110,11 +122,20 @@ public class InvokeComponentHelper {
 	{
 		for(Class<?> clazz : method.getDeclaringClass().getInterfaces())
 		{
+			log.debug(MessageFormat.format("Checking {0} for method {1} that is annotated with JobType", clazz.getName(), method.getName()));
 			Method superMethod;
 			try
 			{
 				superMethod = clazz.getMethod(method.getName(), method.getParameterTypes());
 				JobType jobTypeAnnot = (JobType)superMethod.getAnnotation(JobType.class);
+				if (jobTypeAnnot != null)
+				{
+					log.debug("Method contains JobType annotation with value " + jobTypeAnnot.name());
+				}
+				else
+				{
+					log.debug("Method does not contain JobType annotation");
+				}
 				if (jobTypeAnnot != null && this.jobType.equals(jobTypeAnnot.name()))
 				{
 					return superMethod;
@@ -123,6 +144,7 @@ public class InvokeComponentHelper {
 			}
 			catch(NoSuchMethodException ignore)
 			{
+				log.debug("Does not contain method");
 			}
 		}
 		return null;
@@ -151,19 +173,26 @@ public class InvokeComponentHelper {
 	}
 	
 	
-	private boolean areParametersSatisfied(Object[] parameters)
+	private boolean hasSatisfyingValue(Annotation[] annotationArray)
 	{
-		for(Object obj : parameters)
+		for(Annotation annot : annotationArray)
 		{
-			if (obj == null)
+			if (annot instanceof MapParameter)
 			{
-				log.debug("All parameters are not satisfied");
-				return false;
+				MapParameter mapParameterAnnot = (MapParameter)annot;
+				if (variableMap.containsKey(mapParameterAnnot.name()))
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 		}
-		log.debug("All parameters are satisfied");
-		return true;
+		return false;
 	}
+	
 	
 	private Object getSatisfyingValue(Annotation[] annotationArray)
 	{

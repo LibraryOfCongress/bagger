@@ -162,17 +162,17 @@ public abstract class BaseActionHandler implements ActionHandler
 	
 	@SuppressWarnings("unchecked")
 	protected final <T> T createObject(Class<T> clazz) throws Exception
-	{
+	{		
 		String key = "none";
-		Long processInstanceId = 0L;
+		Long tokenId = 0L;
 		if (this.executionContext != null)
 		{
 			key = this.executionContext.getProcessDefinition().getName();
 			if (this.executionContext.getAction() != null && this.executionContext.getAction().getName() != null)
 			{
-				key += "." + this.executionContext.getAction().getName();
+				key += "." + this.executionContext.getAction().getName().replaceAll(" ", "_");
 			}
-			processInstanceId = this.executionContext.getProcessInstance().getId();
+			tokenId = this.executionContext.getToken().getId();
 		}
 		key += "." + clazz.getSimpleName();		
 		log.debug("Key base is " + key);
@@ -194,7 +194,7 @@ public abstract class BaseActionHandler implements ActionHandler
 		{
 			String queueName = this.getConfiguration().getString(queueNameKey);
 			log.debug(MessageFormat.format("Configuration key {0} has value {1}", queueNameKey, queueName));
-			return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, new JmsInvocationHandler(queueName, processInstanceId));
+			return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, new JmsInvocationHandler(queueName, tokenId));
 		}
 		else
 		{

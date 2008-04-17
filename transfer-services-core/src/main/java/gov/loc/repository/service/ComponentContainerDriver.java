@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import gov.loc.repository.utilities.ConfigurationFactory;
+import gov.loc.repository.utilities.ResourceResolver;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -16,11 +16,11 @@ public class ComponentContainerDriver {
 
 	public static void main(String[] args) throws Exception {
 		
-		List<URL> contextUrlList = ConfigurationFactory.findWildcardResourceList("services-context-*.xml");
+		List<URL> contextUrlList = ResourceResolver.findWildcardResourceList("conf/services-context-*.xml");
 		List<String> contextLocationList = new ArrayList<String>();
 		for(URL url : contextUrlList)
 		{
-			String contextLocation = url.toString().substring(url.toString().lastIndexOf("/") + 1);
+			String contextLocation = url.toString();
 			contextLocationList.add(contextLocation);
 		}
 		

@@ -32,11 +32,11 @@ public class JmsInvocationHandler implements InvocationHandler {
 	private static final Log log = LogFactory.getLog(JmsInvocationHandler.class);	
 		
 	private String queueName;
-	private Long processInstanceId;
+	private Long tokenId;
 	
-	public JmsInvocationHandler(String queueName, Long processInstanceId) {
+	public JmsInvocationHandler(String queueName, Long tokenId) {
 		this.queueName = queueName;
-		this.processInstanceId = processInstanceId;
+		this.tokenId = tokenId;
 	}	
 	
 	public Object invoke(Object object, Method method, Object[] args)
@@ -82,7 +82,7 @@ public class JmsInvocationHandler implements InvocationHandler {
 			MapMessage message = session.createMapMessage();
 			message.setJMSReplyTo(replyToDestination);
 			message.setStringProperty(JOBTYPE_PROPERTY, jobTypeAnnot.name());
-			message.setJMSCorrelationID(Long.toString(this.processInstanceId));
+			message.setJMSCorrelationID(Long.toString(this.tokenId));
 			
 			for(int i=0; i < args.length; i++)
 			{

@@ -30,11 +30,12 @@ public class Listener implements SessionAwareMessageListener {
 	}
 	
 	public void onMessage(Message message, Session session) {
-		String error = null;
+		Exception error = null;
 		boolean result = true;
 		String jobType = null;
 		try
 		{
+			log.debug("Received " + message.toString());
 			if (! (message instanceof MapMessage))
 			{
 				throw new Exception("Message is not a MapMessage");
@@ -45,7 +46,7 @@ public class Listener implements SessionAwareMessageListener {
 			{
 				throw new Exception("Message does not contain jobType property");
 			}
-			
+			System.out.println("Received message with jobType " + jobType);
 			Object component = componentFactory.getComponent(jobType);
 			InvokeComponentHelper helper = new InvokeComponentHelper(component, jobType, this.mapMessageToVariableMap(mapMessage));
 			org.hibernate.Session hibernateSession = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).getCurrentSession();
@@ -75,8 +76,7 @@ public class Listener implements SessionAwareMessageListener {
 		}
 		catch(Exception ex)
 		{
-			log.error("Error handling message", ex);
-			error = ex.getMessage();
+			error = ex;
 		}
 		
 		//Send reply Message
@@ -91,7 +91,8 @@ public class Listener implements SessionAwareMessageListener {
 			replyMessage.setJMSCorrelationID(message.getJMSCorrelationID());
 			if (error != null)
 			{
-				replyMessage.setString("error", error);
+				log.error("Error handling message", error);
+				replyMessage.setString("error", error.getMessage());
 			}
 			else
 			{

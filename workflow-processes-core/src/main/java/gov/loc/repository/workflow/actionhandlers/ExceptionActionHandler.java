@@ -16,8 +16,36 @@ public class ExceptionActionHandler extends BaseActionHandler {
 	
 	@Override
 	protected void execute() throws Exception {		
-		log.debug(MessageFormat.format("Process instance {0}, token {1} threw an exception and has been suspended.  Current node is {2}.  Exception is {3}.", this.executionContext.getProcessInstance().getId(), this.executionContext.getToken().getId(),this.executionContext.getNode().getId(), this.executionContext.getException()), this.executionContext.getException());
-		this.executionContext.getProcessInstance().suspend();
+		String processInstanceId = "unknown";
+		if (this.executionContext.getProcessInstance() != null)
+		{
+			processInstanceId = Long.toString(this.executionContext.getProcessInstance().getId());
+		}
+		String tokenId = "unknown";
+		if (this.executionContext.getToken() != null)
+		{
+			tokenId = Long.toString(this.executionContext.getToken().getId());
+		}
+		String nodeId = "unknown";
+		if (this.executionContext.getNode() != null)
+		{
+			nodeId = Long.toString(this.executionContext.getNode().getId());
+		}
+		
+		log.error(MessageFormat.format("Process instance {0}, token {1} threw an exception and has been suspended.  Current node is {2}.  Exception is {3}.", processInstanceId, tokenId, nodeId, this.executionContext.getException()));
+		try
+		{
+			if (this.executionContext.getProcessInstance() != null)
+			{
+				this.executionContext.getProcessInstance().suspend();
+			}
+		}
+		catch(Exception ex)
+		{
+			log.error("Error suspending process instance", ex);
+		}
+
+		
 	}
 
 }

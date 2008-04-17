@@ -88,7 +88,6 @@ create table core.external_filelocation (
 	identifier_value varchar(255), 
 	media_type varchar(255), 
 	primary key (pkey), 
-	unique (identifier_value, identifier_type, media_type, base_path)
 );
 
 -- This table is deprecated, and will soon move to a separate namespace.

@@ -15,7 +15,6 @@ public class ConfigurationFactoryTest {
 		assertEquals("bar2", config.getProperty("foo2"));
 		assertEquals("bar3", config.getProperty("foo3"));
 		assertEquals("bar4", config.getProperty("foo4"));
-		
 	}
 
 }

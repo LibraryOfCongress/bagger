@@ -15,7 +15,7 @@ public class ComponentFactoryTest {
 	@Before
 	public void setup() throws Exception
 	{
-		ApplicationContext context = new ClassPathXmlApplicationContext("services-context-core.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("conf/services-context-core.xml");
 		factory = (ComponentFactory)context.getBean("componentFactory");
 		assertNotNull(factory);
 	}

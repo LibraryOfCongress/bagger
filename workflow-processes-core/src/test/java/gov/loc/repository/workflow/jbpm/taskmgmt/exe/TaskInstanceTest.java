@@ -25,7 +25,7 @@ public class TaskInstanceTest extends AbstractProcessDefinitionTest {
 	      "    <task name='a task'>" +
 	      "      <assignment actor-id='ray' />" +
 	      "      <event type='task-end'>" +
-	      "        <action name='test' class='gov.loc.repository.workflow.jbpm.taskmgmt.exe.TaskActionTestActionHandler' />" +
+	      "        <action name='test' class='gov.loc.repository.workflow.jbpm.taskmgmt.exe.TaskActionTestActionHandler' config-type='constructor' />" +
 	      "      </event>" +	      
 	      "    </task>" +
 	      "    <transition name='continue' to='b' />" +

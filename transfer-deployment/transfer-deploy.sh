@@ -474,7 +474,14 @@ install_pm_fixtures () {
     $PM_CORE_CLI createperson -id ray -firstname Ray -surname Murray
     $PM_CORE_CLI createperson -id myron -firstname Myron -surname Briggs
     $PM_CORE_CLI createperson -id scott -firstname Scott -surname Phelps
+    $PM_CORE_CLI createperson -id brian -firstname Brian -surname Vargas
     $PM_CORE_CLI createsystem -id rdc-workflow
+    $PM_CORE_CLI createrole -id repository_system
+    $PM_CORE_CLI createsystem -id ndnp-staging-repository -roles repository_system
+    $PM_CORE_CLI createrole -id storage_system
+    $PM_CORE_CLI createsystem -id rdc -roles storage_system
+    $PM_CORE_CLI createsystem -id rs15 -roles storage_system
+    $PM_CORE_CLI createsystem -id rs25 -roles storage_system
     $PM_CORE_CLI createrole -id ndnp_awardee
     $PM_CORE_CLI createorganization -id CU-Riv -name "University of California, Riverside" -roles ndnp_awardee
     $PM_CORE_CLI createorganization -id FUG -name "University of Florida Libraries, Gainesville" -roles ndnp_awardee

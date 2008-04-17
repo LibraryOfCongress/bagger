@@ -136,7 +136,7 @@
 				<form method="post" action="${contextPath}/processdefinition/${processDefinitionBean.id}.html">
                     <fieldset title="Start a New Transfer Workflow">
 			            <legend>
-        		            ${processInstanceBean.processDefinitionBean.name}
+        		            ${processDefinitionBean.name}
         		            (${processDefinitionBean.id})
         		        </legend>
 			            <input type="hidden" name="referer" value="/index.html" />

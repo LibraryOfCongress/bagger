@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 public abstract class BaseComponent implements ModelerAware {
 
-	private static final String REPORTING_AGENT_KEY = "components.agentid";
+	private static final String REPORTING_AGENT_KEY = "components.agent.id";
 	
 	private Log reportingLog;
 	private Log log;	

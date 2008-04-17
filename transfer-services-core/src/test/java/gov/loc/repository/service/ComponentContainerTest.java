@@ -33,7 +33,7 @@ public class ComponentContainerTest {
 	@Before
 	public void setup() throws Exception
 	{
-		context = new ClassPathXmlApplicationContext("services-context-core.xml");
+		context = new ClassPathXmlApplicationContext("conf/services-context-core.xml");
 		container = (ComponentContainer)context.getBean("componentContainer");
 		assertNotNull(container);
 		

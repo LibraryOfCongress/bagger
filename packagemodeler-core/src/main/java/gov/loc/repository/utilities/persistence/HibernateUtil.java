@@ -9,7 +9,7 @@ import org.hibernate.connection.ConnectionProviderFactory;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 
-import gov.loc.repository.utilities.ConfigurationFactory;
+import gov.loc.repository.utilities.ResourceResolver;
 
 import java.io.IOException;
 import java.net.URL;
@@ -45,15 +45,7 @@ public class HibernateUtil {
 		{
 			AnnotationConfiguration hibernateConfiguration = new AnnotationConfiguration();
 			//Find packagemodeler.*.hibernate.cfg.xml
-			List<URL> resourceList;
-			try
-			{
-				resourceList = ConfigurationFactory.findWildcardResourceList("packagemodeler.*.hibernate.cfg.xml");
-			}
-			catch(Exception ex)
-			{
-				throw new ExceptionInInitializerError(ex);
-			}
+			List<URL> resourceList = ResourceResolver.findWildcardResourceList("conf/packagemodeler.*.hibernate.cfg.xml");
 			if (resourceList.isEmpty())
 			{
 				throw new ExceptionInInitializerError("No hibernate.cfg.xml files found");
@@ -66,10 +58,11 @@ public class HibernateUtil {
 
 			//Find packagemodeler.hibernate.properties
 			//First try databaserole.packagemodeler.hibernate.properties
-			String resourceString = databaseRole.toString().toLowerCase() + "." + PROPS_RESOURCE;
+			String resourceString = "conf/" + databaseRole.toString().toLowerCase() + "." + PROPS_RESOURCE;
 			if (HibernateUtil.class.getClassLoader().getResource(resourceString) == null)
 			{
-				resourceString = PROPS_RESOURCE;
+				log.debug(MessageFormat.format("Since resource {0} not found, trying {1}", resourceString, PROPS_RESOURCE));
+				resourceString = "conf/" + PROPS_RESOURCE;
 			}
 			log.debug("Using hibernate.properties: " + resourceString);
 			Properties properties = new Properties();

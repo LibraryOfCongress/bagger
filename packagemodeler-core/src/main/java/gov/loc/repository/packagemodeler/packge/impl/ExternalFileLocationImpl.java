@@ -8,7 +8,7 @@ import gov.loc.repository.packagemodeler.packge.ExternalFileLocation;
 import gov.loc.repository.packagemodeler.packge.ExternalIdentifier;
 
 @Entity(name="ExternalFileLocation")
-@Table(name = "external_filelocation", schema="core", uniqueConstraints={@UniqueConstraint(columnNames={"identifier_value", "identifier_type","media_type","base_path"})})
+@Table(name = "external_filelocation", schema="core")
 public class ExternalFileLocationImpl extends FileLocationImpl implements ExternalFileLocation {
 
 	@Column(name = "base_path", nullable=true)	

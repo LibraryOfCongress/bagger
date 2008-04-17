@@ -42,6 +42,20 @@ public class InvokeComponentHelperTest {
 		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", map);
 		assertTrue(helper.invoke());
 	}
+
+	@Test
+	public void testInvokeWithNull() throws Exception
+	{
+		final TestComponent mock = context.mock(TestComponent.class);
+		
+		context.checking(new Expectations() {{
+			one(mock).test(null, true, 1L);
+		}});
+		map.put("message", null);		
+		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", map);
+		assertTrue(helper.invoke());
+	}
+	
 	
 	@Test(expected=Exception.class)
 	public void testBadJobTypeInvoke() throws Exception

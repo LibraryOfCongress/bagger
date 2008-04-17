@@ -19,7 +19,6 @@ public class PropertyPlaceholderConfigurerTest {
 		assertEquals("bar2", testBean.getFoo2());
 		assertEquals("bar3", testBean.getFoo3());
 		assertEquals("bar4", testBean.getFoo4());
-		
 	}
 
 }

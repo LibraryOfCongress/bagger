@@ -19,7 +19,7 @@ public class JobTypeHelperTest {
 	public void testGetJobTypeToBeanIdMap() throws Exception
 	{
 		
-		ApplicationContext context = new ClassPathXmlApplicationContext("services-context-core.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("conf/services-context-core.xml");
 		Map<String,String> jobTypeMap = JobTypeHelper.getJobTypeToBeanIdMap(context);
 		assertEquals(1, jobTypeMap.size());
 		assertEquals("testcomponent", jobTypeMap.get("test"));

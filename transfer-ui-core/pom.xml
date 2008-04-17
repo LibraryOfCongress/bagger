@@ -174,7 +174,7 @@
       <properties>
         <tomcat.manager.url>http://gold.rdc.lctl.gov:8080/manager</tomcat.manager.url>
         <tomcat.remote.username>admin</tomcat.remote.username>
-        <application.context>transfer3</application.context>
+        <application.context>transfer</application.context>
         <configuration.directory>src/configuration/gold</configuration.directory>
       </properties>
     </profile>

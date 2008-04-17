@@ -1,6 +1,7 @@
 package gov.loc.repository.service;
 
 import gov.loc.repository.utilities.ConfigurationFactory;
+import gov.loc.repository.utilities.ResourceResolver;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
@@ -82,11 +83,11 @@ public class CommandLineComponentDriver {
 			System.out.println(MessageFormat.format("{0} = : {1} [{2}]", k, v, v.getClass().getSimpleName()));
 		}
 		
-		List<URL> contextUrlList = ConfigurationFactory.findWildcardResourceList("services-context-*.xml");
+		List<URL> contextUrlList = ResourceResolver.findWildcardResourceList("conf/services-context-*.xml");
 		List<String> contextLocationList = new ArrayList<String>();
 		for(URL url : contextUrlList)
 		{
-			String contextLocation = url.toString().substring(url.toString().lastIndexOf("/") + 1);
+			String contextLocation = url.toString();
 			contextLocationList.add(contextLocation);
 		}
 		

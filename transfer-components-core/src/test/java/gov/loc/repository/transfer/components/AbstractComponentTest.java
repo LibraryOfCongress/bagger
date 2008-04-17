@@ -31,7 +31,7 @@ public abstract class AbstractComponentTest {
 	protected DaoAwareModelerFactory modelerFactory = new DaoAwareModelerFactoryImpl();
 	protected PackageModelDAO packageModelDao = new PackageModelDAOImpl();
 	
-	private static final String REPORTING_AGENT_KEY = "components.agentid";
+	private static final String REPORTING_AGENT_KEY = "components.agent.id";
 				
 	@BeforeClass
 	public static void beforeClassSetup() throws Exception

@@ -74,9 +74,10 @@ public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsComp
 		log.debug("Connection created");
 		
 		//Create the session
-		log.debug("Creating session");
+		String queueName = configuration.getString("jms.replytoqueue");
+		log.debug("Creating session to queue " + queueName);
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createQueue(configuration.getString("jms.replytoqueue"));
+		Destination destination = session.createQueue(queueName);
 		log.debug("Session created");
 		
 		//Create the consumer
@@ -93,6 +94,11 @@ public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsComp
 	
 	public void stop()
 	{
+		if (! this.isStarted)
+		{
+			return;
+		}
+		log.debug("Stopping");
 		this.isStarted = false;
 		try
 		{
@@ -239,7 +245,7 @@ public class ActiveMQJmsCompletedJobListener implements MessageListener, JmsComp
 	}
 	
 	public void onMessage(Message message) {
-		log.debug("The message is: " + message.toString());
+		log.debug("Received: " + message.toString());
 		//Get the tokenId
 		Long tokenId;
 		try
