@@ -28,11 +28,12 @@ init_vars () {
     PM_NDNP_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_NDNP}-${VERSION}/conf/data_writer.packagemodeler.hibernate.properties"
     PM_NDNP_FIXTURE_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${PM_NDNP}-${VERSION}/conf/fixture_writer.packagemodeler.hibernate.properties"
     JBPM_HIBERNATE_CONF="${TRANSFER_INSTALL_DIR}/${WORKFLOW_CORE}-${VERSION}/conf/jbpm.hibernate.properties"
-    TRANSFER_DW_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/data_writer.packagemodeler.hibernate.properties"
-    TRANSFER_RO_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/read_only.packagemodeler.hibernate.properties"
+    TRANSFER_DW_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/conf/data_writer.packagemodeler.hibernate.properties"
+    TRANSFER_RO_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/conf/read_only.packagemodeler.hibernate.properties"
     TRANSFER_JBPM_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/jbpm.hibernate.properties"
     TRANSFER_LOG4J_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/log4j.properties"
     TRANSFER_CONTEXT_CONF="${CATALINA_HOME}/webapps/transfer/META-INF/context.xml"
+    TRANSFER_WORKFLOW_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/conf/workflow.local.properties"
 
     # ENVIRONMENT VARS
     export PGUSER=$PGUSER
@@ -138,6 +139,21 @@ log4j.logger.org.springframework=WARN"
 	roleNameCol='ROLE_' />\n
 </Context>"
 }
+
+# TRANSFER WORKFLOW PROPERTIES
+WORKFLOW_LOCAL_PROPS="
+#The JMS connection used by the CompletedJobListener
+jms.connection=failover:(tcp://localhost:61616)?maxReconnectAttempts=4
+jms.replytoqueue=completedjobqueue
+
+#The default algorithm used for inventorying, etc.
+fixity.algorithm=md5
+
+#The basepath of staging storage
+storage.staging.basedirectory=/tmp/staging
+agent.staging.id=rdc
+agent.backup.id=rs25
+agent.production.id=rs15"
 
 sanity_checks () {
     # CHECK RBAC
@@ -544,6 +560,7 @@ deploy_console () {
     echo -e $JBPM_HIBERNATE_PROPS > $TRANSFER_JBPM_HIBERNATE_CONF
     echo -e $LOG4J_PROPS > $TRANSFER_LOG4J_CONF
     echo -e $TRANSFER_CONTEXT > $TRANSFER_CONTEXT_CONF
+    echo -e $WORKFLOW_LOCAL_PROPS > $TRANSFER_WORKFLOW_CONF
     svcadm enable svc:/application/csk-tomcat
 }
 
