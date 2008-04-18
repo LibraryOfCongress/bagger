@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+		<property name="hibernate.current_session_context_class">thread</property>
+		<property name="hibernate.connection.autocommit">false</property>
+
+		<!-- Named SQL queries -->
+		<mapping resource="conf/packagemodeler.core.queries.sql.hbm.xml" />
+
+		<!-- Additional DDL, e.g., views -->
+		<!-- 
+		<mapping resource="ddl.hbm.xml" />
+		-->
+
+		<!-- Agents -->
+		<mapping class="gov.loc.repository.packagemodeler.agents.impl.RoleImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.agents.impl.AgentImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.agents.impl.OrganizationImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.agents.impl.PersonImpl" />		
+		<mapping class="gov.loc.repository.packagemodeler.agents.impl.SystemImpl" />		
+		<mapping class="gov.loc.repository.packagemodeler.agents.impl.SoftwareImpl" />		
+        
+		<!-- Package -->
+		<mapping class="gov.loc.repository.packagemodeler.packge.impl.CanonicalFileImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.packge.impl.ExternalFileLocationImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.packge.impl.FileExaminationGroupImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.packge.impl.FileExaminationImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.packge.impl.FileInstanceImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.packge.impl.FileLocationImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.packge.ExternalIdentifier" />		
+	 	<mapping class="gov.loc.repository.packagemodeler.packge.Fixity" />
+        <mapping class="gov.loc.repository.packagemodeler.packge.FileName" />        
+        <mapping class="gov.loc.repository.packagemodeler.packge.impl.PackageImpl" />
+        <mapping class="gov.loc.repository.packagemodeler.packge.impl.RepositoryImpl" />        
+		<mapping class="gov.loc.repository.packagemodeler.packge.impl.StorageSystemFileLocationImpl" />
+
+        <!-- Events -->
+		<mapping class="gov.loc.repository.packagemodeler.events.impl.EventImpl" />        
+
+		<!-- Package Events -->
+		<mapping class="gov.loc.repository.packagemodeler.events.packge.impl.PackageAcceptedEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.packge.impl.PackageEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.packge.impl.PackageReceivedEventImpl" />
+		
+		<!-- File Location Events -->
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.FileCopyEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.FileDeleteEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.FileLocationEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.IngestEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.QualityReviewEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.FileLocationAnomalyEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.InventoryFromFilesOnDiskEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.InventoryFromManifestEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.VerifyAgainstFileInstancesEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.VerifyAgainstManifestEventImpl" />
+		
+		<!-- File Examination Group Events -->
+		<mapping class="gov.loc.repository.packagemodeler.events.fileexaminationgroup.impl.FileExaminationEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.fileexaminationgroup.impl.FileExaminationGroupEventImpl" />
+				
+    </session-factory>
+    
+</hibernate-configuration>
