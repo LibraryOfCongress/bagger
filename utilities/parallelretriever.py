@@ -1,22 +1,29 @@
 #!/usr/bin/env python
-
 """ This "parallel retriever" takes as input a "file manifest" and 
    "retrieval order" for a remotely available BagIt package, and 
     launches a specified number of parallel instances of an appropriate
     retriever tool (rsync, wget) in order to retrieve the contents of
-    the package.  It produces a BagIt package as output. """
+    the package.  It produces a BagIt package as output. If not supplied,
+    the name of the package will default to the current timestamp (seconds 
+    since Dec 31 1969).
+    
+    rsync and wget must be available in the $PATH. 
+
+    Run with '-h' for documentation.
+"""
+
 
 import os, sys, shutil, time
 from optparse import OptionParser
 
 def generate_package_identifier():
     """Assume no more than one of these packages per second, and 
-       use MIME-encoded seconds-since-epoch"""
+       use MIME-encoded seconds-since-epoch."""
     return str(int(time.time())).strip()
 
 
 def get_options_and_args():
-    """Collect the command-line arguments from optparse"""
+    """Collect the command-line arguments from optparse."""
     parser = OptionParser()
     parser.add_option("-n", "--number-of-processes", dest="num_processes", 
                       type="int", default=16, 
@@ -26,7 +33,7 @@ def get_options_and_args():
     parser.add_option("-m", "--file-manifest", dest="file_manifest",
                       help="path to the file manifest that defines this package")
     parser.add_option("-r", "--retrieval-order", dest="retrieval_order",
-                      help="path to the retrieval order for this package")
+                      help="path to the retrieval order (fetch.txt) for this package")
     parser.add_option("-d", "--destination-path", dest="destination_path",
                       help="path in which to create the package")
     options, args = parser.parse_args()
