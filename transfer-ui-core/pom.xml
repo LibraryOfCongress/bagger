@@ -210,23 +210,9 @@
       <artifactId>workflow-processes-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!--dependency>
-      <groupId>loc-repository</groupId>
-      <artifactId>transfer-ui-core-model</artifactId>
-      <version>${project.version}</version>
-    </dependency-->
-      <dependency>
-        <groupId>commons-dbcp</groupId>
-        <artifactId>commons-dbcp</artifactId>
-      </dependency>   
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -241,30 +227,6 @@
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-jsp</artifactId>
     </dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-aop</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jdbc</artifactId>
-      </dependency>    
-      <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-orm</artifactId>
-     </dependency>
-      <dependency>
-       <groupId>org.springframework.ws</groupId>
-       <artifactId>spring-oxm-tiger</artifactId>
-     </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-      </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
@@ -306,10 +268,6 @@
     	<groupId>postgresql</groupId>
     	<artifactId>postgresql</artifactId>
 	    <scope>runtime</scope>    
-    </dependency>
-    <dependency>
-      <groupId>struts</groupId>
-      <artifactId>struts</artifactId>
     </dependency>
   </dependencies>
 </project>

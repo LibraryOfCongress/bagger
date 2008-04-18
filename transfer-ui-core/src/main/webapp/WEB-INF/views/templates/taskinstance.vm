@@ -47,7 +47,7 @@
             <legend>Examine details for this Task</legend>
             <table cellspacing="3" cellpadding="7">
                 <tr>
-                    <td><label for="taskID">Task Instance Id</label></td>
+                    <td><label for="taskID">Task Id</label></td>
                     <td><span id="taskID">
                         ${taskInstanceBean.id}
                     </span></td>

@@ -74,7 +74,7 @@ public class TokenBean extends AbstractWorkflowBean {
 	}
 		
 	@SuppressWarnings("unchecked")
-	public List<TaskInstanceBean> getTaskInstanceBeanList()
+	public List<TaskInstanceBean> getActiveTaskInstanceBeanList()
 	{
 		List<TaskInstance> taskInstanceList = this.jbpmContext.getTaskMgmtSession().findTaskInstancesByToken(this.token.getId());
 		List<TaskInstanceBean> taskInstanceBeanList = new ArrayList<TaskInstanceBean>();

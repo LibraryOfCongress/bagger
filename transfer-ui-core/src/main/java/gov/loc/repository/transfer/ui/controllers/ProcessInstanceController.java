@@ -49,7 +49,7 @@ public class ProcessInstanceController extends AbstractRestController {
 		
 		mav.setViewName("processinstancelist");
 		mav.addObject(
-		    "processInstanceBeanList", dao.getProcessInstanceBeanList() 
+		    "processInstanceBeanList", dao.getActiveProcessInstanceBeanList() 
 		);
 		mav.addObject(
 		    "suspendedProcessInstanceBeanList", dao.getSuspendedProcessInstanceBeanList() 
@@ -95,10 +95,12 @@ public class ProcessInstanceController extends AbstractRestController {
 			WorkflowDao dao, 
 			PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
-		ProcessInstanceBean processInstanceBean = 
-		    processProcessInstance(mav, dao, urlParameterMap);
-		    
-		if (processInstanceBean == null) { return; }
+		
+		ProcessInstanceBean processInstanceBean = processProcessInstance(mav, dao, urlParameterMap);		    
+		if (processInstanceBean == null)
+		{
+			return;
+		}
 	
 		if (request.getParameter(UIConstants.PARAMETER_SUSPENDED) != null) {
 			if (! permissionsHelper.canSuspendProcess()) {
@@ -127,7 +129,7 @@ public class ProcessInstanceController extends AbstractRestController {
 			VariableUpdateHelper.update(request, processInstanceBean);
 			dao.save(processInstanceBean);
 		}
-		this.handleGet(request, mav, null, null, permissionsHelper, urlParameterMap);
+		this.handleGet(request, mav, factory, dao, permissionsHelper, urlParameterMap);
 	}
 	
 	private ProcessInstanceBean processProcessInstance(
@@ -135,6 +137,7 @@ public class ProcessInstanceController extends AbstractRestController {
 	        WorkflowDao dao,
 	        Map<String, String> urlParameterMap )
 	{
+
 		//If there is no processInstanceId in urlParameterMap then 404
 		if (! urlParameterMap.containsKey(PROCESSINSTANCEID)) {
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
@@ -143,6 +146,8 @@ public class ProcessInstanceController extends AbstractRestController {
 		
 		//Otherwise handle processinstanceid
 		String processInstanceId = urlParameterMap.get(PROCESSINSTANCEID);
+		log.debug("ProcessInstanceId is " + processInstanceId);
+
 		ProcessInstanceBean processInstanceBean = dao.getProcessInstanceBean(processInstanceId);
 		if (processInstanceBean == null){
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);

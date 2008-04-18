@@ -18,7 +18,6 @@ import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
 import org.jbpm.identity.User;
 import org.jbpm.identity.hibernate.IdentitySession;
-import org.jbpm.taskmgmt.exe.TaskInstance;
 
 public class WorkflowDao {
 
@@ -63,6 +62,23 @@ public class WorkflowDao {
 	@SuppressWarnings("unchecked")
 	public List<ProcessInstanceBean> getProcessInstanceBeanList()
 	{
+		return this.getProcessInstanceBeanList(true, true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ProcessInstanceBean> getActiveProcessInstanceBeanList()
+	{
+		return this.getProcessInstanceBeanList(true, false);
+	}
+		
+	public List<ProcessInstanceBean> getSuspendedProcessInstanceBeanList()
+	{
+		return this.getProcessInstanceBeanList(false, true);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ProcessInstanceBean> getProcessInstanceBeanList(boolean includeActive, boolean includeSuspended)
+	{
 		List<ProcessInstanceBean> processInstanceBeanList = new ArrayList<ProcessInstanceBean>();
 		List<ProcessDefinition> processDefinitionList = jbpmContext.getGraphSession().findAllProcessDefinitions();
 		Iterator<ProcessDefinition> definitionIter = processDefinitionList.iterator();
@@ -74,28 +90,25 @@ public class WorkflowDao {
 			while (instanceIter.hasNext())
 			{
 				ProcessInstanceBean processInstanceBean = this.factory.createProcessInstanceBean(instanceIter.next());
-				processInstanceBeanList.add(processInstanceBean);
+				if (processInstanceBean.isEnded())
+				{
+					continue;
+				}
+				if (includeActive && ! processInstanceBean.isSuspended())
+				{
+					processInstanceBeanList.add(processInstanceBean);
+				}
+				else if (includeSuspended && processInstanceBean.isSuspended())
+				{
+					processInstanceBeanList.add(processInstanceBean);
+				}
+				
 			}
 		}
 		return processInstanceBeanList;
 		
 	}
-			
 	
-	public List<ProcessInstanceBean> getSuspendedProcessInstanceBeanList()
-	{
-		List<ProcessInstanceBean> processInstanceBeanList = getProcessInstanceBeanList();
-		List<ProcessInstanceBean> suspendedProcessInstanceBeanList = new ArrayList<ProcessInstanceBean>();
-		for(ProcessInstanceBean processInstanceBean : processInstanceBeanList)
-		{
-			if (processInstanceBean.isSuspended())
-			{
-				suspendedProcessInstanceBeanList.add(processInstanceBean);
-			}
-		}
-		return suspendedProcessInstanceBeanList;
-	}
-		
 	public ProcessInstanceBean getProcessInstanceBean(String id)
 	{
 		ProcessInstance processInstance = jbpmContext.getProcessInstance(Long.parseLong(id));

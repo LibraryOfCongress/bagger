@@ -8,18 +8,12 @@
     xsi:schemaLocation="
         http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-        http://www.springframework.org/schema/aop
-        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
         http://www.springframework.org/schema/context 
-        http://www.springframework.org/schema/context/spring-context-2.5.xsd
-        http://www.springframework.org/schema/tx
-        http://www.springframework.org/schema/tx/spring-tx.xsd"
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd"
   default-autowire="byName">
     <context:annotation-config />
     <context:component-scan base-package="gov.loc.repository.transfer.ui"/>
-	  <!--aop:aspectj-autoproxy /-->
   
-
     <bean id="packageDao" class="gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl">
 		<property name="sessionDatabaseRole">
 			<value>READ_ONLY</value>

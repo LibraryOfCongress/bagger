@@ -1,8 +1,8 @@
 <Context reloadable="true" antiJARLocking="true" antiResourceLocking="true">
 <Realm className="org.apache.catalina.realm.JDBCRealm" 
 	driverName="org.postgresql.Driver"
-	connectionURL="jdbc:postgresql://localhost:5432/justin2_jbpm32"
-	connectionName="justin2_jbpm_user" 
+	connectionURL="jdbc:postgresql://localhost:5432/justin4_jbpm32"
+	connectionName="justin4_jbpm_user" 
 	connectionPassword="jbpm_user"
 	userTable="JBPM_ID_USER" 
 	userNameCol="NAME_" 

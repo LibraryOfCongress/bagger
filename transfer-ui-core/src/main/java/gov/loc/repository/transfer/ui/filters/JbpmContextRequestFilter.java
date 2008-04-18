@@ -36,9 +36,8 @@ public class JbpmContextRequestFilter implements Filter {
 			}
 			// Call the next filter (continue request processing)
 			chain.doFilter(req, resp);	
-		}catch(Exception e){
-		    log.error("Error creating jbpmContext for " + req.toString(), e);
-		}finally{			
+		}
+		finally{			
 			try {
 				jbpmContext.close();
 				log.debug("Closed jbpmConfiguration for " + req.toString());
