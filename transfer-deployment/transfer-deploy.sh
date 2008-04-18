@@ -141,6 +141,7 @@ log4j.logger.org.springframework=WARN"
 }
 
 # TRANSFER WORKFLOW PROPERTIES
+#TODO:  The storage.staging.basedirectory and jms.connection needs to be set correctly.
 WORKFLOW_LOCAL_PROPS="
 #The JMS connection used by the CompletedJobListener
 jms.connection=failover:(tcp://localhost:61616)?maxReconnectAttempts=4
@@ -551,7 +552,7 @@ install_process_definition () {
 
 # Deploy the Transfer UI App
 deploy_console () {
-    svcadm disable svc:/application/csk-tomcat
+    /usr/sbin/svcadm disable svc:/application/csk-tomcat
     sleep 10
     mkdir $CATALINA_HOME/webapps/transfer
     unzip -q -d  $CATALINA_HOME/webapps/transfer $TRANSFER_UI_WAR 
@@ -561,7 +562,7 @@ deploy_console () {
     echo -e $LOG4J_PROPS > $TRANSFER_LOG4J_CONF
     echo -e $TRANSFER_CONTEXT > $TRANSFER_CONTEXT_CONF
     echo -e $WORKFLOW_LOCAL_PROPS > $TRANSFER_WORKFLOW_CONF
-    svcadm enable svc:/application/csk-tomcat
+    /usr/sbin/svcadm enable svc:/application/csk-tomcat
 }
 
 process_opts () {
