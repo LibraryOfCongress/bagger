@@ -9,6 +9,10 @@
     
     rsync and wget must be available in the $PATH. 
 
+    If an rsync password is necessary, it must be supplied via the environment,
+    as in:
+      RSYNC_PASSWORD=pass ./parallelretriever.py -m manifest-md5.txt -r fetch.txt 
+
     Run with '-h' for documentation.
 """
 
