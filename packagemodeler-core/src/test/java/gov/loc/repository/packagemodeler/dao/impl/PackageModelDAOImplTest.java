@@ -2,13 +2,16 @@ package gov.loc.repository.packagemodeler.dao.impl;
 
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.Test;
 
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
+import gov.loc.repository.utilities.results.Result;
 import gov.loc.repository.utilities.results.ResultIterator;
+import gov.loc.repository.utilities.results.ResultList;
 import gov.loc.repository.packagemodeler.AbstractModelersTest;
 import gov.loc.repository.packagemodeler.agents.Organization;
 import gov.loc.repository.packagemodeler.agents.Role;
@@ -103,7 +106,8 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		
 		this.commitAndRestartTransaction();
 		
-		ResultIterator resultIter = dao.findPackagesWithFileCount(Package.class, "html");
+		ResultList resultList = dao.findPackagesWithFileCount(Package.class, "html");
+		Iterator<Map<String,Object>> resultIter = resultList.iterator();
 		assertTrue(resultIter.hasNext());
 		int assertPackageCount = dao.findPackages(Package.class).size();
 		int packageCount = 0;

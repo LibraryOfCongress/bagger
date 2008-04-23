@@ -3,9 +3,11 @@
         <li><a href="#reports">
             <span>Reports </span>
         </a></li>
+        <!--
         <li><a href="#createReport">
             <span>Create </span>
         </a></li>
+        -->
         <li><a href="#localHelp">
             <span> Help  </span>
         </a></li>
@@ -14,7 +16,7 @@
 		<h2>Reports</h2>
         <fieldset>
             <legend><b>Available Basic Reports</b></legend>
-            #if( $reports.size() > 10 )
+            #if( $reportList.size() > 10 )
 		    <table>
 		        <tbody><tr><td>
                     <form id="reports_pager" class="pager">
@@ -37,22 +39,25 @@
             #end
 	        <table id="reports_table" class="tablesorter pageable"  >
 	            <thead><tr>
+	            	<th> Category </th>
                     <th> ID </th>
                     <th> Name </th>
                     <th> Description </th>
                 </tr></thead>
                 <tfoot><tr>
+                    <th> Category </th>
                     <th> ID </th>
                     <th> Name </th>
                     <th> Description </th>
                 </tr></tfoot>
                 <tbody>
-			        #foreach($report in $reports)
+			        #foreach($report in $reportList)
 			        <tr id="report_${report.id}" >
-				        <td><a href="${contextPath}/reports/${report.namespace}_${report.id}.html">
-				            <b>${report.namespace.toUpperCase()} ${report.id}</b></a>
+			        	<td>${report.category}</td>
+				        <td><a href="${contextPath}/reports/${report.id}.html">
+				            <b>${report.id}</b></a>
 				        </td>
-				        <td><a href="${contextPath}/reports/${report.namespace}_${report.id}.html">
+				        <td><a href="${contextPath}/reports/${report.id}.html">
 				            <b>${report.name}</b></a>
 				        </td>
 				        <td><p>${report.description}</p></td>     
@@ -62,7 +67,7 @@
 		    </table>
 		</fieldset>
 	</div>
-   		
+<!--   		
    	<div id="createReport">
         <table style="height:300px;width:100%">
             <tbody valign="top"><tr>
@@ -93,8 +98,7 @@
             </tr></tbody>
         </table>
     </div>
-		
-	
+-->			
 	<div id="localHelp">
 	    <h2>Help</h2>
 	    <fieldset>

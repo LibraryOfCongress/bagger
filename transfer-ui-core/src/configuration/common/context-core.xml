@@ -12,9 +12,9 @@
         http://www.springframework.org/schema/context/spring-context-2.5.xsd"
   default-autowire="byName">
     <context:annotation-config />
-    <context:component-scan base-package="gov.loc.repository.transfer.ui"/>
+    <context:component-scan base-package="gov.loc.repository.transfer.ui" />
   
-    <bean id="packageDao" class="gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl">
+    <bean id="packageModelDao" class="gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl">
 		<property name="sessionDatabaseRole">
 			<value>READ_ONLY</value>
 		</property>
@@ -24,12 +24,44 @@
 
     <bean id="messageSource" class="gov.loc.repository.transfer.ui.springframework.ResourceBundleMessageSource">
     </bean>
+
+	<!-- Following best practices, this should be used for (part) of url mapping -->
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <value>
+                /reports/index.html=reportsController
+                /admin/*=adminController
+            </value>
+        </property>
+		<property name="interceptors">
+			<list>
+				<ref bean="contextPathInterceptor" />
+			</list>
+		</property>
+		<property name="order" value="1" />		                    
+    </bean>
+
+	<!-- For annotation-based ControllerMapping -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="order" value="3" />
+	</bean>
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+
+	<bean class="gov.loc.repository.transfer.ui.springframework.ControllerClassNameHandlerMapping">
+		<property name="pathPrefix" value="/reports" />
+		<property name="controllerMarker" value="gov.loc.repository.transfer.ui.controllers.reports.Report" />
+		<property name="order" value="2" />
+		<property name="interceptors">
+			<list>
+				<ref bean="contextPathInterceptor" />
+				<bean class="gov.loc.repository.transfer.ui.interceptors.ViewInterceptor">
+					<property name="view" value="report" />
+				</bean>
+			</list>
+		</property>		
+	</bean>
     
-    <!--bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
-    	<property name="definitionPattern"  value="page-views*.xml" />
-    	<property name="definitionPath"     value="/WEB-INF/views" />
-    </bean-->
-    
+    <bean id="contextPathInterceptor" class="gov.loc.repository.transfer.ui.interceptors.ContextPathInterceptor" />
     <bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
 	    <property name="factoryClass" value="org.apache.struts.tiles.xmlDefinition.I18nFactorySet"/>
 		<property name="definitionPath" value="/WEB-INF/views/" />

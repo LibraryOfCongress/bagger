@@ -59,6 +59,16 @@
         $("#systemInfo_table").tablesorter({
             widgets: ['zebra']
         })
+
+        //TABLE reportData
+        $("#reportData_table").tablesorter({
+            widgets: ['zebra']
+        }).tablesorterPager({
+            seperator:" of ",
+            positionFixed:false,
+            container: $("#reportData_pager")
+        });
+
         
         //HELP
         $("#helpTopics > li").click(function() {

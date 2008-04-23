@@ -31,7 +31,7 @@ import gov.loc.repository.packagemodeler.packge.impl.PackageImpl;
 import gov.loc.repository.packagemodeler.packge.impl.StorageSystemFileLocationImpl;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
-import gov.loc.repository.utilities.results.ResultIterator;
+import gov.loc.repository.utilities.results.ResultList;
 import gov.loc.repository.utilities.FilenameHelper;
 
 public class PackageModelDAOImpl implements PackageModelDAO {
@@ -230,7 +230,8 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return query.list();
 	}
 
-	public ResultIterator findPackagesWithFileCount(Class<Package> packageType, String extension) throws Exception {
+	@SuppressWarnings("unchecked")
+	public ResultList findPackagesWithFileCount(Class<?> packageType, String extension) throws Exception {
   		Query query = this.getSession().createQuery(
   				"select p, " +
   				"( " +
@@ -242,9 +243,9 @@ public class PackageModelDAOImpl implements PackageModelDAO {
   				"from " + this.getAlias(packageType) + " as p"
   				);
 		query.setString("extension", extension);			
-		List<?> resultList = query.list();
+		List<Object[]> resultList = query.list();
 		String[] fieldNameArray = {"package", "file_count"};
-		return new ResultIterator(resultList, fieldNameArray);
+		return new ResultList(resultList, fieldNameArray);
 	}
 
 	@SuppressWarnings("unchecked")

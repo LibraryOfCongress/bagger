@@ -84,12 +84,12 @@
                         <th>Name</th>
                         <th>Value</th>
                 </tr></tfoot>
-                <tbody>
-			        #foreach($info in $systemInfo)
-			        <tr id="systemInfo_${info.name}"  >
-				        <td>${info.name}</td>
+                <tbody>                
+			        #foreach($info in ${systemInfo.keySet()})
+			        <tr id="systemInfo_${info}"  >
+				        <td>${info}</td>
 				        <td ><div style="word-wrap:break-word;width:200px;">
-				            ${info.value}
+				            ${systemInfo.get("$info")}
 				        </div></td>     
 				    </tr>					
 			        #end

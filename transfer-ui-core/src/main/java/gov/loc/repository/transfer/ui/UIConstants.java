@@ -17,6 +17,7 @@ public class UIConstants {
 	
 	public static final String VALUE_TRUE="true";
 	public static final String VALUE_FALSE="false";
+	public static final String VALUE_NULL="null";
 	
 	public static final String PREFIX_VARIABLE = "variable.";
 	

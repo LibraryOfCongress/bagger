@@ -5,7 +5,7 @@
         #if ($task)
             &nbsp;&gt;&nbsp;  ${task.id}
         #elseif ($report)
-            &nbsp;&gt;&nbsp; ${report.namespace.toUpperCase()} ${report.id}
+            &nbsp;&gt;&nbsp; ${reportName}
         #end
     </h1>
     <div id="crumb">

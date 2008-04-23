@@ -17,7 +17,7 @@ import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
-import gov.loc.repository.utilities.results.ResultIterator;
+import gov.loc.repository.utilities.results.ResultList;
 
 public interface PackageModelDAO {
 
@@ -42,7 +42,7 @@ public interface PackageModelDAO {
 	
 	public abstract Long calculatePackageSize(Package packge) throws Exception;	
 
-	public abstract ResultIterator findPackagesWithFileCount(Class<Package> packageType, String extension) throws Exception;
+	public abstract ResultList findPackagesWithFileCount(Class<?> packageType, String extension) throws Exception;
 	
 	public Package loadRequiredPackage(Long key) throws Exception;
 	

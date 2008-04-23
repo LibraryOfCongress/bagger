@@ -1,1 +1,1 @@
-#parse( "${report.namespace}${report.id}.vm" )
+#parse( "${reportId}.vm" )
