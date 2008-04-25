@@ -119,7 +119,7 @@
 				    <legend>Assign a transition for this task.</legend>
 	    			<select id="transition" name="transition">	
 	    				#foreach($transitionBean in $taskInstanceBean.taskBean.leavingTransitionBeanList)	
-	    					<option value="$transitionBean.id">
+	    					<option value="$transitionBean.id" #if($transitionBean.id=="continue") selected #end>
 	    					    $transitionBean.name
 	    					</option>
 	    				#end
