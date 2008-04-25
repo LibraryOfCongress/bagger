@@ -6,9 +6,6 @@
         <li><a href="#groupTasks">
             <span> Unassigned #if ($userBean) ( $userBean.groupTaskInstanceBeanList.size() ) #end  </span>
         </a></li>
-        <li><a href="#localHelp">
-            <span> Help                  </span>
-        </a></li>
     </ul>
 	<div id="userTasks">
 		<h2>My Tasks</h2>
@@ -138,30 +135,5 @@
 			  	#login_required()
 			  #end
 		</fieldset>
-	</div>
-				
-	<div id="localHelp">
-	    <h2>Help</h2>
-	    <fieldset>
-        <legend>Help topics related to tasks.</legend>
-	    <ul id="helpTopics">
-	        <li class="selected">
-	            <h2>User Tasks  </h2>
-	            <p> TODO: User Tasks are task that have been assigned to you or
-                     you have accepted from available group tasks...</p>
-		    </li>
-            <li>
-	            <h2>Unassigned Tasks  </h2>
-	            <p> TODO: Unassigned Tasks are task that are available to you by
-		             virtue of your group membership...</p>
-		    </li>
-            <li>
-	            <h2>More Help  </h2>
-	            <p> TODO: If you need more help, you can...</p>
-	            <p> TODO: For additional support please contact...</p>
-		    </li>
-        </ul>
-        </fieldset>
-    </div>
-    
+	</div>				    
 </div>

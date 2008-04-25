@@ -110,8 +110,6 @@
 				    </table>
 				  #end	            
 	        </li>
-	        <li><a href="${contextPath}/taskinstance/index.html?ref=localHelp#localHelp">
-	            Read the available help docs.</a><br/></li>
 	    </ul>
 	</fieldset>
 	<hr/>
@@ -124,8 +122,6 @@
 	            See all of the suspended workflows.</a><br/></li>
 	        <li><a href="${contextPath}/processinstance/index.html?ref=newWorkflow#newWorkflow">
 	            Start a new workflow.</a><br/></li>
-	        <li><a href="${contextPath}/processinstance/index.html?ref=localHelp#localHelp">
-	            Read the available help docs.</a><br/></li>
 	    </ul>
 	</fieldset>
 	<fieldset>
@@ -135,8 +131,6 @@
 	            View my current and past reports.</a><br/></li>
 	        <li><a href="${contextPath}/reports/index.html?ref=newReports#newReports">
 	            Create new reports.</a><br/></li>
-	        <li><a href="${contextPath}/reports/index.html?ref=localHelp#localHelp">
-	            Read the available help docs.</a><br/></li>
 	    </ul>
 	</fieldset><hr/>
 	<hr/>
@@ -149,8 +143,6 @@
 	            View vital statistics.</a><br/></li>
 	        <li><a href="${contextPath}/admin/index.html?ref=systemInfo#systemInfo">
 	            System details.</a><br/></li>
-	        <li><a href="${contextPath}/admin/index.html?ref=localHelp#localHelp">
-	            Read the available help docs.</a><br/></li>
 	    </ul>
 	</fieldset>
 	<hr/>

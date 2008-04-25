@@ -5,7 +5,6 @@
         <li><a href="#workflowVariables" ><span> Variables </span></a></li>
         <li><a href="#workflowTokens" ><span> Tokens </span></a></li>
         <li><a href="#comments" ><span> Comments </span></a></li>
-        <li><a href="#localHelp"><span> Help     </span></a></li>
     </ul>
 
     <div id="workflowDetails">

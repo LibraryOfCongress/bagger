@@ -8,9 +8,6 @@
 	            <span>Administer </span>
 	        </a></li>
         #end
-        <li><a href="#localHelp">
-            <span> Help                  </span>
-        </a></li>
     </ul>
 	<div id="status">
 		<h2>Status</h2>
@@ -56,27 +53,6 @@
 				    </fieldset>
 			   #end					
 			</form>						
-		</div>
-    	
-    #end
-
-   			
-	<div id="localHelp">
-	    <h2>Help</h2>
-	    <fieldset>
-        <legend><b>Help topics related to the Admin Panel.</b></legend>
-	    <ul id="helpTopics">
-	        <li class="selected">
-	            <h2>System Processes  </h2>
-	            <p> TODO: System Processes are ...</p>
-		    </li>
-            <li>
-	            <h2>More Help  </h2>
-	            <p> TODO: If you need more help, you can...</p>
-	            <p> TODO: For additional support please contact...</p>
-		    </li>
-        </ul>
-        </fieldset>
-    </div>
-    
+		</div>    	
+    #end    
 </div>

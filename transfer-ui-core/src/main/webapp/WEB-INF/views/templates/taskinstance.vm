@@ -93,12 +93,15 @@
         <li><a href="#reassignTask"><span> Reassign </span></a></li> 
         #end
         <li><a href="#comments" ><span> Comments ($taskInstanceBean.processInstanceBean.commentBeanList.size())</span></a></li>
-        <li><a href="#localHelp"><span> Help     </span></a></li>
     </ul>
     
      #if ($formViewName)
 	    <div id="updateTask">
-	    	#details()	    	
+	    	#details()
+		    #if ($instructionViewName)
+    			<h2>Instructions</h2>
+    			#include("${instructionViewName}.vm")
+    		#end	    		    	
 		    <h2>Update</h2>
 	    	#if ($errorList.size() > 0)
 	    	<fieldset>
@@ -183,15 +186,5 @@
 			</form>						
     	</div>
         #end
-    </div>
-    
-    
-    <div id="localHelp">
-		<h2>Help</h2>
-	    #if ($instructionViewName)
-    		#include("${instructionViewName}.vm")
-    	#else
-    	    <p>No help is currently available for this task.</p>
-    	#end
-	</div>
+    </div>        
 </div>

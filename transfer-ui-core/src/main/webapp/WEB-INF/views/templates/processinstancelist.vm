@@ -10,9 +10,6 @@
         <li><a href="#newWorkflow">
             <span> Start New </span>
         </a></li>
-        <li><a href="#localHelp">
-            <span> Help </span>
-        </a></li>
     </ul>
     
 	<div id="activeWorkflows">
