@@ -37,3 +37,31 @@
 	<br/>
 	<h4>To view, please <a href="${contextPath}/login/login.html#if($referer)?referer=$escape.url($referer)#end"">log in</a>.</h4>
 #end
+
+#*
+  -Writes out a variable
+*#
+#macro( variable $variableBean $taskInstanceBean )
+	#set($variableValue = "")
+	#set($variableValue = $taskInstanceBean.variableMap.get($variableBean.id))
+	#if($variableBean.writable)
+		<td><label for="variable${variableBean.id}">
+		    ${variableBean.name}		    
+		<label></td>
+		<td><input id="variable${variableBean.id}"
+		    type="text" 
+		    name="variable.${variableBean.id}" 
+		    value="$variableValue" />
+		#if ($variableBean.required)
+			&nbsp;&nbsp;(Required)
+		#end
+		</td>
+	#else
+	    <td><label for="variable${variableBean.id}">
+		    $variableBean.name
+	    <label></td>
+		<td><span id="variable${variableBean.id}">
+		    $variableValue
+		</span></td>
+	#end
+#end

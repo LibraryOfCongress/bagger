@@ -12,6 +12,8 @@ import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
@@ -27,7 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TaskInstanceController extends AbstractRestController {
 	
 	protected static final Log log = LogFactory.getLog(TaskInstanceController.class);
-	public static final String NULL = "null";	
+	private Map<String,String> commandMap = new HashMap<String, String>();
+
 		
 	@Override
 	public String getUrlParameterDescription() {
@@ -145,31 +148,20 @@ public class TaskInstanceController extends AbstractRestController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@Override
-	protected void initApplicationContext() throws BeansException {
+	@PostConstruct
+	protected void init() throws BeansException {
 		ApplicationContext applicationContext = this.getApplicationContext();
 		Map<String, ProcessDefinitionConfiguration> beanMap = applicationContext.getBeansOfType(ProcessDefinitionConfiguration.class);
 		for(ProcessDefinitionConfiguration processDefinitionConfiguration : beanMap.values())
 		{
 			this.commandMap.putAll(processDefinitionConfiguration.getTaskInstanceUpdateCommandMap());
 		}
-		super.initApplicationContext();
 	}
-	
-	private TaskInstanceUpdateCommand defaultCommand 
-	    = new DefaultTaskInstanceUpdateCommand();
-	
-	private Map<String,TaskInstanceUpdateCommand> commandMap 
-	    = new HashMap<String, TaskInstanceUpdateCommand>();
-	    
-	public void setDefaultTaskInstanceUpdateCommand(
-	        TaskInstanceUpdateCommand defaultCommand ) {
-		this.defaultCommand = defaultCommand;
-	}
+		
 	
 	private TaskInstanceUpdateCommand getTaskInstanceUpdateFormCommand(TaskInstanceBean taskInstanceBean) throws Exception 
 	{
-		TaskInstanceUpdateCommand command = null;
+		String beanId = null;
 		for(String pattern : this.commandMap.keySet()) {
 			String[] patternArray = pattern.split("\\.");
 			if (patternArray.length != 2) {
@@ -181,14 +173,14 @@ public class TaskInstanceController extends AbstractRestController {
 			    && PatternMatchUtils.simpleMatch(
 			        patternArray[1], 
 			        taskInstanceBean.getTaskBean().getId() )){
-				command = this.commandMap.get(pattern);
+				beanId = this.commandMap.get(pattern);
 				break;
 			}
 		}
-		if (command == null) {
-			if (this.defaultCommand == null){
-				throw new Exception("Default task instance update form command not configured.");
-			} command = this.defaultCommand;
-		} return command;
+		if (beanId != null)
+		{
+			return (TaskInstanceUpdateCommand)this.getApplicationContext().getBean(beanId);
+		}
+		return new DefaultTaskInstanceUpdateCommand();
 	}	
 }

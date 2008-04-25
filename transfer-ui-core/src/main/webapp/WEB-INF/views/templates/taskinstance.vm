@@ -113,7 +113,8 @@
 			    </ul>
 			</fieldset>
 	    	#end
-			<form method="post" action="${requestURI}?method=put" enctype="multipart/form-data">
+			<form method="post" action="${requestURI}" enctype="multipart/form-data">
+				<input type="hidden" name="method" value="put"/>
 				#parse( "${formViewName}.vm" )
 				<fieldset>
 				    <legend>Assign a transition for this task.</legend>

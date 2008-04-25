@@ -1,7 +1,6 @@
 package gov.loc.repository.transfer.ui.commands;
 
 import gov.loc.repository.transfer.ui.UIConstants;
-import gov.loc.repository.transfer.ui.controllers.TaskInstanceController;
 import gov.loc.repository.transfer.ui.controllers.VariableUpdateHelper;
 import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
@@ -32,6 +31,8 @@ public class DefaultTaskInstanceUpdateCommand implements
 	protected PermissionsHelper permissionsHelper;
 	protected WorkflowDao dao;
 	protected WorkflowBeanFactory factory;
+	
+	private String message = "";
 	
 	public void setWorkflowBeanFactory(WorkflowBeanFactory factory)
 	{
@@ -65,8 +66,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void bindPut() throws Exception {
-		String message = "";
+	public void bindPut() throws Exception {		
 		//Updating task's user		
 		UserBean userBean = null;
 		if (request.getParameterMap().containsKey(UIConstants.PARAMETER_USER))
@@ -79,7 +79,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 			}
 			
 			String userId = request.getParameter(UIConstants.PARAMETER_USER);
-			if (! TaskInstanceController.NULL.equals(userId))
+			if (! UIConstants.VALUE_NULL.equals(userId))
 			{				
 				if (! dao.userBeanExists(userId))
 				{
@@ -103,7 +103,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 			}
 			if (! taskInstanceBean.canUpdate())
 			{
-				mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Invalid transition");
+				mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Cannot update task");
 				return;				
 			}
 
@@ -144,12 +144,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 			log.debug(MessageFormat.format(
 			    "Setting transition {0} for task instance {1}", 
 			    transition, taskInstanceBean.getId())
-			);
-			message += "The requested transition was taken.";
-		}
-		if (message.length() > 0)
-		{
-			request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, message);
+			);			
 		}
 	}
 			
@@ -171,9 +166,19 @@ public class DefaultTaskInstanceUpdateCommand implements
 		}
 		if (! errorList.isEmpty())
 		{
+			message += "Validation errors were reported. ";
 			this.taskInstanceBean.setTransition(null);
 		}
+		if (this.taskInstanceBean.getTransition() != null)
+		{
+			message += "The requested transition was taken. ";
+		}			
 		mav.addObject("errorList", errorList);
+		if (message.length() > 0)
+		{
+			request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, message);
+		}
+		
 	}	
 	
 	@SuppressWarnings("unchecked")
@@ -188,7 +193,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 	
 	private boolean requestUpdatesTransition()
 	{
-		return (request.getParameterMap().containsKey(UIConstants.PARAMETER_TRANSITION) && ! TaskInstanceController.NULL.equals(request.getParameter(UIConstants.PARAMETER_TRANSITION)));		
+		return (request.getParameterMap().containsKey(UIConstants.PARAMETER_TRANSITION) && ! UIConstants.VALUE_NULL.equals(request.getParameter(UIConstants.PARAMETER_TRANSITION)));		
 	}
 	
 	public void prepareForm() throws Exception {

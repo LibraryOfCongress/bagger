@@ -2,30 +2,9 @@
 <legend>Variables</legend>
 <table>
 #foreach ($variableBean in $taskInstanceBean.taskBean.variableBeanList)
-	#set($variableValue = "")
-	#set($variableValue = $taskInstanceBean.variableMap.get($variableBean.id))
 	<tr>
-	#if($variableBean.writable)
-		<td><label for="variable${variableBean.id}">
-		    ${variableBean.name}		    
-		<label></td>
-		<td><input id="variable${variableBean.id}"
-		    type="text" 
-		    name="variable.${variableBean.id}" 
-		    value="$variableValue" />
-		#if ($variableBean.required)
-			&nbsp;&nbsp;(Required)
-		#end
-		</td>
-	#else
-	    <td><label for="variable${variableBean.id}">
-		    $variableBean.name
-	    <label></td>
-		<td><span id="variable${variableBean.id}">
-		    $variableValue
-		</span></td>
-	#end
-    </tr>
+		#variable($variableBean $taskInstanceBean)
+	</tr>
 #end
 </table>
 </fieldset>

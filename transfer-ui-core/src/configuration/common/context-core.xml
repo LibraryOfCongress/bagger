@@ -59,14 +59,6 @@
 		<property name="order" value="2" />		                    
     </bean>
 
-	<!-- For annotation-based ControllerMapping -->
-	<!-- 
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-		<property name="order" value="3" />
-	</bean>
-    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
-	-->
-
 	<bean class="gov.loc.repository.transfer.ui.springframework.ControllerClassNameHandlerMapping">
 		<property name="pathPrefix" value="/reports" />
 		<property name="controllerMarker" value="gov.loc.repository.transfer.ui.controllers.reports.Report" />

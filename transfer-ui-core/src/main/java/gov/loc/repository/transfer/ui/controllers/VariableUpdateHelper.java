@@ -33,7 +33,7 @@ public class VariableUpdateHelper {
 			{
 				String extractedKey = key.substring(UIConstants.PREFIX_VARIABLE.length());
 				String value = request.getParameter(key);
-				if (value != null && value.length() == 0)
+				if ((value != null && value.length() == 0) || UIConstants.VALUE_NULL.equals(value))
 				{
 					value = null;
 				}

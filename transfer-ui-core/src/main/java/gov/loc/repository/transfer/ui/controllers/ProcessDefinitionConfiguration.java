@@ -1,20 +1,18 @@
 package gov.loc.repository.transfer.ui.controllers;
 
-import gov.loc.repository.transfer.ui.commands.TaskInstanceUpdateCommand;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProcessDefinitionConfiguration {
-	private Map<String,TaskInstanceUpdateCommand> taskInstanceUpdateCommandMap = new HashMap<String, TaskInstanceUpdateCommand>();
+	private Map<String,String> taskInstanceUpdateCommandMap = new HashMap<String, String>();
 	private String resourceBundleBaseName;
 	
 	
-	public void setTaskInstanceUpdateCommandMap(Map<String,TaskInstanceUpdateCommand> map) {
+	public void setTaskInstanceUpdateCommandMap(Map<String,String> map) {
 		this.taskInstanceUpdateCommandMap = map;
 	}
 	
-	public Map<String,TaskInstanceUpdateCommand> getTaskInstanceUpdateCommandMap()
+	public Map<String,String> getTaskInstanceUpdateCommandMap()
 	{
 		return this.taskInstanceUpdateCommandMap;
 	}
