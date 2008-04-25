@@ -32,7 +32,6 @@ init_vars () {
     TRANSFER_RO_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/conf/read_only.packagemodeler.hibernate.properties"
     TRANSFER_JBPM_HIBERNATE_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/jbpm.hibernate.properties"
     TRANSFER_LOG4J_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/log4j.properties"
-    TRANSFER_CONTEXT_CONF="${CATALINA_HOME}/webapps/transfer/META-INF/context.xml"
     TRANSFER_WORKFLOW_CONF="${CATALINA_HOME}/webapps/transfer/WEB-INF/classes/conf/workflow.local.properties"
 
     # ENVIRONMENT VARS
@@ -124,21 +123,6 @@ log4j.logger.org.hibernate=WARN\n
 log4j.logger.org.apache=WARN\n
 log4j.logger.org.jcp=WARN\n
 log4j.logger.org.springframework=WARN"
-
-    # TRANSFER APP CONTEXT DEFINITION
-    TRANSFER_CONTEXT="<Context reloadable='true' antiJARLocking='true'>\n
-<Realm className='org.apache.catalina.realm.JDBCRealm'\n
-	driverName='org.postgresql.Driver'\n
-	connectionURL='jdbc:postgresql://${PGHOST}:${PGPORT}/${JBPM_DB}'\n
-	connectionName='${JBPM}'\n 
-	connectionPassword='${JBPM_PASSWORD}'\n
-	userTable='JBPM_ID_USER'\n
-	userNameCol='NAME_'\n
-	userCredCol='PASSWORD_'\n
-	userRoleTable='JBPM_ID_MEMBERSHIP'\n 
-	roleNameCol='ROLE_' />\n
-</Context>"
-}
 
 # TRANSFER WORKFLOW PROPERTIES
 #TODO:  The storage.staging.basedirectory and jms.connection needs to be set correctly.
@@ -560,7 +544,6 @@ deploy_console () {
     echo -e $PM_READER_HIBERNATE_PROPS > $TRANSFER_RO_HIBERNATE_CONF
     echo -e $JBPM_HIBERNATE_PROPS > $TRANSFER_JBPM_HIBERNATE_CONF
     echo -e $LOG4J_PROPS > $TRANSFER_LOG4J_CONF
-    echo -e $TRANSFER_CONTEXT > $TRANSFER_CONTEXT_CONF
     echo -e $WORKFLOW_LOCAL_PROPS > $TRANSFER_WORKFLOW_CONF
     /usr/sbin/svcadm enable svc:/application/csk-tomcat
 }
