@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ResultList extends AbstractList<Map<String, Object>> implements List<Map<String, Object>> {
+public class ResultList extends AbstractList<Result> implements List<Result> {
 
 	private List<Object[]> resultList;
 	private String[] fieldNameArray;
@@ -23,7 +23,7 @@ public class ResultList extends AbstractList<Map<String, Object>> implements Lis
 	}
 	
 	@Override
-	public Map<String, Object> get(int index) {
+	public Result get(int index) {
 		if (index < 0 || index >= this.size())
 		{
 			throw new IndexOutOfBoundsException();
@@ -47,13 +47,13 @@ public class ResultList extends AbstractList<Map<String, Object>> implements Lis
 	}
 	
 	@Override
-	public Map<String, Object> set(int index, Map<String, Object> element) {		
+	public Result set(int index, Result element) {		
 		this.resultList.set(index, this.mapToArray(element));
 		return element;
 	}
 	
 	@Override
-	public void add(int index, Map<String, Object> element) {
+	public void add(int index, Result element) {
 		this.resultList.add(index, this.mapToArray(element));
 	}
 	

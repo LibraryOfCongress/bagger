@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import gov.loc.repository.utilities.results.Result;
 import gov.loc.repository.utilities.results.ResultList;
 
 public abstract class AbstractReportController implements Report {
@@ -36,7 +37,7 @@ public abstract class AbstractReportController implements Report {
 	{
 		private Map<String, String> sectionLabelMap = new HashMap<String, String>();
 		private List<ReportSection> reportSectionList = new ArrayList<ReportSection>();
-		private ResultList resultList = null;
+		private List<Result> resultList = new ArrayList<Result>();
 		private Map<String, Object> summaryMap = new HashMap<String, Object>();
 		
 		public Map<String,String> getSectionLabelMap()
@@ -54,11 +55,11 @@ public abstract class AbstractReportController implements Report {
 			return this.summaryMap;
 		}
 
-		public void setResultList(ResultList resultList) {
+		public void setResultList(List<Result> resultList) {
 			this.resultList = resultList;
 		}
 
-		public ResultList getResultList() {
+		public List<Result> getResultList() {
 			return resultList;
 		}
 	}

@@ -43,9 +43,6 @@
         <li><a href="#${reportId}">
             <span> Report  </span>
         </a></li>
-        <li><a href="#localHelp">
-            <span> Help     </span>
-        </a></li>
     </ul>
 	<div id="$reportId">
 	    <fieldset>
@@ -172,5 +169,4 @@
 	    	#end
 		</fieldSet>	    		        			            
     </div>
-	<div id="localHelp"></div>    
 </div>
