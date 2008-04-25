@@ -45,15 +45,15 @@
                     <img style="float:left;" src="http://chart.apis.google.com/chart?cht=bhs&chs=200x50&chd=t:${totalMemory}|${maxMemory}&chco=4d89f9,c6d9fd&chbh=20&chds=0,${maxMemory}"/>
                     <ul class="homeNav">
                         <li>
-                            <label for="maxMemory">Max Alloted Memory</label>
+                            <label for="maxMemory">Max Alloted Memory:</label>
                             <span id="maxMemory">${maxMemory}</span><br/>
                         </li>
                         <li>
-                            <label for="totalMemory">Total Memory In Use</label>
+                            <label for="totalMemory">Total Memory In Use:</label>
                             <span id="totalMemory">${totalMemory}</span><br/>
                         </li>
                         <li>
-                            <label for="FreeMemory">Free Memory</label>
+                            <label for="FreeMemory">Free Memory:</label>
                             <span id="Free Memory">${freeMemory}</span><br/></li>
                     </ul>
                 </fieldset><hr/></td>
