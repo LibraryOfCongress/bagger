@@ -4,7 +4,7 @@
         <li><a href="#workflowDetails" ><span> Details </span></a></li>
         <li><a href="#workflowVariables" ><span> Variables </span></a></li>
         <li><a href="#workflowTokens" ><span> Tokens </span></a></li>
-        <li><a href="#comments" ><span> Comments </span></a></li>
+        <li><a href="#comments" ><span> Comments ($processInstanceBean.commentBeanList.size()) </span></a></li>
     </ul>
 
     <div id="workflowDetails">
