@@ -476,6 +476,15 @@ install_pm_fixtures () {
     $PM_CORE_CLI createperson -id myron -firstname Myron -surname Briggs
     $PM_CORE_CLI createperson -id scott -firstname Scott -surname Phelps
     $PM_CORE_CLI createperson -id brian -firstname Brian -surname Vargas
+    $PM_CORE_CLI createperson -id jjoyner-qr -firstname JoKeeta -surname Joyner
+    $PM_CORE_CLI createperson -id jjoyner-sysadmin -firstname JoKeeta -surname Joyner
+    $PM_CORE_CLI createperson -id jjoyner-ingest -firstname JoKeeta -surname Joyner
+    $PM_CORE_CLI createperson -id tami-qr -firstname Tasmin -surname Mills
+    $PM_CORE_CLI createperson -id tami-sysadmin -firstname Tasmin -surname Mills
+    $PM_CORE_CLI createperson -id tami-ingest -firstname Tasmin -surname Mills
+    $PM_CORE_CLI createperson -id lfre-qr -firstname LaTonya -surname Freeman
+    $PM_CORE_CLI createperson -id lfre-sysadmin -firstname LaTonya -surname Freeman
+    $PM_CORE_CLI createperson -id lfre-ingest -firstname LaTonya -surname Freeman
     $PM_CORE_CLI createsystem -id rdc-workflow
     $PM_CORE_CLI createrole -id repository_system
     $PM_CORE_CLI createsystem -id ndnp-staging-repository -roles repository_system
@@ -516,6 +525,15 @@ install_jbpm_fixtures () {
     echo "INSERT INTO JBPM_ID_USER VALUES(2,'U','myron','foo@loc.gov','myron');" | $PSQL
     echo "INSERT INTO JBPM_ID_USER VALUES(3,'U','scott','foo@loc.gov','scott');" | $PSQL
     echo "INSERT INTO JBPM_ID_USER VALUES(4,'U','brian','foo@loc.gov','brian');" | $PSQL
+    echo "INSERT INTO JBPM_ID_USER VALUES(5,'U','jjoyner-qr','foo@loc.gov','jjoyner');" | $PSQL
+    echo "INSERT INTO JBPM_ID_USER VALUES(6,'U','jjoyner-sysadmin','foo@loc.gov','jjoyner');" | $PSQL
+    echo "INSERT INTO JBPM_ID_USER VALUES(7,'U','jjoyner-ingest','foo@loc.gov','jjoyner');" | $PSQL
+    echo "INSERT INTO JBPM_ID_USER VALUES(8,'U','tami-qr','foo@loc.gov','tami');" | $PSQL
+    echo "INSERT INTO JBPM_ID_USER VALUES(9,'U','tami-sysadmin','foo@loc.gov','tami');" | $PSQL
+    echo "INSERT INTO JBPM_ID_USER VALUES(10,'U','tami-ingest','foo@loc.gov','tami');" | $PSQL
+    echo "INSERT INTO JBPM_ID_USER VALUES(11,'U','lfre-qr','foo@loc.gov','lfre');" | $PSQL
+    echo "INSERT INTO JBPM_ID_USER VALUES(12,'U','lfre-sysadmin','foo@loc.gov','lfre');" | $PSQL
+    echo "INSERT INTO JBPM_ID_USER VALUES(13,'U','lfre-ingest','foo@loc.gov','lfre');" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(1,'M','ray','ROLE_USER',1,3);" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(2,'M','ray','ndnp-qr',1,1);" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(3,'M','myron','ROLE_USER',2,3);" | $PSQL
@@ -525,6 +543,27 @@ install_jbpm_fixtures () {
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(7,'M','scott','ROLE_ADMIN',3,4);" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(8,'M','brian','ndnp-ingest',4,5);" | $PSQL
     echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(9,'M','brian','ROLE_USER',4,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(10,'M','jjoyner-qr','ROLE_USER',5,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(11,'M','jjoyner-qr','ndnp-qr',5,1);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(12,'M','jjoyner-sysadmin','ROLE_USER',6,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(13,'M','jjoyner-sysadmin','ROLE_ADMIN',6,4);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(14,'M','jjoyner-sysadmin','ndnp-sysadmin',6,2);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(15,'M','jjoyner-ingest','ROLE_USER',7,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(16,'M','jjoyner-ingest','ndnp-ingest',7,5);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(17,'M','tami-qr','ROLE_USER',8,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(18,'M','tami-qr','ndnp-qr',8,1);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(19,'M','tami-sysadmin','ROLE_USER',9,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(20,'M','tami-sysadmin','ROLE_ADMIN',9,4);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(21,'M','tami-sysadmin','ndnp-sysadmin',9,2);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(22,'M','tami-ingest','ROLE_USER',10,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(23,'M','tami-ingest','ndnp-ingest',10,5);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(24,'M','lfre-qr','ROLE_USER',11,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(25,'M','lfre-qr','ndnp-qr',11,1);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(26,'M','lfre-sysadmin','ROLE_USER',12,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(27,'M','lfre-sysadmin','ROLE_ADMIN',12,4);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(28,'M','lfre-sysadmin','ndnp-sysadmin',12,2);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(29,'M','lfre-ingest','ROLE_USER',13,3);" | $PSQL
+    echo "INSERT INTO JBPM_ID_MEMBERSHIP VALUES(30,'M','lfre-ingest','ndnp-ingest',13,5);" | $PSQL
     echo "INSERT INTO jbpm_id_permissions(entity_, class_, name_) VALUES (1, 'java.lang.RuntimePermission', 'processdefinition.ndnp1.initiate');" | $PSQL
 }
 
