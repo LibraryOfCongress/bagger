@@ -1,0 +1,26 @@
+<beans xmlns:sec="http://www.springframework.org/schema/security"
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd">
+
+	<sec:http>
+		<sec:intercept-url pattern="/login/login.html*" access="ROLE_USER"/>
+		<sec:intercept-url pattern="/processinstance/*" method="POST" access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/admin/*" method="POST" access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/token/*" method="POST" access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/**" method="POST" access="ROLE_USER"/>			
+		<sec:form-login login-page="/login/login_form.html" authentication-failure-url="/login/login_form.html" />
+		<sec:logout logout-url="/login/logout.html" logout-success-url="/index.html"/>
+		<sec:remember-me/>
+	</sec:http>
+
+   <sec:authentication-provider>
+   		<sec:jdbc-user-service data-source-ref="jbpmDataSource" authorities-by-username-query="select name_, role_ from jbpm_id_membership where name_=?" users-by-username-query="select name_, password_, true from jbpm_id_user where name_=?"/>
+	</sec:authentication-provider>
+
+	<bean id="jbpmDataSource" class="gov.loc.repository.commons.dbcp.BasicDataSource">
+		<property name="hibernateProperties" value="classpath:jbpm.hibernate.properties" />
+	</bean>	
+	
+</beans>

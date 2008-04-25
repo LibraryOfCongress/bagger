@@ -66,17 +66,12 @@ public class DefaultTaskInstanceUpdateCommand implements
 	
 	@SuppressWarnings("unchecked")
 	public void bindPut() throws Exception {
-		//Updating task's user
+		String message = "";
+		//Updating task's user		
 		UserBean userBean = null;
 		if (request.getParameterMap().containsKey(UIConstants.PARAMETER_USER))
 		{
-			log.debug("Updating user");
-			if (! permissionsHelper.canUpdateTaskInstanceUser())
-			{
-				mav.setError(HttpServletResponse.SC_FORBIDDEN);
-				return;
-			}
-			
+			log.debug("Updating user");			
 			if (! taskInstanceBean.canUpdateUserBean())
 			{
 				mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Unknown user");
@@ -95,6 +90,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 				userBean = factory.createUserBean(userId);
 			}
 			taskInstanceBean.setUserBean(userBean);
+			message += "The task was reassigned. ";
 		}
 		
 		if (this.requestUpdatesVariables())
@@ -119,7 +115,8 @@ public class DefaultTaskInstanceUpdateCommand implements
 				    "Setting variable {0} with value {1}", 
 				    key, additionalParameterMap.get(key).toString()
 				));				
-			}			
+			}
+			message += "Variables for the task were updated. ";
 		}
 		
 		//If update transition
@@ -148,8 +145,12 @@ public class DefaultTaskInstanceUpdateCommand implements
 			    "Setting transition {0} for task instance {1}", 
 			    transition, taskInstanceBean.getId())
 			);
-			
-		}		
+			message += "The requested transition was taken.";
+		}
+		if (message.length() > 0)
+		{
+			request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, message);
+		}
 	}
 			
 	public void validatePut()

@@ -3,24 +3,32 @@ package gov.loc.repository.transfer.ui.controllers;
 import gov.loc.repository.transfer.ui.UIConstants;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.ui.AbstractProcessingFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class LoginController {
 
-	@RequestMapping("/login/login_*.html")
+	static final Log log = LogFactory.getLog(LoginController.class);
+	
+	@RequestMapping("login_*.html")
 	@SuppressWarnings("unchecked")	
-	public ModelAndView login_form(HttpServletRequest req) {		
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("contextPath", req.getContextPath());
-		mav.setViewName("login");
-		return mav;
+	public String login_form(HttpSession session) {		
+		if (session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY) != null)
+		{
+			log.debug("Login failed:" + ((AuthenticationException) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY)).getMessage());
+			session.setAttribute(UIConstants.SESSION_MESSAGE, "Login failed");
+		}
+		return "login";
 	}
 	
-	@RequestMapping("/login/login.html")
+	@RequestMapping("login.html")
 	@SuppressWarnings("unchecked")	
 	public String login(HttpServletRequest req) {		
 		
@@ -28,12 +36,8 @@ public class LoginController {
 		{
 			return "redirect:" + req.getParameter(UIConstants.PARAMETER_REFERER);
 		}
+		
 		return "redirect:/index.html";
 	}
 
-	@RequestMapping("/login/logout.html")
-	public String logout(HttpServletRequest req) throws Exception {
-		req.getSession().invalidate();
-		return "redirect:/index.html";		
-	}
 }

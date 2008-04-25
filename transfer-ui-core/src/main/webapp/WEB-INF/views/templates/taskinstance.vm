@@ -1,8 +1,94 @@
+##MACROS
+#macro (details)
+    <h2>Details</h2>
+    <fieldset>
+        <legend>Examine details for this Task</legend>
+        <table cellspacing="3" cellpadding="7">
+            <tr>
+                <td><label for="taskID">Task Id</label></td>
+                <td><span id="taskID">
+                    ${taskInstanceBean.id}
+                </span></td>
+                <td><span class="description">
+                    The tasks id.
+                </span></td>
+            </tr>
+            <tr>
+                <td><label for="taskName">Name</label></td>
+                <td><span id="taskName">
+                    ${taskInstanceBean.taskBean.name}
+                </span></td>
+                <td><span class="description">
+                    The title of this task.
+                </span></td>
+            </tr>
+            <tr>
+                <td><label for="workflow">Workflow</label></td>
+                <td><span id="workflow">
+						<a href="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}.html">
+			            ${taskInstanceBean.processInstanceBean.processDefinitionBean.name}
+                        (${taskInstanceBean.processInstanceBean.id}) </a>                        
+                </span></td>
+                <td><span class="description">
+                    The workflow that this task is part of.
+                </span></td>
+            </tr>                
+            <tr>
+                <td><label for="taskAssignee">Task Owner</label></td>
+                <td><span id="taskAssignee">
+                    #if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.name #else UNASSIGNED #end
+                </span></td>
+                <td><span class="description">
+                    This persons this task is currently assigned to, if any.
+                </span></td>
+            </tr>
+            <tr>
+                <td><label for="taskVisibility_value">Groups ($taskInstanceBean.groupBeanList.size())</label></td>
+                <td><span id="taskVisibility_value">
+                    #foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.name | #end
+                </span></td>
+                <td><span class="description">
+                    The groups this task is available to, if any.
+                </span></td>
+            </tr>
+            <tr id="taskStatus" >
+                <td><label for="taskStatus_value">Status</label></td>
+                <td><span id="taskStatus_value">
+                    #if ( $taskInstanceBean.ended ) Completed #else Incomplete #end
+                </span></td>
+                <td><span class="description">The current status of this task.</span></td>
+            </tr>
+            <tr id="taskCreateDate" >
+                <td><label for="taskCreateDate_value">Date Created</label></td>
+                <td><span id="taskCreateDate_value">
+                    ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
+                </span></td>
+                <td><span class="description">The time at which this task was created.</span></td>
+            </tr>                    
+            #if ( $task.ended )
+            <tr id="taskCompletionDate" >
+                <td><label for="taskCompletionDate_value">Date Ended</label></td>
+                <td><span id="taskCompletionDate_value" >
+                    ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.endDate)}
+                </span></td>
+                <td><span class="description">
+                    The time at which this task was marked as completed.
+                </span></td>
+            </tr>
+            #end
+        </table>
+    </fieldset>
+	
+#end
+
+
 <div id="taskinstance">
-    
     <ul id="localNav">
-        #if ($formViewName)     <li><a href="#updateTask"  ><span> Update   </span></a></li> #end
-        <li><a href="#taskDetails" ><span> Details </span></a></li>
+        #if ($formViewName)
+        	<li><a href="#updateTask"  ><span> Update   </span></a></li>
+        #else
+        	<li><a href="#taskDetails" ><span> Details </span></a></li>
+        #end        
         #if ($permissions.canUpdateTaskInstanceUser() && $taskInstanceBean.canUpdateUserBean())
         <li><a href="#reassignTask"><span> Reassign </span></a></li> 
         #end
@@ -11,110 +97,47 @@
     </ul>
     
      #if ($formViewName)
-    <div id="updateTask">
-	    <h2>Update</h2>
-    	#if ($errorList.size() > 0)
-    	<fieldset>
-		    <legend>Errors</legend>
-		    <ul>
-		    #foreach($error in $errorList)
-		    	<li>$error</li>
-		    #end
-		    </ul>
-		</fieldset>
-    	#end
-		<form method="post" action="${requestURI}?method=put" enctype="multipart/form-data">
-			#parse( "${formViewName}.vm" )
-			<fieldset>
-			    <legend>Assign a transition for this task.</legend>
-    			<select id="transition" name="transition">	
-    				#foreach($transitionBean in $taskInstanceBean.taskBean.leavingTransitionBeanList)	
-    					<option value="$transitionBean.id">
-    					    $transitionBean.name
-    					</option>
-    				#end
-    				<option value="null">leave task as incomplete</option>    				
-    			</select>							
-    			<input class="button" type="submit" value="submit"/>
+	    <div id="updateTask">
+	    	#details()	    	
+		    <h2>Update</h2>
+	    	#if ($errorList.size() > 0)
+	    	<fieldset>
+			    <legend>Errors</legend>
+			    <ul>
+			    #foreach($error in $errorList)
+			    	<li>$error</li>
+			    #end
+			    </ul>
 			</fieldset>
-		</form>
-	</div>
-    #end
+	    	#end
+			<form method="post" action="${requestURI}?method=put" enctype="multipart/form-data">
+				#parse( "${formViewName}.vm" )
+				<fieldset>
+				    <legend>Assign a transition for this task.</legend>
+	    			<select id="transition" name="transition">	
+	    				#foreach($transitionBean in $taskInstanceBean.taskBean.leavingTransitionBeanList)	
+	    					<option value="$transitionBean.id">
+	    					    $transitionBean.name
+	    					</option>
+	    				#end
+	    				<option value="null">leave task as incomplete</option>    				
+	    			</select>							
+	    			<input class="button" type="submit" value="submit"/>
+				</fieldset>
+			</form>
+		</div>
+    #else
     
-	<div id="taskDetails">
-        <h2>Details</h2>
-        <fieldset>
-            <legend>Examine details for this Task</legend>
-            <table cellspacing="3" cellpadding="7">
-                <tr>
-                    <td><label for="taskID">Task Id</label></td>
-                    <td><span id="taskID">
-                        ${taskInstanceBean.id}
-                    </span></td>
-                    <td><span class="description">
-                        The tasks id.
-                    </span></td>
-                </tr>
-                <tr>
-                    <td><label for="taskName">Name</label></td>
-                    <td><span id="taskName">
-                        ${taskInstanceBean.taskBean.name}
-                    </span></td>
-                    <td><span class="description">
-                        The title of this task.
-                    </span></td>
-                </tr>
-                <tr>
-                    <td><label for="taskAssignee">Task Owner</label></td>
-                    <td><span id="taskAssignee">
-                        #if ($taskInstanceBean.userBean) $taskInstanceBean.userBean.name #else UNASSIGNED #end
-                    </span></td>
-                    <td><span class="description">
-                        This persons this task is currently assigned to, if any.
-                    </span></td>
-                </tr>
-                <tr>
-                    <td><label for="taskVisibility_value">Groups ($taskInstanceBean.groupBeanList.size())</label></td>
-                    <td><span id="taskVisibility_value">
-                        #foreach($groupBean in $taskInstanceBean.groupBeanList) $groupBean.name | #end
-                    </span></td>
-                    <td><span class="description">
-                        The groups this task is available to, if any.
-                    </span></td>
-                </tr>
-                <tr id="taskStatus" >
-                    <td><label for="taskStatus_value">Status</label></td>
-                    <td><span id="taskStatus_value">
-                        #if ( $taskInstanceBean.ended ) Completed #else Incomplete #end
-                    </span></td>
-                    <td><span class="description">The current status of this task.</span></td>
-                </tr>
-                <tr id="taskCreateDate" >
-                    <td><label for="taskCreateDate_value">Date Created</label></td>
-                    <td><span id="taskCreateDate_value">
-                        ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
-                    </span></td>
-                    <td><span class="description">The time at which this task was created.</span></td>
-                </tr>                    
-                #if ( $task.ended )
-                <tr id="taskCompletionDate" >
-                    <td><label for="taskCompletionDate_value">Date Ended</label></td>
-                    <td><span id="taskCompletionDate_value" >
-                        ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.endDate)}
-                    </span></td>
-                    <td><span class="description">
-                        The time at which this task was marked as completed.
-                    </span></td>
-                </tr>
-                #end
-            </table>
-        </fieldset>
-    </div>
+		<div id="taskDetails">
+			#details()
+	    </div>
+	#end
 
     #if ($permissions.canUpdateTaskInstanceUser() && $taskInstanceBean.canUpdateUserBean())
 	<div id="reassignTask">
 	    <h2>Reassign Task</h2>
-	    <form method="post" action="${requestURI}?method=put">
+	    <form method="post" action="${requestURI}">
+	    	<input type="hidden" name="method" value="put" />
 	        <fieldset>
 	            <legend>Reassign this task to another user</legend>
 	            <label for="taskReassingee">User</label>

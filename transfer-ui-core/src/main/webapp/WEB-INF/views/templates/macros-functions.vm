@@ -29,3 +29,11 @@
     #set ($code = "${resourceMessageBase}.${resourceMessageCode}")
     #springMessageText($code)
 #end
+
+#*
+  -Prints a login required message
+*#
+#macro( login_required )
+	<br/>
+	<h4>To view, please <a href="${contextPath}/login/login.html#if($referer)?referer=$escape.url($referer)#end"">log in</a>.</h4>
+#end

@@ -25,14 +25,14 @@ public class JbpmContextRequestFilter implements Filter {
 	        ServletResponse resp,
 			FilterChain chain) throws IOException, ServletException {
 	
+		HttpServletRequest httpReq = (HttpServletRequest)req;
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
-		log.debug("Created new jbpmConfiguration for " + req.toString());
+		log.debug("Created new jbpmConfiguration for " + httpReq.getRequestURI());
 		try {
-			req.setAttribute("jbpmcontext", jbpmContext);
-			HttpServletRequest httpReq = (HttpServletRequest)req;
-			if (httpReq.getRemoteUser() != null) {
-				log.debug("Setting actorId to " + httpReq.getRemoteUser());
-				jbpmContext.setActorId(httpReq.getRemoteUser());
+			req.setAttribute("jbpmcontext", jbpmContext);			
+			if (httpReq.getUserPrincipal() != null) {
+				log.debug("Setting actorId to " + httpReq.getUserPrincipal().getName());
+				jbpmContext.setActorId(httpReq.getUserPrincipal().getName());
 			}
 			// Call the next filter (continue request processing)
 			chain.doFilter(req, resp);	

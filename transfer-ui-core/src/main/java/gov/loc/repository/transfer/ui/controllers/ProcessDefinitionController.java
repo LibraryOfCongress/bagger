@@ -1,5 +1,6 @@
 package gov.loc.repository.transfer.ui.controllers;
 
+import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.model.ProcessDefinitionBean;
 import gov.loc.repository.transfer.ui.model.ProcessInstanceBean;
@@ -23,7 +24,7 @@ public class ProcessDefinitionController extends AbstractRestController {
 		return "processdefinition/{processDefinitionId}\\.{format}";
 	}
 
-	@RequestMapping("/processdefinition/*.*")
+	@RequestMapping
 	@Override
 	public ModelAndView handleRequest(
 			HttpServletRequest request, 
@@ -41,11 +42,6 @@ public class ProcessDefinitionController extends AbstractRestController {
 	        WorkflowDao dao, PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
 		
-		if(! permissionsHelper.canStartProcess()) {
-			mav.setError(HttpServletResponse.SC_UNAUTHORIZED, "User not authorized to create processinstance");
-			return;			
-		}
-				
 		if (! urlParameterMap.containsKey(PROCESSDEFINITIONID)) {
 			mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Process definition id not provided");
 			return;
@@ -67,6 +63,7 @@ public class ProcessDefinitionController extends AbstractRestController {
 	
 		ProcessInstanceBean processInstanceBean = factory.createNewProcessInstanceBean(processDefinitionBean); 
 		dao.save(processInstanceBean);
+		request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "A new workflow was created.");
 		
 		mav.setViewName("redirect:/processinstance/" + processInstanceBean.getId() + ".html");
 		

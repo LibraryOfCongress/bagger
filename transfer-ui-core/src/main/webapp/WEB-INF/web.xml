@@ -4,10 +4,25 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     version="2.4">
 
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:/context-*.xml</param-value>
+	</context-param>
+
+	<filter>
+	  <filter-name>springSecurityFilterChain</filter-name>
+	  <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>	  
+	<filter-mapping>
+	  <filter-name>springSecurityFilterChain</filter-name>
+	  <url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 	<filter>
 		<filter-name>indexfilter</filter-name>
 		<filter-class>gov.loc.repository.transfer.ui.filters.IndexFilter</filter-class>
-	</filter><filter-mapping>
+	</filter>
+	<filter-mapping>
 		<filter-name>indexfilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
@@ -15,7 +30,8 @@
 	<filter>
 		<filter-name>packageModelDaoSessionRequestFilter</filter-name>
 		<filter-class>gov.loc.repository.transfer.ui.filters.HibernateSessionRequestFilter</filter-class>
-	</filter><filter-mapping>
+	</filter>
+	<filter-mapping>
 		<filter-name>packageModelDaoSessionRequestFilter</filter-name>
 		<url-pattern>/taskinstance/*</url-pattern>
 	</filter-mapping><filter-mapping>
@@ -31,15 +47,20 @@
 		<url-pattern>*.html</url-pattern>
 	</filter-mapping>
 
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
 	<servlet>
 		<servlet-name>consoleapp</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>		
 		<init-param>
-		    <param-name>contextConfigLocation</param-name>
-		    <param-value>classpath:/context-*.xml</param-value>  
+				<param-name>contextConfigLocation</param-name>
+				<param-value>classpath:/context-*.xml</param-value>		
 		</init-param>
 		<load-on-startup>1</load-on-startup>
-	</servlet><servlet-mapping>
+	</servlet>
+	<servlet-mapping>
 		<servlet-name>consoleapp</servlet-name>
 		<url-pattern>*.html</url-pattern>				
 	</servlet-mapping>
@@ -60,7 +81,7 @@
     <servlet-name>ProcessUploadServlet</servlet-name>
     <url-pattern>/uploadDefinition</url-pattern>
   </servlet-mapping>
-
+<!-- 
 	<security-role>
     	<role-name>participant</role-name>
 	</security-role>
@@ -87,7 +108,7 @@
 		    <form-error-page>/login/login_error.html</form-error-page>
     	</form-login-config>
 	</login-config>		
-	
+-->	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>

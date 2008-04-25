@@ -35,7 +35,7 @@
     #if ($permissions.canAdministerJobListener())
 		<div id="administer">
 			<h2>Administer</h2>
-			<form method="get" action="${contextPath}/admin/completedjoblistener.html">
+			<form method="post" action="${contextPath}/admin/completedjoblistener.html">
 				#if (${listener.isStarted()})
 	                <fieldset title="Stop listener">
 			            <legend>

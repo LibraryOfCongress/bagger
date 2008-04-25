@@ -22,7 +22,7 @@ public class CommentController extends AbstractRestController {
 		return "processinstance/{processInstanceId}/comment\\.{format}";
 	}
 
-	@RequestMapping("/processinstance/*/comment.*")
+	@RequestMapping
 	@Override
 	public ModelAndView handleRequest(
 			HttpServletRequest request, 
@@ -40,10 +40,6 @@ public class CommentController extends AbstractRestController {
 	        WorkflowDao dao, 
 	        PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
-		if (! permissionsHelper.canAddComment()){
-			mav.setError(HttpServletResponse.SC_UNAUTHORIZED);
-			return;
-		}
 		if (! urlParameterMap.containsKey(PROCESSINSTANCEID)) {
 			mav.setError(
 			    HttpServletResponse.SC_BAD_REQUEST, 
@@ -63,6 +59,7 @@ public class CommentController extends AbstractRestController {
 		String message =  request.getParameter(UIConstants.PARAMETER_MESSAGE);
 		processInstanceBean.addComment(message);
 		dao.save(processInstanceBean);
+		request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Your comment was added.");
 
 		mav.setViewName("redirect:/processinstance/" + processInstanceId + ".html");
 	}

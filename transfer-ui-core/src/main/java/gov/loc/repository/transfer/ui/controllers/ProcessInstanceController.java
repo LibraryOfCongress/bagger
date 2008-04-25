@@ -27,7 +27,7 @@ public class ProcessInstanceController extends AbstractRestController {
 		return "processinstance/{processInstanceId}\\.{format}";
 	}
 
-	@RequestMapping("/processinstance/*.*")
+	@RequestMapping
 	@Override
 	public ModelAndView handleRequest(
 			HttpServletRequest request, 
@@ -45,8 +45,6 @@ public class ProcessInstanceController extends AbstractRestController {
 			PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{
 		
-		UserBean userBean = factory.createUserBean(request.getUserPrincipal().getName());
-		
 		mav.setViewName("processinstancelist");
 		mav.addObject(
 		    "processInstanceBeanList", dao.getActiveProcessInstanceBeanList() 
@@ -54,10 +52,13 @@ public class ProcessInstanceController extends AbstractRestController {
 		mav.addObject(
 		    "suspendedProcessInstanceBeanList", dao.getSuspendedProcessInstanceBeanList() 
 		);
-		mav.addObject(
-		    "processDefinitionBeanList", 
-		    userBean.getProcessDefinitionBeanList()
-		);
+		if (request.getUserPrincipal() != null)
+		{
+			UserBean userBean = factory.createUserBean(request.getUserPrincipal().getName());		
+			mav.addObject(
+			    "processDefinitionBeanList", 
+			    userBean.getProcessDefinitionBeanList());
+		}
 	}
 
 	@Override
@@ -103,31 +104,26 @@ public class ProcessInstanceController extends AbstractRestController {
 		}
 	
 		if (request.getParameter(UIConstants.PARAMETER_SUSPENDED) != null) {
-			if (! permissionsHelper.canSuspendProcess()) {
-				mav.setError(HttpServletResponse.SC_UNAUTHORIZED);
-				return;
-			}
 			if (UIConstants.VALUE_TRUE.equalsIgnoreCase(
 			        request.getParameter(UIConstants.PARAMETER_SUSPENDED))) {
 				if (! processInstanceBean.isSuspended()) {
 					processInstanceBean.suspended(true);					
 					dao.save(processInstanceBean);
+					request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "The workflow was suspended.");
 				}
 			} else if (UIConstants.VALUE_FALSE.equalsIgnoreCase(
 			            request.getParameter(UIConstants.PARAMETER_SUSPENDED))) {
 				if (processInstanceBean.isSuspended()) {
 					processInstanceBean.suspended(false);
 					dao.save(processInstanceBean);
+					request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "The workflow was resumed.");
 				}
 			} 
 		}
 		if (VariableUpdateHelper.requestUpdatesVariables(request)) {
-			if (! permissionsHelper.canUpdateVariables()) {
-				mav.setError(HttpServletResponse.SC_UNAUTHORIZED);
-				return;
-			}
 			VariableUpdateHelper.update(request, processInstanceBean);
 			dao.save(processInstanceBean);
+			request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Variables updated.");
 		}
 		this.handleGet(request, mav, factory, dao, permissionsHelper, urlParameterMap);
 	}

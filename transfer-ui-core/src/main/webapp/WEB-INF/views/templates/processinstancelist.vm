@@ -131,21 +131,26 @@
 	
 	<div id="newWorkflow">
 		<h2>Workflows Types</h2>
-			#foreach($processDefinitionBean in $processDefinitionBeanList)
-			<li>
-				<form method="post" action="${contextPath}/processdefinition/${processDefinitionBean.id}.html">
-                    <fieldset title="Start a New Transfer Workflow">
-			            <legend>
-        		            ${processDefinitionBean.name}
-        		            (${processDefinitionBean.id})
-        		        </legend>
-			            <input type="hidden" name="referer" value="/index.html" />
-    					<input type="submit" class="button" value="start"/>
-    					<label>Creating a new Transfer Workflow allows tracking a new transfer process.</label>
-				    </fieldset>					
-    			</form>						
-			</li>					
-			#end
-		</ul>
+		#if ($processDefinitionBeanList)					
+			<ul>
+				#foreach($processDefinitionBean in $processDefinitionBeanList)
+				<li>
+					<form method="post" action="${contextPath}/processdefinition/${processDefinitionBean.id}.html">
+	                    <fieldset title="Start a New Transfer Workflow">
+				            <legend>
+	        		            ${processDefinitionBean.name}
+	        		            (${processDefinitionBean.id})
+	        		        </legend>
+				            <input type="hidden" name="referer" value="/index.html" />
+	    					<input type="submit" class="button" value="start"/>
+	    					<label>Creating a new Transfer Workflow allows tracking a new transfer process.</label>
+					    </fieldset>					
+	    			</form>						
+				</li>					
+				#end
+			</ul>
+		#else
+			#login_required()
+		#end
 	</div>
 </div>

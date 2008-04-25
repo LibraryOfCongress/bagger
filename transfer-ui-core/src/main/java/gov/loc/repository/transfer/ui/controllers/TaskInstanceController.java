@@ -35,7 +35,7 @@ public class TaskInstanceController extends AbstractRestController {
 	}
 	
 	@Override
-	@RequestMapping("/taskinstance/*.*")
+	@RequestMapping
 	public ModelAndView handleRequest(
 	        HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
@@ -51,9 +51,12 @@ public class TaskInstanceController extends AbstractRestController {
 			PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception 
 	{   
 		mav.setViewName("tasks");
-		//Add the user to the view
-		UserBean userBean = factory.createUserBean(request.getUserPrincipal().getName());		
-		mav.addObject("userBean", userBean);
+		if (request.getUserPrincipal() != null)
+		{
+			//Add the user to the view		
+			UserBean userBean = factory.createUserBean(request.getUserPrincipal().getName());		
+			mav.addObject("userBean", userBean);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

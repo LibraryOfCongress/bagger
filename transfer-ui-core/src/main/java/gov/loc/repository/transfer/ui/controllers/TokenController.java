@@ -23,7 +23,7 @@ public class TokenController extends AbstractRestController {
 		return "token/{tokenId}\\.{format}";
 	}
 
-	@RequestMapping("/token/*.*")
+	@RequestMapping
 	@Override
 	public ModelAndView handleRequest(
 			HttpServletRequest request, 
@@ -36,11 +36,6 @@ public class TokenController extends AbstractRestController {
 	protected void handlePut(HttpServletRequest request, ModelAndView mav,
 			WorkflowBeanFactory factory, WorkflowDao dao,
 			PermissionsHelper permissionsHelper, Map<String, String> urlParameterMap) throws Exception {
-		if (! permissionsHelper.canMoveToken())
-		{
-			mav.setError(HttpServletResponse.SC_UNAUTHORIZED);
-			return;
-		}
 
 		if (! urlParameterMap.containsKey(TOKENID)) {
 			mav.setError(HttpServletResponse.SC_BAD_REQUEST, "Token id not provided");
@@ -73,6 +68,8 @@ public class TokenController extends AbstractRestController {
 			return;									
 		}
 		tokenBean.setNodeBean(nodeBean);
+		dao.save(tokenBean);
+		request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "The token was moved.");
 		
 		mav.setViewName("redirect:/processinstance/" + tokenBean.getProcessInstanceBean().getId() + ".html");
 		

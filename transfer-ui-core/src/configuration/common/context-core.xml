@@ -14,6 +14,14 @@
     <context:annotation-config />
     <context:component-scan base-package="gov.loc.repository.transfer.ui" />
   
+	<bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+  		<property name="customEditors">
+    		<map>
+      			<entry key="java.util.Properties" value="gov.loc.repository.springframework.PropertiesEditor" />
+    		</map>
+ 		</property>
+	</bean>
+  
     <bean id="packageModelDao" class="gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl">
 		<property name="sessionDatabaseRole">
 			<value>READ_ONLY</value>
@@ -30,38 +38,57 @@
         <property name="mappings">
             <value>
                 /reports/index.html=reportsController
-                /admin/*=adminController
+                /admin/index.html=adminController
+                /admin/completedjoblistener.html=jmsCompletedJobListenerController
+                /login/*=loginController
+                /processinstance/*/comment.*=commentController
+                /processinstance/*.*=processInstanceController
+                /processdefinition/*.*=processDefinitionController
+                /taskinstance/*.*=taskInstanceController
+                /token/*.*=tokenController
+                /**=homeController
             </value>
         </property>
 		<property name="interceptors">
 			<list>
 				<ref bean="contextPathInterceptor" />
+				<ref bean="messageInterceptor" />
+				<ref bean="referrerInterceptor" />
 			</list>
 		</property>
-		<property name="order" value="1" />		                    
+		<property name="order" value="2" />		                    
     </bean>
 
 	<!-- For annotation-based ControllerMapping -->
+	<!-- 
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
 		<property name="order" value="3" />
 	</bean>
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+	-->
 
 	<bean class="gov.loc.repository.transfer.ui.springframework.ControllerClassNameHandlerMapping">
 		<property name="pathPrefix" value="/reports" />
 		<property name="controllerMarker" value="gov.loc.repository.transfer.ui.controllers.reports.Report" />
-		<property name="order" value="2" />
+		<property name="order" value="1" />
 		<property name="interceptors">
 			<list>
 				<ref bean="contextPathInterceptor" />
 				<bean class="gov.loc.repository.transfer.ui.interceptors.ViewInterceptor">
 					<property name="view" value="report" />
 				</bean>
+				<ref bean="messageInterceptor" />
+				<ref bean="referrerInterceptor" />
 			</list>
 		</property>		
 	</bean>
     
     <bean id="contextPathInterceptor" class="gov.loc.repository.transfer.ui.interceptors.ContextPathInterceptor" />
+    
+    <bean id="messageInterceptor" class="gov.loc.repository.transfer.ui.interceptors.MessageInterceptor" />
+    
+    <bean id="referrerInterceptor" class="gov.loc.repository.transfer.ui.interceptors.ReferrerInterceptor" />
+    
     <bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
 	    <property name="factoryClass" value="org.apache.struts.tiles.xmlDefinition.I18nFactorySet"/>
 		<property name="definitionPath" value="/WEB-INF/views/" />

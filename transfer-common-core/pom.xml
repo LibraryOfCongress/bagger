@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project>
   <parent>
     <artifactId>transfer-maven-core</artifactId>
     <groupId>loc-repository</groupId>
@@ -10,7 +9,6 @@
   <name>Transfer Common (Core)</name>
   <scm>
     <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-common-core</connection>
-    <tag>HEAD</tag>
     <url>https://rdc.lctl.gov/trac/transfer/browser</url>
   </scm>
   <dependencies>
@@ -18,16 +16,15 @@
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
     </dependency>
-    <!-- Used by dom4j -->
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
       <scope>runtime</scope>
-    </dependency>        
+    </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-    </dependency>  
+    </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
@@ -35,7 +32,10 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-    </dependency>        
+    </dependency>
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
   </dependencies>
 </project>
-

@@ -21,6 +21,9 @@
     #block("crumb-nav")
     <div id="back_white">
         <div id="content">
+        	#if($message)
+        		<div id="message"><h3>$message</h3></div>	
+	        #end        	
             #block("content")
         </div>
     </div>

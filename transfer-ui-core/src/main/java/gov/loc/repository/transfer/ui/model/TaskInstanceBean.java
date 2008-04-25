@@ -169,4 +169,5 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 	public String toString() {
 		return this.getName();
 	}
+	
 }

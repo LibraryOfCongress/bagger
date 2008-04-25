@@ -5,7 +5,7 @@
         <li><a href="#loginHelp" ><span> Help  </span></a></li>
     </ul>
     <div id="loginForm" >
-        <form action="j_security_check"  method="post">
+        <form action="${contextPath}/j_spring_security_check"  method="post">
             <fieldset title="Credentials">
 			        <legend><b>Login</b></legend>
                     <table border="0" cellpadding="3" cellspacing="3"  >
@@ -16,6 +16,11 @@
                         <tr>
                             <td><label>Password</label>:</td>
                             <td><input name="j_password" type="password" size="20"/></td>
+                        </tr>
+                        <tr>
+                        	<td />
+                        	<td><input type="checkbox" name="_spring_security_remember_me"> Remember me	
+	                        </td>
                         </tr>
                         <tr align="right">
                             <td colspan="2">
