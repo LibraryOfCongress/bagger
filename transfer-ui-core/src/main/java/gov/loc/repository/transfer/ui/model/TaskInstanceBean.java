@@ -41,6 +41,15 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 		return "Task instance " + this.getId();
 	}
 	
+	public boolean canUnassignUserBean()
+	{
+		if (this.taskInstance.getPooledActors().isEmpty())
+		{
+			return false;
+		}
+		return true;
+	}
+	
 	public void setUserBean(UserBean userBean) throws Exception
 	{
 		if (! this.canUpdateUserBean())
@@ -49,6 +58,10 @@ public class TaskInstanceBean extends AbstractWorkflowBean implements VariableUp
 		}
 		if (userBean == null)
 		{
+			if (! this.canUnassignUserBean())
+			{
+				throw new Exception("TaskInstance cannot be unassigned");
+			}
 			this.taskInstance.setActorId(null);
 		}
 		else
