@@ -508,8 +508,10 @@ install_pm_fixtures () {
 # Create the package modler NDNP database fixtures
 install_pm_ndnp_fixtures () {
     printf "INFO:  Installing package modler NDNP database fixtures\n"
-    $PM_NDNP_CLI createawardphase -name "Phase 1"
-    $PM_NDNP_CLI createawardphase -name "Phase 2"    
+    $PM_NDNP_CLI createawardphase -name "2005"
+    $PM_NDNP_CLI createawardphase -name "2006"
+    $PM_NDNP_CLI createawardphase -name "2007"
+    $PM_NDNP_CLI createawardphase -name "2008"
 }
 
 # Create the JBPM identity fixtures
