@@ -139,6 +139,7 @@ storage.staging.basedirectory=/tmp/staging
 agent.staging.id=rdc
 agent.backup.id=rs25
 agent.production.id=rs15"
+}
 
 sanity_checks () {
     # CHECK RBAC
