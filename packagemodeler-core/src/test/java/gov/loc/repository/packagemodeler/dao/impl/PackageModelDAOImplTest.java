@@ -10,7 +10,6 @@ import org.junit.Test;
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
 import gov.loc.repository.utilities.results.Result;
-import gov.loc.repository.utilities.results.ResultIterator;
 import gov.loc.repository.utilities.results.ResultList;
 import gov.loc.repository.packagemodeler.AbstractModelersTest;
 import gov.loc.repository.packagemodeler.agents.Organization;
@@ -107,7 +106,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		this.commitAndRestartTransaction();
 		
 		ResultList resultList = dao.findPackagesWithFileCount(Package.class, "html");
-		Iterator<Map<String,Object>> resultIter = resultList.iterator();
+		Iterator<Result> resultIter = resultList.iterator();
 		assertTrue(resultIter.hasNext());
 		int assertPackageCount = dao.findPackages(Package.class).size();
 		int packageCount = 0;
