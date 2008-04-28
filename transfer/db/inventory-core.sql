@@ -71,7 +71,6 @@ create table core.fileinstance_fixity (
 	unique (fileinstance_key, algorithm)
 );
 
--- 2007-12-13: use and meaning of this table under discussion
 create table core.storagesystem_filelocation (
 	pkey int8 not null, 
 	base_path varchar(255) not null, 
@@ -80,17 +79,15 @@ create table core.storagesystem_filelocation (
 	unique (storagesystem_key, base_path)
 );
 
--- 2007-12-13: use and meaning of this table under discussion
 create table core.external_filelocation (
 	pkey int8 not null, 
 	base_path varchar(255), 
 	identifier_type varchar(255), 
 	identifier_value varchar(255), 
 	media_type varchar(255), 
-	primary key (pkey), 
+	primary key (pkey) 
 );
 
--- This table is deprecated, and will soon move to a separate namespace.
 create schema agent; 
 
 create table agent.agent (
@@ -103,22 +100,18 @@ create table agent.agent (
 	primary key (pkey)
 );
 
--- This table is deprecated, and will soon move to a separate namespace.
 create table agent.agent_role (
 	agent_key int8 not null, 
 	role_key int8 not null, 
 	primary key (agent_key, role_key)
 );
 
--- This table is deprecated, and will soon move to a separate namespace.
 create table agent.role (
 	pkey int8 not null, 
 	role_id varchar(255) not null, 
 	primary key (pkey)
 );
 
--- This table deals with package audits, and is currently out-of-scope.
--- This table is deprecated, and will soon move to a separate namespace.
 create table core.event_file_examination_group (
 	pkey int8 not null, 
 	DTYPE varchar(31) not null, 
@@ -138,8 +131,6 @@ create table core.event_file_examination_group (
 	primary key (pkey)
 );
 
--- This table deals with package audits, and is currently out-of-scope.
--- This table is deprecated, and will soon move to a separate namespace.
 create table core.event_file_location (
 	pkey int8 not null, 
 	DTYPE varchar(31) not null, 
@@ -161,8 +152,6 @@ create table core.event_file_location (
 	primary key (pkey)
 );
 
--- This table deals with package audits, and is currently out-of-scope.
--- This table is deprecated, and will soon move to a separate namespace.
 create table core.event_package (
 	pkey int8 not null, 
 	DTYPE varchar(31) not null, 
@@ -182,8 +171,6 @@ create table core.event_package (
 	primary key (pkey)
 );
 
--- This table deals with package audits, and is currently out-of-scope.
--- This table is deprecated, and will soon move to a separate namespace.
 create table core.fileexamination (
 	pkey int8 not null, 
 	bytes int8, 
@@ -198,8 +185,6 @@ create table core.fileexamination (
 	unique (fileexamination_group_key, relative_path, base_name, extension)
 );
 
--- This table deals with package audits, and is currently out-of-scope.
--- This table is deprecated, and will soon move to a separate namespace.
 create table core.fileexamination_fixity (
 	fileexamination_key int8 not null, 
 	fixity_value varchar(255) not null, 
@@ -208,8 +193,6 @@ create table core.fileexamination_fixity (
 	unique (fileexamination_key, algorithm)
 );
 
--- This table deals with package audits, and is currently out-of-scope.
--- This table is deprecated, and will soon move to a separate namespace.
 create table core.fileexamination_group (
 	pkey int8 not null, 
 	is_complete bool not null, 
