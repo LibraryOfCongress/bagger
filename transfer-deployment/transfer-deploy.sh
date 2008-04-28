@@ -182,55 +182,55 @@ sanity_checks () {
     
     # TOMCAT WRITABLE?
     if [ ! -w $CATALINA_HOME/webapps ]
-        then printf "\n!!! Can't write to %s/webapps\nPlease fix this and try again.\nExitintg....\n" $CATALINA_HOME
+        then printf "\n!!! Can't write to %s/webapps\nPlease fix this and try again.\nExiting....\n" $CATALINA_HOME
        exit 1;
     fi
 
     # ARE REQUIRED FILES READABLE?
     if [ ! -r $PM_CORE_SQL ]
-       then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_CORE_SQL
+       then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExiting....\n" $PM_CORE_SQL
        exit 1;
     else
         printf "INFO:  Can read %s.\n" $PM_CORE_SQL
     fi
     if [ ! -r $PM_NDNP_SQL ]
-        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_NDNP_SQL
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExiting....\n" $PM_NDNP_SQL
         exit 1;
     else
         printf "INFO:  Can read %s.\n" $PM_NDNP_SQL
     fi
     if [ ! -r $JBPM_SQL ]
-        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $JBPM_SQL
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExiting....\n" $JBPM_SQL
         exit 1;
     else
         printf "INFO:  Can read %s.\n" $JBPM_SQL        
     fi
     if [ ! -r $PM_CORE_CLI_PKG ]
-        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_CORE_CLI_PKG
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExiting....\n" $PM_CORE_CLI_PKG
         exit 1;
     else
         printf "INFO:  Can read %s.\n" $PM_CORE_CLI_PKG        
     fi
     if [ ! -r $PM_NDNP_CLI_PKG ]
-        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PM_NDNP_CLI_PKG
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExiting....\n" $PM_NDNP_CLI_PKG
         exit 1;
     else
         printf "INFO:  Can read %s.\n" $PM_NDNP_CLI_PKG        
     fi
     if [ ! -r $WORKFLOW_CORE_PKG ]
-        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $WORKFLOW_CORE_PKG
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExiting....\n" $WORKFLOW_CORE_PKG
         exit 1;
     else
         printf "INFO:  Can read %s.\n" $WORKFLOW_CORE_PKG        
     fi
     if [ ! -r $PROCESS_DEFINITION ]
-        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $PROCESS_DEFINITION
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExiting....\n" $PROCESS_DEFINITION
         exit 1;
     else
         printf "INFO:  Can read %s.\n" $PROCESS_DEFINITION        
     fi
     if [ ! -r $TRANSFER_UI_WAR ]
-        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExitintg....\n" $TRANSFER_UI_WAR
+        then printf "\n!!! Can't read %s\nPlease fix this and try again.\nExiting....\n" $TRANSFER_UI_WAR
         exit 1;
     else
         printf "INFO:  Can read %s.\n" $TRANSFER_UI_WAR        

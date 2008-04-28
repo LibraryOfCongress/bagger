@@ -44,7 +44,7 @@ TRANSFER_INSTALL_DIR=""
 
 # Tell me where to find Java
 # (default = '/usr/jdk/latest')
-JAVA_HOME=/usr/jdk/latest
+JAVA_HOME="/usr/jdk/latest"
 
 # Tell me where to find Tomcat
 # (default = '/opt/coolstack/tomcat')
