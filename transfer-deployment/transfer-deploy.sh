@@ -639,6 +639,7 @@ deploy_pm_ndnp_cli
 deploy_workflow_core
 
 install_pm_fixtures
+install_pm_ndnp_fixtures
 install_jbpm_fixtures
 install_process_definition
 deploy_console
