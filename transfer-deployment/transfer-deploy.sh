@@ -127,18 +127,18 @@ log4j.logger.org.springframework=WARN"
 # TRANSFER WORKFLOW PROPERTIES
 #TODO:  The storage.staging.basedirectory and jms.connection needs to be set correctly.
 WORKFLOW_LOCAL_PROPS="
-#The JMS connection used by the CompletedJobListener
-jms.connection=failover:(tcp://localhost:61616)?maxReconnectAttempts=4
-jms.replytoqueue=completedjobqueue
-
-#The default algorithm used for inventorying, etc.
-fixity.algorithm=md5
-
-#The basepath of staging storage
-storage.staging.basedirectory=/tmp/staging
-agent.staging.id=rdc
-agent.backup.id=rs25
-agent.production.id=rs15"
+#The JMS connection used by the CompletedJobListener\n
+jms.connection=failover:(tcp://localhost:61616)?maxReconnectAttempts=4\n
+jms.replytoqueue=completedjobqueue\n
+\n
+#The default algorithm used for inventorying, etc.\n
+fixity.algorithm=md5\n
+\n
+#The basepath of staging storage\n
+storage.staging.basedirectory=/tmp/staging\n
+agent.staging.id=rdc\n
+agent.backup.id=rs25\n
+agent.production.id=rs15\n"
 }
 
 sanity_checks () {
