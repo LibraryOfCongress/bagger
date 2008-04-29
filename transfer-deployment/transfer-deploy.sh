@@ -487,6 +487,7 @@ install_pm_fixtures () {
     $PM_CORE_CLI createperson -id lfre-sysadmin -firstname LaTonya -surname Freeman
     $PM_CORE_CLI createperson -id lfre-ingest -firstname LaTonya -surname Freeman
     $PM_CORE_CLI createsystem -id rdc-workflow
+    $PM_CORE_CLI createsystem -id transfer-components-core-${VERSION}
     $PM_CORE_CLI createrole -id repository_system
     $PM_CORE_CLI createsystem -id ndnp-staging-repository -roles repository_system
     $PM_CORE_CLI createrole -id storage_system
