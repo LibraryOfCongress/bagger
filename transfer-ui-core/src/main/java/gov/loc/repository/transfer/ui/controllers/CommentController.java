@@ -60,8 +60,7 @@ public class CommentController extends AbstractRestController {
 		processInstanceBean.addComment(message);
 		dao.save(processInstanceBean);
 		request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Your comment was added.");
-
-		mav.setViewName("redirect:/processinstance/" + processInstanceId + ".html");
+		mav.setViewName("redirect:" + request.getParameter(UIConstants.PARAMETER_REFERER));
 	}
 	
 }

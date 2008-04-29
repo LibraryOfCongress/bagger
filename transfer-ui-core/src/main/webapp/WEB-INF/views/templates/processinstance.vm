@@ -107,7 +107,7 @@
     
     <div id="comments">
 	    <h2>Comments</h2>
-    	#foreach($commentBean in $sorter.sort($processInstanceBean.commentBeanList, 'date:desc'))
+    	#foreach($commentBean in $sorter.sort($processInstanceBean.commentBeanList, 'createDate:desc'))
 	    <fieldset>
 	        <legend><b>$commentBean.userBean.name</b></legend>
 	        <p>$escape.html($commentBean.message)</p>
@@ -141,7 +141,7 @@
         <h2>Tokens</h2>
     	#foreach($tokenBean in $processInstanceBean.tokenBeanList)
     		<div id="workflowToken${tokenBean.id}">
-	    		<h3>#if($tokenBean.child)Child#{else}Root#end Token</h3>
+	    		<h3>#if($tokenBean.child)Child #else Root#end Token</h3>
 		        <fieldset>
 		            <legend>Examine details regarding this token</legend>
 		            <table cellspacing="3" cellpadding="7">

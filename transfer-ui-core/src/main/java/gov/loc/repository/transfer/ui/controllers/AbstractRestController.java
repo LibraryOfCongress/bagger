@@ -140,15 +140,6 @@ public abstract class AbstractRestController extends AbstractController {
 			}
 			mav = null;
 		}
-		//Postprocess for referer
-		else if (request.getParameter(UIConstants.PARAMETER_REFERER) != null) {
-			String origViewName = mav.getViewName();
-			mav.clear();
-			mav.setViewName("redirect:" +
-			    request.getParameter(UIConstants.PARAMETER_REFERER)
-			);			
-			log.debug(MessageFormat.format("Changing view name from {0} to {1}", origViewName, mav.getViewName()));
-		}
 		if (mav != null)
 		{
 			log.debug("View name: " + mav.getViewName());

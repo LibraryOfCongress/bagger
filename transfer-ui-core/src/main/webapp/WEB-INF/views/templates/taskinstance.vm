@@ -161,7 +161,6 @@
 
     <div id="comments">
 	    <h2>Comments</h2>
-    	##foreach($commentBean in $sorter.sort($taskInstanceBean.processInstanceBean.commentBeanList, 'dateCreated:desc'))
     	#foreach($commentBean in $sorter.sort($taskInstanceBean.processInstanceBean.commentBeanList, 'createDate:desc'))
 	    <fieldset>
 	        <legend><b>$commentBean.userBean.name</b></legend>
