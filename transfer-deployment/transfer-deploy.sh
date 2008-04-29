@@ -128,14 +128,14 @@ log4j.logger.org.springframework=WARN"
 #TODO:  The storage.staging.basedirectory and jms.connection needs to be set correctly.
 WORKFLOW_LOCAL_PROPS="
 #The JMS connection used by the CompletedJobListener\n
-jms.connection=failover:(tcp://localhost:61616)?maxReconnectAttempts=4\n
+jms.connection=failover:(tcp://${JMSHOST}:61616)?maxReconnectAttempts=4\n
 jms.replytoqueue=completedjobqueue\n
 \n
 #The default algorithm used for inventorying, etc.\n
 fixity.algorithm=md5\n
 \n
 #The basepath of staging storage\n
-storage.staging.basedirectory=/tmp/staging\n
+storage.staging.basedirectory=${STAGING_DIR}\n
 agent.staging.id=rdc\n
 agent.backup.id=rs25\n
 agent.production.id=rs15\n"

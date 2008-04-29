@@ -51,6 +51,10 @@ JAVA_HOME="/usr/jdk/latest"
 CATALINA_HOME="/opt/coolstack/tomcat"
 
 # This is the version of the release being deployed
-VERSION="1.2"
+VERSION="1.4"
 
+# The host for ActiveMQ
+JMSHOST="localhost"
 
+# The staging directory
+STAGING_DIR="/tmp/staging"
