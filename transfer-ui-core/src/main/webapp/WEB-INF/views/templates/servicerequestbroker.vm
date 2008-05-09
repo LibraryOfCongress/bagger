@@ -1,0 +1,70 @@
+<div id="tasks">
+    <ul id="localNav">
+        <li><a href="#requests">
+            <span>Service Requests </span>
+        </a></li>
+    </ul>
+	<div id="requests">
+		<h2>Service Requests</h2>
+        <fieldset>
+            <legend>Service Requests that have not been completed</legend>
+	        <table cellspacing="3" cellpadding="7">
+	        	<thead>
+	                <tr>
+                        <th>Key</th>
+                        <th>Queue</th>
+                        <th>JobType</th>
+                        <th>Corr. key</th>
+                        <th>Variables</th>
+                        <th>Requester</th>
+                        <th>Req. date</th>
+                        <th>Responder</th>
+                        <th>Req. ack. date</th>
+                    </tr>
+	            </thead>
+	            #foreach($req in $serviceRequestList)
+		        	<tr>
+						<td>$req.key</td>
+						<td>$req.queue</td>
+						<td>$req.jobType</td>
+						<td>$req.correlationKey</td>
+						<td>$req.variableMap</td>
+						<td>$req.requester</td>
+						<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestDate)}</td>
+						<td>$!req.responder</td>
+						<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestAcknowledgedDate)}</td>
+		        	</tr>
+	        	#end
+		    </table>
+		</fieldset>
+	</div>
+
+    #if ($permissions.canAdministerJobListener())
+		<div id="administer">
+			<h2>Administer</h2>
+			<form method="post" action="${contextPath}/admin/completedjoblistener.html">
+				#if (${listener.state} == "STARTED")
+	                <fieldset title="Stop listener">
+			            <legend>
+			            	Job listener
+	    		        </legend>
+			            <input type="hidden" name="stop" value="true" />
+						<input type="submit" class="button" value="stop"/>
+						<label>Stop the job listener.</label>
+				    </fieldset>
+			   #elseif (${listener.state} == "STOPPED")
+	                <fieldset title="Start listener">
+			            <legend>
+			            	Job listener
+	    		        </legend>
+			            <input type="hidden" name="start" value="true" />
+						<input type="submit" class="button" value="start"/>
+						<label>Start the job listener.</label>
+				    </fieldset>
+			   #else
+			   		<p>Listener is in process of starting or stopping.</p>
+			   #end					
+			</form>						
+		</div>    	
+    #end    
+</div>
