@@ -1,5 +1,7 @@
 package gov.loc.repository.transfer.ui.model;
 
+import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
+
 import org.jbpm.JbpmContext;
 import org.jbpm.context.def.VariableAccess;
 import org.jbpm.graph.def.Node;
@@ -15,6 +17,7 @@ import org.springframework.context.MessageSource;
 public class WorkflowBeanFactory {
 	protected JbpmContext jbpmContext;
 	private MessageSource messageSource;
+	private ServiceRequestDAO serviceRequestDAO;
 	
 	public void setJbpmContext(JbpmContext jbpmContext) {
 		this.jbpmContext = jbpmContext;
@@ -24,7 +27,12 @@ public class WorkflowBeanFactory {
 	{
 		this.messageSource = messageSource;
 	}
-			
+	
+	public void setServiceRequestDAO(ServiceRequestDAO dao)
+	{
+		this.serviceRequestDAO = dao;
+	}
+	
 	public CommentBean createCommentBean(Comment comment)
 	{
 		CommentBean bean = this.createWorkflowBean(CommentBean.class);
@@ -120,6 +128,7 @@ public class WorkflowBeanFactory {
 			bean.setJbpmContext(jbpmContext);
 			bean.setMessageSource(messageSource);
 			bean.setWorkflowBeanFactory(this);
+			bean.setServiceRequestDAO(serviceRequestDAO);
 			return beanType.cast(bean);
 		}
 		catch(Exception ex)

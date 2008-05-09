@@ -3,10 +3,10 @@ package gov.loc.repository.transfer.components.fileexamination;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.Fixity;
-import gov.loc.repository.transfer.components.Component;
+import gov.loc.repository.service.Component;
+import gov.loc.repository.service.annotations.JobType;
+import gov.loc.repository.service.annotations.MapParameter;
 import gov.loc.repository.transfer.components.ModelerAware;
-import gov.loc.repository.transfer.components.annotations.JobType;
-import gov.loc.repository.transfer.components.annotations.MapParameter;
 
 public interface LCManifestGenerator extends Component, ModelerAware {
 	

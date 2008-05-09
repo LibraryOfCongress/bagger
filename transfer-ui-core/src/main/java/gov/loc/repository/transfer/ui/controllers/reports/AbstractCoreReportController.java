@@ -1,8 +1,10 @@
 package gov.loc.repository.transfer.ui.controllers.reports;
 
-import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
+import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
+
+import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 
 public abstract class AbstractCoreReportController extends AbstractReportController {
 
@@ -13,7 +15,8 @@ public abstract class AbstractCoreReportController extends AbstractReportControl
 		return "Core";
 	}
 	
-	@Autowired
+	@Resource(name="readOnlyPackageModelDao")
+	@Required
 	public void setPackageModelDao(PackageModelDAO dao)
 	{
 		this.packageModelDao = dao;

@@ -1,4 +1,8 @@
 package gov.loc.repository.service;
+import gov.loc.repository.service.annotations.JobType;
+import gov.loc.repository.service.annotations.MapParameter;
+import gov.loc.repository.service.annotations.Result;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
@@ -6,11 +10,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import gov.loc.repository.transfer.components.annotations.JobType;
-import gov.loc.repository.transfer.components.annotations.MapParameter;
-import gov.loc.repository.transfer.components.annotations.Result;
-
 
 public class InvokeComponentHelper {
 	

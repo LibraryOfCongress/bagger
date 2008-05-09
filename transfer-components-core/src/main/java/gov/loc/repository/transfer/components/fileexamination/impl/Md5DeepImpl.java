@@ -22,7 +22,7 @@ import gov.loc.repository.transfer.components.fileexamination.LCManifestVerifier
 import gov.loc.repository.utilities.ManifestHelper;
 import gov.loc.repository.utilities.PackageHelper;
 
-@Component("md5deepcomponent")
+@Component("md5DeepComponent")
 @Scope("prototype")
 public class Md5DeepImpl extends BaseComponent implements LCManifestGenerator, LCManifestVerifier {
 

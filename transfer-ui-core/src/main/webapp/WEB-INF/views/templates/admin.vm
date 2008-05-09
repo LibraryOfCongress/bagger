@@ -25,10 +25,18 @@
                 </tr></tfoot>
                 <tbody>
 			        <tr>
-				        <td><a href="${contextPath}/admin/completedjoblistener.html">
-				            <b>Completed Job Listener</b>
+				        <td><a href="${contextPath}/admin/servicerequestbroker.html">
+				            <b>Service Request Broker</b>
 				        </a><p>
-				            Listens for messages from remote services to indicate that jobs are completed.				            
+				            Brokers requests to remote services.				            
+				        </p>
+				        </td>
+				    </tr>					
+			        <tr>
+				        <td><a href="${contextPath}/admin/completedrequestlistener.html">
+				            <b>Completed Service Request Listener</b>
+				        </a><p>
+				            Listens for messages from remote services to indicate that service requests are completed.				            
 				        </p>
 				        </td>
 				    </tr>					

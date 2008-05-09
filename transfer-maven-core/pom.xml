@@ -1,32 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>loc-repository</groupId>
   <artifactId>transfer-maven-core</artifactId>
   <packaging>pom</packaging>
   <name>Transfer Master POM (Core)</name>
   <version>1.5-SNAPSHOT</version>
+  <developers>
+    <developer>
+      <id>justin</id>
+      <name>Justin Littman</name>
+      <email>jlit@loc.gov</email>
+    </developer>
+    <developer>
+      <id>mgia</id>
+      <name>Michael Giarlo</name>
+      <email>mgia@loc.gov</email>
+    </developer>
+    <developer>
+      <id>cthatcher</id>
+      <name>Chris Thatcher</name>
+      <email>christopher.thatcher@comcast.net</email>
+    </developer>
+  </developers>
   <scm>
-        <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-maven-core</connection>
-        <tag>HEAD</tag>
-        <url>https://rdc.lctl.gov/trac/transfer/browser</url>
+    <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-maven-core</connection>
+    <url>https://rdc.lctl.gov/trac/transfer/browser</url>
   </scm>
-  <modules>
-  	<module>../transfer-common-core</module>
-  	<module>../packagemodeler-core</module>
-  	<module>../transfer-components-core</module>
-  	<module>../transfer-services-core</module>
-  	<module>../workflow-processes-core</module>
-  	<module>../transfer-ui-core</module>
-  </modules>  
   <build>
-	<extensions>
-        <extension>
-          <groupId>org.apache.maven.wagon</groupId>
-          <artifactId>wagon-webdav</artifactId>
-          <version>1.0-beta-2</version>
-        </extension>
-      </extensions>  
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+    </extensions>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>hibernate3-maven-plugin</artifactId>
+          <version>2.0-alpha-2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -35,8 +51,7 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-	  <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+      <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
@@ -53,9 +68,8 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>      
+      </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <includes>
@@ -63,120 +77,101 @@
           </includes>
         </configuration>
       </plugin>
-    </plugins>    
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>hibernate3-maven-plugin</artifactId>
-          <version>2.0-alpha-2</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>    
+    </plugins>
   </build>
+  <modules>
+    <module>../transfer-common-core</module>
+    <module>../packagemodeler-core</module>
+    <module>../transfer-services-core</module>
+    <module>../transfer-components-core</module>
+    <module>../workflow-processes-core</module>
+    <module>../transfer-ui-core</module>
+  </modules>
   <repositories>
-	<repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots />
       <id>rdc-snapshots</id>
       <name>RDC snapshots</name>
       <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
+    </repository>
+    <repository>
+      <releases />
       <snapshots>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </snapshots>
-    </repository>    
-    
-	<repository>
       <id>rdc-releases</id>
       <name>RDC releases</name>
       <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
+    </repository>
+    <repository>
+      <releases />
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-    </repository>    
-
-	<repository>
       <id>local-releases</id>
       <name>Local releases</name>
       <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/local-releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
+    </repository>
+    <repository>
+      <releases />
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-    </repository>    
-    
-    <repository>
       <id>proxy-releases</id>
       <name>Proxy releases</name>
       <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
     </repository>
     <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots />
       <id>proxy-snapshots</id>
       <name>Proxy snapshots</name>
       <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
+      <releases />
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
       <id>proxy-releases</id>
       <name>Proxy releases</name>
       <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
     </pluginRepository>
     <pluginRepository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots />
       <id>proxy-snapshots</id>
       <name>Proxy snapshots</name>
       <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>        
-  </pluginRepositories>  
-  
+    </pluginRepository>
+  </pluginRepositories>
   <dependencies>
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-    </dependency>          
+    </dependency>
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
-    </dependency>          
+    </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-    </dependency>      
+    </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <scope>runtime</scope>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -185,6 +180,11 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <dependencyManagement>
@@ -195,26 +195,26 @@
         <version>1.1</version>
         <scope>runtime</scope>
       </dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.1.6</version>
-		</dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>2.1.6</version>
+      </dependency>
       <dependency>
         <groupId>commons-cli</groupId>
         <artifactId>commons-cli</artifactId>
         <version>1.1</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
         <version>1.3</version>
       </dependency>
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.2</version>
-    </dependency>      
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2</version>
+      </dependency>
       <dependency>
         <groupId>commons-configuration</groupId>
         <artifactId>commons-configuration</artifactId>
@@ -225,27 +225,27 @@
             <groupId>xerces</groupId>
           </exclusion>
         </exclusions>
-      </dependency>   
+      </dependency>
       <dependency>
         <groupId>commons-dbcp</groupId>
         <artifactId>commons-dbcp</artifactId>
         <version>1.2.2</version>
-      </dependency>   
+      </dependency>
       <dependency>
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
         <version>1.1</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>1.3.1</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>2.3</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
@@ -255,7 +255,7 @@
         <groupId>commons-pool</groupId>
         <artifactId>commons-pool</artifactId>
         <version>1.3</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>dom4j</groupId>
         <artifactId>dom4j</artifactId>
@@ -265,7 +265,7 @@
         <groupId>hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
         <version>1.8.0.7</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>javax.persistence</groupId>
         <artifactId>persistence-api</artifactId>
@@ -286,7 +286,7 @@
         <groupId>javax.transaction</groupId>
         <artifactId>jta</artifactId>
         <version>1.0.1B</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>jaxen</groupId>
         <artifactId>jaxen</artifactId>
@@ -301,12 +301,12 @@
         <groupId>jbpm</groupId>
         <artifactId>jbpm-identity</artifactId>
         <version>3.2.2</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
         <version>1.4</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -327,12 +327,12 @@
             <groupId>org.apache.activemq</groupId>
           </exclusion>
         </exclusions>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jms_1.1_spec</artifactId>
         <version>1.0</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.tiles</groupId>
         <artifactId>tiles-api</artifactId>
@@ -352,12 +352,12 @@
         <groupId>org.apache.velocity</groupId>
         <artifactId>velocity</artifactId>
         <version>1.5</version>
-      </dependency> 
+      </dependency>
       <dependency>
         <groupId>org.apache.velocity</groupId>
         <artifactId>velocity-tools</artifactId>
         <version>1.3</version>
-      </dependency>        
+      </dependency>
       <dependency>
         <groupId>org.beanshell</groupId>
         <artifactId>bsh</artifactId>
@@ -372,7 +372,7 @@
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-library</artifactId>
         <version>1.0</version>
-      </dependency>	          
+      </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate</artifactId>
@@ -388,11 +388,11 @@
         <artifactId>hibernate-commons-annotations</artifactId>
         <version>3.3.0.ga</version>
       </dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>3.2.1.ga</version>
-		</dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>3.2.1.ga</version>
+      </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
@@ -410,46 +410,51 @@
         <version>2.4.0</version>
         <scope>test</scope>
       </dependency>
-		<dependency>
-			<groupId>org.jvnet.hyperjaxb3</groupId>
-			<artifactId>hyperjaxb3-ejb-runtime</artifactId>
-			<version>0.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.hyperjaxb3</groupId>
-			<artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
-			<version>0.3</version>
-		</dependency>
+      <dependency>
+        <groupId>org.jvnet.hyperjaxb3</groupId>
+        <artifactId>hyperjaxb3-ejb-runtime</artifactId>
+        <version>0.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jvnet.hyperjaxb3</groupId>
+        <artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
+        <version>0.3</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-aop</artifactId>
-        <version>2.5.3</version>        
+        <version>2.5.3</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-beans</artifactId>
-        <version>2.5.3</version>        
+        <version>2.5.3</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context</artifactId>
-        <version>2.5.3</version>        
-      </dependency> 
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jdbc</artifactId>
-        <version>2.5.3</version>        
-      </dependency>      
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jms</artifactId>
-        <version>2.5.3</version>        
-      </dependency>            
+        <version>2.5.3</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-jdbc</artifactId>
         <version>2.5.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jms</artifactId>
+        <version>2.5.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>2.5.3</version>
       </dependency>      
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>spring-test</artifactId>
+	      <version>2.5.3</version>
+	    </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-webmvc</artifactId>
@@ -471,25 +476,25 @@
         <version>2.5.3</version>
       </dependency>
       <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-orm</artifactId>
-       <version>2.5.3</version>
-     </dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>2.5.3</version>
+      </dependency>
       <dependency>
-       <groupId>org.springframework.security</groupId>
-       <artifactId>spring-security-core</artifactId>
-       <version>2.0.0</version>
-     </dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>2.0.0</version>
+      </dependency>
       <dependency>
-       <groupId>org.springframework.security</groupId>
-       <artifactId>spring-security-core-tiger</artifactId>
-       <version>2.0.0</version>
-     </dependency>     
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core-tiger</artifactId>
+        <version>2.0.0</version>
+      </dependency>
       <dependency>
-       <groupId>org.testng</groupId>
-       <artifactId>testng</artifactId>
-       <version>4.7</version>
-     </dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>4.7</version>
+      </dependency>
       <dependency>
         <groupId>postgresql</groupId>
         <artifactId>postgresql</artifactId>
@@ -499,41 +504,22 @@
         <groupId>struts</groupId>
         <artifactId>struts</artifactId>
         <version>1.2.9</version>
-      </dependency>            
+      </dependency>
       <dependency>
         <groupId>taglibs</groupId>
         <artifactId>standard</artifactId>
         <version>1.1.2</version>
-      </dependency>      
+      </dependency>
     </dependencies>
   </dependencyManagement>
-
   <distributionManagement>
     <repository>
       <id>rdc-releases</id>
       <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-releases/</url>
     </repository>
-	<snapshotRepository>
+    <snapshotRepository>
       <id>rdc-snapshots</id>
       <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
-    </snapshotRepository>    
+    </snapshotRepository>
   </distributionManagement>
-  <developers>
-  	<developer>
-  		<id>justin</id>
-  		<name>Justin Littman</name>
-  		<email>jlit@loc.gov</email>
-  	</developer>
-  	<developer>
-  		<id>mgia</id>
-  		<name>Michael Giarlo</name>
-  		<email>mgia@loc.gov</email>
-  	</developer>  
-    <developer>
-        <id>cthatcher</id>
-        <name>Chris Thatcher</name>
-        <email>christopher.thatcher@comcast.net</email>
-    </developer>    
-  </developers>  
 </project>
-

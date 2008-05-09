@@ -1,15 +1,10 @@
 package gov.loc.repository.service;
 
-import gov.loc.repository.utilities.ConfigurationFactory;
-import gov.loc.repository.utilities.ResourceResolver;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
-import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
@@ -82,16 +77,8 @@ public class CommandLineComponentDriver {
 			Object v = variableMap.get(k);
 			System.out.println(MessageFormat.format("{0} = : {1} [{2}]", k, v, v.getClass().getSimpleName()));
 		}
-		
-		List<URL> contextUrlList = ResourceResolver.findWildcardResourceList("conf/services-context-*.xml");
-		List<String> contextLocationList = new ArrayList<String>();
-		for(URL url : contextUrlList)
-		{
-			String contextLocation = url.toString();
-			contextLocationList.add(contextLocation);
-		}
-		
-		ApplicationContext context = new ClassPathXmlApplicationContext(contextLocationList.toArray(new String[0]));
+				
+		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"classpath:conf/servicecontainer-context.xml", "classpath*:conf/components-*-context.xml"});
 		ComponentFactory componentFactory = (ComponentFactory)context.getBean("componentFactory");
 		Object component = componentFactory.getComponent(jobType);
 		InvokeComponentHelper helper = new InvokeComponentHelper(component, jobType, variableMap);

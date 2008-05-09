@@ -213,6 +213,37 @@
 		    				#end
 				    	</ol>
 				    #end
+				    #if (! $tokenBean.serviceRequestList.empty)
+		    			<h5>Service Requests</h5>
+						<table cellspacing="3" cellpadding="7">
+				        	<thead>
+				                <tr>
+			                        <th>Key</th>
+			                        <th>Queue</th>
+			                        <th>JobType</th>
+			                        <th>Variables</th>
+			                        <th>Req. date</th>
+			                        <th>Responder</th>
+			                        <th>Req. ack. date</th>
+			                        <th>Resp. date</th>
+			                        <th>Resp. ack. date</th>
+			                    </tr>
+				            </thead>
+				            #foreach($req in $tokenBean.serviceRequestList)
+					        	<tr>
+									<td>$req.key</td>
+									<td>$req.queue</td>
+									<td>$req.jobType</td>									
+									<td>$req.variableMap</td>
+									<td>${date.format('yyyy-MM-dd hh:mm', $req.requestDate)}</td>
+									<td>$!req.responder</td>
+									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestAcknowledgedDate)}</td>
+									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.responseDate)}</td>
+									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.responseAcknowledgedDate)}</td>
+					        	</tr>
+				        	#end
+					    </table>
+					#end		    			
 	        	</fieldset>	        	
         	</div>
         #end

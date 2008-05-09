@@ -22,7 +22,26 @@
           </descriptors>
         </configuration>
       </plugin>  	
-  	</plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>hibernate3-maven-plugin</artifactId>
+        <configuration>
+          <components>
+            <component>
+              <name>hbm2ddl</name>
+              <implementation>annotationconfiguration</implementation>
+              <outputDirectory>target/scripts</outputDirectory>
+            </component>
+          </components>
+          <componentProperties>
+            <configurationfile>src/main/resources/conf/servicerequestbroker.hibernate.cfg.xml</configurationfile>
+            <propertyfile>src/main/scripts/postgresql.servicerequestbroker.hibernate.properties</propertyfile>
+            <outputfilename>postgresql.servicerequestbroker.script.sql</outputfilename>
+            <export>false</export>
+          </componentProperties>
+        </configuration>
+      </plugin>
+  	</plugins>  	
   </build>
   <dependencies>
   	<dependency>
@@ -35,27 +54,30 @@
   		<artifactId>packagemodeler-core</artifactId>
   		<version>${pom.version}</version>
   	</dependency>
-  	<dependency>
-  		<groupId>loc-repository</groupId>
-  		<artifactId>transfer-components-core</artifactId>
-  		<version>${pom.version}</version>
-  	</dependency>
     <dependency>
       <groupId>classworlds</groupId>
       <artifactId>classworlds</artifactId>
-    </dependency>      
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+    </dependency>          
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-jms</artifactId>
+      <artifactId>spring-jdbc</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-core</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
     </dependency>
+	<dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+    </dependency>                  
     <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>

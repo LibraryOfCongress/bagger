@@ -1,5 +1,7 @@
 package gov.loc.repository.transfer.ui.model;
 
+import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -13,6 +15,7 @@ public abstract class AbstractWorkflowBean {
 	WorkflowBeanFactory factory;
 	private Locale locale = new Locale("en", "US");
 	private MessageSource messageSource;
+	ServiceRequestDAO serviceRequestDAO;
 		
 	static final Log log = LogFactory.getLog(AbstractWorkflowBean.class);	
 	
@@ -48,6 +51,11 @@ public abstract class AbstractWorkflowBean {
 		String result = messageSource.getMessage(code.replaceAll(" ", "_"), null, defaultMessage, this.locale);
 		log.debug(MessageFormat.format("Lookup code {0} returned {1}", code, result));
 		return result;
+	}
+	
+	public void setServiceRequestDAO(ServiceRequestDAO dao)
+	{
+		this.serviceRequestDAO = dao;
 	}
 	
 }

@@ -1,8 +1,8 @@
 package gov.loc.repository.transfer.components.test;
 
-import gov.loc.repository.transfer.components.Component;
-import gov.loc.repository.transfer.components.annotations.JobType;
-import gov.loc.repository.transfer.components.annotations.MapParameter;
+import gov.loc.repository.service.Component;
+import gov.loc.repository.service.annotations.JobType;
+import gov.loc.repository.service.annotations.MapParameter;
 
 public interface TestComponent extends Component {
 

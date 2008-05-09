@@ -123,7 +123,7 @@ public abstract class AbstractProcessDefinitionTest {
 		
 	}
 	
-	protected Configuration getConfiguration() throws Exception
+	protected static Configuration getConfiguration() throws Exception
 	{
 		return ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
 	}

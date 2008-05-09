@@ -7,15 +7,11 @@ import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
-
-import java.util.Map;
-import java.util.HashMap;
 
 public class SimpleContinuationControllerTest extends AbstractProcessDefinitionTest
 {
@@ -36,10 +32,7 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 	      "      </action>" +
 	      "  </exception-handler>" +	      	      
 	      "</process-definition>";
-	Map<String,String> optionalVariableMap = new HashMap<String,String>();
-	Map<String,String> requiredVariableMap = new HashMap<String,String>();
 	long tokenInstanceId;
-	Map<String,String> variableMap = new HashMap<String,String>();
 	SimpleContinuationController controller;
 	
 	@Before
@@ -58,11 +51,7 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 		{
 			jbpmContext.close();
 		}
-		
-		this.optionalVariableMap.clear();
-		this.requiredVariableMap.clear();
-		this.variableMap.clear();
-		
+				
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -85,36 +74,19 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 		}
 
 		controller = new SimpleContinuationControllerImpl();			
-		controller.setRequiredParameters(this.requiredVariableMap);
-		controller.setOptionalParameters(this.optionalVariableMap);
 
-	}
-
-	@After
-	public void tearDown() throws Exception {
 	}
 
 	@Test
-	public void testInvokeDefault() throws Exception {
+	public void testInvokeSuccess() throws Exception {
 		
-		this.requiredVariableMap.put("p1", "v1");
-		this.requiredVariableMap.put("p2","v2");
-		this.optionalVariableMap.put("p3","v3");
-		this.variableMap.put("p1", "b");
-		this.variableMap.put("p2", "c");
-		this.variableMap.put("p3", "d");
-		this.variableMap.put("p4", "e");
-		controller.invoke(tokenInstanceId, true, this.variableMap);
+		controller.invoke(tokenInstanceId, true);
 		
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
 			Token token = jbpmContext.getToken(this.tokenInstanceId);
 			assertEquals("end1", token.getNode().getName());
-			assertEquals("b", token.getProcessInstance().getContextInstance().getVariable("v1"));
-			assertEquals("c", token.getProcessInstance().getContextInstance().getVariable("v2"));
-			assertEquals("d", token.getProcessInstance().getContextInstance().getVariable("v3"));
-			assertFalse(token.getProcessInstance().getContextInstance().hasVariable("v4"));
 		}
 		finally
 		{
@@ -125,17 +97,9 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 
     
 	@Test
-	public void testInvokeFailureWithoutTransition() throws Exception {
+	public void testInvokeFailure() throws Exception {
 		
-		this.requiredVariableMap.put("p1", "v1");
-		this.requiredVariableMap.put("p2","v2");
-		this.optionalVariableMap.put("p3","v3");
-		this.variableMap.put("p1", "b");
-		this.variableMap.put("p2", "c");
-		this.variableMap.put("p3", "d");
-		this.variableMap.put("p4", "e");
-		controller.setFailureTransition(null);
-		controller.invoke(tokenInstanceId, false, this.variableMap);
+		controller.invoke(tokenInstanceId, false);
 		
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -154,13 +118,6 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 	@Test
 	public void testInvokeError() throws Exception {
 		
-		this.requiredVariableMap.put("p1", "v1");
-		this.requiredVariableMap.put("p2","v2");
-		this.optionalVariableMap.put("p3","v3");
-		this.variableMap.put("p1", "b");
-		this.variableMap.put("p2", "c");
-		this.variableMap.put("p3", "d");
-		this.variableMap.put("p4", "e");
 		controller.invoke(tokenInstanceId, "foo", "It's all fooed up");
 		
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
@@ -176,85 +133,5 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 		}
 		
 	}
-    
-	
-	//Failure
-	@Test
-	public void testInvokeFailureWithTransition() throws Exception {
-		
-		this.requiredVariableMap.put("p1", "v1");
-		this.requiredVariableMap.put("p2","v2");
-		this.optionalVariableMap.put("p3","v3");
-		this.variableMap.put("p1", "b");
-		this.variableMap.put("p2", "c");
-		this.variableMap.put("p3", "d");
-		this.variableMap.put("p4", "e");
-		controller.setFailureTransition("troubleshoot");
-		controller.invoke(tokenInstanceId, false, this.variableMap);
-		
-		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
-		try
-		{
-			Token token = jbpmContext.getToken(this.tokenInstanceId);
-			assertEquals("end2", token.getNode().getName());
-		}
-		finally
-		{
-			jbpmContext.close();
-		}
-		
-	}
-	
-	//Missing required variable
-	@Test(expected=Exception.class)
-	public void testInvokeMissingVariable() throws Exception{
-		
-		this.requiredVariableMap.put("p1", "v1");
-		this.requiredVariableMap.put("p2","v2");
-		this.optionalVariableMap.put("p3","v3");
-		//this.variableMap.put("p1", "b");
-		this.variableMap.put("p2", "c");
-		this.variableMap.put("p3", "d");
-		this.variableMap.put("p4", "e");
-		controller.invoke(tokenInstanceId, true, this.variableMap);
-		
-		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
-		try
-		{
-			Token token = jbpmContext.getToken(this.tokenInstanceId);
-			assertEquals("remote", token.getNode().getName());
-		}
-		finally
-		{
-			jbpmContext.close();
-		}
-		
-	}
-	
-	//TokenInstanceId not valid
-	@Test(expected=Exception.class)
-	public void testInvokeMissingTokenInstanceId() throws Exception {
-		
-		this.requiredVariableMap.put("p1", "v1");
-		this.requiredVariableMap.put("p2","v2");
-		this.optionalVariableMap.put("p3","v3");
-		this.variableMap.put("p1", "b");
-		this.variableMap.put("p2", "c");
-		this.variableMap.put("p3", "d");
-		this.variableMap.put("p4", "e");
-		controller.invoke(123456, true, this.variableMap);
-		
-		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
-		try
-		{
-			Token token = jbpmContext.getToken(this.tokenInstanceId);
-			assertEquals("remote", token.getNode().getName());
-		}
-		finally
-		{
-			jbpmContext.close();
-		}
-		
-	}
-	
+   	
 }

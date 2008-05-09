@@ -1,10 +1,9 @@
 package gov.loc.repository.service;
 
+import gov.loc.repository.component.TestComponent;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import gov.loc.repository.transfer.components.test.TestComponent;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;

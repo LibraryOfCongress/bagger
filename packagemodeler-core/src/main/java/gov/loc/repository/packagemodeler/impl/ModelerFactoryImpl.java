@@ -42,7 +42,7 @@ import gov.loc.repository.utilities.FilenameHelper;
 import gov.loc.repository.utilities.ManifestReader;
 import gov.loc.repository.utilities.ManifestReader.FileFixity;
 
-@Component("modelerfactory")
+@Component("modelerFactory")
 public class ModelerFactoryImpl implements ModelerFactory {
 
 	private static final Log log = LogFactory.getLog(ModelerFactoryImpl.class);

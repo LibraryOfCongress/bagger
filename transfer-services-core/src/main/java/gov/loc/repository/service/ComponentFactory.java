@@ -1,30 +1,41 @@
 package gov.loc.repository.service;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 @Component("componentFactory")
-public class ComponentFactory implements ApplicationContextAware, InitializingBean {
+public class ComponentFactory {
 
 	private ApplicationContext context;
 	private Map<String, String> jobTypeMap = new HashMap<String, String>();
 	
-	
-	public void setApplicationContext(ApplicationContext context)
-			throws BeansException {
+	@Autowired
+	public ComponentFactory(ApplicationContext context) {
 		this.context = context;
 	}
-
-	public void afterPropertiesSet() throws Exception {
-		this.jobTypeMap = JobTypeHelper.getJobTypeToBeanIdMap(this.context);		
+	
+	@PostConstruct
+	public void init() throws Exception {
+		this.jobTypeMap = JobTypeHelper.getJobTypeToBeanIdMap(this.context);
 	}
-		
+
+	public Collection<String> getJobTypes()
+	{
+		return this.jobTypeMap.keySet();
+	}
+	
+	public boolean handlesJobType(String jobType)
+	{
+		return this.jobTypeMap.containsKey(jobType);
+	}
+	
 	public Object getComponent(String jobType) throws Exception
 	{
 		//Let's make sure we can handle that jobType

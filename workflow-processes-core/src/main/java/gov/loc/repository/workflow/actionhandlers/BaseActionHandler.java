@@ -42,7 +42,7 @@ public abstract class BaseActionHandler implements ActionHandler
 	protected PackageModelDAO dao;
 	protected ModelerFactory factory;
 	protected ExecutionContext executionContext;
-	protected String actionHandlerConfiguration;
+	protected String actionHandlerConfiguration;		
 	
 	public BaseActionHandler(String actionHandlerConfiguration) {
 		this.actionHandlerConfiguration = actionHandlerConfiguration;
@@ -194,7 +194,7 @@ public abstract class BaseActionHandler implements ActionHandler
 		{
 			String queueName = this.getConfiguration().getString(queueNameKey);
 			log.debug(MessageFormat.format("Configuration key {0} has value {1}", queueNameKey, queueName));
-			return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, new JmsInvocationHandler(queueName, tokenId));
+			return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, new ServiceInvocationHandler(queueName, tokenId));
 		}
 		else
 		{

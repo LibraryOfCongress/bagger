@@ -1,5 +1,7 @@
 package gov.loc.repository.transfer.ui.model;
 
+import gov.loc.repository.serviceBroker.ServiceRequest;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +10,7 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
 import org.jbpm.logging.log.ProcessLog;
 import org.jbpm.taskmgmt.exe.TaskInstance;
+import org.springframework.web.context.request.RequestScope;
 
 public class TokenBean extends AbstractWorkflowBean {
 	
@@ -111,6 +114,11 @@ public class TokenBean extends AbstractWorkflowBean {
 		this.token.setNode(nodeBean.getNode());
 		this.token.getProcessInstance().resume();
 		nodeBean.getNode().enter(new ExecutionContext(this.token));
+	}
+	
+	public List<ServiceRequest> getServiceRequestList()
+	{
+		return this.serviceRequestDAO.findServiceRequests(this.getId());
 	}
 	
 }

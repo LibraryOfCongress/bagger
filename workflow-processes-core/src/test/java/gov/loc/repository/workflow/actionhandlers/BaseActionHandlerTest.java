@@ -56,19 +56,19 @@ public class BaseActionHandlerTest {
 	}
 
 	@Test(expected=Exception.class)
-	public void testCreateBadJmsProxyObject() throws Exception {
+	public void testCreateBadProxyObject() throws Exception {
 		//FileFilter is just a random interface, but does not implement Component
 		configuration.addProperty("none.FileFilter.queue", "testqueue");
 		FileFilter fileFilter = actionHandler.createObject(FileFilter.class);
-		assertTrue(Proxy.getInvocationHandler(fileFilter) instanceof JmsInvocationHandler);
+		assertTrue(Proxy.getInvocationHandler(fileFilter) instanceof ServiceInvocationHandler);
 		fileFilter.accept(null);
 	}
 
 	@Test
-	public void testCreateJmsProxyObject() throws Exception {
+	public void testCreateProxyObject() throws Exception {
 		configuration.addProperty("none.TestComponent.queue", "testqueue");
 		TestComponent testComponent = actionHandler.createObject(TestComponent.class);
-		assertTrue(Proxy.getInvocationHandler(testComponent) instanceof JmsInvocationHandler);
+		assertTrue(Proxy.getInvocationHandler(testComponent) instanceof ServiceInvocationHandler);
 		//testComponent.test("foo", true);
 	}
 	

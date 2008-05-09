@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component("fixityhelper")
+@Component("fixityHelper")
 @Scope("prototype")
 public class JavaSecurityFixityHelper implements FixityHelper {
 
