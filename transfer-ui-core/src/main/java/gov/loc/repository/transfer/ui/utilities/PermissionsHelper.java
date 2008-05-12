@@ -14,7 +14,7 @@ public class PermissionsHelper {
 	public boolean canAddComment() {
 		return isLoggedIn();
 	}
-	public boolean canAdministerJobListener() {
+	public boolean canAdministerServiceRequestListener() {
 		return isAdministrator();
 	}
 	

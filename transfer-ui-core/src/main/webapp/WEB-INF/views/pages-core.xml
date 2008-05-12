@@ -50,9 +50,9 @@
 		<put name="content"         value="admin.vm" />
 	</definition>
 
-	<definition name="completedjoblistener" extends="base">
-		<put name="title"           value="Admin Completed Job Listener" />
-		<put name="content"         value="completedjoblistener.vm" />
+	<definition name="completedrequestlistener" extends="base">
+		<put name="title"           value="Admin Completed Request Listener" />
+		<put name="content"         value="completedrequestlistener.vm" />
 	</definition>
 
 	<definition name="servicerequestbroker" extends="base">

@@ -43,7 +43,7 @@ public class CompletedServiceRequestListenerController
 	public ModelAndView handleGet(HttpServletRequest req) throws Exception {
 		PermissionsHelper permissions = new PermissionsHelper(req);
 		
-		ModelAndView mav = new ModelAndView("completedjoblistener");
+		ModelAndView mav = new ModelAndView("completedrequestlistener");
 		mav.addObject("listener", this.listener);
 		mav.addObject("permissions", permissions);
 		return mav;		
@@ -55,17 +55,17 @@ public class CompletedServiceRequestListenerController
 		{
 			if (req.getParameter("start") != null && this.listener.getState() == State.STOPPED) {
 				this.listener.start();
-				req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Started Job Listener");
+				req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Started Service Request Listener");
 			}
 			else if (req.getParameter("stop") != null && this.listener.getState() == State.STARTED) {
 				this.listener.stop();
-				req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Stopped Job Listener");
+				req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Stopped Service Request Listener");
 			}
 		}
 		catch(Exception ex)
 		{
 			log.error("Error thrown starting/stop CompletedServiceRequestListener", ex);
-			req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Unable to start/stop Job Listener");
+			req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Unable to start/stop Service Request Listener");
 		}
 		return this.handleGet(req);
 	}
