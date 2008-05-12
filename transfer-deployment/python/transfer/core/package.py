@@ -2,11 +2,11 @@ import os
 from transfer import utils
 
 class PackageModeler():
-    def __init__(self, settings):
-        db_prefix = settings.DB_PREFIX + "_" if settings.DB_PREFIX else ""
-        role_prefix = settings.ROLE_PREFIX + "_" if settings.ROLE_PREFIX else ""
-        self.transfer_reader_passwd = settings.TRANSFER_READER_PASSWD
-        self.transfer_writer_passwd = settings.TRANSFER_WRITER_PASSWD
+    def __init__(self, config):
+        db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ""
+        role_prefix = config['ROLE_PREFIX'] + "_" if config['ROLE_PREFIX'] else ""
+        self.transfer_reader_passwd = config['TRANSFER_READER_PASSWD']
+        self.transfer_writer_passwd = config['TRANSFER_WRITER_PASSWD']
         self.project_name = "packagemodeler-core"
         self.sql_file = "files/inventory-core.sql"
         self.db_name = db_prefix + "package_modeler"
@@ -16,11 +16,11 @@ class PackageModeler():
         self.transfer_writer = role_prefix + "transfer_data_writer_role"
         self.owner_privs = "NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE"
         self.user_privs = "NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE LOGIN"
-        self.psql = settings.PSQL
-        os.environ['PGUSER'] = settings.PGUSER
-        os.environ['PGHOST'] = settings.PGHOST
-        os.environ['PGPORT'] = settings.PGPORT
-        os.environ['PGPASSWORD'] = settings.PGPASSWORD
+        self.psql = config['PSQL']
+        os.environ['PGUSER'] = config['PGUSER']
+        os.environ['PGHOST'] = config['PGHOST']
+        os.environ['PGPORT'] = config['PGPORT']
+        os.environ['PGPASSWORD'] = config['PGPASSWORD']
 
     def create_database(self):
         """ create package modeler database """
