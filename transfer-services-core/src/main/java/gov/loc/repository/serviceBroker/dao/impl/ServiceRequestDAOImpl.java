@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import gov.loc.repository.serviceBroker.ServiceContainerRegistration;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 import gov.loc.repository.serviceBroker.impl.ServiceRequestImpl;
@@ -125,5 +126,27 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	@Transactional(readOnly=true)
 	public ServiceRequest findServiceRequest(Long key) {
 		return (ServiceRequest)this.sessionFactory.getCurrentSession().get(ServiceRequestImpl.class, key);
+	}
+	
+	@Override
+	@Transactional
+	public void delete(ServiceContainerRegistration registration) {
+		this.sessionFactory.getCurrentSession().delete(registration);
+		
+	}
+	
+	@Override
+	@Transactional
+	public void save(ServiceContainerRegistration registration) {
+		this.sessionFactory.getCurrentSession().saveOrUpdate(registration);		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional(readOnly=true)
+	public List<ServiceContainerRegistration> findServiceContainerRegistrations() {
+		String queryString = "from ServiceContainerRegistration";
+		Query query = this.sessionFactory.getCurrentSession().createQuery(queryString);
+		return query.list();
 	}
 }

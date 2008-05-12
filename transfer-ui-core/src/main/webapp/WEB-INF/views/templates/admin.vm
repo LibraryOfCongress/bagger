@@ -40,6 +40,14 @@
 				        </p>
 				        </td>
 				    </tr>					
+			        <tr>
+				        <td><a href="${contextPath}/admin/servicecontainer.html">
+				            <b>Remote service containers</b>
+				        </a><p>
+				            Check the status of and administer remote service containers.				            
+				        </p>
+				        </td>
+				    </tr>					
 			    </tbody>
 		    </table>
 		</fieldset>

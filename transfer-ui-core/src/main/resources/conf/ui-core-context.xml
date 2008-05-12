@@ -125,4 +125,5 @@
     <property name="suffix"                   value="" />
     <property name="viewClass"                value="gov.loc.repository.transfer.ui.springframework.VelocityTilesView" />
   </bean>
+  
 </beans>

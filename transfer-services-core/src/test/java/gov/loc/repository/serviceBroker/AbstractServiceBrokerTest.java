@@ -22,6 +22,8 @@ public abstract class AbstractServiceBrokerTest {
 	protected static final String QUEUE_2 = "specific_service_queue";
 	protected static final String JOBTYPE_1 = "test_job1";
 	protected static final String JOBTYPE_2 = "test_job2";
+	protected static final String REGISTRATION_1 = "reg1";
+	protected static final String REGISTRATION_2 =  "reg2";
 
 	protected ServiceBrokerFactory serviveBrokerFactory = new ServiceBrokerFactory();
 
@@ -45,6 +47,7 @@ public abstract class AbstractServiceBrokerTest {
 						session.createSQLQuery("delete from boolean_map").executeUpdate();
 						session.createSQLQuery("delete from integer_map").executeUpdate();
 						session.createSQLQuery("delete from service_request").executeUpdate();
+						session.createSQLQuery("delete from service_container_registry").executeUpdate();
 						return null;
 					};
 				}

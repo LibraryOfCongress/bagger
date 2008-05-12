@@ -10,12 +10,11 @@ import gov.loc.repository.transfer.components.test.TestComponent;
 public class TestComponentImpl implements TestComponent {
 
 	private static final Log log = LogFactory.getLog(TestComponentImpl.class);	
-	private static final long WAIT = 1000;
 	
 	public void test(String message, boolean istrue, long key) throws Exception {
 		log.info("Test Component called with message: " + message);
 		log.debug("Starting wait");
-		Thread.sleep(WAIT);
+		Thread.sleep(key);
 		log.debug("Done waiting");
 	}
 

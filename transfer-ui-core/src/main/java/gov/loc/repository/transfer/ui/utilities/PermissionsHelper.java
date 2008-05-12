@@ -17,6 +17,11 @@ public class PermissionsHelper {
 	public boolean canAdministerJobListener() {
 		return isAdministrator();
 	}
+	
+	public boolean canAdministerServiceContainer() {
+		return isAdministrator();
+	}
+	
 	public boolean canStartProcess() {
 		return isLoggedIn();
 	}

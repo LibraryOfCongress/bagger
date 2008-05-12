@@ -6,22 +6,21 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>transfer-services-core</artifactId>
-  <packaging>jar</packaging>
   <name>Transfer Services Container (Core)</name>
   <scm>
     <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-services-core</connection>
     <url>https://rdc.lctl.gov/trac/transfer/browser</url>
   </scm>
   <build>
-  	<plugins>
-		<plugin>
+    <plugins>
+      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptors>
             <descriptor>src/assembly/bin.xml</descriptor>
           </descriptors>
         </configuration>
-      </plugin>  	
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>hibernate3-maven-plugin</artifactId>
@@ -41,19 +40,19 @@
           </componentProperties>
         </configuration>
       </plugin>
-  	</plugins>  	
+    </plugins>
   </build>
   <dependencies>
-  	<dependency>
-  		<groupId>loc-repository</groupId>
-  		<artifactId>transfer-common-core</artifactId>
-  		<version>${pom.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>loc-repository</groupId>
-  		<artifactId>packagemodeler-core</artifactId>
-  		<version>${pom.version}</version>
-  	</dependency>
+    <dependency>
+      <groupId>loc-repository</groupId>
+      <artifactId>transfer-common-core</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>loc-repository</groupId>
+      <artifactId>packagemodeler-core</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
     <dependency>
       <groupId>classworlds</groupId>
       <artifactId>classworlds</artifactId>
@@ -61,7 +60,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-    </dependency>          
+    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
@@ -74,10 +73,10 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
     </dependency>
-	<dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-tx</artifactId>
-    </dependency>                  
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+    </dependency>
     <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
@@ -86,19 +85,44 @@
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock-junit4</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.caucho</groupId>
+      <artifactId>hessian</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>mx4j</groupId>
+      <artifactId>mx4j-remote</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>mx4j</groupId>
+      <artifactId>mx4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>mx4j</groupId>
+      <artifactId>mx4j-tools</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jetty</groupId>
+      <artifactId>org.mortbay.jetty</artifactId>
+    </dependency>
       <dependency>
-        <groupId>org.jmock</groupId>
-        <artifactId>jmock</artifactId>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+		<scope>runtime</scope>        
       </dependency>
-      <dependency>
-        <groupId>org.jmock</groupId>
-        <artifactId>jmock-junit4</artifactId>
-      </dependency>
-      <dependency>
-	      <groupId>hsqldb</groupId>
-	      <artifactId>hsqldb</artifactId>
-	      <scope>test</scope>
-	  </dependency>    
-          
+    
   </dependencies>
 </project>

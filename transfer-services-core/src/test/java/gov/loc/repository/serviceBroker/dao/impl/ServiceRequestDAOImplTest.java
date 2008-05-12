@@ -1,6 +1,7 @@
 package gov.loc.repository.serviceBroker.dao.impl;
 
 import gov.loc.repository.serviceBroker.AbstractServiceBrokerTest;
+import gov.loc.repository.serviceBroker.ServiceContainerRegistration;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 
@@ -123,5 +124,26 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 		assertNotNull(req.getKey());
 		assertNotNull(broker.findServiceRequest(req.getKey()));
 
+	}
+	
+	@Test
+	public void testRegistration()
+	{
+		assertTrue(broker.findServiceContainerRegistrations().isEmpty());
+		ServiceContainerRegistration registration = this.serviveBrokerFactory.createServiceContainerRegistration(REGISTRATION_1); 
+		broker.save(registration);
+		assertEquals(1, broker.findServiceContainerRegistrations().size());
+		assertEquals(REGISTRATION_1, broker.findServiceContainerRegistrations().get(0).getServiceUrl());
+		//Make sure can save twice without throwing error
+		broker.save(this.serviveBrokerFactory.createServiceContainerRegistration(REGISTRATION_1));
+		
+		broker.save(this.serviveBrokerFactory.createServiceContainerRegistration(REGISTRATION_2));
+		assertEquals(2, broker.findServiceContainerRegistrations().size());
+		
+		broker.delete(registration);
+		assertEquals(1, broker.findServiceContainerRegistrations().size());
+		
+		//Make sure can delete twice without throwing error		
+		broker.delete(registration);				
 	}
 }

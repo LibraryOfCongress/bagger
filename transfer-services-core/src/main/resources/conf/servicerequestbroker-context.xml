@@ -20,6 +20,7 @@
 		<property name="annotatedClasses">
 			<list>
 				<value>gov.loc.repository.serviceBroker.impl.ServiceRequestImpl</value>
+				<value>gov.loc.repository.serviceBroker.impl.ServiceContainerRegistrationImpl</value>
 			</list>
 		</property>
 		<!-- Still needs a datasource and hibernate properties (hibernate.dialect) -->

@@ -1,12 +1,13 @@
 package gov.loc.repository.service;
 
+import java.text.MessageFormat;
+
 import gov.loc.repository.service.ServiceContainer.State;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ServiceContainerDriver {
-
 
 	public static void main(String[] args) throws Exception {
 		
@@ -27,16 +28,15 @@ public class ServiceContainerDriver {
 			System.out.println(jobType);
 		}
 		
-		System.out.println("Starting");
 		container.start();
 				
 		ServiceContainerDriver driver = new ServiceContainerDriver();
 		ShutdownHook shutdownHook = driver.new ShutdownHook(container);
         Runtime.getRuntime().addShutdownHook(shutdownHook);
         
-        while(container.getState() != State.STOPPED)
+        while(container.getState() != State.SHUTDOWN)
         {
-        	System.out.println("Running.");
+        	System.out.println(MessageFormat.format("{0} ({1} active requests)", container.getState(), container.getActiveServiceRequestCount()));
         	Thread.sleep(5000);
         }
 	}
@@ -49,8 +49,9 @@ public class ServiceContainerDriver {
 		}
 		
 	    public void run() {
-	        System.out.println("Stopping");
-	        container.stop();
+	        System.out.println("Shutting down");
+	        container.shutdown();
+	        
 	    }
 	}
 }

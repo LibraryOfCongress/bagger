@@ -2,6 +2,7 @@ package gov.loc.repository.serviceBroker.dao;
 
 import java.util.List;
 
+import gov.loc.repository.serviceBroker.ServiceContainerRegistration;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 
 public interface ServiceRequestDAO {
@@ -19,4 +20,10 @@ public interface ServiceRequestDAO {
 	public List<ServiceRequest> findServiceRequests(String correlationKey);
 	
 	public ServiceRequest findServiceRequest(Long key);
+	
+	public void save(ServiceContainerRegistration registration);
+	
+	public void delete(ServiceContainerRegistration registration);
+	
+	public List<ServiceContainerRegistration> findServiceContainerRegistrations();
 }

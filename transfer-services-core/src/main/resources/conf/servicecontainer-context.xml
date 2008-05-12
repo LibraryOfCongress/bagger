@@ -8,7 +8,8 @@
            http://www.springframework.org/schema/tx
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd                      
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+       default-lazy-init="false">
 
 	<import resource="servicerequestbroker-context.xml" />
 	
@@ -24,15 +25,36 @@
 		</constructor-arg>
 		<constructor-arg ref="respondingServiceBroker" />
 		<constructor-arg ref="componentFactory" />
-		<constructor-arg value="$s{responder}" />
+		<constructor-arg value="$s{host}" />
 		<constructor-arg value="$s{queues}" />
 		<constructor-arg value="$s{jobtypes}" />
+		<constructor-arg ref="serviceUrl" />
+		<constructor-arg ref="serviceContainerRegistry" />
 	</bean>
 	
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:conf/servicecontainer.properties" />
 		<property name="placeholderPrefix" value="$s{" />
 		<property name="placeholderSuffix" value="}" />
+		<property name="properties">
+			<value>
+				port=9874
+			</value>
+		</property>
 	</bean>
+
+	<context:mbean-server />
+ 	
+ 	<bean id="serviceUrl" class="java.lang.String">
+ 		<constructor-arg value="service:jmx:hessian://$s{host}:$s{port}/" />
+ 	</bean>
+ 	 
+	<context:mbean-export server="mbeanServer"/>
+
+	<bean id="serverConnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
+  		<property name="objectName" value="connector:name=hessian"/>
+  		<property name="serviceUrl" ref="serviceUrl"/>
+  		<property name="server" ref="mbeanServer" />  		     
+  	</bean>
 		
 </beans>

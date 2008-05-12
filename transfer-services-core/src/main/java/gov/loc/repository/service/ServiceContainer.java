@@ -6,21 +6,24 @@ import javax.annotation.PostConstruct;
 
 import gov.loc.repository.exceptions.ConfigurationException;
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
+import gov.loc.repository.serviceBroker.ServiceContainerRegistry;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 @Component("serviceContainer")
+@ManagedResource(objectName="bean:name=serviceContainer")
 public class ServiceContainer implements Runnable {
 	
-	public enum State {STARTING, STARTED, STOPPING, STOPPED};
+	public enum State {STARTING, STARTED, STOPPING, STOPPED, SHUTTINGDOWN, SHUTDOWN};
 	
 	private static final Log log = LogFactory.getLog(ServiceContainer.class);
 
@@ -32,8 +35,10 @@ public class ServiceContainer implements Runnable {
 	private State state = State.STOPPED;
 	private RespondingServiceBroker broker;
 	private String responder;
+	private String serviceUrl;
+	private ServiceContainerRegistry registry;
 	
-	public ServiceContainer(ThreadPoolTaskExecutor executor, RespondingServiceBroker broker, ComponentFactory factory, String responder, String[] queues, String[] jobTypes) {
+	public ServiceContainer(ThreadPoolTaskExecutor executor, RespondingServiceBroker broker, ComponentFactory factory, String responder, String[] queues, String[] jobTypes, String serviceUrl, ServiceContainerRegistry registry) {
 		this.factory = factory;
 		this.executor = executor;
 		this.executor.setWaitForTasksToCompleteOnShutdown(true);
@@ -41,6 +46,8 @@ public class ServiceContainer implements Runnable {
 		this.responder = responder;
 		this.queues = queues;
 		this.jobTypes = jobTypes;
+		this.serviceUrl = serviceUrl;
+		this.registry = registry;
 	}
 	
 	public void setWait(Long wait)
@@ -48,20 +55,28 @@ public class ServiceContainer implements Runnable {
 		this.wait = wait;
 	}
 	
+	@ManagedAttribute
 	public String[] getJobTypes()
 	{
 		return this.jobTypes;
 	}
 	
-	
+	@ManagedAttribute
 	public String[] getQueues()
 	{
 		return this.queues;
 	}
-		
+	
+	@ManagedAttribute
 	public String getResponder()
 	{
 		return this.responder;
+	}
+
+	@ManagedAttribute
+	public Integer getActiveServiceRequestCount()
+	{
+		return this.executor.getActiveCount();
 	}
 	
 	@PostConstruct
@@ -102,43 +117,69 @@ public class ServiceContainer implements Runnable {
 		this.broker.reportErrorsForAcknowledgedServiceRequestsWithoutResponses();
 	}
 
+	public void shutdown()
+	{
+		log.debug("Shutting down");		
+		this.state = State.SHUTTINGDOWN;
+	}
+	
 	public void run()
 	{
 		this.state = State.STARTED;
 		log.debug("Starting");
-		while(this.state == State.STARTED)
+		while(this.state != State.SHUTDOWN)
 		{
-			try
+			if (this.state == State.STARTED || this.state == State.STOPPED)
 			{
-				ServiceRequest req = this.getNextServiceRequest();
-				while(req != null)
-				{
-					this.executor.execute(new ServiceRunnable(req, this.broker, this.factory));
-					req = this.getNextServiceRequest();
-				}
+				//Register
+				this.registry.register(serviceUrl);				
+			}
+			if (this.state == State.STARTED)
+			{
 				try
-				{
-					log.debug("Sleeping");
-					Thread.sleep(this.wait);
-					log.debug("Done sleeping");
+				{				
+					ServiceRequest req = this.getNextServiceRequest();
+					while(req != null)
+					{					
+						this.executor.execute(new ServiceRunnable(req, this.broker, this.factory));					
+						req = this.getNextServiceRequest();
+					}
+					try
+					{
+						log.debug("Sleeping");
+						Thread.sleep(this.wait);
+						log.debug("Done sleeping");
+					}
+					catch(InterruptedException ex)
+					{
+						log.warn("Thread sleeping interrupted", ex);
+					}
 				}
-				catch(InterruptedException ex)
+				catch(Exception ex)
 				{
-					log.warn("Thread sleeping interrupted", ex);
+					log.error(ex);
+					this.stop();
 				}
 			}
-			catch(Exception ex)
+			else if (this.state == State.STOPPING || this.state == State.SHUTTINGDOWN)
 			{
-				log.error(ex);
-				this.stop();
+				this.executor.shutdown();
+				
+				log.debug("Stopped");
+				if (this.state == State.STOPPING)
+				{
+					this.state = State.STOPPED;
+				}
+				else
+				{
+					this.registry.unregister(serviceUrl);
+					this.state = State.SHUTTINGDOWN;
+				}
 			}
 		}
-		this.executor.shutdown();
-		log.debug("Stopped");
-		this.state = State.STOPPED;
-		
 	}
 	
+	@ManagedOperation
 	public void start()
 	{
 		if (this.state == State.STOPPED)
@@ -166,18 +207,25 @@ public class ServiceContainer implements Runnable {
 	{
 		return this.executor.getActiveCount() < this.executor.getMaxPoolSize();
 	}
-	
+		
 	public State getState()
 	{
 		return this.state;
 	}
 	
+	@ManagedAttribute
+	public String getStateString()
+	{
+		return this.state.toString();
+	}
+	
+	@ManagedOperation
 	public void stop()
 	{
 		log.debug("Stopping");		
 		this.state = State.STOPPING;
 	}
-	
+		
 	public class ServiceRunnable implements Runnable
 	{
 		private ServiceRequest req;
@@ -188,6 +236,11 @@ public class ServiceContainer implements Runnable {
 			this.req = req;
 			this.broker = broker;
 			this.componentFactory = factory;
+		}
+		
+		public ServiceRequest getServiceRequest()
+		{
+			return this.req;
 		}
 		
 		@Override
@@ -204,6 +257,7 @@ public class ServiceContainer implements Runnable {
 					hibernateSession.beginTransaction();
 					//Invoke and return taskResult
 					log.debug("Invoking for Service Request " + req);
+					System.out.println("Starting " + req);
 					result = helper.invoke();
 					hibernateSession.getTransaction().commit();
 				}
