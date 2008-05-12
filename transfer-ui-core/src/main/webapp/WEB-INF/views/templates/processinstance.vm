@@ -201,10 +201,10 @@
 	    					<li>$entry</li>
 	    				#end				
 	    			</ol>
-	    			#if (! $tokenBean.activeTaskInstanceBeanList.empty)
-		    			<h5>Active Tasks</h5>
+	    			#if (! $tokenBean.taskInstanceBeanList.empty)
+		    			<h5>Tasks</h5>
 		    			<ol>		    				
-		    				#foreach($taskInstanceBean in $tokenBean.activeTaskInstanceBeanList)
+		    				#foreach($taskInstanceBean in $tokenBean.taskInstanceBeanList)
 		    					<li>
 									<a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">
 						            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)

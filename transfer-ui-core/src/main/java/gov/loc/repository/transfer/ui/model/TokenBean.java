@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
 import org.jbpm.logging.log.ProcessLog;
 import org.jbpm.taskmgmt.exe.TaskInstance;
-import org.springframework.web.context.request.RequestScope;
 
 public class TokenBean extends AbstractWorkflowBean {
 	
@@ -79,7 +79,12 @@ public class TokenBean extends AbstractWorkflowBean {
 	@SuppressWarnings("unchecked")
 	public List<TaskInstanceBean> getActiveTaskInstanceBeanList()
 	{
-		List<TaskInstance> taskInstanceList = this.jbpmContext.getTaskMgmtSession().findTaskInstancesByToken(this.token.getId());
+		return this.taskInstanceListToTaskInstanceBeanList(this.jbpmContext.getTaskMgmtSession().findTaskInstancesByToken(this.token.getId()));
+		
+	}
+	
+	private List<TaskInstanceBean> taskInstanceListToTaskInstanceBeanList(List<TaskInstance> taskInstanceList)
+	{
 		List<TaskInstanceBean> taskInstanceBeanList = new ArrayList<TaskInstanceBean>();
 		Iterator<TaskInstance> iter = taskInstanceList.iterator();
 		while (iter.hasNext())
@@ -88,6 +93,18 @@ public class TokenBean extends AbstractWorkflowBean {
 			taskInstanceBeanList.add(taskInstanceBean);
 		}
 		return taskInstanceBeanList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<TaskInstanceBean> getTaskInstanceBeanList() throws Exception
+	{
+		String queryString = "select ti " +
+			"from org.jbpm.taskmgmt.exe.TaskInstance ti " +
+			"where ti.token.id = :tokenId";
+		Query query = this.jbpmContext.getSession().createQuery(queryString);
+	    query.setLong("tokenId", this.token.getId());
+	    List<TaskInstance> taskInstanceList = query.list();
+	    return this.taskInstanceListToTaskInstanceBeanList(taskInstanceList);	    
 	}
 	
 	public ProcessInstanceBean getProcessInstanceBean()
