@@ -65,7 +65,7 @@ public class ProcessDefinitionController extends AbstractRestController {
 		dao.save(processInstanceBean);
 		request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "A new workflow was created.");
 		
-		mav.setViewName("redirect:/processinstance/" + processInstanceBean.getId() + ".html");
+		mav.setViewName("redirect:/index.html");
 		
 	}
 	
