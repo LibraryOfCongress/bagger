@@ -1,0 +1,6 @@
+CREATE ROLE package_modeler_reader_role NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE;
+CREATE ROLE package_modeler_data_writer_role NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE;
+CREATE ROLE transfer_reader_user WITH PASSWORD 'transfer_reader_passwd' NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE LOGIN;
+CREATE ROLE transfer_data_writer_user WITH PASSWORD 'transfer_writer_passwd' NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE LOGIN;
+GRANT package_modeler_reader_role TO transfer_reader_user;
+GRANT package_modeler_data_writer_role TO transfer_data_writer_user;
