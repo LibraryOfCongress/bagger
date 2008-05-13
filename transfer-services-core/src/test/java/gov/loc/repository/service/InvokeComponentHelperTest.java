@@ -1,9 +1,13 @@
 package gov.loc.repository.service;
 
 import gov.loc.repository.component.TestComponent;
+import gov.loc.repository.serviceBroker.ServiceRequest.ObjectEntry;
+import gov.loc.repository.serviceBroker.impl.BooleanEntryImpl;
+import gov.loc.repository.serviceBroker.impl.IntegerEntryImpl;
+import gov.loc.repository.serviceBroker.impl.StringEntryImpl;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -18,14 +22,14 @@ import static org.junit.Assert.*;
 @RunWith(JMock.class)
 public class InvokeComponentHelperTest {
 	Mockery context = new JUnit4Mockery();
-	Map<String,Object> map = new HashMap<String, Object>();
+	Collection<ObjectEntry> entries = new ArrayList<ObjectEntry>();
 	
 	@Before
 	public void setup()
 	{
-		map.put("message", "foo");
-		map.put("istrue", true);
-		map.put("key", 1L);
+		entries.add(new StringEntryImpl("message", "foo"));
+		entries.add(new BooleanEntryImpl("istrue",true));
+		entries.add(new IntegerEntryImpl("key",1L));
 		
 	}
 	
@@ -38,7 +42,7 @@ public class InvokeComponentHelperTest {
 			one(mock).test("foo", true, 1L);
 		}});
 				
-		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", map);
+		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", entries);
 		assertTrue(helper.invoke());
 	}
 
@@ -50,8 +54,13 @@ public class InvokeComponentHelperTest {
 		context.checking(new Expectations() {{
 			one(mock).test(null, true, 1L);
 		}});
-		map.put("message", null);		
-		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", map);
+		
+		entries.clear();
+		entries.add(new StringEntryImpl("message", null));
+		entries.add(new BooleanEntryImpl("istrue",true));
+		entries.add(new IntegerEntryImpl("key",1L));
+
+		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", entries);
 		assertTrue(helper.invoke());
 	}
 	
@@ -65,7 +74,7 @@ public class InvokeComponentHelperTest {
 			never(mock).test("foo", true, 1L);
 		}});
 				
-		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "xtest", map);
+		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "xtest", entries);
 		helper.invoke();
 	}
 
@@ -78,8 +87,9 @@ public class InvokeComponentHelperTest {
 			never(mock).test("foo", true, 1L);
 		}});
 		
-		map.remove("message");
-		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", map);
+		entries.remove(entries.iterator().next());
+		//map.remove("message");
+		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", entries);
 		helper.invoke();
 	}
 
@@ -92,8 +102,8 @@ public class InvokeComponentHelperTest {
 			never(mock).test("foo", true, 1L);
 		}});
 		
-		map.put("foo", "bar");
-		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", map);
+		entries.add(new StringEntryImpl("foo","bar"));
+		InvokeComponentHelper helper = new InvokeComponentHelper(mock, "test", entries);
 		helper.invoke();
 	}
 	

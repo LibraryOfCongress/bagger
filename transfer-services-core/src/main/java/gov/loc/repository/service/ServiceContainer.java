@@ -226,7 +226,7 @@ public class ServiceContainer implements Runnable {
 			try
 			{
 				Object component = componentFactory.getComponent(req.getJobType());
-				InvokeComponentHelper helper = new InvokeComponentHelper(component, req.getJobType(), req.getVariableMap());
+				InvokeComponentHelper helper = new InvokeComponentHelper(component, req.getJobType(), req.getEntries());
 				org.hibernate.Session hibernateSession = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).getCurrentSession();
 				try
 				{					

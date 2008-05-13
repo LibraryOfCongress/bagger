@@ -43,9 +43,9 @@ public abstract class AbstractServiceBrokerTest {
 				{
 					public Object doInHibernate(org.hibernate.Session session) throws org.hibernate.HibernateException ,java.sql.SQLException
 					{
-						session.createSQLQuery("delete from string_map").executeUpdate();
-						session.createSQLQuery("delete from boolean_map").executeUpdate();
-						session.createSQLQuery("delete from integer_map").executeUpdate();
+						session.createSQLQuery("delete from string_entries").executeUpdate();
+						session.createSQLQuery("delete from boolean_entries").executeUpdate();
+						session.createSQLQuery("delete from integer_entries").executeUpdate();
 						session.createSQLQuery("delete from service_request").executeUpdate();
 						session.createSQLQuery("delete from service_container_registry").executeUpdate();
 						return null;

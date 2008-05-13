@@ -49,9 +49,9 @@ public class ServiceInvocationHandlerTest {
 				{
 					public Object doInHibernate(org.hibernate.Session session) throws org.hibernate.HibernateException ,java.sql.SQLException
 					{
-						session.createSQLQuery("delete from string_map").executeUpdate();
-						session.createSQLQuery("delete from boolean_map").executeUpdate();
-						session.createSQLQuery("delete from integer_map").executeUpdate();
+						session.createSQLQuery("delete from string_entries").executeUpdate();
+						session.createSQLQuery("delete from boolean_entries").executeUpdate();
+						session.createSQLQuery("delete from integer_entries").executeUpdate();
 						session.createSQLQuery("delete from service_request").executeUpdate();
 						session.createSQLQuery("delete from service_container_registry").executeUpdate();
 						return null;
@@ -83,12 +83,12 @@ public class ServiceInvocationHandlerTest {
 		
 		assertEquals("0", req.getCorrelationKey());
 		assertEquals("test", req.getJobType());
-		assertEquals("foo", req.getStringMap().get("message"));
-		assertTrue(req.getBooleanMap().get("istrue"));
-		assertEquals(Long.valueOf(1L), req.getIntegerMap().get("key"));
+		assertEquals("foo", req.getStringEntries().iterator().next().getValue());
+		assertTrue(req.getBooleanEntries().iterator().next().getValue());
+		assertEquals(Long.valueOf(1L), req.getIntegerEntries().iterator().next().getValue());
 		
 	}
-/*
+
 	@Test
 	public void testInvokeWithNull() throws Exception {
 
@@ -103,9 +103,9 @@ public class ServiceInvocationHandlerTest {
 		ServiceRequest req = broker.findAndAcknowledgeNextServiceRequest();
 		assertNotNull(req);
 
-		assertTrue(req.getStringMap().containsKey("message"));
-		assertNull(req.getStringMap().get("message"));
+		assertFalse(req.getStringEntries().isEmpty());
+		assertNull(req.getStringEntries().iterator().next().getValue());
 		
 	}
-*/	
+	
 }

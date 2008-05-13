@@ -1,7 +1,7 @@
 package gov.loc.repository.serviceBroker;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
 public interface ServiceRequest {
 
@@ -9,16 +9,18 @@ public interface ServiceRequest {
 
 	public void addString(String key, String value);
 
-	public Map<String,String> getStringMap();
-
+	public Collection<StringEntry> getStringEntries();
+	
 	public void addInteger(String key, Long value);
 
-	public Map<String,Long> getIntegerMap();
-
+	public Collection<IntegerEntry> getIntegerEntries();
+	
 	public void addBoolean(String key, Boolean value);
 
-	public Map<String,Boolean> getBooleanMap();
-
+	public Collection<BooleanEntry> getBooleanEntries();
+	
+	public Collection<ObjectEntry> getEntries();
+		
 	public void request(String requester);
 	
 	public void acknowledgeRequest(String responder);
@@ -57,6 +59,27 @@ public interface ServiceRequest {
 
 	public String getErrorDetail();
 	
-	public Map<String,Object> getVariableMap();
+	public interface StringEntry extends ObjectEntry
+	{		
+		public String getValue();
+	}
+	
+	public interface BooleanEntry extends ObjectEntry
+	{
+		public Boolean getValue();
+	}
+	
+	public interface IntegerEntry extends ObjectEntry
+	{	
+		public Long getValue();
+	}
 
+	public interface ObjectEntry
+	{
+		public String getKey();
+		
+		public Object getValueObject();
+		
+	}
+	
 }

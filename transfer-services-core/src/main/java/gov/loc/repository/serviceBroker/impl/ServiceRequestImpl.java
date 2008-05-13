@@ -2,11 +2,11 @@ package gov.loc.repository.serviceBroker.impl;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +19,8 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.utilities.ExceptionHelper;
@@ -45,21 +46,20 @@ public class ServiceRequestImpl implements ServiceRequest, Serializable {
 	@Column(name = "job_type", nullable = false, length=50)
 	private String jobType;
 	
-	@CollectionOfElements(fetch=FetchType.EAGER)
-	@JoinTable(name="string_map", joinColumns = @JoinColumn(name="request_key"))
-	@MapKey(columns = @Column(name = "key", length = 50))
-	@Column(name = "value", nullable = true)
-	private Map<String,String> stringMap = new HashMap<String, String>();
-	@CollectionOfElements(fetch=FetchType.EAGER)
-	@JoinTable(name="integer_map", joinColumns = @JoinColumn(name="request_key"))
-	@MapKey(columns = @Column(name = "key", length = 50))
-	@Column(name = "value", nullable = true)
-	private Map<String,Long> integerMap = new HashMap<String, Long>();
-	@CollectionOfElements(fetch=FetchType.EAGER)
-	@JoinTable(name="boolean_map", joinColumns = @JoinColumn(name="request_key"))
-	@MapKey(columns = @Column(name = "key", length = 50))
-	@Column(name = "value", nullable = true)
-	private Map<String,Boolean> booleanMap = new HashMap<String, Boolean>();
+	@CollectionOfElements(targetElement=StringEntryImpl.class, fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SUBSELECT)
+	@JoinTable(name="string_entries", joinColumns = @JoinColumn(name="request_key"))
+	private Collection<StringEntry> stringEntries = new ArrayList<StringEntry>();
+
+	@CollectionOfElements(targetElement=IntegerEntryImpl.class, fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SUBSELECT)
+	@JoinTable(name="integer_entries", joinColumns = @JoinColumn(name="request_key"))
+	private Collection<IntegerEntry> integerEntries = new ArrayList<IntegerEntry>();
+
+	@CollectionOfElements(targetElement=BooleanEntryImpl.class, fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SUBSELECT)
+	@JoinTable(name="boolean_entries", joinColumns = @JoinColumn(name="request_key"))
+	private Collection<BooleanEntry> booleanEntries = new ArrayList<BooleanEntry>();
 	
 	@Column(name = "request_date", nullable = false)
 	private Date requestDate;
@@ -93,32 +93,32 @@ public class ServiceRequestImpl implements ServiceRequest, Serializable {
 	
 	public void addString(String key, String value)
 	{
-		this.stringMap.put(key, value);
+		this.stringEntries.add(new StringEntryImpl(key, value));
 	}
-	
-	public Map<String,String> getStringMap()
-	{
-		return Collections.unmodifiableMap(this.stringMap);
+
+	@Override
+	public Collection<StringEntry> getStringEntries() {
+		return Collections.unmodifiableCollection(this.stringEntries);
 	}
 
 	public void addInteger(String key, Long value)
 	{
-		this.integerMap.put(key, value);
+		this.integerEntries.add(new IntegerEntryImpl(key, value));
 	}
 	
-	public Map<String,Long> getIntegerMap()
-	{
-		return Collections.unmodifiableMap(this.integerMap);
+	@Override
+	public Collection<IntegerEntry> getIntegerEntries() {
+		return Collections.unmodifiableCollection(this.integerEntries);
 	}
 				
 	public void addBoolean(String key, Boolean value)
 	{
-		this.booleanMap.put(key, value);
+		this.booleanEntries.add(new BooleanEntryImpl(key, value));
 	}
-	
-	public Map<String,Boolean> getBooleanMap()
-	{
-		return Collections.unmodifiableMap(this.booleanMap);
+
+	@Override
+	public Collection<BooleanEntry> getBooleanEntries() {
+		return Collections.unmodifiableCollection(this.booleanEntries);
 	}
 
 	@Override
@@ -231,18 +231,37 @@ public class ServiceRequestImpl implements ServiceRequest, Serializable {
 	public String getErrorDetail() {
 		return errorDetail;
 	}
-	
+
 	@Override
-	public Map<String, Object> getVariableMap() {
-		Map<String,Object> variableMap = new HashMap<String, Object>();
-		variableMap.putAll(this.stringMap);
-		variableMap.putAll(this.booleanMap);
-		variableMap.putAll(this.integerMap);
-		return variableMap;
+	public Collection<ObjectEntry> getEntries() {
+		Collection<ObjectEntry> entries = new ArrayList<ObjectEntry>();
+		entries.addAll(this.stringEntries);
+		entries.addAll(this.integerEntries);
+		entries.addAll(this.booleanEntries);
+		return Collections.unmodifiableCollection(entries);
 	}
-	
+		
 	@Override
 	public String toString() {
-		return MessageFormat.format("Service Request with key {0}, requester {1}, jobType {2} and queue {3}.  String map contains {4}.  Integer map contains {5}.  Boolean map contains {6}", this.key, this.requester, this.jobType, this.queue, this.stringMap, this.integerMap, this.booleanMap);
+		return MessageFormat.format("Service Request with key {0}, requester {1}, jobType {2} and queue {3}.  String entries contains {4}.  Integer entries contains {5}.  Boolean entries contains {6}", this.key, this.requester, this.jobType, this.queue, collectionToString(this.stringEntries), collectionToString(this.integerEntries), collectionToString(this.booleanEntries));
 	}
+	
+	@SuppressWarnings("unchecked")
+	private String collectionToString(Collection entries)
+	{
+		String s = "{";
+		for(Object obj : entries)
+		{
+			ObjectEntry entry = (ObjectEntry)obj;
+			if (s.length() != 1)
+			{
+				s+= ", ";
+			}
+			s+= entry.getKey() + "=" + entry.getValueObject();
+		}		
+		s+= "}";
+		
+		return s;
+	}
+			
 }

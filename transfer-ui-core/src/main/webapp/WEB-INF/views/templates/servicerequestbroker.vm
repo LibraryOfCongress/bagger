@@ -28,7 +28,7 @@
 						<td>$req.queue</td>
 						<td>$req.jobType</td>
 						<td>$req.correlationKey</td>
-						<td>$req.variableMap</td>
+						<td>#object_entries($req)</td>
 						<td>$req.requester</td>
 						<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestDate)}</td>
 						<td>$!req.responder</td>

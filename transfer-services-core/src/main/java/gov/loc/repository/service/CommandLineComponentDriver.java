@@ -1,9 +1,15 @@
 package gov.loc.repository.service;
 
+import gov.loc.repository.serviceBroker.ServiceRequest.ObjectEntry;
+import gov.loc.repository.serviceBroker.impl.BooleanEntryImpl;
+import gov.loc.repository.serviceBroker.impl.IntegerEntryImpl;
+import gov.loc.repository.serviceBroker.impl.StringEntryImpl;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +21,7 @@ public class CommandLineComponentDriver {
 	public static void main(String[] args) throws Exception {
 		String key=null;
 		String jobType=null;
-		Map<String,Object> variableMap = new HashMap<String, Object>();
+		Collection<ObjectEntry> entries = new ArrayList<ObjectEntry>();
 		for(String arg: args)
 		{
 			if (arg.startsWith("-"))
@@ -31,27 +37,27 @@ public class CommandLineComponentDriver {
 			{
 				if (key != null)
 				{
-					Object value = arg;
 					if (arg.equalsIgnoreCase("true"))
 					{
-						value = true;
+						entries.add(new BooleanEntryImpl(key, true));
 					}
 					else if (arg.equalsIgnoreCase("false"))
 					{
-						value = false;
+						entries.add(new BooleanEntryImpl(key, false));
 					}
 					else
 					{
 						try
 						{
 							long l = Long.parseLong(arg);
-							value = l;
+							entries.add(new IntegerEntryImpl(key, l));
 						}
 						catch(NumberFormatException ex)
-						{							
+						{
+							//Then it's a string
+							entries.add(new StringEntryImpl(key, arg));
 						}
 					}
-					variableMap.put(key, value);
 					key = null;
 				}
 				else if (jobType == null)
@@ -71,17 +77,16 @@ public class CommandLineComponentDriver {
 			return;
 		}
 		System.out.println("jobType:  " + jobType);
-		System.out.println("variableMap:");
-		for(String k : variableMap.keySet())
+		System.out.println("entries:");
+		for(ObjectEntry entry : entries)
 		{
-			Object v = variableMap.get(k);
-			System.out.println(MessageFormat.format("{0} = : {1} [{2}]", k, v, v.getClass().getSimpleName()));
+			System.out.println(MessageFormat.format("{0} = : {1} [{2}]", entry.getKey(), entry.getValueObject(), entry.getValueObject().getClass().getSimpleName()));
 		}
 				
 		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"classpath:conf/servicecontainer-context.xml", "classpath*:conf/components-*-context.xml"});
 		ComponentFactory componentFactory = (ComponentFactory)context.getBean("componentFactory");
 		Object component = componentFactory.getComponent(jobType);
-		InvokeComponentHelper helper = new InvokeComponentHelper(component, jobType, variableMap);
+		InvokeComponentHelper helper = new InvokeComponentHelper(component, jobType, entries);
 		boolean result = true;
 		org.hibernate.Session hibernateSession = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).getCurrentSession();
 		try

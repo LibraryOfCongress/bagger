@@ -65,3 +65,11 @@
 		</span></td>
 	#end
 #end
+
+#*
+  -Writes out collection of ObjectEntries
+*#
+#macro( object_entries $req )
+	#set($sep = "")
+	{#foreach($entry in $req.entries)$sep$entry.key=$!{entry.value}#set($sep = ", ")#end}
+#end

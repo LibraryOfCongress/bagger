@@ -2,11 +2,13 @@ package gov.loc.repository.service;
 import gov.loc.repository.service.annotations.JobType;
 import gov.loc.repository.service.annotations.MapParameter;
 import gov.loc.repository.service.annotations.Result;
+import gov.loc.repository.serviceBroker.ServiceRequest.ObjectEntry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,12 +22,12 @@ public class InvokeComponentHelper {
 	private Method resultMethod = null;
 	private Object[] jobTypeParameters;
 	private String jobType;
-	private Map<String,Object> variableMap;
+	private Collection<ObjectEntry> objectEntries;
 	
-	public InvokeComponentHelper(Object component, String jobType, Map<String,Object> variableMap) {
+	public InvokeComponentHelper(Object component, String jobType, Collection<ObjectEntry> objectEntries) {
 		this.component = component;
 		this.jobType = jobType;
-		this.variableMap = variableMap;
+		this.objectEntries = objectEntries;
 	}
 
 	public boolean invoke() throws Exception
@@ -59,7 +61,7 @@ public class InvokeComponentHelper {
 		return this.jobTypeParameters;
 	}
 	
-	private void findJobTypeMethod()
+	private void findJobTypeMethod() throws Exception
 	{
 		for(Method method : component.getClass().getDeclaredMethods())
 		{
@@ -179,7 +181,7 @@ public class InvokeComponentHelper {
 			if (annot instanceof MapParameter)
 			{
 				MapParameter mapParameterAnnot = (MapParameter)annot;
-				if (variableMap.containsKey(mapParameterAnnot.name()))
+				if (this.entriesContain(mapParameterAnnot.name()))
 				{
 					return true;
 				}
@@ -192,18 +194,49 @@ public class InvokeComponentHelper {
 		return false;
 	}
 	
+	private Collection<ObjectEntry> getObjectEntries(String key)
+	{
+		Collection<ObjectEntry> entries = new ArrayList<ObjectEntry>();
+		for(ObjectEntry entry : this.objectEntries)
+		{
+			if (entry.getKey().equals(key))
+			{
+				entries.add(entry);
+			}			
+		}
+		
+		return entries;
+	}
 	
-	private Object getSatisfyingValue(Annotation[] annotationArray)
+	private boolean entriesContain(String key)
+	{
+		for(ObjectEntry entry : this.objectEntries)
+		{
+			if (entry.getKey().equals(key))
+			{
+				return true;
+			}			
+		}
+		return false;
+	}
+	
+	private Object getSatisfyingValue(Annotation[] annotationArray) throws Exception
 	{
 		for(Annotation annot : annotationArray)
 		{
 			if (annot instanceof MapParameter)
 			{
 				MapParameter mapParameterAnnot = (MapParameter)annot;
-				if (variableMap.containsKey(mapParameterAnnot.name()))
+				if (this.entriesContain(mapParameterAnnot.name()))
 				{
-					log.debug(MessageFormat.format("VariableMap contains value {0} for MapParameter {1}", variableMap.get(mapParameterAnnot.name()), mapParameterAnnot.name()));
-					return variableMap.get(mapParameterAnnot.name());
+					Collection<ObjectEntry> entries = this.getObjectEntries(mapParameterAnnot.name());
+					if (entries.size() != 1)
+					{
+						throw new Exception("Multiple entries for key " + mapParameterAnnot.name()); 
+					}
+					Object value = entries.iterator().next().getValueObject();
+					log.debug(MessageFormat.format("VariableMap contains value {0} for MapParameter {1}", value, mapParameterAnnot.name()));
+					return value;
 				}
 				else
 				{

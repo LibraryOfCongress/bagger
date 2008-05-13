@@ -26,15 +26,16 @@ public class ServiceRequestImplTest extends AbstractServiceBrokerTest {
 		req.request(REQUESTER_1);
 		
 		template.save(req);
+		template.refresh(req);
 		
 		assertEquals(REQUESTER_1, req.getRequester());
 		assertEquals("1", req.getCorrelationKey());
 		assertEquals(QUEUE_1, req.getQueue());
 		assertEquals(JOBTYPE_1, req.getJobType());
 		assertNotNull(req.getRequestDate());
-		assertEquals(3, req.getStringMap().size());
-		assertEquals(3, req.getIntegerMap().size());
-		assertEquals(3, req.getBooleanMap().size());
+		assertEquals(3, req.getStringEntries().size());
+		assertEquals(3, req.getIntegerEntries().size());
+		assertEquals(3, req.getBooleanEntries().size());
 						
 		req.acknowledgeRequest(RESPONDER_1);		
 		template.saveOrUpdate(req);
