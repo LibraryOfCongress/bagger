@@ -6,7 +6,10 @@ class Jbpm():
         db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ""
         role_prefix = config['ROLE_PREFIX'] + "_" if config['ROLE_PREFIX'] else ""
         self.jbpm_passwd = config['JBPM_PASSWD']
-        self.sql_file = "files/jbpm.sql"
+        self.deploy_sql_file = "files/jbpm.sql"
+        self.create_sql_file = config['JBPM_SQL_FILES']['create']
+        self.roles_sql_file = config['JBPM_SQL_FILES']['roles']
+        self.perms_sql_file = config['JBPM_SQL_FILES']['permissions']
         self.db_name = db_prefix + "jbpm32"
         self.owner_role = role_prefix + "jbpm_role"
         self.user_role = role_prefix + "jbpm_user"

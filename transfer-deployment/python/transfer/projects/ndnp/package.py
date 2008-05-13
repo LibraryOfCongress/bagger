@@ -6,7 +6,8 @@ class PackageModeler():
         db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ""
         role_prefix = config['ROLE_PREFIX'] + "_" if config['ROLE_PREFIX'] else ""
         self.project_name = "packagemodeler-ndnp"
-        self.sql_file = "files/inventory-ndnp.sql"
+        self.deploy_sql_file = "files/inventory-ndnp.sql"
+        self.perms_sql_file = config['PM_NDP_SQL_FILES']['permissions']
         self.db_name = db_prefix + "package_modeler"
         self.reader_role = role_prefix + "package_modeler_reader_role"
         self.writer_role = role_prefix + "package_modeler_data_writer_role"
