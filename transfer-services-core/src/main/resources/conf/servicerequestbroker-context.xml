@@ -28,6 +28,24 @@
 
 	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="serviceBrokerSessionFactory" />
+	</bean>
+	
+	<bean id="abstractRequestServiceBroker" abstract="true" class="gov.loc.repository.serviceBroker.impl.RequestingServiceBrokerImpl">
+		<constructor-arg ref="serviceBroker" />
+		<!-- This bean needs to be configured. -->
+		<!-- 
+		<constructor-arg ref="requester" />
+		-->
 	</bean>	
+
+	<bean id="abstractResponseServiceBroker" abstract="true" class="gov.loc.repository.serviceBroker.impl.RespondingServiceBrokerImpl">
+		<constructor-arg ref="serviceBroker" />
+		<!--  These beans need to be configured.
+		<constructor-arg ref="responder" />
+		<constructor-arg ref="queues" />
+		<constructor-arg ref="jobTypes" />
+		-->
+	</bean>	
+
 			
 </beans>

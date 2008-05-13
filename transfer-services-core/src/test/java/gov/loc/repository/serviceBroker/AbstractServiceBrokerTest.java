@@ -18,8 +18,8 @@ public abstract class AbstractServiceBrokerTest {
 	protected static final String REQUESTER_2 = "requester2";
 	protected static final String RESPONDER_1 = "responder1";
 	protected static final String RESPONDER_2 = "responder2";
-	protected static final String QUEUE_1 = "general_service_queue";
-	protected static final String QUEUE_2 = "specific_service_queue";
+	protected static final String QUEUE_1 = "jobQueue";
+	protected static final String QUEUE_2 = "specificJobQueue";
 	protected static final String JOBTYPE_1 = "test_job1";
 	protected static final String JOBTYPE_2 = "test_job2";
 	protected static final String REGISTRATION_1 = "reg1";

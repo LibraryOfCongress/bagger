@@ -2,15 +2,12 @@ package gov.loc.repository.serviceBroker.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 
-@Component("respondingServiceBroker")
 public class RespondingServiceBrokerImpl implements RespondingServiceBroker {
 
 	private ServiceRequestDAO dao;
@@ -18,9 +15,11 @@ public class RespondingServiceBrokerImpl implements RespondingServiceBroker {
 	private String[] queues;
 	private String[] jobTypes;
 	
-	@Autowired
-	public RespondingServiceBrokerImpl(ServiceRequestDAO dao) {
+	public RespondingServiceBrokerImpl(ServiceRequestDAO dao, String responder, String[] queues, String[] jobTypes) {
 		this.dao = dao;
+		this.responder = responder;
+		this.queues = queues;
+		this.jobTypes = jobTypes;
 	}
 	
 	@Override
@@ -50,21 +49,20 @@ public class RespondingServiceBrokerImpl implements RespondingServiceBroker {
 	public void sendResponse(ServiceRequest req) {
 		this.dao.save(req);
 	}
-
+	
 	@Override
-	public void setJobTypes(String[] jobTypes) {
-		this.jobTypes = jobTypes;
-
+	public String[] getJobTypes() {
+		return this.jobTypes;
 	}
-
+	
 	@Override
-	public void setQueues(String[] queues) {
-		this.queues = queues;
+	public String[] getQueues() {
+		return this.queues;
 	}
-
+	
 	@Override
-	public void setResponder(String responder) {
-		this.responder = responder;
+	public String getResponder() {
+		return this.responder;
 	}
 
 }

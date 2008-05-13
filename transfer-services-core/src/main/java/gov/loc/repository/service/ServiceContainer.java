@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 
 import javax.annotation.PostConstruct;
 
-import gov.loc.repository.exceptions.ConfigurationException;
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceContainerRegistry;
 import gov.loc.repository.serviceBroker.ServiceRequest;
@@ -28,24 +27,18 @@ public class ServiceContainer implements Runnable {
 	private static final Log log = LogFactory.getLog(ServiceContainer.class);
 
 	private ComponentFactory factory;
-	private String[] queues;
-	private String[] jobTypes;
 	private ThreadPoolTaskExecutor executor;
 	private Long wait = 5000L;
 	private State state = State.STOPPED;
 	private RespondingServiceBroker broker;
-	private String responder;
 	private String serviceUrl;
 	private ServiceContainerRegistry registry;
 	
-	public ServiceContainer(ThreadPoolTaskExecutor executor, RespondingServiceBroker broker, ComponentFactory factory, String responder, String[] queues, String[] jobTypes, String serviceUrl, ServiceContainerRegistry registry) {
+	public ServiceContainer(ThreadPoolTaskExecutor executor, RespondingServiceBroker broker, ComponentFactory factory, String serviceUrl, ServiceContainerRegistry registry) {
 		this.factory = factory;
 		this.executor = executor;
 		this.executor.setWaitForTasksToCompleteOnShutdown(true);
 		this.broker = broker;
-		this.responder = responder;
-		this.queues = queues;
-		this.jobTypes = jobTypes;
 		this.serviceUrl = serviceUrl;
 		this.registry = registry;
 	}
@@ -58,19 +51,19 @@ public class ServiceContainer implements Runnable {
 	@ManagedAttribute
 	public String[] getJobTypes()
 	{
-		return this.jobTypes;
+		return this.broker.getJobTypes();
 	}
 	
 	@ManagedAttribute
 	public String[] getQueues()
 	{
-		return this.queues;
+		return this.broker.getQueues();
 	}
 	
 	@ManagedAttribute
 	public String getResponder()
 	{
-		return this.responder;
+		return this.broker.getResponder();
 	}
 
 	@ManagedAttribute
@@ -80,20 +73,8 @@ public class ServiceContainer implements Runnable {
 	}
 	
 	@PostConstruct
-	public void init() {
-		if (this.responder == null || this.responder.length() == 0)
-		{
-			throw new ConfigurationException("Responder not provided");
-		}
-		this.broker.setResponder(responder);
-		
-		//Make sure that factory can create all of the requested jobTypes		
-		if (jobTypes == null || jobTypes.length == 0)
-		{
-			throw new ConfigurationException("JobTypes not provided");
-		}
-		
-		for(String jobType : this.jobTypes)
+	public void init() {		
+		for(String jobType : this.broker.getJobTypes())
 		{
 			log.debug("Handles jobType: " + jobType);
 			if (! this.factory.handlesJobType(jobType))
@@ -101,17 +82,11 @@ public class ServiceContainer implements Runnable {
 				throw new UnsupportedOperationException("Factory cannot create component to handle jobType " + jobType);
 			}
 		}
-		this.broker.setJobTypes(this.jobTypes);
 		
-		if (queues == null || queues.length == 0)
-		{
-			throw new ConfigurationException("Queues not provided");
-		}
-		for(String queue : this.queues)
+		for(String queue : this.broker.getQueues())
 		{
 			log.debug("Handles queue: " + queue);
 		}
-		this.broker.setQueues(queues);		
 		
 		//Report any uncompleted tasks for this responder as errors
 		this.broker.reportErrorsForAcknowledgedServiceRequestsWithoutResponses();
@@ -165,9 +140,10 @@ public class ServiceContainer implements Runnable {
 			{
 				this.executor.shutdown();
 				
-				log.debug("Stopped");
+				
 				if (this.state == State.STOPPING)
 				{
+					log.debug("Stopped");
 					this.state = State.STOPPED;
 				}
 				else
@@ -177,6 +153,7 @@ public class ServiceContainer implements Runnable {
 				}
 			}
 		}
+		log.debug("Shutdown");
 	}
 	
 	@ManagedOperation
@@ -244,8 +221,7 @@ public class ServiceContainer implements Runnable {
 		}
 		
 		@Override
-		public void run() {
-			Exception error = null;
+		public void run() {			
 			boolean result = true;
 			try
 			{
@@ -280,7 +256,7 @@ public class ServiceContainer implements Runnable {
 			}
 			catch(Exception ex)
 			{
-				log.error("Error handling message", error);
+				log.error("Error handling message", ex);
 				req.respondFailure(ex);
 				broker.sendResponse(req);
 				return;

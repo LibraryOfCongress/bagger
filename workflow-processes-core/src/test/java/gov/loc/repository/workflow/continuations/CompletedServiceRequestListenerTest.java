@@ -24,10 +24,12 @@ public class CompletedServiceRequestListenerTest {
 	{
 		//RequestingServiceBroker
 		final RequestingServiceBroker broker = context.mock(RequestingServiceBroker.class);
-		final ServiceRequest req1 = new ServiceRequestImpl("foo", "1", "jobqueue", "test");
+		final ServiceRequest req1 = new ServiceRequestImpl("1", "jobqueue", "test");
+		req1.request("foo");
 		req1.acknowledgeRequest("bar");
 		req1.respondSuccess(true);
-		final ServiceRequest req2 = new ServiceRequestImpl("foo", "2", "jobqueue", "test");
+		final ServiceRequest req2 = new ServiceRequestImpl("2", "jobqueue", "test");
+		req2.request("foo");
 		req2.acknowledgeRequest("bar");
 		req2.respondFailure(new Exception("Ooops"));
 				

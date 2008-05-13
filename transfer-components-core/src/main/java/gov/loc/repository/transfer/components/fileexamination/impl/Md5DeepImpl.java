@@ -7,12 +7,12 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Calendar;
-
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import java.util.Map;
 
 import gov.loc.repository.exceptions.ConfigurationException;
+import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
+import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.events.filelocation.VerifyAgainstManifestEvent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
@@ -22,12 +22,16 @@ import gov.loc.repository.transfer.components.fileexamination.LCManifestVerifier
 import gov.loc.repository.utilities.ManifestHelper;
 import gov.loc.repository.utilities.PackageHelper;
 
-@Component("md5DeepComponent")
-@Scope("prototype")
 public class Md5DeepImpl extends BaseComponent implements LCManifestGenerator, LCManifestVerifier {
 
 	private boolean result = true;
+	private Map<String,String> commandMap;
 	
+	public Md5DeepImpl(ModelerFactory factory, PackageModelDAO dao, Map<String,String> commandMap) {
+		super(factory, dao);
+		this.commandMap = commandMap;
+	}
+		
 	@Override
 	protected String getComponentName() {
 		return LCManifestGenerator.COMPONENT_NAME;
@@ -82,8 +86,9 @@ public class Md5DeepImpl extends BaseComponent implements LCManifestGenerator, L
 
 	private String getCommand(String algorithm) 
 	{
+		
 		String key = algorithm.toString().toLowerCase() + ".command";
-		String command = this.getConfiguration().getString(key);
+		String command = this.commandMap.get(algorithm.toString().toLowerCase());
 		if (command == null)
 		{
 			throw new ConfigurationException(key + " is missing from configuration");

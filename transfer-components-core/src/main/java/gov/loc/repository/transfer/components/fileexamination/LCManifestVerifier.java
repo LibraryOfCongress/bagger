@@ -6,9 +6,8 @@ import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
 import gov.loc.repository.service.annotations.MapParameter;
 import gov.loc.repository.service.annotations.Result;
-import gov.loc.repository.transfer.components.ModelerAware;
 
-public interface LCManifestVerifier extends Component, ModelerAware {
+public interface LCManifestVerifier extends Component {
 	
 	public static final String COMPONENT_NAME = "lcmanifestverifier";
 		

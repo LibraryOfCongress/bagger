@@ -19,16 +19,20 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	public void testFindServiceRequests()
 	{
 		assertTrue(broker.findServiceRequests(true, true, true).isEmpty());
-		ServiceRequest req1 = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_1, JOBTYPE_1);
+		ServiceRequest req1 = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
+		req1.request(REQUESTER_1);
 		broker.save(req1);
-		ServiceRequest req2 = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "2", QUEUE_1, JOBTYPE_1);
+		ServiceRequest req2 = this.serviveBrokerFactory.createServiceRequest("2", QUEUE_1, JOBTYPE_1);
+		req2.request(REQUESTER_1);
 		req2.acknowledgeRequest(RESPONDER_1);
 		broker.save(req2);
-		ServiceRequest req3 = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "3", QUEUE_1, JOBTYPE_1);
+		ServiceRequest req3 = this.serviveBrokerFactory.createServiceRequest("3", QUEUE_1, JOBTYPE_1);
+		req3.request(REQUESTER_1);
 		req3.acknowledgeRequest(RESPONDER_1);
 		req3.respondSuccess(true);
 		broker.save(req3);
-		ServiceRequest req4 = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "4", QUEUE_1, JOBTYPE_1);
+		ServiceRequest req4 = this.serviveBrokerFactory.createServiceRequest("4", QUEUE_1, JOBTYPE_1);
+		req4.request(REQUESTER_1);
 		req4.acknowledgeRequest(RESPONDER_1);
 		req4.respondSuccess(true);
 		req4.acknowledgeResponse();
@@ -45,17 +49,26 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	public void testFindAndAcknowledgeNextServiceRequest()
 	{
 		assertNull(broker.findNextServiceRequest(new String[] {QUEUE_1}, new String[] {JOBTYPE_1}, RESPONDER_1));
-		
-		broker.save(this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_2, JOBTYPE_1));		
+
+		ServiceRequest req1 = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_2, JOBTYPE_1);
+		req1.request(REQUESTER_1);
+		broker.save(req1);		
 
 		assertNull(broker.findNextServiceRequest(new String[] {QUEUE_1}, new String[] {JOBTYPE_1}, RESPONDER_1));
 
-		broker.save(this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "2", QUEUE_1, JOBTYPE_2));
+		ServiceRequest req2 = this.serviveBrokerFactory.createServiceRequest("2", QUEUE_1, JOBTYPE_2);
+		req2.request(REQUESTER_1);
+		broker.save(req2);
 		
 		assertNull(broker.findNextServiceRequest(new String[] {QUEUE_1}, new String[] {JOBTYPE_1}, RESPONDER_1));
 		
-		broker.save(this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "3", QUEUE_1, JOBTYPE_1));
-		broker.save(this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "4", QUEUE_1, JOBTYPE_1));
+		ServiceRequest req3 = this.serviveBrokerFactory.createServiceRequest("3", QUEUE_1, JOBTYPE_1);
+		req3.request(REQUESTER_1);
+		broker.save(req3);
+		
+		ServiceRequest req4 = this.serviveBrokerFactory.createServiceRequest("4", QUEUE_1, JOBTYPE_1);
+		req4.request(REQUESTER_1);
+		broker.save(req4);
 		
 		ServiceRequest req = broker.findNextServiceRequest(new String[] {QUEUE_1}, new String[] {JOBTYPE_1}, RESPONDER_1);
 		assertNotNull(req);
@@ -75,7 +88,8 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	public void testFindAcknowledgedServiceRequestsWithoutResponses()
 	{
 		assertTrue(broker.findAcknowledgedServiceRequestsWithoutResponses(RESPONDER_1).isEmpty());
-		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_2, JOBTYPE_1);
+		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_2, JOBTYPE_1);
+		req.request(REQUESTER_1);
 		req.acknowledgeRequest(RESPONDER_1);
 		broker.save(req);
 		
@@ -86,7 +100,8 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	public void testFindNextServiceRequestWithResponse()
 	{
 		assertNull(broker.findNextServiceRequestWithResponse(REQUESTER_1));
-		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_2, JOBTYPE_1);
+		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_2, JOBTYPE_1);
+		req.request(REQUESTER_1);
 		req.acknowledgeRequest(RESPONDER_1);
 		req.respondSuccess(true);
 		broker.save(req);
@@ -104,13 +119,19 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	{
 		assertTrue(broker.findServiceRequests("1").isEmpty());
 		
-		broker.save(this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_1, JOBTYPE_1));
+		ServiceRequest req1 = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
+		req1.request(REQUESTER_1);
+		broker.save(req1);
 		assertEquals(1, broker.findServiceRequests("1").size());
 
-		broker.save(this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_1, JOBTYPE_1));
+		ServiceRequest req2 = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
+		req2.request(REQUESTER_1);
+		broker.save(req2);
 		assertEquals(2, broker.findServiceRequests("1").size());
 		
-		broker.save(this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "2", QUEUE_1, JOBTYPE_1));
+		ServiceRequest req3 = this.serviveBrokerFactory.createServiceRequest("2", QUEUE_1, JOBTYPE_1);
+		req3.request(REQUESTER_1);
+		broker.save(req3);
 		assertEquals(2, broker.findServiceRequests("1").size());
 				
 	}
@@ -118,7 +139,8 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	@Test
 	public void testFindServiceRequest()
 	{
-		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", JOBTYPE_1, JOBTYPE_2);
+		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest("1", JOBTYPE_1, JOBTYPE_2);
+		req.request(REQUESTER_1);
 		broker.save(req);
 		
 		assertNotNull(req.getKey());

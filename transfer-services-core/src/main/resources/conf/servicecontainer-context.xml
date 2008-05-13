@@ -8,8 +8,7 @@
            http://www.springframework.org/schema/tx
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd                      
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd"
-       default-lazy-init="false">
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
 	<import resource="servicerequestbroker-context.xml" />
 	
@@ -25,13 +24,16 @@
 		</constructor-arg>
 		<constructor-arg ref="respondingServiceBroker" />
 		<constructor-arg ref="componentFactory" />
-		<constructor-arg value="$s{host}" />
-		<constructor-arg value="$s{queues}" />
-		<constructor-arg value="$s{jobtypes}" />
 		<constructor-arg ref="serviceUrl" />
 		<constructor-arg ref="serviceContainerRegistry" />
 	</bean>
 	
+	<bean id="respondingServiceBroker" parent="abstractResponseServiceBroker">
+		<constructor-arg value="$s{host}" />
+		<constructor-arg value="$s{queues}" />
+		<constructor-arg value="$s{jobtypes}" />
+	</bean>		
+		
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:conf/servicecontainer.properties" />
 		<property name="placeholderPrefix" value="$s{" />

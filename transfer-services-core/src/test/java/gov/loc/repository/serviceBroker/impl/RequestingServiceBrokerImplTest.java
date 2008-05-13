@@ -6,7 +6,6 @@ import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,17 +16,12 @@ public class RequestingServiceBrokerImplTest extends AbstractServiceBrokerTest {
 	
 	@Autowired
 	private ServiceRequestDAO dao;
-	
-	@Before
-	public void setup()
-	{
-		broker.setRequester(REQUESTER_1);
-	}
-	
+		
 	@Test
 	public void testFindAndAcknowledgeNextServiceRequestWithResponse() {
 		assertNull(broker.findAndAcknowledgeNextServiceRequestWithResponse());
-		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_1, JOBTYPE_1);
+		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
+		req.request(REQUESTER_1);
 		req.acknowledgeRequest(RESPONDER_1);
 		req.respondSuccess(true);
 		this.dao.save(req);
@@ -43,7 +37,7 @@ public class RequestingServiceBrokerImplTest extends AbstractServiceBrokerTest {
 	@Test
 	public void testSendRequest() {
 		assertTrue(dao.findServiceRequests(true, true, true).isEmpty());
-		this.broker.sendRequest(this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_1, JOBTYPE_1));
+		this.broker.sendRequest(this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1));
 		assertEquals(1, dao.findServiceRequests(true, true, true).size());
 		
 	}

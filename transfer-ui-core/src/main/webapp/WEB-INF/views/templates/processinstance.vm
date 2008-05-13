@@ -227,6 +227,9 @@
 			                        <th>Req. ack. date</th>
 			                        <th>Resp. date</th>
 			                        <th>Resp. ack. date</th>
+			                        <th>Success</th>
+			                        <th>Error</th>
+			                        <th>Error detail</th>
 			                    </tr>
 				            </thead>
 				            #foreach($req in $tokenBean.serviceRequestList)
@@ -240,6 +243,9 @@
 									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestAcknowledgedDate)}</td>
 									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.responseDate)}</td>
 									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.responseAcknowledgedDate)}</td>
+									<td>$!{req.isSuccess()}</td>
+									<td>$!req.errorMessage</td>
+									<td>$!req.errorDetail</td>	
 					        	</tr>
 				        	#end
 					    </table>

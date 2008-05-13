@@ -31,5 +31,15 @@
 			<property name="placeholderPrefix" value="$sc{" />
 			<property name="placeholderSuffix" value="}" />
 		</bean>
+		
+		<bean id="requestServiceBroker" parent="abstractRequestServiceBroker">
+			<constructor-arg value="$w{agent.workflow.id}" />
+		</bean>
+	
+	  	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="location" value="classpath:conf/workflow.core.properties" />
+			<property name="placeholderPrefix" value="$w{" />
+			<property name="placeholderSuffix" value="}" />
+		</bean>
   		  		
 </beans>

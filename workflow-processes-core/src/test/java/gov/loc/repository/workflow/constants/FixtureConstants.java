@@ -29,6 +29,6 @@ public class FixtureConstants {
 	public static final String REEL_NUMBER_1 = "987654321";
 	public static final String REEL_NUMBER_2 = "123456789";
 
-	public static final String QUEUE_1 = "fooqueue";
+	public static final String QUEUE_1 = "jobQueue";
 	
 }

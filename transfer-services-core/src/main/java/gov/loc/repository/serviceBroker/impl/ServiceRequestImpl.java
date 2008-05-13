@@ -80,12 +80,10 @@ public class ServiceRequestImpl implements ServiceRequest, Serializable {
 	public ServiceRequestImpl() {
 	}
 		
-	public ServiceRequestImpl(String requester, String correlationKey, String queue, String jobType) {
-		this.requester = requester;
+	public ServiceRequestImpl(String correlationKey, String queue, String jobType) {
 		this.correlationKey = correlationKey;
 		this.queue = queue;
-		this.jobType = jobType;
-		this.requestDate = Calendar.getInstance().getTime();
+		this.jobType = jobType;		
 	}
 		
 	public Long getKey()
@@ -121,6 +119,12 @@ public class ServiceRequestImpl implements ServiceRequest, Serializable {
 	public Map<String,Boolean> getBooleanMap()
 	{
 		return Collections.unmodifiableMap(this.booleanMap);
+	}
+
+	@Override
+	public void request(String requester) {
+		this.requester = requester;
+		this.requestDate = Calendar.getInstance().getTime();
 	}
 	
 	public void acknowledgeRequest(String responder)

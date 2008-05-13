@@ -26,5 +26,15 @@
     		</property>
     		<property name="schemaUpdate" value="true" />
   		</bean>
+  		
+	  	<bean id="requestServiceBroker" parent="abstractRequestServiceBroker">
+			<constructor-arg value="requester1" />
+		</bean>	
+	
+		<bean id="responseServiceBroker" parent="abstractResponseServiceBroker">
+			<constructor-arg value="responder1" />
+			<constructor-arg value="jobQueue" />
+			<constructor-arg value="test_job1" />
+		</bean>
   				
 </beans>

@@ -6,6 +6,8 @@ import static gov.loc.repository.transfer.components.constants.FixtureConstants.
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,12 +41,13 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 	@Override
 	public void setup() throws Exception {
 		//Look for md5deep
-	        for (String command : new String[] {"c:/md5deep/md5deep.exe", "c:/Program Files/md5deep\\md5deep.exe", "/usr/bin/md5deep"})
+		Map<String, String> commandMap = new HashMap<String, String>();
+	    for (String command : new String[] {"c:/md5deep/md5deep.exe", "c:/Program Files/md5deep\\md5deep.exe", "/usr/bin/md5deep"})
 		{
 			File file = new File(command);
 			if (file.exists())
 			{
-				this.getConfiguration().addProperty("md5.command", command);
+				commandMap.put("md5", command);
 				canRunTest = true;
 				break;
 			}
@@ -54,9 +57,8 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 		{
 			log.warn("Can't run test because can't find md5deep");
 		}
-		md5DeepComponent = new Md5DeepImpl();
-		md5DeepComponent.setModelerFactory(this.modelerFactory);
-		md5DeepComponent.setPackageModelDao(this.packageModelDao);
+		
+		md5DeepComponent = new Md5DeepImpl(this.modelerFactory, this.packageModelDao, commandMap);
 				
 		packge = this.modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
 		this.session.save(packge);

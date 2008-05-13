@@ -19,6 +19,8 @@ public interface ServiceRequest {
 
 	public Map<String,Boolean> getBooleanMap();
 
+	public void request(String requester);
+	
 	public void acknowledgeRequest(String responder);
 
 	public void respondSuccess(boolean isSuccess);

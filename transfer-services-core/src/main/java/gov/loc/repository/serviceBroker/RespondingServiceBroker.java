@@ -2,12 +2,6 @@ package gov.loc.repository.serviceBroker;
 
 public interface RespondingServiceBroker {
 	
-	public void setResponder(String responder);
-		
-	public void setQueues(String[] queues);
-	
-	public void setJobTypes(String[] jobTypes);
-	
 	public ServiceRequest findAndAcknowledgeNextServiceRequest();
 	
 	public void sendResponse(ServiceRequest req);
@@ -17,4 +11,10 @@ public interface RespondingServiceBroker {
 	 */
 	public void reportErrorsForAcknowledgedServiceRequestsWithoutResponses();
 
+	public String getResponder();
+	
+	public String[] getQueues();
+	
+	public String[] getJobTypes();
+	
 }

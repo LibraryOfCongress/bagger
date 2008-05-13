@@ -35,10 +35,7 @@ public class FilesOnDiskInventorierImplTest extends AbstractComponentTest {
 	public void setup() throws Exception {
 		FixityHelper fixityHelper = new JavaSecurityFixityHelper();
 
-		inventorier = new FilesOnDiskInventorierImpl();
-		inventorier.setFixityHelper(fixityHelper);
-		inventorier.setModelerFactory(this.modelerFactory);
-		inventorier.setPackageModelDao(this.packageModelDao);
+		inventorier = new FilesOnDiskInventorierImpl(this.modelerFactory, this.packageModelDao, fixityHelper);
 				
 		packge = this.modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
 		this.session.save(packge);

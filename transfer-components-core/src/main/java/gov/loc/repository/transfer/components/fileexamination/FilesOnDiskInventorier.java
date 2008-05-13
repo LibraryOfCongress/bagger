@@ -6,9 +6,8 @@ import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
 import gov.loc.repository.service.annotations.MapParameter;
-import gov.loc.repository.transfer.components.ModelerAware;
 
-public interface FilesOnDiskInventorier extends Component, ModelerAware {
+public interface FilesOnDiskInventorier extends Component {
 	
 	public static final String COMPONENT_NAME = "filesondiskinventorier";
 		

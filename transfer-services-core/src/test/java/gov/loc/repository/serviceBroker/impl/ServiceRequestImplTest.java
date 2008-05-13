@@ -13,7 +13,7 @@ public class ServiceRequestImplTest extends AbstractServiceBrokerTest {
 	public void testServiceRequest()
 	{		
 		//A typical request/response pattern
-		ServiceRequest req = serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_1, JOBTYPE_1);
+		ServiceRequest req = serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
 		req.addString("key1", "value1");
 		req.addString("key2", "value2");
 		req.addString("key3", null);
@@ -23,6 +23,7 @@ public class ServiceRequestImplTest extends AbstractServiceBrokerTest {
 		req.addBoolean("key7", true);
 		req.addBoolean("key8", false);
 		req.addBoolean("key9", null);		
+		req.request(REQUESTER_1);
 		
 		template.save(req);
 		

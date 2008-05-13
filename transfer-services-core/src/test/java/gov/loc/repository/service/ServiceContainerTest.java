@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations={"classpath:conf/services-test-context.xml","classpath:conf/servicecontainer-context.xml"})
 public class ServiceContainerTest {
 
-	private static final String REQUESTER = "requester";
 	private static final String QUEUE = "jobqueue";
 	private static final String JOBTYPE = "test";
 	
@@ -33,10 +32,9 @@ public class ServiceContainerTest {
 	@Before
 	public void createMessages() throws Exception
 	{
-		this.requestingBroker.setRequester(REQUESTER);
 		for(int i=0; i < 20; i++)
 		{
-			ServiceRequest req = factory.createServiceRequest(REQUESTER, Integer.toString(i), QUEUE, JOBTYPE);
+			ServiceRequest req = factory.createServiceRequest(Integer.toString(i), QUEUE, JOBTYPE);
 			req.addString("message", "foo");
 			req.addBoolean("istrue", true);
 			req.addInteger("key", 1L);
@@ -62,8 +60,8 @@ public class ServiceContainerTest {
 			}			
 		}
 		
-		container.stop();		
-		assertTrue(container.getState() == State.STOPPED || container.getState() == State.STOPPING);
+		container.shutdown();		
+		assertTrue(container.getState() == State.SHUTTINGDOWN || container.getState() == State.SHUTDOWN);
 	}
 	
 }

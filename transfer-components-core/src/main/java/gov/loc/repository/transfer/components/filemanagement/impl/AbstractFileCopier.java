@@ -5,11 +5,14 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.io.FileFilter;
 
 import org.apache.commons.io.FileUtils;
 
+import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
+import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.events.filelocation.FileCopyEvent;
 import gov.loc.repository.packagemodeler.packge.FileInstance;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
@@ -19,6 +22,10 @@ import gov.loc.repository.transfer.components.fileexamination.Verifier;
 public abstract class AbstractFileCopier extends BaseComponent {
 
 	protected static final String CONTENT_DIRECTORY = "contents";	
+	
+	public AbstractFileCopier(ModelerFactory factory, PackageModelDAO dao) {
+		super(factory, dao);
+	}
 	
 	protected void copy(FileLocation srcFileLocation, String srcMountPath,
 			FileLocation destFileLocation, String destMountPath, Agent requestingAgent, FileFilter fileFilter, Verifier verifier)

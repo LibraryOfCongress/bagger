@@ -11,5 +11,16 @@
 	<import resource="classpath:conf/common-core-context.xml" />
 	
 	<context:component-scan base-package="gov.loc.repository.transfer.components"/>
-		
+	
+	<bean id="md5DeepComponent" class="gov.loc.repository.transfer.components.fileexamination.impl.Md5DeepImpl" scope="prototype">
+		<constructor-arg ref="modelerFactory" />
+		<constructor-arg ref="dataWriterPackageModelDao" />
+		<constructor-arg>
+			<map>
+				<entry key="md5" value="md5deep" />
+				<entry key="sha1" value="sha1deep" />
+				<entry key="sha256" value="sha256deep" />
+			</map>
+		</constructor-arg>	
+	</bean>	
 </beans>

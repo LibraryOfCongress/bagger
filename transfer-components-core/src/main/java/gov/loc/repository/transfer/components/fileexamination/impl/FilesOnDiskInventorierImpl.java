@@ -4,14 +4,15 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.Iterator;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
+import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.events.filelocation.InventoryFromFilesOnDiskEvent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
@@ -28,6 +29,12 @@ public class FilesOnDiskInventorierImpl extends BaseComponent implements
 		FilesOnDiskInventorier {
 
 	private FixityHelper fixityHelper;
+	
+	@Autowired
+	public FilesOnDiskInventorierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("dataWriterPackageModelDao")PackageModelDAO dao, @Qualifier("fixityHelper")FixityHelper fixityHelper) {		
+		super(factory, dao);
+		this.fixityHelper = fixityHelper;
+	}
 	
 	@Override
 	protected String getComponentName() {
@@ -75,13 +82,6 @@ public class FilesOnDiskInventorierImpl extends BaseComponent implements
 		}
 		event.setEventEnd(Calendar.getInstance().getTime());
 		this.dao.save(fileLocation);
-	}
-
-	@Resource(name="fixityHelper")
-	@Required
-	public void setFixityHelper(FixityHelper fixityHelper) {
-		this.fixityHelper = fixityHelper;
-
 	}
 
 }

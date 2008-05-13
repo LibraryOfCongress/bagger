@@ -7,14 +7,11 @@ import gov.loc.repository.utilities.ConfigurationFactory;
 
 import java.text.MessageFormat;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Required;
 
-public abstract class BaseComponent implements ModelerAware {
+public abstract class BaseComponent {
 
 	private static final String REPORTING_AGENT_KEY = "components.agent.id";
 	
@@ -24,7 +21,6 @@ public abstract class BaseComponent implements ModelerAware {
 	protected ModelerFactory factory;
 	protected PackageModelDAO dao;	
 	
-
 	protected Configuration getConfiguration()
 	{
 		return ConfigurationFactory.getConfiguration(ComponentConstants.PROPERTIES_NAME);
@@ -65,17 +61,8 @@ public abstract class BaseComponent implements ModelerAware {
 		return this.dao.findRequiredAgent(Agent.class, this.getReportingAgentId());
 	}
 	
-	@Resource(name="modelerFactory")
-	@Required
-	public void setModelerFactory(ModelerFactory factory) {
+	public BaseComponent(ModelerFactory factory, PackageModelDAO dao) {
 		this.factory = factory;
-		
-	}
-	
-	@Resource(name="dataWriterPackageModelDao")
-	@Required
-	public void setPackageModelDao(PackageModelDAO dao) {
-		this.dao = dao;		
-	}
-	
+		this.dao = dao;
+	}	
 }

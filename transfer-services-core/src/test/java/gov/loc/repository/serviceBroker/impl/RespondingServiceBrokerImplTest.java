@@ -5,9 +5,7 @@ import gov.loc.repository.serviceBroker.AbstractServiceBrokerTest;
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
-import gov.loc.repository.serviceBroker.dao.impl.ServiceRequestDAOImpl;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,19 +16,12 @@ public class RespondingServiceBrokerImplTest extends AbstractServiceBrokerTest {
 	
 	@Autowired
 	private ServiceRequestDAO dao;
-	
-	@Before
-	public void setup()
-	{
-		broker.setResponder(RESPONDER_1);
-		broker.setQueues(new String[] {QUEUE_1});
-		broker.setJobTypes(new String[] {JOBTYPE_1});
-	}
-	
+		
 	@Test
 	public void testFindAndAcknowledgeNextServiceRequest() {
 		assertTrue(this.dao.findServiceRequests(false, false, false).isEmpty());
-		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_1, JOBTYPE_1);
+		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
+		req.request(REQUESTER_1);
 		this.dao.save(req);
 		assertFalse(this.dao.findServiceRequests(false, false, false).isEmpty());
 		
@@ -44,7 +35,8 @@ public class RespondingServiceBrokerImplTest extends AbstractServiceBrokerTest {
 
 	@Test
 	public void testReportErrorsForAcknowledgedServiceRequestsWithoutResponses() {
-		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_1, JOBTYPE_1);
+		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
+		req.request(REQUESTER_1);
 		req.acknowledgeRequest(RESPONDER_1);
 		this.dao.save(req);
 		assertEquals(1, dao.findAcknowledgedServiceRequestsWithoutResponses(RESPONDER_1).size());
@@ -59,7 +51,8 @@ public class RespondingServiceBrokerImplTest extends AbstractServiceBrokerTest {
 	@Test
 	public void testSendResponse() {
 		assertTrue(this.dao.findServiceRequests(true, true, true).isEmpty());
-		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest(REQUESTER_1, "1", QUEUE_1, JOBTYPE_1);
+		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
+		req.request(REQUESTER_1);
 		req.acknowledgeRequest(RESPONDER_1);
 		req.respondSuccess(true);
 		broker.sendResponse(req);
