@@ -9,6 +9,7 @@ public class FilenameHelperTest {
 	@Test
 	public void testRemoveBasePath() throws Exception {
 		assertEquals("bar.html", FilenameHelper.removeBasePath("/foo", "/foo/bar.html"));
+		assertEquals("bar.html", FilenameHelper.removeBasePath("c:/foo", "c:\\foo\\bar.html"));
 	}
 
 	@Test(expected=Exception.class)

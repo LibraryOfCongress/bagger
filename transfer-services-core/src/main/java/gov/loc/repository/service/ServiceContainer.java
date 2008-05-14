@@ -258,11 +258,13 @@ public class ServiceContainer implements Runnable {
 			{
 				log.error("Error handling message", ex);
 				req.respondFailure(ex);
+				System.out.println("Responding " + req);
 				broker.sendResponse(req);
 				return;
 			}
 			
 			log.debug( MessageFormat.format("Responding {0} for Service Request {1}", result, req));
+			System.out.println("Responding " + req);
 			req.respondSuccess(result);
 			broker.sendResponse(req);
 								

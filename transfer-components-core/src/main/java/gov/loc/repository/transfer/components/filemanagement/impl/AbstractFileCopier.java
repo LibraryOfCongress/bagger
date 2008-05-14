@@ -15,18 +15,26 @@ import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.events.filelocation.FileCopyEvent;
 import gov.loc.repository.packagemodeler.packge.FileInstance;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
+import gov.loc.repository.packagemodeler.packge.FileName;
+import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 import gov.loc.repository.transfer.components.BaseComponent;
+import gov.loc.repository.transfer.components.fileexamination.LCManifestGenerator;
 import gov.loc.repository.transfer.components.fileexamination.Verifier;
+import gov.loc.repository.utilities.FilenameHelper;
+import gov.loc.repository.utilities.ManifestReader;
 import gov.loc.repository.utilities.PackageHelper;
 
 public abstract class AbstractFileCopier extends BaseComponent {
-		
-	public AbstractFileCopier(ModelerFactory factory, PackageModelDAO dao) {
+
+	private LCManifestGenerator generator;
+	
+	public AbstractFileCopier(ModelerFactory factory, PackageModelDAO dao, LCManifestGenerator generator) {
 		super(factory, dao);
+		this.generator = generator;
 	}
 	
 	protected void copy(FileLocation srcFileLocation, String srcMountPath,
-			FileLocation destFileLocation, String destMountPath, Agent requestingAgent, FileFilter fileFilter, Verifier verifier)
+			FileLocation destFileLocation, String destMountPath, Agent requestingAgent, FileFilter fileFilter, Verifier verifier, Algorithm algorithm)
 			throws Exception {	
 
 		if (srcFileLocation.isLCPackageStructure() && ! destFileLocation.isLCPackageStructure())
@@ -54,7 +62,7 @@ public abstract class AbstractFileCopier extends BaseComponent {
 		}
 		if (! srcFileLocation.isLCPackageStructure() && destFileLocation.isLCPackageStructure())
 		{
-			//Adjust the destFile
+			//Adjust the destDir
 			destDir = new File(destDir, PackageHelper.CONTENT_DIRECTORY);
 		}
 		
@@ -82,6 +90,38 @@ public abstract class AbstractFileCopier extends BaseComponent {
 			this.getReportingLog().error(msg);
 			throw new Exception(msg);
 		}
+
+		if (! srcFileLocation.isLCPackageStructure() && destFileLocation.isLCPackageStructure())
+		{
+			this.generator.generate(destFileLocation, destMountPath, algorithm, requestingAgent);
+		}
+
+		//Record File Instances
+		if (destFileLocation.isLCPackageStructure())
+		{
+			//Load from manifest
+			File packageDir = new File(destFileLocation.getBasePath());
+			if (destMountPath != null)
+			{
+				packageDir = new File(destMountPath);
+			}			
+	        File manifestFile = PackageHelper.discoverManifest(packageDir);
+	        ManifestReader reader = new ManifestReader();
+	        reader.setFile(manifestFile);
+	        factory.createFileInstances(destFileLocation, reader);
+	        
+            List<File> fileList = PackageHelper.discoverLCPackageRootFiles(packageDir);
+            for(File file : fileList)
+            {
+                String filename = FilenameHelper.removeBasePath(packageDir.toString(), FilenameHelper.normalize(file.toString()));
+                factory.createFileInstance(destFileLocation, new FileName(filename));
+            }            
+		}
+		else
+		{
+			this.addFileInstancesForNonLCPackageStructureFileLocation(destFileLocation, destMountPath);
+		}
+		dao.save(destFileLocation);
 		
 		//Create the File Copy Event
 		FileCopyEvent event = this.factory.createFileLocationEvent(FileCopyEvent.class, destFileLocation, start.getTime(), this.getReportingAgent());
@@ -92,4 +132,8 @@ public abstract class AbstractFileCopier extends BaseComponent {
 		dao.save(event);		
 	}
 
+	protected void addFileInstancesForNonLCPackageStructureFileLocation(FileLocation destFileLocation, String destMountPath)
+	{
+		throw new RuntimeException("Destination File Location is not LC-package structured and method not provided to create File Instances");
+	}
 }

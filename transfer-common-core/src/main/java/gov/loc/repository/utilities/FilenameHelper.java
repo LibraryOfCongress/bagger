@@ -66,15 +66,17 @@ public class FilenameHelper {
 	
 	public static String removeBasePath(String basePath, String filename) throws Exception
 	{
-		if (! filename.startsWith(basePath))
+		String normBasePath = normalize(basePath);
+		String normFilename = normalize(filename);
+		if (! normFilename.startsWith(normBasePath))
 		{
 			throw new Exception(MessageFormat.format("Cannot remove basePath {0} from {1}", basePath, filename));
 		}
-		if (basePath.equals(filename))
+		if (normBasePath.equals(normFilename))
 		{
 			return "";
 		}
-		return filename.substring(basePath.length() + 1);
+		return normFilename.substring(normBasePath.length() + 1);
 	}
 	
 	public static String concat(String basePath, String additionalFilename)
