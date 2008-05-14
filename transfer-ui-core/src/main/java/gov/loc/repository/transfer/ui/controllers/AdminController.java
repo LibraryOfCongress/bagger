@@ -30,21 +30,32 @@ public class AdminController {
 		for(Object prop:systemProps.keySet()){
 		    String key = prop.toString();
 		    //splits up long classpaths so wrapping isnt a hassle
-		    String tmpProp = ((String)systemProps.get(prop)).replace(":",": ");
-		    String value = tmpProp.replace(",",", ");
-		    System.out.println("AdminController.handleIndex: [" + key + "][" + value + "]");
+		    String value = whiteSpaceTokens((String)systemProps.get(prop));
+		    log.debug("AdminController.handleIndex: [" + key + "][" + value + "]");
 		    systemInfoMap.put(key, value);
 		}
 		// These are a test for ticket #124, IE vs Firefox -- jste
-		/*
+		/* 
 		String tk = "package.access";
-		String tvv = "sun.,org.apache.catalina.,org.apache.coyote.,org.apache.tomcat.,org.apache.jasper.,sun.beans.";
-	    String tv = tvv.replace(":",": ");
-		String v = tv.replace(",",", ");
+		String tv = "sun.,org.apache.catalina.,org.apache.coyote.,org.apache.tomcat.,org.apache.jasper.,sun.beans.";
+		String v = whiteSpaceTokens(tv);
 	    systemInfoMap.put(tk, v);
-	    */ 
+	    String tk2 = "java.class.path";
+	    String tv2 = ":/home/justin/apache-tomcat-5.5.23/bin/bootstrap.jar:/home/justin/apache-tomcat-5.5.23/bin/commons-logging-api.jar;";
+		String v2 = whiteSpaceTokens(tv2);
+	    systemInfoMap.put(tk2, v2);
+	     */ 
 		mav.addObject("systemInfo", systemInfoMap);
 		return mav;
+	}
+	
+	private String whiteSpaceTokens(String prop) {
+		String[] tokens = {":", ",", "/"};
+		for (int i=0; i< tokens.length; i++) {
+			String v = prop.replace(tokens[i],tokens[i]+" ");
+			prop = v;
+		}
+		return prop;
 	}
 	
 }
