@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 public class PackageHelper {
 
 	public static final String PACKAGE_INFORMATION_DIRECTORY = "package-information";
+	public static final String CONTENT_DIRECTORY = "contents";
 	
 	private static final Log log = LogFactory.getLog(PackageHelper.class);
 	

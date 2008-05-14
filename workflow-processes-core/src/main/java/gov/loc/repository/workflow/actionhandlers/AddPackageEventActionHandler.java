@@ -47,7 +47,7 @@ public class AddPackageEventActionHandler extends BaseActionHandler {
 	@Override
 	protected void execute() throws Exception {
 		PackageEvent event = this.getFactory().createPackageEvent(this.eventClass, packge, Calendar.getInstance().getTime(), this.getWorkflowAgent());
-		event.setReportingAgent(this.getWorkflowAgent());
+		event.setRequestingAgent(this.getWorkflowAgent());
 		TaskInstance taskInstance = this.executionContext.getTaskInstance();
 		if (taskInstance == null)
 		{

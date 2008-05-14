@@ -14,10 +14,10 @@ import static gov.loc.repository.workflow.WorkflowConstants.TRANSITION_CONTINUE;
 import java.util.Calendar;
 import java.text.MessageFormat;
 
-public class IngestPackageEventActionHandler extends BaseActionHandler {
+public class AddIngestPackageEventActionHandler extends BaseActionHandler {
 
 	private static final long serialVersionUID = 1L;
-	private static final Log log = LogFactory.getLog(IngestPackageEventActionHandler.class);
+	private static final Log log = LogFactory.getLog(AddIngestPackageEventActionHandler.class);
 
 	@Required
 	public String fileLocationKey;
@@ -29,7 +29,7 @@ public class IngestPackageEventActionHandler extends BaseActionHandler {
 	
 	private System repositorySystem;
 	
-	public IngestPackageEventActionHandler(String actionHandlerConfig) {
+	public AddIngestPackageEventActionHandler(String actionHandlerConfig) {
 		super(actionHandlerConfig);
 	}
 	
@@ -63,6 +63,10 @@ public class IngestPackageEventActionHandler extends BaseActionHandler {
 		}
 		//PerformingAgent
 		event.setPerformingAgent(this.getDAO().findRequiredAgent(Person.class, taskInstance.getActorId()));
+		
+		//RequestingAgent
+		event.setRequestingAgent(this.getWorkflowAgent());
+		
 		//Success
 		if (! TRANSITION_CONTINUE.equals((String)this.executionContext.getContextInstance().getTransientVariable("transition")))
 		{

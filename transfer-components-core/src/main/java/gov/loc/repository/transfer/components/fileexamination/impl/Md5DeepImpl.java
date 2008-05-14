@@ -52,7 +52,7 @@ public class Md5DeepImpl extends BaseComponent implements LCManifestGenerator, L
 			throw new Exception(fileLocation.toString() + " is not LCPackage structured");
 		}
 		
-		ProcessBuilder builder = new ProcessBuilder(this.getCommand(algorithm.toString()), "-l", "-r", "data");
+		ProcessBuilder builder = new ProcessBuilder(this.getCommand(algorithm.toString()), "-l", "-r", PackageHelper.CONTENT_DIRECTORY);
 		
 		//Set working directory to the package directory
 		File dir = this.getPackageDir(fileLocation, mountPath);
@@ -87,11 +87,10 @@ public class Md5DeepImpl extends BaseComponent implements LCManifestGenerator, L
 	private String getCommand(String algorithm) 
 	{
 		
-		String key = algorithm.toString().toLowerCase() + ".command";
 		String command = this.commandMap.get(algorithm.toString().toLowerCase());
 		if (command == null)
 		{
-			throw new ConfigurationException(key + " is missing from configuration");
+			throw new ConfigurationException(algorithm + " is missing from configuration");
 		}
 		return command;
 	}
@@ -114,11 +113,14 @@ public class Md5DeepImpl extends BaseComponent implements LCManifestGenerator, L
 		File manifestFile = PackageHelper.discoverManifest(packageDir);
 		String algorithm = ManifestHelper.getAlgorithm(manifestFile);
 
-		ProcessBuilder builder = new ProcessBuilder(this.getCommand(algorithm), "-nx", manifestFile.toString(), "-r", "data");
+		this.getLog().debug("Package directory is " + packageDir);
+		this.getLog().debug("Manifest file is " + manifestFile);
+		
+		ProcessBuilder builder = new ProcessBuilder(this.getCommand(algorithm), "-nx", manifestFile.toString(), "-r", PackageHelper.CONTENT_DIRECTORY);
 		
 		//Set working directory to the package directory
-		File dir = this.getPackageDir(fileLocation, mountPath);
-		builder.directory(dir);
+		//File dir = this.getPackageDir(fileLocation, mountPath);
+		builder.directory(packageDir);
 		//redirects stderror to stdout
 		builder.redirectErrorStream(true);
 

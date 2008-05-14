@@ -14,7 +14,7 @@ import java.text.MessageFormat;
 public class InventoryFilesOnDiskEventActionHandler extends BaseActionHandler {
 
 	private static final long serialVersionUID = 1L;
-	private static final Log log = LogFactory.getLog(IngestPackageEventActionHandler.class);
+	private static final Log log = LogFactory.getLog(AddIngestPackageEventActionHandler.class);
 
     @Required
     public String fileLocationKey;

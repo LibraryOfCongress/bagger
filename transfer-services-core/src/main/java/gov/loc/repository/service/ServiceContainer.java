@@ -28,7 +28,7 @@ public class ServiceContainer implements Runnable {
 
 	private ComponentFactory factory;
 	private ThreadPoolTaskExecutor executor;
-	private Long wait = 5000L;
+	private Long wait = 10000L;
 	private State state = State.STOPPED;
 	private RespondingServiceBroker broker;
 	private String serviceUrl;

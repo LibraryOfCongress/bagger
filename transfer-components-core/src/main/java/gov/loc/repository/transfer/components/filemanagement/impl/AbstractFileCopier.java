@@ -5,7 +5,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 import java.io.FileFilter;
 
 import org.apache.commons.io.FileUtils;
@@ -18,11 +17,10 @@ import gov.loc.repository.packagemodeler.packge.FileInstance;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.transfer.components.BaseComponent;
 import gov.loc.repository.transfer.components.fileexamination.Verifier;
+import gov.loc.repository.utilities.PackageHelper;
 
 public abstract class AbstractFileCopier extends BaseComponent {
-
-	protected static final String CONTENT_DIRECTORY = "contents";	
-	
+		
 	public AbstractFileCopier(ModelerFactory factory, PackageModelDAO dao) {
 		super(factory, dao);
 	}
@@ -57,7 +55,7 @@ public abstract class AbstractFileCopier extends BaseComponent {
 		if (! srcFileLocation.isLCPackageStructure() && destFileLocation.isLCPackageStructure())
 		{
 			//Adjust the destFile
-			destDir = new File(destDir, CONTENT_DIRECTORY);
+			destDir = new File(destDir, PackageHelper.CONTENT_DIRECTORY);
 		}
 		
 		for(FileInstance fileInstance : filteredFileInstances)

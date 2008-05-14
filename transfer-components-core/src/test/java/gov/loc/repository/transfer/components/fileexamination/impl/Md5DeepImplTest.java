@@ -91,7 +91,7 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 
 	}
 	
-	@Test
+	//@Test
 	public void testBadValidate() throws Exception
 	{
 		if (! this.canRunTest)
