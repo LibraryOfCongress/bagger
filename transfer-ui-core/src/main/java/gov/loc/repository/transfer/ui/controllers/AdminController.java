@@ -30,9 +30,19 @@ public class AdminController {
 		for(Object prop:systemProps.keySet()){
 		    String key = prop.toString();
 		    //splits up long classpaths so wrapping isnt a hassle
-		    String value = ((String)systemProps.get(prop)).replace(":",": ");
+		    String tmpProp = ((String)systemProps.get(prop)).replace(":",": ");
+		    String value = tmpProp.replace(",",", ");
+		    System.out.println("AdminController.handleIndex: [" + key + "][" + value + "]");
 		    systemInfoMap.put(key, value);
 		}
+		// These are a test for ticket #124, IE vs Firefox -- jste
+		/*
+		String tk = "package.access";
+		String tvv = "sun.,org.apache.catalina.,org.apache.coyote.,org.apache.tomcat.,org.apache.jasper.,sun.beans.";
+	    String tv = tvv.replace(":",": ");
+		String v = tv.replace(",",", ");
+	    systemInfoMap.put(tk, v);
+	    */ 
 		mav.addObject("systemInfo", systemInfoMap);
 		return mav;
 	}
