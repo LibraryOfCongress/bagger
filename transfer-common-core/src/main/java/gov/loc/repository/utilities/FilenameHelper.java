@@ -15,18 +15,20 @@ public class FilenameHelper {
 	{
 		File file = new File(fileName);
 		File parentFile = file.getParentFile();
-		if (parentFile == null)
-		{
-			return null;
-		}
-		while(parentFile != null)
-		{
-			file = parentFile;
-			parentFile = file.getParentFile();
-		}
+		String root = null;
 		
-		return normalize(file.toString());
-		
+		if (parentFile != null)
+		{
+			while(parentFile != null)
+			{
+				file = parentFile;
+				parentFile = file.getParentFile();
+			}
+			
+			root = normalize(file.toString());
+		}
+		log.debug(MessageFormat.format("Get root {0} from {1}", root, fileName));
+		return root;
 	}
 	
 	public static String getPath(String fileName)
@@ -68,21 +70,36 @@ public class FilenameHelper {
 		return FilenameUtils.equalsNormalized(filename1, filename2);
 	}
 	
-	public static String removeBasePath(String basePath, String filename) throws Exception
+	public static String removeBasePath(String basePath, String filename)
 	{
+		if (filename == null)
+		{
+			throw new RuntimeException("Cannot remove basePath from null");
+		}		
 		String normBasePath = normalize(basePath);
 		String normFilename = normalize(filename);
-		if (! normFilename.startsWith(normBasePath))
+		String filenameWithoutBasePath = null;
+		if (basePath == null)
 		{
-			throw new Exception(MessageFormat.format("Cannot remove basePath {0} from {1}", basePath, filename));
+			filenameWithoutBasePath = normFilename;
 		}
-		if (normBasePath.equals(normFilename))
+		else
 		{
-			return "";
+			if (! normFilename.startsWith(normBasePath))
+			{
+				throw new RuntimeException(MessageFormat.format("Cannot remove basePath {0} from {1}", basePath, filename));
+			}
+			if (normBasePath.equals(normFilename))
+			{
+				filenameWithoutBasePath = "";
+			}
+			else
+			{
+				filenameWithoutBasePath = normFilename.substring(normBasePath.length() + 1);				
+			}
 		}
-		String filenameWithoutBasePath = normFilename.substring(normBasePath.length() + 1);
 		log.debug(MessageFormat.format("Removing {0} from {1} resulted in {2}", basePath, filename, filenameWithoutBasePath));
-		return normFilename.substring(normBasePath.length() + 1);
+		return filenameWithoutBasePath;
 	}
 	
 	public static String concat(String basePath, String additionalFilename)
@@ -92,6 +109,10 @@ public class FilenameHelper {
 	
 	public static String normalize(String filename)
 	{
+		if (filename == null)
+		{
+			return null;
+		}
 		String newFilename = FilenameUtils.normalize(filename);
 		newFilename = FilenameUtils.separatorsToUnix(newFilename);
 		log.debug(MessageFormat.format("Normalized {0} to {1}", filename, newFilename));
