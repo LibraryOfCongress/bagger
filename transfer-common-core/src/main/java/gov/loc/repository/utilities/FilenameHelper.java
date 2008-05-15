@@ -4,8 +4,12 @@ import java.io.File;
 import java.text.MessageFormat;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class FilenameHelper {
+	
+	private static final Log log = LogFactory.getLog(FilenameHelper.class);
 	
 	public static String getRoot(String fileName)
 	{
@@ -76,6 +80,8 @@ public class FilenameHelper {
 		{
 			return "";
 		}
+		String filenameWithoutBasePath = normFilename.substring(normBasePath.length() + 1);
+		log.debug(MessageFormat.format("Removing {0} from {1} resulted in {2}", basePath, filename, filenameWithoutBasePath));
 		return normFilename.substring(normBasePath.length() + 1);
 	}
 	
@@ -87,6 +93,8 @@ public class FilenameHelper {
 	public static String normalize(String filename)
 	{
 		String newFilename = FilenameUtils.normalize(filename);
+		newFilename = FilenameUtils.separatorsToUnix(newFilename);
+		log.debug(MessageFormat.format("Normalized {0} to {1}", filename, newFilename));
 		return FilenameUtils.separatorsToUnix(newFilename);
 	}
 }
