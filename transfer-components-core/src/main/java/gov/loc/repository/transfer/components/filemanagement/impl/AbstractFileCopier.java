@@ -113,7 +113,7 @@ public abstract class AbstractFileCopier extends BaseComponent {
             List<File> fileList = PackageHelper.discoverLCPackageRootFiles(packageDir);
             for(File file : fileList)
             {
-                String filename = FilenameHelper.removeBasePath(packageDir.toString(), FilenameHelper.normalize(file.toString()));
+                String filename = FilenameHelper.removeBasePath(packageDir.toString(), file.toString());
                 factory.createFileInstance(destFileLocation, new FileName(filename));
             }            
 		}

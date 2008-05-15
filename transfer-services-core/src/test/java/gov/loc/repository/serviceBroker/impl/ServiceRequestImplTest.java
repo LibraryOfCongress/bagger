@@ -56,4 +56,45 @@ public class ServiceRequestImplTest extends AbstractServiceBrokerTest {
 		assertNotNull(req.getResponseAcknowledgedDate());
 		
 	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testSuspendRequestAcknowledge()
+	{		
+		//A typical request/response pattern
+		ServiceRequest req = serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
+		req.request(REQUESTER_1);
+		
+		template.save(req);
+		template.refresh(req);
+
+		req.suspend();
+		
+		template.saveOrUpdate(req);
+								
+		req.acknowledgeRequest(RESPONDER_1);		
+				
+	}
+
+	@Test(expected=IllegalStateException.class)
+	public void testSuspendResponseAcknowledge()
+	{		
+		//A typical request/response pattern
+		ServiceRequest req = serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
+		req.request(REQUESTER_1);
+		
+		template.save(req);
+		template.refresh(req);
+
+		req.acknowledgeRequest(RESPONDER_1);
+		req.respondSuccess(true);
+		template.saveOrUpdate(req);
+		
+		req.suspend();
+		
+		template.saveOrUpdate(req);
+		
+		req.acknowledgeResponse();
+			
+	}
+	
 }

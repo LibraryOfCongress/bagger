@@ -59,6 +59,12 @@ public interface ServiceRequest {
 
 	public String getErrorDetail();
 	
+	public Boolean isSuspended();
+	
+	public void suspend();
+	
+	public void resume();
+	
 	public interface StringEntry extends ObjectEntry
 	{		
 		public String getValue();

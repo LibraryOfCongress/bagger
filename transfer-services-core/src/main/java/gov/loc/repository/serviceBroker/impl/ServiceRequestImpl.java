@@ -77,6 +77,9 @@ public class ServiceRequestImpl implements ServiceRequest, Serializable {
 	@Column(name = "error_detail", nullable = true)
 	private String errorDetail = null;
 
+	@Column(name = "is_suspended", nullable = false)
+	private Boolean isSuspended = false;
+	
 	public ServiceRequestImpl() {
 	}
 		
@@ -129,6 +132,11 @@ public class ServiceRequestImpl implements ServiceRequest, Serializable {
 	
 	public void acknowledgeRequest(String responder)
 	{
+		if (this.isSuspended)
+		{
+			throw new IllegalStateException("Service Request is suspended.");
+		}
+
 		if (this.responder != null)
 		{
 			throw new IllegalStateException("This request has already been acknowledged.");
@@ -166,6 +174,10 @@ public class ServiceRequestImpl implements ServiceRequest, Serializable {
 
 	public void acknowledgeResponse()
 	{
+		if (this.isSuspended)
+		{
+			throw new IllegalStateException("Service Request is suspended.");
+		}
 		if (this.responseAcknowledgedDate != null)
 		{
 			throw new IllegalStateException("Response is already acknowledged."); 
@@ -264,4 +276,19 @@ public class ServiceRequestImpl implements ServiceRequest, Serializable {
 		return s;
 	}
 			
+	@Override
+	public Boolean isSuspended() {
+		return this.isSuspended;
+	}
+	
+	@Override
+	public void resume() {
+		this.isSuspended = false;		
+	}
+	
+	@Override
+	public void suspend() {
+		this.isSuspended = true;		
+	}
+	
 }

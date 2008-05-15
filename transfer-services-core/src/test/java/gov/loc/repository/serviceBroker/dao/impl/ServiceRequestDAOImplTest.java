@@ -46,7 +46,7 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	}
 
 	@Test
-	public void testFindAndAcknowledgeNextServiceRequest()
+	public void testFindNextServiceRequest()
 	{
 		assertNull(broker.findNextServiceRequest(new String[] {QUEUE_1}, new String[] {JOBTYPE_1}, RESPONDER_1));
 
@@ -59,6 +59,13 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 		ServiceRequest req2 = this.serviveBrokerFactory.createServiceRequest("2", QUEUE_1, JOBTYPE_2);
 		req2.request(REQUESTER_1);
 		broker.save(req2);
+		
+		assertNull(broker.findNextServiceRequest(new String[] {QUEUE_1}, new String[] {JOBTYPE_1}, RESPONDER_1));
+		
+		ServiceRequest req5 = this.serviveBrokerFactory.createServiceRequest("5", QUEUE_1, JOBTYPE_1);
+		req5.request(REQUESTER_1);
+		req5.suspend();
+		broker.save(req5);
 		
 		assertNull(broker.findNextServiceRequest(new String[] {QUEUE_1}, new String[] {JOBTYPE_1}, RESPONDER_1));
 		
@@ -100,16 +107,25 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	public void testFindNextServiceRequestWithResponse()
 	{
 		assertNull(broker.findNextServiceRequestWithResponse(REQUESTER_1));
-		ServiceRequest req = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_2, JOBTYPE_1);
-		req.request(REQUESTER_1);
-		req.acknowledgeRequest(RESPONDER_1);
-		req.respondSuccess(true);
-		broker.save(req);
+		ServiceRequest req1 = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_2, JOBTYPE_1);
+		req1.request(REQUESTER_1);
+		req1.acknowledgeRequest(RESPONDER_1);
+		req1.respondSuccess(true);
+		req1.suspend();
+		broker.save(req1);
+				
+		assertNull(broker.findNextServiceRequestWithResponse(REQUESTER_1));
+
+		ServiceRequest req2 = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_2, JOBTYPE_1);
+		req2.request(REQUESTER_1);
+		req2.acknowledgeRequest(RESPONDER_1);
+		req2.respondSuccess(true);
+		broker.save(req2);
 		
 		assertNotNull(broker.findNextServiceRequestWithResponse(REQUESTER_1));
 		
-		req.acknowledgeResponse();
-		broker.save(req);
+		req2.acknowledgeResponse();
+		broker.save(req2);
 		
 		assertNull(broker.findNextServiceRequestWithResponse(REQUESTER_1));
 	}

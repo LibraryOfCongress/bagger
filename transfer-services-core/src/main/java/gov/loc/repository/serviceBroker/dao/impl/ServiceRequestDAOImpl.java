@@ -64,6 +64,7 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 			"where req.responder is null " +
 			"and req.jobType in (:jobTypes) " +
 			"and req.queue in (:queues) " +
+			"and req.isSuspended = false " +
 			"order by req.requestDate asc";
 		Query query = this.sessionFactory.getCurrentSession().createQuery(queryString);
 		query.setParameterList("jobTypes", this.arrayToList(jobTypes));
@@ -80,6 +81,7 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 		String queryString = "from ServiceRequest req " +
 		"where req.responder = :responder " +
 		"and req.isSuccess is null";
+		
 		Query query = this.sessionFactory.getCurrentSession().createQuery(queryString);
 		query.setString("responder", responder);
 		return query.list();
@@ -92,6 +94,7 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 		"where req.isSuccess is not null " +
 		"and req.responseAcknowledgedDate is null " +
 		"and req.requester = :requester " +
+		"and req.isSuspended = false " +
 		"order by req.responseDate asc";
 		
 		Query query = this.sessionFactory.getCurrentSession().createQuery(queryString);
