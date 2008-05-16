@@ -17,7 +17,7 @@ public interface ServiceRequestDAO {
 	
 	public ServiceRequest findNextServiceRequestWithResponse(String requester);
 	
-	public List<ServiceRequest> findServiceRequests(String correlationKey);
+	public List<ServiceRequest> findServiceRequests(String requester, String correlationKey);
 	
 	public ServiceRequest findServiceRequest(Long key);
 	

@@ -8,4 +8,7 @@ public interface RequestingServiceBroker {
 
 	public String getRequester();
 	
+	public void suspend(String correlationKey);
+	
+	public void resume(String correlationKey);
 }

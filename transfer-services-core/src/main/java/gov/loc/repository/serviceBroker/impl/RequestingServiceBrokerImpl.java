@@ -1,5 +1,7 @@
 package gov.loc.repository.serviceBroker.impl;
 
+import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
@@ -37,5 +39,34 @@ public class RequestingServiceBrokerImpl implements RequestingServiceBroker {
 	@Override
 	public String getRequester() {
 		return this.requester;
+	}
+	
+	@Override
+	@Transactional
+	public void resume(String correlationKey) {
+		List<ServiceRequest> requests = this.dao.findServiceRequests(this.requester, correlationKey);
+		for(ServiceRequest req : requests)
+		{
+			if (req.isSuspended())
+			{
+				req.resume();
+				this.dao.save(req);
+			}
+		}		
+	}
+	
+	@Override
+	@Transactional
+	public void suspend(String correlationKey) {
+		List<ServiceRequest> requests = this.dao.findServiceRequests(this.requester, correlationKey);
+		for(ServiceRequest req : requests)
+		{
+			if (! req.isSuspended())
+			{
+				req.suspend();
+				this.dao.save(req);
+			}
+		}
+
 	}
 }

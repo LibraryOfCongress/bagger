@@ -133,22 +133,22 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	@Test
 	public void testFindServiceRequestsByCorrelationKey()
 	{
-		assertTrue(broker.findServiceRequests("1").isEmpty());
+		assertTrue(broker.findServiceRequests(REQUESTER_1, "1").isEmpty());
 		
 		ServiceRequest req1 = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
 		req1.request(REQUESTER_1);
 		broker.save(req1);
-		assertEquals(1, broker.findServiceRequests("1").size());
+		assertEquals(1, broker.findServiceRequests(REQUESTER_1, "1").size());
 
 		ServiceRequest req2 = this.serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
 		req2.request(REQUESTER_1);
 		broker.save(req2);
-		assertEquals(2, broker.findServiceRequests("1").size());
+		assertEquals(2, broker.findServiceRequests(REQUESTER_1, "1").size());
 		
 		ServiceRequest req3 = this.serviveBrokerFactory.createServiceRequest("2", QUEUE_1, JOBTYPE_1);
 		req3.request(REQUESTER_1);
 		broker.save(req3);
-		assertEquals(2, broker.findServiceRequests("1").size());
+		assertEquals(2, broker.findServiceRequests(REQUESTER_1, "1").size());
 				
 	}
 	

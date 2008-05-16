@@ -106,12 +106,14 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly=true)
-	public List<ServiceRequest> findServiceRequests(String correlationKey) {
+	public List<ServiceRequest> findServiceRequests(String requester, String correlationKey) {
 		String queryString = "from ServiceRequest req " +
-		"where req.correlationKey = :correlationKey";
+		"where req.correlationKey = :correlationKey " +
+		"and req.requester = :requester";
 		
 		Query query = this.sessionFactory.getCurrentSession().createQuery(queryString);
 		query.setString("correlationKey", correlationKey);
+		query.setString("requester", requester);
 		return query.list();
 	}
 	
