@@ -5,7 +5,7 @@ from transfer import utils
 class PackageModeler():
 
     def __init__(self, config):
-        self.project_name = "Package Modeler Core"
+        self.project_name = "packagemodeler-core"
         self.db_name = "package_modeler"
         self.roles = {
             'reader': 'package_modeler_reader_role',
@@ -13,6 +13,9 @@ class PackageModeler():
             'transfer_reader': 'transfer_reader_user',
             'transfer_writer': 'transfer_data_writer_user',
         }
+        self.install_dir = config['TRANSFER_INSTALL_DIR']
+        self.driver_package = "files/%s-%s-bin.zip" % (self.project_name, config['VERSION'])
+        self.driver = "%s/%s-%s/bin/fixturedriver" % (self.install_dir, self.project_name, config['VERSION'])
         self.debug = config['DEBUG']
         self.psql = config['PSQL']
         self.db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ""
@@ -25,6 +28,7 @@ class PackageModeler():
         self.roles_sql_file = config['PM_CORE_SQL_FILES']['roles']
         self.tables_sql_file = config['PM_CORE_SQL_FILES']['tables']        
         self.perms_sql_file = config['PM_CORE_SQL_FILES']['perms']
+        self.fixtures_sql_file = config['PM_CORE_SQL_FILES']['fixtures']
         os.environ['PGUSER'] = config['PGUSER']
         os.environ['PGHOST'] = config['PGHOST']
         os.environ['PGPORT'] = config['PGPORT']
@@ -60,6 +64,22 @@ class PackageModeler():
         sql = self.__prefix_roles(sql, self.roles)
         result = utils.load_sqlstr(self.psql, sql, self.debug)
         return "Granting %s privileges\n====================\n%s" % (self.project_name, result)
+
+    def create_fixtures(self, project=None, env):
+        """ creates database fixtures """
+        os.environ['PGDATABASE'] = self.db_prefix + self.db_name
+        fixtures_file = self.fixtures_sql_file.replace("-fixtures", "-%s-%s-fixtures" % (project, env))
+        sql = file(fixtures_file).read()
+        result = utils.load_sqlstr(self.psql, sql, self.debug)
+        return "Installing %s database fixtures\n====================\n%s" % (self.project_name, result)
+
+    def deploy_drivers(self):
+        """ deploys command-line drivers """
+        utils.unzip(self.driver_package, self.install_dir)
+        utils.chmod("+x", self.driver)
+        utils.mv(PM_WRITER_HIBERNATE_PROPS, PM_CORE_HIBERNATE_CONF)
+        utils.mv(PM_FIXTURE_HIBERNATE_PROPS, PM_CORE_FIXTURE_HIBERNATE_CONF)
+        return "Deploying %s drivers\n====================\n%s" % (self.project_name, result)
 
     def __prefix_database(self, file):
         """ prepends db_prefix to database names """

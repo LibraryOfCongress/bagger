@@ -19,6 +19,7 @@ class Jbpm(PackageModelerCore):
         self.roles_sql_file = config['JBPM_SQL_FILES']['roles']
         self.tables_sql_file = config['JBPM_SQL_FILES']['tables']
         self.perms_sql_file = config['JBPM_SQL_FILES']['perms']
+        self.fixtures_sql_file = config['JBPM_SQL_FILES']['fixtures']
 
     def create_database(self):
         """ creates database """
@@ -35,3 +36,7 @@ class Jbpm(PackageModelerCore):
     def grant_permissions(self):
         """ grants database permissions """
         return PackageModelerCore.grant_permissions(self)
+
+    def create_fixtures(self, project, env):
+        """ creates database fixtures """
+        return PackageModelerCore.create_fixtures(self, project, env)
