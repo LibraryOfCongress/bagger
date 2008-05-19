@@ -50,7 +50,7 @@ public class ProcessInstanceController extends AbstractRestController {
 		    "processInstanceBeanList", dao.getActiveProcessInstanceBeanList() 
 		);
 		mav.addObject(
-		    "suspendedProcessInstanceBeanList", dao.getSuspendedProcessInstanceBeanList() 
+		    "problemProcessInstanceBeanList", dao.getProblemProcessInstanceBeanList() 
 		);
 		if (request.getUserPrincipal() != null)
 		{

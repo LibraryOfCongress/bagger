@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import gov.loc.repository.transfer.components.test.TestComponent;
 import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.workflow.WorkflowConstants;
+import gov.loc.repository.workflow.jbpm.spring.ContextService;
 
 import java.io.FileFilter;
 import java.lang.reflect.Proxy;
@@ -30,6 +31,9 @@ public class BaseActionHandlerTest {
 	public void setup() throws Exception
 	{
 		configuration = ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
+		ContextService contextService = new ContextService();		
+		this.actionHandler.setApplicationContext(contextService.getContext());
+		
 	}
 	
 	@Test

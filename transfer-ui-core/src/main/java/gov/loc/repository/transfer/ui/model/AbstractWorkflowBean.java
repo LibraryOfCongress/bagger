@@ -1,5 +1,6 @@
 package gov.loc.repository.transfer.ui.model;
 
+import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 
 import java.text.MessageFormat;
@@ -15,7 +16,8 @@ public abstract class AbstractWorkflowBean {
 	WorkflowBeanFactory factory;
 	private Locale locale = new Locale("en", "US");
 	private MessageSource messageSource;
-	ServiceRequestDAO serviceRequestDAO;
+	//ServiceRequestDAO serviceRequestDAO;
+	RequestingServiceBroker broker;
 		
 	static final Log log = LogFactory.getLog(AbstractWorkflowBean.class);	
 	
@@ -31,7 +33,12 @@ public abstract class AbstractWorkflowBean {
 	{
 		this.jbpmContext = jbpmContext;
 	}
-			
+	
+	public void setServiceRequestBroker(RequestingServiceBroker broker)
+	{
+		this.broker = broker;
+	}
+	
 	public abstract String getName();
 	
 	public abstract String getId();
@@ -53,9 +60,11 @@ public abstract class AbstractWorkflowBean {
 		return result;
 	}
 	
+	/*
 	public void setServiceRequestDAO(ServiceRequestDAO dao)
 	{
 		this.serviceRequestDAO = dao;
 	}
+	*/
 	
 }

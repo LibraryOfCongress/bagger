@@ -118,8 +118,8 @@
 	    <ul class="homeNav">
 	        <li><a href="${contextPath}/processinstance/index.html?ref=activeWorkflows#activeWorkflows">
 	            See all of the active workflows.</a><br/></li>
-	        <li><a href="${contextPath}/processinstance/index.html?ref=suspendedWorkflows#suspendedWorkflows">
-	            See all of the suspended workflows.</a><br/></li>
+	        <li><a href="${contextPath}/processinstance/index.html?ref=problemWorkflows#problemWorkflows">
+	            See all of the problem workflows.</a><br/></li>
 	        <li><a href="${contextPath}/processinstance/index.html?ref=newWorkflow#newWorkflow">
 	            Start a new workflow.</a><br/></li>
 	    </ul>

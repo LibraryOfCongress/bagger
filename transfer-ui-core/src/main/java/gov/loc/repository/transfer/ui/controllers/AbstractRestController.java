@@ -1,6 +1,6 @@
 package gov.loc.repository.transfer.ui.controllers;
 
-import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
+import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
@@ -49,8 +49,8 @@ public abstract class AbstractRestController extends AbstractController {
 		
 		WorkflowBeanFactory factory = new WorkflowBeanFactory();
 		factory.setJbpmContext(jbpmContext);		
-		factory.setMessageSource(this.getApplicationContext());;
-		factory.setServiceRequestDAO((ServiceRequestDAO)this.getApplicationContext().getBean("serviceBroker"));
+		factory.setMessageSource(this.getApplicationContext());
+		factory.setRequestingServiceBroker((RequestingServiceBroker)this.getApplicationContext().getBean("requestServiceBroker"));
 		
 		WorkflowDao dao = new WorkflowDao();
 		dao.setJbpmContext(jbpmContext);

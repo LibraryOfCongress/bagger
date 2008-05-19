@@ -13,13 +13,11 @@ import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class ServiceInvocationHandler implements InvocationHandler {
 
-	private static ApplicationContext context = new ClassPathXmlApplicationContext("classpath:conf/servicerequestbroker-context.xml");
+	//private static ApplicationContext context = new ClassPathXmlApplicationContext("classpath:conf/servicerequestbroker-context.xml");
 	private ServiceBrokerFactory factory = new ServiceBrokerFactory();
 	
 	private static final Log log = LogFactory.getLog(ServiceInvocationHandler.class);	
@@ -28,10 +26,10 @@ public class ServiceInvocationHandler implements InvocationHandler {
 	private Long tokenId;
 	private RequestingServiceBroker broker;
 	
-	public ServiceInvocationHandler(String queueName, Long tokenId) {
+	public ServiceInvocationHandler(String queueName, Long tokenId, RequestingServiceBroker broker) {
 		this.queueName = queueName;
 		this.tokenId = tokenId;
-		this.broker = (RequestingServiceBroker)context.getBean("requestServiceBroker");
+		this.broker = broker;
 	}	
 	
 	public Object invoke(Object object, Method method, Object[] args)

@@ -1,6 +1,7 @@
 package gov.loc.repository.transfer.ui.model;
 
 import gov.loc.repository.serviceBroker.ServiceRequest;
+import static gov.loc.repository.workflow.WorkflowConstants.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,6 +49,21 @@ public class TokenBean extends AbstractWorkflowBean {
 	public boolean isEnded()
 	{
 		return this.token.hasEnded();
+	}
+	
+	public boolean isSuspended()
+	{
+		return this.token.isSuspended();
+	}
+	
+	public WorkflowExceptionBean getWorkflowExceptionBean()
+	{
+		if (! this.isSuspended())
+		{
+			return null;
+		}
+		ExecutionContext executionContext = new ExecutionContext(this.token);
+		return this.factory.createWorkflowExceptionBean((String)executionContext.getContextInstance().getVariable(VARIABLE_LAST_EXCEPTION), (String)executionContext.getContextInstance().getVariable(VARIABLE_LAST_EXCEPTION_DETAIL), (String)executionContext.getContextInstance().getVariable(VARIABLE_LAST_EXCEPTION_NODENAME), (String)executionContext.getContextInstance().getVariable(VARIABLE_LAST_EXCEPTION_ACTIONNAME));
 	}
 	
 	public TokenBean getParentTokenBean()
@@ -114,11 +130,11 @@ public class TokenBean extends AbstractWorkflowBean {
 	
 	public boolean isMovable()
 	{		
-		if (this.isEnded() || ! this.getProcessInstanceBean().isSuspended())
+		if (! this.isEnded() && this.isSuspended() && ! this.token.getProcessInstance().isSuspended())
 		{
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	public void setNodeBean(NodeBean nodeBean) throws Exception
@@ -129,13 +145,19 @@ public class TokenBean extends AbstractWorkflowBean {
 		}
 		log.debug("Moving node to " + nodeBean.getName());
 		this.token.setNode(nodeBean.getNode());
-		this.token.getProcessInstance().resume();
-		nodeBean.getNode().enter(new ExecutionContext(this.token));
+		this.token.resume();
+		this.broker.resume(this.getId());
+		ExecutionContext executionContext = new ExecutionContext(this.token);
+		nodeBean.getNode().enter(executionContext);
+		executionContext.getContextInstance().deleteVariable(VARIABLE_LAST_EXCEPTION);
+		executionContext.getContextInstance().deleteVariable(VARIABLE_LAST_EXCEPTION_ACTIONNAME);
+		executionContext.getContextInstance().deleteVariable(VARIABLE_LAST_EXCEPTION_NODENAME);
+		executionContext.getContextInstance().deleteVariable(VARIABLE_LAST_EXCEPTION_DETAIL);
 	}
 	
 	public List<ServiceRequest> getServiceRequestList()
 	{
-		return this.serviceRequestDAO.findServiceRequests(this.getId());
+		return this.broker.findServiceRequests(this.getId());
 	}
 	
 }

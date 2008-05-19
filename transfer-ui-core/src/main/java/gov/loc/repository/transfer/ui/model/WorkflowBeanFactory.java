@@ -1,5 +1,6 @@
 package gov.loc.repository.transfer.ui.model;
 
+import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 
 import org.jbpm.JbpmContext;
@@ -17,7 +18,7 @@ import org.springframework.context.MessageSource;
 public class WorkflowBeanFactory {
 	protected JbpmContext jbpmContext;
 	private MessageSource messageSource;
-	private ServiceRequestDAO serviceRequestDAO;
+	private RequestingServiceBroker broker;
 	
 	public void setJbpmContext(JbpmContext jbpmContext) {
 		this.jbpmContext = jbpmContext;
@@ -28,9 +29,9 @@ public class WorkflowBeanFactory {
 		this.messageSource = messageSource;
 	}
 	
-	public void setServiceRequestDAO(ServiceRequestDAO dao)
+	public void setRequestingServiceBroker(RequestingServiceBroker broker)
 	{
-		this.serviceRequestDAO = dao;
+		this.broker = broker;
 	}
 	
 	public CommentBean createCommentBean(Comment comment)
@@ -121,6 +122,16 @@ public class WorkflowBeanFactory {
 		return bean;
 	}
 	
+	public WorkflowExceptionBean createWorkflowExceptionBean(String exception, String exceptionDetail, String nodeName, String actionName)
+	{
+		WorkflowExceptionBean exceptionBean = new WorkflowExceptionBean();
+		exceptionBean.setException(exception);
+		exceptionBean.setExceptionDetail(exceptionDetail);
+		exceptionBean.setNodeName(nodeName);
+		exceptionBean.setActionName(actionName);
+		return exceptionBean;		
+	}
+	
 	public <T extends AbstractWorkflowBean> T createWorkflowBean(Class<T> beanType) {
 		try
 		{
@@ -128,7 +139,7 @@ public class WorkflowBeanFactory {
 			bean.setJbpmContext(jbpmContext);
 			bean.setMessageSource(messageSource);
 			bean.setWorkflowBeanFactory(this);
-			bean.setServiceRequestDAO(serviceRequestDAO);
+			bean.setServiceRequestBroker(broker);
 			return beanType.cast(bean);
 		}
 		catch(Exception ex)

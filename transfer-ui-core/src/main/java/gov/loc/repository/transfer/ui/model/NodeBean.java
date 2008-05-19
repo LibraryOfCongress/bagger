@@ -16,7 +16,7 @@ public class NodeBean extends AbstractWorkflowBean {
 	}
 	
 	public String getId() {
-		return Long.toString(this.node.getId());
+		return this.node.getName();
 	}
 	
 	Node getNode()

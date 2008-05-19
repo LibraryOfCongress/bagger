@@ -9,6 +9,8 @@ import gov.loc.repository.transfer.ui.model.UserBean;
 import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
+import gov.loc.repository.utilities.ExceptionHelper;
+import gov.loc.repository.workflow.actionhandlers.ActionHandlerException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -133,7 +135,24 @@ public class TaskInstanceController extends AbstractRestController {
 		if (mav.getStatusCode() != null) { return; }
 		//This will add an errorList to mav
 		command.validatePut();
-		dao.save(taskInstanceBean);
+		
+		//Catch ActionHandlerException
+		try
+		{
+			dao.save(taskInstanceBean);
+		}
+		catch(RuntimeException ex)
+		{
+			if (ExceptionHelper.hasCause(ex, ActionHandlerException.class))
+			{
+				log.error(ex);
+				request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "An error occurred performing the workflow.  The workflow token has been suspended.");
+			}
+			else
+			{
+				throw ex;
+			}
+		}
 		if (taskInstanceBean.isEnded()) {
 			mav.setViewName("redirect:/");
 		}else{

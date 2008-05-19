@@ -8,6 +8,7 @@ import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.transfer.components.test.TestComponent;
 import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.workflow.WorkflowConstants;
+import gov.loc.repository.workflow.jbpm.spring.ContextService;
 
 import java.lang.reflect.Proxy;
 
@@ -64,7 +65,10 @@ public class ServiceInvocationHandlerTest {
 	public void setup() throws Exception
 	{
 		workflowConfig.clearProperty("none.TestComponent.queue");
-		workflowConfig.addProperty("none.TestComponent.queue", QUEUE_1);		
+		workflowConfig.addProperty("none.TestComponent.queue", QUEUE_1);
+		
+		ContextService contextService = new ContextService();		
+		this.actionHandler.setApplicationContext(contextService.getContext());
 	}
 	
 	@Test

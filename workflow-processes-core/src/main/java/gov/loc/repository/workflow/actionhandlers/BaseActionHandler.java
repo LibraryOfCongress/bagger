@@ -7,18 +7,23 @@ import org.apache.commons.configuration.Configuration;
 import org.hibernate.Session;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.def.ActionHandler;
+import org.springframework.context.ApplicationContext;
 
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.packagemodeler.impl.ModelerFactoryImpl;
+import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.utilities.ConfigurationFactory;
+import gov.loc.repository.utilities.ExceptionHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.workflow.WorkflowConstants;
 import gov.loc.repository.workflow.jbpm.instantiation.FieldInstantiator;
+import gov.loc.repository.workflow.jbpm.spring.ContextService;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
+import static gov.loc.repository.workflow.WorkflowConstants.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -42,61 +47,131 @@ public abstract class BaseActionHandler implements ActionHandler
 	protected PackageModelDAO dao;
 	protected ModelerFactory factory;
 	protected ExecutionContext executionContext;
-	protected String actionHandlerConfiguration;		
+	protected String actionHandlerConfiguration;
+	protected ApplicationContext springContext = null;
 	
 	public BaseActionHandler(String actionHandlerConfiguration) {
 		this.actionHandlerConfiguration = actionHandlerConfiguration;
 	}
 
+	public void setApplicationContext(ApplicationContext context)
+	{
+		//This is to allow testing with a null executionContext;
+		this.springContext = context;
+	}
+	
 	/**
 	 * Calls initialize() and then execute().
 	 * @throws Exception
  	 */	
 	public final void execute(ExecutionContext executionContext) throws Exception
 	{
-		FieldInstantiator instantiator = new FieldInstantiator();
-		instantiator.configure(this, this.actionHandlerConfiguration, executionContext);
-		
-		Session session = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).openSession();
 		try
 		{
-			this.executionContext = executionContext;
-			this.helper = new HandlerHelper(executionContext, this.getConfiguration(), this);
-			this.reportingLog = LogFactory.getLog(this.getLoggerName());		
-
-			session.beginTransaction();
-			factory = this.createObject(ModelerFactory.class);
-			dao = this.createObject(PackageModelDAO.class);
-			dao.setSession(session);			
-
-			if (this.executionContext != null)
+			FieldInstantiator instantiator = new FieldInstantiator();
+			instantiator.configure(this, this.actionHandlerConfiguration, executionContext);
+			
+			if (executionContext != null && executionContext.getJbpmContext() != null)
 			{
-				this.helper.checkRequiredTransitions();
-				this.helper.replacePlaceholdersInFields();
-				this.helper.checkRequiredFields();
+				ContextService contextService = ((ContextService)executionContext.getJbpmContext().getServices().getService("springContext"));
+				if (contextService != null)
+				{
+					springContext = contextService.getContext();
+				}
 			}
-					
-			this.initialize();
-			this.start = Calendar.getInstance();		
-			this.execute();
-			session.getTransaction().commit();
+			else
+			{
+				log.warn("Not operating in jbpmContext, so can't get beans from Spring application context");
+			}
+			
+			Session session = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).openSession();
+			try
+			{
+				this.executionContext = executionContext;
+				this.helper = new HandlerHelper(executionContext, this.getConfiguration(), this);
+				this.reportingLog = LogFactory.getLog(this.getLoggerName());		
+	
+				session.beginTransaction();
+				factory = this.createObject(ModelerFactory.class);
+				dao = this.createObject(PackageModelDAO.class);
+				dao.setSession(session);			
+	
+				if (this.executionContext != null)
+				{
+					this.helper.checkRequiredTransitions();
+					this.helper.replacePlaceholdersInFields();
+					this.helper.checkRequiredFields();
+				}
+						
+				this.initialize();
+				this.start = Calendar.getInstance();		
+				this.execute();
+				session.getTransaction().commit();
+			}
+			catch(Exception ex)
+			{
+				if (session != null && session.isOpen())
+				{
+					session.getTransaction().rollback();
+				}
+				throw ex;
+			}
+			finally
+			{
+				if (session != null && session.isOpen())
+				{
+					session.close();
+				}
+			}
 		}
 		catch(Exception ex)
 		{
-			if (session != null && session.isOpen())
-			{
-				session.getTransaction().rollback();
-			}
-			throw ex;
-		}
-		finally
-		{
-			if (session != null && session.isOpen())
-			{
-				session.close();
-			}
-		}
+			Long processInstanceId = null;
+			Long tokenId = null;
+			String nodeName = null;
+			String actionName = null;
 			
+			if (executionContext != null)
+			{
+				if (executionContext.getProcessInstance() != null)
+				{
+					processInstanceId = executionContext.getProcessInstance().getId();
+				}
+				
+				if (executionContext.getToken() != null)
+				{
+					tokenId = executionContext.getToken().getId();
+					executionContext.getToken().suspend();
+					if (this.springContext != null && this.springContext.containsBean("requestServiceBroker"));
+					{
+						RequestingServiceBroker broker = (RequestingServiceBroker)this.springContext.getBean("requestServiceBroker");
+						broker.suspend(Long.toString(tokenId));
+					}
+
+				}
+				
+				if (executionContext.getNode() != null)
+				{
+					nodeName = executionContext.getNode().getName();
+				}
+				
+				if (executionContext.getAction() != null)
+				{
+					actionName = executionContext.getAction().getName();
+				}
+				
+				//Add to token's contextVariables
+				this.executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION_NODENAME, nodeName);
+				this.executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION_ACTIONNAME, actionName);
+				this.executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION, ex.getMessage());
+				this.executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION_DETAIL, ExceptionHelper.stackTraceToString(ex));
+			}
+						
+			//Log the error
+			log.error(MessageFormat.format("Process instance {0}, token {1} threw an exception.  Current node is {2}.  Current action is {3}.", processInstanceId, tokenId, nodeName, actionName), ex);
+			
+			throw new ActionHandlerException(processInstanceId, tokenId, nodeName, actionName, ex);
+		}
 	}
 	
 	protected void leave(String transitionName) throws Exception
@@ -191,10 +266,10 @@ public abstract class BaseActionHandler implements ActionHandler
 			return (T)method.invoke((Object)null, (Object[])null);
 		}
 		else if (this.getConfiguration().containsKey(queueNameKey))
-		{
+		{			
 			String queueName = this.getConfiguration().getString(queueNameKey);
 			log.debug(MessageFormat.format("Configuration key {0} has value {1}", queueNameKey, queueName));
-			return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, new ServiceInvocationHandler(queueName, tokenId));
+			return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, new ServiceInvocationHandler(queueName, tokenId, (RequestingServiceBroker)springContext.getBean("requestServiceBroker")));
 		}
 		else
 		{

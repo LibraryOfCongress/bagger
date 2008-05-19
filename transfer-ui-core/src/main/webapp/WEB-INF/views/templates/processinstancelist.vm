@@ -4,8 +4,8 @@
         <li><a href="#activeWorkflows">
             <span> Active  ( $processInstanceBeanList.size() )  </span>
         </a></li>
-        <li><a href="#suspendedWorkflows">
-            <span> Suspended  ( $suspendedProcessInstanceBeanList.size() )  </span>
+        <li><a href="#problemWorkflows">
+            <span> Problem  ( $problemProcessInstanceBeanList.size() )  </span>
         </a></li>
         <li><a href="#newWorkflow">
             <span> Start New </span>
@@ -71,22 +71,22 @@
 	</div>
 	
 	
-	<div id="suspendedWorkflows">
-		<h2>Suspended Workflows</h2>
+	<div id="problemWorkflows">
+		<h2>Problem Workflows</h2>
 		<fieldset>
-            <legend>These unassigned tasks are available for anyone to pickup.</legend>
+            <legend>These workflows have either been suspended by a user or have tokens that have been suspended because an error occurred.</legend>
             #if( $suspendedProcessInstanceBeanList.size() > 10)
             <table>
 		        <tbody><tr><td>
-                    <form id="suspendedWorkflows_pager" class="pager">
+                    <form id="problemWorkflows_pager" class="pager">
                 		<img src="${contextPath}/images/icons/first.png" class="first"/>
                 		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
                 		<label for="suspendedWorkflows_pagedisplay">Showing page </label>
                 		<input id="suspendedWorkflows_pagedisplay" type="text" class="pagedisplay"/>
                 		<img src="${contextPath}/images/icons/next.png" class="next"/>
                 		<img src="${contextPath}/images/icons/last.png" class="last"/>
-                		<label for="suspendedWorkflows_pagesize">Results per page: </label>
-                		<select id="suspendedWorkflows_pagesize" class="pagesize">
+                		<label for="problemWorkflows_pagesize">Results per page: </label>
+                		<select id="problemWorkflows_pagesize" class="pagesize">
                 			<option selected="selected"  value="10">10</option>
                 			<option value="20">20</option>
                 			<option value="30">30</option>
@@ -96,7 +96,7 @@
                 </td></tr></tbody>
             </table>
             #end
-		    <table id="suspendedWorkflows_table" class="tablesorter pageable"  >
+		    <table id="problemWorkflows_table" class="tablesorter pageable"  >
 	            <thead>
 	                <tr>
                         <th>Package</th>
@@ -108,7 +108,7 @@
                         <th>Workflow</th>
                 </tr></tfoot>
                 <tbody>
-		    	#foreach($processInstanceBean in $suspendedProcessInstanceBeanList)
+		    	#foreach($processInstanceBean in $problemProcessInstanceBeanList)
 			        <tr id="workflow_${processInstanceBean.id}" >
 				        <td>
     				    #if($processInstanceBean.packageName) $processInstanceBean.packageName #else none #end

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
@@ -68,8 +69,35 @@ public class WorkflowDao {
 	@SuppressWarnings("unchecked")
 	public List<ProcessInstanceBean> getActiveProcessInstanceBeanList()
 	{
-		return this.getProcessInstanceBeanList(true, false);
+		String queryString = "select pi " +
+	      "from org.jbpm.graph.exe.ProcessInstance as pi " +
+	      "where pi.isSuspended=false " +
+	      "and pi not in (" +
+	      "  select t.processInstance " +
+	      "  from org.jbpm.graph.exe.Token as t " +
+	      "  where t.isSuspended=true" +
+	      ") order by pi.start desc";
+		Query query = this.jbpmContext.getSession().createQuery(queryString);
+		return this.toProcessInstanceBeanList(query.iterate());
+		//return this.getProcessInstanceBeanList(true, false);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ProcessInstanceBean> getProblemProcessInstanceBeanList()
+	{
+		String queryString = "select pi " +
+	      "from org.jbpm.graph.exe.ProcessInstance as pi " +
+	      "where pi.isSuspended=true " +
+	      "or pi in (" +
+	      "  select t.processInstance " +
+	      "  from org.jbpm.graph.exe.Token as t " +
+	      "  where t.isSuspended=true" +
+	      ") order by pi.start desc";
+		Query query = this.jbpmContext.getSession().createQuery(queryString);
+		return this.toProcessInstanceBeanList(query.iterate());
+		//return this.getProcessInstanceBeanList(true, false);
+	}
+	
 		
 	public List<ProcessInstanceBean> getSuspendedProcessInstanceBeanList()
 	{
@@ -167,6 +195,19 @@ public class WorkflowDao {
 
 		return userBeanList;
 	}
+
+	private List<ProcessInstanceBean> toProcessInstanceBeanList(Iterator<ProcessInstance> iter)
+	{
+		List<ProcessInstanceBean> processInstanceBeanList = new ArrayList<ProcessInstanceBean>();
+		while(iter.hasNext())
+		{
+			ProcessInstanceBean processInstanceBean = this.factory.createProcessInstanceBean(iter.next());
+			processInstanceBeanList.add(processInstanceBean);
+		}
+
+		return processInstanceBeanList;
+	}
+	
 	
 	public void save(TokenBean tokenBean)
 	{

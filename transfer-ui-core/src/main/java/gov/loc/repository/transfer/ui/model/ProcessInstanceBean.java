@@ -93,15 +93,35 @@ public class ProcessInstanceBean extends AbstractWorkflowBean implements Variabl
 		return this.processInstance.isSuspended();
 	}
 
+	private List<Token> getTokenList()
+	{
+		List<Token> tokenList = new ArrayList<Token>(); 
+		this.processInstance.getRootToken().collectChildrenRecursively(tokenList);
+		tokenList.add(this.processInstance.getRootToken());
+		return tokenList;
+	}
+	
 	public void suspended(boolean suspended)
 	{
 		if (suspended && ! this.isSuspended())
 		{
 			this.processInstance.suspend();
+			List<Token> tokenList = this.getTokenList(); 
+			for(Token token : tokenList)
+			{
+				this.broker.suspend(Long.toString(token.getId()));				
+			}
+			
 		}
 		else if (! suspended && this.isSuspended())
 		{
 			this.processInstance.resume();
+			List<Token> tokenList = this.getTokenList(); 
+			for(Token token : tokenList)
+			{
+				this.broker.resume(Long.toString(token.getId()));				
+			}
+			
 		}
 	}
 		

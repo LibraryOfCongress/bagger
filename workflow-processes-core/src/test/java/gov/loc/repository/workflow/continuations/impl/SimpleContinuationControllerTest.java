@@ -27,10 +27,6 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 	      "  </state>" +
 	      "  <end-state name='end1' />" +
 	      "  <end-state name='end2' />" +
-	      "  <exception-handler>" +
-	      "      <action class='gov.loc.repository.workflow.actionhandlers.ExceptionActionHandler'>" +
-	      "      </action>" +
-	      "  </exception-handler>" +	      	      
 	      "</process-definition>";
 	long tokenInstanceId;
 	SimpleContinuationController controller;
@@ -106,7 +102,7 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 		{
 			Token token = jbpmContext.getToken(this.tokenInstanceId);
 			assertEquals("remote", token.getNode().getName());
-			assertTrue(token.getProcessInstance().isSuspended());
+			assertTrue(token.isSuspended());
 		}
 		finally
 		{
@@ -125,7 +121,7 @@ public class SimpleContinuationControllerTest extends AbstractProcessDefinitionT
 		{
 			Token token = jbpmContext.getToken(this.tokenInstanceId);
 			assertEquals("remote", token.getNode().getName());
-			assertTrue(token.getProcessInstance().isSuspended());
+			assertTrue(token.isSuspended());
 		}
 		finally
 		{

@@ -151,6 +151,35 @@
 		                    <td><span class="description">
 		                    </span></td>
 		                </tr>
+		                <tr id="tokenStatus" >
+		                    <td><label for="tokenStatus_value">Status</label></td>
+		                    <td><span id="tokenStatus_value">
+								#if ($tokenBean.suspended)
+									Suspended
+		                        #elseif ($tokenBean.ended)		                        	
+		                            Ended
+		                        #else
+		                            In Progress
+		                        #end	                    	
+		                    </span></td>
+		                    <td><span class="description">
+		                    </span></td>
+		                </tr>
+		                #if($tokenBean.workflowExceptionBean)
+			                <tr id="tokenException" >
+			                    <td><label for="tokenException_value">Last exception</label></td>
+			                    <td><span id="tokenException_value">
+			                    	<p>
+			                    		Exception = $!tokenBean.workflowExceptionBean.exception<br/>
+			                    		#if($tokenBean.workflowExceptionBean.exceptionDetail)Exception = $tokenBean.workflowExceptionBean.exceptionDetail<br/>#end
+			                    		#if($tokenBean.workflowExceptionBean.nodeName)Node = $tokenBean.workflowExceptionBean.nodeName<br/>#end
+			                    		#if($tokenBean.workflowExceptionBean.actionName)Action = $tokenBean.workflowExceptionBean.actionName<br/>#end
+	                    			</p>
+			                    </span></td>
+			                    <td><span class="description">
+			                    </span></td>
+			                </tr>
+		                #end		                
 		                <tr id="node" >
 		                    <td><label for="node_value">Node</label></td>
 		                    <td><span id="node_value">$tokenBean.nodeBean.name</span></td>
@@ -170,18 +199,6 @@
 				        				<input class="button" type="submit" value="move"/>
 				        			</form>
 				        		#end			                    	
-		                    </span></td>
-		                </tr>
-		                <tr id="tokenStatus" >
-		                    <td><label for="tokenStatus_value">Status</label></td>
-		                    <td><span id="tokenStatus_value">
-		                        #if ($tokenBean.ended)
-		                            Ended
-		                        #else
-		                            In Progress
-		                        #end	                    	
-		                    </span></td>
-		                    <td><span class="description">
 		                    </span></td>
 		                </tr>
 		                #if($tokenBean.child)
@@ -227,6 +244,7 @@
 			                        <th>Req. ack. date</th>
 			                        <th>Resp. date</th>
 			                        <th>Resp. ack. date</th>
+			                        <th>Suspended</th>
 			                        <th>Success</th>
 			                        <th>Error</th>
 			                        <th>Error detail</th>
@@ -243,6 +261,7 @@
 									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestAcknowledgedDate)}</td>
 									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.responseDate)}</td>
 									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.responseAcknowledgedDate)}</td>
+									<td>$!{req.isSuspended()}</td>
 									<td>$!{req.isSuccess()}</td>
 									<td>$!req.errorMessage</td>
 									<td>$!req.errorDetail</td>	

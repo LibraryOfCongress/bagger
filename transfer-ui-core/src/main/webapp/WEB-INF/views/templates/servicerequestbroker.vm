@@ -20,6 +20,7 @@
                         <th>Req. date</th>
                         <th>Responder</th>
                         <th>Req. ack. date</th>
+                        <th>Suspended</th>
                     </tr>
 	            </thead>
 	            #foreach($req in $serviceRequestList)
@@ -33,6 +34,7 @@
 						<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestDate)}</td>
 						<td>$!req.responder</td>
 						<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestAcknowledgedDate)}</td>
+						<td>$req.suspended</td>
 		        	</tr>
 	        	#end
 		    </table>
