@@ -24,7 +24,7 @@ def main(config):
     print core_modeler.grant_permissions()
     print ndnp_modeler.grant_permissions()
 
-    print jbpm.create_fixtures(project="ndnp", env="qa")
+    #print jbpm.create_fixtures(project="ndnp", env="qa")
     #print core_modeler.create_fixtures(env="qa")
     #print ndnp_modeler.create_fixtures(env="qa")
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     from time import time
     time = time().__str__().split('.')[0]
     config = {
-        'DEBUG': False, # If True, will print out actions rather than take them (e.g., will not hit database)
+        'DEBUG': True, # If True, will print out actions rather than take them (e.g., will not hit database)
         'PSQL': '/usr/bin/psql', # Tell me where to find psql (default = '/usr/bin/psql')
         'PGHOST': 'localhost', # This is the host that the PostgreSQL database lives on (default = localhost)
         'PGPORT': '5433', # This is the port that PostgreSQL listens on (default = 5432)
