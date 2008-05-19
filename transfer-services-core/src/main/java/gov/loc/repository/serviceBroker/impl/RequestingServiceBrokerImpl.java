@@ -69,4 +69,10 @@ public class RequestingServiceBrokerImpl implements RequestingServiceBroker {
 		}
 
 	}
+	
+	@Override
+	@Transactional
+	public List<ServiceRequest> findServiceRequests(String correlationKey) {
+		return this.dao.findServiceRequests(this.requester, correlationKey);
+	}
 }
