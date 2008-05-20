@@ -1,0 +1,3 @@
+CREATE ROLE service_request_broker_role NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE;
+CREATE ROLE service_request_broker_user WITH PASSWORD 'request_broker_passwd' NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE LOGIN;
+GRANT service_request_broker_role TO service_request_broker_user;
