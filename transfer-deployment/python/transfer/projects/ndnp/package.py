@@ -7,8 +7,8 @@ class PackageModeler(PackageModelerCore):
     def __init__(self, config):
         PackageModelerCore.__init__(self, config)
         self.project_name = "packagemodeler-ndnp"
-        self.tables_sql_file = config['PM_NDNP_SQL_FILES']['tables']
-        self.perms_sql_file = config['PM_NDNP_SQL_FILES']['perms']
+        self.tables_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_NDNP_SQL_FILES']['tables']
+        self.perms_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_NDNP_SQL_FILES']['perms']
 
     def create_database(self):
         """ creates database """

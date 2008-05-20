@@ -21,14 +21,15 @@ class PackageModeler():
         self.db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ""
         self.role_prefix = config['ROLE_PREFIX'] + "_" if config['ROLE_PREFIX'] else ""
         self.passwds = {
-            'transfer_reader': config['TRANSFER_READER_PASSWD'],
-            'transfer_writer': config['TRANSFER_WRITER_PASSWD'],
+            'transfer_reader': config['TRANSFER_READER_PASSWD'] if config['TRANSFER_READER_PASSWD'] else "transfer_reader_user",
+            'transfer_writer': config['TRANSFER_WRITER_PASSWD'] if config['TRANSFER_WRITER_PASSWD'] else "transfer_data_writer_user",
         }
-        self.create_sql_file = config['PM_CORE_SQL_FILES']['create']
-        self.roles_sql_file = config['PM_CORE_SQL_FILES']['roles']
-        self.tables_sql_file = config['PM_CORE_SQL_FILES']['tables']        
-        self.perms_sql_file = config['PM_CORE_SQL_FILES']['perms']
-        self.fixtures_sql_file = config['PM_CORE_SQL_FILES']['fixtures']
+        self.create_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_CORE_SQL_FILES']['create']
+        self.roles_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_CORE_SQL_FILES']['roles']
+        self.tables_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_CORE_SQL_FILES']['tables']        
+        self.perms_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_CORE_SQL_FILES']['perms']
+        self.fixtures_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_CORE_SQL_FILES']['fixtures']
+        self.drop_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_CORE_SQL_FILES']['drop']
         os.environ['PGUSER'] = config['PGUSER']
         os.environ['PGHOST'] = config['PGHOST']
         os.environ['PGPORT'] = config['PGPORT']
@@ -64,6 +65,15 @@ class PackageModeler():
         sql = self.__prefix_roles(sql, self.roles)
         result = utils.load_sqlstr(self.psql, sql, self.debug)
         return "Granting %s privileges\n====================\n%s" % (self.project_name, result)
+
+    def drop(self):
+        """ drops database and roles """
+        os.environ['PGDATABASE'] = "postgres"
+        sql = self.__prefix_database(file(self.drop_sql_file).read())
+        sql = self.__prefix_roles(sql, self.roles)
+        result = utils.load_sqlstr(self.psql, sql, self.debug)
+        return "Dropping %s\n====================\n%s" % (self.project_name, result)
+
 
 #    def create_fixtures(self, project, env):
 #        """ creates database fixtures """
