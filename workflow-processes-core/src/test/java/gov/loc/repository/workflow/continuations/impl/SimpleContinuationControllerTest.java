@@ -2,6 +2,7 @@ package gov.loc.repository.workflow.continuations.impl;
 
 import static org.junit.Assert.*;
 
+import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
@@ -9,13 +10,20 @@ import org.jbpm.graph.exe.Token;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
 
-public class SimpleContinuationControllerTest extends AbstractProcessDefinitionTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml"})
+public class SimpleContinuationControllerTest
 {
-
+	@Autowired
+	JbpmConfiguration jbpmConfiguration;
+	
 	String processDefinitionString =
 	      "<process-definition name='test'>" +
 	      "  <start-state>" +

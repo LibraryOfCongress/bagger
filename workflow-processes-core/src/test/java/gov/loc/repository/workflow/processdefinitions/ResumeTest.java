@@ -2,46 +2,72 @@ package gov.loc.repository.workflow.processdefinitions;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.workflow.WorkflowConstants;
 
 import org.apache.commons.configuration.Configuration;
+import org.hibernate.Session;
+import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.Node;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
+import org.jbpm.identity.Entity;
+import org.jbpm.identity.xml.IdentityXmlParser;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-public class ResumeTest extends AbstractProcessDefinitionTest	
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml"})
+public class ResumeTest	
 {
 	static String tokenInstanceId;
 	private long processInstanceId;
 	private JbpmContext jbpmContext;
 	Configuration configuration;
 	
-	private static final String IDENTITIES =
-		"<identity>" +
-		"  <user name='u' />" +
-		"</identity>";
+	@Autowired
+	JbpmConfiguration jbpmConfiguration;
 	
-	@Override
-	public void createFixtures() throws Exception {		
-		//Load identities to be used by the process definition
-		loadIdentities(IDENTITIES);
+	@Before
+	public void loadIdentities() throws Exception
+	{
+		jbpmConfiguration= JbpmConfiguration.getInstance();
+		String identities =
+			"<identity>" +
+			"  <user name='u' />" +
+			"</identity>";
 		
-	}		
-	
+		InputStream stream = new ByteArrayInputStream(identities.getBytes());
+		Entity[] entities = IdentityXmlParser.parseEntitiesResource(stream);
+
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+	    try {
+	      Session session = jbpmContext.getSession();
+	      for (int i=0; i<entities.length; i++) {
+	        session.save(entities[i]);
+	      }
+	    } finally {
+	      jbpmContext.close();
+	    }		
+		
+	}	
 	@Before
 	public void setup() throws Exception
 	{
 		configuration = ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
 	}
-		
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testMoveToNode() throws Exception

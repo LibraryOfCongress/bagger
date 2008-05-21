@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	private SessionFactory sessionFactory;
 	
 	@Autowired
-	public ServiceRequestDAOImpl(SessionFactory factory) {
+	public ServiceRequestDAOImpl(@Qualifier(value="serviceBrokerSessionFactory")SessionFactory factory) {
 		this.sessionFactory = factory;
 	}
 	

@@ -2,8 +2,6 @@ package gov.loc.repository.workflow.jbpm.graph.def;
 
 import java.text.MessageFormat;
 
-import gov.loc.repository.workflow.actionhandlers.BaseActionHandler;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;

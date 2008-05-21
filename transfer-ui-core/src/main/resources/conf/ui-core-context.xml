@@ -9,11 +9,10 @@
         http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/context 
-        http://www.springframework.org/schema/context/spring-context-2.5.xsd"
-  default-autowire="byName">
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
   	<import resource="security-context.xml" />
 	<import resource="classpath:conf/packagemodeler-core-context.xml" />
-	<import resource="classpath:conf/workflow-core-context.xml" />
+	<import resource="classpath:conf/workflow-continuations-context.xml" />
 	<import resource="classpath:conf/servicerequestbroker-context.xml" />
   
     <context:annotation-config />
@@ -54,6 +53,7 @@
 				<ref bean="contextPathInterceptor" />
 				<ref bean="messageInterceptor" />
 				<ref bean="referrerInterceptor" />
+				<ref bean="jbpmContextInterceptor" />
 			</list>
 		</property>
 		<property name="order" value="2" />		                    
@@ -80,6 +80,8 @@
     <bean id="messageInterceptor" class="gov.loc.repository.transfer.ui.interceptors.MessageInterceptor" />
     
     <bean id="referrerInterceptor" class="gov.loc.repository.transfer.ui.interceptors.ReferrerInterceptor" />
+    
+    <bean id="jbpmContextInterceptor" class="gov.loc.repository.transfer.ui.interceptors.JbpmContextInterceptor" />
     
     <bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
 	    <property name="factoryClass" value="org.apache.struts.tiles.xmlDefinition.I18nFactorySet"/>

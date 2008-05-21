@@ -5,8 +5,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import org.jbpm.JbpmConfiguration;
-import org.jbpm.persistence.db.DbPersistenceServiceFactory;
-import org.jbpm.svc.Services;
 import org.jbpm.JbpmContext;
 import org.jbpm.identity.Entity;
 import org.jbpm.identity.xml.IdentityXmlParser;
@@ -14,24 +12,37 @@ import org.jbpm.identity.xml.IdentityXmlParser;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+
+import javax.annotation.Resource;
 
 import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.utilities.persistence.HibernateUtil;
 import gov.loc.repository.utilities.persistence.TestFixtureHelper;
 import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.workflow.WorkflowConstants;
+import gov.loc.repository.workflow.jbpm.spring.LocalSessionFactoryBean;
 import gov.loc.repository.workflow.utilities.HandlerHelper;
 
 /**
  * An abstract class used to simplify testing of ProcessDefinitions.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml"})
 public abstract class AbstractProcessDefinitionTest {
 
-	protected static JbpmConfiguration jbpmConfiguration = JbpmConfiguration.getInstance();
+	@Autowired
+	protected JbpmConfiguration jbpmConfiguration;
 
+	@Resource(name="&jbpmSessionFactory")
+	protected LocalSessionFactoryBean sessionFactoryBean;
+	
 	protected TestFixtureHelper fixtureHelper = new TestFixtureHelper();
 	protected Session session;
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory(DatabaseRole.SUPER_USER);
@@ -40,9 +51,8 @@ public abstract class AbstractProcessDefinitionTest {
 	@Before
 	public void baseSetup() throws Exception
 	{
-		setupJbpm();
 		HibernateUtil.createDatabase();
-					
+		sessionFactoryBean.createDatabaseSchema();
 		helper = new HandlerHelper(null, getConfiguration(), null);			
 		session = sessionFactory.openSession();
 		session.beginTransaction();
@@ -73,6 +83,7 @@ public abstract class AbstractProcessDefinitionTest {
 		{
 			session.getTransaction().commit();
 		}
+		sessionFactoryBean.dropDatabaseSchema();
 	}
 	
 	@AfterClass
@@ -90,12 +101,6 @@ public abstract class AbstractProcessDefinitionTest {
 		session.beginTransaction();
 	}
 	
-	
-	public void setupJbpm() throws Exception
-	{		
-		DbPersistenceServiceFactory dbPersistenceServiceFactory = (DbPersistenceServiceFactory)jbpmConfiguration.getServiceFactory(Services.SERVICENAME_PERSISTENCE);
-		dbPersistenceServiceFactory.createSchema();
-	}
 
 	/*
 	@AfterClass

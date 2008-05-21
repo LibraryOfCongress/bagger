@@ -10,6 +10,7 @@ public class UIConstants {
 	public static final String PARAMETER_SUSPENDED = "suspended";
 	public static final String PARAMETER_NODE = "node";
 	public static final String PARAMETER_REF = "ref";
+	public static final String PARAMETER_JBPMCONTEXT = "jbpmcontext";
 		
 	public static final String ROLE_USER = "ROLE_USER";
 	public static final String ROLE_ADMINISTRATOR = "ROLE_ADMIN";	

@@ -17,6 +17,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ProcessDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ProcessDeployer {
 	private static Options options;
@@ -59,10 +61,13 @@ public class ProcessDeployer {
 			{
 				throw new ParseException("One and only one action may be provided");
 			}
+			
+			ApplicationContext applicationContext = new ClassPathXmlApplicationContext("conf/workflow-core-context.xml");
+			
 			String action = (String)line.getArgList().get(0);
 			if (ACTION_DEPLOY.equalsIgnoreCase(action))
 			{
-				JbpmConfiguration jbpmConfiguration = JbpmConfiguration.getInstance();
+				JbpmConfiguration jbpmConfiguration = (JbpmConfiguration)applicationContext.getBean("jbpmConfiguration");
 				
 				JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();		
 				try

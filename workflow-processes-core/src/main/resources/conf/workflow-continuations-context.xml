@@ -7,12 +7,9 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-	<context:component-scan base-package="gov.loc.repository.utilities"/>
+	 	<import resource="classpath:conf/servicerequestbroker-context.xml" />
+	 	<import resource="workflow-core-context.xml" />
+
+	 	<context:component-scan base-package="gov.loc.repository.workflow.continuations"/>	
 	
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:conf/datasources.properties" />
-		<property name="placeholderPrefix" value="$ds{" />
-		<property name="placeholderSuffix" value="}" />
-	</bean>
-		
 </beans>

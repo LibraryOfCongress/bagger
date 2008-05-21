@@ -6,22 +6,32 @@ import java.util.Collection;
 
 import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.workflow.WorkflowConstants;
-import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
 import static gov.loc.repository.workflow.WorkflowConstants.*;
 
 import org.apache.commons.configuration.Configuration;
+import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-public class ExceptionInActionHandlerTest extends AbstractProcessDefinitionTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml"})
+public class ExceptionInActionHandlerTest
 {
 	static String tokenInstanceId;
 	private JbpmContext jbpmContext;
 	Configuration configuration;
+	
+	@Autowired
+	JbpmConfiguration jbpmConfiguration;
+	
 	
 	@Before
 	public void setup() throws Exception

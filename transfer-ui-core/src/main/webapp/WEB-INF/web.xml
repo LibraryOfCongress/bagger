@@ -39,14 +39,6 @@
 		<url-pattern>/reports/*</url-pattern>
 	</filter-mapping>
 
-	<filter>
-		<filter-name>jbpmcontextrequestfilter</filter-name>
-		<filter-class>gov.loc.repository.transfer.ui.filters.JbpmContextRequestFilter</filter-class>
-	</filter><filter-mapping>
-		<filter-name>jbpmcontextrequestfilter</filter-name>
-		<url-pattern>*.html</url-pattern>
-	</filter-mapping>
-
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>

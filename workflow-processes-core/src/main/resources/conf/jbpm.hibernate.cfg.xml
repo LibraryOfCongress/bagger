@@ -143,7 +143,7 @@
     <mapping resource="org/jbpm/taskmgmt/exe/TaskMgmtInstance.hbm.xml"/>
     <mapping resource="org/jbpm/taskmgmt/exe/TaskInstance.hbm.xml"/>
     <!-- Added this mapping file -->
-        <mapping resource="gov/loc/repository/workflow/jbpm/taskmgmt/exe/TaskInstance.hbm.xml"/>
+    <mapping resource="gov/loc/repository/workflow/jbpm/taskmgmt/exe/TaskInstance.hbm.xml"/>
     <mapping resource="org/jbpm/taskmgmt/exe/PooledActor.hbm.xml"/>
     <mapping resource="org/jbpm/taskmgmt/exe/SwimlaneInstance.hbm.xml"/>
 

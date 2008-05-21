@@ -11,8 +11,11 @@
   </jbpm-context>
 
   <!-- configuration resource files pointing to default configuration files in jbpm-{version}.jar -->
+  <!-- 
   <string name='resource.hibernate.cfg.xml' value='jbpm.hibernate.cfg.xml' />
   <string name='resource.hibernate.properties' value='jbpm.hibernate.properties' />
+  -->
+  <string name='foo' value='bar' />
   <string name='resource.business.calendar' value='org/jbpm/calendar/jbpm.business.calendar.properties' />
   <string name='resource.default.modules' value='org/jbpm/graph/def/jbpm.default.modules.properties' />
   <string name='resource.converter' value='org/jbpm/db/hibernate/jbpm.converter.properties' />
@@ -29,16 +32,18 @@
   <bean name='jbpm.variable.resolver' class='org.jbpm.jpdl.el.impl.JbpmVariableResolver' singleton='true' />
   <bean name="jbpm.mail.address.resolver" class="org.jbpm.identity.mail.IdentityAddressResolver" singleton="true" />
 
+  <!-- 
   <bean name="jbpm.job.executor" class="org.jbpm.job.executor.JobExecutor">
     <field name="jbpmConfiguration"><ref bean="jbpmConfiguration" /></field>
     <field name="name"><string value="JbpmJobExector" /></field>
     <field name="nbrOfThreads"><int value="1" /></field>
     <field name="idleInterval"><int value="500" /></field>
-    <field name="maxIdleInterval"><int value="3600000" /></field> <!-- 1 hour -->
+    <field name="maxIdleInterval"><int value="3600000" /></field>
     <field name="historyMaxSize"><int value="20" /></field>
-    <field name="maxLockTime"><int value="600000" /></field> <!-- 10 minutes -->
-    <field name="lockMonitorInterval"><int value="60000" /></field> <!-- 1 minute -->
-    <field name="lockBufferTime"><int value="5000" /></field> <!-- 5 seconds -->
+    <field name="maxLockTime"><int value="600000" /></field>
+    <field name="lockMonitorInterval"><int value="60000" /></field>
+    <field name="lockBufferTime"><int value="5000" /></field>
   </bean>
+  -->
 
 </jbpm-configuration>

@@ -190,12 +190,11 @@
         <version>1.1</version>
         <scope>runtime</scope>
       </dependency>
-      	<!-- Required by mx4j -->
-	    <dependency>
-	      <groupId>com.caucho</groupId>
-	      <artifactId>hessian</artifactId>
-	      <version>3.0.8</version>
-	    </dependency>      
+      <dependency>
+        <groupId>com.caucho</groupId>
+        <artifactId>hessian</artifactId>
+        <version>3.0.8</version>
+      </dependency>
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
@@ -317,21 +316,21 @@
         <artifactId>log4j</artifactId>
         <version>1.2.14</version>
       </dependency>
-	    <dependency>
-	      <groupId>mx4j</groupId>
-	      <artifactId>mx4j-remote</artifactId>
-	      <version>3.0.1</version>
-	    </dependency>
-	    <dependency>
-	      <groupId>mx4j</groupId>
-	      <artifactId>mx4j</artifactId>
-	      <version>3.0.1</version>
-	    </dependency>
-	    <dependency>
-	      <groupId>mx4j</groupId>
-	      <artifactId>mx4j-tools</artifactId>
-	      <version>3.0.1</version>
-	    </dependency>
+      <dependency>
+        <groupId>mx4j</groupId>
+        <artifactId>mx4j-remote</artifactId>
+        <version>3.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>mx4j</groupId>
+        <artifactId>mx4j</artifactId>
+        <version>3.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>mx4j</groupId>
+        <artifactId>mx4j-tools</artifactId>
+        <version>3.0.1</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
@@ -435,12 +434,11 @@
         <artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
         <version>0.3</version>
       </dependency>
-      <!-- This is the version required by mx4j -->
-	    <dependency>
-	      <groupId>jetty</groupId>
-	      <artifactId>org.mortbay.jetty</artifactId>
-	      <version>5.1.10</version>
-	    </dependency>      
+      <dependency>
+        <groupId>jetty</groupId>
+        <artifactId>org.mortbay.jetty</artifactId>
+        <version>5.1.10</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-aop</artifactId>
@@ -465,12 +463,7 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-jms</artifactId>
         <version>2.5.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-orm</artifactId>
-        <version>2.5.3</version>
-      </dependency>
+      </dependency>      
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
@@ -511,6 +504,33 @@
         <artifactId>spring-security-core-tiger</artifactId>
         <version>2.0.0</version>
       </dependency>
+	    <dependency>
+	      <groupId>org.springmodules</groupId>
+	      <artifactId>spring-modules-jbpm31</artifactId>
+	      <version>0.8a</version>
+	      <exclusions>
+	      	<exclusion>
+	            <groupId>jboss</groupId>
+    	        <artifactId>jbpm</artifactId>
+	      	</exclusion>
+	      	<exclusion>
+	            <groupId>org.springframework</groupId>
+	            <artifactId>spring-core</artifactId>
+	      	</exclusion>
+	      	<exclusion>
+	            <groupId>org.springframework</groupId>
+	            <artifactId>spring-dao</artifactId>
+	      	</exclusion>
+	      	<exclusion>
+		      	<groupId>org.springframework</groupId>
+	            <artifactId>spring-support</artifactId>
+	      	</exclusion>
+	      	<exclusion>
+	            <groupId>org.springframework</groupId>
+	            <artifactId>spring-hibernate3</artifactId>	      	
+	      	</exclusion>	      	
+      	  </exclusions>
+        </dependency>
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>

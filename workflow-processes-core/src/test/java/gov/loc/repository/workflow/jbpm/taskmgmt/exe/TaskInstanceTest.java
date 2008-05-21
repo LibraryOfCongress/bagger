@@ -3,14 +3,25 @@ package gov.loc.repository.workflow.jbpm.taskmgmt.exe;
 import static org.junit.Assert.*;
 import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
 
+import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-public class TaskInstanceTest extends AbstractProcessDefinitionTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml"})
+public class TaskInstanceTest {
+	
+	@Autowired
+	JbpmConfiguration jbpmConfiguration;
+	
 	private String processDefinitionName;
 	//Everything goes according to plan
 	@Test

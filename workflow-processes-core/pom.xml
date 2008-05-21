@@ -107,6 +107,10 @@
       <scope>runtime</scope>      
     </dependency>
     <dependency>
+      <groupId>org.springmodules</groupId>
+      <artifactId>spring-modules-jbpm31</artifactId>
+    </dependency>    
+    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
     </dependency>
