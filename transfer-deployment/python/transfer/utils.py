@@ -41,3 +41,13 @@ def mv(srcfile, destfile, debug=False):
         return "moving %s to %s" % (srcfile, destfile)
     else:
         return os.popen('mv "%s" "%s"' % (srcfile, destfile))
+
+def strtofile(str, file, debug=False):
+    """ creates a file from a string """
+    if debug:
+        return "making '%s' out of '%s'" % (file, str)
+    else:
+        f = open(file, 'w')
+        f.write(str)
+        f.close()
+        return "created %s" % (file)

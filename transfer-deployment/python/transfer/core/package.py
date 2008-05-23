@@ -13,11 +13,11 @@ class PackageModeler():
             'transfer_reader': 'transfer_reader_user',
             'transfer_writer': 'transfer_data_writer_user',
         }
-#        self.install_dir = config['TRANSFER_INSTALL_DIR']
-#        self.driver_package = "files/%s-%s-bin.zip" % (self.project_name, config['VERSION'])
-#        self.driver = "%s/%s-%s/bin/fixturedriver" % (self.install_dir, self.project_name, config['VERSION'])
-        self.debug = config['DEBUG']
-        self.psql = config['PSQL']
+        self.install_dir = config['TRANSFER_INSTALL_DIR'] if config['TRANSFER_INSTALL_DIR'] else "."
+        self.driver_package = "files/%s-%s-bin.zip" % (self.project_name, config['VERSION'])
+        self.driver = "%s/%s-%s/bin/fixturedriver" % (self.install_dir, self.project_name, config['VERSION'])
+        self.debug = config['DEBUG'] if config['DEBUG'] else False
+        self.psql = config['PSQL'] if config['PSQL'] else "/usr/bin/psql"
         self.db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ""
         self.role_prefix = config['ROLE_PREFIX'] + "_" if config['ROLE_PREFIX'] else ""
         self.passwds = {
@@ -30,10 +30,20 @@ class PackageModeler():
         self.perms_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_CORE_SQL_FILES']['perms']
         self.fixtures_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_CORE_SQL_FILES']['fixtures']
         self.drop_sql_file = config['SQL_FILES_LOCATION'] + "/" + config['PM_CORE_SQL_FILES']['drop']
-        os.environ['PGUSER'] = config['PGUSER']
-        os.environ['PGHOST'] = config['PGHOST']
-        os.environ['PGPORT'] = config['PGPORT']
-        os.environ['PGPASSWORD'] = config['PGPASSWORD']
+        self.hibernate_writer_props = """hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+                                         hibernate.connection.driver_class=org.postgresql.Driver
+                                         hibernate.connection.url=jdbc:postgresql://%s:%s/%s
+                                         hibernate.connection.username=%s
+                                         hibernate.connection.password=%s
+                                      """ % (config['PGHOST'], config['PGPORT'], self.db_prefix + self.db_name, 
+                                             self.roles['transfer_writer'], self.passwds['transfer_writer'])
+        self.hibernate_conf = "%s/%s-%s/conf/data_writer.packagemodeler.hibernate.properties" % (
+            self.install_dir, self.project_name, config['VERSION']
+        )
+        os.environ['PGUSER'] = config['PGUSER'] if config['PGUSER'] else 'postgres'
+        os.environ['PGHOST'] = config['PGHOST'] if config['PGHOST'] else 'localhost'
+        os.environ['PGPORT'] = config['PGPORT'] if config['PGPORT'] else '5432'
+        os.environ['PGPASSWORD'] = config['PGPASSWORD'] if config['PGPASSWORD'] else ""
 
     def create_database(self):
         """ creates database """
@@ -74,22 +84,21 @@ class PackageModeler():
         result = utils.load_sqlstr(self.psql, sql, self.debug)
         return "Dropping %s\n====================\n%s" % (self.project_name, result)
 
+    def create_fixtures(self, project, env):
+        """ creates database fixtures """
+        os.environ['PGDATABASE'] = self.db_prefix + self.db_name
+        fixtures_file = self.fixtures_sql_file.replace("-fixtures", "-%s-%s-fixtures" % (project, env))
+        sql = file(fixtures_file).read()
+        result = utils.load_sqlstr(self.psql, sql, self.debug)
+        return "Installing %s database fixtures\n====================\n%s" % (self.project_name, result)
 
-#    def create_fixtures(self, project, env):
-#        """ creates database fixtures """
-#        os.environ['PGDATABASE'] = self.db_prefix + self.db_name
-#        fixtures_file = self.fixtures_sql_file.replace("-fixtures", "-%s-%s-fixtures" % (project, env))
-#        sql = file(fixtures_file).read()
-#        result = utils.load_sqlstr(self.psql, sql, self.debug)
-#        return "Installing %s database fixtures\n====================\n%s" % (self.project_name, result)
-
-#    def deploy_drivers(self):
-#        """ deploys command-line drivers """
-#        utils.unzip(self.driver_package, self.install_dir)
-#        utils.chmod("+x", self.driver)
-#        utils.mv(PM_WRITER_HIBERNATE_PROPS, PM_CORE_HIBERNATE_CONF)
-#        utils.mv(PM_FIXTURE_HIBERNATE_PROPS, PM_CORE_FIXTURE_HIBERNATE_CONF)
-#        return "Deploying %s drivers\n====================\n%s" % (self.project_name, result)
+    def deploy_drivers(self):
+        """ deploys command-line drivers """
+        utils.unzip(self.driver_package, self.install_dir)
+        utils.chmod("+x", self.driver)
+        utils.strtofile(self.hibernate_writer_props, self.hibernate_conf)
+        #utils.strtofile(self.hibernate_fixture_props, self.hibernate_fixture_conf)
+        return "Deploying %s drivers\n====================\n%s" % (self.project_name, result)
 
     def __prefix_database(self, file):
         """ prepends db_prefix to database names """

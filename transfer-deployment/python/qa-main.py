@@ -2,14 +2,14 @@
 """ Deploys a build of the NDNP Transfer project to QA
 """
 
-from transfer.core import workflow, request_broker as req_broker, package as core_package
+from transfer.core import workflow, broker, package as core_package
 from transfer.projects.ndnp import package as ndnp_package
 
 def main(config):
+    jbpm = workflow.Jbpm(config)
     core_modeler = core_package.PackageModeler(config)
     ndnp_modeler = ndnp_package.PackageModeler(config)
-    jbpm = workflow.Jbpm(config)
-    request_broker = req_broker.RequestBroker(config)
+    request_broker = broker.RequestBroker(config)
 
     #Set to true to drop dbs and roles
     if False:
@@ -37,19 +37,15 @@ def main(config):
         print ndnp_modeler.grant_permissions()
         print request_broker.grant_permissions()
 
-    #print jbpm.create_fixtures(project="ndnp", env="qa")
-    #print core_modeler.create_fixtures(env="qa")
-    #print ndnp_modeler.create_fixtures(env="qa")
+    print jbpm.create_fixtures(project="ndnp", env="qa")
 
     #print core_modeler.deploy_drivers()
     #print ndnp_modeler.deploy_drivers()
 
 
 if __name__ == '__main__':
-    from time import time
-    time = time().__str__().split('.')[0]
     config = {
-        'DEBUG': False, # If True, will print out actions rather than take them (e.g., will not hit database)
+        'DEBUG': True, # If True, will print out actions rather than take them (e.g., will not hit database)
         'PSQL': '/usr/bin/psql', # Tell me where to find psql (default = '/usr/bin/psql')
         'PGHOST': 'localhost', # This is the host that the PostgreSQL database lives on (default = localhost)
         'PGPORT': '5432', # This is the port that PostgreSQL listens on (default = 5432)
@@ -57,11 +53,13 @@ if __name__ == '__main__':
         'PGPASSWORD': '', # This is the password for the user specified above (default = '')
         'DB_PREFIX': 'qa', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
         'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
+        'TRANSFER_INSTALL_DIR': '', # Set the directory that the CLI tools will be unzipped to (default = '.')
+        'VERSION': '1.4', # This is the version of the release being deployed
         'TRANSFER_READER_PASSWD': '', # Set a password for the reader role (default = 'transfer_reader_user')
         'TRANSFER_WRITER_PASSWD': '', # Set a password for the writer role (default = 'transfer_data_writer_user')
         'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
         'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
-        'SQL_FILES_LOCATION':'', #Set the location of the sql files (default = '')
+        'SQL_FILES_LOCATION': '/home/mjg/workspace/transport-perl/db', #Set the location of the sql files (default = '')
         'JBPM_SQL_FILES': {
             'create': 'jbpm-create.sql',
             'roles': 'jbpm-roles.sql',
