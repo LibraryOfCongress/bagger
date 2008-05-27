@@ -2,6 +2,8 @@ package Transport::Tickets;
 
 use strict;
 use warnings;
+
+use lib "$ENV{HOME}/workspace/transport-perl/lib";
 use Transfer::DB;
 use Transfer::Process;
 use Transfer::Query;

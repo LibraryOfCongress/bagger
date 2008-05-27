@@ -7,6 +7,7 @@ require Exporter;
 our @ISA=qw(Exporter);
 our @EXPORT=qw(add_master add_row add_row_or_die select_rows select_one);
 
+use lib "$ENV{HOME}/workspace/transport-perl/lib";
 use Transfer::DB;
 
 ##----------------------------------------------------------------------

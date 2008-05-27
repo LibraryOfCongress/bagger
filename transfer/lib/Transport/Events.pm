@@ -3,6 +3,7 @@ package Transport::Events;
 use strict;
 use warnings;
 
+use lib "$ENV{HOME}/workspace/transport-perl/lib";
 use Transfer::Process;
 use Transport::Tickets;
 
