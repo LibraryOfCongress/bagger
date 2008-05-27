@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" Deploys a build of the NDNP Transfer project to QA
+""" Deploys a build of the NDNP Transfer project to QA 
 """
 
 from transfer.core import workflow, broker, package as core_package
