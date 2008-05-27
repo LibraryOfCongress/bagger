@@ -9,9 +9,8 @@
   <name>Transfer Components (Core)</name>
   <scm>
     <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-components-core</connection>
-    <tag>HEAD</tag>
     <url>https://rdc.lctl.gov/trac/transfer/browser</url>
-  </scm>  
+  </scm>
   <build>
     <resources>
       <resource>
@@ -20,15 +19,14 @@
       </resource>
     </resources>
     <plugins>
-		<plugin>
+      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptors>
             <descriptor>src/assembly/bin.xml</descriptor>
           </descriptors>
         </configuration>
-      </plugin>  	
-    
+      </plugin>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
@@ -44,9 +42,23 @@
           </execution>
         </executions>
       </plugin>
-     </plugins>
-      
-    
+      <plugin>
+        <groupId>com.servprise.maven.plugins</groupId>
+        <artifactId>maven-jython-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <jythonHome>${env.JYTHON_HOME}</jythonHome>
+              <deep>true</deep>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
   <dependencies>
     <dependency>
@@ -76,6 +88,27 @@
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <scope>test</scope>
-    </dependency>        
+    </dependency>
+    <dependency>
+      <groupId>com.servprise.maven.plugins</groupId>
+      <artifactId>maven-jython-plugin</artifactId>
+      <version>0.2</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.6.5</version>
+    </dependency>
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant-jsch</artifactId>
+      <version>1.6.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jcraft</groupId>
+      <artifactId>jsch</artifactId>
+      <version>0.1.31</version>
+    </dependency>
   </dependencies>
 </project>
