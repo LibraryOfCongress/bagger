@@ -1,4 +1,5 @@
 import os
+import re
 
 def list_databases(command, debug=False):
     """ gets list of databases """
@@ -51,3 +52,23 @@ def strtofile(str, file, debug=False):
         f.write(str)
         f.close()
         return "created %s" % (file)
+
+def prefix_database_in_file(file, original_db_name, db_name):
+    """ prepends db_prefix to database names """
+    pattern = r'DATABASE %s' % original_db_name
+    replacement = r'DATABASE %s' % db_name
+    return re.sub(pattern, replacement, file)
+
+def prefix_roles_in_file(file, roles, role_prefix):
+    """ prepends role_prefix to role names """
+    pattern = r'(%s)' % "|".join(roles.values())
+    replacement = r'%s\1' % role_prefix
+    return re.sub(pattern, replacement, file)
+
+def replace_passwds_in_file(file, passwds):
+    """ replaces passwords in sql dumps with values from config """
+    def getrepl(match):
+        return passwds.get(match.group(1))
+    pattern = r'(\w+)_passwd'
+    return re.sub(pattern, getrepl, file)
+

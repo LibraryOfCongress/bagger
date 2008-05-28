@@ -12,7 +12,7 @@ def main(config):
     request_broker = broker.RequestBroker(config)
 
     #Set to true to drop dbs and roles
-    if False:
+    if True:
         print jbpm.drop()
         print core_modeler.drop()
         print request_broker.drop()
@@ -55,39 +55,10 @@ if __name__ == '__main__':
         'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
         'TRANSFER_INSTALL_DIR': '', # Set the directory that the CLI tools will be unzipped to (default = '.')
         'VERSION': '1.4', # This is the version of the release being deployed
+        'SQL_FILES_LOCATION': '/home/mjg/workspace/transport-perl/db', #Set the location of the sql files (default = '')
         'TRANSFER_READER_PASSWD': '', # Set a password for the reader role (default = 'transfer_reader_user')
         'TRANSFER_WRITER_PASSWD': '', # Set a password for the writer role (default = 'transfer_data_writer_user')
         'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
         'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
-        'SQL_FILES_LOCATION': '/home/mjg/workspace/transport-perl/db', #Set the location of the sql files (default = '')
-        'JBPM_SQL_FILES': {
-            'create': 'jbpm-create.sql',
-            'roles': 'jbpm-roles.sql',
-            'tables': 'jbpm-tables.sql',
-            'perms': 'jbpm-perms.sql',
-            'fixtures': 'jbpm-fixtures.sql',
-            'drop': 'jbpm-drop.sql',    
-        },
-        'PM_CORE_SQL_FILES': {
-            'create': 'packagemodeler-core-create.sql',
-            'roles': 'packagemodeler-core-roles.sql',
-            'tables': 'packagemodeler-core-tables.sql',
-            'perms': 'packagemodeler-core-perms.sql',
-            'drop': 'packagemodeler-core-drop.sql',    
-            'fixtures': 'packagemodeler-core-fixtures.sql',
-        },
-        'PM_NDNP_SQL_FILES': {
-            'tables': 'packagemodeler-ndnp-tables.sql',
-            'perms': 'packagemodeler-ndnp-perms.sql',
-            'fixtures': 'packagemodeler-ndnp-fixtures.sql',
-        },
-        'REQUEST_BROKER_SQL_FILES': {
-            'create': 'requestbroker-create.sql',
-            'roles': 'requestbroker-roles.sql',
-            'tables': 'requestbroker-tables.sql',
-            'perms': 'requestbroker-perms.sql',
-            'drop': 'requestbroker-drop.sql',    
-        },
-        
     }
     main(config)
