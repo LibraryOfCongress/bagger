@@ -11,6 +11,7 @@
     </ul>
 	<div id="status">
 		<h2>Status</h2>
+        <form method="get" action="${contextPath}/admin/completedrequestlistener.html" >
         <fieldset>
             <legend>Status of listener</legend>
 	        <table cellspacing="3" cellpadding="7">
@@ -21,6 +22,9 @@
                 </span></td>
 		    </table>
 		</fieldset>
+	            <input type="hidden" name="refresh" value="true" />
+        	    <input type="submit" class="button" value="  Refresh  " style="float:right"/>
+	    </form>
 	</div>
 
     #if ($permissions.canAdministerServiceRequestListener())
