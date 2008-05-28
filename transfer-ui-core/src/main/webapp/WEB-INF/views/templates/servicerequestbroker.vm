@@ -6,6 +6,7 @@
     </ul>
 	<div id="requests">
 		<h2>Service Requests</h2>
+    <form method="get" action="${contextPath}/admin/servicerequestbroker.html" >
         <fieldset>
             <legend>Service Requests that have not been completed</legend>
 	        <table cellspacing="3" cellpadding="7">
@@ -39,6 +40,9 @@
 	        	#end
 		    </table>
 		</fieldset>
+	            <input type="hidden" name="refresh" value="true" />
+        	    <input type="submit" class="button" value="  Refresh  " style="float:right"/>
+    </form>
 	</div>
 
     #if ($permissions.canAdministerJobListener())
