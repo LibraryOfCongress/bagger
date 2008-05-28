@@ -44,8 +44,13 @@ public class CompletedServiceRequestListenerController
 		PermissionsHelper permissions = new PermissionsHelper(req);
 		
 		ModelAndView mav = new ModelAndView("completedrequestlistener");
-		mav.addObject("listener", this.listener);
-		mav.addObject("permissions", permissions);
+		try {
+			mav.addObject("listener", this.listener);
+			mav.addObject("permissions", permissions);
+		} catch (Exception e) {
+			log.error("CompletedServiceRequestListenerController.handleGet: " + e.getMessage());
+			req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Unable to get Completed Request Listener");
+		}
 		return mav;		
 	}
 
