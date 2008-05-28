@@ -4,7 +4,7 @@
         <li><a href="#loginForm" ><span> Login </span></a></li>
     </ul>
     <div id="loginForm" >
-        <form action="${contextPath}/j_spring_security_check"  method="post">
+        <form name="loginForm" action="${contextPath}/j_spring_security_check"  method="post">
             <fieldset title="Credentials">
 			        <legend><b>Login</b></legend>
                     <table border="0" cellpadding="3" cellspacing="3"  >
@@ -34,3 +34,7 @@
         </span>
     </div>
 </div>
+
+<script type="text/javascript">
+document.loginForm.j_username.focus();
+</script>
