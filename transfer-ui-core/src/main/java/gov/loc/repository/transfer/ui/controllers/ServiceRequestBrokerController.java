@@ -34,8 +34,13 @@ public class ServiceRequestBrokerController
 		//PermissionsHelper permissions = new PermissionsHelper(req);
 		
 		ModelAndView mav = new ModelAndView("servicerequestbroker");
-		mav.addObject("serviceRequestList", this.dao.findServiceRequests(true, false, false));
-		//mav.addObject("permissions", permissions);
+		try {
+			mav.addObject("serviceRequestList", this.dao.findServiceRequests(true, false, false));
+			//mav.addObject("permissions", permissions);
+		} catch (Exception e) {
+			log.error("ServiceRequestBrokerController.handleGet: " + e.getMessage());
+			//req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Unable to get Service Request Broker");
+		}
 		return mav;		
 	}
 	
