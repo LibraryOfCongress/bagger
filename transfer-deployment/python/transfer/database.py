@@ -1,7 +1,7 @@
 import os
 from transfer import utils
 
-class TransferDB():
+class AbstractDB():
     def __init__(self, config):
         self.db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ''
         self.role_prefix = config['ROLE_PREFIX'] + "_" if config['ROLE_PREFIX'] else ''
@@ -10,7 +10,9 @@ class TransferDB():
         self.roles = {}
         self.passwds = {}
         self.hibernate_writer_props = ""
+        self.hibernate_fixture_props = ""
         self.hibernate_conf = ""
+        self.hibernate_fixture_conf = ""
         self.sql_files = {
             'create': "%s/%s-create.sql" % (config['SQL_FILES_LOCATION'], self.project_name),
             'roles': "%s/%s-roles.sql" % (config['SQL_FILES_LOCATION'], self.project_name),
@@ -22,6 +24,7 @@ class TransferDB():
         self.install_dir = config['TRANSFER_INSTALL_DIR'] if config['TRANSFER_INSTALL_DIR'] else "."
         self.driver_package = "files/%s-%s-bin.zip" % (self.project_name, config['VERSION'])
         self.driver = "%s/%s-%s/bin/fixturedriver" % (self.install_dir, self.project_name, config['VERSION'])
+        self.version = config['VERSION'] if config['VERSION'] else ''
         self.debug = config['DEBUG'] if config['DEBUG'] else False
         self.psql = config['PSQL'] if config['PSQL'] else "/usr/bin/psql"
         os.environ['PGUSER'] = config['PGUSER'] if config['PGUSER'] else 'postgres'
@@ -68,19 +71,20 @@ class TransferDB():
         result = utils.load_sqlstr(self.psql, sql, self.debug)
         return "Dropping %s\n====================\n%s" % (self.project_name, result)
 
-    def create_fixtures(self, project, env):
+    def create_fixtures(self, env, project=None):
         """ creates database fixtures """
-        os.environ['PGDATABASE'] = self.db_prefix + self.db_name
-        fixtures_file = self.sql_files['fixtures'].replace("-fixtures", "-%s-%s-fixtures" % (project, env))
-        sql = file(fixtures_file).read()
-        result = utils.load_sqlstr(self.psql, sql, self.debug)
-        return "Installing %s database fixtures\n====================\n%s" % (self.project_name, result)
+        # subclasses define this method since jBPM fixtures are installed differently than 
+        # Package Modeler drivers
+        pass
 
     def deploy_drivers(self):
         """ deploys command-line drivers """
-        utils.unzip(self.driver_package, self.install_dir)
-        utils.chmod("+x", self.driver)
-        utils.strtofile(self.hibernate_writer_props, self.hibernate_conf)
-        #utils.strtofile(self.hibernate_fixture_props, self.hibernate_fixture_conf)
+        """ deploys command-line drivers """
+        result  = utils.unzip(self.driver_package, self.install_dir, self.debug)
+        result += utils.chmod("+x", self.driver, self.debug)
+        result += utils.strtofile(self.hibernate_writer_props, self.hibernate_conf, self.debug)
+        result += utils.strtofile(self.hibernate_fixture_props, self.hibernate_fixture_conf, self.debug)
         return "Deploying %s drivers\n====================\n%s" % (self.project_name, result)
+
+
 

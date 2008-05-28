@@ -1,10 +1,10 @@
 from transfer.decorators import project_name
-from transfer.database import TransferDB
+from transfer.database import AbstractDB
 
-class RequestBroker(TransferDB):
+class RequestBroker(AbstractDB):
     @project_name("requestbroker")
     def __init__(self, config):
-        TransferDB.__init__(self, config)
+        AbstractDB.__init__(self, config)
         self.original_db_name = "service_request_broker"
         self.db_name = self.db_prefix + self.original_db_name
         self.roles = {

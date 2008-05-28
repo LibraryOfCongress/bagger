@@ -53,6 +53,13 @@ def strtofile(str, file, debug=False):
         f.close()
         return "created %s" % (file)
 
+def driver(str, debug=False):
+    """ invokes a command-line driver """
+    if debug:
+        return "invoking %s" % str
+    else:
+        return os.popen(str)
+        
 def prefix_database_in_file(file, original_db_name, db_name):
     """ prepends db_prefix to database names """
     pattern = r'DATABASE %s' % original_db_name

@@ -37,10 +37,12 @@ def main(config):
         print ndnp_modeler.grant_permissions()
         print request_broker.grant_permissions()
 
-    print jbpm.create_fixtures(project="ndnp", env="qa")
+    print core_modeler.deploy_drivers()
+    print ndnp_modeler.deploy_drivers()
 
-    #print core_modeler.deploy_drivers()
-    #print ndnp_modeler.deploy_drivers()
+    print jbpm.create_fixtures(env="qa", project="ndnp")
+    print core_modeler.create_fixtures(env="qa")
+    print ndnp_modeler.create_fixtures(env="qa")
 
 
 if __name__ == '__main__':
@@ -58,6 +60,7 @@ if __name__ == '__main__':
         'SQL_FILES_LOCATION': '/home/mjg/workspace/transport-perl/db', #Set the location of the sql files (default = '')
         'TRANSFER_READER_PASSWD': '', # Set a password for the reader role (default = 'transfer_reader_user')
         'TRANSFER_WRITER_PASSWD': '', # Set a password for the writer role (default = 'transfer_data_writer_user')
+        'TRANSFER_FIXTURE_WRITER_PASSWD': '', # Set a password for the fixture writer role (default = '')
         'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
         'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
     }
