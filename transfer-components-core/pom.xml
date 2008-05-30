@@ -9,6 +9,7 @@
   <name>Transfer Components (Core)</name>
   <scm>
     <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-components-core</connection>
+    <tag>HEAD</tag>
     <url>https://rdc.lctl.gov/trac/transfer/browser</url>
   </scm>
   <build>
@@ -37,6 +38,7 @@
             <configuration>
               <includes>
                 <include>**/constants/*.class</include>
+                <include>**/Abstract*Test.class</include>
               </includes>
             </configuration>
           </execution>
@@ -71,6 +73,14 @@
       <artifactId>packagemodeler-core</artifactId>
       <version>${pom.version}</version>
     </dependency>
+    <dependency>
+      <groupId>loc-repository</groupId>
+      <artifactId>packagemodeler-core</artifactId>
+      <version>${pom.version}</version>
+	  <type>test-jar</type>
+      <classifier>tests</classifier>      
+      <scope>test</scope>
+    </dependency>        
     <dependency>
       <groupId>loc-repository</groupId>
       <artifactId>transfer-services-core</artifactId>

@@ -17,19 +17,24 @@ import gov.loc.repository.packagemodeler.packge.FileInstance;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
-import gov.loc.repository.transfer.components.BaseComponent;
+import gov.loc.repository.transfer.components.AbstractPackageModelerAwareComponent;
 import gov.loc.repository.transfer.components.fileexamination.LCManifestGenerator;
 import gov.loc.repository.transfer.components.fileexamination.Verifier;
 import gov.loc.repository.utilities.FilenameHelper;
 import gov.loc.repository.utilities.ManifestReader;
 import gov.loc.repository.utilities.PackageHelper;
 
-public abstract class AbstractFileCopier extends BaseComponent {
+public abstract class AbstractFileCopier extends AbstractPackageModelerAwareComponent {
 
 	private LCManifestGenerator generator;
 	
 	public AbstractFileCopier(ModelerFactory factory, PackageModelDAO dao, LCManifestGenerator generator) {
 		super(factory, dao);
+		this.generator = generator;
+	}
+	
+	public void setLCManifestGenerator(LCManifestGenerator generator)
+	{
 		this.generator = generator;
 	}
 	

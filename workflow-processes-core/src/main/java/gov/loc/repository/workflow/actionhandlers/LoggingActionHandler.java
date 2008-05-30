@@ -1,11 +1,12 @@
 package gov.loc.repository.workflow.actionhandlers;
 
+import gov.loc.repository.workflow.AbstractHandler;
 import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 import gov.loc.repository.workflow.actionhandlers.annotations.Transitions;
 import static gov.loc.repository.workflow.WorkflowConstants.TRANSITION_CONTINUE;
 
 @Transitions(transitions={TRANSITION_CONTINUE})
-public class LoggingActionHandler extends BaseActionHandler {
+public class LoggingActionHandler extends AbstractHandler {
 
 	private static final long serialVersionUID = 1L; 
 	

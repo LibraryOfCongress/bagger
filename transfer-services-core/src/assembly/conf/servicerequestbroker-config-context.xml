@@ -13,7 +13,7 @@
 		<import resource="classpath:conf/common-core-context.xml" />
 
 		<bean id="serviceBrokerDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-			<property name="driverClassName" value= "$ds{servicerequestbroker.driver_class}" />
+			<property name="driverClassName" value= "org.postgresql.Driver" />
 			<property name="url" value="$ds{servicerequestbroker.connection.url}" />
 			<property name="username" value="$ds{servicerequestbroker.connection.username}" />
 			<property name="password" value="$ds{servicerequestbroker.connection.password}" />			
@@ -23,7 +23,7 @@
 			<property name="dataSource" ref="serviceBrokerDataSource" />
 			<property name="hibernateProperties">
       			<value>
-        			hibernate.dialect=$ds{servicerequestbroker.dialect}
+        			hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
       			</value>
     		</property>
   		</bean>

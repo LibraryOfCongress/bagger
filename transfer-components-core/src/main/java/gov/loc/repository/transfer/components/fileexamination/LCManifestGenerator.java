@@ -1,5 +1,7 @@
 package gov.loc.repository.transfer.components.fileexamination;
 
+import java.util.Map;
+
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.Fixity;
@@ -25,4 +27,5 @@ public interface LCManifestGenerator extends Component {
 	
 	public void generate(FileLocation fileLocation, String mountPath, Fixity.Algorithm algorithm, Agent requestingAgent) throws Exception;
 	
+	public void setCommandMap(Map<String,String> commandMap);
 }

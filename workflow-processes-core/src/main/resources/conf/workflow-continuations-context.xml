@@ -8,7 +8,7 @@
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
 	 	<import resource="classpath:conf/servicerequestbroker-context.xml" />
-	 	<import resource="workflow-core-context.xml" />
+	 	<import resource="classpath:conf/workflow-core-context.xml" />
 
 	 	<context:component-scan base-package="gov.loc.repository.workflow.continuations"/>	
 	

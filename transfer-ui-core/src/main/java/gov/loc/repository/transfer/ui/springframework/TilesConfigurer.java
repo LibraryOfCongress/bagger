@@ -23,7 +23,7 @@ org.springframework.web.servlet.view.tiles.TilesConfigurer {
 		
 	@Override
 	public void afterPropertiesSet() throws DefinitionsFactoryException {
-		File contextDir = new File(this.getServletContext().getRealPath("."));
+		File contextDir = new File(this.getServletContext().getRealPath("/"));
 		
 		ArrayList<String> definitionList = new ArrayList<String>();
 		File definitionDir = new File(contextDir, this.definitionPath);

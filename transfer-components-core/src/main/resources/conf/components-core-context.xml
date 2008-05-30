@@ -2,8 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"    
+       xmlns:aop="http://www.springframework.org/schema/aop"       
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd                                 
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
@@ -12,9 +18,23 @@
 	
 	<context:component-scan base-package="gov.loc.repository.transfer.components"/>
 	
+	<!-- Files On Disk Inventories -->
+	<tx:advice id="filesOnDiskInventorierTxAdvice" transaction-manager="packageModelerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="inventory*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<aop:pointcut id="filesOnDiskInventorierMethods" expression="execution(* gov.loc.repository.transfer.components.fileexamination.impl.FilesOnDiskInventorierImpl.*(..))" />
+    	<aop:advisor advice-ref="filesOnDiskInventorierTxAdvice" pointcut-ref="filesOnDiskInventorierMethods" />    	
+    </aop:config>	
+	
+	<!-- MD5Deep Verifier / Generator -->
+	
 	<bean id="md5DeepComponent" class="gov.loc.repository.transfer.components.fileexamination.impl.Md5DeepImpl" scope="prototype">
 		<constructor-arg ref="modelerFactory" />
-		<constructor-arg ref="dataWriterPackageModelDao" />
+		<constructor-arg ref="packageModelDao" />
 		<constructor-arg>
 			<map>
 				<entry key="md5" value="md5deep" />
@@ -23,4 +43,17 @@
 			</map>
 		</constructor-arg>	
 	</bean>	
+	
+	<tx:advice id="md5DeepTxAdvice" transaction-manager="packageModelerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="generate*" />
+    		<tx:method name="verify*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<aop:pointcut id="md5DeepMethods" expression="execution(* gov.loc.repository.transfer.components.fileexamination.impl.Md5DeepImpl.*(..))" />
+    	<aop:advisor advice-ref="md5DeepTxAdvice" pointcut-ref="md5DeepMethods" />    	
+    </aop:config>	
+	
 </beans>

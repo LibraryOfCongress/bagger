@@ -62,7 +62,7 @@ public class ProcessDeployer {
 				throw new ParseException("One and only one action may be provided");
 			}
 			
-			ApplicationContext applicationContext = new ClassPathXmlApplicationContext("conf/workflow-core-context.xml");
+			ApplicationContext applicationContext = new ClassPathXmlApplicationContext("conf/workflow-common-context.xml");
 			
 			String action = (String)line.getArgList().get(0);
 			if (ACTION_DEPLOY.equalsIgnoreCase(action))

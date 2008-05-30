@@ -16,13 +16,13 @@ import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.events.filelocation.VerifyAgainstManifestEvent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
-import gov.loc.repository.transfer.components.BaseComponent;
+import gov.loc.repository.transfer.components.AbstractPackageModelerAwareComponent;
 import gov.loc.repository.transfer.components.fileexamination.LCManifestGenerator;
 import gov.loc.repository.transfer.components.fileexamination.LCManifestVerifier;
 import gov.loc.repository.utilities.ManifestHelper;
 import gov.loc.repository.utilities.PackageHelper;
 
-public class Md5DeepImpl extends BaseComponent implements LCManifestGenerator, LCManifestVerifier {
+public class Md5DeepImpl extends AbstractPackageModelerAwareComponent implements LCManifestGenerator, LCManifestVerifier {
 
 	private boolean result = true;
 	private Map<String,String> commandMap;
@@ -35,6 +35,12 @@ public class Md5DeepImpl extends BaseComponent implements LCManifestGenerator, L
 	@Override
 	protected String getComponentName() {
 		return LCManifestGenerator.COMPONENT_NAME;
+	}
+	
+	@Override
+	public void setCommandMap(Map<String,String> commandMap)
+	{
+		this.commandMap = commandMap;
 	}
 	
 	@Override

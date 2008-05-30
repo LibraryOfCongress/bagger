@@ -8,6 +8,10 @@ import org.hibernate.SessionFactory;
 import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ProcessDefinition;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,16 +39,16 @@ import org.springmodules.workflow.jbpm31.definition.ProcessDefinitionFactoryBean
  * @author Costin Leau
  * 
  */
-public class LocalJbpmConfigurationFactoryBean implements InitializingBean, DisposableBean, FactoryBean
+public class LocalJbpmConfigurationFactoryBean implements InitializingBean, DisposableBean, FactoryBean, BeanFactoryAware, BeanNameAware
 {
 
 	private static final Log logger = LogFactory.getLog(LocalJbpmConfigurationFactoryBean.class);
 
 	private JbpmConfiguration jbpmConfiguration;
 
-	private boolean createSchema;
+	private boolean createSchema = false;
 
-	private boolean dropSchema;
+	private boolean dropSchema = false;
 
 	private boolean hasPersistenceService;
 
@@ -56,14 +60,41 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 
 	private SessionFactory sessionFactory;
 
+	/**
+	 * FactoryLocator
+	 */
+	private JbpmFactoryLocator factoryLocator = new JbpmFactoryLocator();
+
 	private BeanFactoryReference reference;
 
+	private String factoryKey = JbpmFactoryLocator.class.getName();
+
+	/**
+	 * @see org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
+	 */
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		factoryLocator.setBeanFactory(beanFactory);
+		reference = factoryLocator.useBeanFactory(factoryKey);
+	}
+
+	/**
+	 * @see org.springframework.beans.factory.BeanNameAware#setBeanName(java.lang.String)
+	 */
+	public void setBeanName(String name) {
+		factoryLocator.setBeanName(name);
+		this.factoryKey = name;
+	}
+
+	
 	/**
 	 * @see org.springframework.beans.factory.DisposableBean#destroy()
 	 */
 	public void destroy() throws Exception {
 		// trigger locator cleanup
-		reference.release();
+		if (reference != null)
+		{
+			reference.release();
+		}
 
 		if (dropSchema && hasPersistenceService) {
 			logger.info("dropping schema");
@@ -77,7 +108,6 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 	 */
 	public void afterPropertiesSet() throws Exception {
 		jbpmConfiguration = JbpmConfiguration.getInstance();
-
 		JbpmContext context = null;
 		try {
 			// 2. inject the HB session factory if it is the case
@@ -247,4 +277,11 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 		this.processDefinitionsResources = processDefinitionsResources;
 	}
 
+	/**
+	 * @return Returns the factoryLocator.
+	 */
+	protected JbpmFactoryLocator getFactoryLocator() {
+		return factoryLocator;
+	}
+	
 }

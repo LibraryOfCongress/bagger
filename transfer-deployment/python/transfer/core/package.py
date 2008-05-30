@@ -9,16 +9,11 @@ class PackageModeler(AbstractDB):
         self.original_db_name = "package_modeler"
         self.db_name = self.db_prefix + self.original_db_name
         self.roles = {
-            'reader': 'package_modeler_reader_role',
-            'writer': 'package_modeler_data_writer_role',
-            'transfer_reader': 'transfer_reader_user',
-            'transfer_writer': 'transfer_data_writer_user',
-            'transfer_fixture_writer': 'transfer_fixture_writer_user',
+            'transfer_role': 'package_modeler_role',
+            'transfer_user': 'transfer_user',
         }
         self.passwds = {
-            'transfer_reader': config['TRANSFER_READER_PASSWD'] if config['TRANSFER_READER_PASSWD'] else "transfer_reader_user",
-            'transfer_writer': config['TRANSFER_WRITER_PASSWD'] if config['TRANSFER_WRITER_PASSWD'] else "transfer_data_writer_user",
-            'transfer_fixture_writer': config['TRANSFER_FIXTURE_WRITER_PASSWD'] if config['TRANSFER_FIXTURE_WRITER_PASSWD'] else "transfer_fixture_writer_user",
+            'transfer_user': config['TRANSFER_PASSWD'] if config['TRANSFER_PASSWD'] else "transfer_user",
         }
         self.hibernate_writer_props = """hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
                                          hibernate.connection.driver_class=org.postgresql.Driver

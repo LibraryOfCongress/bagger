@@ -5,17 +5,24 @@ import static org.junit.Assert.*;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.junit.Test;
+import org.springframework.transaction.IllegalTransactionStateException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
 import gov.loc.repository.utilities.results.Result;
 import gov.loc.repository.utilities.results.ResultList;
-import gov.loc.repository.packagemodeler.AbstractModelersTest;
+import gov.loc.repository.exceptions.RequiredEntityNotFound;
+import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
 import gov.loc.repository.packagemodeler.agents.Organization;
 import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.dao.FileListComparisonResult;
+import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.packge.CanonicalFile;
 import gov.loc.repository.packagemodeler.packge.FileExamination;
 import gov.loc.repository.packagemodeler.packge.FileExaminationGroup;
@@ -27,68 +34,80 @@ import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 
-public class PackageModelDAOImplTest extends AbstractModelersTest {
+public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 	
-	private static Repository repository;
-	private FileName fileName1;
-	private static System rs25Service;
-	private FileLocation fileLocation1;
-	private FileExaminationGroup fileExaminationGroup1;
-        
-    private static final String ROLE = "foo";
+	static Repository repository;
+	static System rs25;
+	static System rdc;
+
+	FileLocation fileLocation1;
+	FileExaminationGroup fileExaminationGroup1;
+	FileName fileName1;
 	
+	@Resource(name="packageModelDao")
+	PackageModelDAO dao;
+		
 	@Override
 	public void createFixtures() throws Exception {
 		repository = fixtureHelper.createRepository(REPOSITORY_ID1);
-		rs25Service = fixtureHelper.createStorageSystem(RS25);
-		fixtureHelper.createStorageSystem(RDC);
+		rs25 = fixtureHelper.createSystem(RS25, new Role[] {storageSystemRole});
+		rdc = fixtureHelper.createSystem(RDC, new Role[] {storageSystemRole});
 		fixtureHelper.createSystem(JBPM);
-		fixtureHelper.createOrganization(ORGANIZATION_ID1, ORGANIZATION_NAME1, new String[] {ROLE});		
+		fixtureHelper.createOrganization(ORGANIZATION_ID1, ORGANIZATION_NAME1, new Role[] {fixtureHelper.createRole(ROLE_1)});		
 	}
 		
 	@Override
 	public void setup() throws Exception
 	{
 		fileName1 = new FileName(FILENAME_1);
-		
-		fixtureHelper.reload(repository);
-		fixtureHelper.reload(rs25Service);
-		
+				
 		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
-		session.save(packge);
-
-		modelerFactory.createCanonicalFile(packge, fileName1, new Fixity(FIXITY_1, Algorithm.MD5));
-		
-		fileLocation1 = modelerFactory.createStorageSystemFileLocation(packge, rs25Service, BASEPATH_1 + testCounter, true, true);
-		
+		modelerFactory.createCanonicalFile(packge, fileName1, new Fixity(FIXITY_1, Algorithm.MD5));		
+		fileLocation1 = modelerFactory.createStorageSystemFileLocation(packge, rs25, BASEPATH_1 + testCounter, true, true);		
 		modelerFactory.createFileInstance(fileLocation1, fileName1, new Fixity(FIXITY_1, Algorithm.MD5));
-
-		fileExaminationGroup1 = modelerFactory.createFileExaminationGroup(fileLocation1, true);
-		
+		fileExaminationGroup1 = modelerFactory.createFileExaminationGroup(fileLocation1, true);		
 		modelerFactory.createFileExamination(fileExaminationGroup1, fileName1, new Fixity(FIXITY_1, Algorithm.MD5));
 		
-		this.commitAndRestartTransaction();
+		this.template.save(packge);
 		
 	}		
 
 	@Test
 	public void testFindPackage() throws Exception
 	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+
 		assertNotNull(dao.findPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter));
 		assertNull(dao.findPackage(Package.class, REPOSITORY_ID1, "x" + PACKAGE_ID1 + testCounter));
+		
+		txManager.commit(status);
 	}
 
+	/*
+	@Test(expected=IllegalTransactionStateException.class)
+	public void testRequiredTransaction() throws Exception
+	{
+		assertNotNull(dao.findPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter));
+	}
+	*/
+	
 	@Test(expected=Exception.class)
 	public void testFindRequiredPackage() throws Exception
 	{
 		dao.findRequiredPackage(Package.class, REPOSITORY_ID1, "x" + PACKAGE_ID1 + testCounter);
 	}
+
 	
 	@Test
 	public void testFindPackages() throws Exception
 	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+
 		assertTrue(dao.findPackages(Package.class).size() > 0);
 		assertTrue(dao.findPackages(Package.class).get(0) instanceof Package);
+		
+		txManager.commit(status);
+		
 	}
 
 	@Test
@@ -96,14 +115,14 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 	{
 		//Let's also make sure there is a package with no canonical files
 		Package packge1 = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID2 + testCounter);
-		session.save(packge1);
+		this.template.save(packge1);
 				
 		//And another with no html files
 		Package packge2 = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID3 + testCounter);
-		session.save(packge2);		
 		modelerFactory.createCanonicalFile(packge2, new FileName("test.xml"), new Fixity(FIXITY_2, Algorithm.MD5));
+		this.template.save(packge2);
 		
-		this.commitAndRestartTransaction();
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
 		
 		ResultList resultList = dao.findPackagesWithFileCount(Package.class, "html");
 		Iterator<Result> resultIter = resultList.iterator();
@@ -126,79 +145,140 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 			packageCount++;
 		}
 		assertEquals(assertPackageCount, packageCount);
-	}
+		
+		txManager.commit(status);
 
+	}
+	
 	@Test
 	public void testFindCanonicalFile() throws Exception
 	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+
 		assertNotNull(dao.findCanonicalFile(REPOSITORY_ID1, PACKAGE_ID1 + testCounter, FILENAME_1));
-		assertNull(dao.findCanonicalFile(REPOSITORY_ID1, PACKAGE_ID1 + testCounter, "x" + FILENAME_1));		
+		assertNull(dao.findCanonicalFile(REPOSITORY_ID1, PACKAGE_ID1 + testCounter, "x" + FILENAME_1));
+		
+		txManager.commit(status);
+
 	}
-	
+
 	@Test
 	public void testFindFileInstance() throws Exception
 	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+
 		assertNotNull(dao.findFileInstance(REPOSITORY_ID1, PACKAGE_ID1 + testCounter, RS25, BASEPATH_1 + testCounter, FILENAME_1));
 		assertNull(dao.findFileInstance(REPOSITORY_ID1, PACKAGE_ID1 + testCounter, RS25, BASEPATH_1 + testCounter, "x" + FILENAME_1));
 		assertNotNull(dao.findFileInstance(fileLocation1, new FileName(FILENAME_1)));
+		
+		txManager.commit(status);
+		
 	}
-	
+
 	@Test
 	public void testFindFileExamination() throws Exception
 	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+
 		assertNotNull(dao.findFileExamination(fileExaminationGroup1, fileName1));
 		assertNull(dao.findFileExamination(fileExaminationGroup1, new FileName("x" + FILENAME_1)));
-		
+
+		txManager.commit(status);
+
 	}
 	
 	@Test
 	public void testFindRepositories() throws Exception
 	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+
 		assertEquals(1, dao.findRepositories().size());
 		assertTrue(dao.findRepositories().get(0) instanceof Repository);
+
+		txManager.commit(status);
+
 	}
 
 	@Test
 	public void testFindRepository() throws Exception
 	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+
 		assertNotNull(dao.findRepository(REPOSITORY_ID1));
 		assertNull(dao.findRepository("x" + REPOSITORY_ID1));
+		
+		txManager.commit(status);
+		
 	}
 
-	@Test(expected=Exception.class)
+	@Test(expected=RequiredEntityNotFound.class)
 	public void testFindRequiredRepository() throws Exception
 	{
-		dao.findRequiredRepository("x" + REPOSITORY_ID1);
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		try
+		{
+			dao.findRequiredRepository("x" + REPOSITORY_ID1);
+		}
+		finally
+		{
+			txManager.rollback(status);	
+		}		
 	}
 
+	
 	@Test
 	public void testFindAgent() throws Exception
 	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		
 		Organization organization = dao.findAgent(Organization.class, ORGANIZATION_ID1);
 		assertNotNull(organization);
 		assertEquals(ORGANIZATION_ID1, organization.getId());
+		
+		txManager.commit(status);
 	}
 
-	@Test(expected=Exception.class)
+	@Test(expected=RequiredEntityNotFound.class)
 	public void testFindRequiredAgent() throws Exception
 	{
-		dao.findRequiredAgent(Organization.class, "x" + ORGANIZATION_ID1);
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		try
+		{
+			dao.findRequiredAgent(Organization.class, "x" + ORGANIZATION_ID1);
+		}
+		finally
+		{
+			txManager.rollback(status);
+		}
 	}
 
 	@Test
 	public void testFindRole() throws Exception
 	{
-		Role role = dao.findRole(ROLE);
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());		
+
+		Role role = dao.findRole(ROLE_1);
 		assertNotNull(role);
 		assertEquals(1, role.getAgentSet().size());
 		
-		assertNull(dao.findRole("x" + ROLE));
+		assertNull(dao.findRole("x" + ROLE_1));
+		
+		txManager.commit(status);
 	}
 	
-	@Test(expected=Exception.class)
+	@Test(expected=RequiredEntityNotFound.class)
 	public void testFindRequiredRole() throws Exception
 	{
-		dao.findRequiredRole("x" + ROLE);
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		try
+		{
+			dao.findRequiredRole("x" + ROLE_1);
+		}
+		finally
+		{
+			txManager.rollback(status);
+		}
+		
 	}
 	
 	@Test
@@ -206,22 +286,22 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 	{
 		//Comparing file instances and file examinations
 		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID2 + testCounter);
-		dao.save(packge);
-		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_1 + testCounter, true, true);
+		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, rdc, BASEPATH_1 + testCounter, true, true);
 		FileExaminationGroup fileExaminationGroup = modelerFactory.createFileExaminationGroup(fileLocation, true);
 			
 		//Add file instance for FILE1
 		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		this.commitAndRestartTransaction();
 		
+		this.template.save(packge);
+
 		//FILE1 should be in file instances, but not file examinations
 		FileListComparisonResult result = dao.compare(fileLocation, fileExaminationGroup);
 		assertEquals(1, result.missingFromTargetList.size());
 		assertEquals(new FileName(FILENAME_1), result.missingFromTargetList.get(0));
+
 		//Add file exam for FILE1
 		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//Everything should be OK
 		result = dao.compare(fileLocation, fileExaminationGroup);
@@ -229,8 +309,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		
 		//Add file exam for FILE2
 		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//FILE2 should be in file exams, but not file instances
 		result = dao.compare(fileLocation, fileExaminationGroup);
@@ -240,8 +319,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		
 		//Add file instance for FILE2
 		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//Everything should be OK
 		result = dao.compare(fileLocation, fileExaminationGroup);
@@ -253,8 +331,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		FileInstance fileInstance = modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_3), new Fixity(FIXITY_4, Algorithm.MD5));
 		fileInstance.getFixities().add(new Fixity(FIXITY_5, Algorithm.SHA256));
 
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//FILE3 should be in incomparable
 		result = dao.compare(fileLocation, fileExaminationGroup);
@@ -267,8 +344,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		//session.refresh(fileExamination);
 		fileExamination.getFixities().add(new Fixity(FIXITY_4, Algorithm.MD5));
 
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//Everything should be OK
 		result = dao.compare(fileLocation, fileExaminationGroup);
@@ -280,8 +356,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_4));		
 		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_4), new Fixity(FIXITY_6, Algorithm.MD5));		
 
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//Everything should be OK
 		result = dao.compare(fileLocation, fileExaminationGroup);
@@ -293,8 +368,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_5), new Fixity(FIXITY_7, Algorithm.MD5));
 		fileInstance = modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_5), new Fixity(FIXITY_8, Algorithm.MD5));
 
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 				
 		//FILE4 should be in conflict
 		result = dao.compare(fileLocation, fileExaminationGroup);
@@ -306,8 +380,8 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		
 		//Fix it
 		fileInstance.getFixity(Algorithm.MD5).setValue(FIXITY_7);
-		dao.save(fileInstance);
-		this.commitAndRestartTransaction();
+
+		this.template.update(fileInstance);
 		
 		//Everything should be OK
 		result = dao.compare(fileLocation, fileExaminationGroup);
@@ -320,8 +394,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_6));
 		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_6), new Fixity(FIXITY_9, Algorithm.MD5));		
 
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		result = dao.compare(fileLocation, fileExaminationGroup);
 		assertEquals(0, result.missingFromTargetList.size());
@@ -330,18 +403,18 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		assertEquals(1, result.fixityMismatchList.size());
 		
 	}
-	
+
 	@Test
 	public void testCompareCanonicalFilesFileInstances() throws Exception
 	{
 		//Comparing canonical files and file instances
 		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID2 + testCounter);
-		dao.save(packge);
-		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_1 + testCounter, true, true);
+		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, rdc, BASEPATH_1 + testCounter, true, true);
 		
 		//Add canonical file for FILE1
 		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		this.commitAndRestartTransaction();
+		
+		this.template.save(packge);
 		
 		//FILE1 should be in canonical files, but not file instances
 		FileListComparisonResult result = dao.compare(packge, fileLocation);
@@ -349,8 +422,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		assertEquals(new FileName(FILENAME_1), result.missingFromTargetList.get(0));
 		//Add file instance for FILE1
 		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//Everything should be OK
 		result = dao.compare(packge, fileLocation);
@@ -358,8 +430,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		
 		//Add file instance for FILE2
 		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//FILE2 should be in file instances, but not canonicalFiles
 		result = dao.compare(packge, fileLocation);
@@ -369,8 +440,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		
 		//Add canonical file for FILE2
 		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//Everything should be OK
 		result = dao.compare(packge, fileLocation);
@@ -382,8 +452,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		CanonicalFile canonicalFile = modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_3), new Fixity(FIXITY_4, Algorithm.MD5));
 		canonicalFile.getFixities().add(new Fixity(FIXITY_5, Algorithm.SHA256));
 
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//FILE3 should be in incomparable
 		result = dao.compare(packge, fileLocation);
@@ -395,8 +464,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		//Add MD5 for FILE3 file instance
 		fileInstance.getFixities().add(new Fixity(FIXITY_4, Algorithm.MD5));
 
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 		
 		//Everything should be OK
 		result = dao.compare(packge, fileLocation);
@@ -408,8 +476,7 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_4), new Fixity(FIXITY_6, Algorithm.MD5));
 		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_4), new Fixity(FIXITY_7, Algorithm.MD5));
 
-		dao.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.update(packge);
 				
 		//FILE4 should be in conflict
 		result = dao.compare(packge, fileLocation);
@@ -420,17 +487,29 @@ public class PackageModelDAOImplTest extends AbstractModelersTest {
 		assertEquals(new FileName(FILENAME_4), result.fixityMismatchList.get(0));
 		
 	}
-	
+
 	@Test
 	public void testLoadFileLocation() throws Exception
 	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		
 		assertNotNull(dao.loadRequiredFileLocation(this.fileLocation1.getKey()));
+		
+		txManager.commit(status);
 	}
 	
-	@Test(expected=Exception.class)
+	@Test(expected=RequiredEntityNotFound.class)
 	public void testLoadBadFileLocation() throws Exception
 	{
-		dao.loadRequiredFileLocation(10001L);
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		try
+		{
+			dao.loadRequiredFileLocation(10001L);
+		}
+		finally
+		{
+			txManager.rollback(status);
+		}			
 	}
 	
 }

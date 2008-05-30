@@ -4,14 +4,10 @@ import gov.loc.repository.serviceBroker.ServiceRequest.ObjectEntry;
 import gov.loc.repository.serviceBroker.impl.BooleanEntryImpl;
 import gov.loc.repository.serviceBroker.impl.IntegerEntryImpl;
 import gov.loc.repository.serviceBroker.impl.StringEntryImpl;
-import gov.loc.repository.utilities.persistence.HibernateUtil;
-import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -88,31 +84,11 @@ public class CommandLineComponentDriver {
 		Object component = componentFactory.getComponent(jobType);
 		InvokeComponentHelper helper = new InvokeComponentHelper(component, jobType, entries);
 		boolean result = true;
-		org.hibernate.Session hibernateSession = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).getCurrentSession();
-		try
-		{					
-			hibernateSession.beginTransaction();
-			//Invoke and return taskResult
-			System.out.println("Invoking " + jobType);
-			result = helper.invoke();
-			System.out.println("Returned " + result);
-			hibernateSession.getTransaction().commit();
-		}
-		catch(Exception ex)
-		{
-			if (hibernateSession != null && hibernateSession.isOpen())
-			{
-				hibernateSession.getTransaction().rollback();
-			}
-			throw ex;
-		}
-		finally
-		{
-			if (hibernateSession != null && hibernateSession.isOpen())
-			{
-				hibernateSession.close();
-			}
-		}
+
+		//Invoke and return taskResult
+		System.out.println("Invoking " + jobType);
+		result = helper.invoke();
+		System.out.println("Returned " + result);
 		
 	}
 

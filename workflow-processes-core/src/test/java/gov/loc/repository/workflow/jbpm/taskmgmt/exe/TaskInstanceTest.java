@@ -1,33 +1,20 @@
 package gov.loc.repository.workflow.jbpm.taskmgmt.exe;
 
 import static org.junit.Assert.*;
-import gov.loc.repository.workflow.processdefinitions.AbstractProcessDefinitionTest;
+import gov.loc.repository.workflow.AbstractCoreHandlerTest;
 
-import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
-import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml"})
-public class TaskInstanceTest {
+public class TaskInstanceTest extends AbstractCoreHandlerTest {
 	
-	@Autowired
-	JbpmConfiguration jbpmConfiguration;
-	
-	private String processDefinitionName;
-	//Everything goes according to plan
 	@Test
 	public void testTransition() throws Exception
 	{
-		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+		String processDefinitionString =
 	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='a' />" +
@@ -44,21 +31,11 @@ public class TaskInstanceTest {
 	      "  </task-node>" +
 	      "  <end-state name='b' />" +
 	      "  <end-state name='c' />" +
-	      "</process-definition>");
-		processDefinitionName = processDefinition.getName();
-
-		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
-		try
-		{			
-			jbpmContext.deployProcessDefinition(processDefinition);
-		}
-		finally
-		{
-			jbpmContext.close();
-		}
-			
+	      "</process-definition>";
 		
-		jbpmContext = jbpmConfiguration.createJbpmContext();		
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+				
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();		
 		try
 		{			
 			//The Fedex guy hands Ray the drive, so he starts a process
@@ -66,7 +43,7 @@ public class TaskInstanceTest {
 			jbpmContext.setActorId("ray");
 			assertEquals("ray", jbpmContext.getActorId());
 			
-			ProcessInstance processInstance = jbpmContext.newProcessInstance(processDefinitionName);
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 	    
 		    //Gets out of start state
 		    processInstance.signal();

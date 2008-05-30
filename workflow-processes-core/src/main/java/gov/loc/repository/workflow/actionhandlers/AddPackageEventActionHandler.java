@@ -7,13 +7,14 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.agents.Person;
 import gov.loc.repository.packagemodeler.events.packge.PackageEvent;
+import gov.loc.repository.workflow.AbstractPackageModelerAwareHandler;
 import static gov.loc.repository.workflow.WorkflowConstants.*;
 
 import java.util.Calendar;
 import java.util.Collection;
 import java.text.MessageFormat;
 
-public class AddPackageEventActionHandler extends BaseActionHandler {
+public class AddPackageEventActionHandler extends AbstractPackageModelerAwareHandler {
 
 	private static final long serialVersionUID = 1L;
 	private static final Log log = LogFactory.getLog(AddPackageEventActionHandler.class);
@@ -40,14 +41,14 @@ public class AddPackageEventActionHandler extends BaseActionHandler {
 			this.eventClassName = CLASS_PREFIX + eventClassName;
 		}		
 		this.eventClass = Class.forName(eventClassName);
-		this.packge = this.getDAO().loadRequiredPackage(Long.parseLong(this.packageKey));
+		this.packge = this.dao.loadRequiredPackage(Long.parseLong(this.packageKey));
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
-		PackageEvent event = this.getFactory().createPackageEvent(this.eventClass, packge, Calendar.getInstance().getTime(), this.getWorkflowAgent());
-		event.setRequestingAgent(this.getWorkflowAgent());
+		PackageEvent event = this.factory.createPackageEvent(this.eventClass, packge, Calendar.getInstance().getTime(), this.workflowAgent);
+		event.setRequestingAgent(this.workflowAgent);
 		TaskInstance taskInstance = this.executionContext.getTaskInstance();
 		if (taskInstance == null)
 		{
@@ -82,7 +83,7 @@ public class AddPackageEventActionHandler extends BaseActionHandler {
 			event.setEventEnd(end.getTime());
 		}
 		//PerformingAgent
-		event.setPerformingAgent(this.getDAO().findRequiredAgent(Person.class, taskInstance.getActorId()));
+		event.setPerformingAgent(this.dao.findRequiredAgent(Person.class, taskInstance.getActorId()));
 		//Success
 		if (! TRANSITION_CONTINUE.equals((String)this.executionContext.getContextInstance().getTransientVariable(VARIABLE_TRANSITION)))
 		{

@@ -1,9 +1,10 @@
 package gov.loc.repository.workflow.actionhandlers;
 
 import gov.loc.repository.transfer.components.fileexamination.LCManifestGenerator;
+import gov.loc.repository.workflow.AbstractHandler;
 import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 
-public class GenerateLCManifestActionHandler extends BaseActionHandler {
+public class GenerateLCManifestActionHandler extends AbstractHandler {
 
 	private static final long serialVersionUID = 1L;
 

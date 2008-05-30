@@ -1,8 +1,10 @@
 package gov.loc.repository.workflow.actionhandlers;
 
+import gov.loc.repository.workflow.AbstractHandler;
+
 import org.jbpm.graph.def.ActionHandler;
 
-public class MockingActionHandler extends BaseActionHandler {
+public class MockingActionHandler extends AbstractHandler {
 
 	private static final long serialVersionUID = 1L;
 

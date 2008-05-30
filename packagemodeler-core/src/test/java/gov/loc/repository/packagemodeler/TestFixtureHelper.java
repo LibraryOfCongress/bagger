@@ -1,11 +1,6 @@
-package gov.loc.repository.utilities.persistence;
-
-import java.util.HashMap;
-import java.util.Map;
+package gov.loc.repository.packagemodeler;
 
 import gov.loc.repository.Ided;
-import gov.loc.repository.Keyed;
-import gov.loc.repository.constants.Roles;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Organization;
 import gov.loc.repository.packagemodeler.agents.Person;
@@ -13,60 +8,49 @@ import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.Software;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.packge.Repository;
-import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 public class TestFixtureHelper {
 	private SessionFactory sessionFactory;
-	private Session session = null;
 	
-	private Map<String, Ided> idedMap = new HashMap<String, Ided>();
-	
-	public TestFixtureHelper()
+	public TestFixtureHelper(SessionFactory sessionFactory)
 	{
-		sessionFactory = HibernateUtil.getSessionFactory(DatabaseRole.SUPER_USER);
+		this.sessionFactory = sessionFactory;
+	}
+	
+	public TestFixtureHelper() {
 	}
 	
 	protected Session getSession()
 	{
-		if (session != null)
-		{
-			return session;
-		}
 		return sessionFactory.getCurrentSession();
 	}
 	
-	public void setSession(Session session)
-	{
-		this.session = session;
-	}
-
-	protected <T extends Agent> T createAgent(Class<T> clazz, String id, String[] roles) throws Exception
+	private <T extends Agent> T createAgent(Class<T> clazz, String id, Role[] roles) throws Exception
 	{
 		Agent agent = this.create(clazz, id);
 		if (roles != null)
 		{
-			for(String role : roles)
+			for(Role role : roles)
 			{
-				agent.addRole(this.get(Role.class, role));
+				agent.addRole(role);
 			}
 		}
 		return clazz.cast(agent);
 	}
 	
-	protected <T extends Ided> T create(Class<T> clazz, String id) throws Exception
+	private <T extends Ided> T create(Class<T> clazz, String id) throws Exception
 	{
 		String implClassName = getImplClassName(clazz);
 		Ided obj = Ided.class.cast(Class.forName(implClassName).newInstance());
 		obj.setId(id);
 		this.getSession().save(obj);
-		this.idedMap.put(this.getKey(clazz, id), obj);
 		return clazz.cast(obj);
 	}
 	
-	private static String getImplClassName(Class clazz)
+	private static String getImplClassName(Class<?> clazz)
 	{
 		return clazz.getName().substring(0, (clazz.getName().length()-clazz.getSimpleName().length())) + "impl." + clazz.getSimpleName() + "Impl";		
 	}	
@@ -80,18 +64,13 @@ public class TestFixtureHelper {
 	{
 		return this.create(Role.class, roleId);
 	}
-	
-	public System createStorageSystem(String storageSystemId) throws Exception
-	{
-		return this.createAgent(System.class, storageSystemId, new String[] {Roles.STORAGE_SYSTEM}); 
-	}
-		
+			
 	public System createSystem(String systemId) throws Exception
 	{
 		return this.create(System.class, systemId);
 	}
 
-	public System createSystem(String systemId, String[] roles) throws Exception
+	public System createSystem(String systemId, Role[] roles) throws Exception
 	{
 		return this.createAgent(System.class, systemId, roles);
 	}	
@@ -100,29 +79,8 @@ public class TestFixtureHelper {
 	{
 		return this.create(Software.class, softwareId);
 	}
-	
-	protected String getKey(Class clazz, String id)
-	{
-		return clazz.getName() + "_" + id;
-	}
-	
-	protected <T extends Ided> T get(Class<T> clazz, String id) throws Exception
-	{
-		String key = this.getKey(clazz, id);
-		if (! this.idedMap.containsKey(key))
-		{
-			this.idedMap.put(key, this.create(clazz, id));
-		}
-		Ided obj = this.idedMap.get(key);
-		if (! this.getSession().contains(obj))
-		{
-			this.getSession().load(obj, obj.getKey());
-		}
-		return clazz.cast(obj);
-		
-	}
-		
-	public Organization createOrganization(String organizationId, String name, String[] roles) throws Exception
+			
+	public Organization createOrganization(String organizationId, String name, Role[] roles) throws Exception
 	{
 		Organization organization = this.createAgent(Organization.class, organizationId, roles);
 		organization.setName(name);
@@ -135,14 +93,5 @@ public class TestFixtureHelper {
 		person.setFirstName(firstName);
 		person.setSurname(surname);
 		return person;
-	}
-			
-	public void reload(Keyed obj)
-	{
-		if (this.getSession().contains(obj))
-		{
-			this.getSession().refresh(obj);
-		}
-		this.getSession().load(obj, obj.getKey());
-	}
+	}			
 }

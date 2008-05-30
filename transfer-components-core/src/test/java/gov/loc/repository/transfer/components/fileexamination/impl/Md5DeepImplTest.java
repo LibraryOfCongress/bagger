@@ -6,35 +6,53 @@ import static gov.loc.repository.transfer.components.constants.FixtureConstants.
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 import static org.junit.Assert.*;
 
+import gov.loc.repository.constants.Roles;
 import gov.loc.repository.packagemodeler.agents.Agent;
+import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.events.filelocation.VerifyAgainstManifestEvent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.Package;
+import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
-import gov.loc.repository.transfer.components.AbstractComponentTest;
+import gov.loc.repository.transfer.components.AbstractCorePackageModelerAwareComponentTest;
+import gov.loc.repository.transfer.components.fileexamination.LCManifestGenerator;
+import gov.loc.repository.transfer.components.fileexamination.LCManifestVerifier;
+import gov.loc.repository.packagemodeler.agents.System;
 
-
-public class Md5DeepImplTest extends AbstractComponentTest {
+public class Md5DeepImplTest extends AbstractCorePackageModelerAwareComponentTest {
 
 	private static Log log = LogFactory.getLog(Md5DeepImplTest.class);
 	
-	protected static Agent requestingAgent;
+	static Agent requestingAgent;
+	static Repository repository;
+	static System rdc;
 	Package packge;
-	Md5DeepImpl md5DeepComponent;
 	boolean canRunTest = false;
+
+	@Autowired
+	LCManifestGenerator generator;
+	
+	@Autowired
+	LCManifestVerifier verifier;
+
 	
 	@Override
 	public void createFixtures() throws Exception {
-		this.fixtureHelper.createRepository(REPOSITORY_ID1);
-		this.fixtureHelper.createStorageSystem(RDC);
+		repository = this.fixtureHelper.createRepository(REPOSITORY_ID1);
+		rdc = this.fixtureHelper.createSystem(RDC, new Role[] {fixtureHelper.createRole(Roles.STORAGE_SYSTEM)});
 		requestingAgent = this.fixtureHelper.createPerson(PERSON_ID1, PERSON_FIRSTNAME1, PERSON_SURNAME1);
 	}	
 	
@@ -58,10 +76,11 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 			log.warn("Can't run test because can't find md5deep");
 		}
 		
-		md5DeepComponent = new Md5DeepImpl(this.modelerFactory, this.packageModelDao, commandMap);
+		generator.setCommandMap(commandMap);
+		verifier.setCommandMap(commandMap);
 				
-		packge = this.modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
-		this.session.save(packge);
+		packge = this.modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
+		this.template.save(packge);
 	}
 	
 	@Test
@@ -72,26 +91,29 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 			return;
 		}
 		
-		FileLocation fileLocation = this.modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_1, true, true);
-		
+		FileLocation fileLocation = this.modelerFactory.createStorageSystemFileLocation(packge, rdc, BASEPATH_1, true, true);
+						
 		assertEquals(0, fileLocation.getFileLocationEvents().size());
 				
 		File packageDir = this.getFile("package");
-		md5DeepComponent.generate(fileLocation, packageDir.toString(), Algorithm.MD5, this.packageModelDao.findRequiredAgent(Agent.class, this.getReportingAgent()));
+		generator.generate(fileLocation, packageDir.toString(), Algorithm.MD5, reportingAgent);
 		
 		File manifestFile = new File(packageDir, "manifest-md5.txt");
 		assertTrue(manifestFile.exists());
 		
-		md5DeepComponent.verify(fileLocation, packageDir.toString(), this.packageModelDao.findRequiredAgent(Agent.class, this.getReportingAgent()));
-		assertTrue(md5DeepComponent.verifyResult());
+		verifier.verify(fileLocation, packageDir.toString(), reportingAgent);
+		assertTrue(verifier.verifyResult());
 		
-		this.commitAndRestartTransaction();
 		
-		assertEquals(1, fileLocation.getFileLocationEvents(VerifyAgainstManifestEvent.class).size());		
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+
+		assertEquals(1, fileLocation.getFileLocationEvents(VerifyAgainstManifestEvent.class).size());
+		
+		txManager.commit(status);
 
 	}
 	
-	//@Test
+	@Test
 	public void testBadValidate() throws Exception
 	{
 		if (! this.canRunTest)
@@ -99,12 +121,12 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 			return;
 		}
 
-		FileLocation fileLocation = this.modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_2, true, true);
+		FileLocation fileLocation = this.modelerFactory.createStorageSystemFileLocation(packge, rdc, BASEPATH_2, true, true);
 		
 		assertEquals(0, fileLocation.getFileLocationEvents().size());
 				
 		File packageDir = this.getFile("package");
-		md5DeepComponent.generate(fileLocation, packageDir.toString(), Algorithm.MD5, this.packageModelDao.findRequiredAgent(Agent.class, this.getReportingAgent()));
+		generator.generate(fileLocation, packageDir.toString(), Algorithm.MD5, reportingAgent);
 		
 		File manifestFile = new File(packageDir, "manifest-md5.txt");
 		assertTrue(manifestFile.exists());
@@ -114,15 +136,18 @@ public class Md5DeepImplTest extends AbstractComponentTest {
 		manifestWriter.write("ad0234829205b9033196ba818f7a872c  data\\batch1\\test3.txt");
 		manifestWriter.close();
 		
-		md5DeepComponent.verify(fileLocation, packageDir.toString(), this.packageModelDao.findRequiredAgent(Agent.class, this.getReportingAgent()));
-		assertFalse(md5DeepComponent.verifyResult());
+		verifier.verify(fileLocation, packageDir.toString(), reportingAgent);
+		assertFalse(verifier.verifyResult());
 		
-		this.commitAndRestartTransaction();
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
 		
 		assertEquals(1, fileLocation.getFileLocationEvents(VerifyAgainstManifestEvent.class).size());
 		VerifyAgainstManifestEvent event = fileLocation.getFileLocationEvents(VerifyAgainstManifestEvent.class).iterator().next();
 		assertFalse(event.isSuccess());
 		assertNotNull(event.getMessage());
+		
+		txManager.commit(status);
+		
 	}
 	
 }

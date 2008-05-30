@@ -4,9 +4,6 @@
 		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-		<property name="hibernate.current_session_context_class">thread</property>
-		<property name="hibernate.connection.autocommit">false</property>
-
 		<!-- Named SQL queries -->
 		<mapping resource="conf/packagemodeler.core.queries.sql.hbm.xml" />
 

@@ -7,7 +7,7 @@
     <service name='scheduler' factory='org.jbpm.scheduler.db.DbSchedulerServiceFactory' />
     <service name='logging' factory='org.jbpm.logging.db.DbLoggingServiceFactory' />
     <service name='authentication' factory='org.jbpm.security.authentication.DefaultAuthenticationServiceFactory' />
-    <service name='springContext' factory='gov.loc.repository.workflow.jbpm.spring.ContextFactory' />
+    <!-- <service name='springContext' factory='gov.loc.repository.workflow.jbpm.spring.ContextFactory' />  -->
   </jbpm-context>
 
   <!-- configuration resource files pointing to default configuration files in jbpm-{version}.jar -->
@@ -15,7 +15,6 @@
   <string name='resource.hibernate.cfg.xml' value='jbpm.hibernate.cfg.xml' />
   <string name='resource.hibernate.properties' value='jbpm.hibernate.properties' />
   -->
-  <string name='foo' value='bar' />
   <string name='resource.business.calendar' value='org/jbpm/calendar/jbpm.business.calendar.properties' />
   <string name='resource.default.modules' value='org/jbpm/graph/def/jbpm.default.modules.properties' />
   <string name='resource.converter' value='org/jbpm/db/hibernate/jbpm.converter.properties' />

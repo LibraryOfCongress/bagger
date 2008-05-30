@@ -4,65 +4,74 @@ import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.transfer.components.constants.FixtureConstants.*;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 import static org.junit.Assert.*;
 
+import gov.loc.repository.constants.Roles;
 import gov.loc.repository.packagemodeler.agents.Agent;
+import gov.loc.repository.packagemodeler.agents.Role;
+import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.events.filelocation.InventoryFromFilesOnDiskEvent;
 import gov.loc.repository.packagemodeler.packge.FileInstance;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.Package;
-import gov.loc.repository.transfer.components.AbstractComponentTest;
-import gov.loc.repository.utilities.FixityHelper;
-import gov.loc.repository.utilities.impl.JavaSecurityFixityHelper;
+import gov.loc.repository.packagemodeler.packge.Repository;
+import gov.loc.repository.transfer.components.AbstractCorePackageModelerAwareComponentTest;
+import gov.loc.repository.transfer.components.fileexamination.FilesOnDiskInventorier;
 
 
-public class FilesOnDiskInventorierImplTest extends AbstractComponentTest {
+public class FilesOnDiskInventorierImplTest extends AbstractCorePackageModelerAwareComponentTest {
 
-	protected static Agent requestingAgent;
+	static Agent requestingAgent;
+	static Repository repository;
+	static System rdc;
 	Package packge;
-	FilesOnDiskInventorierImpl inventorier;
+	
+	@Autowired
+	public FilesOnDiskInventorier inventorier;
 	
 	@Override
 	public void createFixtures() throws Exception {
-		this.fixtureHelper.createRepository(REPOSITORY_ID1);
-		this.fixtureHelper.createStorageSystem(RDC);
+		repository = this.fixtureHelper.createRepository(REPOSITORY_ID1);
+		rdc = this.fixtureHelper.createSystem(RDC, new Role[] {fixtureHelper.createRole(Roles.STORAGE_SYSTEM)});
 		requestingAgent = this.fixtureHelper.createPerson(PERSON_ID1, PERSON_FIRSTNAME1, PERSON_SURNAME1);
 	}	
 
 	@Override
 	public void setup() throws Exception {
-		FixityHelper fixityHelper = new JavaSecurityFixityHelper();
-
-		inventorier = new FilesOnDiskInventorierImpl(this.modelerFactory, this.packageModelDao, fixityHelper);
-				
-		packge = this.modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
-		this.session.save(packge);
+		packge = this.modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
+		this.template.save(packge);
 	}
 	
 	@Test
 	public void testInventory() throws Exception
 	{
-		FileLocation fileLocation = this.modelerFactory.createStorageSystemFileLocation(packge, RDC, BASEPATH_1, true, true);
+		FileLocation fileLocation = this.modelerFactory.createStorageSystemFileLocation(packge, rdc, BASEPATH_1, true, true);
 		
 		assertEquals(0, fileLocation.getFileInstances().size());
 		assertEquals(0, fileLocation.getFileLocationEvents().size());
 		
-		inventorier.inventory(fileLocation, this.getFile("batch").toString(), Fixity.Algorithm.MD5, this.packageModelDao.findRequiredAgent(Agent.class, this.getReportingAgent()));
+		inventorier.inventory(fileLocation, this.getFile("batch").toString(), Fixity.Algorithm.MD5, reportingAgent );
 		
-		this.commitAndRestartTransaction();
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
 
 		assertEquals(6, fileLocation.getFileInstances().size());
-		FileInstance fileInstance = this.packageModelDao.findFileInstance(fileLocation, new FileName("manifest-md5.txt"));
+		FileInstance fileInstance = this.dao.findFileInstance(fileLocation, new FileName("manifest-md5.txt"));
 		assertNotNull(fileInstance);
 		assertTrue(fileInstance.getFixities().isEmpty());
-		fileInstance = this.packageModelDao.findFileInstance(fileLocation, new FileName("batch1/dir2/dir3/test5.txt"));
+		fileInstance = this.dao.findFileInstance(fileLocation, new FileName("batch1/dir2/dir3/test5.txt"));
 		assertNotNull(fileInstance);
 		Fixity fixity = fileInstance.getFixity(Fixity.Algorithm.MD5);
 		assertNotNull(fixity);
 		assertEquals("E3D704F3542B44A621EBED70DC0EFE13".toLowerCase(), fixity.getValue().toLowerCase());
 		
 		assertEquals(1, fileLocation.getFileLocationEvents(InventoryFromFilesOnDiskEvent.class).size());
+		
+		txManager.commit(status);
 	}
 }

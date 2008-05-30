@@ -15,7 +15,7 @@ public abstract class AbstractCoreReportController extends AbstractReportControl
 		return "Core";
 	}
 	
-	@Resource(name="readOnlyPackageModelDao")
+	@Resource(name="packageModelDao")
 	@Required
 	public void setPackageModelDao(PackageModelDAO dao)
 	{

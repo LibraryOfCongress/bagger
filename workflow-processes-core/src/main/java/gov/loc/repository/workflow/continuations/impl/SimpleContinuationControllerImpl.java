@@ -9,24 +9,34 @@ import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.access.BeanFactoryLocator;
+import org.springframework.beans.factory.access.BeanFactoryReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import static gov.loc.repository.workflow.WorkflowConstants.*;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
-import gov.loc.repository.workflow.jbpm.spring.ContextService;
+import gov.loc.repository.workflow.jbpm.spring.JbpmFactoryLocator;
 
 @Component("continuationController")
+@Scope("prototype")
 public class SimpleContinuationControllerImpl implements
 		SimpleContinuationController {
-
+	
 	private static final Log log = LogFactory.getLog(SimpleContinuationControllerImpl.class);	
 	
-	protected static JbpmConfiguration jbpmConfiguration = JbpmConfiguration.getInstance();
+	protected JbpmConfiguration jbpmConfiguration;	
 	
 	private String successTransition = TRANSITION_CONTINUE;
-	
+
+	@Autowired
+	public SimpleContinuationControllerImpl(JbpmConfiguration jbpmConfiguration) {
+		this.jbpmConfiguration = jbpmConfiguration;
+	}
+		
 	@Override
 	public void invoke(Long tokenInstanceId, Boolean success) throws Exception
 	{		
@@ -65,15 +75,34 @@ public class SimpleContinuationControllerImpl implements
 	
 	private void suspendServiceRequests(JbpmContext jbpmContext, Token token)
 	{
-		ApplicationContext springContext = ((ContextService)jbpmContext.getServices().getService("springContext")).getContext();
-		if (springContext.containsBean("requestServiceBroker"))
+		BeanFactory beanFactory = this.retrieveBeanFactory();
+		if (beanFactory != null && beanFactory.containsBean("requestServiceBroker"))
 		{
-			RequestingServiceBroker broker = (RequestingServiceBroker)springContext.getBean("requestServiceBroker");
+			RequestingServiceBroker broker = (RequestingServiceBroker)beanFactory.getBean("requestServiceBroker");
 			log.debug("Suspending service requests for " + token.getId());
 			broker.suspend(Long.toString(token.getId()));
 		}
 	}
 	
+	private BeanFactory retrieveBeanFactory() {
+		final String factoryKey = "jbpmConfiguration";
+		BeanFactoryLocator factoryLocator = new JbpmFactoryLocator();
+		BeanFactoryReference factory = factoryLocator.useBeanFactory(factoryKey);
+		if (factory == null)
+		{
+			log.warn("Spring application context not available");
+			return null;
+			//throw new IllegalArgumentException("no beanFactory found under key=" + factoryKey);
+		}
+
+		try {
+			return factory.getFactory();
+		}
+		finally {
+			factory.release();
+		}
+	}
+
 	@Override
 	public void invoke(Long tokenInstanceId, String error, String errorDetail) throws Exception {
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();

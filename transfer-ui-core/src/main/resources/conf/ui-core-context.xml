@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/context 
         http://www.springframework.org/schema/context/spring-context-2.5.xsd">
-  	<import resource="security-context.xml" />
+  	<import resource="classpath:conf/security-context.xml" />
 	<import resource="classpath:conf/packagemodeler-core-context.xml" />
 	<import resource="classpath:conf/workflow-continuations-context.xml" />
 	<import resource="classpath:conf/servicerequestbroker-context.xml" />
@@ -31,7 +31,17 @@
     </bean>
 
 	<!-- Following best practices, this should be used for (part) of url mapping -->
-	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	<bean id="abstractHandlerMapping" abstract="true" >
+		<property name="interceptors">
+			<list>
+				<ref bean="contextPathInterceptor" />
+				<ref bean="messageInterceptor" />
+				<ref bean="referrerInterceptor" />
+			</list>
+		</property>	
+	</bean> 
+	
+	<bean id="urlHandler3" parent="abstractHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <value>
                 /reports/index.html=reportsController
@@ -43,34 +53,43 @@
                 /processinstance/*/comment.*=commentController
                 /processinstance/*.*=processInstanceController
                 /processdefinition/*.*=processDefinitionController
-                /taskinstance/*.*=taskInstanceController
                 /token/*.*=tokenController
                 /**=homeController
             </value>
         </property>
 		<property name="interceptors">
-			<list>
-				<ref bean="contextPathInterceptor" />
-				<ref bean="messageInterceptor" />
-				<ref bean="referrerInterceptor" />
+			<list merge="true">
+				<ref bean="jbpmContextInterceptor" />
+			</list>
+		</property>
+		<property name="order" value="3" />		                    
+    </bean>
+
+	<bean id="urlHandler2" parent="abstractHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <value>
+                /taskinstance/*.*=taskInstanceController
+            </value>
+        </property>
+		<property name="interceptors">
+			<list merge="true">
+				<ref bean="packageModelerInterceptor" />
 				<ref bean="jbpmContextInterceptor" />
 			</list>
 		</property>
 		<property name="order" value="2" />		                    
     </bean>
 
-	<bean class="gov.loc.repository.transfer.ui.springframework.ControllerClassNameHandlerMapping">
+	<bean id="urlHandler1" parent="abstractHandlerMapping" class="gov.loc.repository.transfer.ui.springframework.ControllerClassNameHandlerMapping">
 		<property name="pathPrefix" value="/reports" />
 		<property name="controllerMarker" value="gov.loc.repository.transfer.ui.controllers.reports.Report" />
 		<property name="order" value="1" />
 		<property name="interceptors">
-			<list>
-				<ref bean="contextPathInterceptor" />
+			<list merge="true">
+				<ref bean="packageModelerInterceptor" />				
 				<bean class="gov.loc.repository.transfer.ui.interceptors.ViewInterceptor">
 					<property name="view" value="report" />
 				</bean>
-				<ref bean="messageInterceptor" />
-				<ref bean="referrerInterceptor" />
 			</list>
 		</property>		
 	</bean>
@@ -82,6 +101,10 @@
     <bean id="referrerInterceptor" class="gov.loc.repository.transfer.ui.interceptors.ReferrerInterceptor" />
     
     <bean id="jbpmContextInterceptor" class="gov.loc.repository.transfer.ui.interceptors.JbpmContextInterceptor" />
+
+	<bean id="packageModelerInterceptor" class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+		<property name="sessionFactory" ref="packageModelerSessionFactory" />
+	</bean>
     
     <bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
 	    <property name="factoryClass" value="org.apache.struts.tiles.xmlDefinition.I18nFactorySet"/>

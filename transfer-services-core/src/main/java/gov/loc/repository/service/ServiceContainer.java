@@ -7,8 +7,6 @@ import javax.annotation.PostConstruct;
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceContainerRegistry;
 import gov.loc.repository.serviceBroker.ServiceRequest;
-import gov.loc.repository.utilities.persistence.HibernateUtil;
-import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -227,32 +225,10 @@ public class ServiceContainer implements Runnable {
 			{
 				Object component = componentFactory.getComponent(req.getJobType());
 				InvokeComponentHelper helper = new InvokeComponentHelper(component, req.getJobType(), req.getEntries());
-				org.hibernate.Session hibernateSession = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).getCurrentSession();
-				try
-				{					
-					hibernateSession.beginTransaction();
-					//Invoke and return taskResult
-					log.debug("Invoking for Service Request " + req);
-					System.out.println("Starting " + req);
-					result = helper.invoke();
-					hibernateSession.getTransaction().commit();
-				}
-				catch(Exception ex)
-				{
-					if (hibernateSession != null && hibernateSession.isOpen())
-					{
-						hibernateSession.getTransaction().rollback();
-					}
-					throw ex;
-				}
-				finally
-				{
-					if (hibernateSession != null && hibernateSession.isOpen())
-					{
-						hibernateSession.close();
-					}
-				}
-				
+				//Invoke and return taskResult
+				log.debug("Invoking for Service Request " + req);
+				System.out.println("Starting " + req);
+				result = helper.invoke();				
 			}
 			catch(Exception ex)
 			{

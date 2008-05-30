@@ -1,8 +1,5 @@
 package gov.loc.repository.transfer.components;
 
-import gov.loc.repository.packagemodeler.ModelerFactory;
-import gov.loc.repository.packagemodeler.agents.Agent;
-import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.utilities.ConfigurationFactory;
 
 import java.text.MessageFormat;
@@ -11,15 +8,12 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public abstract class BaseComponent {
+public abstract class AbstractComponent {
 
 	private static final String REPORTING_AGENT_KEY = "components.agent.id";
 	
 	private Log reportingLog;
 	private Log log;	
-	
-	protected ModelerFactory factory;
-	protected PackageModelDAO dao;	
 	
 	protected Configuration getConfiguration()
 	{
@@ -55,14 +49,5 @@ public abstract class BaseComponent {
 		}
 		return reportingAgent;
 	}
-	
-	protected Agent getReportingAgent() throws Exception
-	{
-		return this.dao.findRequiredAgent(Agent.class, this.getReportingAgentId());
-	}
-	
-	public BaseComponent(ModelerFactory factory, PackageModelDAO dao) {
-		this.factory = factory;
-		this.dao = dao;
-	}	
+		
 }

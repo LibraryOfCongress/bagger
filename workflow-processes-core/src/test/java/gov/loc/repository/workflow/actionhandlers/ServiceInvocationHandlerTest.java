@@ -8,7 +8,6 @@ import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.transfer.components.test.TestComponent;
 import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.workflow.WorkflowConstants;
-import gov.loc.repository.workflow.jbpm.spring.ContextService;
 
 import java.lang.reflect.Proxy;
 
@@ -18,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,6 +34,9 @@ public class ServiceInvocationHandlerTest {
 	@Autowired
 	RespondingServiceBroker broker;
 
+	@Autowired
+	ApplicationContext applicationContext;
+	
 	protected HibernateTemplate template;
 	
 	@Autowired
@@ -67,8 +70,7 @@ public class ServiceInvocationHandlerTest {
 		workflowConfig.clearProperty("none.TestComponent.queue");
 		workflowConfig.addProperty("none.TestComponent.queue", QUEUE_1);
 		
-		ContextService contextService = new ContextService();		
-		this.actionHandler.setApplicationContext(contextService.getContext());
+		actionHandler.setBeanFactory(this.applicationContext);
 	}
 	
 	@Test

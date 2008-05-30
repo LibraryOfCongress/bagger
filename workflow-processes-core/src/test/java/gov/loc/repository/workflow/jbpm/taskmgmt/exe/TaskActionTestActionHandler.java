@@ -2,9 +2,9 @@ package gov.loc.repository.workflow.jbpm.taskmgmt.exe;
 
 import static org.junit.Assert.assertEquals;
 
-import gov.loc.repository.workflow.actionhandlers.BaseActionHandler;
+import gov.loc.repository.workflow.AbstractHandler;
 
-public class TaskActionTestActionHandler extends BaseActionHandler {
+public class TaskActionTestActionHandler extends AbstractHandler {
 
 	private static final long serialVersionUID = 1L;
 

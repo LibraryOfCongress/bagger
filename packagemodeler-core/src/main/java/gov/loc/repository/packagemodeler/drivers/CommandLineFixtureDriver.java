@@ -18,6 +18,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CommandLineFixtureDriver {
 	
@@ -50,7 +52,8 @@ public class CommandLineFixtureDriver {
 			}
 			String action = (String)line.getArgList().get(0);
 			EnhancedHashMap<String,String> optionsMap = commandLineToEnhancedHashMap(line);
-			MapFixtureDriver componentDriver = new MapFixtureDriver();
+			ApplicationContext context = new ClassPathXmlApplicationContext("conf/packagemodeler-core-context.xml"); 
+			MapFixtureDriver componentDriver = (MapFixtureDriver)context.getBean("mapFixtureDriver");
 			componentDriver.execute(action, optionsMap);
 			System.exit(RETURN_SUCCESS);
 		}

@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import gov.loc.repository.transfer.components.test.TestComponent;
 import gov.loc.repository.utilities.ConfigurationFactory;
+import gov.loc.repository.workflow.AbstractCoreHandlerTest;
 import gov.loc.repository.workflow.WorkflowConstants;
-import gov.loc.repository.workflow.jbpm.spring.ContextService;
 
 import java.io.FileFilter;
 import java.lang.reflect.Proxy;
@@ -18,11 +18,12 @@ import org.apache.commons.configuration.Configuration;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 
-public class BaseActionHandlerTest {
+public class BaseActionHandlerTest extends AbstractCoreHandlerTest {
 
 	DummyActionHandler actionHandler= new DummyActionHandler(null);
 	Configuration configuration;
@@ -31,8 +32,6 @@ public class BaseActionHandlerTest {
 	public void setup() throws Exception
 	{
 		configuration = ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
-		ContextService contextService = new ContextService();		
-		this.actionHandler.setApplicationContext(contextService.getContext());
 		
 	}
 	
@@ -87,8 +86,8 @@ public class BaseActionHandlerTest {
 	@Test
 	public void testConfigurationField() throws Exception
 	{
-	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+		String processDefinitionString =
+	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
@@ -100,21 +99,32 @@ public class BaseActionHandlerTest {
 	      "    <transition name='c' to='end' />" +
 	      "  </node>" +		      
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
 
-	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.signal();
-	    
-	    assertEquals("end", processInstance.getRootToken().getNode().getName());
-	    assertEquals("foo", processInstance.getContextInstance().getVariable("configField"));
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+			processInstance.signal();
+		    
+		    assertEquals("end", processInstance.getRootToken().getNode().getName());
+		    assertEquals("foo", processInstance.getContextInstance().getVariable("configField"));
+			
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
 	}
 
 	//Test missing required field
 	@Test(expected=Exception.class)
 	public void testMissingRequiredField() throws Exception
 	{
-	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+		String processDefinitionString=
+	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
@@ -125,10 +135,21 @@ public class BaseActionHandlerTest {
 	      "    <transition name='c' to='end' />" +
 	      "  </node>" +		      
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
 
-	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.signal();
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+			processInstance.signal();
+		    
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
 	    
 	}
 	
@@ -137,8 +158,8 @@ public class BaseActionHandlerTest {
 	@Test
 	public void testConfigurationFieldWithContextVariablePlaceholder() throws Exception
 	{
-	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+		String processDefinitionString =
+	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
@@ -150,22 +171,34 @@ public class BaseActionHandlerTest {
 	      "    <transition name='c' to='end' />" +
 	      "  </node>" +		      
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
 
-	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.getContextInstance().setVariable("contextvariable", "foo");
-	    processInstance.signal();
-	    
-	    assertEquals("end", processInstance.getRootToken().getNode().getName());
-	    assertEquals("foo", processInstance.getContextInstance().getVariable("configField"));
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+		    processInstance.getContextInstance().setVariable("contextvariable", "foo");
+		    processInstance.signal();
+		    
+		    assertEquals("end", processInstance.getRootToken().getNode().getName());
+		    assertEquals("foo", processInstance.getContextInstance().getVariable("configField"));
+			
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+		
 	}
 
 	//Test configuration field with configuration placeholder
 	@Test
 	public void testConfigurationFieldWithConfigurationPlaceholder() throws Exception
 	{
-	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+		String processDefinitionString =
+	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
@@ -177,22 +210,35 @@ public class BaseActionHandlerTest {
 	      "    <transition name='c' to='end' />" +
 	      "  </node>" +		      
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
+
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
 
 		this.configuration.addProperty("config", "foo");
-		ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.signal();
-	    
-	    assertEquals("end", processInstance.getRootToken().getNode().getName());
-	    assertEquals("foo", processInstance.getContextInstance().getVariable("configField"));
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+		    processInstance.signal();
+		    
+		    assertEquals("end", processInstance.getRootToken().getNode().getName());
+		    assertEquals("foo", processInstance.getContextInstance().getVariable("configField"));
+			
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+		
 	}
 	
 	//Test not allowed transition
 	@Test(expected=Exception.class)
 	public void testDeclaringBadTransition() throws Exception
 	{
-	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+		String processDefinitionString = 
+	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
@@ -204,10 +250,22 @@ public class BaseActionHandlerTest {
 	      "    <transition name='d' to='end' />" +
 	      "  </node>" +		      
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
 
-	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    processInstance.signal();	    
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+		    processInstance.signal();
+		    			
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+		
 	}
 	
 	//Test configuration list field with context variable placeholder
@@ -215,8 +273,8 @@ public class BaseActionHandlerTest {
 	@Test
 	public void testListConfigurationField() throws Exception
 	{
-	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+		String processDefinitionString =
+	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
@@ -229,22 +287,34 @@ public class BaseActionHandlerTest {
 	      "    <transition name='c' to='end' />" +
 	      "  </node>" +		      
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
 
-	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    List<String> list = new ArrayList<String>();
-	    list.add("foo");
-	    list.add("${contextVariable}");
-	    processInstance.getContextInstance().setVariable("listContextVariable", list);
-	    processInstance.getContextInstance().setVariable("contextVariable", "bar");
-	    processInstance.signal();
-	    	    
-	    assertEquals("end", processInstance.getRootToken().getNode().getName());
-	    assertNotNull(processInstance.getContextInstance().getVariable("listConfigField"));
-	    list = (List<String>)processInstance.getContextInstance().getVariable("listConfigField");
-	    assertEquals(2, list.size());
-	    assertTrue(list.contains("foo"));
-	    assertTrue(list.contains("bar"));
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+		    List<String> list = new ArrayList<String>();
+		    list.add("foo");
+		    list.add("${contextVariable}");
+		    processInstance.getContextInstance().setVariable("listContextVariable", list);
+		    processInstance.getContextInstance().setVariable("contextVariable", "bar");
+		    processInstance.signal();
+		    	    
+		    assertEquals("end", processInstance.getRootToken().getNode().getName());
+		    assertNotNull(processInstance.getContextInstance().getVariable("listConfigField"));
+		    list = (List<String>)processInstance.getContextInstance().getVariable("listConfigField");
+		    assertEquals(2, list.size());
+		    assertTrue(list.contains("foo"));
+		    assertTrue(list.contains("bar"));
+		    			
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+		
 	}
 	
 	//Test configuration map field with context variable placeholder
@@ -252,8 +322,8 @@ public class BaseActionHandlerTest {
 	@Test
 	public void testMapConfigurationField() throws Exception
 	{
-	ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
-	      "<process-definition>" +
+		String processDefinitionString =
+	      "<process-definition name='test'>" +
 	      "  <start-state>" +
 	      "    <transition to='a' />" +
 	      "  </start-state>" +
@@ -266,23 +336,35 @@ public class BaseActionHandlerTest {
 	      "    <transition name='c' to='end' />" +
 	      "  </node>" +		      
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
 
-	    ProcessInstance processInstance = new ProcessInstance(processDefinition);
-	    Map<String,String> map = new HashMap<String, String>();
-	    map.put("v1", "foo");
-	    map.put("v2", "${contextVariable}");
-	    processInstance.getContextInstance().setVariable("mapContextVariable", map);
-	    processInstance.getContextInstance().setVariable("contextVariable", "bar");
-	    processInstance.signal();
-	    
-	    
-	    assertEquals("end", processInstance.getRootToken().getNode().getName());
-	    assertNotNull(processInstance.getContextInstance().getVariable("mapConfigField"));
-	    map = (Map<String,String>)processInstance.getContextInstance().getVariable("mapConfigField");
-	    assertEquals(2, map.size());
-	    assertTrue("foo".equals(map.get("v1")));
-	    assertTrue("bar".equals(map.get("v2")));
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+		    Map<String,String> map = new HashMap<String, String>();
+		    map.put("v1", "foo");
+		    map.put("v2", "${contextVariable}");
+		    processInstance.getContextInstance().setVariable("mapContextVariable", map);
+		    processInstance.getContextInstance().setVariable("contextVariable", "bar");
+		    processInstance.signal();
+		    
+		    
+		    assertEquals("end", processInstance.getRootToken().getNode().getName());
+		    assertNotNull(processInstance.getContextInstance().getVariable("mapConfigField"));
+		    map = (Map<String,String>)processInstance.getContextInstance().getVariable("mapConfigField");
+		    assertEquals(2, map.size());
+		    assertTrue("foo".equals(map.get("v1")));
+		    assertTrue("bar".equals(map.get("v2")));
+		    			
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+		
 	}
 
 }

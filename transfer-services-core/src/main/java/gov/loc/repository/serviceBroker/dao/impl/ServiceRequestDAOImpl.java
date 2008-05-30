@@ -8,7 +8,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import gov.loc.repository.serviceBroker.ServiceContainerRegistration;
 import gov.loc.repository.serviceBroker.ServiceRequest;
@@ -26,14 +25,12 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	}
 	
 	@Override
-	@Transactional
 	public void save(ServiceRequest req) {
 		this.sessionFactory.getCurrentSession().saveOrUpdate(req);		
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	@Transactional(readOnly=true)
 	public List<ServiceRequest> findServiceRequests(
 			boolean includeRequestAcknowledged, boolean includeResponded,
 			boolean includeResponseAcknowledged) {
@@ -54,7 +51,6 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	}
 	
 	@Override
-	@Transactional
 	public ServiceRequest findNextServiceRequest(String[] queues,
 			String[] jobTypes, String responder) {
 		if (queues == null || queues.length == 0 || jobTypes == null || jobTypes.length == 0)
@@ -76,7 +72,6 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	@Transactional
 	public List<ServiceRequest> findAcknowledgedServiceRequestsWithoutResponses(
 			String responder) {
 		String queryString = "from ServiceRequest req " +
@@ -89,7 +84,6 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	}
 	
 	@Override
-	@Transactional
 	public ServiceRequest findNextServiceRequestWithResponse(String requester) {
 		String queryString = "from ServiceRequest req " +
 		"where req.isSuccess is not null " +
@@ -106,7 +100,6 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	@Transactional(readOnly=true)
 	public List<ServiceRequest> findServiceRequests(String requester, String correlationKey) {
 		String queryString = "from ServiceRequest req " +
 		"where req.correlationKey = :correlationKey " +
@@ -129,27 +122,23 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	}
 	
 	@Override
-	@Transactional(readOnly=true)
 	public ServiceRequest findServiceRequest(Long key) {
 		return (ServiceRequest)this.sessionFactory.getCurrentSession().get(ServiceRequestImpl.class, key);
 	}
 	
 	@Override
-	@Transactional
 	public void delete(ServiceContainerRegistration registration) {
 		this.sessionFactory.getCurrentSession().delete(registration);
 		
 	}
 	
 	@Override
-	@Transactional
 	public void save(ServiceContainerRegistration registration) {
 		this.sessionFactory.getCurrentSession().saveOrUpdate(registration);		
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	@Transactional(readOnly=true)
 	public List<ServiceContainerRegistration> findServiceContainerRegistrations() {
 		String queryString = "from ServiceContainerRegistration";
 		Query query = this.sessionFactory.getCurrentSession().createQuery(queryString);

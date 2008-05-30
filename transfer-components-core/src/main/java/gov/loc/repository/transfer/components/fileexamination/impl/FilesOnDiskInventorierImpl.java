@@ -17,7 +17,7 @@ import gov.loc.repository.packagemodeler.events.filelocation.InventoryFromFilesO
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity;
-import gov.loc.repository.transfer.components.BaseComponent;
+import gov.loc.repository.transfer.components.AbstractPackageModelerAwareComponent;
 import gov.loc.repository.transfer.components.fileexamination.FilesOnDiskInventorier;
 import gov.loc.repository.utilities.FilenameHelper;
 import gov.loc.repository.utilities.FixityHelper;
@@ -25,13 +25,13 @@ import gov.loc.repository.utilities.PackageHelper;
 
 @Component("filesOnDiskInventorierComponent")
 @Scope("prototype")
-public class FilesOnDiskInventorierImpl extends BaseComponent implements
+public class FilesOnDiskInventorierImpl extends AbstractPackageModelerAwareComponent implements
 		FilesOnDiskInventorier {
 
 	private FixityHelper fixityHelper;
 	
 	@Autowired
-	public FilesOnDiskInventorierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("dataWriterPackageModelDao")PackageModelDAO dao, @Qualifier("fixityHelper")FixityHelper fixityHelper) {		
+	public FilesOnDiskInventorierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("fixityHelper")FixityHelper fixityHelper) {		
 		super(factory, dao);
 		this.fixityHelper = fixityHelper;
 	}

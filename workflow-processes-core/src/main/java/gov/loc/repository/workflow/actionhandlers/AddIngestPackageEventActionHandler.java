@@ -7,6 +7,7 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 import gov.loc.repository.packagemodeler.agents.Person;
 import gov.loc.repository.packagemodeler.events.filelocation.IngestEvent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
+import gov.loc.repository.workflow.AbstractPackageModelerAwareHandler;
 import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 import gov.loc.repository.packagemodeler.agents.System;
 import static gov.loc.repository.workflow.WorkflowConstants.TRANSITION_CONTINUE;
@@ -14,7 +15,7 @@ import static gov.loc.repository.workflow.WorkflowConstants.TRANSITION_CONTINUE;
 import java.util.Calendar;
 import java.text.MessageFormat;
 
-public class AddIngestPackageEventActionHandler extends BaseActionHandler {
+public class AddIngestPackageEventActionHandler extends AbstractPackageModelerAwareHandler {
 
 	private static final long serialVersionUID = 1L;
 	private static final Log log = LogFactory.getLog(AddIngestPackageEventActionHandler.class);
@@ -35,15 +36,15 @@ public class AddIngestPackageEventActionHandler extends BaseActionHandler {
 	
 	@Override
 	protected void initialize() throws Exception {
-		this.fileLocation = this.getDAO().loadRequiredFileLocation(Long.parseLong(this.fileLocationKey));
-		this.repositorySystem = this.getDAO().findRequiredAgent(System.class, this.repositorySystemId);
+		this.fileLocation = this.dao.loadRequiredFileLocation(Long.parseLong(this.fileLocationKey));
+		this.repositorySystem = this.dao.findRequiredAgent(System.class, this.repositorySystemId);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
 		
-		IngestEvent event = this.getFactory().createFileLocationEvent(IngestEvent.class, this.fileLocation, Calendar.getInstance().getTime(), this.getWorkflowAgent());
+		IngestEvent event = this.factory.createFileLocationEvent(IngestEvent.class, this.fileLocation, Calendar.getInstance().getTime(), this.workflowAgent);
 
 		TaskInstance taskInstance = this.executionContext.getTaskInstance();		
 
@@ -62,10 +63,10 @@ public class AddIngestPackageEventActionHandler extends BaseActionHandler {
 			event.setEventEnd(end.getTime());
 		}
 		//PerformingAgent
-		event.setPerformingAgent(this.getDAO().findRequiredAgent(Person.class, taskInstance.getActorId()));
+		event.setPerformingAgent(this.dao.findRequiredAgent(Person.class, taskInstance.getActorId()));
 		
 		//RequestingAgent
-		event.setRequestingAgent(this.getWorkflowAgent());
+		event.setRequestingAgent(this.workflowAgent);
 		
 		//Success
 		if (! TRANSITION_CONTINUE.equals((String)this.executionContext.getContextInstance().getTransientVariable("transition")))

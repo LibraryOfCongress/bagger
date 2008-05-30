@@ -58,9 +58,7 @@ if __name__ == '__main__':
         'TRANSFER_INSTALL_DIR': '', # Set the directory that the CLI tools will be unzipped to (default = '.')
         'VERSION': '1.4', # This is the version of the release being deployed
         'SQL_FILES_LOCATION': '/home/mjg/workspace/transport-perl/db', #Set the location of the sql files (default = '')
-        'TRANSFER_READER_PASSWD': '', # Set a password for the reader role (default = 'transfer_reader_user')
-        'TRANSFER_WRITER_PASSWD': '', # Set a password for the writer role (default = 'transfer_data_writer_user')
-        'TRANSFER_FIXTURE_WRITER_PASSWD': '', # Set a password for the fixture writer role (default = '')
+        'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
         'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
         'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
     }

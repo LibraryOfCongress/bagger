@@ -2,8 +2,6 @@ package gov.loc.repository.serviceBroker.impl;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
@@ -19,7 +17,6 @@ public class RequestingServiceBrokerImpl implements RequestingServiceBroker {
 	}
 	
 	@Override
-	@Transactional
 	public ServiceRequest findAndAcknowledgeNextServiceRequestWithResponse() {
 		ServiceRequest req = dao.findNextServiceRequestWithResponse(this.requester);
 		if (req != null)
@@ -42,7 +39,6 @@ public class RequestingServiceBrokerImpl implements RequestingServiceBroker {
 	}
 	
 	@Override
-	@Transactional
 	public void resume(String correlationKey) {
 		List<ServiceRequest> requests = this.dao.findServiceRequests(this.requester, correlationKey);
 		for(ServiceRequest req : requests)
@@ -56,7 +52,6 @@ public class RequestingServiceBrokerImpl implements RequestingServiceBroker {
 	}
 	
 	@Override
-	@Transactional
 	public void suspend(String correlationKey) {
 		List<ServiceRequest> requests = this.dao.findServiceRequests(this.requester, correlationKey);
 		for(ServiceRequest req : requests)
@@ -71,7 +66,6 @@ public class RequestingServiceBrokerImpl implements RequestingServiceBroker {
 	}
 	
 	@Override
-	@Transactional
 	public List<ServiceRequest> findServiceRequests(String correlationKey) {
 		return this.dao.findServiceRequests(this.requester, correlationKey);
 	}

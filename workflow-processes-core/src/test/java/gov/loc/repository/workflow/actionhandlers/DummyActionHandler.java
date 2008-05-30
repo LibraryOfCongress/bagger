@@ -1,14 +1,13 @@
 package gov.loc.repository.workflow.actionhandlers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import gov.loc.repository.workflow.AbstractHandler;
 import gov.loc.repository.workflow.actionhandlers.annotations.*;
 
 @Transitions(transitions={"b","c"})
-public class DummyActionHandler extends BaseActionHandler
+public class DummyActionHandler extends AbstractHandler
 {
 	public DummyActionHandler(String actionHandlerConfiguration) {
 		super(actionHandlerConfiguration);

@@ -1,5 +1,7 @@
 package gov.loc.repository.transfer.components.fileexamination;
 
+import java.util.Map;
+
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.service.Component;
@@ -28,4 +30,6 @@ public interface LCManifestVerifier extends Component {
 	
 	@Result(jobType="verifylcmanifest")
 	public boolean verifyResult();
+	
+	public void setCommandMap(Map<String,String> commandMap);
 }

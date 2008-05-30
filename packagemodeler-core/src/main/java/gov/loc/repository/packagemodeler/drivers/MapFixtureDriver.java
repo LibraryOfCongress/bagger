@@ -9,15 +9,14 @@ import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.Software;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
-import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
-import gov.loc.repository.packagemodeler.impl.ModelerFactoryImpl;
 import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.utilities.EnhancedHashMap;
-import gov.loc.repository.utilities.persistence.HibernateUtil;
-import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
-import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
+@Component("mapFixtureDriver")
 public class MapFixtureDriver {
 
     //Arg types
@@ -58,88 +57,70 @@ public class MapFixtureDriver {
     public static final String OPT_SURNAME_DESCRIPTION = "The surname of the person.";
     public static final String OPT_SURNAME_TYPE = TYPE_NAME;
             
-    private static PackageModelDAO dao = new PackageModelDAOImpl();
-    private static ModelerFactory factory = new ModelerFactoryImpl();
+    private PackageModelDAO dao;
+    private ModelerFactory factory;
 
     private EnhancedHashMap<String,String> options;
+    
+    @Autowired
+    public MapFixtureDriver(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao) {
+		this.dao = dao;
+		this.factory = factory;
+	}
+    
+    public MapFixtureDriver() {
+	}
     
     public void execute(String action, EnhancedHashMap<String,String> options) throws Exception
     {
         this.options = options;
         
-        Session session = HibernateUtil.getSessionFactory(DatabaseRole.FIXTURE_WRITER).getCurrentSession();
-        try
-        {                    
-            dao.setSession(session);
-            session.beginTransaction();
-            if (ACTION_TEST.equalsIgnoreCase(action))
-            {
-                dao.findRepository("foo");
-                java.lang.System.out.println("Database connection is good.");
-            }
-            else if (ACTION_REPOSITORY.equalsIgnoreCase(action))
-            {
-                Repository repository = factory.createRepository(options.getRequired(OPT_ID));
-                dao.save(repository);
-            }
-            else if (ACTION_ROLE.equalsIgnoreCase(action))
-            {
-                Role role = factory.createRole(options.getRequired(OPT_ID));
-                dao.save(role);
-            }
-            else if (ACTION_PERSON.equalsIgnoreCase(action))
-            {
-                Person agent = factory.createAgent(Person.class, options.getRequired(OPT_ID));
-                dao.save(agent);
-                agent.setFirstName(options.getRequired(OPT_FIRSTNAME));
-                agent.setSurname(options.getRequired(OPT_SURNAME));
-                addRoles(agent);
-            }
-            else if (ACTION_ORGANIZATION.equalsIgnoreCase(action))
-            {
-                Organization agent = factory.createAgent(Organization.class, options.getRequired(OPT_ID));
-                dao.save(agent);
-                agent.setName(options.getRequired(OPT_NAME));
-                addRoles(agent);
-            }
-            else if (ACTION_SOFTWARE.equalsIgnoreCase(action))
-            {
-                Software agent = factory.createAgent(Software.class, options.getRequired(OPT_ID));
-                dao.save(agent);
-                addRoles(agent);
-            }            
-            else if (ACTION_SYSTEM.equalsIgnoreCase(action))
-            {
-                System agent = factory.createAgent(System.class, options.getRequired(OPT_ID));
-                dao.save(agent);
-                addRoles(agent);
-            }                        
-            else
-            {
-                throw new Exception(action + " is an unrecognized action");
-            }
-            session.getTransaction().commit();
-        }
-        catch(Exception ex)
+        if (ACTION_TEST.equalsIgnoreCase(action))
         {
-            if (session != null && session.isOpen())
-            {
-                try {
-                    session.getTransaction().rollback();
-                } catch (Exception ex2) {
-                    // swallow rollback exception
-                } 
-            }
-            throw ex;
+            dao.findRepository("foo");
+            java.lang.System.out.println("Database connection is good.");
         }
-        finally
+        else if (ACTION_REPOSITORY.equalsIgnoreCase(action))
         {
-            if (session != null && session.isOpen())
-            {
-                session.close();
-            }
+            Repository repository = factory.createRepository(options.getRequired(OPT_ID));
+            dao.save(repository);
         }
-        
+        else if (ACTION_ROLE.equalsIgnoreCase(action))
+        {
+            Role role = factory.createRole(options.getRequired(OPT_ID));
+            dao.save(role);
+        }
+        else if (ACTION_PERSON.equalsIgnoreCase(action))
+        {
+            Person agent = factory.createAgent(Person.class, options.getRequired(OPT_ID));
+            dao.save(agent);
+            agent.setFirstName(options.getRequired(OPT_FIRSTNAME));
+            agent.setSurname(options.getRequired(OPT_SURNAME));
+            addRoles(agent);
+        }
+        else if (ACTION_ORGANIZATION.equalsIgnoreCase(action))
+        {
+            Organization agent = factory.createAgent(Organization.class, options.getRequired(OPT_ID));
+            dao.save(agent);
+            agent.setName(options.getRequired(OPT_NAME));
+            addRoles(agent);
+        }
+        else if (ACTION_SOFTWARE.equalsIgnoreCase(action))
+        {
+            Software agent = factory.createAgent(Software.class, options.getRequired(OPT_ID));
+            dao.save(agent);
+            addRoles(agent);
+        }            
+        else if (ACTION_SYSTEM.equalsIgnoreCase(action))
+        {
+            System agent = factory.createAgent(System.class, options.getRequired(OPT_ID));
+            dao.save(agent);
+            addRoles(agent);
+        }                        
+        else
+        {
+            throw new Exception(action + " is an unrecognized action");
+        }        
     }
     
     private void addRoles(Agent agent) throws Exception

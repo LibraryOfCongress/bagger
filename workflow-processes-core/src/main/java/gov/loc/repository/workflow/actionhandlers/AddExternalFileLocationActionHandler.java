@@ -7,11 +7,12 @@ import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.ExternalFileLocation.MediaType;
 import gov.loc.repository.packagemodeler.packge.ExternalIdentifier.IdentifierType;
+import gov.loc.repository.workflow.AbstractPackageModelerAwareHandler;
 import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 
 import java.text.MessageFormat;
 
-public class AddExternalFileLocationActionHandler extends BaseActionHandler {
+public class AddExternalFileLocationActionHandler extends AbstractPackageModelerAwareHandler {
 
 	private static final long serialVersionUID = 1L;
 	private static final Log log = LogFactory.getLog(AddExternalFileLocationActionHandler.class);
@@ -48,7 +49,7 @@ public class AddExternalFileLocationActionHandler extends BaseActionHandler {
 	protected void initialize() throws Exception {
 		this.identifier = new ExternalIdentifier(this.externalIdentifierValue, IdentifierType.valueOf(this.externalIdentifierType));
 		this.mediaTypeEnum = MediaType.valueOf(this.mediaType);
-		this.packge = this.getDAO().loadRequiredPackage(Long.parseLong(this.packageKey));
+		this.packge = this.dao.loadRequiredPackage(Long.parseLong(this.packageKey));
 	}	
 	
 	@SuppressWarnings("unchecked")
@@ -59,8 +60,8 @@ public class AddExternalFileLocationActionHandler extends BaseActionHandler {
 		{
 			throw new Exception(MessageFormat.format("External File Location with identifier value {0} and identifier type {1} already found for {2}", this.externalIdentifierValue, this.externalIdentifierType, this.packge.toString()));
 		}
-		externalFileLocation = this.getFactory().createExternalFileLocation(packge, this.mediaTypeEnum, this.identifier, this.basePath, this.isManaged, this.isLCPackageStructured);
-		this.getDAO().save(externalFileLocation);
+		externalFileLocation = this.factory.createExternalFileLocation(packge, this.mediaTypeEnum, this.identifier, this.basePath, this.isManaged, this.isLCPackageStructured);
+		this.dao.save(externalFileLocation);
 		log.debug(MessageFormat.format("Adding External File Location with identifier value {0} and identifier type {1} to {2}", this.externalIdentifierValue, this.externalIdentifierType, this.packge.toString()));
 		if (keyVariable != null)
 		{

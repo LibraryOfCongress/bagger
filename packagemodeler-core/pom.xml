@@ -9,37 +9,20 @@
   <artifactId>packagemodeler-core</artifactId>
   <name>Package Modeler (Core)</name>
   <scm>
-        <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/packagemodeler-core</connection>
-        <tag>HEAD</tag>
-        <url>https://rdc.lctl.gov/trac/transfer/browser</url>
-  </scm>  
+    <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/packagemodeler-core</connection>
+    <url>https://rdc.lctl.gov/trac/transfer/browser</url>
+  </scm>
   <build>
     <resources>
       <resource>
         <filtering>true</filtering>
-        <directory>src/main/resources</directory>
+        <directory>src/main/resources</directory> 
+        <excludes>
+        	<exclude>postgresql.packagemodeler.core.hibernate.properties</exclude>
+        </excludes>       
       </resource>
     </resources>
     <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties>
-            <property>
-              <name>hibernate.properties</name>
-              <value>modelers.hibernate.properties</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>hibernate3-maven-plugin</artifactId>
@@ -48,12 +31,12 @@
             <component>
               <name>hbm2ddl</name>
               <implementation>annotationconfiguration</implementation>
-              <outputDirectory>src/main/scripts</outputDirectory>
+              <outputDirectory>target/scripts</outputDirectory>
             </component>
           </components>
           <componentProperties>
-            <configurationfile>src/main/resources/packagemodeler.core.hibernate.cfg.xml</configurationfile>
-            <propertyfile>src/main/scripts/postgresql.packagemodeler.core.hibernate.properties</propertyfile>
+            <configurationfile>src/main/resources/conf/packagemodeler.core.hibernate.cfg.xml</configurationfile>
+            <propertyfile>src/main/resources/postgresql.packagemodeler.core.hibernate.properties</propertyfile>
             <outputfilename>postgresql.packagemodeler.core.script.sql</outputfilename>
             <export>false</export>
           </componentProperties>
@@ -68,6 +51,8 @@
             </goals>
             <configuration>
               <includes>
+                <include>**/TestFixtureHelper.class</include>              
+                <include>**/HsqlDbHelper.class</include>
                 <include>**/AbstractModelersTest.class</include>
                 <include>**/constants/*.class</include>
               </includes>
@@ -113,6 +98,22 @@
       <artifactId>hibernate-validator</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+    </dependency>
+    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
@@ -147,6 +148,11 @@
       <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <!-- Dependency of spring-aop -->
+	<dependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjweaver</artifactId>
+	</dependency>    
     <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>

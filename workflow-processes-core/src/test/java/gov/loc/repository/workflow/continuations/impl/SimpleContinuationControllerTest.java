@@ -2,8 +2,11 @@ package gov.loc.repository.workflow.continuations.impl;
 
 import static org.junit.Assert.*;
 
+import javax.annotation.Resource;
+
 import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
+import org.jbpm.db.hibernate.HibernateHelper;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
@@ -16,58 +19,80 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
+import gov.loc.repository.workflow.jbpm.spring.LocalSessionFactoryBean;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml"})
+@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml","classpath:conf/workflow-continuations-context.xml"})
 public class SimpleContinuationControllerTest
 {
+		
+	Long tokenInstanceId;
+	Long processInstanceId;
+	
+	@Resource(name="continuationController")
+	SimpleContinuationController controller;
+	
 	@Autowired
 	JbpmConfiguration jbpmConfiguration;
 	
-	String processDefinitionString =
-	      "<process-definition name='test'>" +
-	      "  <start-state>" +
-	      "    <transition to='remote' />" +
-	      "  </start-state>" +
-	      "  <state name='remote'>" +
-	      "    <transition name='troubleshoot' to='end2' />" +
-	      "    <transition name='continue' to='end1' />" +
-	      "  </state>" +
-	      "  <end-state name='end1' />" +
-	      "  <end-state name='end2' />" +
-	      "</process-definition>";
-	long tokenInstanceId;
-	SimpleContinuationController controller;
-	
+	@Resource(name="&jbpmSessionFactory")
+	private LocalSessionFactoryBean sessionFactoryBean;
+		
 	@Before
-	public void setUp() throws Exception
+	public void setup() throws Exception
 	{
-		String processDefinitionName;
+		sessionFactoryBean.dropDatabaseSchema();		
+		sessionFactoryBean.createDatabaseSchema();
+
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
-			ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(processDefinitionString);
-			jbpmContext.deployProcessDefinition(processDefinition);
-			processDefinitionName = processDefinition.getName();
-			
+			HibernateHelper.clearHibernateCache(jbpmContext.getSessionFactory());
 		}
 		finally
 		{
 			jbpmContext.close();
 		}
+		
+		String processDefinitionString =
+		      "<process-definition name='controller_test'>" +
+		      "  <start-state>" +
+		      "    <transition to='remote' />" +
+		      "  </start-state>" +
+		      "  <state name='remote'>" +
+		      "    <transition name='troubleshoot' to='end2' />" +
+		      "    <transition name='continue' to='end1' />" +
+		      "  </state>" +
+		      "  <end-state name='end1' />" +
+		      "  <end-state name='end2' />" +
+		      "</process-definition>";
 				
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(processDefinitionString);		
+		jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			jbpmContext.deployProcessDefinition(processDefinition);
+			ProcessInstance processInstance = jbpmContext.newProcessInstance(processDefinition.getName());			
+
+			processInstanceId = processInstance.getId();
+						
+		}
+		finally
+		{
+			jbpmContext.close();
+		}	    
+		
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
 			//Normally the set-up would be performed by a monitor or scheduler
-			ProcessInstance processInstance = jbpmContext.newProcessInstance(processDefinitionName);
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			//Makes sure everything is set-up OK
-			assertEquals(processDefinitionName, processInstance.getProcessDefinition().getName());
 			
 			processInstance.getContextInstance().setVariable("v1", "a");
 			assertEquals("a", processInstance.getContextInstance().getVariable("v1"));
 			assertFalse(processInstance.getContextInstance().hasVariable("v2"));
-			
 			processInstance.signal();
 			assertEquals("remote", processInstance.getRootToken().getNode().getName());
 			this.tokenInstanceId = processInstance.getRootToken().getId();
@@ -77,10 +102,8 @@ public class SimpleContinuationControllerTest
 			jbpmContext.close();
 		}
 
-		controller = new SimpleContinuationControllerImpl();			
-
 	}
-
+	
 	@Test
 	public void testInvokeSuccess() throws Exception {
 		

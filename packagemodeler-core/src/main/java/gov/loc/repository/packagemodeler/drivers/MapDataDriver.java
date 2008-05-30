@@ -12,13 +12,11 @@ import gov.loc.repository.packagemodeler.PackageModelerConstants;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
-import gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl;
 import gov.loc.repository.packagemodeler.events.Event;
 import gov.loc.repository.packagemodeler.events.filelocation.FileCopyEvent;
 import gov.loc.repository.packagemodeler.events.filelocation.FileLocationEvent;
 import gov.loc.repository.packagemodeler.events.filelocation.InventoryFromManifestEvent;
 import gov.loc.repository.packagemodeler.events.packge.PackageEvent;
-import gov.loc.repository.packagemodeler.impl.ModelerFactoryImpl;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
@@ -28,12 +26,13 @@ import gov.loc.repository.utilities.EnhancedHashMap;
 import gov.loc.repository.utilities.FilenameHelper;
 import gov.loc.repository.utilities.ManifestReader;
 import gov.loc.repository.utilities.PackageHelper;
-import gov.loc.repository.utilities.persistence.HibernateUtil;
-import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 
-import org.hibernate.Session;
 import org.joda.time.format.ISODateTimeFormat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
+@Component("mapDataDriver")
 public class MapDataDriver {
 
     //Arg types
@@ -128,74 +127,56 @@ public class MapDataDriver {
     private static final String REPORTING_AGENT_KEY = "agent.packagemodeler.id";
     private static final String FALSE = "false";
             
-    private static PackageModelDAO dao = new PackageModelDAOImpl();
-    private static ModelerFactory factory = new ModelerFactoryImpl();
+    private PackageModelDAO dao;
+    private ModelerFactory factory;
 
     private EnhancedHashMap<String,String> options;
     
+    @Autowired
+    public MapDataDriver(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao) {
+		this.dao = dao;
+		this.factory = factory;
+	}
+    
+    public MapDataDriver() {
+	}
+    
     public void execute(String action, EnhancedHashMap<String,String> options) throws Exception
-    {
-        
+    {        
         this.options = options;
-        Session session = HibernateUtil.getSessionFactory(DatabaseRole.DATA_WRITER).getCurrentSession();
-        try
-        {                    
-            dao.setSession(session);
-            session.beginTransaction();
-            if (ACTION_TEST.equalsIgnoreCase(action))
-            {
-                dao.findRepository("foo");
-                java.lang.System.out.println("Database connection is good.");
-                
-            }
-            else if (ACTION_PACKAGE.equalsIgnoreCase(action))
-            {
-                createPackage();
-            }
-            else if (ACTION_FILELOCATION.equalsIgnoreCase(action))
-            {
-                createFileLocation();
-            }
-            else if (ACTION_PACKAGE_EVENT.equalsIgnoreCase(action))
-            {
-                createPackageEvent();
-            }
-            else if (ACTION_FILELOCATION_EVENT.equalsIgnoreCase(action))
-            {
-                createFileLocationEvent();
-            }
-            else if (ACTION_INVENTORY_FROM_MANIFEST.equalsIgnoreCase(action))
-            {
-                inventoryFromManifest();
-            }
-            else if (ACTION_CANONICALIZE_FROM_FILELOCATION.equalsIgnoreCase(action))
-            {
-                canonicalizeFromFileLocation();
-            }
-            else
-            {
-                throw new Exception(action + " is an unrecognized action");
-            }
-            session.getTransaction().commit();
-        }
-        catch(Exception ex)
+        if (ACTION_TEST.equalsIgnoreCase(action))
         {
-            if (session != null && session.isOpen())
-            {
-                try { 
-                    session.getTransaction().rollback();
-                } catch (Exception ex2) {
-                    // swallow rollback failure
-                }
-            }
-            throw ex;
+            dao.findRepository("foo");
+            java.lang.System.out.println("Database connection is good.");
+            
         }
-        finally
+        else if (ACTION_PACKAGE.equalsIgnoreCase(action))
         {
-            if (session != null && session.isOpen())
-            {
-                session.close();
-            }
+            createPackage();
+        }
+        else if (ACTION_FILELOCATION.equalsIgnoreCase(action))
+        {
+            createFileLocation();
+        }
+        else if (ACTION_PACKAGE_EVENT.equalsIgnoreCase(action))
+        {
+            createPackageEvent();
+        }
+        else if (ACTION_FILELOCATION_EVENT.equalsIgnoreCase(action))
+        {
+            createFileLocationEvent();
+        }
+        else if (ACTION_INVENTORY_FROM_MANIFEST.equalsIgnoreCase(action))
+        {
+            inventoryFromManifest();
+        }
+        else if (ACTION_CANONICALIZE_FROM_FILELOCATION.equalsIgnoreCase(action))
+        {
+            canonicalizeFromFileLocation();
+        }
+        else
+        {
+            throw new Exception(action + " is an unrecognized action");
         }
         
     }
@@ -265,7 +246,8 @@ public class MapDataDriver {
         
     }
     
-    private Class getEventClass() throws Exception
+    @SuppressWarnings("unchecked")
+	private Class getEventClass() throws Exception
     {
         String eventClassName = this.options.get(OPT_EVENT_TYPE);
         return Class.forName(eventClassName);

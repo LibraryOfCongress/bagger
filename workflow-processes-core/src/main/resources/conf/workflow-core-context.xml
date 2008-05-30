@@ -7,25 +7,8 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-	 	<import resource="workflow-core-config-context.xml" />
-
-	<bean id="abstractJbpmSessionFactory" abstract="true" class="gov.loc.repository.workflow.jbpm.spring.LocalSessionFactoryBean">
-		<property name="configLocations">
-			<list>
-				<value>classpath:conf/jbpm.hibernate.cfg.xml</value>
-			</list>
-		</property>
-		<property name="jbpmConfiguration" value="classpath:conf/jbpm.cfg.xml"/>
-		<!-- Still needs a datasource and hibernate properties (hibernate.dialect, hibernate.cache.provider_class) -->
-	</bean>	
-		
-	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-		<property name="sessionFactory" ref="jbpmSessionFactory" />
-		
-	</bean>
-
-	<bean id="jbpmConfiguration" class="gov.loc.repository.workflow.jbpm.spring.LocalJbpmConfigurationFactoryBean">
-    	<property name="sessionFactory" ref="jbpmSessionFactory"/>    	
-	</bean>
+	<import resource="classpath:conf/packagemodeler-core-context.xml" />
+	<import resource="classpath:conf/servicerequestbroker-context.xml" />
+	<import resource="classpath:conf/workflow-common-context.xml" />
 
 </beans>

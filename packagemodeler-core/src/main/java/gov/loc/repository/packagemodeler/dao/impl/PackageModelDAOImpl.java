@@ -14,6 +14,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
 
 import gov.loc.repository.Ided;
+import gov.loc.repository.exceptions.RequiredEntityNotFound;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.dao.FileListComparisonResult;
@@ -29,52 +30,35 @@ import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.impl.ExternalFileLocationImpl;
 import gov.loc.repository.packagemodeler.packge.impl.PackageImpl;
 import gov.loc.repository.packagemodeler.packge.impl.StorageSystemFileLocationImpl;
-import gov.loc.repository.utilities.persistence.HibernateUtil;
-import gov.loc.repository.utilities.persistence.HibernateUtil.DatabaseRole;
 import gov.loc.repository.utilities.results.ResultList;
 import gov.loc.repository.utilities.FilenameHelper;
 
+@org.springframework.stereotype.Repository
 public class PackageModelDAOImpl implements PackageModelDAO {
-
+	
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(PackageModelDAOImpl.class);
 	
 	private SessionFactory sessionFactory;
-	private Session session = null;
 	
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;		
+	public PackageModelDAOImpl(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 	
-	public void setSessionDatabaseRole(DatabaseRole databaseRole) {
-		this.sessionFactory = HibernateUtil.getSessionFactory(databaseRole);
-		
+	public PackageModelDAOImpl() {
 	}
 	
-	public void setSessionDatabaseRole(String databaseRole) {
-		this.setSessionDatabaseRole(Enum.valueOf(DatabaseRole.class, databaseRole));		
+	@Override
+	public SessionFactory getSessionFactory() {
+		return this.sessionFactory;
 	}
 	
-	public Session getSession() throws Exception
+	protected Session getSession()
 	{
-		if (session != null)
-		{
-			return session;
-		}
-		if (sessionFactory == null)
-		{
-			throw new Exception("Neither session, session factory, nor database role was provided to PackageModelDao");
-		}
 		return sessionFactory.getCurrentSession();
 	}
 	
-	public void setSession(Session session)
-	{
-		this.session = session;
-	}
-
-	public Long calculatePackageSize(Package packge) throws Exception {
+	public Long calculatePackageSize(Package packge) {
 		Query query = this.getSession().createQuery(
 				"select sum(package.canonicalFileSet.bytes) " +
 				"from Package as package " +
@@ -84,7 +68,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return (Long)query.uniqueResult();
 	}
 
-	public Map<String, Long> countCanonicalFilesByExtension(Package packge) throws Exception {
+	public Map<String, Long> countCanonicalFilesByExtension(Package packge) {
 		Map<String, Long> results = new HashMap<String, Long>();
 		Query query = this.getSession().createQuery(
 				"select cf.fileName.extension, count(*) " +
@@ -103,15 +87,15 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return results;
 	}
 
-	public void delete(Object object) throws Exception {
+	public void delete(Object object) {
 		this.getSession().delete(object);
 	}
 
-	public <T extends Agent> T findAgent(Class<T> agentType, String agentId) throws Exception {
+	public <T extends Agent> T findAgent(Class<T> agentType, String agentId) {
 		return this.find(agentType, agentId);
 	}
 
-	public CanonicalFile findCanonicalFile(String repositoryId, String packageId, String filename) throws Exception {
+	public CanonicalFile findCanonicalFile(String repositoryId, String packageId, String filename) {
 		String queryString =
 			"from CanonicalFile as cf " +
 			"where cf.fileName = :filename " +
@@ -124,7 +108,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return (CanonicalFile)query.uniqueResult();
 	}
 
-	public FileInstance findFileInstance(FileLocation fileLocation, FileName fileName) throws Exception {
+	public FileInstance findFileInstance(FileLocation fileLocation, FileName fileName) {
 		String queryString =
 			"select fi " +
 			"from FileLocation as fl " + 
@@ -138,7 +122,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return (FileInstance)query.uniqueResult();
 	}
 	
-	public FileInstance findFileInstance(String repositoryId, String packageId, String storageSystemId, String basePath, String filename) throws Exception {
+	public FileInstance findFileInstance(String repositoryId, String packageId, String storageSystemId, String basePath, String filename) {
 		String queryString =
 			"select fi " +
 			"from StorageSystemFileLocation as fl " + 
@@ -158,7 +142,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return (FileInstance)query.uniqueResult();
 	}
 
-	public FileExamination findFileExamination(FileExaminationGroup fileExaminationGroup, FileName fileName) throws Exception {
+	public FileExamination findFileExamination(FileExaminationGroup fileExaminationGroup, FileName fileName) {
 		String queryString =
 			"from FileExamination as fe " + 
 			"where fe.fileName = :filename " +
@@ -171,7 +155,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 	}	
 	
 	@SuppressWarnings("unchecked")
-	public List<FileInstance> findFileInstances(Repository repository, String relativePath, String baseName, String extension) throws Exception {
+	public List<FileInstance> findFileInstances(Repository repository, String relativePath, String baseName, String extension) {
 		String queryString =
 			"select fi " +
 			"from FileInstance as fi " +
@@ -205,11 +189,11 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return query.list();
 	}
 
-	public <T> T findPackage(Class<T> packageType, Repository repository, String packageId) throws Exception {
+	public <T> T findPackage(Class<T> packageType, Repository repository, String packageId) {
 		return this.findPackage(packageType, repository.getId(), packageId);
 	}
 
-	public <T> T findPackage(Class<T> packageType, String repositoryId, String packageId) throws Exception {
+	public <T> T findPackage(Class<T> packageType, String repositoryId, String packageId) {
 		Object packge = null;
 		Query query = this.getSession().createQuery(
 			"from " + getAlias(packageType) + " as p " +
@@ -223,7 +207,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Package> findPackages(Class<?> packageType) throws Exception {
+	public List<Package> findPackages(Class<?> packageType) {
 		Query query = this.getSession().createQuery(
 				"from " + getAlias(packageType)
 					);
@@ -231,7 +215,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResultList findPackagesWithFileCount(Class<?> packageType, String extension) throws Exception {
+	public ResultList findPackagesWithFileCount(Class<?> packageType, String extension) {
   		Query query = this.getSession().createQuery(
   				"select p, " +
   				"( " +
@@ -249,14 +233,14 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Repository> findRepositories() throws Exception {
+	public List<Repository> findRepositories() {
 		Query query = this.getSession().createQuery(
 				"from Repository"
 					);
 		return query.list();
 	}
 
-	public Repository findRepository(String repositoryId) throws Exception {
+	public Repository findRepository(String repositoryId) {
 		Query query = this.getSession().createQuery(
 				"from Repository as r " + 
 				"where r.identifier = :repositoryid"
@@ -265,51 +249,51 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return (Repository)query.uniqueResult();
 	}
 
-	public <T extends Agent> T findRequiredAgent(Class<T> agentType, String agentId) throws Exception {
+	public <T extends Agent> T findRequiredAgent(Class<T> agentType, String agentId) throws RequiredEntityNotFound {
 		Object agent = this.find(agentType, agentId);
 		if (agent == null)
 		{
-			throw new Exception(MessageFormat.format("Agent not found with agentId {0}", agentId));
+			throw new RequiredEntityNotFound(agentId);
 		}
 		return agentType.cast(agent);
 	}
 
-	public <T> T findRequiredPackage(Class<T> packageType, Repository repository, String packageId) throws Exception {
+	public <T> T findRequiredPackage(Class<T> packageType, Repository repository, String packageId) throws RequiredEntityNotFound {
 		return this.findRequiredPackage(packageType, repository.getId(), packageId);
 	}
 
-	public <T> T findRequiredPackage(Class<T> packageType, String repositoryId, String packageId) throws Exception {
+	public <T> T findRequiredPackage(Class<T> packageType, String repositoryId, String packageId) throws RequiredEntityNotFound {
 		Object packge = this.findPackage(packageType, repositoryId, packageId);
 		if (packge == null)
 		{
-			throw new Exception(MessageFormat.format("Package not found with repositoryId {0} and packageId {1}", repositoryId, packageId));
+			throw new RequiredEntityNotFound(MessageFormat.format("RepositoryId {0} and packageId {1}", repositoryId, packageId));
 		}
 		return packageType.cast(packge);
 	}
 
-	public Repository findRequiredRepository(String repositoryId) throws Exception {
+	public Repository findRequiredRepository(String repositoryId) throws RequiredEntityNotFound {
 		Repository repository = this.findRepository(repositoryId);
 		if (repository == null)
 		{
-			throw new Exception(MessageFormat.format("Repository not found with repositoryId {0}", repositoryId));
+			throw new RequiredEntityNotFound(repositoryId);
 		}
 		return repository;
 	}
 
-	public Role findRequiredRole(String roleId) throws Exception {
+	public Role findRequiredRole(String roleId) throws RequiredEntityNotFound {
 		Role role = this.findRole(roleId);
 		if (role == null)
 		{
-			throw new Exception(MessageFormat.format("Role not found with roleId {0}", roleId));
+			throw new RequiredEntityNotFound(roleId);
 		}
 		return role;
 	}
 
-	public Role findRole(String roleId) throws Exception {
+	public Role findRole(String roleId) {
 		return this.find(Role.class, roleId);
 	}
 
-	public void save(Object object) throws Exception {
+	public void save(Object object) {
 		this.getSession().saveOrUpdate(object);		
 	}
 
@@ -329,7 +313,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return Class.forName(implClassName);
 	}
 
-	protected <T extends Ided> T find(Class<T> clazz, String id) throws Exception
+	protected <T extends Ided> T find(Class<T> clazz, String id)
 	{
 		if (id == null)
 		{
@@ -345,10 +329,10 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public FileListComparisonResult compare(FileLocation fileLocation, FileExaminationGroup fileExaminationGroup) throws Exception {
+	public FileListComparisonResult compare(FileLocation fileLocation, FileExaminationGroup fileExaminationGroup) {
 		if (! fileExaminationGroup.isComplete())
 		{
-			throw new Exception("Not implemented yet for incomplete File Examination Groups");
+			throw new RuntimeException("Not implemented yet for incomplete File Examination Groups");
 		}
 		FileListComparisonResult result = new FileListComparisonResult();
 		
@@ -380,7 +364,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FileListComparisonResult compare(Package packge, FileLocation fileLocation) throws Exception {
+	public FileListComparisonResult compare(Package packge, FileLocation fileLocation) {
 		FileListComparisonResult result = new FileListComparisonResult();
 		
 		Query query1 = this.getSession().getNamedQuery("findCanonicalFilesMinusFileInstances");
@@ -411,7 +395,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		
 	}	
 	
-	public FileLocation loadRequiredFileLocation(Long key) throws Exception {
+	public FileLocation loadRequiredFileLocation(Long key) throws RequiredEntityNotFound {
 		FileLocation fileLocation = (FileLocation)this.getSession().get(StorageSystemFileLocationImpl.class, key);
 		if (fileLocation == null)
 		{
@@ -419,16 +403,16 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		}
 		if (fileLocation == null)
 		{
-			throw new Exception(MessageFormat.format("Could not load a FileLocation with key {0}", key));
+			throw new RequiredEntityNotFound(key.toString());
 		}
 		return fileLocation;
 	}	
 	
-	public Package loadRequiredPackage(Long key) throws Exception {
+	public Package loadRequiredPackage(Long key) throws RequiredEntityNotFound {
 		Package packge = (Package)this.getSession().get(PackageImpl.class, key);
 		if (packge == null)
 		{
-			throw new Exception(MessageFormat.format("Could not load a Package with key {0}", key));
+			throw new RequiredEntityNotFound(key.toString());
 		}
 		return packge;
 	}	

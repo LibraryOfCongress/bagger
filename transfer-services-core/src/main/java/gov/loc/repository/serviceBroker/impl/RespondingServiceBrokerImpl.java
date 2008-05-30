@@ -2,8 +2,6 @@ package gov.loc.repository.serviceBroker.impl;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
@@ -23,7 +21,6 @@ public class RespondingServiceBrokerImpl implements RespondingServiceBroker {
 	}
 	
 	@Override
-	@Transactional
 	public ServiceRequest findAndAcknowledgeNextServiceRequest() {
 		ServiceRequest req = this.dao.findNextServiceRequest(queues, jobTypes, responder);
 		if (req != null)
@@ -35,7 +32,6 @@ public class RespondingServiceBrokerImpl implements RespondingServiceBroker {
 	}
 
 	@Override
-	@Transactional
 	public void reportErrorsForAcknowledgedServiceRequestsWithoutResponses() {
 		List<ServiceRequest> reqList = this.dao.findAcknowledgedServiceRequestsWithoutResponses(responder);
 		for(ServiceRequest req : reqList)

@@ -22,7 +22,7 @@ public class LCPackageCopierImpl extends AbstractLCPackageCopier implements LCPa
     private Verifier verifier;
     
     @Autowired
-    public LCPackageCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("dataWriterPackageModelDao")PackageModelDAO dao, @Qualifier("batchVerifier")Verifier batchVerifier, @Qualifier("md5DeepComponent")LCManifestGenerator generator) {
+    public LCPackageCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("batchVerifier")Verifier batchVerifier, @Qualifier("md5DeepComponent")LCManifestGenerator generator) {
         super(factory, dao, generator);
         this.verifier = batchVerifier;
     }

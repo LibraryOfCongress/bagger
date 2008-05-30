@@ -22,6 +22,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CommandLineDataDriver {
 	
@@ -54,7 +56,8 @@ public class CommandLineDataDriver {
 			}
 			String action = (String)line.getArgList().get(0);
 			EnhancedHashMap<String,String> optionsMap = commandLineToEnhancedHashMap(line);
-			MapDataDriver componentDriver = new MapDataDriver();
+			ApplicationContext context = new ClassPathXmlApplicationContext("conf/packagemodeler-core-context.xml"); 
+			MapDataDriver componentDriver = (MapDataDriver)context.getBean("mapDataDriver");
 			componentDriver.execute(action, optionsMap);
 			System.exit(RETURN_SUCCESS);
 		}

@@ -3,9 +3,10 @@ package gov.loc.repository.workflow.actionhandlers;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.loc.repository.workflow.AbstractHandler;
 import gov.loc.repository.workflow.actionhandlers.annotations.*;
 
-public class RecordingActionHandler extends BaseActionHandler
+public class RecordingActionHandler extends AbstractHandler
 {
 	public RecordingActionHandler(String actionHandlerConfiguration) {
 		super(actionHandlerConfiguration);

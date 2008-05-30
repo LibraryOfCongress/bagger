@@ -1,6 +1,8 @@
 package gov.loc.repository.workflow.actionhandlers;
 
-public class ExceptionThrowingAfterSignalActionHandler extends BaseActionHandler {
+import gov.loc.repository.workflow.AbstractHandler;
+
+public class ExceptionThrowingAfterSignalActionHandler extends AbstractHandler {
 
 	private static final long serialVersionUID = 1L;
 

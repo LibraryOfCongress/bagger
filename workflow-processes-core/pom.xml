@@ -33,7 +33,7 @@
         </includes>
       </testResource>
     </testResources>
-    <plugins>
+    <plugins>    
 	   <plugin>
 	       <groupId>org.apache.maven.plugins</groupId>
 	       <artifactId>maven-jar-plugin</artifactId>
@@ -44,8 +44,7 @@
 	           </goals>
 			  <configuration>
 			         <includes>
-			           <include>**/AbstractProcessDefinitionTest.class</include>
-			           <include>**/ProcessDefinitionHelper.class</include>
+			           <include>**/Abstract*Test.class</include>
 			           <include>**/constants/*.class</include>
 			         </includes>
 			        </configuration>
@@ -73,6 +72,14 @@
       <artifactId>packagemodeler-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>loc-repository</groupId>
+      <artifactId>packagemodeler-core</artifactId>
+      <version>${pom.version}</version>
+	  <type>test-jar</type>
+      <classifier>tests</classifier>      
+      <scope>test</scope>
+    </dependency>        
     <dependency>
       <groupId>loc-repository</groupId>
       <artifactId>transfer-common-core</artifactId>

@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 
 public class ServiceInvocationHandler implements InvocationHandler {
 
-	//private static ApplicationContext context = new ClassPathXmlApplicationContext("classpath:conf/servicerequestbroker-context.xml");
 	private ServiceBrokerFactory factory = new ServiceBrokerFactory();
 	
 	private static final Log log = LogFactory.getLog(ServiceInvocationHandler.class);	

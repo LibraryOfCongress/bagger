@@ -70,6 +70,11 @@
           <includes>
             <include>**/*Test.java</include>
           </includes>
+          <excludes>
+            <exclude>**/Abstract*.java</exclude>
+          </excludes>
+          <disableXmlReport>true</disableXmlReport>
+          <argLine>-Xms256m -Xmx512m</argLine>
         </configuration>
       </plugin>
     </plugins>
@@ -160,6 +165,10 @@
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
+      <artifactId>commons-logging-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
     <dependency>
@@ -246,6 +255,11 @@
         <artifactId>commons-lang</artifactId>
         <version>2.3</version>
       </dependency>
+	    <dependency>
+	      <groupId>commons-logging</groupId>
+	      <artifactId>commons-logging-api</artifactId>
+	      <version>1.1</version>
+	    </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
@@ -373,6 +387,11 @@
         <version>1.3</version>
       </dependency>
       <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>1.5.4</version>
+      </dependency>
+      <dependency>
         <groupId>org.beanshell</groupId>
         <artifactId>bsh</artifactId>
         <version>2.0b4</version>
@@ -463,7 +482,7 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-jms</artifactId>
         <version>2.5.3</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
@@ -504,33 +523,33 @@
         <artifactId>spring-security-core-tiger</artifactId>
         <version>2.0.0</version>
       </dependency>
-	    <dependency>
-	      <groupId>org.springmodules</groupId>
-	      <artifactId>spring-modules-jbpm31</artifactId>
-	      <version>0.8a</version>
-	      <exclusions>
-	      	<exclusion>
-	            <groupId>jboss</groupId>
-    	        <artifactId>jbpm</artifactId>
-	      	</exclusion>
-	      	<exclusion>
-	            <groupId>org.springframework</groupId>
-	            <artifactId>spring-core</artifactId>
-	      	</exclusion>
-	      	<exclusion>
-	            <groupId>org.springframework</groupId>
-	            <artifactId>spring-dao</artifactId>
-	      	</exclusion>
-	      	<exclusion>
-		      	<groupId>org.springframework</groupId>
-	            <artifactId>spring-support</artifactId>
-	      	</exclusion>
-	      	<exclusion>
-	            <groupId>org.springframework</groupId>
-	            <artifactId>spring-hibernate3</artifactId>	      	
-	      	</exclusion>	      	
-      	  </exclusions>
-        </dependency>
+      <dependency>
+        <groupId>org.springmodules</groupId>
+        <artifactId>spring-modules-jbpm31</artifactId>
+        <version>0.8a</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>jbpm</artifactId>
+            <groupId>jboss</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>spring-core</artifactId>
+            <groupId>org.springframework</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>spring-dao</artifactId>
+            <groupId>org.springframework</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>spring-support</artifactId>
+            <groupId>org.springframework</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>spring-hibernate3</artifactId>
+            <groupId>org.springframework</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>

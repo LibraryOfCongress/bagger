@@ -7,13 +7,14 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 import gov.loc.repository.packagemodeler.agents.Person;
 import gov.loc.repository.packagemodeler.events.filelocation.FileLocationEvent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
+import gov.loc.repository.workflow.AbstractPackageModelerAwareHandler;
 import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 import static gov.loc.repository.workflow.WorkflowConstants.TRANSITION_CONTINUE;
 
 import java.util.Calendar;
 import java.text.MessageFormat;
 
-public class AddFileLocationEventActionHandler extends BaseActionHandler {
+public class AddFileLocationEventActionHandler extends AbstractPackageModelerAwareHandler {
 
 	private static final long serialVersionUID = 1L;
 	private static final Log log = LogFactory.getLog(AddFileLocationEventActionHandler.class);
@@ -41,14 +42,14 @@ public class AddFileLocationEventActionHandler extends BaseActionHandler {
 			this.eventClassName = CLASS_PREFIX + eventClassName;
 		}		
 		this.eventClass = Class.forName(eventClassName);
-		this.fileLocation = this.getDAO().loadRequiredFileLocation(Long.parseLong(this.fileLocationKey));
+		this.fileLocation = this.dao.loadRequiredFileLocation(Long.parseLong(this.fileLocationKey));
 	}
 		
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
 		
-		FileLocationEvent event = this.getFactory().createFileLocationEvent(this.eventClass, this.fileLocation, Calendar.getInstance().getTime(), this.getWorkflowAgent());
+		FileLocationEvent event = this.factory.createFileLocationEvent(this.eventClass, this.fileLocation, Calendar.getInstance().getTime(), this.workflowAgent);
 
 		TaskInstance taskInstance = this.executionContext.getTaskInstance();		
 		//EventStart
@@ -66,10 +67,10 @@ public class AddFileLocationEventActionHandler extends BaseActionHandler {
 			event.setEventEnd(end.getTime());
 		}
 		//PerformingAgent
-		event.setPerformingAgent(this.getDAO().findRequiredAgent(Person.class, taskInstance.getActorId()));
+		event.setPerformingAgent(this.dao.findRequiredAgent(Person.class, taskInstance.getActorId()));
 		
 		//RequestingAgent
-		event.setRequestingAgent(this.getWorkflowAgent());
+		event.setRequestingAgent(this.workflowAgent);
 		//Success
 		if (! TRANSITION_CONTINUE.equals((String)this.executionContext.getContextInstance().getTransientVariable("transition")))
 		{

@@ -5,10 +5,14 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 import org.junit.Test;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
-import gov.loc.repository.packagemodeler.AbstractModelersTest;
+import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
+import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.events.Event;
 import gov.loc.repository.packagemodeler.events.fileexaminationgroup.FileExaminationEvent;
@@ -31,40 +35,34 @@ import gov.loc.repository.packagemodeler.packge.impl.PackageImpl;
 import gov.loc.repository.utilities.FilenameHelper;
 
 import org.apache.commons.io.FilenameUtils;
-import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.PropertyValueException;
 
-public class PackageImplTest extends AbstractModelersTest {
+public class PackageImplTest extends AbstractCoreModelersTest {
 	
-	protected static System storageSystem;
-	protected static System workflowService;
-	protected static Repository repository;
+	static System storageSystem;
+	static System workflowService;
+	static Repository repository;
 
 	@Override
 	public void createFixtures() throws Exception {
 		repository = fixtureHelper.createRepository(REPOSITORY_ID1);
-		storageSystem = fixtureHelper.createStorageSystem(RS25);
+		storageSystem = fixtureHelper.createSystem(RS25, new Role[] {storageSystemRole});
 		workflowService = fixtureHelper.createSystem(JBPM);
 	}	
-		
-	@Override
-	public void setup() throws Exception
-	{
-	}
-		
+				
 	@Test
 	public void testPackageLocation() throws Exception
 	{
-		Package packge = modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
+		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
 		modelerFactory.createStorageSystemFileLocation(packge, storageSystem, BASEPATH_1 + testCounter, true, true);
 		modelerFactory.createStorageSystemFileLocation(packge, storageSystem, BASEPATH_2 + testCounter, true, true);
 		modelerFactory.createExternalFileLocation(packge, MediaType.EXTERNAL_HARDDRIVE, new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER), BASEPATH_1 + testCounter, true, true);				
 		modelerFactory.createExternalFileLocation(packge, MediaType.EXTERNAL_HARDDRIVE, new ExternalIdentifier(SERIAL_NUMBER_2, IdentifierType.SERIAL_NUMBER), BASEPATH_2 + testCounter, true, true);				
-		session.save(packge);
-		this.commitAndRestartTransaction();
-		
-		fixtureHelper.reload(packge);
 
+		this.template.save(packge);
+		
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		this.template.refresh(packge);
+		
 		assertNotNull(packge);
 		assertEquals(4, packge.getFileLocations().size());		
 
@@ -74,51 +72,35 @@ public class PackageImplTest extends AbstractModelersTest {
 		assertNotNull(packge.getFileLocation(new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER)));
 		assertNotNull(packge.getFileLocation(new ExternalIdentifier(SERIAL_NUMBER_2, IdentifierType.SERIAL_NUMBER)));
 		assertNull(packge.getFileLocation(new ExternalIdentifier("x" + SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER)));
-		
+
+		txManager.commit(status);
 	}
 
-	@Test(expected = PropertyValueException.class)
+	@Test(expected = DataIntegrityViolationException.class)
 	public void testMissingRepository() throws Exception
 	{		
 		
-		try
-		{
-			Package packge = new PackageImpl();
-			packge.setPackageId(PACKAGE_ID1 + testCounter);
-			session.save(packge);
-			session.getTransaction().commit();
-		}
-		catch(Exception ex)
-		{
-			session.getTransaction().rollback();
-			throw ex;
-		}
+		Package packge = new PackageImpl();
+		packge.setPackageId(PACKAGE_ID1 + testCounter);
+		
+		this.template.save(packge);
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test(expected = DataIntegrityViolationException.class)
 	public void testUniquePackageIdRepositoryId() throws Exception
 	{
-		try
-		{
-			Package packge1 = modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
-			session.save(packge1);
+		Package packge1 = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
+		this.template.save(packge1);
 
-			Package packge2 = modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
-			session.save(packge2);
+		Package packge2 = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
+		this.template.save(packge2);
 			
-			session.getTransaction().commit();
-		}
-		catch(Exception ex)
-		{
-			session.getTransaction().rollback();
-			throw ex;
-		}
 	}
 	
 	@Test
 	public void testEvent() throws Exception
 	{
-		Package packge = modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
+		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
 
 		Calendar cal1 = Calendar.getInstance();
 		Event event1 = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal1.getTime(), workflowService);
@@ -144,10 +126,11 @@ public class PackageImplTest extends AbstractModelersTest {
 		FileExaminationGroup fileExaminationGroup = modelerFactory.createFileExaminationGroup(fileLocation, false);
 		modelerFactory.createFileExaminationGroupEvent(FileExaminationEvent.class, fileExaminationGroup, cal4.getTime(), workflowService);
 
-		session.save(packge);
-		this.commitAndRestartTransaction();
+		this.template.save(packge);
+
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		this.template.refresh(packge);
 		
-		this.session.refresh(packge);
 		assertEquals(7, packge.getEvents().size());
 		//Should be sorted
 		assertEquals(event5.getKey(), packge.getEvents().get(0).getKey());
@@ -165,26 +148,30 @@ public class PackageImplTest extends AbstractModelersTest {
 		assertEquals(event3.getKey(), eventIter.next().getKey());
 		assertEquals(event4.getKey(), eventIter.next().getKey());
 		
+		txManager.commit(status);
 	}
+	
 	
 	@Test
 	public void testCanonicalFiles() throws Exception
 	{
-		Package packge = modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1 + testCounter);
+		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
 		String root = FilenameHelper.getRoot(FILENAME_1);
 		modelerFactory.createCanonicalFile(packge, new FileName(FilenameHelper.removeBasePath(root, FILENAME_1)), new Fixity(FIXITY_1, Algorithm.MD5));
 		modelerFactory.createCanonicalFile(packge, new FileName(FilenameHelper.removeBasePath(root, FILENAME_2)), new Fixity(FIXITY_2, Algorithm.MD5));
 
-		session.save(packge);
-		this.commitAndRestartTransaction();
-		fixtureHelper.reload(packge);
+		this.template.save(packge);
+		
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		this.template.refresh(packge);
 		
 		assertEquals(2, packge.getCanonicalFiles().size());
 		CanonicalFile file = packge.getCanonicalFiles().iterator().next();
 		//Don't know ordering
 		assertTrue(FilenameUtils.equalsNormalized(FILENAME_1, FilenameHelper.concat(root, file.getFileName().getFilename())) || FilenameUtils.equalsNormalized(FILENAME_2, FilenameHelper.concat(root, file.getFileName().getFilename())));
 		assertEquals(1, file.getFixities().size());
-				
+
+		txManager.rollback(status);
 	}
-	
+
 }

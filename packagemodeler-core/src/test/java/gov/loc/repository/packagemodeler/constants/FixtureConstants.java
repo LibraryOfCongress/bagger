@@ -42,4 +42,6 @@ public class FixtureConstants {
 	
 	public static final String SERIAL_NUMBER_1 = "abcdef";
 	public static final String SERIAL_NUMBER_2 = "hijlkm";
+	
+	public static final String ROLE_1 = "fooer";
 }

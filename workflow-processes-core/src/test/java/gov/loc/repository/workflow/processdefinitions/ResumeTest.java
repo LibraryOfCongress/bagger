@@ -2,43 +2,36 @@ package gov.loc.repository.workflow.processdefinitions;
 
 import static org.junit.Assert.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 
-import gov.loc.repository.utilities.ConfigurationFactory;
-import gov.loc.repository.workflow.WorkflowConstants;
+import gov.loc.repository.workflow.AbstractCoreHandlerTest;
 
-import org.apache.commons.configuration.Configuration;
-import org.hibernate.Session;
-import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.Node;
-import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
-import org.jbpm.identity.Entity;
-import org.jbpm.identity.xml.IdentityXmlParser;
 import org.jbpm.taskmgmt.exe.TaskInstance;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml"})
-public class ResumeTest	
+public class ResumeTest extends AbstractCoreHandlerTest	
 {
 	static String tokenInstanceId;
-	private long processInstanceId;
-	private JbpmContext jbpmContext;
-	Configuration configuration;
+
+	@Override
+	public void setup() throws Exception {
+		String identitiesString =
+			"<identity>" +
+			"  <user name='u' />" +
+			"</identity>";
+		this.loadIdentities(identitiesString);
+	}
 	
-	@Autowired
-	JbpmConfiguration jbpmConfiguration;
-	
+	/*
 	@Before
 	public void loadIdentities() throws Exception
 	{
@@ -67,13 +60,14 @@ public class ResumeTest
 	{
 		configuration = ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
 	}
+	*/
 	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testMoveToNode() throws Exception
 	{
 		//Shows that moving a suspended token works OK.
-		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+		String processDefinitionString = 
 		  "<process-definition name='test1'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -97,24 +91,14 @@ public class ResumeTest
 	      "    <transition name='continue2' to='end' />" +
 	      "  </node>" +
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
 
-		String processDefinitionName = processDefinition.getName();
-		jbpmContext = jbpmConfiguration.createJbpmContext();
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
-			jbpmContext.deployProcessDefinition(processDefinition);						
-		}
-		finally
-		{
-			jbpmContext.close();
-		}
-
-		jbpmContext = jbpmConfiguration.createJbpmContext();
-		try
-		{
-			ProcessInstance processInstance = jbpmContext.newProcessInstance(processDefinitionName);
-			this.processInstanceId = processInstance.getId();
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			processInstance.signal();
 	    
 			assertEquals("a", processInstance.getRootToken().getNode().getName());
@@ -128,7 +112,7 @@ public class ResumeTest
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
-			ProcessInstance processInstance = jbpmContext.getProcessInstance(this.processInstanceId);
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			
 			//Let's suspend, move, and resume
 			processInstance.suspend();
@@ -158,7 +142,7 @@ public class ResumeTest
 	public void testMoveToTaskNode() throws Exception
 	{
 		//Shows that a task is re-done when a token is moved to it and resumed.
-		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+		String processDefinitionString =
 		  "<process-definition name='test1'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -188,24 +172,14 @@ public class ResumeTest
 	      "    <transition name='continue' to='end' />" +
 	      "  </state>" +
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
 
-		String processDefinitionName = processDefinition.getName();
-		jbpmContext = jbpmConfiguration.createJbpmContext();
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
-			jbpmContext.deployProcessDefinition(processDefinition);						
-		}
-		finally
-		{
-			jbpmContext.close();
-		}
-
-		jbpmContext = jbpmConfiguration.createJbpmContext();
-		try
-		{
-			ProcessInstance processInstance = jbpmContext.newProcessInstance(processDefinitionName);
-			this.processInstanceId = processInstance.getId();
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			processInstance.signal();
 	    
 			assertEquals("a", processInstance.getRootToken().getNode().getName());
@@ -237,7 +211,7 @@ public class ResumeTest
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
-			ProcessInstance processInstance = jbpmContext.getProcessInstance(this.processInstanceId);
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			
 			List<TaskInstance> taskInstanceList = jbpmContext.getTaskList("u");
 			assertTrue(taskInstanceList.isEmpty());
@@ -278,7 +252,7 @@ public class ResumeTest
 	public void testRestartEnded() throws Exception
 	{
 		//Shows that trying to restart a process instance is a bad idea
-		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(
+		String processDefinitionString = 
 		  "<process-definition name='test1'>" +
 	      "  <start-state>" +
 	      "    <transition name='continue1' to='a' />" +
@@ -287,24 +261,14 @@ public class ResumeTest
 	      "    <transition name='continue' to='end' />" +
 	      "  </state>" +
 	      "  <end-state name='end' />" +
-	      "</process-definition>");
+	      "</process-definition>";
 
-		String processDefinitionName = processDefinition.getName();
-		jbpmContext = jbpmConfiguration.createJbpmContext();
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
-			jbpmContext.deployProcessDefinition(processDefinition);						
-		}
-		finally
-		{
-			jbpmContext.close();
-		}
-
-		jbpmContext = jbpmConfiguration.createJbpmContext();
-		try
-		{
-			ProcessInstance processInstance = jbpmContext.newProcessInstance(processDefinitionName);
-			this.processInstanceId = processInstance.getId();
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			processInstance.signal();
 	    
 			assertEquals("a", processInstance.getRootToken().getNode().getName());
@@ -322,7 +286,7 @@ public class ResumeTest
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
-			ProcessInstance processInstance = jbpmContext.getProcessInstance(this.processInstanceId);
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			
 			//Let's suspend, move, and resume
 			processInstance.suspend();
@@ -345,7 +309,7 @@ public class ResumeTest
 		jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
-			ProcessInstance processInstance = jbpmContext.getProcessInstance(this.processInstanceId);
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			processInstance.signal("continue");
 			
 			//This fails!

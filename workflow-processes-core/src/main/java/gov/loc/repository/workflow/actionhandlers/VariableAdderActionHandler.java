@@ -5,9 +5,10 @@ import java.text.MessageFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import gov.loc.repository.workflow.AbstractHandler;
 import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 
-public class VariableAdderActionHandler extends BaseActionHandler {
+public class VariableAdderActionHandler extends AbstractHandler {
 
 	private static final long serialVersionUID = 1L; 
 	private static final Log log = LogFactory.getLog(VariableAdderActionHandler.class);	

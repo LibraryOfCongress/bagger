@@ -2,33 +2,35 @@ package gov.loc.repository.packagemodeler.events.impl;
 
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
-import gov.loc.repository.packagemodeler.AbstractModelersTest;
+import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
 import gov.loc.repository.packagemodeler.agents.Person;
 import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.events.packge.PackageReceivedEvent;
 import gov.loc.repository.packagemodeler.events.packge.impl.PackageReceivedEventImpl;
 import gov.loc.repository.packagemodeler.packge.Package;
+import gov.loc.repository.packagemodeler.packge.Repository;
 
 import org.hibernate.validator.InvalidStateException;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.Calendar;
 
-public class EventImplTest extends AbstractModelersTest {
+public class EventImplTest extends AbstractCoreModelersTest {
 
-	protected static Package packge;
-	protected static System workflow;
-	protected static Person person1;
-	protected static Person person2;
-	protected Calendar cal;
+	Package packge;
+	static Repository repository;
+	static System workflow;
+	static Person person1;
+	static Person person2;
+	Calendar cal;	
 	
 	@Override
 	public void createFixtures() throws Exception {
-		fixtureHelper.createRepository(REPOSITORY_ID1);		
-		packge = modelerFactory.createPackage(Package.class, REPOSITORY_ID1, PACKAGE_ID1);
-		session.save(packge);
+		repository = fixtureHelper.createRepository(REPOSITORY_ID1);		
 		
 		workflow = fixtureHelper.createSystem(JBPM);
 		person1 = fixtureHelper.createPerson(PERSON_ID1, PERSON_FIRSTNAME1, PERSON_SURNAME1);
@@ -37,6 +39,8 @@ public class EventImplTest extends AbstractModelersTest {
 
 	@Override
 	public void setup() throws Exception {
+		packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
+		this.template.save(packge);
 		this.cal = Calendar.getInstance();
 	}
 
@@ -50,12 +54,11 @@ public class EventImplTest extends AbstractModelersTest {
 		cal.add(Calendar.HOUR, 1);
 		event.setEventEnd(cal.getTime());	
 		event.setMessage("foo");
-		session.save(event);
-
-		this.commitAndRestartTransaction();
 		
-		//Reload the event
-		this.session.refresh(event);
+		this.template.update(packge);
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		this.template.refresh(event);
+		this.template.refresh(packge);
 		
 		//Check package
 		assertEquals(packge.getKey(), event.getPackage().getKey());
@@ -69,54 +72,35 @@ public class EventImplTest extends AbstractModelersTest {
 		assertEquals(person1.getKey(), event.getPerformingAgent().getKey());
 		//Check message
 		assertEquals("foo", event.getMessage());
+		
+		txManager.commit(status);
 	}
 		
 	@Test(expected=InvalidStateException.class)
 	public void testPerformingAgentValidation() throws Exception
 	{
-		try
-		{
-			PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
-			event.setPerformingAgent(person1);
-			event.setUnknownPerformingAgent(true);
-			session.save(event);
-		}
-		finally
-		{
-			session.getTransaction().rollback();
-		}
+		PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
+		event.setPerformingAgent(person1);
+		event.setUnknownPerformingAgent(true);
+		this.template.save(event);
 	}
 
 	@Test(expected=InvalidStateException.class)
 	public void testRequestingAgentValidation() throws Exception
 	{
-		try
-		{
-			PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
-			event.setRequestingAgent(person1);
-			event.setUnknownRequestingAgent(true);
-			session.save(event);
-		}
-		finally
-		{
-			session.getTransaction().rollback();
-		}
+		PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
+		event.setRequestingAgent(person1);
+		event.setUnknownRequestingAgent(true);
+		this.template.save(event);
 	}
 	
 	
 	@Test(expected=InvalidStateException.class)
 	public void testEventStartValidation() throws Exception
 	{
-		try
-		{
-			PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
-			event.setUnknownEventStart(true);
-			session.save(event);
-		}
-		finally
-		{
-			session.getTransaction().rollback();
-		}
+		PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
+		event.setUnknownEventStart(true);
+		this.template.save(event);
 	}
 		
 	@Test
@@ -132,10 +116,6 @@ public class EventImplTest extends AbstractModelersTest {
 		PackageReceivedEvent event = modelerFactory.createPackageEvent(PackageReceivedEvent.class, packge, cal.getTime(), workflow);
 		cal.add(Calendar.HOUR, 1);
 		event.setEventEnd(cal.getTime());				
-		session.save(event);
-		
-		this.commitAndRestartTransaction();
-		fixtureHelper.reload(event);
 
 		//This makes sure it validates properly
 		assertNotNull(event.toPremis());

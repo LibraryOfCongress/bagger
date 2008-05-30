@@ -18,7 +18,7 @@ import gov.loc.repository.packagemodeler.packge.FileInstance;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
-import gov.loc.repository.transfer.components.BaseComponent;
+import gov.loc.repository.transfer.components.AbstractPackageModelerAwareComponent;
 import gov.loc.repository.transfer.components.fileexamination.LCManifestGenerator;
 import gov.loc.repository.transfer.components.fileexamination.Verifier;
 import gov.loc.repository.utilities.FilenameHelper;
@@ -26,7 +26,7 @@ import gov.loc.repository.utilities.ManifestReader;
 import gov.loc.repository.utilities.PackageHelper;
 //import gov.loc.repository.transfer.components.filemanagement.transport.*;
 
-public abstract class AbstractLCPackageCopier extends BaseComponent {
+public abstract class AbstractLCPackageCopier extends AbstractPackageModelerAwareComponent {
 
 	private LCManifestGenerator generator;
 	
