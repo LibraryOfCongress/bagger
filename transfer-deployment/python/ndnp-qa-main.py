@@ -56,6 +56,45 @@ if True:
 print core_modeler.deploy_drivers()
 print ndnp_modeler.deploy_drivers()
 
-print jbpm.create_fixtures(env="qa", project="ndnp")
-print core_modeler.create_fixtures(env="qa")
-print ndnp_modeler.create_fixtures(env="qa")
+print jbpm.create_fixtures(fixtures="jbpm-ndnp-qa-fixtures.sql")
+print core_modeler.create_fixtures(fixtures=(
+        'createrepository -id ndnp',
+        'createperson -id ray -firstname Ray -surname Murray',
+        'createperson -id myron -firstname Myron -surname Briggs',
+        'createperson -id scott -firstname Scott -surname Phelps',
+        'createperson -id brian -firstname Brian -surname Vargas',
+        'createperson -id jjoyner-qr -firstname JoKeeta -surname Joyner',
+        'createperson -id jjoyner-sysadmin -firstname JoKeeta -surname Joyner',
+        'createperson -id jjoyner-ingest -firstname JoKeeta -surname Joyner',
+        'createperson -id tami-qr -firstname Tasmin -surname Mills',
+        'createperson -id tami-sysadmin -firstname Tasmin -surname Mills',
+        'createperson -id tami-ingest -firstname Tasmin -surname Mills',
+        'createperson -id lfre-qr -firstname LaTonya -surname Freeman',
+        'createperson -id lfre-sysadmin -firstname LaTonya -surname Freeman',
+        'createperson -id lfre-ingest -firstname LaTonya -surname Freeman',
+        'createsystem -id rdc-workflow',
+        'createsystem -id transfer-components-core-%s' % config['VERSION'],
+        'createrole -id repository_system',
+        'createsystem -id ndnp-staging-repository -roles repository_system',
+        'createrole -id storage_system',
+        'createsystem -id rdc -roles storage_system',
+        'createsystem -id rs15 -roles storage_system',
+        'createsystem -id rs25 -roles storage_system',
+        'createrole -id ndnp_awardee',
+        'createorganization -id CU-Riv -name "University of California, Riverside" -roles ndnp_awardee',
+        'createorganization -id FUG -name "University of Florida Libraries, Gainesville" -roles ndnp_awardee',
+        'createorganization -id KyU -name "University of Kentucky Libraries, Lexington" -roles ndnp_awardee',
+        'createorganization -id NN -name "New York Public Library, New York City" -roles ndnp_awardee',
+        'createorganization -id UUML -name "University of Utah, Salt Lake City" -roles ndnp_awardee',
+        'createorganization -id VIC -name "Library of Virginia, Richmond" -roles ndnp_awardee',
+        'createorganization -id DLC -name "Library of Congress" -roles ndnp_awardee',
+        'createorganization -id MnHi -name "Minnesota Historical Society" -roles ndnp_awardee',
+        'createorganization -id NbU -name "University of Nebraska, Lincoln" -roles ndnp_awardee',
+        'createorganization -id TxDN -name "University of North Texas, Denton" -roles ndnp_awardee',
+       ))
+print ndnp_modeler.create_fixtures(fixtures=(
+        'createawardphase -name "2005"',
+        'createawardphase -name "2006"',
+        'createawardphase -name "2007"',
+        'createawardphase -name "2008"',
+       ))

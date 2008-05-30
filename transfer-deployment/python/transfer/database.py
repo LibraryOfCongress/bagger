@@ -3,6 +3,7 @@ from transfer import utils
 
 class AbstractDB():
     def __init__(self, config):
+        self.config = config
         self.db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ''
         self.role_prefix = config['ROLE_PREFIX'] + "_" if config['ROLE_PREFIX'] else ''
         self.original_db_name = ""
@@ -71,11 +72,24 @@ class AbstractDB():
         result = utils.load_sqlstr(self.psql, sql, self.debug)
         return "Dropping %s\n====================\n%s" % (self.project_name, result)
 
-    def create_fixtures(self, env, project=None):
+    def create_fixtures(self, fixtures=None):
         """ creates database fixtures """
         # subclasses define this method since jBPM fixtures are installed differently than 
         # Package Modeler drivers
-        pass
+        result = ""
+        if isinstance(fixtures, tuple):
+            for fixture in fixtures:
+                result += utils.driver("%s %s" % (self.driver, fixture), self.debug)
+        elif isinstance(fixtures, str):
+            os.environ['PGDATABASE'] = self.db_prefix + self.db_name
+            # probably want to wrap this in a try block
+            fixtures_file = "%s/%s" % (self.config['SQL_FILES_LOCATION'], fixtures)
+            sql = file(fixtures_file).read()
+            result += utils.load_sqlstr(self.psql, sql, self.debug)
+        else:
+            # error!
+            pass
+        return "Installing %s database fixtures\n====================\n%s" % (self.project_name, result)
 
     def deploy_drivers(self):
         """ deploys command-line drivers """

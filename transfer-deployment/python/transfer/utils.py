@@ -25,28 +25,28 @@ def load_sqlstr(command, sql, debug=False):
 def unzip(file, directory, debug=False):
     """ unzips a file into a directory """
     if debug:
-        return "unzipping %s into %s" % (file, directory)
+        return "unzipping %s into %s\n" % (file, directory)
     else:
         return os.popen('unzip "%s" -d %s' % (file, directory))
 
 def chmod(mode, file, debug=False): 
     """ changes the permissions of a file to mode """
     if debug:
-        return "changing mode of %s to %s" % (file, mode)
+        return "changing mode of %s to %s\n" % (file, mode)
     else:
         return os.popen('chmod %s "%s"' % (mode, file))
     
 def mv(srcfile, destfile, debug=False):
     """ moves srcfile to destfile """
     if debug:
-        return "moving %s to %s" % (srcfile, destfile)
+        return "moving %s to %s\n" % (srcfile, destfile)
     else:
         return os.popen('mv "%s" "%s"' % (srcfile, destfile))
 
 def strtofile(str, file, debug=False):
     """ creates a file from a string """
     if debug:
-        return "making '%s' out of '%s'" % (file, str)
+        return "making '%s' out of '%s'\n" % (file, str)
     else:
         f = open(file, 'w')
         f.write(str)
@@ -56,7 +56,7 @@ def strtofile(str, file, debug=False):
 def driver(str, debug=False):
     """ invokes a command-line driver """
     if debug:
-        return "invoking %s" % str
+        return "invoking %s\n" % str
     else:
         return os.popen(str)
         
