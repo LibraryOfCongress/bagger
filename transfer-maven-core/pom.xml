@@ -4,7 +4,7 @@
   <artifactId>transfer-maven-core</artifactId>
   <packaging>pom</packaging>
   <name>Transfer Master POM (Core)</name>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.5</version>
   <developers>
     <developer>
       <id>justin</id>
