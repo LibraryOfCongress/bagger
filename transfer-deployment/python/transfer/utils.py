@@ -27,7 +27,7 @@ def unzip(file, directory, debug=False):
     if debug:
         return "unzipping %s into %s\n" % (file, directory)
     else:
-        return os.popen('unzip "%s" -d %s' % (file, directory))
+        return os.popen('unzip -o "%s" -d %s' % (file, directory))
 
 def chmod(mode, file, debug=False): 
     """ changes the permissions of a file to mode """
