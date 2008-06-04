@@ -17,3 +17,11 @@ class RequestBroker(AbstractDB):
         self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.project_name, config['VERSION']
         )
+
+    def deploy_drivers(self):
+        """ deploys CLI drivers """
+        return None
+
+    def create_fixtures(self):
+        """ creates database fixtures """
+        return None

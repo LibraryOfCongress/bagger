@@ -79,14 +79,14 @@ def replace_passwds_in_file(file, passwds):
     pattern = r'(\w+)_passwd'
     return re.sub(pattern, getrepl, file)
 
-def localize_datasources_props(file, db_name, db_prefix="", role_prefix="", passwds={}, debug=False):
+def localize_datasources_props(file, db_server, db_port, db_name, db_prefix, role_prefix, passwds, debug=False):
     """ search and replace db names, role names, and passwds in datasources.properties """
     # kludgy way to get, e.g.,  "packagemodeler" from "package_modeler32"
     key_name = re.compile(r'[\d_]').sub('', db_name)
     f = open(file, 'r')
     contents = f.read()
     f.close()
-    contents = re.sub(r'(%s.connection.url=.+/)(%s)' % (key_name, db_name), r'\1%s\2' % (db_prefix), contents)
+    contents = re.sub(r'(%s.connection.url=.+//)(\w+):(\d+)/(%s)' % (key_name, db_name), r'\1%s:%s/%s\4' % (db_server, db_port, db_prefix), contents)
     username = re.compile(r'.+%s.connection.username=(\w+)' % (key_name), re.S).match(contents).group(1)
     contents = re.sub(r'(%s.connection.username=)(.+)' % (key_name), r'\1%s\2' % (role_prefix), contents)
     contents = re.sub(r'(%s.connection.password=).+' % (key_name), r'\1%s' % (passwds[username]), contents)
@@ -98,3 +98,7 @@ def localize_datasources_props(file, db_name, db_prefix="", role_prefix="", pass
         f.close()
         return "localized datasources.properties file" 
 
+def deploy_process_def(driver, process_def):
+    """ deploys process definition """
+    result = os.popen("%s deploy -file %s" % (driver, process_def)).__str__()
+    return "Deploying process definition\n====================\n%s" % (result)

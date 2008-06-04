@@ -6,6 +6,7 @@ class PackageModeler(AbstractDB):
     @project_name("packagemodeler-ndnp")
     def __init__(self, config):
         AbstractDB.__init__(self, config)
+        self.config
         self.original_db_name = "package_modeler"
         self.db_name = self.db_prefix + self.original_db_name
         self.roles = {
@@ -18,6 +19,7 @@ class PackageModeler(AbstractDB):
         self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.project_name, self.version
         )
+        self.process_def = "files/processdefinition.xml"
 
     def create_database(self):
         """ creates database """
@@ -30,3 +32,7 @@ class PackageModeler(AbstractDB):
     def drop(self):
         """ drops database """
         return None
+
+    def deploy_process_def(self, driver):
+        """ deploys process definition """
+        return utils.deploy_process_def(driver, self.process_def)

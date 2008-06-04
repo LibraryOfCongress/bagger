@@ -23,6 +23,4 @@ class Jbpm(AbstractDB):
             self.install_dir, self.workflow_name, self.version
         )
 
-    def deploy_process_def(self):
-        """ deploys process definition """
-        return
+    

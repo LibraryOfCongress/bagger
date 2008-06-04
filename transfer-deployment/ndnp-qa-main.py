@@ -98,5 +98,5 @@ print ndnp_modeler.create_fixtures(fixtures=(
         'createawardphase -name "2008"',
        ))
 
-print jbpm.deploy_process_def()
+print ndnp_modeler.deploy_process_def(jbpm.driver)
 

@@ -26,9 +26,11 @@ class AbstractDB():
         self.version = config['VERSION'] if config['VERSION'] else ''
         self.debug = config['DEBUG'] if config['DEBUG'] else False
         self.psql = config['PSQL'] if config['PSQL'] else "/usr/bin/psql"
+        self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
+        self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
+        os.environ['PGHOST'] = self.db_server
+        os.environ['PGPORT'] = self.db_port
         os.environ['PGUSER'] = config['PGUSER'] if config['PGUSER'] else 'postgres'
-        os.environ['PGHOST'] = config['PGHOST'] if config['PGHOST'] else 'localhost'
-        os.environ['PGPORT'] = config['PGPORT'] if config['PGPORT'] else '5432'
         os.environ['PGPASSWORD'] = config['PGPASSWORD'] if config['PGPASSWORD'] else ""
 
     def create_database(self):
@@ -93,7 +95,7 @@ class AbstractDB():
         """ deploys command-line drivers """
         result  = utils.unzip(self.driver_package, self.install_dir, self.debug)
         result += utils.chmod("+x", self.driver, self.debug)
-        result += utils.localize_datasources_props(self.datasources_props, self.original_db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
+        result += utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.original_db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
         return "Deploying %s drivers\n====================\n%s" % (self.project_name, result)
 
 
