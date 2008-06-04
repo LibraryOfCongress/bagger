@@ -1,4 +1,3 @@
-import os
 from transfer import utils
 
 class TransferServices():

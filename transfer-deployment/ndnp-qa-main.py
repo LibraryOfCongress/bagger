@@ -3,7 +3,7 @@
 """
 
 from transfer.core import workflow, broker, package as core_package
-from transfer.projects.ndnp import package as ndnp_package
+from transfer.projects.ndnp import webapp, package as ndnp_package
 
 config = {
     'DEBUG': False, # If True, will print out actions rather than take them (e.g., will not hit database)
@@ -26,6 +26,7 @@ jbpm = workflow.Jbpm(config)
 core_modeler = core_package.PackageModeler(config)
 ndnp_modeler = ndnp_package.PackageModeler(config)
 request_broker = broker.RequestBroker(config)
+ndnp_webapp = webapp.WebApp(config)
 
 # Uncomment to drop dbs and roles
 print jbpm.drop()
@@ -99,4 +100,5 @@ print ndnp_modeler.create_fixtures(fixtures=(
        ))
 
 print ndnp_modeler.deploy_process_def(jbpm.driver)
+print ndnp_webapp.deploy()
 

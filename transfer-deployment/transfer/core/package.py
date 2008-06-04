@@ -19,3 +19,6 @@ class PackageModeler(AbstractDB):
             self.install_dir, self.project_name, config['VERSION']
         )
 
+    def deploy_process_def(self, driver):
+        """ deploys process definition """
+        return None

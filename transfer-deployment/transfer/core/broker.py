@@ -25,3 +25,7 @@ class RequestBroker(AbstractDB):
     def create_fixtures(self):
         """ creates database fixtures """
         return None
+
+    def deploy_process_def(self, driver):
+        """ deploys process definition """
+        return None
