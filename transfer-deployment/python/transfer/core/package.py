@@ -15,24 +15,7 @@ class PackageModeler(AbstractDB):
         self.passwds = {
             'transfer_user': config['TRANSFER_PASSWD'] if config['TRANSFER_PASSWD'] else "transfer_user",
         }
-        self.hibernate_writer_props = """hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-                                         hibernate.connection.driver_class=org.postgresql.Driver
-                                         hibernate.connection.url=jdbc:postgresql://%s:%s/%s
-                                         hibernate.connection.username=%s
-                                         hibernate.connection.password=%s
-                                      """ % (config['PGHOST'], config['PGPORT'], self.db_name, 
-                                             self.roles['transfer_user'], self.passwds['transfer_user'])
-        self.hibernate_conf = "%s/%s-%s/conf/data_writer.packagemodeler.hibernate.properties" % (
-            self.install_dir, self.project_name, config['VERSION']
-        )
-        self.hibernate_fixture_props = """hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-                                         hibernate.connection.driver_class=org.postgresql.Driver
-                                         hibernate.connection.url=jdbc:postgresql://%s:%s/%s
-                                         hibernate.connection.username=%s
-                                         hibernate.connection.password=%s
-                                      """ % (config['PGHOST'], config['PGPORT'], self.db_name, 
-                                             self.roles['transfer_user'], self.passwds['transfer_user'])
-        self.hibernate_fixture_conf = "%s/%s-%s/conf/fixture_writer.packagemodeler.hibernate.properties" % (
+        self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.project_name, config['VERSION']
         )
 

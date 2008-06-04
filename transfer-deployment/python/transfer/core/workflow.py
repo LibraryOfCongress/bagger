@@ -14,5 +14,15 @@ class Jbpm(AbstractDB):
             'user': "jbpm_user",
         }
         self.passwds = {
-            'jbpm': config['JBPM_PASSWD'] if config['JBPM_PASSWD'] else "jbpm_user",
+            'jbpm_user': config['JBPM_PASSWD'] if config['JBPM_PASSWD'] else "jbpm_user",
         }
+        self.workflow_name = "workflow-processes-core"
+        self.driver_package = "files/%s-%s-bin.zip" % (self.workflow_name, self.version)
+        self.driver = "%s/%s-%s/bin/processdeployer" % (self.install_dir, self.workflow_name, self.version)
+        self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
+            self.install_dir, self.workflow_name, self.version
+        )
+
+    def deploy_process_def(self):
+        """ deploys process definition """
+        return

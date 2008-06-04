@@ -27,21 +27,21 @@ def unzip(file, directory, debug=False):
     if debug:
         return "unzipping %s into %s\n" % (file, directory)
     else:
-        return os.popen('unzip -o "%s" -d %s' % (file, directory))
+        return os.popen('unzip -o "%s" -d "%s"' % (file, directory)).__str__()
 
 def chmod(mode, file, debug=False): 
     """ changes the permissions of a file to mode """
     if debug:
         return "changing mode of %s to %s\n" % (file, mode)
     else:
-        return os.popen('chmod %s "%s"' % (mode, file))
+        return os.popen('chmod %s "%s"' % (mode, file)).__str__()
     
 def mv(srcfile, destfile, debug=False):
     """ moves srcfile to destfile """
     if debug:
         return "moving %s to %s\n" % (srcfile, destfile)
     else:
-        return os.popen('mv "%s" "%s"' % (srcfile, destfile))
+        return os.popen('mv "%s" "%s"' % (srcfile, destfile)).__str__()
 
 def strtofile(str, file, debug=False):
     """ creates a file from a string """
@@ -58,7 +58,7 @@ def driver(str, debug=False):
     if debug:
         return "invoking %s\n" % str
     else:
-        return os.popen(str)
+        return os.popen(str).__str__()
         
 def prefix_database_in_file(file, original_db_name, db_name):
     """ prepends db_prefix to database names """
@@ -78,4 +78,23 @@ def replace_passwds_in_file(file, passwds):
         return passwds.get(match.group(1))
     pattern = r'(\w+)_passwd'
     return re.sub(pattern, getrepl, file)
+
+def localize_datasources_props(file, db_name, db_prefix="", role_prefix="", passwds={}, debug=False):
+    """ search and replace db names, role names, and passwds in datasources.properties """
+    # kludgy way to get, e.g.,  "packagemodeler" from "package_modeler32"
+    key_name = re.compile(r'[\d_]').sub('', db_name)
+    f = open(file, 'r')
+    contents = f.read()
+    f.close()
+    contents = re.sub(r'(%s.connection.url=.+/)(%s)' % (key_name, db_name), r'\1%s\2' % (db_prefix), contents)
+    username = re.compile(r'.+%s.connection.username=(\w+)' % (key_name), re.S).match(contents).group(1)
+    contents = re.sub(r'(%s.connection.username=)(.+)' % (key_name), r'\1%s\2' % (role_prefix), contents)
+    contents = re.sub(r'(%s.connection.password=).+' % (key_name), r'\1%s' % (passwds[username]), contents)
+    if debug:
+        return "localized datasources.properties file: %s" % (contents)
+    else:
+        f = open(file, 'w')
+        f.write(contents)
+        f.close()
+        return "localized datasources.properties file" 
 

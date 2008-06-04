@@ -2,6 +2,7 @@ import os
 from transfer import utils
 
 class AbstractDB():
+    # don't use @project_name decorator here
     def __init__(self, config):
         self.config = config
         self.db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ''
@@ -10,10 +11,7 @@ class AbstractDB():
         self.db_name = self.db_prefix + self.original_db_name
         self.roles = {}
         self.passwds = {}
-        self.hibernate_writer_props = ""
-        self.hibernate_fixture_props = ""
-        self.hibernate_conf = ""
-        self.hibernate_fixture_conf = ""
+        self.datasources_props = ""
         self.sql_files = {
             'create': "%s/%s-create.sql" % (config['SQL_FILES_LOCATION'], self.project_name),
             'roles': "%s/%s-roles.sql" % (config['SQL_FILES_LOCATION'], self.project_name),
@@ -22,7 +20,7 @@ class AbstractDB():
             'fixtures': "%s/%s-fixtures.sql" % (config['SQL_FILES_LOCATION'], self.project_name),
             'drop': "%s/%s-drop.sql" % (config['SQL_FILES_LOCATION'], self.project_name),
         }
-        self.install_dir = config['TRANSFER_INSTALL_DIR'] if config['TRANSFER_INSTALL_DIR'] else "."
+        self.install_dir = config['INSTALL_DIR'] if config['INSTALL_DIR'] else "."
         self.driver_package = "files/%s-%s-bin.zip" % (self.project_name, config['VERSION'])
         self.driver = "%s/%s-%s/bin/fixturedriver" % (self.install_dir, self.project_name, config['VERSION'])
         self.version = config['VERSION'] if config['VERSION'] else ''
@@ -93,11 +91,9 @@ class AbstractDB():
 
     def deploy_drivers(self):
         """ deploys command-line drivers """
-        """ deploys command-line drivers """
         result  = utils.unzip(self.driver_package, self.install_dir, self.debug)
         result += utils.chmod("+x", self.driver, self.debug)
-        result += utils.strtofile(self.hibernate_writer_props, self.hibernate_conf, self.debug)
-        result += utils.strtofile(self.hibernate_fixture_props, self.hibernate_fixture_conf, self.debug)
+        result += utils.localize_datasources_props(self.datasources_props, self.original_db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
         return "Deploying %s drivers\n====================\n%s" % (self.project_name, result)
 
 

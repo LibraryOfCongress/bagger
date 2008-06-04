@@ -14,3 +14,6 @@ class RequestBroker(AbstractDB):
         self.passwds = {
             'request_broker': config['REQUEST_BROKER_PASSWD'] if config['REQUEST_BROKER_PASSWD'] else "service_request_broker_user",
         }
+        self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
+            self.install_dir, self.project_name, config['VERSION']
+        )
