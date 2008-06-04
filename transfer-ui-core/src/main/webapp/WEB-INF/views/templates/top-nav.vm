@@ -12,11 +12,11 @@
     <li id="global_workflows">
       <a href="${contextPath}/processinstance/index.html">workflows</a>
     </li>
-    <li id="global_admin">
-      <a href="${contextPath}/admin/index.html">admin</a>
-    </li>
     <li id="global_help">
       <a href="${contextPath}/reports/index.html">reports</a>
+    </li>
+    <li id="global_admin">
+      <a href="${contextPath}/admin/index.html">admin</a>
     </li>
     ##block("search")
   </ul>
