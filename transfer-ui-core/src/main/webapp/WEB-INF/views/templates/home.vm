@@ -31,7 +31,7 @@
 			                <tr id="taskDetailsHeader">
 		                        <th>Name</th>
 		                        <th>Package</th>
-		                        <th>Date Created</th>
+		                        <th>Date Task Created</th>
 		                    </tr>
 		                </thead>
 		                <tbody>
