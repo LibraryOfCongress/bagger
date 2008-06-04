@@ -38,13 +38,13 @@
 		                <tr id="taskDetailsHeader">
 	                        <th>Name</th>
 	                        <th>Package</th>
-	                        <th>Date Created</th>
+	                        <th>Date Task Created</th>
 	                    </tr>
 	                </thead>
 	                <tfoot><tr id="taskDetailsFooter">
 	                        <th>Name</th>
 	                        <th>Package</th>
-	                        <th>Date Created</th>
+	                        <th>Date Task Created</th>
 	                </tr></tfoot>
 	                <tbody>
 				        #foreach($taskInstanceBean in $userBean.userTaskInstanceBeanList)
@@ -99,14 +99,14 @@
 		                <tr >
 	                        <th>Name</th>
 	                        <th>Package</th>
-	                        <th>Create Date</th>
+	                        <th>Date Task Created</th>
 	                        <th>Accept This Task</th>
 	                    </tr>
 	                </thead>
 	                <tfoot><tr >
 	                        <th>Name</th>
 	                        <th>Package</th>
-	                        <th>Create Date</th>
+	                        <th>Date Task Created</th>
 	                        <th>Accept This Task</th>
 	                </tr></tfoot>
 	                <tbody>
