@@ -49,5 +49,9 @@
 				#end         
 			</fieldset>
 		#end
+	    <form method="get" action="${contextPath}/admin/servicecontainer.html" >
+			<input type="hidden" name="refresh" value="true" />
+   			<input type="submit" class="button" value="  Refresh  " style="float:right"/>
+	    </form>
 	</div>    
 </div>
