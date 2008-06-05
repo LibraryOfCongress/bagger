@@ -82,7 +82,12 @@ def replace_passwds_in_file(file, passwds):
 def localize_datasources_props(file, db_server, db_port, db_name, db_prefix, role_prefix, passwds, debug=False):
     """ search and replace db names, role names, and passwds in datasources.properties """
     # kludgy way to get, e.g.,  "packagemodeler" from "package_modeler32"
-    key_name = re.compile(r'[\d_]').sub('', db_name)
+    if db_name.__len__():
+        key_name = re.compile(r'[\d_]').sub('', db_name)  
+    else:
+        # set key_name and db_name to "match anything" regex 
+        # for props files with multiple databases
+        key_name = db_name = ".+"
     f = open(file, 'r')
     contents = f.read()
     f.close()
