@@ -47,21 +47,30 @@ public class ServiceContainerController {
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView handleGet(HttpServletRequest req) throws Exception {
 		ModelAndView mav = new ModelAndView("servicecontainer");
-		PermissionsHelper permissions = new PermissionsHelper(req);
-		mav.addObject("permissions", permissions);
-		
-		List<ServiceContainerBean> serviceContainerBeanList = new ArrayList<ServiceContainerBean>(); 
-		List<String> serviceUrlList = this.registry.listServiceContainers();
-		for(String serviceUrl : serviceUrlList)
+
+		try
 		{
-			ServiceContainerBean serviceContainerBean = this.loadServiceContainerBean(serviceUrl);
-			if (serviceContainerBean != null)
+			PermissionsHelper permissions = new PermissionsHelper(req);
+			mav.addObject("permissions", permissions);
+			
+			List<ServiceContainerBean> serviceContainerBeanList = new ArrayList<ServiceContainerBean>(); 
+			List<String> serviceUrlList = this.registry.listServiceContainers();
+			for(String serviceUrl : serviceUrlList)
 			{
-				serviceContainerBeanList.add(serviceContainerBean);
-			}	
+				ServiceContainerBean serviceContainerBean = this.loadServiceContainerBean(serviceUrl);
+				if (serviceContainerBean != null)
+				{
+					serviceContainerBeanList.add(serviceContainerBean);
+				}	
+			}
+			
+			mav.addObject("serviceContainerBeanList", serviceContainerBeanList);
 		}
-		
-		mav.addObject("serviceContainerBeanList", serviceContainerBeanList);
+		catch(Exception ex)
+		{
+			log.error("ServiceContainerController.handleGet: " + ex.getMessage());
+			//req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Unable to get Remote Service Container");
+		}
 		
 		return mav;		
 	}
