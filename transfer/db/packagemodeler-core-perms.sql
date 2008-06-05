@@ -19,3 +19,4 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.fileinstance_fixity TO GROUP 
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.filelocation TO GROUP package_modeler_role;
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.package TO GROUP package_modeler_role;
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE core.storagesystem_filelocation TO GROUP package_modeler_role;
+GRANT ALL ON TABLE hibernate_sequence TO GROUP package_modeler_role;

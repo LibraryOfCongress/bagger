@@ -32,3 +32,4 @@ GRANT ALL ON TABLE jbpm_tokenvariablemap TO GROUP jbpm_role;
 GRANT ALL ON TABLE jbpm_transition TO GROUP jbpm_role;
 GRANT ALL ON TABLE jbpm_variableaccess TO GROUP jbpm_role;
 GRANT ALL ON TABLE jbpm_variableinstance TO GROUP jbpm_role;
+GRANT ALL ON TABLE hibernate_sequence TO GROUP jbpm_role;
