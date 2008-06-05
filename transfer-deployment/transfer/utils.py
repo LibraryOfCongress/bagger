@@ -68,8 +68,8 @@ def prefix_database_in_file(file, original_db_name, db_name):
 
 def prefix_roles_in_file(file, roles, role_prefix):
     """ prepends role_prefix to role names """
-    pattern = r'(%s)' % "|".join(roles.values())
-    replacement = r'%s\1' % role_prefix
+    pattern = r' (%s)' % "|".join(roles.values())
+    replacement = r' %s\1' % role_prefix
     return re.sub(pattern, replacement, file)
 
 def replace_passwds_in_file(file, passwds):
