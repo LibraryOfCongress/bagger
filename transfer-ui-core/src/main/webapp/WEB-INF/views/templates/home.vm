@@ -124,6 +124,7 @@
 	            Start a new workflow.</a><br/></li>
 	    </ul>
 	</fieldset>
+	<hr/>
 	<fieldset>
 	    <legend><b><a href="${contextPath}/reports/index.html">Reports</a></b></legend>
 	    <ul class="homeNav">
@@ -132,7 +133,7 @@
 	        <li><a href="${contextPath}/reports/index.html?ref=newReports#newReports">
 	            Create new reports.</a><br/></li>
 	    </ul>
-	</fieldset><hr/>
+	</fieldset>
 	<hr/>
 	<fieldset>
 	    <legend><b><a href="${contextPath}/admin/index.html">Administer</a></b></legend>
