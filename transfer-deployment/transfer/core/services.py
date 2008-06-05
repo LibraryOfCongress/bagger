@@ -3,7 +3,7 @@ from transfer import utils
 class TransferServices():
     def __init__(self, config):
         self.config = config
-        self.project_name = "transfer-services"
+        self.project_name = "transfer-services-core"
         self.file_location = "files"
         self.debug = config['DEBUG'] if config['DEBUG'] else False        
         self.install_dir = config['TRANSFER_SERVICES_INSTALL_DIR'] if config['TRANSFER_SERVICES_INSTALL_DIR'] else "."        
