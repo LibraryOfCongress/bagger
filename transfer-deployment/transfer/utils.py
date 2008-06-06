@@ -96,8 +96,6 @@ def localize_datasources_props(file, db_server, db_port, db_name, db_prefix, rol
     contents = re.sub(r'(%s.connection.url=.+//)(\w+):(\d+)/(%s)' % (key_name, db_name), r'\1%s:%s/%s\4' % (db_server, db_port, db_prefix), contents)
     for username in re.findall(r'^%s.connection.username=(\w+)$' % key_name, contents, re.M):
         contents = re.sub(r'(%s.connection.username=)(%s)' % (key_name, username), r'\1%s\2' % (role_prefix), contents)
-        print "username: %s" % username
-        print "passwds: %s" % passwds.__str__()
         contents = re.sub(r'(%s.connection.password=)%s' % (key_name, username), r'\1%s' % (passwds[username]), contents)
     if debug:
         return "localized datasources.properties file: %s" % (contents)
