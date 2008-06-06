@@ -13,9 +13,7 @@ class WebApp(CoreWebApp):
         self.file_location = "files"
         self.webapps_location = "%s/webapps/transfer" % (self.catalina_home)
         self.warfile = "%s/transfer-ui-ndnp-%s-template.war" % (self.file_location, self.version)
-        self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
-            self.install_dir, self.project_name, self.version
-        )
+        self.datasources_props = "%s/WEB-INF/classes/conf/datasources.properties" % (self.webapps_location)
         self.db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ''
         self.role_prefix = config['ROLE_PREFIX'] + "_" if config['ROLE_PREFIX'] else ''
         self.db_name = ""
@@ -24,9 +22,6 @@ class WebApp(CoreWebApp):
             'service_request_broker_user': config['REQUEST_BROKER_PASSWD'] if config['REQUEST_BROKER_PASSWD'] else "service_request_broker_user",
             'jbpm_user': config['JBPM_PASSWD'] if config['JBPM_PASSWD'] else "jbpm_user",
         }
-        self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
-            self.install_dir, self.project_name, self.version
-        )
         self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
         self.tomcat_start = config['TOMCAT_START'] if config['TOMCAT_START'] else ''
