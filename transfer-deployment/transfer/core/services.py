@@ -29,8 +29,8 @@ class TransferServices():
         self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.project_name, config['VERSION']
         )
-        self.db_server = config['HOST'] if config['HOST'] else 'localhost'
-        self.db_port = '5432'
+        self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
+        self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
 
     def deploy_drivers(self):
         """ deploys command-line drivers """
