@@ -67,7 +67,10 @@ def mkdir(path, debug=False):
     if debug:
         return "making %s directory" % (path)
     else:
-        return os.makedirs(path)
+        try:
+            return os.makedirs(path)
+        except OSError:
+            return os.popen("rm -rf '%s/*'" % (path)).read()
     
 def mv(srcfile, destfile, debug=False):
     """ moves srcfile to destfile """
