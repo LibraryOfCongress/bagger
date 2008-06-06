@@ -68,7 +68,7 @@ def mkdir(path, debug=False):
         return "making %s directory" % (path)
     else:
         try:
-            return os.makedirs(path)
+            return os.makedirs(path).__str__()
         except OSError:
             return os.popen("rm -rf '%s/*'" % (path)).read()
     

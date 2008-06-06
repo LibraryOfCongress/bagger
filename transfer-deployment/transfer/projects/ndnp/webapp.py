@@ -32,7 +32,7 @@ class WebApp(CoreWebApp):
     def deploy(self):
         """ deploys web application to tomcat """
         result = ""
-        result += utils.stop_tomcat(self.tomcat_stop, self.debug)
+        # result += utils.stop_tomcat(self.tomcat_stop, self.debug)
         result += utils.mkdir("%s/webapps/transfer" % (self.catalina_home), self.debug)
         result += utils.unzip(self.warfile, self.webapps_location, self.debug)
         result += utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)        
