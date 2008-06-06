@@ -12,7 +12,7 @@ class TransferServices():
         self.db_name = ""
         self.passwds = {
             'transfer_user': config['TRANSFER_PASSWD'] if config['TRANSFER_PASSWD'] else "transfer_user",
-            'request_broker': config['REQUEST_BROKER_PASSWD'] if config['REQUEST_BROKER_PASSWD'] else "service_request_broker_user",
+            'service_request_broker_user': config['REQUEST_BROKER_PASSWD'] if config['REQUEST_BROKER_PASSWD'] else "service_request_broker_user",
         }
         self.driver_package = "%s/transfer-services-core-%s-bin.zip" % (self.file_location, config['VERSION'])
         self.driver_location = "%s/%s-%s/bin" % (self.install_dir, self.project_name, config['VERSION'])

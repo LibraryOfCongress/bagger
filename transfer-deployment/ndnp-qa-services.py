@@ -14,8 +14,8 @@ config = {
     'JOBTYPES': "test,inventoryfilesondisk,generatelcmanifest,verifylcmanifest,ndnpcopy", #List of the job types to handle, e.g., test,inventoryfilesondisk.  Default is test
     'DB_PREFIX': 'qa', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
     'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
-    'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
-    'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
+    'TRANSFER_PASSWD': 'FOO', # Set a password for the package modeler user role (default = 'transfer_user')
+    'REQUEST_BROKER_PASSWD': 'BAR', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
 }
 
 transfer_services = services.TransferServices(config)
