@@ -12,6 +12,8 @@ config = {
     'PGPORT': '5433', # This is the port that PostgreSQL listens on (default = 5432)
     'PGUSER': 'postgres', # This is a username on PostgreSQL with SUPERUSER privlidges (default = postgres)
     'PGPASSWORD': '', # This is the password for the user specified above (default = '')
+    'JAVA_HOME': "/usr/jdk/latest", # Tell me where to find Java (default = '/usr/jdk/latest') 
+    'CATALINA_HOME': "", # Tell me where to find Tomcat (default = '/opt/coolstack/tomcat')    
     'DB_PREFIX': 'qa', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
     'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
     'INSTALL_DIR': 'install', # Set the directory that the CLI tools will be unzipped to (default = '.')
@@ -20,6 +22,8 @@ config = {
     'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
     'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
     'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
+    'TOMCAT_START': '', # Set the invocation of starting tomcat (default = '/usr/sbin/svcadm disable svc:/application/csk-tomcat')
+    'TOMCAT_STOP': '', # Set the invocation of stopping tomcat (default = '/usr/sbin/svcadm enable svc:/application/csk-tomcat')
 }
 
 jbpm = workflow.Jbpm(config)

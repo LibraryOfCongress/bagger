@@ -1,6 +1,32 @@
 import os
 import re
 
+def check_os():
+    try:
+        platform = os.uname()[0]
+    except AttributeError:
+        platform = os.name
+    # "Linux" for linux
+    # "SunOS" for solaris
+    # "nt" for windows
+    return platform
+
+def start_tomcat(cmd, debug=False):
+    # platform = check_os()
+    cmd = cmd if cmd else "/usr/sbin/svcadm enable svc:/application/csk-tomcat"
+    if debug:
+        return "starting tomcat: %s" % (cmd)
+    else:
+        return os.popen(cmd).read()
+
+def stop_tomcat(cmd, debug=False):
+    # platform = check_os()
+    cmd = cmd if cmd else "/usr/sbin/svcadm disable svc:/application/csk-tomcat"
+    if debug:
+        return "stopping tomcat: %s" % (cmd)
+    else:
+        return os.popen(cmd).read()
+
 def list_databases(command, debug=False):
     """ gets list of databases """
     if debug:
@@ -35,6 +61,13 @@ def chmod(mode, file, debug=False):
         return "changing mode of %s to %s\n" % (file, mode)
     else:
         return os.popen('chmod %s "%s"' % (mode, file)).__str__()
+
+def mkdir(path, debug=False):
+    """ makes directory path """
+    if debug:
+        return "making %s directory" % (path)
+    else:
+        return os.makedirs(path)
     
 def mv(srcfile, destfile, debug=False):
     """ moves srcfile to destfile """
