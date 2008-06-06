@@ -12,7 +12,6 @@ config = {
     'PGPORT': '5433', # This is the port that PostgreSQL listens on (default = 5432)
     'PGUSER': 'postgres', # This is a username on PostgreSQL with SUPERUSER privlidges (default = postgres)
     'PGPASSWORD': '', # This is the password for the user specified above (default = '')
-    'JAVA_HOME': "/usr/jdk/latest", # Tell me where to find Java (default = '/usr/jdk/latest') 
     'CATALINA_HOME': "", # Tell me where to find Tomcat (default = '/opt/coolstack/tomcat')    
     'DB_PREFIX': 'qa', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
     'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
