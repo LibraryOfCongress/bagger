@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """ Deploys a build of the Transfer Core components for NDIIP to production.
-    Requires packmodeler-core-*-bin.zip.
+    Requires packagemodeler-core-*-bin.zip.
 """
 
 from transfer.core import workflow, broker, package as core_package
