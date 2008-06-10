@@ -9,6 +9,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
 import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.System;
@@ -19,7 +20,6 @@ import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 import gov.loc.repository.packagemodeler.packge.impl.FileExaminationImpl;
 import gov.loc.repository.packagemodeler.packge.impl.FileInstanceImpl;
 
@@ -49,8 +49,8 @@ public class FileInstanceImplTest extends AbstractCoreModelersTest {
 	@Test
 	public void testFileInstance() throws Exception
 	{		
-		FileInstance file1 = modelerFactory.createFileInstance(fileLocation1, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));		
-		file1.getFixities().add(new Fixity(FIXITY_2, Algorithm.SHA1));
+		FileInstance file1 = modelerFactory.createFileInstance(fileLocation1, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));		
+		file1.getFixities().add(new Fixity(FIXITY_2, FixityAlgorithm.SHA1));
 
 		FileInstance file2 = modelerFactory.createFileInstance(fileLocation1, new FileName(FILENAME_2));
 
@@ -62,7 +62,7 @@ public class FileInstanceImplTest extends AbstractCoreModelersTest {
 		
 		assertNotNull(file1);
 		assertEquals(2, file1.getFixities().size());
-		assertEquals(FIXITY_2, file1.getFixity(Algorithm.SHA1).getValue());
+		assertEquals(FIXITY_2, file1.getFixity(FixityAlgorithm.SHA1).getValue());
 		assertNotNull(file2);
 		assertEquals(0, file2.getFixities().size());
 
@@ -72,8 +72,8 @@ public class FileInstanceImplTest extends AbstractCoreModelersTest {
 	@Test(expected=DataIntegrityViolationException.class) 
 	public void testUniqueFileInstance() throws Exception
 	{
-		modelerFactory.createFileInstance(fileLocation1, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));		
-		modelerFactory.createFileInstance(fileLocation1, new FileName(FILENAME_1), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createFileInstance(fileLocation1, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));		
+		modelerFactory.createFileInstance(fileLocation1, new FileName(FILENAME_1), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		this.template.save(fileLocation1);			
 	}
 
@@ -85,13 +85,13 @@ public class FileInstanceImplTest extends AbstractCoreModelersTest {
 		
 		assertTrue(fileInstance1.matches(fileInstance2));
 		
-		fileInstance1.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));
+		fileInstance1.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		assertFalse(fileInstance1.matches(fileInstance2));
-		fileInstance2.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));
+		fileInstance2.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		assertTrue(fileInstance1.matches(fileInstance2));
-		fileInstance1.getFixities().add(new Fixity(FIXITY_2, Algorithm.SHA1));
+		fileInstance1.getFixities().add(new Fixity(FIXITY_2, FixityAlgorithm.SHA1));
 		assertTrue(fileInstance1.matches(fileInstance2));
-		fileInstance2.getFixities().add(new Fixity(FIXITY_3, Algorithm.SHA1));
+		fileInstance2.getFixities().add(new Fixity(FIXITY_3, FixityAlgorithm.SHA1));
 		assertFalse(fileInstance1.matches(fileInstance2));
 	}
 
@@ -103,13 +103,13 @@ public class FileInstanceImplTest extends AbstractCoreModelersTest {
 		
 		assertTrue(fileInstance.matches(fileExamination));
 		
-		fileInstance.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));
+		fileInstance.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		assertFalse(fileInstance.matches(fileExamination));
-		fileExamination.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));
+		fileExamination.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		assertTrue(fileInstance.matches(fileExamination));
-		fileInstance.getFixities().add(new Fixity(FIXITY_2, Algorithm.SHA1));
+		fileInstance.getFixities().add(new Fixity(FIXITY_2, FixityAlgorithm.SHA1));
 		assertTrue(fileInstance.matches(fileExamination));
-		fileExamination.getFixities().add(new Fixity(FIXITY_3, Algorithm.SHA1));
+		fileExamination.getFixities().add(new Fixity(FIXITY_3, FixityAlgorithm.SHA1));
 		assertFalse(fileInstance.matches(fileExamination));
 	}
 	
@@ -117,12 +117,12 @@ public class FileInstanceImplTest extends AbstractCoreModelersTest {
 	public void testEquals() throws Exception
 	{
 		FileInstance file1 = new FileInstanceImpl();
-		file1.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));		
-		file1.getFixities().add(new Fixity(FIXITY_2, Algorithm.SHA1));				
+		file1.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));		
+		file1.getFixities().add(new Fixity(FIXITY_2, FixityAlgorithm.SHA1));				
 		file1.setFileName(new FileName(FILENAME_1));
 		
 		FileInstance file2 = new FileInstanceImpl();
-		file2.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));
+		file2.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		file2.setFileName(new FileName(FILENAME_1));
 
 		assertTrue(file1.equals(file2));
@@ -132,12 +132,12 @@ public class FileInstanceImplTest extends AbstractCoreModelersTest {
 	public void testNotEqualsFilenameMismatch() throws Exception
 	{
 		FileInstance file1 = new FileInstanceImpl();
-		file1.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));		
-		file1.getFixities().add(new Fixity(FIXITY_2, Algorithm.SHA1));				
+		file1.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));		
+		file1.getFixities().add(new Fixity(FIXITY_2, FixityAlgorithm.SHA1));				
 		file1.setFileName(new FileName(FILENAME_1));
 		
 		FileInstance file2 = new FileInstanceImpl();
-		file2.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));				
+		file2.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));				
 		file2.setFileName(new FileName(FILENAME_2));
 
 		assertFalse(file1.equals(file2));
@@ -147,12 +147,12 @@ public class FileInstanceImplTest extends AbstractCoreModelersTest {
 	public void testNotEqualsFixityMismatch() throws Exception
 	{
 		FileInstance file1 = new FileInstanceImpl();
-		file1.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));		
-		file1.getFixities().add(new Fixity(FIXITY_2, Algorithm.SHA1));				
+		file1.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));		
+		file1.getFixities().add(new Fixity(FIXITY_2, FixityAlgorithm.SHA1));				
 		file1.setFileName(new FileName(FILENAME_1));
 		
 		FileInstance file2 = new FileInstanceImpl();
-		file2.getFixities().add(new Fixity(FIXITY_3, Algorithm.MD5));		
+		file2.getFixities().add(new Fixity(FIXITY_3, FixityAlgorithm.MD5));		
 		file2.setFileName(new FileName(FILENAME_1));
 
 		assertFalse(file1.equals(file2));
@@ -162,11 +162,11 @@ public class FileInstanceImplTest extends AbstractCoreModelersTest {
 	public void testNotEqualsNoFixityMatch() throws Exception
 	{
 		FileInstance file1 = new FileInstanceImpl();
-		file1.getFixities().add(new Fixity(FIXITY_1, Algorithm.MD5));						
+		file1.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.MD5));						
 		file1.setFileName(new FileName(FILENAME_1));
 		
 		FileInstance file2 = new FileInstanceImpl();
-		file2.getFixities().add(new Fixity(FIXITY_1, Algorithm.SHA1));		
+		file2.getFixities().add(new Fixity(FIXITY_1, FixityAlgorithm.SHA1));		
 		file2.setFileName(new FileName(FILENAME_1));
 
 		assertFalse(file1.equals(file2));

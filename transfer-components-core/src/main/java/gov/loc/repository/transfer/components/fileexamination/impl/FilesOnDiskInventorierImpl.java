@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import gov.loc.repository.bagit.BagHelper;
+import gov.loc.repository.fixity.FixityAlgorithm;
+import gov.loc.repository.fixity.FixityGenerator;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
@@ -20,20 +23,18 @@ import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.transfer.components.AbstractPackageModelerAwareComponent;
 import gov.loc.repository.transfer.components.fileexamination.FilesOnDiskInventorier;
 import gov.loc.repository.utilities.FilenameHelper;
-import gov.loc.repository.utilities.FixityHelper;
-import gov.loc.repository.utilities.PackageHelper;
 
 @Component("filesOnDiskInventorierComponent")
 @Scope("prototype")
 public class FilesOnDiskInventorierImpl extends AbstractPackageModelerAwareComponent implements
 		FilesOnDiskInventorier {
 
-	private FixityHelper fixityHelper;
+	private FixityGenerator fixityGenerator;
 	
 	@Autowired
-	public FilesOnDiskInventorierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("fixityHelper")FixityHelper fixityHelper) {		
+	public FilesOnDiskInventorierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityFixityGenerator")FixityGenerator fixityGenerator) {		
 		super(factory, dao);
-		this.fixityHelper = fixityHelper;
+		this.fixityGenerator = fixityGenerator;
 	}
 	
 	@Override
@@ -43,18 +44,16 @@ public class FilesOnDiskInventorierImpl extends AbstractPackageModelerAwareCompo
 
 	public void inventory(long fileLocationKey, String mountPath,
 			String algorithm, String requestingAgentId) throws Exception {
-		this.inventory(this.dao.loadRequiredFileLocation(fileLocationKey), mountPath, Fixity.Algorithm.fromString(algorithm), this.dao.findRequiredAgent(Agent.class, requestingAgentId));
+		this.inventory(this.dao.loadRequiredFileLocation(fileLocationKey), mountPath, FixityAlgorithm.fromString(algorithm), this.dao.findRequiredAgent(Agent.class, requestingAgentId));
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public void inventory(FileLocation fileLocation, String mountPath, Fixity.Algorithm algorithm,
+	public void inventory(FileLocation fileLocation, String mountPath, FixityAlgorithm algorithm,
 			Agent requestingAgent) throws Exception {
 		InventoryFromFilesOnDiskEvent event = this.factory.createFileLocationEvent(InventoryFromFilesOnDiskEvent.class, fileLocation, Calendar.getInstance().getTime(), this.getReportingAgent());
 		event.setRequestingAgent(requestingAgent);
 		event.setPerformingAgent(this.getReportingAgent());
-		
-		this.fixityHelper.setAlgorithm(algorithm.getJavaSecurityName());
 		
 		File dir = new File(fileLocation.getBasePath());
 		if (mountPath != null)
@@ -69,13 +68,13 @@ public class FilesOnDiskInventorierImpl extends AbstractPackageModelerAwareCompo
 			if (file.isFile())
 			{
 				FileName fileName = new FileName(FilenameHelper.removeBasePath(dir.toString(), file.toString()));
-				if (fileLocation.isLCPackageStructure() && PackageHelper.isInLCPackageRoot(dir, file))
+				if (fileLocation.isBag() && BagHelper.isTag(dir, file))
 				{
 					this.factory.createFileInstance(fileLocation, fileName);
 				}
 				else
 				{
-					String fixityValue = fixityHelper.generateFixity(file);
+					String fixityValue = fixityGenerator.generateFixity(file, algorithm);
 					this.factory.createFileInstance(fileLocation, fileName, new Fixity(fixityValue, algorithm));
 				}
 			}

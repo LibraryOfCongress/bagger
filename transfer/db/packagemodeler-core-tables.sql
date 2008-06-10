@@ -44,7 +44,7 @@ create table core.filelocation (
 	pkey int8 not null, 
 	package_key int8 not null, 
 	is_managed bool not null, 
-	is_lc_package_structure bool not null, 
+	is_bag bool not null, 
 	create_timestamp timestamp not null, 
 	update_timestamp timestamp not null, 
 	primary key (pkey)

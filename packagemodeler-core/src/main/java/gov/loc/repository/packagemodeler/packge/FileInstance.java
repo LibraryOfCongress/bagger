@@ -2,7 +2,7 @@ package gov.loc.repository.packagemodeler.packge;
 
 import gov.loc.repository.Keyed;
 import gov.loc.repository.Timestamped;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
+import gov.loc.repository.fixity.FixityAlgorithm;
 
 import java.util.Date;
 import java.util.Set;
@@ -26,7 +26,7 @@ public interface FileInstance extends Keyed, Timestamped {
 	 */
 	public abstract Set<Fixity> getFixities();
 	
-	public abstract Fixity getFixity(Algorithm algorithm);
+	public abstract Fixity getFixity(FixityAlgorithm algorithm);
 	
 	/*
 	 * Returns true if neither have fixities or there is at least one fixity match and no fixity mismatches.

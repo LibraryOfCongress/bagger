@@ -10,7 +10,7 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-		<import resource="classpath:conf/common-core-context.xml" />
+		<import resource="classpath:conf/common-core-datasource-context.xml" />
 
 		<bean id="serviceBrokerDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 			<property name="driverClassName" value= "org.postgresql.Driver" />

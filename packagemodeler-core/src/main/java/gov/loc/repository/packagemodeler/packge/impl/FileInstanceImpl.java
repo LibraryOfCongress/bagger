@@ -10,13 +10,13 @@ import javax.persistence.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.packge.FileExamination;
 import gov.loc.repository.packagemodeler.packge.FileInstance;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.FixityHelper;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 
 @Entity(name="FileInstance")
 @Table(name = "fileinstance", schema="core", uniqueConstraints={@UniqueConstraint(columnNames={"filelocation_key","relative_path","base_name","extension"})})
@@ -77,10 +77,10 @@ public class FileInstanceImpl implements FileInstance {
 		location.getFileInstances().add(this);
 	}
 
-	public Fixity getFixity(Algorithm algorithm) {
+	public Fixity getFixity(FixityAlgorithm algorithm) {
 		for(Fixity fixity : this.fixitySet)
 		{
-			if (fixity.getAlgorithm().equals(algorithm))
+			if (fixity.getFixityAlgorithm().equals(algorithm))
 			{
 				return fixity;
 			}
@@ -124,7 +124,7 @@ public class FileInstanceImpl implements FileInstance {
 		boolean matchFound = false;
 		for(Fixity fixity : this.fixitySet)
 		{
-			Fixity otherFixity = otherFileInstance.getFixity(fixity.getAlgorithm()); 
+			Fixity otherFixity = otherFileInstance.getFixity(fixity.getFixityAlgorithm()); 
 			if (otherFixity != null)
 			{
 				if (otherFixity.getValue().equals(fixity.getValue()))
@@ -153,7 +153,7 @@ public class FileInstanceImpl implements FileInstance {
 		boolean matchFound = false;
 		for(Fixity fixity : this.fixitySet)
 		{
-			Fixity otherFixity = fileExamination.getFixity(fixity.getAlgorithm()); 
+			Fixity otherFixity = fileExamination.getFixity(fixity.getFixityAlgorithm()); 
 			if (otherFixity != null)
 			{
 				if (otherFixity.getValue().equals(fixity.getValue()))

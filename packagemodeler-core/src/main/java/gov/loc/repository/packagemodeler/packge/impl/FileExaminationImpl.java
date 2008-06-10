@@ -10,12 +10,12 @@ import javax.persistence.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.packge.FileExamination;
 import gov.loc.repository.packagemodeler.packge.FileExaminationGroup;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.FixityHelper;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 
 @Entity(name="FileExamination")
 @Table(name = "fileexamination", schema="core", uniqueConstraints={@UniqueConstraint(columnNames={"fileexamination_group_key","relative_path","base_name","extension"})})
@@ -96,10 +96,10 @@ public class FileExaminationImpl implements FileExamination {
 	}
 
 	
-	public Fixity getFixity(Algorithm algorithm) {
+	public Fixity getFixity(FixityAlgorithm algorithm) {
 		for(Fixity fixity : this.fixitySet)
 		{
-			if (fixity.getAlgorithm().equals(algorithm))
+			if (fixity.getFixityAlgorithm().equals(algorithm))
 			{
 				return fixity;
 			}

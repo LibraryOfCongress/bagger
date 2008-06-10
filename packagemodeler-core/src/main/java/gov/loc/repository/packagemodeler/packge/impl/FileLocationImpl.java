@@ -56,8 +56,8 @@ public abstract class FileLocationImpl implements FileLocation
 	@Column(name="is_managed", nullable = false)
 	private boolean isManaged = false;
 
-	@Column(name="is_lc_package_structure", nullable = false)
-	private boolean isLCPackageStructure = false;	
+	@Column(name="is_bag", nullable = false)
+	private boolean isBag = false;	
 	
 	public void setKey(Long key) {
 		this.key = key;
@@ -169,12 +169,12 @@ public abstract class FileLocationImpl implements FileLocation
 		return updateTimestamp;
 	}
 	
-	public boolean isLCPackageStructure() {
-		return this.isLCPackageStructure;
+	public boolean isBag() {
+		return this.isBag;
 	}
 	
-	public void setLCPackageStructure(boolean isLCPackageStructure) {
-		this.isLCPackageStructure = isLCPackageStructure;
+	public void setBag(boolean isBag) {
+		this.isBag = isBag;
 		
 	}
 }

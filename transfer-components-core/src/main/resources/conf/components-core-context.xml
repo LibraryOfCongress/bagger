@@ -30,30 +30,4 @@
     	<aop:advisor advice-ref="filesOnDiskInventorierTxAdvice" pointcut-ref="filesOnDiskInventorierMethods" />    	
     </aop:config>	
 	
-	<!-- MD5Deep Verifier / Generator -->
-	
-	<bean id="md5DeepComponent" class="gov.loc.repository.transfer.components.fileexamination.impl.Md5DeepImpl" scope="prototype">
-		<constructor-arg ref="modelerFactory" />
-		<constructor-arg ref="packageModelDao" />
-		<constructor-arg>
-			<map>
-				<entry key="md5" value="md5deep" />
-				<entry key="sha1" value="sha1deep" />
-				<entry key="sha256" value="sha256deep" />
-			</map>
-		</constructor-arg>	
-	</bean>	
-	
-	<tx:advice id="md5DeepTxAdvice" transaction-manager="packageModelerTransactionManager">
-    	<tx:attributes>
-    		<tx:method name="generate*" />
-    		<tx:method name="verify*" />
-    	</tx:attributes>
-    </tx:advice>
-    
-    <aop:config>
-    	<aop:pointcut id="md5DeepMethods" expression="execution(* gov.loc.repository.transfer.components.fileexamination.impl.Md5DeepImpl.*(..))" />
-    	<aop:advisor advice-ref="md5DeepTxAdvice" pointcut-ref="md5DeepMethods" />    	
-    </aop:config>	
-	
 </beans>

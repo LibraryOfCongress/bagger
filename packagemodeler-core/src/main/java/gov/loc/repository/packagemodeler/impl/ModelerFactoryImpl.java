@@ -1,14 +1,21 @@
 package gov.loc.repository.packagemodeler.impl;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
+import gov.loc.repository.bagit.ManifestReader;
+import gov.loc.repository.bagit.ManifestReader.FileFixity;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;
@@ -39,14 +46,13 @@ import gov.loc.repository.packagemodeler.packge.impl.FileInstanceImpl;
 import gov.loc.repository.packagemodeler.packge.impl.RepositoryImpl;
 import gov.loc.repository.packagemodeler.packge.impl.StorageSystemFileLocationImpl;
 import gov.loc.repository.utilities.FilenameHelper;
-import gov.loc.repository.utilities.ManifestReader;
-import gov.loc.repository.utilities.ManifestReader.FileFixity;
 
 @Component("modelerFactory")
 public class ModelerFactoryImpl implements ModelerFactory {
 
 	private static final Log log = LogFactory.getLog(ModelerFactoryImpl.class);
 	
+	@Override
 	public <T extends Agent> T createAgent(Class<T> agentType, String agentId) throws Exception {
 		Agent agent = (Agent)(Class.forName(getImplClassName(agentType))).newInstance();
 		agent.setId(agentId);
@@ -54,6 +60,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return agentType.cast(agent);
 	}
 
+	@Override
 	public CanonicalFile createCanonicalFile(Package packge, FileName fileName, Set<Fixity> fixitySet) {
 		CanonicalFile canonicalFile = new CanonicalFileImpl();
 		packge.addCanonicalFile(canonicalFile);
@@ -63,28 +70,76 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return canonicalFile;
 	}
 
+	@Override
 	public CanonicalFile createCanonicalFile(Package packge, FileName fileName, Fixity fixity) {
 		return this.createCanonicalFile(packge, fileName,  FixityHelper.createFixitySet(fixity));
 	}
 
-	public Collection<CanonicalFile> createCanonicalFiles(Package packge, ManifestReader reader) throws Exception {
+	private Map<String, Map<String,String>> readFixityMap(List<File> manifests)
+	{
+		Map<String, Map<String,String>> fixityMap = new HashMap<String, Map<String,String>>();
+		for(File manifest : manifests)
+		{
+			ManifestReader reader = new ManifestReader(manifest);
+			try
+			{
+				while(reader.hasNext())
+				{
+					FileFixity fileFixity = reader.next();
+					
+					if (! fixityMap.containsKey(fileFixity.getFile()))
+					{
+						fixityMap.put(fileFixity.getFile(), new HashMap<String,String>());
+					}
+					fixityMap.get(fileFixity.getFile()).put(reader.getAlgorithm(), fileFixity.getFixityValue());
+				}
+			}
+			finally
+			{
+				reader.close();
+			}
+		}
+		return fixityMap;
+	}
+
+	private Set<Fixity> createFixitySet(Map<String,String> fixityValueMap)
+	{
+		Set<Fixity> fixitySet = new HashSet<Fixity>();
+		for(String algorithm : fixityValueMap.keySet())
+		{
+			fixitySet.add(new Fixity(fixityValueMap.get(algorithm), algorithm));
+		}
+		return fixitySet;
+	}
+	
+	@Override
+	public Collection<CanonicalFile> createCanonicalFilesFromBagManifests(
+			Package packge, List<File> bagManifests) throws Exception {
 		if (! packge.getCanonicalFiles().isEmpty())
 		{
 			throw new Exception(packge.toString() + " already has canonical files.");
 		}
-		String root = null;
-		while(reader.hasNext())
+
+		Map<String, Map<String,String>> fixityMap = this.readFixityMap(bagManifests);
+
+		for(String fileKey : fixityMap.keySet())
 		{
-			FileFixity fileFixity = reader.next();
-			//Need to remove the root
-			root = FilenameHelper.getRoot(fileFixity.getFile());
-			String filename = FilenameHelper.removeBasePath(root, fileFixity.getFile());
-			this.createCanonicalFile(packge, new FileName(filename), new Fixity(fileFixity.getFixityValue(), reader.getAlgorithm()));
+			Set<Fixity> fixitySet = this.createFixitySet(fixityMap.get(fileKey));
+			this.createCanonicalFile(packge, new FileName(fileKey), fixitySet);			
 		}
-		reader.close();
+		
 		return packge.getCanonicalFiles();
 	}	
+	
+	@Override
+	public Collection<CanonicalFile> createCanonicalFilesFromBagManifest(Package packge, File manifestFile) throws Exception {
+		List<File> manifestFiles = new ArrayList<File>();
+		manifestFiles.add(manifestFile);
+		return this.createCanonicalFilesFromBagManifests(packge, manifestFiles);
+		
+	}	
 
+	@Override
 	public Collection<CanonicalFile> createCanonicalFilesFromFileInstances(Package packge, Collection<FileInstance> fileInstanceCollection) throws Exception {
 		if (! packge.getCanonicalFiles().isEmpty())
 		{
@@ -95,7 +150,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 			Set<Fixity> fixitySet = new HashSet<Fixity>();
 			for(Fixity fixity : fileInstance.getFixities())
 			{
-				fixitySet.add(new Fixity(fixity.getValue(), fixity.getAlgorithm()));
+				fixitySet.add(new Fixity(fixity.getValue(), fixity.getFixityAlgorithm()));
 			}
 			//Filter out fileInstances with no fixities
 			if (! fixitySet.isEmpty())
@@ -106,7 +161,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return packge.getCanonicalFiles();
 	}
 	
-	
+	@Override
 	public FileExamination createFileExamination(FileExaminationGroup fileExaminationGroup, FileName fileName, Set<Fixity> fixitySet) {
 		FileExamination fileExamination = new FileExaminationImpl();
 		fileExaminationGroup.addFileExamination(fileExamination);
@@ -116,10 +171,12 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return fileExamination;
 	}
 
+	@Override
 	public FileExamination createFileExamination(FileExaminationGroup fileExaminationGroup, FileName fileName, Fixity fixity) {
 		return this.createFileExamination(fileExaminationGroup, fileName, FixityHelper.createFixitySet(fixity));
 	}
 
+	@Override
 	public FileExaminationGroup createFileExaminationGroup(FileLocation fileLocation, boolean isComplete) {
 		FileExaminationGroup fileExaminationGroup = new FileExaminationGroupImpl();
 		fileLocation.addFileExaminationGroup(fileExaminationGroup);
@@ -128,6 +185,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return fileExaminationGroup;
 	}
 
+	@Override
 	public FileInstance createFileInstance(FileLocation fileLocation, FileName fileName, Set<Fixity> fixitySet) {
 		FileInstance fileInstance = new FileInstanceImpl();
 		fileLocation.addFileInstance(fileInstance);
@@ -140,14 +198,17 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return fileInstance;
 	}
 
+	@Override
 	public FileInstance createFileInstance(FileLocation fileLocation, FileName fileName, Fixity fixity) {
 		return this.createFileInstance(fileLocation, fileName, FixityHelper.createFixitySet(fixity));
 	}
 
+	@Override
 	public FileInstance createFileInstance(FileLocation fileLocation, FileName fileName) {
 		return this.createFileInstance(fileLocation, fileName, (Set<Fixity>)null);
 	}	
 	
+	@Override
 	public Collection<FileInstance> createFileInstancesFromCanonicalFiles(FileLocation fileLocation, Collection<CanonicalFile> canonicalFileCollection) throws Exception {
 		if (! fileLocation.getFileInstances().isEmpty())
 		{
@@ -158,13 +219,14 @@ public class ModelerFactoryImpl implements ModelerFactory {
 			Set<Fixity> fixitySet = new HashSet<Fixity>();
 			for(Fixity fixity : canonicalFile.getFixities())
 			{
-				fixitySet.add(new Fixity(fixity.getValue(), fixity.getAlgorithm()));
+				fixitySet.add(new Fixity(fixity.getValue(), fixity.getFixityAlgorithm()));
 			}
 			this.createFileInstance(fileLocation, canonicalFile.getFileName(), fixitySet);
 		}
 		return fileLocation.getFileInstances();
 	}
 	
+	@Override
 	public Collection<FileInstance> createFileInstancesFromFileExaminations(FileLocation fileLocation, Collection<FileExamination> fileExaminationCollection) throws Exception {
 		if (! fileLocation.getFileInstances().isEmpty())
 		{
@@ -175,11 +237,11 @@ public class ModelerFactoryImpl implements ModelerFactory {
 			if (! fileExamination.getFixities().isEmpty())
 			{
 				Set<Fixity> fixitySet = new HashSet<Fixity>();
-				if (! fileLocation.isLCPackageStructure() || ! (fileExamination.getFileName().getRelativePath() == null || fileExamination.getFileName().getRelativePath().length() == 0))
+				if (! fileLocation.isBag() || ! (fileExamination.getFileName().getRelativePath() == null || fileExamination.getFileName().getRelativePath().length() == 0))
 				{
 					for(Fixity fixity : fileExamination.getFixities())
 					{
-						fixitySet.add(new Fixity(fixity.getValue(), fixity.getAlgorithm()));
+						fixitySet.add(new Fixity(fixity.getValue(), fixity.getFixityAlgorithm()));
 					}
 				}
 				this.createFileInstance(fileLocation, fileExamination.getFileName(), fixitySet);				
@@ -188,6 +250,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return fileLocation.getFileInstances();
 	}	
 
+	@Override
 	public Collection<FileInstance> createFileInstances(FileLocation fileLocation, ManifestReader reader) throws Exception {
 		if (! fileLocation.getFileInstances().isEmpty())
 		{
@@ -206,7 +269,52 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return fileLocation.getFileInstances();
 	}	
 	
+	@Override
+	public Collection<FileInstance> createFileInstancesFromBagManifests(
+			FileLocation fileLocation, List<File> bagManifests)
+			throws Exception {
+		Map<String, Map<String,String>> fixityMap = this.readFixityMap(bagManifests);
+
+		for(String fileKey : fixityMap.keySet())
+		{
+			Set<Fixity> fixitySet = this.createFixitySet(fixityMap.get(fileKey));
+			this.createFileInstance(fileLocation, new FileName(fileKey), fixitySet);
+		}
+		
+		return fileLocation.getFileInstances();
+	}
 	
+	@Override
+	public Collection<FileInstance> createFileInstancesFromBagTagManifests(
+			FileLocation fileLocation, List<File> tagManifests)
+			throws Exception {
+		Map<String, Map<String,String>> fixityMap = this.readFixityMap(tagManifests);
+
+		for(String fileKey : fixityMap.keySet())
+		{
+			this.createFileInstance(fileLocation, new FileName(fileKey));
+		}
+		
+		return fileLocation.getFileInstances();
+	}
+	
+	@Override
+	public Collection<FileInstance> createFileInstancesFromBagManifest(
+			FileLocation fileLocation, File bagManifest) throws Exception {
+		List<File> bagManifests = new ArrayList<File>();
+		bagManifests.add(bagManifest);
+		return this.createFileInstancesFromBagManifests(fileLocation, bagManifests);
+	}
+	
+	@Override
+	public Collection<FileInstance> createFileInstancesFromBagTagManifest(
+			FileLocation fileLocation, File tagManifest) throws Exception {
+		List<File> tagManifests = new ArrayList<File>();
+		tagManifests.add(tagManifest);
+		return this.createFileInstancesFromBagTagManifests(fileLocation, tagManifests);
+	}
+	
+	@Override
 	public FileExamination createFileExamination(FileExaminationGroup fileExaminationGroup, FileName fileName) {
 		FileExamination fileExamination = new FileExaminationImpl();		
 		fileExaminationGroup.addFileExamination(fileExamination);
@@ -216,6 +324,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		
 	}
 
+	@Override
 	public <T extends Package> T createPackage(Class<T> packageType, Repository repository, String packageId) throws Exception
 	{
 		Package packge = (Package)(Class.forName(getImplClassName(packageType))).newInstance();
@@ -226,6 +335,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		
 	}
 
+	@Override
 	public <T extends PackageEvent> T createPackageEvent(Class<T> eventType, Package packge, Date eventStart, Agent reportingAgent) throws Exception {
 		PackageEvent event = (PackageEvent)(Class.forName(getImplClassName(eventType))).newInstance();		
 		packge.addPackageEvent(event);
@@ -235,6 +345,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return eventType.cast(event);
 	}
 
+	@Override
 	public Repository createRepository(String repositoryId) throws Exception {
 		Repository repository = new RepositoryImpl();
 		repository.setId(repositoryId);
@@ -242,17 +353,19 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return repository;
 	}
 
+	@Override
 	public StorageSystemFileLocation createStorageSystemFileLocation(Package packge, System storageSystem, String basePath, boolean isManaged, boolean isLCPackageStructure) {
 		StorageSystemFileLocation fileLocation = new StorageSystemFileLocationImpl();
 		packge.addFileLocation(fileLocation);
 		fileLocation.setStorageSystem(storageSystem);
 		fileLocation.setBasePath(basePath);
 		fileLocation.setManaged(isManaged);
-		fileLocation.setLCPackageStructure(isLCPackageStructure);
+		fileLocation.setBag(isLCPackageStructure);
 		log.info("Created " + fileLocation.toString());
 		return fileLocation;
 	}
 
+	@Override
 	public ExternalFileLocation createExternalFileLocation(Package packge, MediaType mediaType, ExternalIdentifier externalIdentifier, String basePath, boolean isManaged, boolean isLCPackageStructure) {
 		ExternalFileLocation fileLocation = new ExternalFileLocationImpl();
 		packge.addFileLocation(fileLocation);
@@ -260,11 +373,12 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		fileLocation.setExternalIdentifier(externalIdentifier);
 		fileLocation.setBasePath(basePath);
 		fileLocation.setManaged(isManaged);
-		fileLocation.setLCPackageStructure(isLCPackageStructure);
+		fileLocation.setBag(isLCPackageStructure);
 		log.info("Created " + fileLocation.toString());
 		return fileLocation;				
 	}
 
+	@Override
 	public Role createRole(String roleId) {
 		Role role = new RoleImpl();
 		role.setId(roleId);
@@ -272,6 +386,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return role;
 	}
 
+	@Override
 	public <T extends FileExaminationGroupEvent> T createFileExaminationGroupEvent(Class<T> eventType, FileExaminationGroup fileExaminationGroup, Date eventStart, Agent reportingAgent) throws Exception {
 		FileExaminationGroupEvent event = (FileExaminationGroupEvent)(Class.forName(getImplClassName(eventType))).newInstance();
 		fileExaminationGroup.addFileExaminationGroupEvent(event);
@@ -281,6 +396,7 @@ public class ModelerFactoryImpl implements ModelerFactory {
 		return eventType.cast(event);
 	}
 
+	@Override
 	public <T extends FileLocationEvent> T createFileLocationEvent(Class<T> eventType, FileLocation fileLocation, Date eventStart, Agent reportingAgent) throws Exception {
 		FileLocationEvent event = (FileLocationEvent)(Class.forName(getImplClassName(eventType))).newInstance();
 		fileLocation.addFileLocationEvent(event);

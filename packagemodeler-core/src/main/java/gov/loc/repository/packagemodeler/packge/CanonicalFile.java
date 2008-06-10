@@ -2,7 +2,7 @@ package gov.loc.repository.packagemodeler.packge;
 
 import gov.loc.repository.Keyed;
 import gov.loc.repository.Timestamped;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
+import gov.loc.repository.fixity.FixityAlgorithm;
 
 import java.util.Set;
 
@@ -14,7 +14,7 @@ public interface CanonicalFile extends Keyed, Timestamped {
 	
 	public abstract Set<Fixity> getFixities();
 	
-	public abstract Fixity getFixity(Algorithm algorithm);
+	public abstract Fixity getFixity(FixityAlgorithm algorithm);
 	
 	public abstract void setBytes(Long size);
 

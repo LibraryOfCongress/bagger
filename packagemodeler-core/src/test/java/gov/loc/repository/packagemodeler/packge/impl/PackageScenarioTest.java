@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
 import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.System;
@@ -19,7 +20,6 @@ import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
 
@@ -49,9 +49,9 @@ public class PackageScenarioTest extends AbstractCoreModelersTest {
 		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
 		
 		//It has 3 canonical files
-		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
-		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_3), new Fixity(FIXITY_3, Algorithm.MD5));		
+		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
+		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_2), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
+		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_3), new Fixity(FIXITY_3, FixityAlgorithm.MD5));		
 		
 		this.template.save(packge);
 		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
@@ -75,14 +75,14 @@ public class PackageScenarioTest extends AbstractCoreModelersTest {
 		//A partial set is copied to RS15
 		this.template.refresh(rs15);
 		FileLocation rs15FileLocation = modelerFactory.createStorageSystemFileLocation(packge, rs15, BASEPATH_1, true, true);
-		modelerFactory.createFileInstance(rs15FileLocation, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		modelerFactory.createFileInstance(rs15FileLocation, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createFileInstance(rs15FileLocation, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
+		modelerFactory.createFileInstance(rs15FileLocation, new FileName(FILENAME_2), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		
 		//A complete set plus an additional file is copies to RS5
 		this.template.refresh(rs5);
 		FileLocation rs5FileLocation = modelerFactory.createStorageSystemFileLocation(packge, rs5, BASEPATH_1, true, true);
 		modelerFactory.createFileInstancesFromCanonicalFiles(rs5FileLocation, packge.getCanonicalFiles());
-		modelerFactory.createFileInstance(rs5FileLocation, new FileName(FILENAME_4), new Fixity(FIXITY_4, Algorithm.MD5));
+		modelerFactory.createFileInstance(rs5FileLocation, new FileName(FILENAME_4), new Fixity(FIXITY_4, FixityAlgorithm.MD5));
 		
 		txManager.commit(status);
 		this.template.update(packge);

@@ -1,8 +1,8 @@
 package gov.loc.repository.transfer.components.fileexamination;
 
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
-import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
 import gov.loc.repository.service.annotations.MapParameter;
@@ -24,6 +24,6 @@ public interface FilesOnDiskInventorier extends Component {
 			@MapParameter(name="requestingagentid") String requestingAgentId)
 			throws Exception;
 	
-	public void inventory(FileLocation fileLocation, String mountPath, Fixity.Algorithm algorithm, Agent requestingAgent) throws Exception;
+	public void inventory(FileLocation fileLocation, String mountPath, FixityAlgorithm algorithm, Agent requestingAgent) throws Exception;
 		
 }

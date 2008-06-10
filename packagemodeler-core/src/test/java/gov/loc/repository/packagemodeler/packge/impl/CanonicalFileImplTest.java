@@ -8,13 +8,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
 import gov.loc.repository.packagemodeler.packge.CanonicalFile;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 import gov.loc.repository.packagemodeler.packge.impl.CanonicalFileImpl;
 
 import org.hibernate.validator.InvalidStateException;
@@ -39,8 +39,8 @@ public class CanonicalFileImplTest extends AbstractCoreModelersTest {
 	@Test
 	public void testCanonicalFile() throws Exception
 	{
-		CanonicalFile file1 = modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		file1.getFixities().add(new Fixity(FIXITY_2, Algorithm.SHA1));				
+		CanonicalFile file1 = modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
+		file1.getFixities().add(new Fixity(FIXITY_2, FixityAlgorithm.SHA1));				
 
 		this.template.save(packge);
 		
@@ -49,7 +49,7 @@ public class CanonicalFileImplTest extends AbstractCoreModelersTest {
 				
 		assertNotNull(file1);
 		assertEquals(2, file1.getFixities().size());
-		assertEquals(FIXITY_2, file1.getFixity(Algorithm.SHA1).getValue());
+		assertEquals(FIXITY_2, file1.getFixity(FixityAlgorithm.SHA1).getValue());
 		
 		txManager.commit(status);
 		
@@ -58,8 +58,8 @@ public class CanonicalFileImplTest extends AbstractCoreModelersTest {
 	@Test(expected=DataIntegrityViolationException.class) 
 	public void testUniqueCanonicalFile() throws Exception
 	{
-		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
+		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		
 		this.template.save(packge);
 					

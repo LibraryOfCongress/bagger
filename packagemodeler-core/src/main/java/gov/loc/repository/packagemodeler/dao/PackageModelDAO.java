@@ -16,7 +16,7 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
-import gov.loc.repository.utilities.results.ResultList;
+import gov.loc.repository.results.ResultList;
 
 public interface PackageModelDAO {
 

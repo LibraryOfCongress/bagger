@@ -73,7 +73,7 @@ public class AddExternalFileLocationActionHandlerTest extends AbstractCoreHandle
 		    assertEquals(MediaType.EXTERNAL_HARDDRIVE, fileLocation.getMediaType());
 		    assertEquals("/", fileLocation.getBasePath());
 		    assertFalse(fileLocation.isManaged());
-		    assertFalse(fileLocation.isLCPackageStructure());
+		    assertFalse(fileLocation.isBag());
 		    assertEquals(fileLocation.getKey().toString(), (String)processInstance.getContextInstance().getVariable("externalFileLocationKey"));
 		    
 		    txManager.commit(status);

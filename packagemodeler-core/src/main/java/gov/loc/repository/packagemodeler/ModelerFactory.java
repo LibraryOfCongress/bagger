@@ -1,9 +1,12 @@
 package gov.loc.repository.packagemodeler;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
+import gov.loc.repository.bagit.ManifestReader;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.System;
@@ -23,7 +26,6 @@ import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
 import gov.loc.repository.packagemodeler.packge.ExternalFileLocation.MediaType;
-import gov.loc.repository.utilities.ManifestReader;
 
 public interface ModelerFactory {
 	public Repository createRepository(String repositoryId) throws Exception;
@@ -36,7 +38,9 @@ public interface ModelerFactory {
 
 	public abstract CanonicalFile createCanonicalFile(Package packge, FileName fileName, Fixity fixity);
 	
-	public abstract Collection<CanonicalFile> createCanonicalFiles(Package packge, ManifestReader reader) throws Exception;
+	public abstract Collection<CanonicalFile> createCanonicalFilesFromBagManifest(Package packge, File bagManifest) throws Exception;
+
+	public abstract Collection<CanonicalFile> createCanonicalFilesFromBagManifests(Package packge, List<File> bagManifests) throws Exception;
 	
 	public abstract Collection<CanonicalFile> createCanonicalFilesFromFileInstances(Package packge, Collection<FileInstance> fileInstanceCollection) throws Exception;
 	
@@ -60,6 +64,15 @@ public interface ModelerFactory {
 	public abstract Collection<FileInstance> createFileInstancesFromFileExaminations(FileLocation fileLocation, Collection<FileExamination> fileExaminationCollection) throws Exception;
 
 	public abstract Collection<FileInstance> createFileInstances(FileLocation fileLocation, ManifestReader reader) throws Exception;
+	
+	public abstract Collection<FileInstance> createFileInstancesFromBagManifest(FileLocation fileLocation, File bagManifest) throws Exception;
+
+	public abstract Collection<FileInstance> createFileInstancesFromBagManifests(FileLocation fileLocation, List<File> bagManifests) throws Exception;
+
+	public abstract Collection<FileInstance> createFileInstancesFromBagTagManifest(FileLocation fileLocation, File tagManifest) throws Exception;
+
+	public abstract Collection<FileInstance> createFileInstancesFromBagTagManifests(FileLocation fileLocation, List<File> tagManifests) throws Exception;
+	
 	
 	public abstract FileExaminationGroup createFileExaminationGroup(FileLocation fileLocation, boolean isComplete);
 	

@@ -7,8 +7,7 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import gov.loc.repository.utilities.results.Result;
-import gov.loc.repository.utilities.results.ResultList;
+import gov.loc.repository.results.Result;
 
 public abstract class AbstractReportController implements Report {
 

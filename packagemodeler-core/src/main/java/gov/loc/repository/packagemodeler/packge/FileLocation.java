@@ -44,7 +44,7 @@ public abstract interface FileLocation extends Keyed, Timestamped {
 	
 	public void setManaged(boolean isManaged);
 	
-	public boolean isLCPackageStructure();
+	public boolean isBag();
 	
-	public void setLCPackageStructure(boolean isLCPackageStructure);
+	public void setBag(boolean isBag);
 }

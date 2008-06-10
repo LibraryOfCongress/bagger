@@ -30,7 +30,7 @@ import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.impl.ExternalFileLocationImpl;
 import gov.loc.repository.packagemodeler.packge.impl.PackageImpl;
 import gov.loc.repository.packagemodeler.packge.impl.StorageSystemFileLocationImpl;
-import gov.loc.repository.utilities.results.ResultList;
+import gov.loc.repository.results.ResultList;
 import gov.loc.repository.utilities.FilenameHelper;
 
 @org.springframework.stereotype.Repository

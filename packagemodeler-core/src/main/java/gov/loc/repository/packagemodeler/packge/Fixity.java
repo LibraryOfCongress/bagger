@@ -1,55 +1,35 @@
 package gov.loc.repository.packagemodeler.packge;
 
+import gov.loc.repository.fixity.FixityAlgorithm;
+
 import java.text.MessageFormat;
 
 import javax.persistence.*;
 
 @Embeddable
 public class Fixity {
-
-	public enum Algorithm {
-		MD5("MD5"), SHA1("SHA-1"), SHA256("SHA-256");
-		
-		private final String javaSecurityName;
-		
-		Algorithm(String javaSecurityName) {
-			this.javaSecurityName = javaSecurityName;
-		}
-		
-		public String getJavaSecurityName()
-		{
-			return javaSecurityName;
-		}
-		
-		public static Algorithm fromString(String algorithm) throws IllegalArgumentException
-		{
-			return Algorithm.valueOf(algorithm.toUpperCase());
-			
-		}
-	}
 	
 	public Fixity() {
 	}
 
-	public Fixity(String fixityValue, Algorithm algorithm) {
+	public Fixity(String fixityValue, FixityAlgorithm algorithm) {
 		this.value = fixityValue;
 		this.algorithm = algorithm;
 	}
 
 	public Fixity(String fixityValue, String algorithm) {
 		this.value = fixityValue;
-		this.algorithm = Algorithm.fromString(algorithm);
+		this.algorithm = FixityAlgorithm.fromString(algorithm);
 	}
-	
-	
+		
 	@Column(name="fixity_value", nullable = false)
 	private String value;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="algorithm", nullable = false)
-	private Algorithm algorithm;
+	private FixityAlgorithm algorithm;
 
-	public Algorithm getAlgorithm() {
+	public FixityAlgorithm getFixityAlgorithm() {
 		return this.algorithm;
 	}
 
@@ -57,7 +37,7 @@ public class Fixity {
 		return this.value;
 	}
 
-	public void setAlgorithm(Algorithm algorithm) {
+	public void setFixityAlgorithm(FixityAlgorithm algorithm) {
 		this.algorithm = algorithm;
 	}
 

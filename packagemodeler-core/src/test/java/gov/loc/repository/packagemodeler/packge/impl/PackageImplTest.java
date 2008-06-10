@@ -11,6 +11,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
 import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.System;
@@ -30,7 +31,6 @@ import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.ExternalFileLocation.MediaType;
 import gov.loc.repository.packagemodeler.packge.ExternalIdentifier.IdentifierType;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 import gov.loc.repository.packagemodeler.packge.impl.PackageImpl;
 import gov.loc.repository.utilities.FilenameHelper;
 
@@ -157,8 +157,8 @@ public class PackageImplTest extends AbstractCoreModelersTest {
 	{
 		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
 		String root = FilenameHelper.getRoot(FILENAME_1);
-		modelerFactory.createCanonicalFile(packge, new FileName(FilenameHelper.removeBasePath(root, FILENAME_1)), new Fixity(FIXITY_1, Algorithm.MD5));
-		modelerFactory.createCanonicalFile(packge, new FileName(FilenameHelper.removeBasePath(root, FILENAME_2)), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createCanonicalFile(packge, new FileName(FilenameHelper.removeBasePath(root, FILENAME_1)), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
+		modelerFactory.createCanonicalFile(packge, new FileName(FilenameHelper.removeBasePath(root, FILENAME_2)), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 
 		this.template.save(packge);
 		

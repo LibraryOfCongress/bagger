@@ -11,6 +11,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import static org.junit.Assert.*;
 
 import gov.loc.repository.constants.Roles;
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.System;
@@ -56,7 +57,7 @@ public class FilesOnDiskInventorierImplTest extends AbstractCorePackageModelerAw
 		assertEquals(0, fileLocation.getFileInstances().size());
 		assertEquals(0, fileLocation.getFileLocationEvents().size());
 		
-		inventorier.inventory(fileLocation, this.getFile("batch").toString(), Fixity.Algorithm.MD5, reportingAgent );
+		inventorier.inventory(fileLocation, this.getFile("batch").toString(), FixityAlgorithm.MD5, reportingAgent );
 		
 		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
 
@@ -66,7 +67,7 @@ public class FilesOnDiskInventorierImplTest extends AbstractCorePackageModelerAw
 		assertTrue(fileInstance.getFixities().isEmpty());
 		fileInstance = this.dao.findFileInstance(fileLocation, new FileName("batch1/dir2/dir3/test5.txt"));
 		assertNotNull(fileInstance);
-		Fixity fixity = fileInstance.getFixity(Fixity.Algorithm.MD5);
+		Fixity fixity = fileInstance.getFixity(FixityAlgorithm.MD5);
 		assertNotNull(fixity);
 		assertEquals("E3D704F3542B44A621EBED70DC0EFE13".toLowerCase(), fixity.getValue().toLowerCase());
 		

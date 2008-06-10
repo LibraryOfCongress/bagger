@@ -9,6 +9,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
 import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.System;
@@ -19,7 +20,6 @@ import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 
 public class FileExaminationImplTest extends AbstractCoreModelersTest {
 	
@@ -49,8 +49,8 @@ public class FileExaminationImplTest extends AbstractCoreModelersTest {
 	public void testFileExamination() throws Exception
 	{				
 		//A typical file observation
-		FileExamination fileExamination1 = modelerFactory.createFileExamination(fileExaminationGroup1, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		fileExamination1.getFixities().add(new Fixity(FIXITY_2, Algorithm.SHA1));
+		FileExamination fileExamination1 = modelerFactory.createFileExamination(fileExaminationGroup1, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
+		fileExamination1.getFixities().add(new Fixity(FIXITY_2, FixityAlgorithm.SHA1));
 
 		this.template.save(fileExaminationGroup1);
 		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
@@ -58,7 +58,7 @@ public class FileExaminationImplTest extends AbstractCoreModelersTest {
 
 		assertNotNull(fileExamination1);
 		assertEquals(2, fileExamination1.getFixities().size());
-		assertEquals(FIXITY_2, fileExamination1.getFixity(Algorithm.SHA1).getValue());
+		assertEquals(FIXITY_2, fileExamination1.getFixity(FixityAlgorithm.SHA1).getValue());
 		assertEquals(fileExaminationGroup1.getKey(), fileExamination1.getFileExaminationGroup().getKey());
 		
 		txManager.commit(status);
@@ -84,8 +84,8 @@ public class FileExaminationImplTest extends AbstractCoreModelersTest {
 	@Test(expected=DataIntegrityViolationException.class) 
 	public void testUniqueFileObservation() throws Exception
 	{
-		modelerFactory.createFileExamination(fileExaminationGroup1, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
-		modelerFactory.createFileExamination(fileExaminationGroup1, new FileName(FILENAME_1), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createFileExamination(fileExaminationGroup1, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
+		modelerFactory.createFileExamination(fileExaminationGroup1, new FileName(FILENAME_1), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		
 		this.template.save(fileExaminationGroup1);		
 	}

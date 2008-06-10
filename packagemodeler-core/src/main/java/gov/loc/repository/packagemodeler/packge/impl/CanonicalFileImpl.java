@@ -1,10 +1,10 @@
 package gov.loc.repository.packagemodeler.packge.impl;
 
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.packge.CanonicalFile;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.Package;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -76,10 +76,10 @@ public class CanonicalFileImpl implements CanonicalFile {
 		this.fileName = fileName;	
 	}
 	
-	public Fixity getFixity(Algorithm algorithm) {
+	public Fixity getFixity(FixityAlgorithm algorithm) {
 		for(Fixity fixity : this.fixitySet)
 		{
-			if (fixity.getAlgorithm().equals(algorithm))
+			if (fixity.getFixityAlgorithm().equals(algorithm))
 			{
 				return fixity;
 			}

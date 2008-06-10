@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import gov.loc.repository.bagit.ManifestReader;
+import gov.loc.repository.bagit.BagHelper;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.PackageModelerConstants;
 import gov.loc.repository.packagemodeler.agents.Agent;
@@ -24,8 +26,6 @@ import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.utilities.ConfigurationFactory;
 import gov.loc.repository.utilities.EnhancedHashMap;
 import gov.loc.repository.utilities.FilenameHelper;
-import gov.loc.repository.utilities.ManifestReader;
-import gov.loc.repository.utilities.PackageHelper;
 
 import org.joda.time.format.ISODateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -353,24 +353,33 @@ public class MapDataDriver {
     
     private void inventoryFromManifest() throws Exception
     {
-        Date eventStart = Calendar.getInstance().getTime();
+    	Date eventStart = Calendar.getInstance().getTime();
         FileLocation fileLocation = getFileLocation();
-        ManifestReader reader = new ManifestReader();
-        File packageDirectory = new File(fileLocation.getBasePath());
-        File manifestFile = PackageHelper.discoverManifest(packageDirectory);
-        reader.setFile(manifestFile);
+        if (! fileLocation.isBag())
+        {
+        	throw new RuntimeException("Can only inventory from manifest for bags");
+        }
+        
+        File packageDir = new File(fileLocation.getBasePath());
+        List<File> manifests =  BagHelper.getManifests(packageDir);
+        if (manifests.isEmpty())
+        {
+        	throw new RuntimeException("No manifests found");
+        }
+        if (manifests.size() > 1)
+        {
+        	throw new RuntimeException("Driver can only handle bags with a single manifest");
+        }
+        ManifestReader reader = new ManifestReader(manifests.get(0));
         factory.createFileInstances(fileLocation, reader);
         
-        //Add files from the package root
-        if (fileLocation.isLCPackageStructure())
+        //Add tags
+        List<File> fileList = BagHelper.getTags(packageDir, true);
+        for(File file : fileList)
         {
-            List<File> fileList = PackageHelper.discoverLCPackageRootFiles(packageDirectory);
-            for(File file : fileList)
-            {
-                String filename = FilenameHelper.removeBasePath(fileLocation.getBasePath(), FilenameHelper.normalize(file.toString()));
-                factory.createFileInstance(fileLocation, new FileName(filename));
-            }            
-        }
+            String filename = FilenameHelper.removeBasePath(fileLocation.getBasePath(), FilenameHelper.normalize(file.toString()));
+            factory.createFileInstance(fileLocation, new FileName(filename));
+        }            
         
         //Record InventoryFromManifestEvent
         InventoryFromManifestEvent event = factory.createFileLocationEvent(InventoryFromManifestEvent.class, fileLocation, eventStart, this.getReportingAgent());

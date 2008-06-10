@@ -48,7 +48,7 @@
 	<context:mbean-server />
  	
  	<bean id="serviceUrl" class="java.lang.String">
- 		<constructor-arg value="service:jmx:hessian://$s{host}:$s{port}/" />
+ 		<constructor-arg value="service:jmx:hessian://$s{host}:$s{port}/" type="java.lang.String"/>
  	</bean>
  	 
 	<context:mbean-export server="mbeanServer"/>

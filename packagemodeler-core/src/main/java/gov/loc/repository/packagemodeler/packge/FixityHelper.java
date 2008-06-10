@@ -18,11 +18,11 @@ public class FixityHelper
 		log.debug(MessageFormat.format("Checking fixity set with {0} items", fixitySet1.size()));
 		for(Fixity fixity : fixitySet1)
 		{
-			log.debug(MessageFormat.format("Checking fixity set for a match for {0} ({1})", fixity.getValue(), fixity.getAlgorithm()));
+			log.debug(MessageFormat.format("Checking fixity set for a match for {0} ({1})", fixity.getValue(), fixity.getFixityAlgorithm()));
 			Fixity fixity2 = null;
 			for(Fixity checkFixity : fixitySet2)
 			{
-				if (checkFixity.getAlgorithm().equals(fixity.getAlgorithm()))
+				if (checkFixity.getFixityAlgorithm().equals(fixity.getFixityAlgorithm()))
 				{
 					fixity2 = checkFixity;
 				}

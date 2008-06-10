@@ -72,7 +72,7 @@ public class AddStorageSystemFileLocationActionHandlerTest extends AbstractCoreH
 		    StorageSystemFileLocation fileLocation = packge.getFileLocation(RDC, BASEPATH_1);
 		    assertNotNull(fileLocation);
 		    assertTrue(fileLocation.isManaged());
-		    assertTrue(fileLocation.isLCPackageStructure());
+		    assertTrue(fileLocation.isBag());
 		    assertEquals(fileLocation.getKey().toString(), (String)processInstance.getContextInstance().getVariable("stagingFileLocationKey"));
 		    
 		    txManager.commit(status);

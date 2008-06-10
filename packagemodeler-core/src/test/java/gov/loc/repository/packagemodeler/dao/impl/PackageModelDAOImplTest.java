@@ -8,15 +8,13 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.junit.Test;
-import org.springframework.transaction.IllegalTransactionStateException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
-import gov.loc.repository.utilities.results.Result;
-import gov.loc.repository.utilities.results.ResultList;
 import gov.loc.repository.exceptions.RequiredEntityNotFound;
+import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
 import gov.loc.repository.packagemodeler.agents.Organization;
 import gov.loc.repository.packagemodeler.agents.Role;
@@ -32,7 +30,8 @@ import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
-import gov.loc.repository.packagemodeler.packge.Fixity.Algorithm;
+import gov.loc.repository.results.Result;
+import gov.loc.repository.results.ResultList;
 
 public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 	
@@ -62,11 +61,11 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		fileName1 = new FileName(FILENAME_1);
 				
 		Package packge = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
-		modelerFactory.createCanonicalFile(packge, fileName1, new Fixity(FIXITY_1, Algorithm.MD5));		
+		modelerFactory.createCanonicalFile(packge, fileName1, new Fixity(FIXITY_1, FixityAlgorithm.MD5));		
 		fileLocation1 = modelerFactory.createStorageSystemFileLocation(packge, rs25, BASEPATH_1 + testCounter, true, true);		
-		modelerFactory.createFileInstance(fileLocation1, fileName1, new Fixity(FIXITY_1, Algorithm.MD5));
+		modelerFactory.createFileInstance(fileLocation1, fileName1, new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		fileExaminationGroup1 = modelerFactory.createFileExaminationGroup(fileLocation1, true);		
-		modelerFactory.createFileExamination(fileExaminationGroup1, fileName1, new Fixity(FIXITY_1, Algorithm.MD5));
+		modelerFactory.createFileExamination(fileExaminationGroup1, fileName1, new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		
 		this.template.save(packge);
 		
@@ -119,7 +118,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 				
 		//And another with no html files
 		Package packge2 = modelerFactory.createPackage(Package.class, repository, PACKAGE_ID3 + testCounter);
-		modelerFactory.createCanonicalFile(packge2, new FileName("test.xml"), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createCanonicalFile(packge2, new FileName("test.xml"), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		this.template.save(packge2);
 		
 		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
@@ -290,7 +289,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		FileExaminationGroup fileExaminationGroup = modelerFactory.createFileExaminationGroup(fileLocation, true);
 			
 		//Add file instance for FILE1
-		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
+		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		
 		this.template.save(packge);
 
@@ -300,7 +299,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(new FileName(FILENAME_1), result.missingFromTargetList.get(0));
 
 		//Add file exam for FILE1
-		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
+		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		this.template.update(packge);
 		
 		//Everything should be OK
@@ -308,7 +307,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(0, result.missingFromTargetList.size());
 		
 		//Add file exam for FILE2
-		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_2), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		this.template.update(packge);
 		
 		//FILE2 should be in file exams, but not file instances
@@ -318,7 +317,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(new FileName(FILENAME_2), result.additionalInTargetList.get(0));		
 		
 		//Add file instance for FILE2
-		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_2), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		this.template.update(packge);
 		
 		//Everything should be OK
@@ -327,9 +326,9 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(0, result.additionalInTargetList.size());
 
 		//Add file exam with SHA1 and file instance with MD5 for FILE3
-		FileExamination fileExamination = modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_3), new Fixity(FIXITY_3, Algorithm.SHA1));
-		FileInstance fileInstance = modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_3), new Fixity(FIXITY_4, Algorithm.MD5));
-		fileInstance.getFixities().add(new Fixity(FIXITY_5, Algorithm.SHA256));
+		FileExamination fileExamination = modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_3), new Fixity(FIXITY_3, FixityAlgorithm.SHA1));
+		FileInstance fileInstance = modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_3), new Fixity(FIXITY_4, FixityAlgorithm.MD5));
+		fileInstance.getFixities().add(new Fixity(FIXITY_5, FixityAlgorithm.SHA256));
 
 		this.template.update(packge);
 		
@@ -342,7 +341,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 				
 		//Add MD5 for FILE3 file exam
 		//session.refresh(fileExamination);
-		fileExamination.getFixities().add(new Fixity(FIXITY_4, Algorithm.MD5));
+		fileExamination.getFixities().add(new Fixity(FIXITY_4, FixityAlgorithm.MD5));
 
 		this.template.update(packge);
 		
@@ -354,7 +353,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 	
 		//Add file instance for FILE4, which is changeable.  This should not show up as incomparable.
 		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_4));		
-		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_4), new Fixity(FIXITY_6, Algorithm.MD5));		
+		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_4), new Fixity(FIXITY_6, FixityAlgorithm.MD5));		
 
 		this.template.update(packge);
 		
@@ -365,8 +364,8 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(0, result.incomparableList.size());
 		
 		//Add file exam and file instance for FILE5, but with conflicting fixity values
-		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_5), new Fixity(FIXITY_7, Algorithm.MD5));
-		fileInstance = modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_5), new Fixity(FIXITY_8, Algorithm.MD5));
+		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_5), new Fixity(FIXITY_7, FixityAlgorithm.MD5));
+		fileInstance = modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_5), new Fixity(FIXITY_8, FixityAlgorithm.MD5));
 
 		this.template.update(packge);
 				
@@ -379,7 +378,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(new FileName(FILENAME_5), result.fixityMismatchList.get(0));
 		
 		//Fix it
-		fileInstance.getFixity(Algorithm.MD5).setValue(FIXITY_7);
+		fileInstance.getFixity(FixityAlgorithm.MD5).setValue(FIXITY_7);
 
 		this.template.update(fileInstance);
 		
@@ -392,7 +391,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		
 		//Now add a bad FileExamination (i.e., no fixities)
 		modelerFactory.createFileExamination(fileExaminationGroup, new FileName(FILENAME_6));
-		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_6), new Fixity(FIXITY_9, Algorithm.MD5));		
+		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_6), new Fixity(FIXITY_9, FixityAlgorithm.MD5));		
 
 		this.template.update(packge);
 		
@@ -412,7 +411,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		FileLocation fileLocation = modelerFactory.createStorageSystemFileLocation(packge, rdc, BASEPATH_1 + testCounter, true, true);
 		
 		//Add canonical file for FILE1
-		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
+		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		
 		this.template.save(packge);
 		
@@ -421,7 +420,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(1, result.missingFromTargetList.size());
 		assertEquals(new FileName(FILENAME_1), result.missingFromTargetList.get(0));
 		//Add file instance for FILE1
-		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_1), new Fixity(FIXITY_1, Algorithm.MD5));
+		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_1), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
 		this.template.update(packge);
 		
 		//Everything should be OK
@@ -429,7 +428,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(0, result.missingFromTargetList.size());
 		
 		//Add file instance for FILE2
-		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_2), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		this.template.update(packge);
 		
 		//FILE2 should be in file instances, but not canonicalFiles
@@ -439,7 +438,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(new FileName(FILENAME_2), result.additionalInTargetList.get(0));		
 		
 		//Add canonical file for FILE2
-		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_2), new Fixity(FIXITY_2, Algorithm.MD5));
+		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_2), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		this.template.update(packge);
 		
 		//Everything should be OK
@@ -448,9 +447,9 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(0, result.additionalInTargetList.size());
 
 		//Add file instance with SHA1 and canonical file with MD5 for FILE3
-		FileInstance fileInstance = modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_3), new Fixity(FIXITY_3, Algorithm.SHA1));
-		CanonicalFile canonicalFile = modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_3), new Fixity(FIXITY_4, Algorithm.MD5));
-		canonicalFile.getFixities().add(new Fixity(FIXITY_5, Algorithm.SHA256));
+		FileInstance fileInstance = modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_3), new Fixity(FIXITY_3, FixityAlgorithm.SHA1));
+		CanonicalFile canonicalFile = modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_3), new Fixity(FIXITY_4, FixityAlgorithm.MD5));
+		canonicalFile.getFixities().add(new Fixity(FIXITY_5, FixityAlgorithm.SHA256));
 
 		this.template.update(packge);
 		
@@ -462,7 +461,7 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(new FileName(FILENAME_3), result.incomparableList.get(0));		
 				
 		//Add MD5 for FILE3 file instance
-		fileInstance.getFixities().add(new Fixity(FIXITY_4, Algorithm.MD5));
+		fileInstance.getFixities().add(new Fixity(FIXITY_4, FixityAlgorithm.MD5));
 
 		this.template.update(packge);
 		
@@ -473,8 +472,8 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		assertEquals(0, result.incomparableList.size());
 		
 		//Add file instance and canonicalFile for FILE4, but with conflicting fixity values
-		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_4), new Fixity(FIXITY_6, Algorithm.MD5));
-		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_4), new Fixity(FIXITY_7, Algorithm.MD5));
+		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_4), new Fixity(FIXITY_6, FixityAlgorithm.MD5));
+		modelerFactory.createCanonicalFile(packge, new FileName(FILENAME_4), new Fixity(FIXITY_7, FixityAlgorithm.MD5));
 
 		this.template.update(packge);
 				
