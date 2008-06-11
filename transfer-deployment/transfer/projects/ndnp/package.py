@@ -1,12 +1,10 @@
-from transfer import utils
-from transfer.decorators import project_name
+import re
+from transfer import utils, log
 from transfer.database import AbstractDB
 
 class PackageModeler(AbstractDB):
-    @project_name("packagemodeler-ndnp")
     def __init__(self, config):
-        AbstractDB.__init__(self, config)
-        self.config
+        AbstractDB.__init__(self, config, project_name="packagemodeler-ndnp")
         self.original_db_name = "package_modeler"
         self.db_name = self.db_prefix + self.original_db_name
         self.roles = {
@@ -20,6 +18,7 @@ class PackageModeler(AbstractDB):
             self.install_dir, self.project_name, self.version
         )
         self.process_def = "files/processdefinition.xml"
+        self.logger = log.Log(self.project_name)
 
     def create_database(self):
         """ creates database """
@@ -35,4 +34,15 @@ class PackageModeler(AbstractDB):
 
     def deploy_process_def(self, driver):
         """ deploys process definition """
-        return utils.deploy_process_def(driver, self.process_def)
+        result = utils.deploy_process_def(driver, self.process_def)
+        for line in result.splitlines():
+            if self.debug:
+                self.logger.debug(line)
+            m = re.compile(r'ERROR (.+)').search(line)
+            if m:
+                self.logger.error("Error deploying process definition: %s" % (m.groups(1)))
+                raise RuntimeError("Error deploying process definition: %s" % (m.groups(1)))
+            if line.find("Deployment succeeded") != -1:
+                self.logger.info("Deploying process definition")
+                return
+    

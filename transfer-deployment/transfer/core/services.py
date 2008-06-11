@@ -1,4 +1,4 @@
-from transfer import utils
+from transfer import utils, log
 
 class TransferServices():
     def __init__(self, config):
@@ -31,6 +31,7 @@ class TransferServices():
         )
         self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
+        self.logger = log.Log(self.project_name)
 
     def deploy_drivers(self):
         """ deploys command-line drivers """
@@ -41,7 +42,8 @@ class TransferServices():
             result += utils.chmod("+x", "%s/%s" % (self.driver_location, driver), self.debug)
         result += utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
         result += utils.strtofile(self.servicecontainer_props, self.servicecontainer_conf, self.debug)
-        return "Deploying %s drivers\n====================\n%s" % (self.project_name, result)
+        self.logger.info("Deploying %s drivers" % (self.project_name))
+        return
 
 
 

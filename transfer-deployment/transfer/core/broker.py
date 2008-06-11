@@ -1,10 +1,9 @@
-from transfer.decorators import project_name
+from transfer import log
 from transfer.database import AbstractDB
 
 class RequestBroker(AbstractDB):
-    @project_name("requestbroker")
     def __init__(self, config):
-        AbstractDB.__init__(self, config)
+        AbstractDB.__init__(self, config, project_name="requestbroker")
         self.original_db_name = "service_request_broker"
         self.db_name = self.db_prefix + self.original_db_name
         self.roles = {
@@ -17,6 +16,7 @@ class RequestBroker(AbstractDB):
         self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.project_name, config['VERSION']
         )
+        self.logger = log.Log(self.project_name)
 
     def deploy_drivers(self):
         """ deploys CLI drivers """

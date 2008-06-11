@@ -23,17 +23,17 @@ config = {
 core_modeler = core_package.PackageModeler(config)
 
 # Uncomment to drop dbs and roles
-#print core_modeler.drop()
+#core_modeler.drop()
 
 # Uncomment to create dbs, roles, load with fixtures
-print core_modeler.create_database()
-print core_modeler.create_roles()
-print core_modeler.create_tables()
-print core_modeler.grant_permissions()
-print core_modeler.deploy_drivers()
+core_modeler.create_database()
+core_modeler.create_roles()
+core_modeler.create_tables()
+core_modeler.grant_permissions()
+core_modeler.deploy_drivers()
 
 #BRIAN -- We need to discuss what fixtures are needed
-print core_modeler.create_fixtures(fixtures=(
+core_modeler.create_fixtures(fixtures=(
         'createrepository -id ndiip',
         'createperson -id brian -firstname Brian -surname Vargas',
         'createsoftware -id packagemodeler-core-%s' % config['VERSION'],

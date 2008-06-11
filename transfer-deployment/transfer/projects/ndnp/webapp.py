@@ -1,5 +1,5 @@
 import os
-from transfer import utils
+from transfer import utils, log
 from transfer.core.webapp import WebApp as CoreWebApp
 
 class WebApp(CoreWebApp):
@@ -26,6 +26,7 @@ class WebApp(CoreWebApp):
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
         self.tomcat_start = config['TOMCAT_START'] if config['TOMCAT_START'] else ''
         self.tomcat_stop = config['TOMCAT_STOP'] if config['TOMCAT_STOP'] else ''
+        self.logger = log.Log(self.project_name)
         os.environ['CATALINA_HOME'] = self.catalina_home
         utils.stop_tomcat(self.tomcat_stop, self.debug)
 
@@ -37,5 +38,6 @@ class WebApp(CoreWebApp):
         result += utils.unzip(self.warfile, self.webapps_location, self.debug)
         result += utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)        
         result += utils.start_tomcat(self.tomcat_start, self.debug)
-        return "Deploying %s webapp\n====================\n%s" % (self.project_name, result)
+        self.logger.info("Deploying %s webapp" % (self.project_name))
+        return
     

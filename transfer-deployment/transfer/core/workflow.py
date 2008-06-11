@@ -1,12 +1,10 @@
 import os
-from transfer.decorators import project_name
 from transfer.database import AbstractDB
-from transfer import utils
+from transfer import utils, log
 
 class Jbpm(AbstractDB):
-    @project_name("jbpm")
     def __init__(self, config):
-        AbstractDB.__init__(self, config)
+        AbstractDB.__init__(self, config, project_name="jbpm")
         self.original_db_name = "jbpm32"
         self.db_name = self.db_prefix + self.original_db_name
         self.roles = {
@@ -22,7 +20,8 @@ class Jbpm(AbstractDB):
         self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.workflow_name, self.version
         )
-
+        self.logger = log.Log(self.project_name)
+        
     def deploy_process_def(self, driver):
         """ deploys process definition """
         return None

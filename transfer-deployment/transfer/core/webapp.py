@@ -1,4 +1,4 @@
-from transfer import utils
+from transfer import utils, log
 
 class WebApp():
     def __init__(self, config):

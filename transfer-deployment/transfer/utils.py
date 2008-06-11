@@ -17,7 +17,7 @@ def start_tomcat(cmd, debug=False):
     if debug:
         return "starting tomcat: %s" % (cmd)
     else:
-        return os.popen(cmd).read()
+        return os.popen4(cmd)[1].read()
 
 def stop_tomcat(cmd, debug=False):
     # platform = check_os()
@@ -25,42 +25,47 @@ def stop_tomcat(cmd, debug=False):
     if debug:
         return "stopping tomcat: %s" % (cmd)
     else:
-        return os.popen(cmd).read()
+        return os.popen4(cmd)[1].read()
 
 def list_databases(command, debug=False):
     """ gets list of databases """
     if debug:
-        return os.popen('echo "%s"' % command).read()
+        return os.popen4('echo "%s"' % command)[1].read()
     else:
-        return os.popen('%s -l' % command).read()
+        return os.popen4('%s -l' % command)[1].read()
 
 def load_sqlfile(command, sql_file, debug=False):
     """ loads sql data from a file into a database """
     if debug:
-        return os.popen('cat "%s"' % sql_file).read()
+        return os.popen4('cat "%s"' % sql_file)[1].read()
     else:
-        return os.popen('%s -f %s' % (command, sql_file)).read()
+        output = os.popen4('%s -f %s' % (command, sql_file))[1].read()
+        m = re.compile(r'^ERROR: (.+)', re.M).search(output)
+        if m:
+            raise RuntimeError("Error loading '%s': %s" % (sql_file, m.groups(1)))
+        else:
+            return output
 
 def load_sqlstr(command, sql, debug=False):
     """ loads sql data from a string into a database """
     if debug:
-        return os.popen('echo "%s"' % sql).read()
+        return os.popen4('echo "%s"' % sql)[1].read()
     else:
-        return os.popen('echo "%s" | %s' % (sql, command)).read()
-
+        return os.popen4('echo "%s" | %s' % (sql, command))[1].read()
+        
 def unzip(file, directory, debug=False):
     """ unzips a file into a directory """
     if debug:
         return "unzipping %s into %s\n" % (file, directory)
     else:
-        return os.popen('unzip -o "%s" -d "%s"' % (file, directory)).__str__()
+        return os.popen4('unzip -o "%s" -d "%s"' % (file, directory))[1].read()
 
 def chmod(mode, file, debug=False): 
     """ changes the permissions of a file to mode """
     if debug:
         return "changing mode of %s to %s\n" % (file, mode)
     else:
-        return os.popen('chmod %s "%s"' % (mode, file)).__str__()
+        return os.popen4('chmod %s "%s"' % (mode, file))[1].read()
 
 def mkdir(path, debug=False):
     """ makes directory path """
@@ -70,14 +75,14 @@ def mkdir(path, debug=False):
         try:
             return os.makedirs(path).__str__()
         except OSError:
-            return os.popen("rm -rf '%s/*'" % (path)).read()
+            return os.popen4("rm -rf '%s/*'" % (path))[1].read()
     
 def mv(srcfile, destfile, debug=False):
     """ moves srcfile to destfile """
     if debug:
         return "moving %s to %s\n" % (srcfile, destfile)
     else:
-        return os.popen('mv "%s" "%s"' % (srcfile, destfile)).__str__()
+        return os.popen4('mv "%s" "%s"' % (srcfile, destfile))[1].read()
 
 def strtofile(str, file, debug=False):
     """ creates a file from a string """
@@ -94,7 +99,7 @@ def driver(str, debug=False):
     if debug:
         return "invoking %s\n" % str
     else:
-        return os.popen(str).__str__()
+        return os.popen4(str)[1].read()
         
 def prefix_database_in_file(file, original_db_name, db_name):
     """ prepends db_prefix to database names """
@@ -143,5 +148,5 @@ def localize_datasources_props(file, db_server, db_port, db_name, db_prefix, rol
 
 def deploy_process_def(driver, process_def):
     """ deploys process definition """
-    result = os.popen("%s deploy -file %s" % (driver, process_def)).__str__()
-    return "Deploying process definition\n====================\n%s" % (result)
+    return os.popen4("%s deploy -file %s" % (driver, process_def))[1].read()
+

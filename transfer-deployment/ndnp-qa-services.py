@@ -23,4 +23,4 @@ config = {
 transfer_services = services.TransferServices(config)
 
 # Uncomment to deploy transfer service drivers
-print transfer_services.deploy_drivers()
+transfer_services.deploy_drivers()
