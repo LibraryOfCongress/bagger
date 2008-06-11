@@ -16,6 +16,7 @@ class PackageModeler(AbstractDB):
         self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.project_name, config['VERSION']
         )
+        self.url = 'https://beryllium.rdc.lctl.gov/trac/transfer/browser/trunk/%s/release/%s-%s-bin.zip?format=raw' % (self.project_name, self.project_name, self.version)
         self.logger = log.Log(self.project_name)
 
     def deploy_process_def(self, driver):

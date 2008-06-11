@@ -1,5 +1,6 @@
 import os
 import re
+import urllib
 from transfer import utils, log
 
 class AbstractDB():
@@ -24,6 +25,7 @@ class AbstractDB():
         self.psql = config['PSQL'] if config['PSQL'] else "/usr/bin/psql"
         self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
+        self.url = None
         self.logger = None
         os.environ['PGHOST'] = self.db_server
         os.environ['PGPORT'] = self.db_port
@@ -108,6 +110,8 @@ class AbstractDB():
 
     def deploy_drivers(self):
         """ deploys command-line drivers """
+        if not os.path.exists(self.driver_package):
+            urllib.urlretrieve(self.url, self.driver_package)
         result  = utils.unzip(self.driver_package, self.install_dir, self.debug)
         result += utils.chmod("+x", self.driver, self.debug)
         result += utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.original_db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)

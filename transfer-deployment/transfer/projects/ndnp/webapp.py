@@ -1,4 +1,5 @@
 import os
+import urllib
 from transfer import utils, log
 from transfer.core.webapp import WebApp as CoreWebApp
 
@@ -27,11 +28,14 @@ class WebApp(CoreWebApp):
         self.tomcat_start = config['TOMCAT_START'] if config['TOMCAT_START'] else ''
         self.tomcat_stop = config['TOMCAT_STOP'] if config['TOMCAT_STOP'] else ''
         self.logger = log.Log(self.project_name)
+        self.url = 'https://beryllium.rdc.lctl.gov/trac/ndnptransfer/browser/trunk/transfer-ui-ndnp/releases/transfer-ui-ndnp-%s-template.war?format=raw' % (self.version)
         os.environ['CATALINA_HOME'] = self.catalina_home
         utils.stop_tomcat(self.tomcat_stop, self.debug)
 
     def deploy(self):
         """ deploys web application to tomcat """
+        if not os.path.exists(self.warfile):
+            urllib.urlretrieve(self.url, self.warfile)
         result = ""
         # result += utils.stop_tomcat(self.tomcat_stop, self.debug)
         result += utils.mkdir("%s/webapps/transfer" % (self.catalina_home), self.debug)

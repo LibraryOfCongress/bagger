@@ -1,4 +1,6 @@
+import os
 import re
+import urllib
 from transfer import utils, log
 from transfer.database import AbstractDB
 
@@ -18,6 +20,8 @@ class PackageModeler(AbstractDB):
             self.install_dir, self.project_name, self.version
         )
         self.process_def = "files/processdefinition.xml"
+        self.process_def_url = "https://beryllium.rdc.lctl.gov/trac/ndnptransfer/browser/trunk/workflow-processes-ndnp/src/main/resources/gov/loc/repository/workflow/processdefinitions/ndnp/ndnp1/processdefinition.xml?format=raw"
+        self.url = 'https://beryllium.rdc.lctl.gov/trac/ndnptransfer/browser/trunk/%s/releases/%s-%s-bin.zip?format=raw' % (self.project_name, self.project_name, self.version)
         self.logger = log.Log(self.project_name)
 
     def create_database(self):
@@ -34,6 +38,8 @@ class PackageModeler(AbstractDB):
 
     def deploy_process_def(self, driver):
         """ deploys process definition """
+        if not os.path.exists(self.process_def):
+            urllib.urlretrieve(self.process_def_url, self.process_def)
         result = utils.deploy_process_def(driver, self.process_def)
         for line in result.splitlines():
             if self.debug:
