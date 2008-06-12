@@ -26,11 +26,14 @@ class AbstractDB():
         self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
         self.url = None
-        self.logger = None
+        self.logger = log.Log(self.project_name)
         os.environ['PGHOST'] = self.db_server
         os.environ['PGPORT'] = self.db_port
         os.environ['PGUSER'] = config['PGUSER'] if config['PGUSER'] else 'postgres'
         os.environ['PGPASSWORD'] = config['PGPASSWORD'] if config['PGPASSWORD'] else ""
+        if not self.java_home():
+            self.logger.error("JAVA_HOME is not set properly: '%s'" % (os.environ['JAVA_HOME']))
+            raise RuntimeError("JAVA_HOME is not set properly: '%s'" % (os.environ['JAVA_HOME']))
         if not self.connect():
             self.logger.error("Cannot connect to database: %s@%s:%s/%s" % (
                 os.environ['PGUSER'], self.db_server, self.db_port, self.db_name
@@ -112,9 +115,18 @@ class AbstractDB():
         """ deploys command-line drivers """
         if not os.path.exists(self.driver_package):
             urllib.urlretrieve(self.url, self.driver_package)
-        result  = utils.unzip(self.driver_package, self.install_dir, self.debug)
-        result += utils.chmod("+x", self.driver, self.debug)
-        result += utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.original_db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
+        if not os.path.isdir(self.install_dir):
+            self.logger.error("INSTALL_DIR '%s' does not exist" % (self.install_dir))
+            raise RuntimeError("INSTALL_DIR '%s' does not exist" % (self.install_dir))
+        try:
+            utils.unzip(self.driver_package, self.install_dir, self.debug)
+        except IOError, e:
+            self.logger.error("Could not unzip driver '%s' into '%s': %s" % (self.driver_package, self.install_dir, e))
+            raise RuntimeError("Could not unzip driver '%s' into '%s': %s" % (self.driver_package, self.install_dir, e))
+        if utils.chmod("+x", self.driver, self.debug).find("Operation not permitted") != -1:
+            self.logger.error("Could not chmod driver '%s'" % (self.driver))
+            raise RuntimeError("Could not chmod driver '%s'" % (self.driver))
+        utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.original_db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
         self.logger.info("Deploying %s drivers" % (self.project_name))
         return 
 
@@ -123,4 +135,9 @@ class AbstractDB():
         os.environ['PGDATABASE'] = "postgres"
         result = utils.load_sqlstr(self.psql, r'\q', self.debug)
         return True if result.find('ERROR:') == -1 else False
+
+    def java_home(self):
+        """ checks the value of JAVA_HOME """
+        return os.path.isfile("%s/bin/java" % (os.environ['JAVA_HOME']))
+        
     

@@ -13,7 +13,6 @@ def check_os():
 
 def start_tomcat(cmd, debug=False):
     # platform = check_os()
-    cmd = cmd if cmd else "/usr/sbin/svcadm enable svc:/application/csk-tomcat"
     if debug:
         return "starting tomcat: %s" % (cmd)
     else:
@@ -21,7 +20,6 @@ def start_tomcat(cmd, debug=False):
 
 def stop_tomcat(cmd, debug=False):
     # platform = check_os()
-    cmd = cmd if cmd else "/usr/sbin/svcadm disable svc:/application/csk-tomcat"
     if debug:
         return "stopping tomcat: %s" % (cmd)
     else:

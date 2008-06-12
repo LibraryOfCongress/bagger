@@ -16,7 +16,7 @@ class RequestBroker(AbstractDB):
         self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.project_name, config['VERSION']
         )
-        self.logger = log.Log(self.project_name)
+        #self.logger = log.Log(self.project_name)
 
     def deploy_drivers(self):
         """ deploys CLI drivers """

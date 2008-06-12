@@ -21,7 +21,7 @@ class Jbpm(AbstractDB):
             self.install_dir, self.workflow_name, self.version
         )
         self.url = 'https://beryllium.rdc.lctl.gov/trac/transfer/browser/trunk/workflow-processes-core/release/workflow-processes-core-%s-bin.zip?format=raw' % (self.version)
-        self.logger = log.Log(self.project_name)
+        #self.logger = log.Log(self.project_name)
         
     def deploy_process_def(self, driver):
         """ deploys process definition """

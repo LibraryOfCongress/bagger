@@ -25,23 +25,36 @@ class WebApp(CoreWebApp):
         }
         self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
-        self.tomcat_start = config['TOMCAT_START'] if config['TOMCAT_START'] else ''
-        self.tomcat_stop = config['TOMCAT_STOP'] if config['TOMCAT_STOP'] else ''
+        self.tomcat_start = config['TOMCAT_START'] if config['TOMCAT_START'] else "/usr/sbin/svcadm enable svc:/application/csk-tomcat"
+        self.tomcat_stop = config['TOMCAT_STOP'] if config['TOMCAT_STOP'] else "/usr/sbin/svcadm disable svc:/application/csk-tomcat"
         self.logger = log.Log(self.project_name)
         self.url = 'https://beryllium.rdc.lctl.gov/trac/ndnptransfer/browser/trunk/transfer-ui-ndnp/releases/transfer-ui-ndnp-%s-template.war?format=raw' % (self.version)
         os.environ['CATALINA_HOME'] = self.catalina_home
+        if not self.tomcat_exists():
+            self.logger.error("One of the Tomcat scripts is not set properly")
+            raise RuntimeError("One of the Tomcat scripts is not set properly")
         utils.stop_tomcat(self.tomcat_stop, self.debug)
 
     def deploy(self):
         """ deploys web application to tomcat """
         if not os.path.exists(self.warfile):
             urllib.urlretrieve(self.url, self.warfile)
-        result = ""
-        # result += utils.stop_tomcat(self.tomcat_stop, self.debug)
-        result += utils.mkdir("%s/webapps/transfer" % (self.catalina_home), self.debug)
-        result += utils.unzip(self.warfile, self.webapps_location, self.debug)
-        result += utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)        
-        result += utils.start_tomcat(self.tomcat_start, self.debug)
+        if not os.path.isdir("%s/webapps" % (self.catalina_home)):
+            self.logger.error("CATALINA_HOME/webapps '%s' does not exist" % (self.catalina_home))
+            raise RuntimeError("CATALINA_HOME/webapps '%s'  does not exist" % (self.catalina_home))
+        if utils.mkdir("%s/webapps/transfer" % (self.catalina_home), self.debug).find("Permission denied") != -1:
+            self.logger.error("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))
+            raise RuntimeError("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))        
+        try:
+            utils.unzip(self.warfile, self.webapps_location, self.debug)
+        except IOError, e:
+            self.logger.error("Could not unzip warfile '%s' into '%s': %s" % (self.warfile, self.webapps_location, e))
+            raise RuntimeError("Could not unzip driver '%s' into '%s': %s" % (self.warfile, self.webapps_location, e))
+        utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)        
+        utils.start_tomcat(self.tomcat_start, self.debug)
         self.logger.info("Deploying %s webapp" % (self.project_name))
         return
     
+    def tomcat_exists(self):
+        """ checks to make sure tomcat scripts exist """
+        return os.path.isfile(self.tomcat_start) and os.path.isfile(self.tomcat_stop)

@@ -22,7 +22,7 @@ class PackageModeler(AbstractDB):
         self.process_def = "files/processdefinition.xml"
         self.process_def_url = "https://beryllium.rdc.lctl.gov/trac/ndnptransfer/browser/trunk/workflow-processes-ndnp/src/main/resources/gov/loc/repository/workflow/processdefinitions/ndnp/ndnp1/processdefinition.xml?format=raw"
         self.url = 'https://beryllium.rdc.lctl.gov/trac/ndnptransfer/browser/trunk/%s/releases/%s-%s-bin.zip?format=raw' % (self.project_name, self.project_name, self.version)
-        self.logger = log.Log(self.project_name)
+        #self.logger = log.Log(self.project_name)
 
     def create_database(self):
         """ creates database """
