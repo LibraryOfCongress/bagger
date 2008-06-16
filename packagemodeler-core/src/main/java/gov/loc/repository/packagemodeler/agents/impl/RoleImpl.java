@@ -9,7 +9,7 @@ import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;
 
 @Entity(name="Role")
-@Table(name="role", schema="agent")
+@Table(name="role", schema="agent", uniqueConstraints={@UniqueConstraint(columnNames={"role_id"})})
 public class RoleImpl implements Role {
 
 	@Id @GeneratedValue

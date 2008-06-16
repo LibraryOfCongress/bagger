@@ -109,7 +109,8 @@ create table agent.agent_role (
 create table agent.role (
 	pkey int8 not null, 
 	role_id varchar(255) not null, 
-	primary key (pkey)
+	primary key (pkey),
+    unique (role_id)
 );
 
 create table core.event_file_examination_group (
