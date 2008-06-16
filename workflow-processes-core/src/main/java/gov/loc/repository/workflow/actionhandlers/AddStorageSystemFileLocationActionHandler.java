@@ -50,11 +50,14 @@ public class AddStorageSystemFileLocationActionHandler extends AbstractPackageMo
 		FileLocation fileLocation = packge.getFileLocation(this.storageSystemId, this.basePath);
 		if (fileLocation != null)
 		{
-			throw new Exception(MessageFormat.format("Storage System File Location with storage system id {0} and basepath {1} is found for {2}", this.storageSystemId, this.basePath, this.packge.toString()));
+			log.warn(MessageFormat.format("Storage System File Location with storage system id {0} and basepath {1} already found for {2}", this.storageSystemId, this.basePath, this.packge.toString()));
 		}
-		fileLocation = this.factory.createStorageSystemFileLocation(packge, this.storageSystem, this.basePath, this.isManaged, this.isLCPackageStructured);
-		this.dao.save(fileLocation);
-		log.debug(MessageFormat.format("Storage System File Location with storage system id {0} and basepath {1} added for {2}", this.storageSystemId, this.basePath, this.packge.toString()));
+		else
+		{
+			fileLocation = this.factory.createStorageSystemFileLocation(packge, this.storageSystem, this.basePath, this.isManaged, this.isLCPackageStructured);
+			this.dao.save(fileLocation);
+			log.debug(MessageFormat.format("Storage System File Location with storage system id {0} and basepath {1} added for {2}", this.storageSystemId, this.basePath, this.packge.toString()));
+		}
 		
 		if (keyVariable != null)
 		{

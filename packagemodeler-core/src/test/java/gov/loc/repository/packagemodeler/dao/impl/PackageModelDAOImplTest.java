@@ -511,4 +511,37 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		}			
 	}
 	
+	@Test
+	public void testDeleteCanonicalFiles() throws Exception
+	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		Package packge = dao.findRequiredPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
+		assertFalse(packge.getCanonicalFiles().isEmpty());
+		dao.deleteCanonicalFiles(packge);
+		txManager.commit(status);
+		
+		status = txManager.getTransaction(new DefaultTransactionDefinition());
+		this.template.refresh(packge);
+		assertTrue(packge.getCanonicalFiles().isEmpty());
+		txManager.commit(status);
+				
+	}
+	
+	@Test
+	public void testDeleteFileInstances() throws Exception
+	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		Package packge = dao.findRequiredPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
+		FileLocation fileLocation = packge.getFileLocation(RS25, BASEPATH_1 + testCounter);
+		assertNotNull(fileLocation);
+		assertFalse(fileLocation.getFileInstances().isEmpty());
+		dao.deleteFileInstances(fileLocation);
+		txManager.commit(status);
+		
+		status = txManager.getTransaction(new DefaultTransactionDefinition());
+		this.template.refresh(fileLocation);
+		assertTrue(fileLocation.getFileInstances().isEmpty());
+		txManager.commit(status);
+		
+	}
 }

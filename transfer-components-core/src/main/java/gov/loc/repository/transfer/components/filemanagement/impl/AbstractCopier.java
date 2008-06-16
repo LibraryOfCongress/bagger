@@ -56,21 +56,27 @@ public abstract class AbstractCopier extends AbstractPackageModelerAwareComponen
 			//Adjust the destDir
 			this.destCopyToPath = FilenameHelper.concat(this.destPath, BagHelper.DATA_DIRECTORY);
 		}
+		
+		File destCopyToFile = new File(this.destCopyToPath);
+		if (destCopyToFile.exists() && destCopyToFile.listFiles().length != 0)
+		{
+			throw new RuntimeException(MessageFormat.format("{0} already contains files.  They must be deleted prior to a copy.", destCopyToPath));
+		}
 				
 		if (srcFileLocation.isBag() && ! destFileLocation.isBag())
 		{
-			throw new Exception("Cannot copy from an LC package structure to a non-LC package structure");
+			throw new RuntimeException("Cannot copy from an LC package structure to a non-LC package structure");
 		}
-
+				
 		Calendar start = Calendar.getInstance();
 		
 
 		//Copy
-		this.getLog().debug("Permorming copy");
+		this.getLog().debug("Performing copy");
 		this.performCopy();
 		
 		//Verify without verify event
-		this.getLog().debug("Permorming verify");
+		this.getLog().debug("Performing verify");
 		if (! this.performVerify())
 		{
 			String msg = MessageFormat.format("Verification of copy from {0} to {1} failed", srcFileLocation.toString(), destFileLocation.toString());
@@ -85,6 +91,14 @@ public abstract class AbstractCopier extends AbstractPackageModelerAwareComponen
 
 		//Record File Instances
 		this.getLog().debug("Recording file instances");
+		
+		if (! destFileLocation.getFileInstances().isEmpty())
+		{
+			this.getLog().warn(MessageFormat.format("{0} already has file instances.  Deleting before adding new ones.", destFileLocation));
+
+			this.dao.deleteFileInstances(destFileLocation);
+		}
+				
 		if (destFileLocation.isBag())
 		{
 			File packageDir = new File(this.destPath);

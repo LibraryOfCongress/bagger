@@ -43,9 +43,12 @@ public interface PackageModelDAO {
 	public abstract Map<String,Long> countCanonicalFilesByExtension(Package packge);	
 
 	public abstract CanonicalFile findCanonicalFile(String repositoryId, String packageId, String filename);
+	
+	public abstract void deleteCanonicalFiles(Package packge);
 
 	//FileLocation
 	public abstract FileLocation loadRequiredFileLocation(Long key) throws RequiredEntityNotFound;
+	
 	
 	//FileInstance
 	public abstract FileInstance findFileInstance(String repositoryId, String packageId, String storageServiceId, String basePath, String filename);
@@ -54,6 +57,8 @@ public interface PackageModelDAO {
 				
 	public abstract List<FileInstance> findFileInstances(Repository repository, String relativePath, String baseName, String extension);	
 
+	public abstract void deleteFileInstances(FileLocation fileLocation);
+		
 	//FileExamination
 	public abstract FileExamination findFileExamination(FileExaminationGroup fileExaminationGroup, FileName fileName);
 

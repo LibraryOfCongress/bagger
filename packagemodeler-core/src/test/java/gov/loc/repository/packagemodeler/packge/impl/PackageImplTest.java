@@ -171,6 +171,9 @@ public class PackageImplTest extends AbstractCoreModelersTest {
 		assertTrue(FilenameUtils.equalsNormalized(FILENAME_1, FilenameHelper.concat(root, file.getFileName().getFilename())) || FilenameUtils.equalsNormalized(FILENAME_2, FilenameHelper.concat(root, file.getFileName().getFilename())));
 		assertEquals(1, file.getFixities().size());
 
+		packge.removeCanonicalFiles();
+		assertEquals(0, packge.getCanonicalFiles().size());
+		
 		txManager.rollback(status);
 	}
 

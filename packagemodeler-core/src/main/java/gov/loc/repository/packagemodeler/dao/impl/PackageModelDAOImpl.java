@@ -1,9 +1,11 @@
 package gov.loc.repository.packagemodeler.dao.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
@@ -89,6 +91,7 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 
 	public void delete(Object object) {
 		this.getSession().delete(object);
+		//this.getSession().flush();
 	}
 
 	public <T extends Agent> T findAgent(Class<T> agentType, String agentId) {
@@ -415,5 +418,42 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 			throw new RequiredEntityNotFound(key.toString());
 		}
 		return packge;
-	}	
+	}
+	
+	@Override
+	public void deleteCanonicalFiles(Package packge) {
+		Set<CanonicalFile> canonicalFileSet = new HashSet<CanonicalFile>();
+		for(CanonicalFile canonicalFile : packge.getCanonicalFiles())
+		{
+			
+			canonicalFileSet.add(canonicalFile);
+		}			
+		
+		packge.removeCanonicalFiles();
+		for(CanonicalFile canonicalFile : canonicalFileSet)
+		{				
+			this.delete(canonicalFile);
+		}			
+		this.getSession().flush();
+		
+	}
+	
+	@Override
+	public void deleteFileInstances(FileLocation fileLocation) {
+		Set<FileInstance> fileInstanceSet = new HashSet<FileInstance>();
+		for(FileInstance fileInstance : fileLocation.getFileInstances())
+		{
+			
+			fileInstanceSet.add(fileInstance);
+		}			
+		fileLocation.removeFileInstances();
+		
+		for(FileInstance fileInstance : fileInstanceSet)
+		{				
+			this.delete(fileInstance);
+		}			
+		this.getSession().flush();
+		
+	}
+	
 }

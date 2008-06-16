@@ -1,6 +1,7 @@
 package gov.loc.repository.transfer.components.fileexamination.impl;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Iterator;
 
@@ -61,6 +62,19 @@ public class FilesOnDiskInventorierImpl extends AbstractPackageModelerAwareCompo
 			dir = new File(mountPath);
 		}
 		this.getLog().debug("Directory for inventorying is " + dir.toString());
+		if (! dir.exists() || ! dir.isDirectory())
+		{
+			throw new RuntimeException(dir.toString() + " does not exist or is not a directory");
+		}
+		
+		if (! fileLocation.getFileInstances().isEmpty())
+		{
+			this.getLog().warn(MessageFormat.format("{0} already has file instances.  Deleting before adding new ones.", fileLocation));
+
+			this.dao.deleteFileInstances(fileLocation);
+		}
+		
+		
 		Iterator<File> fileIter = FileUtils.iterateFiles(dir, null, true);
 		while(fileIter.hasNext())
 		{

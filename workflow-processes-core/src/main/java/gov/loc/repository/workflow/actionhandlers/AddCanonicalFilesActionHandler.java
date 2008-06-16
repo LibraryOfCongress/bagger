@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 //import gov.loc.repository.packagemodeler.agents.System;
+import gov.loc.repository.packagemodeler.packge.CanonicalFile;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileInstance;
@@ -13,6 +14,8 @@ import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AddCanonicalFilesActionHandler extends AbstractPackageModelerAwareHandler {
 
@@ -50,6 +53,14 @@ public class AddCanonicalFilesActionHandler extends AbstractPackageModelerAwareH
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
+		//Delete any canonical files that exist
+		if (! this.packge.getCanonicalFiles().isEmpty())
+		{
+			log.warn(MessageFormat.format("{0} already has canonical files.  Deleting before adding new ones.", this.packge));
+			this.dao.deleteCanonicalFiles(packge);
+			
+		}
+		
 	    this.factory.createCanonicalFilesFromFileInstances(this.packge, (Collection<FileInstance>)this.fileLocation.getFileInstances()); 
 	    this.dao.save(this.packge);
 		log.debug(MessageFormat.format("Canonical files from {0} added for package {1}", this.packge.getPackageId(), this.fileLocation.toString()));

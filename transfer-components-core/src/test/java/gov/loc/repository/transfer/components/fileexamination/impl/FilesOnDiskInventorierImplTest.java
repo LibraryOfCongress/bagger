@@ -69,10 +69,16 @@ public class FilesOnDiskInventorierImplTest extends AbstractCorePackageModelerAw
 		assertNotNull(fileInstance);
 		Fixity fixity = fileInstance.getFixity(FixityAlgorithm.MD5);
 		assertNotNull(fixity);
-		assertEquals("E3D704F3542B44A621EBED70DC0EFE13".toLowerCase(), fixity.getValue().toLowerCase());
-		
-		assertEquals(1, fileLocation.getFileLocationEvents(InventoryFromFilesOnDiskEvent.class).size());
-		
+		assertEquals("E3D704F3542B44A621EBED70DC0EFE13".toLowerCase(), fixity.getValue().toLowerCase());		
+		assertEquals(1, fileLocation.getFileLocationEvents(InventoryFromFilesOnDiskEvent.class).size());		
 		txManager.commit(status);
+		
+		//Test repeat of inventory
+		inventorier.inventory(fileLocation, this.getFile("batch").toString(), FixityAlgorithm.MD5, reportingAgent );
+		
+		status = txManager.getTransaction(new DefaultTransactionDefinition());
+		assertEquals(6, fileLocation.getFileInstances().size());
+		txManager.commit(status);
+		
 	}
 }

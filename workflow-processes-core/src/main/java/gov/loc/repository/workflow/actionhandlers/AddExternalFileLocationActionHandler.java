@@ -58,11 +58,14 @@ public class AddExternalFileLocationActionHandler extends AbstractPackageModeler
 		FileLocation externalFileLocation = packge.getFileLocation(identifier);
 		if (externalFileLocation != null)
 		{
-			throw new Exception(MessageFormat.format("External File Location with identifier value {0} and identifier type {1} already found for {2}", this.externalIdentifierValue, this.externalIdentifierType, this.packge.toString()));
+			log.warn(MessageFormat.format("External File Location with identifier value {0} and identifier type {1} already found for {2}", this.externalIdentifierValue, this.externalIdentifierType, this.packge.toString()));
 		}
-		externalFileLocation = this.factory.createExternalFileLocation(packge, this.mediaTypeEnum, this.identifier, this.basePath, this.isManaged, this.isLCPackageStructured);
-		this.dao.save(externalFileLocation);
-		log.debug(MessageFormat.format("Adding External File Location with identifier value {0} and identifier type {1} to {2}", this.externalIdentifierValue, this.externalIdentifierType, this.packge.toString()));
+		else
+		{
+			externalFileLocation = this.factory.createExternalFileLocation(packge, this.mediaTypeEnum, this.identifier, this.basePath, this.isManaged, this.isLCPackageStructured);
+			this.dao.save(externalFileLocation);
+			log.debug(MessageFormat.format("Adding External File Location with identifier value {0} and identifier type {1} to {2}", this.externalIdentifierValue, this.externalIdentifierType, this.packge.toString()));
+		}
 		if (keyVariable != null)
 		{
 			this.setVariable(this.keyVariable, externalFileLocation.getKey().toString());

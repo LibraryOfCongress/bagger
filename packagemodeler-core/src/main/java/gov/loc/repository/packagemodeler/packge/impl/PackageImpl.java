@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -198,6 +199,11 @@ public class PackageImpl implements Package, Serializable {
 		file.setPackage(null);
 		this.canonicalFileSet.remove(file);
 	}	
+	
+	@Override
+	public void removeCanonicalFiles() {
+		this.canonicalFileSet = new HashSet<CanonicalFile>();		
+	}
 	
 	public StorageSystemFileLocation getFileLocation(String storageSystemId, String basePath)
 	{

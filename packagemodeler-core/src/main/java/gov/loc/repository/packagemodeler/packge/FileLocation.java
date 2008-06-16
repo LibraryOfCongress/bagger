@@ -17,7 +17,9 @@ public abstract interface FileLocation extends Keyed, Timestamped {
 	public abstract void addFileInstance(FileInstance fileInstance);
 	
 	public abstract Set<FileInstance> getFileInstances();
-		
+	
+	public abstract void removeFileInstances();
+	
 	public abstract FileInstance findFileInstance(FileName fileName);
 	
 	public abstract Package getPackage();

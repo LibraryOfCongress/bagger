@@ -48,6 +48,8 @@ public interface Package extends Keyed, Timestamped {
 
 	public abstract void removeCanonicalFile(CanonicalFile file);
 	
+	public abstract void removeCanonicalFiles();
+	
 	public abstract CanonicalFile findCanonicalFile(FileName fileName);
 	
 	public StorageSystemFileLocation getFileLocation(String storageServiceId, String basePath);

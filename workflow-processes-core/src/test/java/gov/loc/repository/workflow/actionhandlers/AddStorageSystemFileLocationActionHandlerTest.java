@@ -47,7 +47,18 @@ public class AddStorageSystemFileLocationActionHandlerTest extends AbstractCoreH
 	      "      </action>" +
 	      "    </event>" +	      	      	      	      	      	      
 	      "  </start-state>" +
-	      "  <end-state name='b' />" +
+	      "  <state name='b'>" +
+	      "    <transition to='c' />" +
+	      "    <event type='node-leave'>" +
+	      "      <action name='add staging file location' class='AddStorageSystemFileLocationActionHandler'>" +
+	      "        <basePath>" + BASEPATH_1 + "</basePath>" +
+	      "        <storageSystemId>" + RDC + "</storageSystemId>" +
+	      "        <packageKey>" + packge.getKey() + "</packageKey>" +
+	      "        <keyVariable>stagingFileLocationKey</keyVariable>" +
+	      "      </action>" +
+	      "    </event>" +	      	      	      	      	      	      
+	      "  </state>" +
+	      "  <end-state name='c' />" +
 	      "</process-definition>";
 		
 		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
@@ -58,9 +69,7 @@ public class AddStorageSystemFileLocationActionHandlerTest extends AbstractCoreH
 		try
 		{
 			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
-		
-		    
-		    
+				    		   
 		    //Gets out of start state
 		    processInstance.signal();
 	
@@ -81,6 +90,29 @@ public class AddStorageSystemFileLocationActionHandlerTest extends AbstractCoreH
 		{
 			jbpmContext.close();
 		}
+		
+		jbpmContext = jbpmConfiguration.createJbpmContext();		
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+				    		   
+		    //Gets out of b state
+		    processInstance.signal();
+	
+		    assertEquals("c", processInstance.getRootToken().getNode().getName());
+		    
+		    TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+			this.template.refresh(packge);
+	
+		    StorageSystemFileLocation fileLocation = packge.getFileLocation(RDC, BASEPATH_1);
+		    assertNotNull(fileLocation);
+		    txManager.commit(status);
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+		
 	}
 
 	

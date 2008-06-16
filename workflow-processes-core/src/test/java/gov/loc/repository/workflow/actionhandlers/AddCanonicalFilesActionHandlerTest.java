@@ -4,20 +4,28 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import org.jbpm.JbpmContext;
+import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import gov.loc.repository.fixity.FixityAlgorithm;
+import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.packagemodeler.packge.ExternalFileLocation;
 import gov.loc.repository.packagemodeler.packge.ExternalIdentifier;
+import gov.loc.repository.packagemodeler.packge.FileLocation;
+import gov.loc.repository.packagemodeler.packge.FileName;
+import gov.loc.repository.packagemodeler.packge.Fixity;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
 import gov.loc.repository.packagemodeler.packge.ExternalFileLocation.MediaType;
 import gov.loc.repository.packagemodeler.packge.ExternalIdentifier.IdentifierType;
+import gov.loc.repository.packagemodeler.packge.impl.PackageImpl;
 import gov.loc.repository.workflow.AbstractCoreHandlerTest;
 import static gov.loc.repository.workflow.constants.FixtureConstants.*;
 
-public class AddExternalFileLocationActionHandlerTest extends AbstractCoreHandlerTest {
+
+public class AddCanonicalFilesActionHandlerTest extends AbstractCoreHandlerTest {
 
 	static Repository repository;
 	
@@ -32,6 +40,10 @@ public class AddExternalFileLocationActionHandlerTest extends AbstractCoreHandle
 	{
 
 		Package packge = this.modelerFactory.createPackage(Package.class, repository, PACKAGE_ID1 + testCounter);
+		FileLocation fileLocation = modelerFactory.createExternalFileLocation(packge, MediaType.EXTERNAL_HARDDRIVE, new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER), "/", false, false);
+		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_1));
+		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_2), new Fixity(FIXITY_1, FixityAlgorithm.MD5));
+		modelerFactory.createFileInstance(fileLocation, new FileName(FILENAME_3), new Fixity(FIXITY_2, FixityAlgorithm.MD5));
 		this.template.save(packge);
 				
 		String processDefinitionString = 
@@ -39,24 +51,18 @@ public class AddExternalFileLocationActionHandlerTest extends AbstractCoreHandle
 	      "  <start-state>" +
 	      "    <transition to='b' />" +
 	      "    <event type='node-leave'>" +
-	      "      <action name='add external file location' class='AddExternalFileLocationActionHandler'>" +
-	      "        <externalIdentifierValue>" + SERIAL_NUMBER_1 + "</externalIdentifierValue>" +
-	      "        <externalIdentifierType>" + IdentifierType.SERIAL_NUMBER.toString() + "</externalIdentifierType>" +	   
-	      "        <mediaType>" + MediaType.EXTERNAL_HARDDRIVE.toString() + "</mediaType>" +
+	      "      <action name='add canonical files' class='AddCanonicalFilesActionHandler'>" +
 	      "        <packageKey>" + packge.getKey() + "</packageKey>" +
-	      "        <keyVariable>externalFileLocationKey</keyVariable>" +
+	      "        <fileLocationKey>" + fileLocation.getKey() + "</fileLocationKey>" +
 	      "      </action>" +
 	      "    </event>" +	      	      	      	      	      	      
 	      "  </start-state>" +
 	      "  <state name='b'>" +
-	      "    <transition to='c' />" +
+	      "    <transition name='continue' to='c' />" +
 	      "    <event type='node-leave'>" +
-	      "      <action name='add external file location' class='AddExternalFileLocationActionHandler'>" +
-	      "        <externalIdentifierValue>" + SERIAL_NUMBER_1 + "</externalIdentifierValue>" +
-	      "        <externalIdentifierType>" + IdentifierType.SERIAL_NUMBER.toString() + "</externalIdentifierType>" +	   
-	      "        <mediaType>" + MediaType.EXTERNAL_HARDDRIVE.toString() + "</mediaType>" +
+	      "      <action name='add canonical files' class='AddCanonicalFilesActionHandler'>" +
 	      "        <packageKey>" + packge.getKey() + "</packageKey>" +
-	      "        <keyVariable>externalFileLocationKey</keyVariable>" +
+	      "        <fileLocationKey>" + fileLocation.getKey() + "</fileLocationKey>" +
 	      "      </action>" +
 	      "    </event>" +	      	      	      	      	      	      
 	      "  </state>" +	      
@@ -73,48 +79,50 @@ public class AddExternalFileLocationActionHandlerTest extends AbstractCoreHandle
 		    ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			//Gets out of start state
 		    processInstance.signal();	    
-
 			
 			TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
-			this.template.refresh(packge);
+			this.template.refresh(fileLocation);
+			
+			packge = (Package)this.template.load(PackageImpl.class, packge.getKey());
 
+			assertEquals(3, fileLocation.getFileInstances().size());
 			assertEquals("b", processInstance.getRootToken().getNode().getName());	    	    
-		    ExternalFileLocation fileLocation = packge.getFileLocation(new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER));
-		    assertNotNull(fileLocation);
-		    assertEquals(MediaType.EXTERNAL_HARDDRIVE, fileLocation.getMediaType());
-		    assertEquals("/", fileLocation.getBasePath());
-		    assertFalse(fileLocation.isManaged());
-		    assertFalse(fileLocation.isBag());
-		    assertEquals(fileLocation.getKey().toString(), (String)processInstance.getContextInstance().getVariable("externalFileLocationKey"));
+			assertEquals(2, packge.getCanonicalFiles().size());
 		    
 		    txManager.commit(status);
 		}
 		finally
 		{
 			jbpmContext.close();
-		}
-		
+		}	    
+
 		jbpmContext = jbpmConfiguration.createJbpmContext();		
 		try
 		{
-		    ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
-			//Gets out of b state
-		    processInstance.signal();	    
+			//Make sure that can be repeated			
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 
+			//Gets out of b
+		    processInstance.signal("continue");	    
 			
+		    
 			TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
-			this.template.refresh(packge);
+			this.template.refresh(fileLocation);
+			
+			packge = (Package)this.template.load(PackageImpl.class, packge.getKey());
 
+			assertEquals(3, fileLocation.getFileInstances().size());
 			assertEquals("c", processInstance.getRootToken().getNode().getName());	    	    
-		    ExternalFileLocation fileLocation = packge.getFileLocation(new ExternalIdentifier(SERIAL_NUMBER_1, IdentifierType.SERIAL_NUMBER));
-		    assertNotNull(fileLocation);		    
+			assertEquals(2, packge.getCanonicalFiles().size());
+		    
 		    txManager.commit(status);
 		}
 		finally
 		{
 			jbpmContext.close();
-		}
-		    
+		}	    
+		
+		
 	}
 
 	

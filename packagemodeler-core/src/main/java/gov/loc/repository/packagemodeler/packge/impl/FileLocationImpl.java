@@ -100,6 +100,11 @@ public abstract class FileLocationImpl implements FileLocation
 		return Collections.unmodifiableSet(this.eventSet);
 	}
 	
+	@Override
+	public void removeFileInstances() {
+		this.fileInstanceSet = new HashSet<FileInstance>();		
+	}
+	
 	public <T extends FileLocationEvent> Set<T> getFileLocationEvents(Class<T> eventType) {
 		Set<T> eventSet = new HashSet<T>();
 		for(Event event : this.eventSet)

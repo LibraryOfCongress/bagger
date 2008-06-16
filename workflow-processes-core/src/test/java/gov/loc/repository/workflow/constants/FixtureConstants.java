@@ -11,6 +11,8 @@ public class FixtureConstants {
 	public static final String BASEPATH_4 = "/barfoo";
 	
 	public static final String FILENAME_1 = "foo/bar1.html";
+	public static final String FILENAME_2 = "foo/bar2.html";
+	public static final String FILENAME_3 = "foo/bar3.html";
 	public static final String TIFF_FILENAME_1 = "foo/bar1.tif";
 
 	public static final String FIXITY_1 = "abcdef";
