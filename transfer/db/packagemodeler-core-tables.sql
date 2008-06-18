@@ -97,7 +97,8 @@ create table agent.agent (
 	name varchar(255), 
 	first_name varchar(255), 
 	surname varchar(255), 
-	primary key (pkey)
+	primary key (pkey),
+    unique (agent_id)
 );
 
 create table agent.agent_role (

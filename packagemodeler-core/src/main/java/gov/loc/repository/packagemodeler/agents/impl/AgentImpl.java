@@ -12,7 +12,7 @@ import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;
 
 @Entity(name="Agent")
-@Table(name = "agent", schema="agent")
+@Table(name = "agent", schema="agent", uniqueConstraints={@UniqueConstraint(columnNames={"agent_id"})})
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(
     name="agent_type",
