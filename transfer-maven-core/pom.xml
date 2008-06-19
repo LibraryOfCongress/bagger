@@ -308,12 +308,12 @@
       <dependency>
         <groupId>jbpm</groupId>
         <artifactId>jbpm-jpdl</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.3</version>
       </dependency>
       <dependency>
         <groupId>jbpm</groupId>
         <artifactId>jbpm-identity</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.3</version>
       </dependency>
       <dependency>
         <groupId>joda-time</groupId>
