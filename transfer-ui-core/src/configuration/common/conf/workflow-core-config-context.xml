@@ -21,7 +21,8 @@
 		<property name="hibernateProperties">
    			<value>
      			hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-     			hibernate.cache.provider_class=org.hibernate.cache.HashtableCacheProvider
+     			hibernate.cache.provider_class=org.hibernate.cache.EhCacheProvider
+     			hibernate.cache.provider_configuration_file_resource_path=/conf/jbpm-ehcache.xml
    			</value>
    		</property>
 	</bean>
