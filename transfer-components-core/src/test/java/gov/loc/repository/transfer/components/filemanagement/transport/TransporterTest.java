@@ -4,8 +4,11 @@ import gov.loc.repository.transfer.components.filemanagement.transport.Transport
 
 public class TransporterTest {
     public static void main(String[] args) {
-        Transporter transporter = new Transporter("/home/mjg/.ssh/id_rsa");
-        transporter.transport("/home/mjg/tmp/test1", "mgia@ga.rdc.lctl.gov:tmp/test2");
-        transporter.transport("mgia@ga.rdc.lctl.gov:tmp/test2", "/home/mjg/tmp/test3");  
+        // assumes local transfer account's pubkey has been added
+        //   to authorized_keys for remote transfer account and
+        //   local ndnp account
+        Transporter t1 = new Transporter("/home/transfer/.ssh/id_rsa");
+        t1.transport("transfer@ga.rdc.lctl.gov:tmp/test", "test");  
+        t1.transport("test", "ndnp@localhost:/ndnp_sips/test");
     }
 }
