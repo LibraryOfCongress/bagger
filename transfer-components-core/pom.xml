@@ -99,12 +99,7 @@
       <artifactId>hsqldb</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.servprise.maven.plugins</groupId>
-      <artifactId>maven-jython-plugin</artifactId>
-      <version>0.2</version>
-      <scope>compile</scope>
-    </dependency>
+    <!-- For jython file copier -->
     <dependency>
       <groupId>ant</groupId>
       <artifactId>ant</artifactId>
