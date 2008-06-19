@@ -21,6 +21,20 @@ def normalize_relative_path(path):
         path = path[2:]
     return path
 
+def build_manifest_entries(manifest):
+    """Builds a dictionary of manifest entries, from filename -> hash.
+    """
+    entries = {}
+    
+    for entry in manifest_entries(manifest):
+        hash, path = entry
+        
+        if entries.has_key(path):
+            print "*** Duplicate manifest entry: %s" % path
+        else:
+            entries[path] = hash
+            
+    return entries
 
 def manifest_entries(manifest):
     """Generator, returning pairs of (checksum, filename) 
@@ -56,7 +70,8 @@ def reconcile(manifestname, directoryname):
            - the files found in the current dir not named in the manifest
     """
     manifest = open(manifestname, "r")
-    manifest_contents = Set(files_in_manifest(manifest))
+    manifest_entries = build_manifest_entries(manifest)
+    manifest_contents = Set(manifest_entries.keys())
     discovered_files  = Set(files_in_directory(directoryname))
 
     return (list(manifest_contents - discovered_files), 
@@ -74,9 +89,9 @@ if __name__ == "__main__":
                                sys.argv[2])
 
     import pprint
-    print "Missing:"
+    print "*** Missing:"
     pprint.pprint(missing)
   
-    print "Extra:"
+    print "*** Extra:"
     pprint.pprint(extra)
     
