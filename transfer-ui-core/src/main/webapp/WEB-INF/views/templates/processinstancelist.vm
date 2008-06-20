@@ -42,11 +42,13 @@
                         <th>Package</th>
                         <th>Workflow</th>
                         <th>Start date</th>
+                        <th>Completion date</th>
                 </tr></thead>
                 <tfoot><tr>
                         <th>Package</th>
                         <th>Workflow</th>
                         <th>Start date</th>
+                        <th>Completion date</th>
                 </tr></tfoot>
                 <tbody>
 			        #foreach($processInstanceBean in $processInstanceBeanList)
@@ -62,6 +64,13 @@
 				        <td>
 				            ${date.format('yyyy-MM-dd hh:mm', $processInstanceBean.startDate)}
 				        </td>				        
+				        <td>
+				            #if($processInstanceBean.endDate)
+				            	${date.format('yyyy-MM-dd hh:mm', $processInstanceBean.endDate)}
+				            #else
+				            	Incomplete
+				            #end
+				        </td>				        
 				    </tr>					
 			        #end
 			    </tbody>
@@ -69,12 +78,13 @@
 		</fieldset>
 		
 	</div>
-	
-	
+
+
 	<div id="problemWorkflows">
 		<h2>Problem Workflows</h2>
 		<fieldset>
-            <legend>These workflows have either been suspended by a user or have tokens that have been suspended because an error occurred.</legend>
+            <legend><div style="word-wrap:break-word;width:600px;">These workflows have either been suspended by a user or have tokens that have been suspended 
+            because an error occurred.</div></legend>
             #if( $suspendedProcessInstanceBeanList.size() > 10)
             <table>
 		        <tbody><tr><td>
@@ -124,25 +134,31 @@
             </table>
         </fieldset>
 	</div>
-	
-	
+
+
 	<div id="newWorkflow">
 		<h2>Workflows Types</h2>
 		#if ($processDefinitionBeanList)					
 			<ul>
 				#foreach($processDefinitionBean in $processDefinitionBeanList)
-				<li>
+				<li>					
 					<form method="post" action="${contextPath}/processdefinition/${processDefinitionBean.id}.html">
 	                    <fieldset title="Start a New Transfer Workflow">
 				            <legend>
+				            #if ($processDefinitionBean.id)
 	        		            ${processDefinitionBean.name}
 	        		            (${processDefinitionBean.id})
+	        		        #else
+	        		        	No process definition found.
+	        		        #end
 	        		        </legend>
 				            <input type="hidden" name="referer" value="/index.html" />
-	    					<input type="submit" class="button" value="start"/>
+				            #if ($processDefinitionBean.id)
+		    					<input type="submit" class="button" value="start"/>
+	        		        #end
 	    					<label>Creating a new Transfer Workflow allows tracking a new transfer process.</label>
 					    </fieldset>					
-	    			</form>						
+	    			</form>
 				</li>					
 				#end
 			</ul>
