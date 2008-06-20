@@ -89,9 +89,11 @@ if __name__ == "__main__":
                                sys.argv[2])
 
     import pprint
-    print "*** Missing:"
-    pprint.pprint(missing)
-  
-    print "*** Extra:"
-    pprint.pprint(extra)
     
+    if len(missing) > 0:
+        print "*** Missing:"
+        pprint.pprint(missing)
+
+    if len(extra) > 0:
+        print "*** Extra:"
+        pprint.pprint(extra)
