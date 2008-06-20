@@ -59,7 +59,7 @@
                 <td><span class="description">The current status of this task.</span></td>
             </tr>
             <tr id="taskCreateDate" >
-                <td><label for="taskCreateDate_value">Date Created</label></td>
+                <td><label for="taskCreateDate_value">Date Task Created</label></td>
                 <td><span id="taskCreateDate_value">
                     ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.createDate)}
                 </span></td>
@@ -81,7 +81,6 @@
 	
 #end
 
-
 <div id="taskinstance">
     <ul id="localNav">
         #if ($formViewName)
@@ -97,7 +96,6 @@
     
      #if ($formViewName)
 	    <div id="updateTask">
-	    	#details()
 		    #if ($instructionViewName)
     			<h2>Instructions</h2>
     			#include("${instructionViewName}.vm")
@@ -129,9 +127,28 @@
 	    			<input class="button" type="submit" value="submit"/>
 				</fieldset>
 			</form>
+
+	    	#if ($permissions.canAddComment())
+	    	<div id="addComment">
+	    	    <h2>Add Comment</h2>
+				<form method="post" action="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}/comment.html">
+				    <table style="width:100%">
+				        <tr><td align="center">
+					        <input type="hidden" 
+					            name="referer" 
+					            value="/processInstance/${taskInstanceBean.processInstanceBean.id}.html#comments" />
+					        <textarea name="message" cols="50" rows="3"></textarea>				
+					    </td></tr>
+					    <tr><td align="right">
+					        <input class="button" type="submit" value="create"/>
+					    </td></tr>
+					</table>
+				</form>						
+	    	</div>
+	        #end
+			#details()
 		</div>
     #else
-    
 		<div id="taskDetails">
 			#details()
 	    </div>
@@ -140,6 +157,26 @@
     #if ($permissions.canUpdateTaskInstanceUser() && $taskInstanceBean.canUpdateUserBean())
 	<div id="reassignTask">
 	    <h2>Reassign Task</h2>
+
+    	#if ($permissions.canAddComment())
+    	<div id="addComment">
+    	    <h2>Add Comment</h2>
+			<form method="post" action="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}/comment.html">
+			    <table style="width:100%">
+			        <tr><td align="center">
+				        <input type="hidden" 
+				            name="referer" 
+				            value="/processinstance/${taskInstanceBean.processInstanceBean.id}.html#comments" />
+				        <textarea name="message" cols="50" rows="3"></textarea>				
+				    </td></tr>
+				    <tr><td align="right">
+				        <input class="button" type="submit" value="create"/>
+				    </td></tr>
+				</table>
+			</form>						
+    	</div>
+        #end
+
 	    <form method="post" action="${requestURI}">
 	    	<input type="hidden" name="method" value="put" />
 	        <fieldset>
@@ -170,7 +207,7 @@
 	    <hr/>
     	#end
 
-    #if ($permissions.canAddComment())
+    	#if ($permissions.canAddComment())
     	<div id="addComment">
     	    <h2>Add Comment</h2>
 			<form method="post" action="${contextPath}/processinstance/${taskInstanceBean.processInstanceBean.id}/comment.html">
@@ -188,5 +225,5 @@
 			</form>						
     	</div>
         #end
-    </div>        
+    </div> 
 </div>
