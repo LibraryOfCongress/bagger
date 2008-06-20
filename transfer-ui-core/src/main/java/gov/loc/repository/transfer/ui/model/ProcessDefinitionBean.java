@@ -13,7 +13,11 @@ public class ProcessDefinitionBean extends AbstractWorkflowBean {
 	private ProcessDefinition processDefinition;
 	
 	public String getId() {
-		return this.processDefinition.getName();
+		if (this.processDefinition != null) {
+			return this.processDefinition.getName();
+		} else {
+			return null;
+		}
 	}
 
 	public String getName() {
