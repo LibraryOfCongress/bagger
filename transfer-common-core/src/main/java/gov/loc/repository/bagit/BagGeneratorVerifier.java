@@ -6,7 +6,7 @@ import java.io.File;
 
 public interface BagGeneratorVerifier {
 
-	public SimpleResult isValid(File packageDir, boolean verifyTagManifests);
+	public SimpleResult isValid(File packageDir);
 	
 	public SimpleResult isComplete(File packageDir);
 	

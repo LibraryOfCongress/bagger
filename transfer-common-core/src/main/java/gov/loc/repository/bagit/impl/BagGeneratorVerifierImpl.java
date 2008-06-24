@@ -3,10 +3,10 @@ package gov.loc.repository.bagit.impl;
 import java.io.File;
 import java.io.FileWriter;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -71,34 +71,20 @@ public class BagGeneratorVerifierImpl implements BagGeneratorVerifier {
 			log.info(message);
 			return new SimpleResult(false, message);
 		}
-		
-		File baseManifest = manifestList.get(0);
-		Collection<String> baseFiles = this.readManifest(baseManifest);		
-		
-		//Every manifest covers same files
-		if (manifestList.size() > 1)
+
+		//Every file listed in at least one manifest
+		Set<String> files = new HashSet<String>();
+		for(File manifest : manifestList)
 		{
-			
-			for(int i=1; i < manifestList.size(); i++)
-			{
-				File manifest = manifestList.get(i);
-				Collection<String> files = this.readManifest(manifest);
-				if (baseFiles.size() != files.size() || ! baseFiles.containsAll(files))
-				{
-					String message = MessageFormat.format("Bag at {0} has manifests with different files", packageDir);
-					log.info(message);
-					return new SimpleResult(false, message);
-				}
-				
-			}
+			files.addAll(this.readManifest(manifest));
 		}
-		//Every file listed in every manifest
+		
 		Iterator<File> iter = FileUtils.iterateFiles(BagHelper.getDataDirectory(packageDir), null, true);
 		while(iter.hasNext())
 		{
 			File file = iter.next();
 			String relativeFilePath = FilenameHelper.removeBasePath(packageDir.toString(), file.toString());
-			if (! baseFiles.contains(relativeFilePath))
+			if (! files.contains(relativeFilePath))
 			{
 				String message = MessageFormat.format("Bag at {0} has file {1} not found in manifest", packageDir, relativeFilePath);
 				log.info(message);
@@ -108,9 +94,9 @@ public class BagGeneratorVerifierImpl implements BagGeneratorVerifier {
 		return new SimpleResult(true);
 	}
 
-	private Collection<String> readManifest(File manifest)
+	private Set<String> readManifest(File manifest)
 	{
-		Collection<String> files = new ArrayList<String>();
+		Set<String> files = new HashSet<String>();
 		ManifestReader reader = new ManifestReader(manifest);
 		while (reader.hasNext())
 		{
@@ -122,7 +108,7 @@ public class BagGeneratorVerifierImpl implements BagGeneratorVerifier {
 	}
 	
 	@Override
-	public SimpleResult isValid(File packageDir, boolean verifyTagManifests) {
+	public SimpleResult isValid(File packageDir) {
 		//Is complete
 		SimpleResult result = this.isComplete(packageDir);
 		if (! result.isSuccess())
@@ -169,8 +155,10 @@ public class BagGeneratorVerifierImpl implements BagGeneratorVerifier {
 		//Write manifest
 		this.verifier.generateManifest(packageDir, algorithm);
 		//Write tag manifest
-		this.verifier.generateTagManifest(packageDir, algorithm);
-				
+		if (generateTagManifest)
+		{
+			this.verifier.generateTagManifest(packageDir, algorithm);
+		}				
 	}
 	
 	@Override

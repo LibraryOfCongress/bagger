@@ -21,7 +21,9 @@ public class BagGeneratorVerifierImplTest {
 	@Test
 	public void testIsComplete() throws Exception {
 		assertTrue(verifier.isComplete(this.getFile("bag_with_one_manifest")).isSuccess());
-		assertTrue(verifier.isComplete(this.getFile("bag_with_two_manifests")).isSuccess());
+		//Includes a tag manifest
+		assertTrue(verifier.isComplete(this.getFile("bag_with_two_equal_manifests")).isSuccess());
+		assertTrue(verifier.isComplete(this.getFile("bag_with_two_unequal_manifests")).isSuccess());
 		
 		assertFalse(verifier.isComplete(this.getFile("bag_with_no_manifests")).isSuccess());
 		verifier.setMissingBagItTolerant(true);
@@ -31,7 +33,6 @@ public class BagGeneratorVerifierImplTest {
 		
 		assertFalse(verifier.isComplete(this.getFile("bag_with_no_data_directory")).isSuccess());
 		assertFalse(verifier.isComplete(this.getFile("bag_with_extra_directory")).isSuccess());
-		assertFalse(verifier.isComplete(this.getFile("bag_with_mismatched_manifests")).isSuccess());
 		assertFalse(verifier.isComplete(this.getFile("bag_with_extra_files")).isSuccess());
 		
 	}

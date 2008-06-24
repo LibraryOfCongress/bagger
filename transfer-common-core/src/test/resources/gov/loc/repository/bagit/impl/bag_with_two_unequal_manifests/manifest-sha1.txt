@@ -1,5 +1,3 @@
-8ad8757baa8564dc136c1e07507f4a98  data\dir1\test3.txt
-e3d704f3542b44a621ebed70dc0efe13  data\dir2\dir3\test5.txt
 5a105e8b9d40e1329780d62ea2265d8a  data\test1.txt
 ad0234829205b9033196ba818f7a872b  data\test2.txt
 86985e105f79b95d6bc918fb45ec7727  data\dir2\test4.txt

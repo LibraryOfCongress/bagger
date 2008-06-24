@@ -1,0 +1,4 @@
+15bf3e7ac722b3677c449e48145b09dd  bagit.txt
+92e2b63dac15c896600070c466185137  manifest-md5.txt
+9b0690d2bff8e571b5dc6c607549c76d  package-info.txt
+cbacc209ad83469a09fee547904f48ef  tagmanifest-md5.txt
