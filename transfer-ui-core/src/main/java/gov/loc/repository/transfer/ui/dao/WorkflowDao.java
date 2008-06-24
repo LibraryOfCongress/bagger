@@ -9,6 +9,7 @@ import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -96,6 +97,44 @@ public class WorkflowDao {
 		Query query = this.jbpmContext.getSession().createQuery(queryString);
 		return this.toProcessInstanceBeanList(query.iterate());
 		//return this.getProcessInstanceBeanList(true, false);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ProcessInstanceBean> getSuspendedOrWithCommentsProcessInstanceBeanList(Date commentLimitDate)
+	{
+		/*
+		String queryString = "select pi " +
+	      "from org.jbpm.graph.exe.ProcessInstance as pi " +
+	      "where pi.end is null and (pi.isSuspended=true " +
+	      "or pi in (" +
+	      "  select t.processInstance " +
+	      "  from org.jbpm.graph.exe.Token as t " +
+	      "  inner join t.comments " +
+	      ")) order by pi.start desc";
+	      */
+		String queryString = "select pi " +
+	      "from org.jbpm.graph.exe.ProcessInstance as pi " +
+	      "where pi.end is null and (pi.isSuspended=true " +
+	      "or pi in (" +
+	      "  select c.token.processInstance " +
+	      "  from org.jbpm.graph.exe.Comment as c ";
+
+		if (commentLimitDate != null)
+		{
+			queryString += 
+	      "  where c.time >= :commentlimitdate ";		 				
+		}
+		
+		queryString +=
+	      ")) order by pi.start desc";
+		
+		Query query = this.jbpmContext.getSession().createQuery(queryString);
+		if (commentLimitDate != null)
+		{
+			query.setDate("commentlimitdate", commentLimitDate);
+		}
+		return this.toProcessInstanceBeanList(query.iterate());
+		
 	}
 	
 		

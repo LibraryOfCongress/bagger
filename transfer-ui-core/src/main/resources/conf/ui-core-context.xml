@@ -86,7 +86,8 @@
 		<property name="order" value="1" />
 		<property name="interceptors">
 			<list merge="true">
-				<ref bean="packageModelerInterceptor" />				
+				<ref bean="packageModelerInterceptor" />
+				<ref bean="jbpmContextInterceptor" />				
 				<bean class="gov.loc.repository.transfer.ui.interceptors.ViewInterceptor">
 					<property name="view" value="report" />
 				</bean>

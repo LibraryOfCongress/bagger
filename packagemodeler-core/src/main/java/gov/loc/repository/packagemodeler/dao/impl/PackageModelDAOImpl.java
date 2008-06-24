@@ -209,6 +209,18 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return packageType.cast(packge);
 	}
 
+	@Override
+	public <T> T findPackage(Class<T> packageType, long processInstanceId) {
+		Object packge = null;
+		Query query = this.getSession().createQuery(
+			"from " + getAlias(packageType) + " as p " +
+			"where p.processInstanceId = :processInstanceId"
+				);
+		query.setLong("processInstanceId", processInstanceId);
+		packge = query.uniqueResult();
+		return packageType.cast(packge);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<Package> findPackages(Class<?> packageType) {
 		Query query = this.getSession().createQuery(

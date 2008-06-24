@@ -25,7 +25,9 @@ public interface PackageModelDAO {
 	//Package		
 	public <T> T findPackage(Class<T> packageType, Repository repository, String packageId);
 
-	public <T> T findPackage(Class<T> packageType, String repositoryId, String packageId);	
+	public <T> T findPackage(Class<T> packageType, String repositoryId, String packageId);
+	
+	public <T> T findPackage(Class<T> packageType, long processInstanceId);
 	
 	public <T> T findRequiredPackage(Class<T> packageType, Repository repository, String packageId) throws RequiredEntityNotFound;
 

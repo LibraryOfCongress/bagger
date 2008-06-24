@@ -567,6 +567,10 @@
             <artifactId>spring-hibernate3</artifactId>
             <groupId>org.springframework</groupId>
           </exclusion>
+          <exclusion>
+            <artifactId>ehcache</artifactId>
+            <groupId>ehcache</groupId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
