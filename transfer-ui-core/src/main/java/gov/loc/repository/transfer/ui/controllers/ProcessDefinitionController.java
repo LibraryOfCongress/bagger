@@ -61,10 +61,14 @@ public class ProcessDefinitionController extends AbstractRestController {
 			return;			
 		}
 	
-		ProcessInstanceBean processInstanceBean = factory.createNewProcessInstanceBean(processDefinitionBean); 
-		dao.save(processInstanceBean);
-		request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "A new workflow was created.");
-		
+		try {
+			ProcessInstanceBean processInstanceBean = factory.createNewProcessInstanceBean(processDefinitionBean); 
+			dao.save(processInstanceBean);
+			request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "A new workflow was created.");			
+		} catch (Exception e) {
+			log.error("ProcessDefinitionController.handlePost: " + e.getMessage());
+			request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "There was an error.  Workflow was not created.");			
+		}		
 		mav.setViewName("redirect:/processinstance/index.html");
 		
 	}
