@@ -55,3 +55,7 @@
 	    </form>
 	</div>    
 </div>
+
+<form method="get" action="${contextPath}/admin/index.html" >
+	<input type="submit" class="button" value="  Back  " style="float:left" />
+</form>
