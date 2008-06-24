@@ -227,3 +227,8 @@
         #end
     </div> 
 </div>
+#if ($formViewName)
+<form method="get" action="${contextPath}/taskinstance/index.html" >
+	<input type="submit" class="button" value="  Back  " style="float:left" />
+</form>
+#end
