@@ -54,6 +54,7 @@ class ProgressReporter(threading.Thread):
                 m_bytes_per_second = total / duration / 1024. / 1024.
                 logging.info("fetched %u bytes in %.4g seconds. %.4g MBs (overall)" % 
                              (total, duration, m_bytes_per_second))
+                print "\rfetched %u bytes in %.4g seconds. %.4g MBs (overall)" % (total, duration, m_bytes_per_second),
             finally:
                 self.queue.task_done()
 
