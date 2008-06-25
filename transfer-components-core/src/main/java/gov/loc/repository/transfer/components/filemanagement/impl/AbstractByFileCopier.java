@@ -4,7 +4,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Set;
 
-import gov.loc.repository.bagit.BagGeneratorVerifier;
+import gov.loc.repository.bagit.bag.BagGeneratorVerifier;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.packge.FileInstance;

@@ -14,7 +14,7 @@
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
 	<import resource="classpath:conf/packagemodeler-core-context.xml" />
-	<import resource="classpath:conf/common-core-context.xml" />
+	<import resource="classpath:conf/bagit-context.xml" />
 	
 	<context:component-scan base-package="gov.loc.repository.transfer.components"/>
 	

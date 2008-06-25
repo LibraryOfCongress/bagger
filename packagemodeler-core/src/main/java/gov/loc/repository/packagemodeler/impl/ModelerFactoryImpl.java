@@ -14,8 +14,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
-import gov.loc.repository.bagit.ManifestReader;
-import gov.loc.repository.bagit.ManifestReader.FileFixity;
+import gov.loc.repository.bagit.manifest.ManifestReader;
+import gov.loc.repository.bagit.manifest.ManifestReader.FileFixity;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;

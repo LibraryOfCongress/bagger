@@ -3,19 +3,14 @@ package gov.loc.repository.workflow.actionhandlers;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-//import gov.loc.repository.packagemodeler.agents.System;
-import gov.loc.repository.packagemodeler.packge.CanonicalFile;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileInstance;
-//import gov.loc.repository.packagemodeler.packge.CanonicalFile;
 import gov.loc.repository.workflow.AbstractPackageModelerAwareHandler;
 import gov.loc.repository.workflow.actionhandlers.annotations.Required;
 
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class AddCanonicalFilesActionHandler extends AbstractPackageModelerAwareHandler {
 

@@ -4,14 +4,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import org.jbpm.JbpmContext;
-import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import gov.loc.repository.fixity.FixityAlgorithm;
-import gov.loc.repository.packagemodeler.agents.System;
-import gov.loc.repository.packagemodeler.packge.ExternalFileLocation;
 import gov.loc.repository.packagemodeler.packge.ExternalIdentifier;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;

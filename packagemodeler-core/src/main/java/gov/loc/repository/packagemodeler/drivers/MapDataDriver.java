@@ -7,8 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import gov.loc.repository.bagit.ManifestReader;
-import gov.loc.repository.bagit.BagHelper;
+import gov.loc.repository.bagit.bag.BagHelper;
+import gov.loc.repository.bagit.manifest.ManifestReader;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.PackageModelerConstants;
 import gov.loc.repository.packagemodeler.agents.Agent;

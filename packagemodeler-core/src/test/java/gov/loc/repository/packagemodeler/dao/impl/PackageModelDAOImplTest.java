@@ -13,8 +13,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static gov.loc.repository.constants.Agents.*;
 import static gov.loc.repository.packagemodeler.constants.FixtureConstants.*;
-import gov.loc.repository.exceptions.RequiredEntityNotFound;
 import gov.loc.repository.fixity.FixityAlgorithm;
+import gov.loc.repository.exceptions.RequiredEntityNotFound;
 import gov.loc.repository.packagemodeler.AbstractCoreModelersTest;
 import gov.loc.repository.packagemodeler.agents.Organization;
 import gov.loc.repository.packagemodeler.agents.Role;

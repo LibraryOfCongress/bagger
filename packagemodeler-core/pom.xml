@@ -75,10 +75,14 @@
       <groupId>loc-repository</groupId>
       <artifactId>transfer-common-core</artifactId>
       <version>${pom.version}</version>
-    </dependency>
+    </dependency>    
     <dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>loc-repository</groupId>
+      <artifactId>bagit</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>

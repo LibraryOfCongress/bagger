@@ -95,6 +95,10 @@
       <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
+      <groupId>loc-repository</groupId>
+      <artifactId>bagit</artifactId>
+    </dependency>    
+    <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <scope>test</scope>

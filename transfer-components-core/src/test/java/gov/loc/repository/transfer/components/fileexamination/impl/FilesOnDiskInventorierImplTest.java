@@ -10,8 +10,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static org.junit.Assert.*;
 
-import gov.loc.repository.constants.Roles;
 import gov.loc.repository.fixity.FixityAlgorithm;
+import gov.loc.repository.constants.Roles;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Role;
 import gov.loc.repository.packagemodeler.agents.System;

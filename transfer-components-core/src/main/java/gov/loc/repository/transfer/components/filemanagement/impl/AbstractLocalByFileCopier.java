@@ -5,7 +5,7 @@ import java.text.MessageFormat;
 
 import org.apache.commons.io.FileUtils;
 
-import gov.loc.repository.bagit.BagGeneratorVerifier;
+import gov.loc.repository.bagit.bag.BagGeneratorVerifier;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 

@@ -5,8 +5,8 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
 
-import gov.loc.repository.bagit.BagGeneratorVerifier;
-import gov.loc.repository.bagit.BagHelper;
+import gov.loc.repository.bagit.bag.BagGeneratorVerifier;
+import gov.loc.repository.bagit.bag.BagHelper;
 import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;

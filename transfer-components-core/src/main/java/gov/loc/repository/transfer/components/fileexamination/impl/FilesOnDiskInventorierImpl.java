@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import gov.loc.repository.bagit.BagHelper;
+import gov.loc.repository.bagit.bag.BagHelper;
+import gov.loc.repository.bagit.manifest.FixityGenerator;
 import gov.loc.repository.fixity.FixityAlgorithm;
-import gov.loc.repository.fixity.FixityGenerator;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
@@ -88,7 +88,7 @@ public class FilesOnDiskInventorierImpl extends AbstractPackageModelerAwareCompo
 				}
 				else
 				{
-					String fixityValue = fixityGenerator.generateFixity(file, algorithm);
+					String fixityValue = fixityGenerator.generateFixity(file, algorithm.toString());
 					this.factory.createFileInstance(fileLocation, fileName, new Fixity(fixityValue, algorithm));
 				}
 			}
