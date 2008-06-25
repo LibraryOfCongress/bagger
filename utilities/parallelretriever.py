@@ -131,6 +131,7 @@ def retrieve_package(options):
     """
     Retrieve the package using the desired number of workers.
     """
+    logging.info("Retrieving Package with options: %s" % repr(options))
     package_directory = os.path.join(options.destination_path,
                                      options.package_identifier)
     if not os.path.isdir(package_directory):
@@ -191,7 +192,10 @@ if __name__ == '__main__':
     if options.destination_path is None:
         options.destination_path = os.getcwd()
 
-    logging.basicConfig(level=logging.INFO, filename='%s-retrieval.log' % options.package_identifier)
+    logging.basicConfig(level=logging.INFO, 
+                        format='%(asctime)s %(levelname)-8s %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S',
+                        filename='%s-retrieval.log' % options.package_identifier)
 
     try:
         retrieve_package(options)
