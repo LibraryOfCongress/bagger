@@ -9,15 +9,15 @@ config = {
     'DEBUG': False, # If True, will print out actions rather than take them (e.g., will not hit database)
     'PSQL': '/usr/bin/psql', # Tell me where to find psql (default = '/usr/bin/psql')
     'PGHOST': 'localhost', # This is the host that the PostgreSQL database lives on (default = localhost)
-    'PGPORT': '5433', # This is the port that PostgreSQL listens on (default = 5432)
+    'PGPORT': '5432', # This is the port that PostgreSQL listens on (default = 5432)
     'PGUSER': 'postgres', # This is a username on PostgreSQL with SUPERUSER privlidges (default = postgres)
     'PGPASSWORD': '', # This is the password for the user specified above (default = '')
     'CATALINA_HOME': "", # Tell me where to find Tomcat (default = '/opt/coolstack/tomcat')    
     'DB_PREFIX': 'qa', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
     'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
     'INSTALL_DIR': 'install', # Set the directory that the CLI tools will be unzipped to (default = '.')
-    'VERSION': '1.5', # This is the version of the release being deployed
-    'SQL_FILES_LOCATION': '/home/mjg/workspace/transport-perl/db', #Set the location of the sql files (default = '')
+    'VERSION': '1.6', # This is the version of the release being deployed
+    'SQL_FILES_LOCATION': 'MUST SET', #Set the location of the sql files (default = '')
     'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
     'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
     'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
