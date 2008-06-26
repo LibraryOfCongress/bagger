@@ -19,14 +19,6 @@ public class Transporter {
         this.keyFile = keyFile;
     }
 
-    public static void main(String[] args) {
-        // test out the transporter class
-        Transporter transporter = new Transporter("/home/mjg/.ssh/id_rsa");
-        transporter.pull("mgia", "ga.rdc.lctl.gov", "/home/mgia/tmp/",
-                "/tmp/staging/");
-        transporter.archive("foobar", "/tmp/archive/");
-    }
-
     public void pull(String remoteUsername, String remoteHost,
             String remotePath, String stagingBasePath) {
         this.stagingPath = stagingBasePath + (new File(remotePath)).getName();
