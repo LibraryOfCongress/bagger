@@ -2,14 +2,19 @@ package gov.loc.repository.transfer.ui.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Date;
 
 import org.jbpm.graph.exe.Comment;
+import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
+import org.jbpm.graph.node.TaskNode;
+import org.jbpm.taskmgmt.exe.TaskInstance;
+import org.jbpm.taskmgmt.exe.TaskMgmtInstance;
 
 public class ProcessInstanceBean extends AbstractWorkflowBean implements VariableUpdatingBean {
 	
@@ -137,11 +142,31 @@ public class ProcessInstanceBean extends AbstractWorkflowBean implements Variabl
 	{
 		return this.processInstance.getStart();
 	}
-	/*
-	public void end()
-	{
-		this.processInstance.end();
-	}
 	
-	*/
+	@SuppressWarnings("unchecked")
+	public void cancel()
+	{
+		TaskNode cancelNode = (TaskNode)processInstance.getProcessDefinition().getNode("cancel");
+		processInstance.getRootToken().setNode(cancelNode);
+		cancelNode.removeTaskInstanceSynchronization(processInstance.getRootToken());
+		cancelNode.enter(new ExecutionContext(processInstance.getRootToken()));
+		TaskMgmtInstance taskMgmtInstance = (TaskMgmtInstance) processInstance.getInstance(TaskMgmtInstance.class);
+		Collection<TaskInstance> taskInstances = taskMgmtInstance.getUnfinishedTasks(processInstance.getRootToken());
+		TaskInstance cancelTaskInstance = null;
+		Iterator<TaskInstance> iter = taskInstances.iterator();
+		while(iter.hasNext())
+		{
+			cancelTaskInstance = iter.next();
+			if ("cancel task".equals(cancelTaskInstance.getName()))
+			{
+				break;
+			}
+		}
+		if (cancelTaskInstance == null)
+		{
+			throw new RuntimeException("Cancel task instance not found");
+		}
+		cancelTaskInstance.setActorId(this.jbpmContext.getActorId());
+		
+	}
 }

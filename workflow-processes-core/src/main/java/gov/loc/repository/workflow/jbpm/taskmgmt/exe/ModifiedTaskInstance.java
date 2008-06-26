@@ -91,27 +91,27 @@ public class ModifiedTaskInstance extends org.jbpm.taskmgmt.exe.TaskInstance
 
 	//Copied directly from org.jbpm.taskmgmt.exe.TaskInstance
 	private void submitVariablesx() {
-		    final TaskController taskController = (task!=null ? task.getTaskController() : null);
+		    
+		TaskController taskController = (task!=null ? task.getTaskController() : null);
 		    // if there is a task controller, 
 		    if (taskController!=null) {
-		      // the task controller is responsible for copying variables back into the process
+		    	// the task controller is responsible for copying variables back into the process
 		      taskController.submitParameters(this);
 		      
 		    // if there is no task controller
 		    } else if ( (token!=null)
 		                && (token.getProcessInstance()!=null)
 		              ) {
-		      // the default behaviour is that all task-local variables are flushed to the process 
+		      // the default behaviour is that all task-local variables are flushed to the process
 		      if (variableInstances!=null) {
-		        final ContextInstance contextInstance = token.getProcessInstance().getContextInstance();
-		        final Iterator iter = variableInstances.values().iterator();
+		        ContextInstance contextInstance = token.getProcessInstance().getContextInstance();
+		        Iterator iter = variableInstances.values().iterator();
 		        while(iter.hasNext()) {
-		          final VariableInstance variableInstance = (VariableInstance) iter.next();
+		          VariableInstance variableInstance = (VariableInstance) iter.next();
 		          // This might be optimized, but this was the simplest way to make a clone of the variable instance.
 		          contextInstance.setVariable(variableInstance.getName(), variableInstance.getValue(), token);
 		        }
 		      }
 		    }
-		  }
-	
+		  }	
 }

@@ -28,6 +28,8 @@ public class AddPackageEventActionHandler extends AbstractPackageModelerAwareHan
 	public String eventClassName;
 	
 	public String packageKey;
+	
+	public String message;
 
 	public AddPackageEventActionHandler(String actionHandlerConfiguration) {
 		super(actionHandlerConfiguration);
@@ -89,7 +91,11 @@ public class AddPackageEventActionHandler extends AbstractPackageModelerAwareHan
 		{
 			event.setSuccess(false);
 		}
-
+		if (this.message != null)
+		{
+			event.setMessage(this.message);
+		}
+		
 		log.debug(MessageFormat.format("Adding event of type {0} to {1}.  Event success: {2}", eventClass.getName(), this.packge.toString(), event.isSuccess()));				
 	}
 

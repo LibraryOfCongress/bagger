@@ -47,6 +47,7 @@ public class AddPackageEventActionHandlerTest extends AbstractCoreHandlerTest{
 	      "      <action name='add generic event action' class='AddPackageEventActionHandler'>" +
 	      "        <eventClassName>PackageReceivedEvent</eventClassName>" +
 	      "        <packageKey>${packageKey}</packageKey>" +
+	      "        <message>foo</message>" +
 	      "      </action>" +
 	      "    </event>" +	      	      	      	      	      
 	      "    </task>" +	      
@@ -97,6 +98,7 @@ public class AddPackageEventActionHandlerTest extends AbstractCoreHandlerTest{
 		    assertEquals(taskInstance.getEnd().getTime(), event.getEventEnd().getTime());
 		    assertEquals(PERSON_ID1, event.getPerformingAgent().getId());
 		    assertTrue(event.isSuccess());
+		    assertEquals("foo", event.getMessage());
 		    
 		    txManager.commit(status);
 		}

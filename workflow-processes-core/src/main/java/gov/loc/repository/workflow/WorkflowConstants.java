@@ -3,6 +3,7 @@ package gov.loc.repository.workflow;
 public class WorkflowConstants {
 	public static final String PROPERTIES_NAME = "workflow";
 	
+	public static final String VARIABLE_CANCEL_REASON = "cancelReason";
 	public static final String VARIABLE_PACKAGEID = "packageId";
 	public static final String VARIABLE_REPOSITORYID = "repositoryId";
 	public static final String VARIABLE_PACKAGEKEY = "packageKey";

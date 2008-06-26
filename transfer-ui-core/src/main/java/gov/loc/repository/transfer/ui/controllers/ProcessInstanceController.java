@@ -103,7 +103,13 @@ public class ProcessInstanceController extends AbstractRestController {
 			return;
 		}
 	
-		if (request.getParameter(UIConstants.PARAMETER_SUSPENDED) != null) {
+		if (UIConstants.VALUE_TRUE.equalsIgnoreCase(request.getParameter(UIConstants.PARAMETER_CANCEL)))
+		{
+			processInstanceBean.cancel();
+			dao.save(processInstanceBean);
+			request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "The workflow has entered the cancellation process.");
+		}
+		else if (request.getParameter(UIConstants.PARAMETER_SUSPENDED) != null) {
 			if (UIConstants.VALUE_TRUE.equalsIgnoreCase(
 			        request.getParameter(UIConstants.PARAMETER_SUSPENDED))) {
 				if (! processInstanceBean.isSuspended()) {

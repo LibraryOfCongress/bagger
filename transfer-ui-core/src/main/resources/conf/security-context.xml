@@ -8,7 +8,6 @@
 	
 	<sec:http>
 		<sec:intercept-url pattern="/login/login.html*" access="ROLE_USER"/>
-		<sec:intercept-url pattern="/processinstance/*" method="POST" access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/admin/*" method="POST" access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/token/*" method="POST" access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/**" method="POST" access="ROLE_USER"/>			

@@ -41,6 +41,7 @@
 		<mapping class="gov.loc.repository.packagemodeler.events.packge.impl.PackageAcceptedEventImpl" />
 		<mapping class="gov.loc.repository.packagemodeler.events.packge.impl.PackageEventImpl" />
 		<mapping class="gov.loc.repository.packagemodeler.events.packge.impl.PackageReceivedEventImpl" />
+		<mapping class="gov.loc.repository.packagemodeler.events.packge.impl.PackageCancelledEventImpl" />
 		
 		<!-- File Location Events -->
 		<mapping class="gov.loc.repository.packagemodeler.events.filelocation.impl.FileCopyEventImpl" />

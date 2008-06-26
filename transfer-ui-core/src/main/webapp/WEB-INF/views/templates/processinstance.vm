@@ -65,8 +65,19 @@
                         	#end
                         	</form>
                         #end
-                    </span></td>
+                    </span></td>                    
                 </tr>
+                #if($permissions.canCancelProcessInstance() && ! $processInstanceBean.ended && ! $processInstanceBean.suspended)
+	                <tr id="cancel" >
+	                    <td>
+                            <form method="post" action="${requestURI}">
+						    	<input type="hidden" name="method" value="put" />    		                            	    		
+    	                		<input type="hidden" name="cancel" value="true" />
+                        		<input class="button" type="submit" value="cancel workflow" />
+                        	</form>
+	                    </td>                    
+	                </tr>                                	
+                #end
             </table>
         </fieldset>
     </div>

@@ -26,6 +26,11 @@ public class PermissionsHelper {
 		return isLoggedIn();
 	}
 
+	public boolean canCancelProcessInstance()
+	{
+		return isLoggedIn();
+	}
+	
 	public boolean canUpdateTaskInstanceUser()
 	{
 		return isLoggedIn();
