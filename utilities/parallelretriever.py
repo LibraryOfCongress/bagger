@@ -38,32 +38,48 @@ from optparse import OptionParser
 
 
 class ProgressReporter(threading.Thread):
-    def __init__(self, queue):
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.queue = queue
+        self._queue = Queue.Queue()
+        self._in_progress = set()
+
+    def started(self, filename):
+        self._in_progress.add(filename)        
+
+    def finished(self, filename):
+        self._queue.put(filename)
 
     def run(self):
         total = 0
         t0 = time.time()
         while True:
-            filename = self.queue.get()
-            try:
-                mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime = os.stat(filename)
-                total += size
-                duration = (time.time() - t0)
-                m_bytes_per_second = total / duration / 1024. / 1024.
-                logging.info("fetched %u bytes in %.4g seconds. %.4g MBs (overall)" % 
-                             (total, duration, m_bytes_per_second))
-                print "\rfetched %u bytes in %.4g seconds. %.4g MBs (overall)" % (total, duration, m_bytes_per_second),
-            finally:
-                self.queue.task_done()
+            while True:
+                try:
+                    filename = self._queue.get(block=False)
+                    self._queue.task_done()
+                    self._in_progress.remove(filename)
+                    mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime = os.stat(filename)
+                    total += size
+                except Queue.Empty, e:
+                    break
+            time.sleep(1)
+            in_progress_total = 0
+            for fn in set(self._in_progress):
+                if os.path.exists(fn):
+                    mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime = os.stat(fn)
+                    in_progress_total += size
+            g_total = total + in_progress_total
+            duration = (time.time() - t0)
+            m_bytes_per_second = g_total / duration / 1024. / 1024.
+            logging.info("fetched %u bytes in %.4g seconds. %.4g MB/s (overall)" % 
+                         (g_total, duration, m_bytes_per_second))
+            print "\rfetched %u bytes in %.4g in seconds. %.4g MB/s (overall)" % (g_total, duration, m_bytes_per_second),
+            sys.stdout.flush()
 
-
-finished_queue = Queue.Queue()
-t = ProgressReporter(finished_queue)
-t.setName("Progress Reporter")
-t.setDaemon(True)
-t.start()
+progress_reporter = ProgressReporter()
+progress_reporter.setName("Progress Reporter")
+progress_reporter.setDaemon(True)
+progress_reporter.start()
 
 
 class FetchWorker(threading.Thread):
@@ -95,6 +111,7 @@ def generate_package_identifier():
 
 def fetch(filename, url):
     logging.debug("%s fetching: %s" % (threading.currentThread().getName(), url))
+    progress_reporter.started(filename)
     try:
         os.makedirs(os.path.dirname(filename))
     except OSError:
@@ -119,7 +136,7 @@ def fetch(filename, url):
     else:
         raise Exception("unexpected url type")
     if ret==0:
-        finished_queue.put(filename)
+        progress_reporter.finished(filename)
     elif ret<0:
         logging.error("child process was terminated by signal %s" % -ret)
         return ret
