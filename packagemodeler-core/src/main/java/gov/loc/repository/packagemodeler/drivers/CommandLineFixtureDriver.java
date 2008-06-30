@@ -111,9 +111,10 @@ public class CommandLineFixtureDriver {
 				OPT_ID,
 				OPT_ROLES));
 		System.out.println("To create a System, use:");		
-		System.out.println(MessageFormat.format("driver {0} -{1} -{2}", 
+		System.out.println(MessageFormat.format("driver {0} -{1} -{2} -{3}", 
 				ACTION_SYSTEM,
 				OPT_ID,
+				OPT_HOST,
 				OPT_ROLES));
 
 

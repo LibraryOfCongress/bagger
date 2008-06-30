@@ -40,7 +40,12 @@ public class MapFixtureDriver {
     
     public static final String OPT_HELP = "help";
     public static final String OPT_HELP_DESCRIPTION = "Print this message";
-        
+
+    public static final String OPT_HOST = "host";
+    public static final String OPT_HOST_DESCRIPTION = "The hostname of the system.";
+    public static final String OPT_HOST_TYPE = TYPE_NAME;
+    
+    
     public static final String OPT_ID = "id";
     public static final String OPT_ID_DESCRIPTION = "The identifier of the fixture.";
     public static final String OPT_ID_TYPE = TYPE_ID;
@@ -114,6 +119,7 @@ public class MapFixtureDriver {
         else if (ACTION_SYSTEM.equalsIgnoreCase(action))
         {
             System agent = factory.createAgent(System.class, options.getRequired(OPT_ID));
+            agent.setHost(options.get(OPT_HOST, null));
             dao.save(agent);
             addRoles(agent);
         }                        
