@@ -3,12 +3,23 @@ import logging
 class Log():
     def __init__(self, project_name="Transfer"):
         self.logger = logging.getLogger(project_name)
+        logfile = 'logs/transfer.log'
         formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
-        logfile = logging.FileHandler('logs/transfer.log')
-        logfile.setFormatter(formatter)
+        try:
+            open(logfile, 'r+')
+        except IOError, e:
+            if e.errno == 13:
+                raise RuntimeError("Need write permission on logfile: %s" % (logfile))
+            elif e.errno == 2:
+                # file does not exist; create it and move on
+                open(logfile, 'w').close()
+            else:
+                raise RuntimeError("Unhandled error opening logfile %s: %s" % (logfile, e))
+        handler = logging.FileHandler(logfile)
+        handler.setFormatter(formatter)
         console = logging.StreamHandler()
         console.setFormatter(formatter)
-        self.logger.addHandler(logfile)
+        self.logger.addHandler(handler)
         self.logger.addHandler(console)
         self.logger.setLevel(logging.DEBUG)
 

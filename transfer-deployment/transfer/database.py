@@ -35,13 +35,13 @@ class AbstractDB():
             self.logger.error("JAVA_HOME is not set properly: '%s'" % (os.environ['JAVA_HOME']))
             raise RuntimeError("JAVA_HOME is not set properly: '%s'" % (os.environ['JAVA_HOME']))
         if not self.connect():
-            self.logger.error("Cannot connect to database: %s@%s:%s/%s" % (
-                os.environ['PGUSER'], self.db_server, self.db_port, self.db_name
+            self.logger.error("Cannot connect to database server: %s@%s:%s" % (
+                os.environ['PGUSER'], self.db_server, self.db_port
             ))
-            raise RuntimeError("Cannot connect to database: %s@%s:%s/%s" % (
-                os.environ['PGUSER'], self.db_server, self.db_port, self.db_name
+            raise RuntimeError("Cannot connect to database server: %s@%s:%s" % (
+                os.environ['PGUSER'], self.db_server, self.db_port
             ))
-
+            
     def create_database(self):
         """ creates database """
         os.environ['PGDATABASE'] = "postgres"
@@ -134,7 +134,7 @@ class AbstractDB():
         """ checks if a connection can be made to the database """
         os.environ['PGDATABASE'] = "postgres"
         result = utils.load_sqlstr(self.psql, r'\q', self.debug)
-        return True if result.find('ERROR:') == -1 else False
+        return True if result.find('ERROR:') == -1 and result.find('Connection refused') == -1 else False
 
     def java_home(self):
         """ checks the value of JAVA_HOME """

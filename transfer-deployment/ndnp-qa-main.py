@@ -17,7 +17,7 @@ config = {
     'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
     'INSTALL_DIR': 'install', # Set the directory that the CLI tools will be unzipped to (default = '.')
     'VERSION': '1.6', # This is the version of the release being deployed
-    'SQL_FILES_LOCATION': 'MUST SET', #Set the location of the sql files (default = '')
+    'SQL_FILES_LOCATION': 'CHANGEME', #Set the location of the sql files (default = '')
     'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
     'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
     'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
@@ -78,9 +78,9 @@ core_modeler.create_fixtures(fixtures=(
     'createrole -id repository_system',
     'createsystem -id ndnp-staging-repository -roles repository_system',
     'createrole -id storage_system',
-    'createsystem -id rdc -roles storage_system',
-    'createsystem -id rs15 -roles storage_system',
-    'createsystem -id rs25 -roles storage_system',
+    'createsystem -id rdc -host beryllium.rdc.lctl.gov -roles storage_system',
+    'createsystem -id rs15 -host rs15.loc.gov -roles storage_system',
+    'createsystem -id rs25 -host rs25.loc.gov -roles storage_system',
     'createrole -id ndnp_awardee',
      'createorganization -id CU-Riv -name "CA - University of California, Riverside" -roles ndnp_awardee',
      'createorganization -id FUG -name "FL - University of Florida Libraries, Gainesville" -roles ndnp_awardee',

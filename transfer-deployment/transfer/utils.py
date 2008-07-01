@@ -56,7 +56,12 @@ def unzip(file, directory, debug=False):
     if debug:
         return "unzipping %s into %s\n" % (file, directory)
     else:
-        return os.popen4('unzip -o "%s" -d "%s"' % (file, directory))[1].read()
+        output = os.popen4('unzip -o "%s" -d "%s"' % (file, directory))[1].read()
+        m = re.compile(r'cannot find', re.M).search(output)
+        if m:
+            raise RuntimeError("Problem with zipfile %s" % (file))
+        else:
+            return output
 
 def chmod(mode, file, debug=False): 
     """ changes the permissions of a file to mode """
