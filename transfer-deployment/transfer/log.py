@@ -1,9 +1,11 @@
+import os
 import logging
 
 class Log():
     def __init__(self, project_name="Transfer"):
         self.logger = logging.getLogger(project_name)
-        logfile = 'logs/transfer.log'
+        logdir = 'logs'
+        logfile = '%s/transfer.log' % (logdir)
         formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
         try:
             open(logfile, 'r+')
@@ -12,6 +14,11 @@ class Log():
                 raise RuntimeError("Need write permission on logfile: %s" % (logfile))
             elif e.errno == 2:
                 # file does not exist; create it and move on
+                try:
+                    os.makedirs(logdir)
+                except IOError:
+                    # logdir already exists, so eat the tasty error
+                    pass
                 open(logfile, 'w').close()
             else:
                 raise RuntimeError("Unhandled error opening logfile %s: %s" % (logfile, e))

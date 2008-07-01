@@ -1,5 +1,6 @@
 import os
 import re
+from time import sleep
 
 def check_os():
     try:
@@ -16,14 +17,18 @@ def start_tomcat(cmd, debug=False):
     if debug:
         return "starting tomcat: %s" % (cmd)
     else:
-        return os.popen4(cmd)[1].read()
+        output = os.popen4(cmd)[1].read()
+        sleep(5)
+        return output
 
 def stop_tomcat(cmd, debug=False):
     # platform = check_os()
     if debug:
         return "stopping tomcat: %s" % (cmd)
     else:
-        return os.popen4(cmd)[1].read()
+        output = os.popen4(cmd)[1].read()
+        sleep(5)
+        return output
 
 def list_databases(command, debug=False):
     """ gets list of databases """
