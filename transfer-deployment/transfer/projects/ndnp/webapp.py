@@ -44,10 +44,9 @@ class WebApp(CoreWebApp):
             raise RuntimeError("%s/webapps does not exist" % (self.catalina_home))
         if os.path.isdir("%s/webapps/transfer" % (self.catalina_home)):
             utils.rmdir("%s/webapps/transfer" % (self.catalina_home))
-        else:
-            if utils.mkdir("%s/webapps/transfer" % (self.catalina_home), self.debug).find("Permission denied") != -1:
-                self.logger.error("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))
-                raise RuntimeError("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))        
+        if utils.mkdir("%s/webapps/transfer" % (self.catalina_home), self.debug).find("Permission denied") != -1:
+            self.logger.error("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))
+            raise RuntimeError("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))        
         try:
             utils.unzip(self.warfile, self.webapps_location, self.debug)
         except IOError, e:
