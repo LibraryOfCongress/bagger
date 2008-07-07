@@ -45,13 +45,13 @@ class TransferServices():
         for package in self.component_packages.keys():
             if not os.path.exists(package):
                 urllib.urlretrieve(self.component_packages.get(package), package)
-        result  = utils.unzip(self.driver_package, self.install_dir, self.debug)
+        utils.unzip(self.driver_package, self.install_dir, self.debug)
         for component_package in self.component_packages.keys():
-            result += utils.unzip(component_package, self.component_location, self.debug)        
+            utils.unzip(component_package, self.component_location, self.debug)        
         for driver in self.drivers:
-            result += utils.chmod("+x", "%s/%s" % (self.driver_location, driver), self.debug)
-        result += utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
-        result += utils.strtofile(self.servicecontainer_props, self.servicecontainer_conf, self.debug)
+            utils.chmod("+x", "%s/%s" % (self.driver_location, driver), self.debug)
+        utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
+        utils.strtofile(self.servicecontainer_props, self.servicecontainer_conf, self.debug)
         self.logger.info("Deploying %s drivers" % (self.project_name))
         return
 

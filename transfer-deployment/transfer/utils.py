@@ -80,8 +80,15 @@ def mkdir(path, debug=False):
     if debug:
         return "making %s directory" % (path)
     else:
+        return os.makedirs(path).__str__()
+    
+def rmdir(path, debug=False):
+    """ removes directory path """
+    if debug:
+        return "removing %s directory" % (path)
+    else:
         try:
-            return os.makedirs(path).__str__()
+            return os.removedirs(path).__str__()
         except OSError:
             return os.popen4("rm -rf '%s/*'" % (path))[1].read()
     

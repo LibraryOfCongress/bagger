@@ -40,11 +40,14 @@ class WebApp(CoreWebApp):
         if not os.path.exists(self.warfile):
             urllib.urlretrieve(self.url, self.warfile)
         if not os.path.isdir("%s/webapps" % (self.catalina_home)):
-            self.logger.error("CATALINA_HOME/webapps '%s' does not exist" % (self.catalina_home))
-            raise RuntimeError("CATALINA_HOME/webapps '%s'  does not exist" % (self.catalina_home))
-        if utils.mkdir("%s/webapps/transfer" % (self.catalina_home), self.debug).find("Permission denied") != -1:
-            self.logger.error("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))
-            raise RuntimeError("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))        
+            self.logger.error("%s/webapps does not exist" % (self.catalina_home))
+            raise RuntimeError("%s/webapps does not exist" % (self.catalina_home))
+        if os.path.isdir("%s/webapps/transfer" % (self.catalina_home)):
+            utils.rmdir("%s/webapps/transfer" % (self.catalina_home))
+        else:
+            if utils.mkdir("%s/webapps/transfer" % (self.catalina_home), self.debug).find("Permission denied") != -1:
+                self.logger.error("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))
+                raise RuntimeError("Could not create directory '%s/webapps/transfer'" % (self.catalina_home))        
         try:
             utils.unzip(self.warfile, self.webapps_location, self.debug)
         except IOError, e:
@@ -57,4 +60,4 @@ class WebApp(CoreWebApp):
     
     def tomcat_exists(self):
         """ checks to make sure tomcat scripts exist """
-        return os.path.isfile(self.tomcat_start) and os.path.isfile(self.tomcat_stop)
+        return os.path.isfile(self.tomcat_start.split()[0]) and os.path.isfile(self.tomcat_stop.split()[0])
