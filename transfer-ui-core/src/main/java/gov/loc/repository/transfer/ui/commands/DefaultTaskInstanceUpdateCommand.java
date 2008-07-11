@@ -4,7 +4,7 @@ import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.controllers.VariableUpdateHelper;
 import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
-import gov.loc.repository.transfer.ui.model.ProcessInstanceBean;
+//import gov.loc.repository.transfer.ui.model.ProcessInstanceBean;
 import gov.loc.repository.transfer.ui.model.UserBean;
 import gov.loc.repository.transfer.ui.model.VariableBean;
 import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
@@ -120,7 +120,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 			}
 			message += "Variables for the task were updated. ";
 		}
-
+/*
 		ProcessInstanceBean pib = taskInstanceBean.getProcessInstanceBean();
 		String packageId = pib.getPackageName();
 		String normalizedPackageId = packageId.replaceAll("_\\d{8}_", "_");
@@ -129,7 +129,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 			message = "Package name already exists.  Variables for the task were not updated. ";
 			log.debug("Message: " + message);
 		}
-		
+*/		
 		//If update transition
 		if (this.requestUpdatesTransition())
 		{
