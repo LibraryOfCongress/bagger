@@ -24,11 +24,18 @@ public class CheckPackageExistsDecisionHandler extends AbstractPackageModelerAwa
 	@Override
 	protected String decide() throws Exception {
 		Package packge = this.dao.findPackage(Package.class, this.repositoryId, this.packageId);
+		boolean b = true;
+		String packageId = packge.getPackageId();
+		String normalizedPackageId = packageId.replaceAll("_\\d{8}_", "_");
+		if (packageId.equals(normalizedPackageId)) {
+			b = false;
+		}
 
-		if (packge == null || (packge.getProcessInstanceId() != null && packge.getProcessInstanceId() == this.executionContext.getProcessInstance().getId()))
+		if (b && (packge == null || (packge.getProcessInstanceId() != null && packge.getProcessInstanceId() == this.executionContext.getProcessInstance().getId())))
 		{
 			return TRANSITION_CONTINUE;
 		}
+		log.debug("CheckPackageExistsDecisionHandler: packageId: " + packageId + ", normalized: " + normalizedPackageId);
 		this.executionContext.getContextInstance().setVariable("message", "The package already exists.");
 		return TRANSITION_RETRY;
 	}	
