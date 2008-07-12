@@ -35,7 +35,6 @@ public class CheckPackageExistsDecisionHandler extends AbstractPackageModelerAwa
 		{
 			return TRANSITION_CONTINUE;
 		}
-		log.debug("CheckPackageExistsDecisionHandler: packageId: " + packageId + ", normalized: " + normalizedPackageId);
 		this.executionContext.getContextInstance().setVariable("message", "The package already exists.");
 		return TRANSITION_RETRY;
 	}	
