@@ -99,6 +99,13 @@ def mv(srcfile, destfile, debug=False):
     else:
         return os.popen4('mv "%s" "%s"' % (srcfile, destfile))[1].read()
 
+def cp(srcfile, destfile, debug=False):
+    """ copies srcfile to destfile """
+    if debug:
+        return "copying %s to %s\n" % (srcfile, destfile)
+    else:
+        return os.popen4('cp "%s" "%s"' % (srcfile, destfile))[1].read()
+
 def strtofile(str, file, debug=False):
     """ creates a file from a string """
     if debug:
@@ -134,6 +141,20 @@ def replace_passwds_in_file(file, passwds):
         return passwds.get(match.group(1))
     pattern = r'(\w+)_passwd'
     return re.sub(pattern, getrepl, file)
+
+def setup_driver_init(driver_location, init_dir):
+    """ localize init script for servicecontainerdriver and move to /etc/init.d """
+    init_script = "%s/service_container.sh" % (driver_location)
+    driver = "%s/servicecontainerdriver" % (driver_location)
+    f = open(init_script, 'r')
+    contents = f.read()
+    f.close()
+    contents = re.compile(r'^COMMAND=.+$', re.M).sub(r'COMMAND=%s' % (driver), contents)
+    f = open(init_script, 'w')
+    f.write(contents)
+    f.close()
+    cp(init_script, init_dir)
+    return
 
 def localize_datasources_props(file, db_server, db_port, db_name, db_prefix, role_prefix, passwds, debug=False):
     """ search and replace db names, role names, and passwds in datasources.properties """

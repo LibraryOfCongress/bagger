@@ -21,6 +21,8 @@ class TransferServices():
         self.url = 'https://beryllium.rdc.lctl.gov/trac/transfer/browser/trunk/transfer-services-core/release/transfer-services-core-%s-bin.zip?format=raw' % (self.version)
         self.driver_location = "%s/%s-%s/bin" % (self.install_dir, self.project_name, self.version)
         self.drivers = ("componentdriver","servicecontainerdriver")
+        self.driver_init = "%s/service_container.sh" % (self.driver_location)
+        self.init_dir = "/etc/init.d/"
         self.component_location = "%s/%s-%s" % (self.install_dir, self.project_name, self.version)
         self.component_packages = {}
         for project in config['COMPONENT_PROJECTS']:
@@ -50,6 +52,7 @@ class TransferServices():
             utils.unzip(component_package, self.component_location, self.debug)        
         for driver in self.drivers:
             utils.chmod("+x", "%s/%s" % (self.driver_location, driver), self.debug)
+        utils.setup_driver_init(self.driver_location, self.init_dir)
         utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
         utils.strtofile(self.servicecontainer_props, self.servicecontainer_conf, self.debug)
         self.logger.info("Deploying %s drivers" % (self.project_name))
