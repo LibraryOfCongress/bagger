@@ -19,8 +19,6 @@ import gov.loc.repository.utilities.FilenameHelper;
 
 public abstract class AbstractCopier extends AbstractPackageModelerAwareComponent {
 
-	
-	
 	private BagGeneratorVerifier generator;
 	protected FileLocation srcFileLocation;
 	protected String srcMountPath;
