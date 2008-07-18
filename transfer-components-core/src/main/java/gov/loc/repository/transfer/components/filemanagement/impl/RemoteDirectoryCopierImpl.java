@@ -33,15 +33,16 @@ public class RemoteDirectoryCopierImpl extends AbstractCopier implements RemoteD
     //   homedir will always be /home/transfer?
     //   key will always be in .ssh/id_rsa?
     // pass in via constructor
+    // homedir is in /home on AIX and Linux boxes, /export/home on Solaris
     private String keyFile = "/home/transfer/.ssh/id_rsa";
 
     // get this from the user
-    // 
+    // comes from interface?
     private String archiveUsername = "foo"; 
 
     // get this from the user
     //   value will vary with remoteHost, since rs25 and sun29 are different
-    // this will be in this.destPath
+    // this will be in this.destCopyToPath
     private String archivePath = "/lcbp/foo/bar"; 
     
     @Autowired  
