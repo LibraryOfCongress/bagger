@@ -170,3 +170,6 @@
 		</fieldSet>	    		        			            
     </div>
 </div>
+<form method="get" action="${contextPath}/reports/index.html" >
+	<input type="submit" class="button" value="  Back  " style="float:left" />
+</form>
