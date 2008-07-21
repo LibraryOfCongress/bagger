@@ -48,7 +48,6 @@
                         <th>Package</th>
                         <th>Workflow</th>
                         <th>Start date</th>
-                        <th>Completion date</th>
                 </tr></tfoot>
                 <tbody>
 			        #foreach($processInstanceBean in $processInstanceBeanList)
@@ -63,13 +62,6 @@
                         </td>
 				        <td>
 				            ${date.format('yyyy-MM-dd hh:mm', $processInstanceBean.startDate)}
-				        </td>				        
-				        <td>
-				            #if($processInstanceBean.endDate)
-				            	${date.format('yyyy-MM-dd hh:mm', $processInstanceBean.endDate)}
-				            #else
-				            	Incomplete
-				            #end
 				        </td>				        
 				    </tr>					
 			        #end
