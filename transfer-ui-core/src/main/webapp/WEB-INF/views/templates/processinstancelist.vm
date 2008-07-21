@@ -42,7 +42,6 @@
                         <th>Package</th>
                         <th>Workflow</th>
                         <th>Start date</th>
-                        <th>Completion date</th>
                 </tr></thead>
                 <tfoot><tr>
                         <th>Package</th>
