@@ -12,9 +12,8 @@ public interface RemoteDirectoryCopier extends Component {
 	static final String COMPONENT_NAME = "remotedirectorycopier";
 	
 	/*
-	 * Copies from the source FileLocation to the destination FileLocation and performs verification using the NDNP Validation Library.
+	 * Copies from the source FileLocation to the destination FileLocation and performs verification using the BagIt Validation Library.
 	 * A FileCopyEvent is recorded.
-	 * Only the files that are referenced in the batch/METS files are copied.
 	 * If mount path is provided, it is used as the base path for the FileLocation.
 	 * If the destination FileLocation is LC package structure, the files are copied into the LC package structure.
 	 */	

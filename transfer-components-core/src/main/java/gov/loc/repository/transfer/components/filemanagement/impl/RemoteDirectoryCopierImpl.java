@@ -28,29 +28,32 @@ public class RemoteDirectoryCopierImpl extends AbstractCopier implements RemoteD
     
     private BagGeneratorVerifier verifier;
 
-    // rely on convention for getting ssh key? follow up with brian
-    //   user will always be transfer?
-    //   homedir will always be /home/transfer?
-    //   key will always be in .ssh/id_rsa?
-    // pass in via constructor
-    // homedir is in /home on AIX and Linux boxes, /export/home on Solaris
-    private String keyFile = "/home/transfer/.ssh/id_rsa";
+    // Value optionally comes from constructor, otherwise is set to reasonable default
+    private String keyFile;
 
-    // get this from the user
-    // comes from interface?
-    private String archiveUsername = "foo"; 
+    // Value comes from the RemoteDirectoryCopier interface 
+    private String archiveUsername; 
 
-    // get this from the user
-    //   value will vary with remoteHost, since rs25 and sun29 are different
-    // this will be in this.destCopyToPath
-    private String archivePath = "/lcbp/foo/bar"; 
+    // Get this value from the user
+    // The value will vary with remoteHost, since rs25 and sun29 are different
+    private String archivePath = this.destCopyToPath;
     
+    // keyFile is not provided in this constructor, so use a default value
     @Autowired  
     public RemoteDirectoryCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityBagGeneratorVerifier")BagGeneratorVerifier verifier) {
         super(factory, dao, verifier);
         this.verifier = verifier;
+        this.keyFile = "/home/transfer/.ssh/id_rsa";
     }
 
+    // keyFile is provided in this constructor
+    @Autowired  
+    public RemoteDirectoryCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityBagGeneratorVerifier")BagGeneratorVerifier verifier, String keyFile) {
+        super(factory, dao, verifier);
+        this.verifier = verifier;
+        this.keyFile = keyFile;
+    }
+    
     @Override
     protected String getComponentName() {
         return COMPONENT_NAME;
@@ -60,7 +63,7 @@ public class RemoteDirectoryCopierImpl extends AbstractCopier implements RemoteD
     protected void performCopy() throws Exception
     {
         this.getLog().debug(MessageFormat.format("Performing copy from {0} to {1}", this.srcPath, this.destCopyToPath));
-        this.performTransport(this.srcPath, this.destCopyToPath);       
+        this.performTransport(this.srcPath, this.destCopyToPath);
     }
 
     @Override
@@ -86,9 +89,10 @@ public class RemoteDirectoryCopierImpl extends AbstractCopier implements RemoteD
     public void copy(FileLocation srcFileLocation, String srcMountPath,
             FileLocation destFileLocation, String destMountPath,
             Agent requestingAgent, FixityAlgorithm algorithm, String archiveUsername) throws Exception {
+        this.archiveUsername = archiveUsername;
         this.internalCopy(srcFileLocation, srcMountPath, destFileLocation, destMountPath, requestingAgent, algorithm);
     }
-    
+
     protected void performTransport(String srcPath, String destPath) throws Exception
     {
         // How to get remoteHost from storagesystem in PM?
