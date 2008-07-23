@@ -1,9 +1,8 @@
 package gov.loc.repository.transfer.components.filemanagement.impl;
 
 import static gov.loc.repository.transfer.components.ComponentConstants.TRANSPORT_USERNAME;
-
+import static gov.loc.repository.transfer.components.ComponentConstants.DEFAULT_STAGING_BASEPATH;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Properties;
@@ -19,13 +18,18 @@ import com.jcraft.jsch.Session;
 import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
 import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCopier.CopyDescription;
 import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCopier.DirectoryCopier;
+import gov.loc.repository.utilities.ProcessBuilderWrapper;
+import gov.loc.repository.utilities.ProcessBuilderWrapper.ProcessBuilderResult;
 
 public class TwoStepRemoteDirectoryCopier implements DirectoryCopier {
 
 	private static final Log log = LogFactory.getLog(TwoStepRemoteDirectoryCopier.class);
 	
 	private String keyFile;
-	
+	private String stagingBasePath;
+    
+    protected ProcessBuilderWrapper pb;
+    
 	public TwoStepRemoteDirectoryCopier(String keyFile) {
 		this.keyFile = keyFile;
 	}
@@ -42,34 +46,29 @@ public class TwoStepRemoteDirectoryCopier implements DirectoryCopier {
 		
 	}
 	
-    private void pull(String remoteUsername, String remoteHost, CopyDescription copyDescription) {
-
-        try {
-            // scp must be on the path
-            Process p = Runtime.getRuntime().exec(
-                    "scp -B -q -o StrictHostKeyChecking=no -r -i " 
-                    + this.keyFile + " " 
-                    + this.toUri(remoteUsername, remoteHost, copyDescription.srcPath) + " " 
-			        + copyDescription.destCopyToPath
-            );
-            p.waitFor();
-        }
-        catch (IOException ioe) {
-            throw new RuntimeException(MessageFormat.format("I/O error during pull operation: {0}", ioe.getStackTrace().toString()));
-        }
-        catch (InterruptedException ie) {
-            throw new RuntimeException(MessageFormat.format("Interrupt error during pull operation: {0}", ie.getStackTrace().toString()));
+    private void pull(String remoteUsername, String remoteHost, CopyDescription copyDescription) 
+    {
+        this.stagingBasePath = 
+            (copyDescription.additionalParameters.containsKey("stagingBasePath"))
+            ? copyDescription.additionalParameters.get("stagingBasePath") : DEFAULT_STAGING_BASEPATH;
+        log.debug(MessageFormat.format("stagingBasePath set to {0}", this.stagingBasePath));
+        String commandLine = MessageFormat.format("scp -B -q -o StrictHostKeyChecking=no -r -i {0} {1} {2}", this.keyFile, this.toUri(remoteUsername, remoteHost, copyDescription.srcPath), this.stagingBasePath);
+        log.debug("Commandline is " + commandLine);
+        ProcessBuilderResult result = pb.execute(commandLine);
+        if (result.getExitValue() != 0)
+        {
+            log.error(MessageFormat.format("{0} returned {1}.  Output was {2}", commandLine, result.getExitValue(), result.getOutput()));
+            throw new RuntimeException("Pull remote directory failed");
         }
     }
 
     private void archive(CopyDescription copyDescription)
     {
     	String archiveUsername = copyDescription.additionalParameters.get(TwoStepRemoteBagCopierImpl.ARCHIVE_USERNAME_KEY);
-	    String stagingBasePath = copyDescription.destCopyToPath;
-	    if (!stagingBasePath.endsWith("/")) {
-            stagingBasePath += "/";
+	    if (! this.stagingBasePath.endsWith("/")) {
+            this.stagingBasePath += "/";
         }
-        String stagingPath = stagingBasePath + (new File(copyDescription.srcPath)).getName();
+        String stagingPath = this.stagingBasePath + (new File(copyDescription.srcPath)).getName();
 
     	boolean isArchiveSuccess = this.execute(archiveUsername, "cp -a " + stagingPath + " " + copyDescription.destCopyToPath);
         if (isArchiveSuccess) {

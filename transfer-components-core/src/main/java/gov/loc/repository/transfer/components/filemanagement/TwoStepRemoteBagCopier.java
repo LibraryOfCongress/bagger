@@ -19,7 +19,6 @@ public interface TwoStepRemoteBagCopier extends Component {
 	 */	
 	@JobType(name="twostepremotebagcopy")
 	public void copy(
-	        // may need to add a couple more mapparams?
             @MapParameter(name="srcfilelocationid") Long srcFileLocationId,
 			@MapParameter(name="srcmountpath") String srcMountPath,			
 			@MapParameter(name="destfilelocationid") Long destFileLocationId,

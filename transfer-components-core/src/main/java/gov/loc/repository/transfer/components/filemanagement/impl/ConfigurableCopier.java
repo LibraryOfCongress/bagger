@@ -135,7 +135,7 @@ public abstract class ConfigurableCopier extends AbstractPackageModelerAwareComp
 		public String destMountPath;
 		public String destPath;
 		public String destCopyToPath;
-		public Map<String,String> additionalParameters;
+        public Map<String,String> additionalParameters;
 				
 		public CopyDescription(FileLocation srcFileLocation, String srcMountPath,
 				FileLocation destFileLocation, String destMountPath, Map<String, String> additionalParameters)
