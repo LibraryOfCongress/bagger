@@ -120,16 +120,7 @@ public class DefaultTaskInstanceUpdateCommand implements
 			}
 			message += "Variables for the task were updated. ";
 		}
-/*
-		ProcessInstanceBean pib = taskInstanceBean.getProcessInstanceBean();
-		String packageId = pib.getPackageName();
-		String normalizedPackageId = packageId.replaceAll("_\\d{8}_", "_");
-		if (packageId.equals(normalizedPackageId)) {
-			log.debug("DefaultTaskInstance: packageId: " + packageId + ", normalized: " + normalizedPackageId);
-			message = "Package name already exists.  Variables for the task were not updated. ";
-			log.debug("Message: " + message);
-		}
-*/		
+
 		//If update transition
 		if (this.requestUpdatesTransition())
 		{
@@ -188,6 +179,15 @@ public class DefaultTaskInstanceUpdateCommand implements
 		if (message.length() > 0)
 		{
 			request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, message);
+		}
+
+		try {
+			String contextMsg = (String) this.taskInstanceBean.getTaskInstance().getProcessInstance().getContextInstance().getVariable("message");			
+			if (contextMsg != null && contextMsg.trim().length() > 0) {
+				request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, contextMsg);				
+			}
+		} catch (Exception e) {
+			log.error("Error retrieving messages from ContextInstance set by CheckPackageExistsDecisionHandler workflow.");
 		}
 		
 	}	
