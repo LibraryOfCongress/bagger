@@ -30,7 +30,7 @@ ALG=$(echo $MANIFEST | sed -e 's/manifest-//' | sed -e 's/.txt//')
 
 # Split the manifest into several temp files, 
 MANIFEST_LENGTH=$(wc -l < $MANIFEST)
-let SPLIT_SIZE=$MANIFEST_LENGTH/$NUM_PROCS+1
+SPLIT_SIZE=$(expr $MANIFEST_LENGTH / $NUM_PROCS + 1)
 split -l $SPLIT_SIZE $(basename $MANIFEST) .manifest-$ALG-split.$$.
 i=0
 
@@ -41,6 +41,8 @@ do
     CHILD_PIDS[i]=$!
     ((i++))
 done
+
+trap 'for p in ${CHILD_PIDS[*]} ; do kill $p ; done' 2
 
 # Wait for everyone to finish.
 for p in ${CHILD_PIDS[*]}
