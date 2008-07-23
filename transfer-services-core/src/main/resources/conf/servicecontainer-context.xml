@@ -11,10 +11,11 @@
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
 	<import resource="servicerequestbroker-context.xml" />
+	<import resource="service-context.xml" />
 	
-	<context:component-scan base-package="gov.loc.repository.service"/>
+	<context:component-scan base-package="gov.loc.repository.service.container"/>
 		
-	<bean id="serviceContainer" class="gov.loc.repository.service.ServiceContainer">
+	<bean id="serviceContainer" class="gov.loc.repository.service.container.ServiceContainer">
 		<constructor-arg>
 			<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 				<property name="corePoolSize" value="5" />

@@ -1,4 +1,4 @@
-package gov.loc.repository.service;
+package gov.loc.repository.service.component;
 import gov.loc.repository.service.annotations.JobType;
 import gov.loc.repository.service.annotations.MapParameter;
 import gov.loc.repository.service.annotations.Result;

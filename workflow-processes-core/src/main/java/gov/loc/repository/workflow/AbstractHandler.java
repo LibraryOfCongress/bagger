@@ -10,7 +10,6 @@ import org.jbpm.graph.def.ActionHandler;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.access.BeanFactoryLocator;
 import org.springframework.beans.factory.access.BeanFactoryReference;
-import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -38,6 +37,8 @@ import java.util.Calendar;
  */
 public abstract class AbstractHandler implements ActionHandler, DecisionHandler
 {
+	private static final long serialVersionUID = 1L;
+
 	private static final Log log = LogFactory.getLog(AbstractHandler.class);
 	
 	private static final int MAX_VAR_LENGTH = 255;

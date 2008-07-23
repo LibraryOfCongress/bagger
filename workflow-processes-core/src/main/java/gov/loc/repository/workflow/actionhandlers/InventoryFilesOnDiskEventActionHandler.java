@@ -31,7 +31,6 @@ public class InventoryFilesOnDiskEventActionHandler extends AbstractPackageModel
 		this.fileLocation = this.dao.loadRequiredFileLocation(Long.parseLong(this.fileLocationKey));
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
 		

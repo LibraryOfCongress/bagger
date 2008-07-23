@@ -1,8 +1,9 @@
-package gov.loc.repository.service;
+package gov.loc.repository.service.drivers;
 
 import java.text.MessageFormat;
 
-import gov.loc.repository.service.ServiceContainer.State;
+import gov.loc.repository.service.container.ServiceContainer;
+import gov.loc.repository.service.container.ServiceContainer.State;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

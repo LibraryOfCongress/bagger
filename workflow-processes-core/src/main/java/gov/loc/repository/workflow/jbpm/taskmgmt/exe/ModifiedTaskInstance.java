@@ -90,6 +90,7 @@ public class ModifiedTaskInstance extends org.jbpm.taskmgmt.exe.TaskInstance
 	
 
 	//Copied directly from org.jbpm.taskmgmt.exe.TaskInstance
+	@SuppressWarnings("unchecked")
 	private void submitVariablesx() {
 		    
 		TaskController taskController = (task!=null ? task.getTaskController() : null);

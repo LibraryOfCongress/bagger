@@ -30,7 +30,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml"})
+@ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml","classpath:conf/packagemodeler-core-test-context.xml"})
 public abstract class AbstractHandlerTest {
 
 	private static boolean isSetup = false;

@@ -1,5 +1,6 @@
-package gov.loc.repository.service;
+package gov.loc.repository.service.component;
 
+import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
 
 import java.lang.reflect.Method;

@@ -1,7 +1,8 @@
-package gov.loc.repository.service;
+package gov.loc.repository.service.component;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
 
 
 import java.util.Collection;

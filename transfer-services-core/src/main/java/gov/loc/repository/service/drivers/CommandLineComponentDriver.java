@@ -1,5 +1,7 @@
-package gov.loc.repository.service;
+package gov.loc.repository.service.drivers;
 
+import gov.loc.repository.service.component.ComponentFactory;
+import gov.loc.repository.service.component.InvokeComponentHelper;
 import gov.loc.repository.serviceBroker.ServiceRequest.ObjectEntry;
 import gov.loc.repository.serviceBroker.impl.BooleanEntryImpl;
 import gov.loc.repository.serviceBroker.impl.IntegerEntryImpl;
@@ -79,7 +81,7 @@ public class CommandLineComponentDriver {
 			System.out.println(MessageFormat.format("{0} = : {1} [{2}]", entry.getKey(), entry.getValueObject(), entry.getValueObject().getClass().getSimpleName()));
 		}
 				
-		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"classpath:conf/servicecontainer-context.xml", "classpath*:conf/components-*-context.xml"});
+		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"classpath:conf/service-context.xml", "classpath*:conf/components-*-context.xml"});
 		ComponentFactory componentFactory = (ComponentFactory)context.getBean("componentFactory");
 		Object component = componentFactory.getComponent(jobType);
 		InvokeComponentHelper helper = new InvokeComponentHelper(component, jobType, entries);

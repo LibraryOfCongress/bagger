@@ -1,9 +1,11 @@
-package gov.loc.repository.service;
+package gov.loc.repository.service.container;
 
 import java.text.MessageFormat;
 
 import javax.annotation.PostConstruct;
 
+import gov.loc.repository.service.component.ComponentFactory;
+import gov.loc.repository.service.component.InvokeComponentHelper;
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceContainerRegistry;
 import gov.loc.repository.serviceBroker.ServiceRequest;

@@ -1,6 +1,7 @@
 package gov.loc.repository.service;
 
 import gov.loc.repository.component.TestComponent;
+import gov.loc.repository.service.component.InvokeComponentHelper;
 import gov.loc.repository.serviceBroker.ServiceRequest.ObjectEntry;
 import gov.loc.repository.serviceBroker.impl.BooleanEntryImpl;
 import gov.loc.repository.serviceBroker.impl.IntegerEntryImpl;

@@ -1,6 +1,7 @@
 package gov.loc.repository.service;
 
-import gov.loc.repository.service.ServiceContainer.State;
+import gov.loc.repository.service.container.ServiceContainer;
+import gov.loc.repository.service.container.ServiceContainer.State;
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceBrokerFactory;
 import gov.loc.repository.serviceBroker.ServiceRequest;
