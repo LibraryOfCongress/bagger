@@ -45,6 +45,15 @@
 		<url-pattern>*.html</url-pattern>				
 	</servlet-mapping>
  
+	<servlet>
+	 <servlet-name>ProcessBatchFile</servlet-name>
+	 <servlet-class>gov.loc.repository.transfer.ui.utilities.ProcessBatchFile</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ProcessBatchFile</servlet-name>
+		<url-pattern>/processBatchFile</url-pattern>				
+	</servlet-mapping>
+
   <!-- jBPM DeployServlet -->
   <servlet>
     <servlet-name>ProcessUploadServlet</servlet-name>
