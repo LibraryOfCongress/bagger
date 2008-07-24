@@ -18,14 +18,11 @@ import gov.loc.repository.transfer.components.filemanagement.TwoStepRemoteBagCop
 public class TwoStepRemoteBagCopierImpl extends ConfigurableCopier implements TwoStepRemoteBagCopier {
 
     static final String COMPONENT_NAME = "remotedirectorycopier";
-    static final String ARCHIVE_USERNAME_KEY = "archive_username";
+    public static final String ARCHIVE_USERNAME_KEY = "archive_username";
     
-    
-    // keyFile is not provided in this constructor, so use a default value
     @Autowired  
     public TwoStepRemoteBagCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityBagGeneratorVerifier")BagGeneratorVerifier generator, @Qualifier("bagFileCopyVerifier")FileCopyVerifier verifier, @Qualifier("twoStepRemoteDirectoryCopier") DirectoryCopier copier) {
     	super(factory, dao, generator, copier, verifier);
-        //this.keyFile = "/home/transfer/.ssh/id_rsa";
     }
     
     @Override
