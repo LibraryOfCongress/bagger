@@ -14,15 +14,15 @@ public class ServiceRequestImplTest extends AbstractServiceBrokerTest {
 	{		
 		//A typical request/response pattern
 		ServiceRequest req = serviveBrokerFactory.createServiceRequest("1", QUEUE_1, JOBTYPE_1);
-		req.addString("key1", "value1");
-		req.addString("key2", "value2");
-		req.addString("key3", null);
-		req.addInteger("key4", 1L);
-		req.addInteger("key5", 2L);
-		req.addInteger("key6", null);
-		req.addBoolean("key7", true);
-		req.addBoolean("key8", false);
-		req.addBoolean("key9", null);		
+		req.addRequestString("key1", "value1");
+		req.addRequestString("key2", "value2");
+		req.addRequestString("key3", null);
+		req.addRequestInteger("key4", 1L);
+		req.addRequestInteger("key5", 2L);
+		req.addRequestInteger("key6", null);
+		req.addRequestBoolean("key7", true);
+		req.addRequestBoolean("key8", false);
+		req.addRequestBoolean("key9", null);		
 		req.request(REQUESTER_1);
 		
 		template.save(req);
@@ -33,9 +33,9 @@ public class ServiceRequestImplTest extends AbstractServiceBrokerTest {
 		assertEquals(QUEUE_1, req.getQueue());
 		assertEquals(JOBTYPE_1, req.getJobType());
 		assertNotNull(req.getRequestDate());
-		assertEquals(3, req.getStringEntries().size());
-		assertEquals(3, req.getIntegerEntries().size());
-		assertEquals(3, req.getBooleanEntries().size());
+		assertEquals(3, req.getRequestStringEntries().size());
+		assertEquals(3, req.getRequestIntegerEntries().size());
+		assertEquals(3, req.getRequestBooleanEntries().size());
 						
 		req.acknowledgeRequest(RESPONDER_1);		
 		template.saveOrUpdate(req);
@@ -43,12 +43,25 @@ public class ServiceRequestImplTest extends AbstractServiceBrokerTest {
 		assertEquals(RESPONDER_1, req.getResponder());
 		assertNotNull(req.getRequestAcknowledgedDate());
 		
-		req.respondFailure(new Exception("Darn"));		
+		req.respondFailure(new Exception("Darn"));
+		req.addResponseString("respkey1", "value1");
+		req.addResponseString("respkey2", "value2");
+		req.addResponseString("respkey3", null);
+		req.addResponseInteger("respkey4", 1L);
+		req.addResponseInteger("respkey5", 2L);
+		req.addResponseInteger("respkey6", null);
+		req.addResponseBoolean("respkey7", true);
+		req.addResponseBoolean("respkey8", false);
+		req.addResponseBoolean("respkey9", null);		
+		
 		template.saveOrUpdate(req);
 		
 		assertFalse(req.isSuccess());
 		assertNotNull(req.getErrorMessage());
 		assertNotNull(req.getErrorDetail());
+		assertEquals(3, req.getResponseStringEntries().size());
+		assertEquals(3, req.getResponseIntegerEntries().size());
+		assertEquals(3, req.getResponseBooleanEntries().size());
 		
 		req.acknowledgeResponse();		
 		template.saveOrUpdate(req);

@@ -1,6 +1,6 @@
-package gov.loc.repository.serviceBroker.impl;
+package gov.loc.repository.service.component.impl;
 
-import gov.loc.repository.serviceBroker.ServiceRequest.IntegerEntry;
+import gov.loc.repository.service.component.ComponentRequest.IntegerEntry;
 
 import java.io.Serializable;
 

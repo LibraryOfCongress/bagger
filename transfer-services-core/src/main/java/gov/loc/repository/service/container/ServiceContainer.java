@@ -5,7 +5,7 @@ import java.text.MessageFormat;
 import javax.annotation.PostConstruct;
 
 import gov.loc.repository.service.component.ComponentFactory;
-import gov.loc.repository.service.component.InvokeComponentHelper;
+import gov.loc.repository.service.component.ComponentInvoker;
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceContainerRegistry;
 import gov.loc.repository.serviceBroker.ServiceRequest;
@@ -222,28 +222,23 @@ public class ServiceContainer implements Runnable {
 		
 		@Override
 		public void run() {			
-			boolean result = true;
-			try
+			Object component = null;
+			try {
+				component = componentFactory.getComponent(req.getJobType());
+			} catch (Exception ex) {
+				req.respondFailure(ex);
+			}
+			if (component != null)
 			{
-				Object component = componentFactory.getComponent(req.getJobType());
-				InvokeComponentHelper helper = new InvokeComponentHelper(component, req.getJobType(), req.getEntries());
+				ComponentInvoker helper = new ComponentInvoker();
 				//Invoke and return taskResult
 				log.debug("Invoking for Service Request " + req);
 				System.out.println("Starting " + req);
-				result = helper.invoke();				
-			}
-			catch(Exception ex)
-			{
-				log.error("Error handling message", ex);
-				req.respondFailure(ex);
-				System.out.println("Responding " + req);
-				broker.sendResponse(req);
-				return;
+				helper.invoke(component, req);
 			}
 			
-			log.debug( MessageFormat.format("Responding {0} for Service Request {1}", result, req));
+			log.debug( MessageFormat.format("Responding {0} for Service Request {1}", req.isSuccess(), req));
 			System.out.println("Responding " + req);
-			req.respondSuccess(result);
 			broker.sendResponse(req);
 								
 		}

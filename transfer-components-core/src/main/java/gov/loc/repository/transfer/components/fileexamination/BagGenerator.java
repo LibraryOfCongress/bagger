@@ -5,7 +5,7 @@ import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
-import gov.loc.repository.service.annotations.MapParameter;
+import gov.loc.repository.service.annotations.RequestParam;
 
 public interface BagGenerator extends Component {
 	
@@ -17,11 +17,11 @@ public interface BagGenerator extends Component {
 	 */
 	@JobType(name="generatebag")	
 	public void generate(
-			@MapParameter(name="filelocationkey") long fileLocationKey,
-			@MapParameter(name="mountpath") String mountPath,
-			@MapParameter(name="algorithm") String algorithm,
-			@MapParameter(name="tagfilefixities") Boolean tagFileFixities,
-			@MapParameter(name="requestingagentid") String requestingAgentId)
+			@RequestParam(name="filelocationkey") long fileLocationKey,
+			@RequestParam(name="mountpath") String mountPath,
+			@RequestParam(name="algorithm") String algorithm,
+			@RequestParam(name="tagfilefixities") Boolean tagFileFixities,
+			@RequestParam(name="requestingagentid") String requestingAgentId)
 			throws Exception;
 	
 	public void generate(FileLocation fileLocation, String mountPath, FixityAlgorithm algorithm,/* Boolean tagFileFixities,*/ Agent requestingAgent) throws Exception;

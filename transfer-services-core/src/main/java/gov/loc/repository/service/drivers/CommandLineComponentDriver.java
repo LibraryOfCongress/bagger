@@ -1,15 +1,12 @@
 package gov.loc.repository.service.drivers;
 
 import gov.loc.repository.service.component.ComponentFactory;
-import gov.loc.repository.service.component.InvokeComponentHelper;
-import gov.loc.repository.serviceBroker.ServiceRequest.ObjectEntry;
-import gov.loc.repository.serviceBroker.impl.BooleanEntryImpl;
-import gov.loc.repository.serviceBroker.impl.IntegerEntryImpl;
-import gov.loc.repository.serviceBroker.impl.StringEntryImpl;
+import gov.loc.repository.service.component.ComponentRequest;
+import gov.loc.repository.service.component.ComponentInvoker;
+import gov.loc.repository.service.component.ComponentRequest.ObjectEntry;
+import gov.loc.repository.service.component.impl.ComponentRequestImpl;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -18,8 +15,7 @@ public class CommandLineComponentDriver {
 
 	public static void main(String[] args) throws Exception {
 		String key=null;
-		String jobType=null;
-		Collection<ObjectEntry> entries = new ArrayList<ObjectEntry>();
+		ComponentRequest req = new ComponentRequestImpl();
 		for(String arg: args)
 		{
 			if (arg.startsWith("-"))
@@ -37,60 +33,64 @@ public class CommandLineComponentDriver {
 				{
 					if (arg.equalsIgnoreCase("true"))
 					{
-						entries.add(new BooleanEntryImpl(key, true));
+						req.addRequestBoolean(key, true);
 					}
 					else if (arg.equalsIgnoreCase("false"))
 					{
-						entries.add(new BooleanEntryImpl(key, false));
+						req.addRequestBoolean(key, false);
 					}
 					else
 					{
 						try
 						{
 							long l = Long.parseLong(arg);
-							entries.add(new IntegerEntryImpl(key, l));
+							req.addRequestInteger(key, l);
 						}
 						catch(NumberFormatException ex)
 						{
 							//Then it's a string
-							entries.add(new StringEntryImpl(key, arg));
+							req.addRequestString(key, arg);
 						}
 					}
 					key = null;
 				}
-				else if (jobType == null)
+				else if (req.getJobType() == null)
 				{
-					jobType = arg;
+					req.setJobType(arg);
 				}
 				else
 				{
-					System.err.println(MessageFormat.format("JobType is already defined as {0} and there is no key for value {1}", jobType, arg));
+					System.err.println(MessageFormat.format("JobType is already defined as {0} and there is no key for value {1}", req.getJobType(), arg));
 					return;
 				}
 			}
 		}
-		if (jobType == null)
+		if (req.getJobType() == null)
 		{
 			System.err.println("jobType is not defined");
 			return;
 		}
-		System.out.println("jobType:  " + jobType);
-		System.out.println("entries:");
-		for(ObjectEntry entry : entries)
+		System.out.println("jobType:  " + req.getJobType());
+		System.out.println("request entries:");
+		for(ObjectEntry entry : req.getRequestEntries())
 		{
 			System.out.println(MessageFormat.format("{0} = : {1} [{2}]", entry.getKey(), entry.getValueObject(), entry.getValueObject().getClass().getSimpleName()));
 		}
 				
 		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"classpath:conf/service-context.xml", "classpath*:conf/components-*-context.xml"});
 		ComponentFactory componentFactory = (ComponentFactory)context.getBean("componentFactory");
-		Object component = componentFactory.getComponent(jobType);
-		InvokeComponentHelper helper = new InvokeComponentHelper(component, jobType, entries);
-		boolean result = true;
-
+		Object component = componentFactory.getComponent(req.getJobType());
+		ComponentInvoker helper = new ComponentInvoker();
 		//Invoke and return taskResult
-		System.out.println("Invoking " + jobType);
-		result = helper.invoke();
-		System.out.println("Returned " + result);
+		System.out.println("Invoking " + req.getJobType());
+		helper.invoke(component, req);
+		System.out.println("Returned " + req.isSuccess());
+		
+		System.out.println("response entries:");
+		for(ObjectEntry entry : req.getResponseEntries())
+		{
+			System.out.println(MessageFormat.format("{0} = : {1} [{2}]", entry.getKey(), entry.getValueObject(), entry.getValueObject().getClass().getSimpleName()));
+		}
 		
 	}
 

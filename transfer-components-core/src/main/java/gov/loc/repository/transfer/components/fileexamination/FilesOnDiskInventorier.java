@@ -5,7 +5,7 @@ import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
-import gov.loc.repository.service.annotations.MapParameter;
+import gov.loc.repository.service.annotations.RequestParam;
 
 public interface FilesOnDiskInventorier extends Component {
 	
@@ -18,10 +18,10 @@ public interface FilesOnDiskInventorier extends Component {
 	 */
 	@JobType(name="inventoryfilesondisk")	
 	public void inventory(
-			@MapParameter(name="filelocationkey") long fileLocationKey,
-			@MapParameter(name="mountpath") String mountPath,
-			@MapParameter(name="algorithm") String algorithm,
-			@MapParameter(name="requestingagentid") String requestingAgentId)
+			@RequestParam(name="filelocationkey") long fileLocationKey,
+			@RequestParam(name="mountpath") String mountPath,
+			@RequestParam(name="algorithm") String algorithm,
+			@RequestParam(name="requestingagentid") String requestingAgentId)
 			throws Exception;
 	
 	public void inventory(FileLocation fileLocation, String mountPath, FixityAlgorithm algorithm, Agent requestingAgent) throws Exception;

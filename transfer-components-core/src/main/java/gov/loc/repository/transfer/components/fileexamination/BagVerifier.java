@@ -4,7 +4,7 @@ import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
-import gov.loc.repository.service.annotations.MapParameter;
+import gov.loc.repository.service.annotations.RequestParam;
 import gov.loc.repository.service.annotations.Result;
 
 public interface BagVerifier extends Component {
@@ -19,10 +19,10 @@ public interface BagVerifier extends Component {
 	 */
 	@JobType(name="verifybag")	
 	public void verify(
-			@MapParameter(name="filelocationkey") long fileLocationKey,
-			@MapParameter(name="mountpath") String mountPath,
-			@MapParameter(name="tagmanifests") Boolean verifyTagManifests,
-			@MapParameter(name="requestingagentid") String requestingAgentId)
+			@RequestParam(name="filelocationkey") long fileLocationKey,
+			@RequestParam(name="mountpath") String mountPath,
+			@RequestParam(name="tagmanifests") Boolean verifyTagManifests,
+			@RequestParam(name="requestingagentid") String requestingAgentId)
 			throws Exception;
 	
 	public void verify(FileLocation fileLocation, String mountPath, Agent requestingAgent) throws Exception;

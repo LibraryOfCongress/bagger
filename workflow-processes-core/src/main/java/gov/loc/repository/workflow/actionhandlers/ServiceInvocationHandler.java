@@ -1,7 +1,7 @@
 package gov.loc.repository.workflow.actionhandlers;
 import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
-import gov.loc.repository.service.annotations.MapParameter;
+import gov.loc.repository.service.annotations.RequestParam;
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceBrokerFactory;
 import gov.loc.repository.serviceBroker.ServiceRequest;
@@ -51,9 +51,9 @@ public class ServiceInvocationHandler implements InvocationHandler {
 			String paramName = null;
 			for(Annotation annot : method.getParameterAnnotations()[i])
 			{
-				if (annot instanceof MapParameter)
+				if (annot instanceof RequestParam)
 				{
-					MapParameter mapParameterAnnot = (MapParameter)annot;
+					RequestParam mapParameterAnnot = (RequestParam)annot;
 					paramName = mapParameterAnnot.name();
 				}					
 			}				
@@ -65,15 +65,15 @@ public class ServiceInvocationHandler implements InvocationHandler {
 			
 			if (paramType.equals(String.class))
 			{
-				req.addString(paramName, (String)args[i]);
+				req.addRequestString(paramName, (String)args[i]);
 			}
 			else if (paramType.equals(Boolean.class) || paramType.equals(Boolean.TYPE))
 			{
-				req.addBoolean(paramName, (Boolean)args[i]);
+				req.addRequestBoolean(paramName, (Boolean)args[i]);
 			}
 			else if (paramType.equals(Long.class) || paramType.equals(Long.TYPE))
 			{
-				req.addInteger(paramName, (Long)args[i]);
+				req.addRequestInteger(paramName, (Long)args[i]);
 			}				
 			else
 			{

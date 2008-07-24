@@ -1,6 +1,6 @@
-package gov.loc.repository.serviceBroker.impl;
+package gov.loc.repository.service.component.impl;
 
-import gov.loc.repository.serviceBroker.ServiceRequest.BooleanEntry;
+import gov.loc.repository.service.component.ComponentRequest.StringEntry;
 
 import java.io.Serializable;
 
@@ -8,22 +8,23 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class BooleanEntryImpl implements BooleanEntry, Serializable
+public class StringEntryImpl implements StringEntry, Serializable	
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Column(name = "key", length = 50, nullable = false)
 	private String key;
 	
 	@Column(name = "value", nullable = true)
-	private Boolean value;
+	private String value;
 	
-	public BooleanEntryImpl(String key, Boolean value) {
+	public StringEntryImpl(String key, String value) {
 		this.key = key;
 		this.value = value;
 	}
 
-	public BooleanEntryImpl() {
+	public StringEntryImpl() {
+	
 	}
 	
 	@Override
@@ -32,13 +33,12 @@ public class BooleanEntryImpl implements BooleanEntry, Serializable
 	}
 	
 	@Override
-	public Boolean getValue() {
+	public String getValue() {
 		return this.value;
 	}
-
+	
 	@Override
 	public Object getValueObject() {
 		return this.value;
 	}
-	
 }

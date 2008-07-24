@@ -1,7 +1,7 @@
 package gov.loc.repository.transfer.components.filemanagement;
 
 import gov.loc.repository.service.annotations.JobType;
-import gov.loc.repository.service.annotations.MapParameter;
+import gov.loc.repository.service.annotations.RequestParam;
 import gov.loc.repository.service.Component;
 
 public interface ZFSFileSystemCreator extends Component {
@@ -10,8 +10,8 @@ public interface ZFSFileSystemCreator extends Component {
     
     @JobType(name="zfsfilesystemcreate")
     public void create(
-            @MapParameter(name="mountpath") String mountPath,
-            @MapParameter(name="size") Long size         
+            @RequestParam(name="mountpath") String mountPath,
+            @RequestParam(name="size") Long size         
             )
             throws Exception;
     

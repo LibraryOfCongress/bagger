@@ -36,9 +36,9 @@ public class ServiceContainerTest {
 		for(int i=0; i < 20; i++)
 		{
 			ServiceRequest req = factory.createServiceRequest(Integer.toString(i), QUEUE, JOBTYPE);
-			req.addString("message", "foo");
-			req.addBoolean("istrue", true);
-			req.addInteger("key", 1L);
+			req.addRequestString("message", "foo");
+			req.addRequestBoolean("istrue", true);
+			req.addRequestInteger("key", 1L);
 			this.requestingBroker.sendRequest(req);
 		}		
 	}

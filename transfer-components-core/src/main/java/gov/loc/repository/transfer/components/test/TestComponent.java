@@ -2,14 +2,14 @@ package gov.loc.repository.transfer.components.test;
 
 import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
-import gov.loc.repository.service.annotations.MapParameter;
+import gov.loc.repository.service.annotations.RequestParam;
 
 public interface TestComponent extends Component {
 
 	@JobType(name="test")
 	public void test(
-			@MapParameter(name="message") String message,
-			@MapParameter(name="istrue") boolean isTrue,
-			@MapParameter(name="key") long key
+			@RequestParam(name="message") String message,
+			@RequestParam(name="istrue") boolean isTrue,
+			@RequestParam(name="key") long key
 	) throws Exception;
 }

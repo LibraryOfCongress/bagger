@@ -19,4 +19,23 @@ public class TestComponentImpl implements TestComponent
 		log.debug("Done waiting");
 	}
 
+	@Override
+	public boolean getRespIsTrue() {
+		return false;
+	}
+	
+	@Override
+	public Long getRespKey() {
+		return null;
+	}
+	
+	@Override
+	public String getRespMessage() {
+		return null;
+	}
+	
+	@Override
+	public boolean getResult() {
+		return true;
+	}
 }
