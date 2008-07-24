@@ -7,7 +7,7 @@ import gov.loc.repository.fixity.FixityAlgorithm;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 
-public interface TwoStepRemoteBagCopier extends Component {
+public interface ArchivalRemoteBagCopier extends Component {
 
 	static final String COMPONENT_NAME = "twostepremotebagcopier";
 	
@@ -25,9 +25,9 @@ public interface TwoStepRemoteBagCopier extends Component {
 			@MapParameter(name="destmountpath") String destMountPath,			
 			@MapParameter(name="requestingagentid") String requestingAgentId,
 			@MapParameter(name="algorithm") String algorithm,
-            @MapParameter(name="archiveusername") String archiveUsername)
+            @MapParameter(name="archiveownergroup") String archiveOwnerGroup)
 	    throws Exception;
 
-    public void copy(FileLocation srcFileLocation, String srcMountPath, FileLocation destFileLocation, String destMountPath, Agent requestingAgent, FixityAlgorithm algorithm, String archiveUsername) throws Exception;		
+    public void copy(FileLocation srcFileLocation, String srcMountPath, FileLocation destFileLocation, String destMountPath, Agent requestingAgent, FixityAlgorithm algorithm, String archiveOwnerGroup) throws Exception;		
 
 }

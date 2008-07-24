@@ -12,16 +12,16 @@ import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
-import gov.loc.repository.transfer.components.filemanagement.TwoStepRemoteBagCopier;
+import gov.loc.repository.transfer.components.filemanagement.ArchivalRemoteBagCopier;
 
 @Component("twoStepRemoteBagCopierComponent")
-public class TwoStepRemoteBagCopierImpl extends ConfigurableCopier implements TwoStepRemoteBagCopier {
+public class ArchivalRemoteBagCopierImpl extends ConfigurableCopier implements ArchivalRemoteBagCopier {
 
     static final String COMPONENT_NAME = "remotedirectorycopier";
-    public static final String ARCHIVE_USERNAME_KEY = "archive_username";
+    public static final String ARCHIVE_OWNERGROUP_KEY = "archive_owner:archive_group";
     
     @Autowired  
-    public TwoStepRemoteBagCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityBagGeneratorVerifier")BagGeneratorVerifier generator, @Qualifier("bagFileCopyVerifier")FileCopyVerifier verifier, @Qualifier("twoStepRemoteDirectoryCopier") DirectoryCopier copier) {
+    public ArchivalRemoteBagCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityBagGeneratorVerifier")BagGeneratorVerifier generator, @Qualifier("bagFileCopyVerifier")FileCopyVerifier verifier, @Qualifier("twoStepRemoteDirectoryCopier") DirectoryCopier copier) {
     	super(factory, dao, generator, copier, verifier);
     }
     
@@ -33,16 +33,16 @@ public class TwoStepRemoteBagCopierImpl extends ConfigurableCopier implements Tw
     @Override
     public void copy(Long srcFileLocationId, String srcMountPath,
             Long destFileLocationId, String destMountPath,
-            String requestingAgentId, String algorithm, String archiveUsername) throws Exception {
-        this.copy(this.dao.loadRequiredFileLocation(srcFileLocationId), srcMountPath, this.dao.loadRequiredFileLocation(destFileLocationId), destMountPath, this.dao.findRequiredAgent(Agent.class, requestingAgentId), FixityAlgorithm.fromString(algorithm), archiveUsername);
+            String requestingAgentId, String algorithm, String archiveOwnerGroup) throws Exception {
+        this.copy(this.dao.loadRequiredFileLocation(srcFileLocationId), srcMountPath, this.dao.loadRequiredFileLocation(destFileLocationId), destMountPath, this.dao.findRequiredAgent(Agent.class, requestingAgentId), FixityAlgorithm.fromString(algorithm), archiveOwnerGroup);
     }
 
     @Override
     public void copy(FileLocation srcFileLocation, String srcMountPath,
             FileLocation destFileLocation, String destMountPath,
-            Agent requestingAgent, FixityAlgorithm algorithm, String archiveUsername) throws Exception {
+            Agent requestingAgent, FixityAlgorithm algorithm, String archiveOwnerGroup) throws Exception {
         Map<String,String> additionalParameters = new HashMap<String,String>();
-        additionalParameters.put(ARCHIVE_USERNAME_KEY, archiveUsername);
+        additionalParameters.put(ARCHIVE_OWNERGROUP_KEY, archiveOwnerGroup);
         
         this.internalCopy(srcFileLocation, srcMountPath, destFileLocation, destMountPath, requestingAgent, algorithm, additionalParameters);
     }

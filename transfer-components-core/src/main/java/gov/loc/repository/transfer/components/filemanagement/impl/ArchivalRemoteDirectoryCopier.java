@@ -11,13 +11,13 @@ import gov.loc.repository.transfer.components.filemanagement.Transporter;
 import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCopier.CopyDescription;
 import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCopier.DirectoryCopier;
 
-public class TwoStepRemoteDirectoryCopier implements DirectoryCopier {
+public class ArchivalRemoteDirectoryCopier implements DirectoryCopier {
 
-	private static final Log log = LogFactory.getLog(TwoStepRemoteDirectoryCopier.class);
+	private static final Log log = LogFactory.getLog(ArchivalRemoteDirectoryCopier.class);
 	
 	private String keyFile;
     
-	public TwoStepRemoteDirectoryCopier(String keyFile) {
+	public ArchivalRemoteDirectoryCopier(String keyFile) {
 		this.keyFile = keyFile;
 	}
 	
