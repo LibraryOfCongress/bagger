@@ -19,21 +19,21 @@
 	
 	<context:component-scan base-package="gov.loc.repository.transfer.components"/>
 	
-	<!-- Two Step Remote Directory Copier -->
-	<bean id="twoStepRemoteDirectoryCopier" class="gov.loc.repository.transfer.components.filemanagement.impl.TwoStepRemoteDirectoryCopier">
-		<constructor-arg value="$comp{components.twostepremotedirectorycopier.keyfile}" />
+	<!-- Archival Remote Directory Copier -->
+	<bean id="archivalRemoteDirectoryCopier" class="gov.loc.repository.transfer.components.filemanagement.impl.ArchivalRemoteDirectoryCopier">
+		<constructor-arg value="$comp{components.archivalremotedirectorycopier.keyfile}" />
 	</bean>
 
-	<!-- Two Step Remote Bag Copier -->
-	<tx:advice id="twoStepRemoteBagCopierTxAdvice" transaction-manager="packageModelerTransactionManager">
+	<!-- Archival Remote Bag Copier -->
+	<tx:advice id="archivalRemoteBagCopierTxAdvice" transaction-manager="packageModelerTransactionManager">
     	<tx:attributes>
     		<tx:method name="copy*" />
     	</tx:attributes>
     </tx:advice>
     
     <aop:config>
-    	<aop:pointcut id="twoStepRemoteBagCopierMethods" expression="execution(* gov.loc.repository.transfer.components.filemanagement.impl.TwoStepRemoteBagCopierImpl.*(..))" />
-    	<aop:advisor advice-ref="twoStepRemoteBagCopierTxAdvice" pointcut-ref="twoStepRemoteBagCopierMethods" />    	
+    	<aop:pointcut id="archivalRemoteBagCopierMethods" expression="execution(* gov.loc.repository.transfer.components.filemanagement.impl.ArchivalRemoteBagCopierImpl.*(..))" />
+    	<aop:advisor advice-ref="archivalRemoteBagCopierTxAdvice" pointcut-ref="archivalRemoteBagCopierMethods" />    	
     </aop:config>
 
 	
@@ -62,7 +62,7 @@
 		<property name="properties">
     		<value>
        			components.zfsfilesystemcreator.pool=
-       			components.twostepremotedirectorycopier.keyfile=/home/transfer/.ssh/id_rsa
+       			components.archivalremotedirectorycopier.keyfile=/home/transfer/.ssh/id_rsa
      		</value>
    		</property>
    		<property name="ignoreResourceNotFound" value="true" />   		

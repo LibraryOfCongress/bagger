@@ -14,14 +14,14 @@ import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.transfer.components.filemanagement.ArchivalRemoteBagCopier;
 
-@Component("twoStepRemoteBagCopierComponent")
+@Component("archivalRemoteBagCopierComponent")
 public class ArchivalRemoteBagCopierImpl extends ConfigurableCopier implements ArchivalRemoteBagCopier {
 
     static final String COMPONENT_NAME = "remotedirectorycopier";
     public static final String ARCHIVE_OWNERGROUP_KEY = "archive_owner:archive_group";
     
     @Autowired  
-    public ArchivalRemoteBagCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityBagGeneratorVerifier")BagGeneratorVerifier generator, @Qualifier("bagFileCopyVerifier")FileCopyVerifier verifier, @Qualifier("twoStepRemoteDirectoryCopier") DirectoryCopier copier) {
+    public ArchivalRemoteBagCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityBagGeneratorVerifier")BagGeneratorVerifier generator, @Qualifier("bagFileCopyVerifier")FileCopyVerifier verifier, @Qualifier("archivalRemoteDirectoryCopier") DirectoryCopier copier) {
     	super(factory, dao, generator, copier, verifier);
     }
     
