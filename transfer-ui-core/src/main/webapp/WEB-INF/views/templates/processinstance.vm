@@ -47,6 +47,8 @@
 	                            Suspended
 	                        #elseif ($processInstanceBean.ended)
 	                        	Ended
+							#elseif ($tokenBean.endDate)
+								Ended on ${date.format('yyyy-MM-dd hh:mm', $tokenBean.endDate)}
 	                        #else
 	                            In Progress
 	                        #end                        
@@ -169,6 +171,8 @@
 									Suspended
 		                        #elseif ($tokenBean.ended)		                        	
 		                            Ended
+								#elseif ($tokenBean.endDate)
+									Ended on ${date.format('yyyy-MM-dd hh:mm', $tokenBean.endDate)}
 		                        #else
 		                            In Progress
 		                        #end	                    	
@@ -231,13 +235,25 @@
 	    			</ol>
 	    			#if (! $tokenBean.taskInstanceBeanList.empty)
 		    			<h5>Tasks</h5>
-		    			<ol>		    				
+		    			<ol>
 		    				#foreach($taskInstanceBean in $tokenBean.taskInstanceBeanList)
-		    					<li>
+	    					<li>
+    						<div class="row">
+	   							<span>
 									<a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">
 						            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)
-							        </a>	    						
-		    					</li>
+							        </a>
+						        </span>
+						        <span>&nbsp;&nbsp;</span>
+						        <span>
+									#if ($taskInstanceBean.ended)
+	            		                Ended on ${date.format('yyyy-MM-dd hh:mm', $taskInstanceBean.endDate)}
+	                		        #else
+    	                		        Active or Suspended
+        	                		#end
+	       	                	</span>
+       	                	</div>
+	    					</li>
 		    				#end
 				    	</ol>
 				    #end
