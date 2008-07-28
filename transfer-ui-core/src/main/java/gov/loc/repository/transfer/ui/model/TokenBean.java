@@ -56,6 +56,11 @@ public class TokenBean extends AbstractWorkflowBean {
 		return this.token.isSuspended();
 	}
 	
+	public java.util.Date hasEndDate()
+	{
+		return this.token.getEnd();
+	}
+	
 	public WorkflowExceptionBean getWorkflowExceptionBean()
 	{
 		if (! this.isSuspended())
