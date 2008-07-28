@@ -12,7 +12,6 @@ import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
 import gov.loc.repository.utilities.ExceptionHelper;
 import gov.loc.repository.workflow.actionhandlers.ActionHandlerException;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -31,8 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TaskInstanceController extends AbstractRestController {
 	
 	protected static final Log log = LogFactory.getLog(TaskInstanceController.class);
-	private Map<String,String> commandMap = new HashMap<String, String>();
-
+	private Map<String, ProcessDefinitionConfiguration> processDefinitionConfigurationMap;
 		
 	@Override
 	public String getUrlParameterDescription() {
@@ -64,7 +62,6 @@ public class TaskInstanceController extends AbstractRestController {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void handleGet(
 	        HttpServletRequest request, 
@@ -170,35 +167,23 @@ public class TaskInstanceController extends AbstractRestController {
 	@PostConstruct
 	protected void init() throws BeansException {
 		ApplicationContext applicationContext = this.getApplicationContext();
-		Map<String, ProcessDefinitionConfiguration> beanMap = applicationContext.getBeansOfType(ProcessDefinitionConfiguration.class);
-		for(ProcessDefinitionConfiguration processDefinitionConfiguration : beanMap.values())
-		{
-			this.commandMap.putAll(processDefinitionConfiguration.getTaskInstanceUpdateCommandMap());
-		}
+		this.processDefinitionConfigurationMap = applicationContext.getBeansOfType(ProcessDefinitionConfiguration.class);
 	}
 		
 	
 	private TaskInstanceUpdateCommand getTaskInstanceUpdateFormCommand(TaskInstanceBean taskInstanceBean) throws Exception 
 	{
-		String beanId = null;
-		for(String pattern : this.commandMap.keySet()) {
-			String[] patternArray = pattern.split("\\.");
-			if (patternArray.length != 2) {
-				throw new Exception("Invalid pattern: " + pattern);
-			}
-			if ( PatternMatchUtils.simpleMatch(
-			        patternArray[0],
-			        taskInstanceBean.getProcessInstanceBean().getProcessDefinitionBean().getId() ) 
-			    && PatternMatchUtils.simpleMatch(
-			        patternArray[1], 
-			        taskInstanceBean.getTaskBean().getId() )){
-				beanId = this.commandMap.get(pattern);
-				break;
-			}
-		}
-		if (beanId != null)
+		ProcessDefinitionConfiguration config = this.processDefinitionConfigurationMap.get(taskInstanceBean.getProcessInstanceBean().getProcessDefinitionBean().getId());
+		if (config != null)
 		{
-			return (TaskInstanceUpdateCommand)this.getApplicationContext().getBean(beanId);
+		
+			for(String pattern : config.getTaskInstanceUpdateCommandMap().keySet()) {
+				if ( PatternMatchUtils.simpleMatch(
+				        pattern, 
+				        taskInstanceBean.getTaskBean().getId() )){
+					return (TaskInstanceUpdateCommand)this.getApplicationContext().getBean(config.getTaskInstanceUpdateCommandMap().get(pattern));
+				}
+			}
 		}
 		return new DefaultTaskInstanceUpdateCommand();
 	}	

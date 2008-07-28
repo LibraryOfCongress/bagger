@@ -66,7 +66,6 @@ public class DefaultTaskInstanceUpdateCommand implements
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void bindPut() throws Exception {		
 		//Updating task's user		
 		UserBean userBean = null;
@@ -192,7 +191,6 @@ public class DefaultTaskInstanceUpdateCommand implements
 		
 	}	
 	
-	@SuppressWarnings("unchecked")
 	private boolean requestUpdatesVariables()
 	{
 		if (! this.additionalParameterMap.isEmpty())

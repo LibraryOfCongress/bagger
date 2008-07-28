@@ -117,7 +117,7 @@ public abstract class AbstractHandlerTest {
 		return ResourceHelper.getFile(clazz, filename);
 	}
 	
-	protected Configuration getConfiguration() throws Exception
+	protected static Configuration getConfiguration() throws Exception
 	{
 		return ConfigurationFactory.getConfiguration(WorkflowConstants.PROPERTIES_NAME);
 	}

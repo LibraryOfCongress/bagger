@@ -1,6 +1,8 @@
 package gov.loc.repository.workflow.continuations.impl;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import static gov.loc.repository.workflow.WorkflowConstants.*;
+import gov.loc.repository.workflow.continuations.ResponseParameterMapper;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
 import gov.loc.repository.workflow.jbpm.spring.JbpmFactoryLocator;
 
@@ -28,7 +31,8 @@ public class SimpleContinuationControllerImpl implements
 	
 	private static final Log log = LogFactory.getLog(SimpleContinuationControllerImpl.class);	
 	
-	protected JbpmConfiguration jbpmConfiguration;	
+	protected JbpmConfiguration jbpmConfiguration;
+	protected Map<String, ResponseParameterMapper> responseParameterMapperMap = new HashMap<String, ResponseParameterMapper>();
 	
 	private String successTransition = TRANSITION_CONTINUE;
 
@@ -36,9 +40,21 @@ public class SimpleContinuationControllerImpl implements
 	public SimpleContinuationControllerImpl(JbpmConfiguration jbpmConfiguration) {
 		this.jbpmConfiguration = jbpmConfiguration;
 	}
-		
+	
+	@Autowired(required=false)
+	public void setResponseParameterMapperMap(Map<String, ResponseParameterMapper> responseParameterMapperMap)
+	{
+		this.responseParameterMapperMap.putAll(responseParameterMapperMap);
+	}
+	
+	public void addResponseParameterMapper(String processDefinitionName, ResponseParameterMapper mapper)
+	{
+		this.responseParameterMapperMap.put(processDefinitionName, mapper);
+	}
+	
+	
 	@Override
-	public void invoke(Long tokenInstanceId, Boolean success) throws Exception
+	public void invoke(Long tokenInstanceId, Map<String,Object> responseParameterMap, Boolean success) throws Exception
 	{		
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -48,7 +64,9 @@ public class SimpleContinuationControllerImpl implements
 			{
 				throw new Exception(MessageFormat.format("Token for token instance {0} not found", tokenInstanceId));
 			}
-								
+			
+			ExecutionContext executionContext = new ExecutionContext(token);			
+			this.addContextVariables(executionContext, responseParameterMap);
 			//Continue along the appropriate transition
 			if (success)
 			{
@@ -57,8 +75,7 @@ public class SimpleContinuationControllerImpl implements
 			}
 			else
 			{
-				//Add variables describing error
-				ExecutionContext executionContext = new ExecutionContext(token);
+				//Add variables describing error			
 				executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION, "Service request returned failure");
 				//Suspend token
 				token.suspend();
@@ -70,6 +87,23 @@ public class SimpleContinuationControllerImpl implements
 		finally
 		{
 			jbpmContext.close();
+		}
+	}
+	
+	
+	private void addContextVariables(ExecutionContext executionContext, Map<String,Object> responseParameterMap)
+	{
+		ResponseParameterMapper mapper = this.responseParameterMapperMap.get(executionContext.getProcessDefinition().getName());
+		if (mapper != null)
+		{
+			for(String key : responseParameterMap.keySet())
+			{
+				String contextVariableName = mapper.map(key);
+				if (contextVariableName != null)
+				{
+					executionContext.setVariable(contextVariableName, responseParameterMap.get(key));
+				}
+			}
 		}
 	}
 	
@@ -104,7 +138,7 @@ public class SimpleContinuationControllerImpl implements
 	}
 
 	@Override
-	public void invoke(Long tokenInstanceId, String error, String errorDetail) throws Exception {
+	public void invoke(Long tokenInstanceId, Map<String,Object> contextVariableMap, String error, String errorDetail) throws Exception {
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
@@ -116,6 +150,9 @@ public class SimpleContinuationControllerImpl implements
 			}
 			//Add variables describing error
 			ExecutionContext executionContext = new ExecutionContext(token);
+			
+			this.addContextVariables(executionContext, contextVariableMap);
+						
 			executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION, error);
 			executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION_DETAIL, errorDetail);
 			//Suspend token

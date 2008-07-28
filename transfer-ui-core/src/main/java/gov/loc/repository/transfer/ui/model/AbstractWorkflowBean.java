@@ -1,7 +1,6 @@
 package gov.loc.repository.transfer.ui.model;
 
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
-import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 
 import java.text.MessageFormat;
 import java.util.Locale;

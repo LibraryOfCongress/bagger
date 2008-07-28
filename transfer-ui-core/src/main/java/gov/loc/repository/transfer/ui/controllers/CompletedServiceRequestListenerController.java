@@ -38,7 +38,6 @@ public class CompletedServiceRequestListenerController
 		this.listener.start();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView handleGet(HttpServletRequest req) throws Exception {
 		PermissionsHelper permissions = new PermissionsHelper(req);

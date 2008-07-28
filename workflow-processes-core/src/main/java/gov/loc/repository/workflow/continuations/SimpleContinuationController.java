@@ -1,5 +1,7 @@
 package gov.loc.repository.workflow.continuations;
 
+import java.util.Map;
+
 /*
  * A controller for continuing a Process Instance that is in a wait state.
  * <p>An example of its use is by a servlet that accepts http messages that function as callbacks for an asynchronous action.
@@ -14,7 +16,7 @@ public interface SimpleContinuationController {
 	 * @param success
 	 * @throws Exception if process instance is not found or required variables are not provided.
 	 */
-	public void invoke(Long tokenId, Boolean success) throws Exception;
+	public void invoke(Long tokenId, Map<String,Object> responseParameterMap, Boolean success) throws Exception;
 
 	/**
 	 * Invokes the continuation by instantiating the appropriate jBPM context based on the tokenInstanceId and throwing an exception.
@@ -23,6 +25,6 @@ public interface SimpleContinuationController {
 	 * @param errorDetail
 	 * @throws Exception if process instance is not found.
 	 */
-	public void invoke(Long tokenId, String error, String errorDetail) throws Exception;
+	public void invoke(Long tokenId, Map<String,Object> responseParameterMap, String error, String errorDetail) throws Exception;
 			
 }

@@ -32,6 +32,7 @@ public abstract class AbstractRestController extends AbstractController {
 		
 	
 	//Subclass method should annotate with @RequestMethod and call handleRequestInternal().
+	@Override
 	public abstract ModelAndView handleRequest(
 	        HttpServletRequest request, 
 	        HttpServletResponse response
@@ -39,7 +40,7 @@ public abstract class AbstractRestController extends AbstractController {
 	
 	
 	
-	@SuppressWarnings("unchecked")
+	@Override
 	protected ModelAndView handleRequestInternal(
 	        HttpServletRequest request,
 			HttpServletResponse response) throws Exception 

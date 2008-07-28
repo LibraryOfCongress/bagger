@@ -1,5 +1,7 @@
 package gov.loc.repository.workflow.continuations;
 
+import java.util.Map;
+
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.impl.ServiceRequestImpl;
@@ -19,6 +21,7 @@ public class CompletedServiceRequestListenerTest {
 	Mockery context = new JUnit4Mockery();
 	private CompletedServiceRequestListener listener;
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testListen() throws Exception
 	{
@@ -44,8 +47,8 @@ public class CompletedServiceRequestListenerTest {
 	
 		final SimpleContinuationController controller = context.mock(SimpleContinuationController.class);
 		context.checking(new Expectations() {{
-			one(controller).invoke(with(equal(1L)), with(equal(true)));
-			one(controller).invoke(with(equal(2L)), with(any(String.class)), with(any(String.class)));
+			one(controller).invoke(with(equal(1L)), with(any(Map.class)), with(equal(true)));
+			one(controller).invoke(with(equal(2L)), with(any(Map.class)), with(any(String.class)), with(any(String.class)));
 		}});		
 		
 		//ContinuationController

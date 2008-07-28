@@ -1,10 +1,14 @@
 package gov.loc.repository.workflow.continuations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import gov.loc.repository.service.component.ComponentRequest.ObjectEntry;
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
@@ -42,13 +46,19 @@ public class CompletedServiceRequestListener implements Runnable
 				Long tokenId = Long.parseLong(req.getCorrelationKey());
 				try
 				{
+					Map<String,Object> responseParameterMap = new HashMap<String,Object>();					
+					for(ObjectEntry entry : req.getResponseEntries())
+					{
+						responseParameterMap.put(entry.getKey(), entry.getValueObject());
+					}
+					
 					if (req.getErrorMessage() == null)
 					{
-						continuationController.invoke(tokenId, req.isSuccess());
+						continuationController.invoke(tokenId, responseParameterMap, req.isSuccess());
 					}
 					else
 					{
-						continuationController.invoke(tokenId, req.getErrorMessage(), req.getErrorDetail());
+						continuationController.invoke(tokenId, responseParameterMap, req.getErrorMessage(), req.getErrorDetail());
 					}
 				}
 				catch(Exception ex)

@@ -2,15 +2,21 @@ package gov.loc.repository.workflow.continuations.impl;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.db.hibernate.HibernateHelper;
 import org.jbpm.graph.def.ProcessDefinition;
+import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
 
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import gov.loc.repository.workflow.continuations.ResponseParameterMapper;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
 import gov.loc.repository.workflow.jbpm.spring.LocalSessionFactoryBean;
 
@@ -26,9 +33,11 @@ import gov.loc.repository.workflow.jbpm.spring.LocalSessionFactoryBean;
 @ContextConfiguration(locations={"classpath:conf/workflow-core-context.xml","classpath:conf/workflow-continuations-context.xml"})
 public class SimpleContinuationControllerTest
 {
-		
+	Mockery context = new Mockery();
+	
 	Long tokenInstanceId;
 	Long processInstanceId;
+	Map<String, Object> contextVariableMap = new HashMap<String, Object>();
 	
 	@Resource(name="continuationController")
 	SimpleContinuationController controller;
@@ -101,19 +110,32 @@ public class SimpleContinuationControllerTest
 		{
 			jbpmContext.close();
 		}
+		
+		final ResponseParameterMapper mapper = context.mock(ResponseParameterMapper.class);
+		context.checking(new Expectations(){{
+			one(mapper).map("foo");
+			will(returnValue("foo2"));
+		}});
+		
+		((SimpleContinuationControllerImpl)controller).addResponseParameterMapper("controller_test", mapper);
+		
+		contextVariableMap.put("foo", "bar");
 
 	}
 	
 	@Test
 	public void testInvokeSuccess() throws Exception {
 		
-		controller.invoke(tokenInstanceId, true);
+		controller.invoke(tokenInstanceId, contextVariableMap, true);
 		
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
 		{
 			Token token = jbpmContext.getToken(this.tokenInstanceId);
 			assertEquals("end1", token.getNode().getName());
+			ExecutionContext executionContext = new ExecutionContext(token);
+			assertEquals("bar", (String)executionContext.getVariable("foo2"));
+			context.assertIsSatisfied();
 		}
 		finally
 		{
@@ -126,7 +148,7 @@ public class SimpleContinuationControllerTest
 	@Test
 	public void testInvokeFailure() throws Exception {
 		
-		controller.invoke(tokenInstanceId, false);
+		controller.invoke(tokenInstanceId, contextVariableMap, false);
 		
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -134,6 +156,10 @@ public class SimpleContinuationControllerTest
 			Token token = jbpmContext.getToken(this.tokenInstanceId);
 			assertEquals("remote", token.getNode().getName());
 			assertTrue(token.isSuspended());
+			ExecutionContext executionContext = new ExecutionContext(token);
+			assertEquals("bar", (String)executionContext.getVariable("foo2"));
+			context.assertIsSatisfied();
+			
 		}
 		finally
 		{
@@ -145,7 +171,7 @@ public class SimpleContinuationControllerTest
 	@Test
 	public void testInvokeError() throws Exception {
 		
-		controller.invoke(tokenInstanceId, "foo", "It's all fooed up");
+		controller.invoke(tokenInstanceId, contextVariableMap, "foo", "It's all fooed up");
 		
 		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 		try
@@ -153,6 +179,10 @@ public class SimpleContinuationControllerTest
 			Token token = jbpmContext.getToken(this.tokenInstanceId);
 			assertEquals("remote", token.getNode().getName());
 			assertTrue(token.isSuspended());
+			ExecutionContext executionContext = new ExecutionContext(token);
+			assertEquals("bar", (String)executionContext.getVariable("foo2"));
+			context.assertIsSatisfied();
+			
 		}
 		finally
 		{
