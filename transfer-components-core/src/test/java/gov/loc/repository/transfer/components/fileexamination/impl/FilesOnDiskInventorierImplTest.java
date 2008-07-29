@@ -38,7 +38,7 @@ public class FilesOnDiskInventorierImplTest extends AbstractCorePackageModelerAw
 	
 	@Override
 	public void createFixtures() throws Exception {
-		repository = this.fixtureHelper.createRepository(REPOSITORY_ID1);
+        repository = this.fixtureHelper.createRepository(REPOSITORY_ID1);
 		rdc = this.fixtureHelper.createSystem(RDC, new Role[] {fixtureHelper.createRole(Roles.STORAGE_SYSTEM)});
 		requestingAgent = this.fixtureHelper.createPerson(PERSON_ID1, PERSON_FIRSTNAME1, PERSON_SURNAME1);
 	}	

@@ -9,7 +9,7 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 
 public interface ArchivalRemoteBagCopier extends Component {
 
-	static final String COMPONENT_NAME = "archivakremotebagcopier";
+	static final String COMPONENT_NAME = "archivalremotebagcopier";
 	
 	/*
 	 * Copies from the source FileLocation to the destination FileLocation and performs verification using the BagIt Validation Library.
@@ -17,7 +17,7 @@ public interface ArchivalRemoteBagCopier extends Component {
 	 * If mount path is provided, it is used as the base path for the FileLocation.
 	 * If the destination FileLocation is LC package structure, the files are copied into the LC package structure.
 	 */	
-	@JobType(name="twostepremotebagcopy")
+	@JobType(name="archivalremotebagcopy")
 	public void copy(
             @RequestParam(name="srcfilelocationid") Long srcFileLocationId,
             @RequestParam(name="srcmountpath") String srcMountPath,			
