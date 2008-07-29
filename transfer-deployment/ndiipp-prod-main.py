@@ -38,7 +38,7 @@ core_modeler.create_fixtures(fixtures=(
         'createperson -id brian -firstname Brian -surname Vargas',
         'createsoftware -id packagemodeler-core-%s' % config['VERSION'],
         'createrole -id storage_system',
-        'createsystem -id sun9 -roles storage_system',
-        'createsystem -id rs25 -roles storage_system',
+        'createsystem -id sun9 -host sun9.loc.gov -roles storage_system',
+        'createsystem -id rs25 -host rs25.loc.gov -roles storage_system',
        ))
 
