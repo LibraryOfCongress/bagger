@@ -25,9 +25,9 @@ public class ZFSFileSystemCreatorImplTest {
 	@Test
 	public void testCreate() throws Exception {
 		context.checking(new Expectations() {{
-			one(mockPb).execute(with(aNonNull(File.class)), with(equal("zfs get -o value -H -p avail " + POOL + MOUNTPATH)));
+			one(mockPb).execute(with(aNonNull(File.class)), with(equal(new String("zfs get -o value -H -p avail " + POOL + MOUNTPATH).replace('/', File.separatorChar))));
 			will(returnValue(new ProcessBuilderWrapper.ProcessBuilderResult(0, "600")));
-			one(mockPb).execute(with(aNonNull(File.class)), with(equal("zfs create " + POOL + MOUNTPATH + "/" + FILESYS )));
+			one(mockPb).execute(with(aNonNull(File.class)), with(equal("zfs create " + POOL + MOUNTPATH + "/" + FILESYS)));
 			will(returnValue(new ProcessBuilderWrapper.ProcessBuilderResult(0, "")));			
 		}});
 		
@@ -38,7 +38,7 @@ public class ZFSFileSystemCreatorImplTest {
 	@Test(expected=RuntimeException.class)
 	public void testCreateWithoutEnoughSpace() throws Exception {
 		context.checking(new Expectations() {{
-			one(mockPb).execute(with(aNonNull(File.class)), with(equal("zfs get -o value -H -p avail " + POOL + MOUNTPATH)));
+			one(mockPb).execute(with(aNonNull(File.class)), with(equal(new String("zfs get -o value -H -p avail " + POOL + MOUNTPATH).replace('/', File.separatorChar))));
 			will(returnValue(new ProcessBuilderWrapper.ProcessBuilderResult(0, "400")));
 		}});
 		
