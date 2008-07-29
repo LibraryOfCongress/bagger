@@ -16,9 +16,10 @@ class Log():
                 # file does not exist; create it and move on
                 try:
                     os.makedirs(logdir)
-                except IOError:
-                    # logdir already exists, so eat the tasty error
-                    pass
+                except OSError, err:
+                    if err.errno == 17:
+                        # logdir already exists, so eat the tasty error
+                        pass
                 open(logfile, 'w').close()
             else:
                 raise RuntimeError("Unhandled error opening logfile %s: %s" % (logfile, e))
