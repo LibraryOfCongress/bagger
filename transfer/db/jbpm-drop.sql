@@ -1,3 +1,3 @@
-DROP DATABASE jbpm32;
-DROP ROLE jbpm_user;
-DROP ROLE jbpm_role;
+DROP DATABASE IF EXISTS jbpm32;
+DROP ROLE IF EXISTS jbpm_user;
+DROP ROLE IF EXISTS jbpm_role;

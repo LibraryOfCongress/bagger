@@ -1,3 +1,3 @@
-DROP DATABASE package_modeler;
-DROP ROLE transfer_user;
-DROP ROLE package_modeler_role;
+DROP DATABASE IF EXISTS package_modeler;
+DROP ROLE IF EXISTS transfer_user;
+DROP ROLE IF EXISTS package_modeler_role;
