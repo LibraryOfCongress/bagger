@@ -90,7 +90,7 @@ def rmdir(path, debug=False):
         try:
             return os.removedirs(path).__str__()
         except OSError:
-            return os.popen4("rm -rf '%s/*'" % (path))[1].read()
+            return os.popen4("rm -rf '%s'" % (path))[1].read()
     
 def mv(srcfile, destfile, debug=False):
     """ moves srcfile to destfile """
