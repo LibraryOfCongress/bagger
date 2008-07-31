@@ -132,9 +132,12 @@ class AbstractDB():
 
     def connect(self):
         """ checks if a connection can be made to the database """
+        if not os.path.isfile(self.psql):
+            self.logger.error("Could not find psql at %s" % (self.psql))
+            raise RuntimeError("Could not find psql at %s" % (self.psql))
         os.environ['PGDATABASE'] = "postgres"
         result = utils.load_sqlstr(self.psql, r'\q', self.debug)
-        return True if result.find('ERROR:') == -1 and result.find('Connection refused') == -1 else False
+        return False if 'ERROR' in result or 'refused' in result or 'not found' in result else True
 
     def java_home(self):
         """ checks the value of JAVA_HOME """
