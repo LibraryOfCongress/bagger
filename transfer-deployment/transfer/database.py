@@ -82,8 +82,8 @@ class AbstractDB():
         """ drops database and roles """
         os.environ['PGDATABASE'] = "postgres"
         sql = utils.prefix_database_in_file(file(self.sql_files['drop']).read(), self.original_db_name, self.db_name)
-        sql = utils.prefix_roles_in_file(sql, self.roles, self.role_prefix)
-        result = utils.load_sqlstr(self.psql, sql, self.debug)
+       	sql = utils.prefix_roles_in_file(sql, self.roles, self.role_prefix)
+       	result = utils.load_sqlstr(self.psql, sql, self.debug)
         for error in re.findall(r'^ERROR: (.+)', result, re.M):
             if re.compile(r'role ".+" does not exist').search(error):
                 self.logger.warning(error)
