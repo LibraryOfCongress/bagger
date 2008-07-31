@@ -44,7 +44,6 @@ public class AddStorageSystemFileLocationActionHandler extends AbstractPackageMo
 		this.packge = this.dao.loadRequiredPackage(Long.parseLong(this.packageKey));
 	}	
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
 		FileLocation fileLocation = packge.getFileLocation(this.storageSystemId, this.basePath);

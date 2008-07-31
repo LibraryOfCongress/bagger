@@ -120,7 +120,6 @@ public class BaseActionHandlerTest extends AbstractCoreHandlerTest {
 	}
 
 	//Test missing required field
-	@Test(expected=Exception.class)
 	public void testMissingRequiredField() throws Exception
 	{
 		String processDefinitionString=
@@ -144,7 +143,76 @@ public class BaseActionHandlerTest extends AbstractCoreHandlerTest {
 		{
 			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 			processInstance.signal();
-		    
+		    assertTrue(processInstance.getRootToken().isSuspended());
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+	    
+	}
+	
+
+	//Tests that will suspend process instance when an error occurs and there is no troubleshoot transition
+	public void testSuspend() throws Exception
+	{
+		String processDefinitionString=
+	      "<process-definition name='test'>" +
+	      "  <start-state>" +
+	      "    <transition to='a' />" +
+	      "  </start-state>" +
+	      "  <node name='a'>" +
+	      "    <action class='DummyActionHandler'>" +
+	      "    </action>" +
+	      "    <transition name='b' to='end' />" +
+	      "    <transition name='c' to='end' />" +
+	      "  </node>" +		      
+	      "  <end-state name='end' />" +
+	      "</process-definition>";
+
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+			processInstance.signal();
+		    assertTrue(processInstance.getRootToken().isSuspended());
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+	    
+	}
+
+	//Tests that will take troubleshoot transition when an error occurs
+	public void testTroubleshoot() throws Exception
+	{
+		String processDefinitionString=
+	      "<process-definition name='test'>" +
+	      "  <start-state>" +
+	      "    <transition to='a' />" +
+	      "  </start-state>" +
+	      "  <node name='a'>" +
+	      "    <action class='DummyActionHandler'>" +
+	      "    </action>" +
+	      "    <transition name='b' to='end' />" +
+	      "    <transition name='c' to='end' />" +
+	      "    <transition name='troubleshoot' to='troubleshoot-end' />" +
+	      "  </node>" +
+	      "  <end-state name='troubleshoot-end' />" +
+	      "  <end-state name='end' />" +
+	      "</process-definition>";
+
+		Long processInstanceId = this.deployAndCreateProcessInstance(processDefinitionString);
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
+			processInstance.signal();
+		    assertEquals("troubleshoot-end", processInstance.getRootToken().getNode().getName());
 		}
 		finally
 		{
@@ -234,7 +302,6 @@ public class BaseActionHandlerTest extends AbstractCoreHandlerTest {
 	}
 	
 	//Test not allowed transition
-	@Test(expected=Exception.class)
 	public void testDeclaringBadTransition() throws Exception
 	{
 		String processDefinitionString = 
@@ -259,6 +326,7 @@ public class BaseActionHandlerTest extends AbstractCoreHandlerTest {
 		{
 			ProcessInstance processInstance = jbpmContext.getProcessInstance(processInstanceId);
 		    processInstance.signal();
+		    assertTrue(processInstance.isSuspended());
 		    			
 		}
 		finally

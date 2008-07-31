@@ -12,6 +12,8 @@ import org.jbpm.graph.def.Event;
 import org.jbpm.graph.def.Transition;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.taskmgmt.def.TaskController;
+import org.jbpm.taskmgmt.exe.TaskInstance;
+import org.jbpm.taskmgmt.exe.TaskMgmtInstance;
 import org.jbpm.taskmgmt.log.TaskEndLog;
 
 public class ModifiedTaskInstance extends org.jbpm.taskmgmt.exe.TaskInstance
@@ -60,7 +62,7 @@ public class ModifiedTaskInstance extends org.jbpm.taskmgmt.exe.TaskInstance
 	    
 	    // submit the variables
 	    //submitVariables();
-	    
+	    	      
 	    // verify if the end of this task triggers continuation of execution
 	    if (isSignalling) {
 	      this.isSignalling = false;

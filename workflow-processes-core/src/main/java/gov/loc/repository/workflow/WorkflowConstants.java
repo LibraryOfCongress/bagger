@@ -9,6 +9,7 @@ public class WorkflowConstants {
 	public static final String VARIABLE_REPOSITORYID = "repositoryId";
 	public static final String VARIABLE_PACKAGEKEY = "packageKey";
 	public static final String VARIABLE_TRANSITION = "transition";
+	public static final String VARIABLE_MESSAGE = "message";
 	public static final String VARIABLE_EXTERNALIDENTIFIERVALUE = "externalIdentifierValue";
 	public static final String VARIABLE_LAST_EXCEPTION = "lastException";
 	public static final String VARIABLE_LAST_EXCEPTION_DETAIL = "lastExceptionDetail";
@@ -17,4 +18,5 @@ public class WorkflowConstants {
 	
 	public static final String TRANSITION_CONTINUE = "continue";
 	public static final String TRANSITION_RETRY = "retry";
+	public static final String TRANSITION_TROUBLESHOOT = "troubleshoot";
 }

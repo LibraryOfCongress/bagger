@@ -40,6 +40,11 @@ public class JbpmContextInterceptor extends HandlerInterceptorAdapter {
 		JbpmContext jbpmContext = (JbpmContext)request.getAttribute(UIConstants.PARAMETER_JBPMCONTEXT);
 		if (jbpmContext != null)
 		{
+			if (ex != null)
+			{
+				log.debug("Rolling back jbpmContext for " + request.getRequestURI());
+				jbpmContext.setRollbackOnly();
+			}
 			log.debug("Closing jbpmContext for " + request.getRequestURI());
 			jbpmContext.close();
 		}

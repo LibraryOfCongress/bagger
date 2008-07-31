@@ -127,8 +127,14 @@ public class HandlerHelper
 			String value = (String)obj;				
 			if (value.startsWith("${") && value.endsWith("}"))
 			{
+				
 				String name = value.substring(2, value.length()-1);
-				String newValue = (String)this.getContextVariable(name);
+				Object newValueObj = this.getContextVariable(name);
+				String newValue = null;
+				if (newValueObj != null)
+				{
+					newValue = newValueObj.toString();
+				}
 				log.debug(MessageFormat.format("Replacing {0} with {1}", value, newValue));
 				return newValue;
 			}

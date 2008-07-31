@@ -16,6 +16,8 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
+import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
+import gov.loc.repository.packagemodeler.agents.System;
 import gov.loc.repository.results.ResultList;
 
 public interface PackageModelDAO {
@@ -51,6 +53,7 @@ public interface PackageModelDAO {
 	//FileLocation
 	public abstract FileLocation loadRequiredFileLocation(Long key) throws RequiredEntityNotFound;
 	
+	public abstract StorageSystemFileLocation findStorageSystemFileLocation(System storageSystem, String basePath);
 	
 	//FileInstance
 	public abstract FileInstance findFileInstance(String repositoryId, String packageId, String storageServiceId, String basePath, String filename);

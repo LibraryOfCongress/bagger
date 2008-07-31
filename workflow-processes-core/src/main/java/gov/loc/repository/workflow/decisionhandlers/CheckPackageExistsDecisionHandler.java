@@ -28,11 +28,7 @@ public class CheckPackageExistsDecisionHandler extends AbstractPackageModelerAwa
 		{
 			return TRANSITION_CONTINUE;
 		}
-		String packageId = packge.getPackageId();
-		String normalizedPackageId = packageId.replaceAll("_\\d{8}_", "_");
-		if (packageId.equals(normalizedPackageId)) {
-		}
-		this.executionContext.getContextInstance().setVariable("message", "The package already exists.");
+		this.executionContext.getContextInstance().setVariable(VARIABLE_MESSAGE, "The package already exists.");
 		return TRANSITION_RETRY;
 	}	
 	

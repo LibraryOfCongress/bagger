@@ -61,7 +61,6 @@ public class WorkflowDao {
 		return this.factory.createProcessDefinitionBean(definition);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ProcessInstanceBean> getProcessInstanceBeanList()
 	{
 		return this.getProcessInstanceBeanList(true, true);
@@ -76,7 +75,8 @@ public class WorkflowDao {
 	      "and pi not in (" +
 	      "  select t.processInstance " +
 	      "  from org.jbpm.graph.exe.Token as t " +
-	      "  where t.isSuspended=true" +
+	      "  where t.isSuspended=true " +
+	      "  or t.node.name like 'troubleshoot%' " +	      
 	      ") order by pi.start desc";
 		Query query = this.jbpmContext.getSession().createQuery(queryString);
 		return this.toProcessInstanceBeanList(query.iterate());
@@ -92,7 +92,8 @@ public class WorkflowDao {
 	      "or pi in (" +
 	      "  select t.processInstance " +
 	      "  from org.jbpm.graph.exe.Token as t " +
-	      "  where t.isSuspended=true" +
+	      "  where t.isSuspended=true " +
+	      "  or t.node.name like 'troubleshoot%' " +
 	      ") order by pi.start desc";
 		Query query = this.jbpmContext.getSession().createQuery(queryString);
 		return this.toProcessInstanceBeanList(query.iterate());
@@ -102,16 +103,6 @@ public class WorkflowDao {
 	@SuppressWarnings("unchecked")
 	public List<ProcessInstanceBean> getSuspendedOrWithCommentsProcessInstanceBeanList(Date commentLimitDate)
 	{
-		/*
-		String queryString = "select pi " +
-	      "from org.jbpm.graph.exe.ProcessInstance as pi " +
-	      "where pi.end is null and (pi.isSuspended=true " +
-	      "or pi in (" +
-	      "  select t.processInstance " +
-	      "  from org.jbpm.graph.exe.Token as t " +
-	      "  inner join t.comments " +
-	      ")) order by pi.start desc";
-	      */
 		String queryString = "select pi " +
 	      "from org.jbpm.graph.exe.ProcessInstance as pi " +
 	      "where pi.end is null and (pi.isSuspended=true " +

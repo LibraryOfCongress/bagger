@@ -154,8 +154,8 @@ public class SimpleContinuationControllerTest
 		try
 		{
 			Token token = jbpmContext.getToken(this.tokenInstanceId);
-			assertEquals("remote", token.getNode().getName());
-			assertTrue(token.isSuspended());
+			assertEquals("end2", token.getNode().getName());
+			assertFalse(token.isSuspended());
 			ExecutionContext executionContext = new ExecutionContext(token);
 			assertEquals("bar", (String)executionContext.getVariable("foo2"));
 			context.assertIsSatisfied();
@@ -169,6 +169,31 @@ public class SimpleContinuationControllerTest
 	}
 
 	@Test
+	public void testInvokeFailureWithoutTroubleshoot() throws Exception {
+		
+		((SimpleContinuationControllerImpl)controller).setTroubleshootTransition("missing");
+		controller.invoke(tokenInstanceId, contextVariableMap, false);
+		
+		JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
+		try
+		{
+			Token token = jbpmContext.getToken(this.tokenInstanceId);
+			assertEquals("remote", token.getNode().getName());
+			assertTrue(token.isSuspended());
+			ExecutionContext executionContext = new ExecutionContext(token);
+			assertEquals("bar", (String)executionContext.getVariable("foo2"));
+			context.assertIsSatisfied();
+			
+		}
+		finally
+		{
+			jbpmContext.close();
+		}
+		
+	}
+	
+	
+	@Test
 	public void testInvokeError() throws Exception {
 		
 		controller.invoke(tokenInstanceId, contextVariableMap, "foo", "It's all fooed up");
@@ -177,8 +202,8 @@ public class SimpleContinuationControllerTest
 		try
 		{
 			Token token = jbpmContext.getToken(this.tokenInstanceId);
-			assertEquals("remote", token.getNode().getName());
-			assertTrue(token.isSuspended());
+			assertEquals("end2", token.getNode().getName());
+			assertFalse(token.isSuspended());
 			ExecutionContext executionContext = new ExecutionContext(token);
 			assertEquals("bar", (String)executionContext.getVariable("foo2"));
 			context.assertIsSatisfied();

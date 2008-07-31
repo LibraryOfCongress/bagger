@@ -544,4 +544,14 @@ public class PackageModelDAOImplTest extends AbstractCoreModelersTest {
 		txManager.commit(status);
 		
 	}
+	
+	@Test
+	public void testFindStorageSystemFileLocation() throws Exception
+	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+		assertNotNull(dao.findStorageSystemFileLocation(rs25, BASEPATH_1 + testCounter));
+		assertNull(dao.findStorageSystemFileLocation(rs25, BASEPATH_1 + testCounter + "x"));
+		txManager.commit(status);
+
+	}
 }

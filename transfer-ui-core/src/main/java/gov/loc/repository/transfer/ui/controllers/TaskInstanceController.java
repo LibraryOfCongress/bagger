@@ -132,24 +132,7 @@ public class TaskInstanceController extends AbstractRestController {
 		if (mav.getStatusCode() != null) { return; }
 		//This will add an errorList to mav
 		command.validatePut();
-		
-		//Catch ActionHandlerException
-		try
-		{
-			dao.save(taskInstanceBean);
-		}
-		catch(RuntimeException ex)
-		{
-			if (ExceptionHelper.hasCause(ex, ActionHandlerException.class))
-			{
-				log.error(ex);
-				request.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "An error occurred performing the workflow.  The workflow token has been suspended.");
-			}
-			else
-			{
-				throw ex;
-			}
-		}
+			
 		if (taskInstanceBean.isEnded()) {
 			mav.setViewName("redirect:/");
 		}else{

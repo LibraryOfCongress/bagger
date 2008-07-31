@@ -3,12 +3,14 @@ package gov.loc.repository.workflow.continuations.impl;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
+import org.jbpm.graph.def.Transition;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
 import org.springframework.beans.factory.BeanFactory;
@@ -34,8 +36,9 @@ public class SimpleContinuationControllerImpl implements
 	protected JbpmConfiguration jbpmConfiguration;
 	protected Map<String, ResponseParameterMapper> responseParameterMapperMap = new HashMap<String, ResponseParameterMapper>();
 	
-	private String successTransition = TRANSITION_CONTINUE;
-
+	private String continueTransition = TRANSITION_CONTINUE;
+	protected String troubleshootTransition = TRANSITION_TROUBLESHOOT;
+		
 	@Autowired
 	public SimpleContinuationControllerImpl(JbpmConfiguration jbpmConfiguration) {
 		this.jbpmConfiguration = jbpmConfiguration;
@@ -68,15 +71,25 @@ public class SimpleContinuationControllerImpl implements
 			ExecutionContext executionContext = new ExecutionContext(token);			
 			this.addContextVariables(executionContext, responseParameterMap);
 			//Continue along the appropriate transition
-			if (success)
+			if (success && this.hasTransition(token, continueTransition))
 			{
-				log.debug(MessageFormat.format("Taking success transition {0} for token {1}", this.successTransition, token.getId()));
-				token.signal(this.successTransition);
+				log.debug(MessageFormat.format("Taking {0} transition for token {1}", continueTransition, token.getId()));
+				token.signal(continueTransition);
+			}
+			else if (! success && this.hasTransition(token, troubleshootTransition))
+			{
+				log.debug(MessageFormat.format("Taking {0} transition for token {1}", troubleshootTransition, token.getId()));
+				//Add variables describing error			
+				executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION, "Service request returned failure");
+				token.signal(troubleshootTransition);
+				
 			}
 			else
 			{
-				//Add variables describing error			
-				executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION, "Service request returned failure");
+				if (success && ! this.hasTransition(token, continueTransition))
+				{
+					executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION, "Service request returned success, but no continue transition found");
+				}
 				//Suspend token
 				token.suspend();
 				//Suspend service requests
@@ -155,10 +168,20 @@ public class SimpleContinuationControllerImpl implements
 						
 			executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION, error);
 			executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION_DETAIL, errorDetail);
-			//Suspend token
-			token.suspend();
-			//Suspend service requests
-			this.suspendServiceRequests(jbpmContext, token);
+			
+			if (this.hasTransition(token, troubleshootTransition))
+			{
+				log.debug(MessageFormat.format("Taking {0} transition for token {1}", troubleshootTransition, token.getId()));
+				//Add variables describing error			
+				token.signal(troubleshootTransition);			
+			}
+			else
+			{
+				//Suspend token
+				token.suspend();
+				//Suspend service requests
+				this.suspendServiceRequests(jbpmContext, token);
+			}
 			
 		}
 		finally
@@ -168,9 +191,26 @@ public class SimpleContinuationControllerImpl implements
 		
 	}
 
-	public void setSuccessTransition(String transitionName) {
-		this.successTransition = transitionName;
-		
+	@SuppressWarnings("unchecked")
+	public boolean hasTransition(Token token, String transitionName)
+	{
+		Set<Transition> transitions = token.getAvailableTransitions();
+		for(Transition transition : transitions)
+		{
+			if (transitionName.equals(transition.getName()))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
+	public void setContinueTransition(String continueTransition) {
+		this.continueTransition = continueTransition;
+	}
+
+	public void setTroubleshootTransition(String troubleshootTransition) {
+		this.troubleshootTransition = troubleshootTransition;
+	}
+	
 }

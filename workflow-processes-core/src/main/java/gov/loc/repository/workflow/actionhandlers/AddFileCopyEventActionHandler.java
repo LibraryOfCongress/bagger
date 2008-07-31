@@ -41,7 +41,6 @@ public class AddFileCopyEventActionHandler extends AbstractPackageModelerAwareHa
 		this.destFileLocation = this.dao.loadRequiredFileLocation(Long.parseLong(this.destFileLocationKey));
 	}
 		
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void execute() throws Exception {
 		

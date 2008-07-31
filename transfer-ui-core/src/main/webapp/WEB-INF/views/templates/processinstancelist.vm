@@ -74,8 +74,8 @@
 	<div id="problemWorkflows">
 		<h2>Problem Workflows</h2>
 		<fieldset>
-            <legend><div style="word-wrap:break-word;width:600px;">These workflows have either been suspended by a user or have tokens that have been suspended 
-            because an error occurred.</div></legend>
+            <legend><div style="word-wrap:break-word;width:600px;">These workflows have either been suspended by a user, have tokens that have been suspended 
+            because an error occurred, or are at troubleshoot nodes.</div></legend>
             #if( $suspendedProcessInstanceBeanList.size() > 10)
             <table>
 		        <tbody><tr><td>

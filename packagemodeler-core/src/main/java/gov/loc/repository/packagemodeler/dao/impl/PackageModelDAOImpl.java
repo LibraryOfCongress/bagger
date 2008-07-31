@@ -29,11 +29,13 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.packagemodeler.packge.FileName;
 import gov.loc.repository.packagemodeler.packge.Package;
 import gov.loc.repository.packagemodeler.packge.Repository;
+import gov.loc.repository.packagemodeler.packge.StorageSystemFileLocation;
 import gov.loc.repository.packagemodeler.packge.impl.ExternalFileLocationImpl;
 import gov.loc.repository.packagemodeler.packge.impl.PackageImpl;
 import gov.loc.repository.packagemodeler.packge.impl.StorageSystemFileLocationImpl;
 import gov.loc.repository.results.ResultList;
 import gov.loc.repository.utilities.FilenameHelper;
+import gov.loc.repository.packagemodeler.agents.System;
 
 @org.springframework.stereotype.Repository
 public class PackageModelDAOImpl implements PackageModelDAO {
@@ -421,7 +423,20 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 			throw new RequiredEntityNotFound(key.toString());
 		}
 		return fileLocation;
-	}	
+	}
+	
+	@Override
+	public StorageSystemFileLocation findStorageSystemFileLocation(
+			System storageSystem, String basePath) {
+		Query query = this.getSession().createQuery(
+			"from StorageSystemFileLocation as fl " +
+			"where fl.basePath = :basePath " +
+			"and fl.storageSystem.identifier = :storageSystemId"
+				);
+		query.setString("basePath", basePath);
+		query.setParameter("storageSystemId", storageSystem.getId());
+		return (StorageSystemFileLocation)query.uniqueResult();
+	}
 	
 	public Package loadRequiredPackage(Long key) throws RequiredEntityNotFound {
 		Package packge = (Package)this.getSession().get(PackageImpl.class, key);
