@@ -124,7 +124,7 @@
 					        <td>
 					            <form method="post" action="${contextPath}/taskinstance/${taskInstanceBean.id}.html?method=put">
 	                					<input type="hidden" name="user" value="${userBean.id}" />
-	                					<input type="submit"  class="button" value="Assign To Me"/>
+	                					<input type="submit" name="assignbutton" class="button" value="Assign To Me"/>
 	                			</form>	
 					        </td>				        
 					    </tr>					
