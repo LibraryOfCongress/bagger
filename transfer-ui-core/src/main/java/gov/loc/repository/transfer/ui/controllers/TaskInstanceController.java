@@ -87,6 +87,12 @@ public class TaskInstanceController extends AbstractRestController {
 		mav.setViewName("taskinstance");
 		mav.addObject("taskInstanceBean", taskInstanceBean);
 		mav.addObject("userBeanList", dao.getUserBeanList());
+		String buttonname = request.getParameter("assignbutton");
+		if (buttonname != null) {
+			if (buttonname.trim().equalsIgnoreCase("Assign to Me")) {
+				mav.setViewName("redirect:/index.html");				
+			}
+		}
 		    
 		TaskInstanceUpdateCommand command = 
 		    getTaskInstanceUpdateFormCommand(taskInstanceBean);
