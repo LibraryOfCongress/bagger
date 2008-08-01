@@ -24,13 +24,14 @@ import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCo
 import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCopier.CopyDescription;
 import gov.loc.repository.utilities.ProcessBuilderWrapper;
 import gov.loc.repository.utilities.ProcessBuilderWrapper.ProcessBuilderResult;
+import gov.loc.repository.utilities.impl.ProcessBuilderWrapperImpl;
 
 public class Transporter {
 
     private static final Log log = LogFactory.getLog(Transporter.class);
 
     private String keyFile;
-    protected ProcessBuilderWrapper pb;
+    protected ProcessBuilderWrapper pb = new ProcessBuilderWrapperImpl();
     
     public static void main(String[] args) throws Exception
     {
@@ -102,7 +103,7 @@ public class Transporter {
                                                 
         String stagingPath = stagingBasePath + (new File(srcPath)).getName();
 
-        boolean isArchiveSuccess = this.execute(owner, "cp -a " + stagingPath + " " + destPath);
+        boolean isArchiveSuccess = this.execute(owner, "cp -r " + stagingPath + " " + destPath);
         if (isArchiveSuccess) {
             this.execute(owner, "rm -rf " + stagingPath);
         } 
