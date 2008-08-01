@@ -103,7 +103,7 @@ public class Transporter {
                                                 
         String stagingPath = stagingBasePath + (new File(srcPath)).getName();
 
-        boolean isArchiveSuccess = this.execute(owner, "cp -r " + stagingPath + " " + destPath);
+        boolean isArchiveSuccess = this.execute(owner, "cp -rf " + stagingPath + " " + destPath);
         if (isArchiveSuccess) {
             this.execute(owner, "rm -rf " + stagingPath);
         } 
