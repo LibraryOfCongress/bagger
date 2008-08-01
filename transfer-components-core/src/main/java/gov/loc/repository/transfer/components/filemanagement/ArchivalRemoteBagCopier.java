@@ -25,9 +25,10 @@ public interface ArchivalRemoteBagCopier extends Component {
             @RequestParam(name="destmountpath") String destMountPath,			
             @RequestParam(name="requestingagentid") String requestingAgentId,
             @RequestParam(name="algorithm") String algorithm,
-            @RequestParam(name="archiveownergroup") String archiveOwnerGroup)
+			@RequestParam(name="owner") String owner,
+			@RequestParam(name="group") String group)
 	    throws Exception;
 
-    public void copy(FileLocation srcFileLocation, String srcMountPath, FileLocation destFileLocation, String destMountPath, Agent requestingAgent, FixityAlgorithm algorithm, String archiveOwnerGroup) throws Exception;		
+    public void copy(FileLocation srcFileLocation, String srcMountPath, FileLocation destFileLocation, String destMountPath, Agent requestingAgent, FixityAlgorithm algorithm, String owner, String group) throws Exception;		
 
 }

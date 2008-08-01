@@ -17,6 +17,7 @@
     	<outputDirectory>/</outputDirectory>    	
       <includes>
         <include>conf/*</include>
+        <include>bin/*</include>
       </includes>
     </fileSet>
   </fileSets>

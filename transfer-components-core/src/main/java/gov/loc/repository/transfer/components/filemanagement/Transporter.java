@@ -14,8 +14,13 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.ChannelExec;
+import com.martiansoftware.jsap.FlaggedOption;
+import com.martiansoftware.jsap.JSAP;
+import com.martiansoftware.jsap.JSAPResult;
+import com.martiansoftware.jsap.Parameter;
+import com.martiansoftware.jsap.SimpleJSAP;
 
-import gov.loc.repository.transfer.components.filemanagement.impl.ArchivalRemoteBagCopierImpl;
+import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCopier.Chowner;
 import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCopier.CopyDescription;
 import gov.loc.repository.utilities.ProcessBuilderWrapper;
 import gov.loc.repository.utilities.ProcessBuilderWrapper.ProcessBuilderResult;
@@ -25,27 +30,64 @@ public class Transporter {
     private static final Log log = LogFactory.getLog(Transporter.class);
 
     private String keyFile;
-    private String stagingBasePath;
-
     protected ProcessBuilderWrapper pb;
+    
+    public static void main(String[] args) throws Exception
+    {
+    	final String KEYFILE = "keyfile";
+    	final String REMOTE_USERNAME = "remote_username";
+    	final String REMOTE_HOST = "remote_host";
+    	final String STAGING_BASE_PATH = "staging_base_path";
+    	final String SOURCE_PATH = "source_path";
+    	final String DEST_PATH = "dest_path";
+    	final String OWNER = "owner";
+    	
+    	SimpleJSAP jsap = new SimpleJSAP("Transporter",
+    			"Performs a two step copy.",
+    			new Parameter[] {
+    				new FlaggedOption(KEYFILE, JSAP.STRING_PARSER, "/home/transfer/.ssh/id_rsa", true, 'k', "keyfile", "keyfile containing the keys to remote machines" ),
+    				new FlaggedOption(REMOTE_USERNAME, JSAP.STRING_PARSER, null, true, 'u', "username", "remote username" ),
+    				new FlaggedOption(REMOTE_HOST, JSAP.STRING_PARSER, null, true, 'h', "host", "remote host" ),
+    				new FlaggedOption(STAGING_BASE_PATH, JSAP.STRING_PARSER, "/tmp", true, 'b', "staging", "staging base path" ),
+    				new FlaggedOption(SOURCE_PATH, JSAP.STRING_PARSER, null, true, 's', "source", "source path" ),
+    				new FlaggedOption(DEST_PATH, JSAP.STRING_PARSER, null, true, 'd', "dest", "destination path" ),
+    				new FlaggedOption(OWNER, JSAP.STRING_PARSER, null, true, 'o', "owner", "archival owner" ),    				
+    	}
+    	);
+    	
+    	JSAPResult config = jsap.parse(args);    
+        if ( jsap.messagePrinted() ) System.exit( 1 );
+
+        Transporter transporter = new Transporter(config.getString(KEYFILE));
+        transporter.pullAndArchive(config.getString(REMOTE_USERNAME), config.getString(REMOTE_HOST), config.getString(STAGING_BASE_PATH), config.getString(SOURCE_PATH), config.getString(DEST_PATH), config.getString(OWNER));
+    }
     
     public Transporter(String keyFile) {
         this.keyFile = keyFile;
     }
+        
+    public void pullAndArchive(String remoteUsername, String remoteHost, String stagingBasePath, String srcPath, String destPath, String owner)
+    {
+        stagingBasePath= stagingBasePath != null ? stagingBasePath : DEFAULT_STAGING_BASEPATH;
+            
+        if (! stagingBasePath.endsWith("/")) {
+            stagingBasePath += "/";
+        }            
+    	this.pull(remoteUsername, remoteHost, stagingBasePath, srcPath);
+        this.archive(stagingBasePath, srcPath, owner, destPath);
+    }
 
     public void pullAndArchive(String remoteUsername, String remoteHost, CopyDescription copyDescription)
     {
-        this.pull(remoteUsername, remoteHost, copyDescription);
-        this.archive(copyDescription);
+        
+        this.pullAndArchive(remoteUsername, remoteHost, copyDescription.additionalParameters.get("stagingBasePath"), copyDescription.srcPath, copyDescription.destCopyToPath, copyDescription.additionalParameters.get(Chowner.USER_KEY));
     }
-
-    public void pull(String remoteUsername, String remoteHost, CopyDescription copyDescription)
+    
+    
+    private void pull(String remoteUsername, String remoteHost, String stagingBasePath, String srcPath)
     {
-        this.stagingBasePath = 
-            (copyDescription.additionalParameters.containsKey("stagingBasePath"))
-            ? copyDescription.additionalParameters.get("stagingBasePath") : DEFAULT_STAGING_BASEPATH;
-        log.debug(MessageFormat.format("stagingBasePath set to {0}", this.stagingBasePath));
-        String commandLine = MessageFormat.format("scp -B -q -o StrictHostKeyChecking=no -r -i {0} {1} {2}", this.keyFile, this.toUri(remoteUsername, remoteHost, copyDescription.srcPath), this.stagingBasePath);
+        log.debug(MessageFormat.format("stagingBasePath set to {0}", stagingBasePath));
+        String commandLine = MessageFormat.format("scp -B -q -o StrictHostKeyChecking=no -r -i {0} {1} {2}", this.keyFile, this.toUri(remoteUsername, remoteHost, srcPath), stagingBasePath);
         log.debug("Commandline is " + commandLine);
         ProcessBuilderResult result = pb.execute(commandLine);
         if (result.getExitValue() != 0)
@@ -55,27 +97,17 @@ public class Transporter {
         }
     }  
 
-    public void archive(CopyDescription copyDescription)
+    private void archive(String stagingBasePath, String srcPath, String owner, String destPath)
     {
-        String[] archiveOwnerGroup = copyDescription.additionalParameters.get(ArchivalRemoteBagCopierImpl.ARCHIVE_OWNERGROUP_KEY).split(":");
-        String archiveOwner = archiveOwnerGroup[0]; 
-        String archiveGroup;
-        if (archiveOwnerGroup.length > 1) {
-            // archiveGroup is currently not used for anything
-            archiveGroup = archiveOwnerGroup[1];
-        }
                                                 
-        if (! this.stagingBasePath.endsWith("/")) {
-            this.stagingBasePath += "/";
-        }
-        String stagingPath = this.stagingBasePath + (new File(copyDescription.srcPath)).getName();
+        String stagingPath = stagingBasePath + (new File(srcPath)).getName();
 
-        boolean isArchiveSuccess = this.execute(archiveOwner, "cp -a " + stagingPath + " " + copyDescription.destCopyToPath);
+        boolean isArchiveSuccess = this.execute(owner, "cp -a " + stagingPath + " " + destPath);
         if (isArchiveSuccess) {
-            this.execute(archiveOwner, "rm -rf " + stagingPath);
+            this.execute(owner, "rm -rf " + stagingPath);
         } 
         else {
-            throw new RuntimeException(MessageFormat.format("Archive of {0} to {1} by user {2} was not successful. Also, {0} not cleaned", stagingPath, copyDescription.destCopyToPath, archiveOwner));
+            throw new RuntimeException(MessageFormat.format("Archive of {0} to {1} by user {2} was not successful. Also, {0} not cleaned", stagingPath, destPath, owner));
         }
     }
     
@@ -105,7 +137,6 @@ public class Transporter {
                     if (i < 0) {
                         break;
                     }
-                    System.out.print(new String(tmp, 0, i));
                 }
                 if (channel.isClosed()) {
                     log.debug(MessageFormat.format("exit-status: {0}", channel.getExitStatus()));
