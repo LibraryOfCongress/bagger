@@ -19,12 +19,25 @@
 	
 	<context:component-scan base-package="gov.loc.repository.transfer.components"/>
 	
+	<bean id="abstractPackageModelAwareComponent" abstract="true">
+		<constructor-arg ref="modelerFactory" />
+		<constructor-arg ref="packageModelDao" />
+		<constructor-arg value="${pom.build.finalName}" />
+	</bean>
+	
 	<!-- Archival Remote Directory Copier -->
 	<bean id="archivalRemoteDirectoryCopier" class="gov.loc.repository.transfer.components.filemanagement.impl.ArchivalRemoteDirectoryCopier">
 		<constructor-arg value="$comp{components.archivalremotedirectorycopier.keyfile}" />
 	</bean>
 
 	<!-- Archival Remote Bag Copier -->
+	<bean id="archivalRemoteBagCopierComponent" class="gov.loc.repository.transfer.components.filemanagement.impl.ArchivalRemoteBagCopierImpl" parent="abstractPackageModelAwareComponent">
+		<constructor-arg ref="javaSecurityBagGeneratorVerifier" />
+		<constructor-arg ref="bagFileCopyVerifier" />
+		<constructor-arg ref="archivalRemoteDirectoryCopier" />
+	</bean>
+	
+	
 	<tx:advice id="archivalRemoteBagCopierTxAdvice" transaction-manager="packageModelerTransactionManager">
     	<tx:attributes>
     		<tx:method name="copy*" />
@@ -44,6 +57,10 @@
 	</bean>
 
 	<!-- Files On Disk Inventories -->
+	<bean id="filesOnDiskInventorier" class="gov.loc.repository.transfer.components.fileexamination.impl.FilesOnDiskInventorierImpl" parent="abstractPackageModelAwareComponent">
+		<constructor-arg ref="javaSecurityFixityGenerator" />
+	</bean>
+	
 	<tx:advice id="filesOnDiskInventorierTxAdvice" transaction-manager="packageModelerTransactionManager">
     	<tx:attributes>
     		<tx:method name="inventory*" />

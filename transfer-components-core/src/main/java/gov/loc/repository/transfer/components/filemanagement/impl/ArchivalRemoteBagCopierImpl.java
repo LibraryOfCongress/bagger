@@ -2,9 +2,6 @@ package gov.loc.repository.transfer.components.filemanagement.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import gov.loc.repository.bagit.bag.BagGeneratorVerifier;
 import gov.loc.repository.fixity.FixityAlgorithm;
@@ -14,14 +11,12 @@ import gov.loc.repository.packagemodeler.dao.PackageModelDAO;
 import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.transfer.components.filemanagement.ArchivalRemoteBagCopier;
 
-@Component("archivalRemoteBagCopierComponent")
 public class ArchivalRemoteBagCopierImpl extends ConfigurableCopier implements ArchivalRemoteBagCopier {
 
     static final String COMPONENT_NAME = "remotedirectorycopier";
     
-    @Autowired  
-    public ArchivalRemoteBagCopierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityBagGeneratorVerifier")BagGeneratorVerifier generator, @Qualifier("bagFileCopyVerifier")FileCopyVerifier verifier, @Qualifier("archivalRemoteDirectoryCopier") DirectoryCopier copier) {
-    	super(factory, dao, generator, copier, verifier);
+    public ArchivalRemoteBagCopierImpl(ModelerFactory factory, PackageModelDAO dao, String reportingAgentId, BagGeneratorVerifier generator, FileCopyVerifier verifier, DirectoryCopier copier) {
+    	super(factory, dao, reportingAgentId, generator, copier, verifier);
     }
     
     @Override

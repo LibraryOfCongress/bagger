@@ -4,12 +4,12 @@ import java.io.File;
 import java.text.MessageFormat;
 
 import gov.loc.repository.transfer.components.AbstractComponent;
-import gov.loc.repository.transfer.components.filemanagement.ZFSFileSystemCreator;
+import gov.loc.repository.transfer.components.filemanagement.FileSystemCreator;
 import gov.loc.repository.utilities.ProcessBuilderWrapper;
 import gov.loc.repository.utilities.ProcessBuilderWrapper.ProcessBuilderResult;
 
 public class ZFSFileSystemCreatorImpl extends AbstractComponent implements
-		ZFSFileSystemCreator {
+		FileSystemCreator {
 
 	private String pool;
 	private ProcessBuilderWrapper pb;

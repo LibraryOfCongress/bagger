@@ -6,8 +6,9 @@ import gov.loc.repository.packagemodeler.packge.FileLocation;
 import gov.loc.repository.service.Component;
 import gov.loc.repository.service.annotations.JobType;
 import gov.loc.repository.service.annotations.RequestParam;
+import gov.loc.repository.transfer.components.ReportingAgentAware;
 
-public interface FilesOnDiskInventorier extends Component {
+public interface FilesOnDiskInventorier extends Component, ReportingAgentAware {
 	
 	public static final String COMPONENT_NAME = "filesondiskinventorier";
 		

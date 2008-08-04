@@ -29,8 +29,8 @@ public abstract class ConfigurableCopier extends AbstractPackageModelerAwareComp
 	protected ProcessBuilderWrapper pb = new ProcessBuilderWrapperImpl();
 	protected CopyDescription copyDescription;
 	
-	public ConfigurableCopier(ModelerFactory factory, PackageModelDAO dao, BagGeneratorVerifier generator, DirectoryCopier fileCopier, FileCopyVerifier verifier) {
-		super(factory, dao);
+	public ConfigurableCopier(ModelerFactory factory, PackageModelDAO dao, String reportingAgentId, BagGeneratorVerifier generator, DirectoryCopier fileCopier, FileCopyVerifier verifier) {
+		super(factory, dao, reportingAgentId);
 		this.generator = generator;
 		this.fileCopier = fileCopier;
 		this.verifier = verifier;

@@ -76,7 +76,7 @@ public class ServiceContainer implements Runnable {
 	public void init() {		
 		for(String jobType : this.broker.getJobTypes())
 		{
-			log.debug("Handles jobType: " + jobType);
+			log.debug("Checking if component factory handles jobType: " + jobType);
 			if (! this.factory.handlesJobType(jobType))
 			{
 				throw new UnsupportedOperationException("Factory cannot create component to handle jobType " + jobType);

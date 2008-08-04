@@ -10,6 +10,18 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
+	<bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+  		<property name="customEditors">
+    		<map>
+      			<entry key="java.util.Properties" value="gov.loc.repository.springframework.PropertiesEditor" />
+    		</map>
+ 		</property>
+	</bean>
+
+
 	<context:component-scan base-package="gov.loc.repository.service.component"/>
-				
+	
+	<bean id="componentFactory" class="gov.loc.repository.service.component.ComponentFactory">
+		<constructor-arg value="classpath:conf/service.local.properties" type="java.util.Properties"/>
+	</bean>
 </beans>

@@ -2,10 +2,11 @@ package gov.loc.repository.component.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 
 import gov.loc.repository.component.TestComponent;
 
-@org.springframework.stereotype.Component("testComponent")
+@Component("testComponent")
 public class TestComponentImpl implements TestComponent
 {
 

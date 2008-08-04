@@ -19,9 +19,9 @@ public abstract class AbstractComponentTest {
 	protected static boolean isSetup = false;
 	protected static int testCounter = 0;
 	
-	private static final String REPORTING_AGENT_KEY = "components.agent.id";
+	//private static final String REPORTING_AGENT_KEY = "components.agent.id";
 	
-	protected static Agent reportingAgent; 
+	//protected static Agent reportingAgent; 
 	
 	@Autowired
 	public TestFixtureHelper fixtureHelper;
@@ -46,7 +46,7 @@ public abstract class AbstractComponentTest {
 			dbHelper.dropDatabase();
 			dbHelper.createDatabase();
 	
-			reportingAgent = this.fixtureHelper.createSoftware(this.getReportingAgentId());
+			//reportingAgent = this.fixtureHelper.createSoftware(this.getReportingAgentId());
 			this.createFixtures();
 			
 			isSetup = true;
@@ -68,11 +68,13 @@ public abstract class AbstractComponentTest {
 		return ResourceHelper.getFile(this.getClass(), filename);
 	}
 	
+	/*
 	protected Configuration getConfiguration() throws Exception
 	{
 		return ConfigurationFactory.getConfiguration(ComponentConstants.PROPERTIES_NAME);
 	}
-	
+	*/
+	/*
 	protected String getReportingAgentId() throws Exception
 	{
 		String reportingAgent = this.getConfiguration().getString(REPORTING_AGENT_KEY);
@@ -82,6 +84,6 @@ public abstract class AbstractComponentTest {
 		}
 		return reportingAgent;
 	}
-	
+	*/
 
 }

@@ -7,9 +7,6 @@ import java.util.Iterator;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import gov.loc.repository.bagit.bag.BagHelper;
 import gov.loc.repository.bagit.manifest.FixityGenerator;
@@ -25,16 +22,14 @@ import gov.loc.repository.transfer.components.AbstractPackageModelerAwareCompone
 import gov.loc.repository.transfer.components.fileexamination.FilesOnDiskInventorier;
 import gov.loc.repository.utilities.FilenameHelper;
 
-@Component("filesOnDiskInventorierComponent")
-@Scope("prototype")
 public class FilesOnDiskInventorierImpl extends AbstractPackageModelerAwareComponent implements
 		FilesOnDiskInventorier {
 
 	private FixityGenerator fixityGenerator;
 	
 	@Autowired
-	public FilesOnDiskInventorierImpl(@Qualifier("modelerFactory")ModelerFactory factory, @Qualifier("packageModelDao")PackageModelDAO dao, @Qualifier("javaSecurityFixityGenerator")FixityGenerator fixityGenerator) {		
-		super(factory, dao);
+	public FilesOnDiskInventorierImpl(ModelerFactory factory, PackageModelDAO dao, String reportingAgentId, FixityGenerator fixityGenerator) {		
+		super(factory, dao, reportingAgentId);
 		this.fixityGenerator = fixityGenerator;
 	}
 	

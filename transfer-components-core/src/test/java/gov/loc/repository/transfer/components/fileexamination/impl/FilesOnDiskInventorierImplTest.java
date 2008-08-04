@@ -31,6 +31,7 @@ public class FilesOnDiskInventorierImplTest extends AbstractCorePackageModelerAw
 	static Agent requestingAgent;
 	static Repository repository;
 	static System rdc;
+	static Agent reportingAgent;
 	Package packge;
 	
 	@Autowired
@@ -38,6 +39,7 @@ public class FilesOnDiskInventorierImplTest extends AbstractCorePackageModelerAw
 	
 	@Override
 	public void createFixtures() throws Exception {
+		reportingAgent = this.fixtureHelper.createSoftware(inventorier.getReportingAgentId());
         repository = this.fixtureHelper.createRepository(REPOSITORY_ID1);
 		rdc = this.fixtureHelper.createSystem(RDC, new Role[] {fixtureHelper.createRole(Roles.STORAGE_SYSTEM)});
 		requestingAgent = this.fixtureHelper.createPerson(PERSON_ID1, PERSON_FIRSTNAME1, PERSON_SURNAME1);
@@ -56,7 +58,7 @@ public class FilesOnDiskInventorierImplTest extends AbstractCorePackageModelerAw
 		
 		assertEquals(0, fileLocation.getFileInstances().size());
 		assertEquals(0, fileLocation.getFileLocationEvents().size());
-		
+				
 		inventorier.inventory(fileLocation, this.getFile("batch").toString(), FixityAlgorithm.MD5, reportingAgent );
 		
 		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());

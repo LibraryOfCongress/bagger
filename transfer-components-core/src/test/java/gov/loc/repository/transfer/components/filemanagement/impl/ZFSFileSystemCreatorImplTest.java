@@ -2,7 +2,7 @@ package gov.loc.repository.transfer.components.filemanagement.impl;
 
 import java.io.File;
 
-import gov.loc.repository.transfer.components.filemanagement.ZFSFileSystemCreator;
+import gov.loc.repository.transfer.components.filemanagement.FileSystemCreator;
 import gov.loc.repository.utilities.ProcessBuilderWrapper;
 
 import org.jmock.Expectations;
@@ -31,7 +31,7 @@ public class ZFSFileSystemCreatorImplTest {
 			will(returnValue(new ProcessBuilderWrapper.ProcessBuilderResult(0, "")));			
 		}});
 		
-		ZFSFileSystemCreator fsCreator = new ZFSFileSystemCreatorImpl(POOL, mockPb);
+		FileSystemCreator fsCreator = new ZFSFileSystemCreatorImpl(POOL, mockPb);
 		fsCreator.create(MOUNTPATH + '/' + FILESYS, 500L);
 	}
 
@@ -42,7 +42,7 @@ public class ZFSFileSystemCreatorImplTest {
 			will(returnValue(new ProcessBuilderWrapper.ProcessBuilderResult(0, "400")));
 		}});
 		
-		ZFSFileSystemCreator fsCreator = new ZFSFileSystemCreatorImpl(POOL, mockPb);
+		FileSystemCreator fsCreator = new ZFSFileSystemCreatorImpl(POOL, mockPb);
 		fsCreator.create(MOUNTPATH + '/' + FILESYS, 500L);
 	}
 	
