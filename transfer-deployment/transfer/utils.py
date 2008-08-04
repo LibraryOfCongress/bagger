@@ -186,3 +186,6 @@ def deploy_process_def(driver, process_def):
     """ deploys process definition """
     return os.popen4("%s deploy -file %s" % (driver, process_def))[1].read()
 
+def restart_container(command):
+    """ restarts service container """
+    return os.popen4("%s restart" % command)[1].read()

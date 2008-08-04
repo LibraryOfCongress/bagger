@@ -46,6 +46,11 @@ class TransferServices():
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
         self.logger = log.Log(self.project_name)
 
+    def start_container(self):
+        """ starts up the service_container """
+        utils.restart_container(self.init_dir + "service_container.sh")
+        return
+
     def deploy_drivers(self):
         """ deploys command-line drivers """
         if not os.path.exists(self.driver_package):
