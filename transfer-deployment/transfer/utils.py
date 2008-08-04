@@ -125,8 +125,8 @@ def driver(str, debug=False):
         
 def prefix_database_in_file(file, original_db_name, db_name):
     """ prepends db_prefix to database names """
-    pattern = r'DATABASE %s' % original_db_name
-    replacement = r'DATABASE %s' % db_name
+    pattern = r'.+ DATABASE (IF EXISTS) %s' % original_db_name
+    replacement = r'DATABASE \1 %s' % db_name
     return re.sub(pattern, replacement, file)
 
 def prefix_roles_in_file(file, roles, role_prefix):
