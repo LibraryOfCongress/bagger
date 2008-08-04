@@ -32,10 +32,16 @@ class TransferServices():
                                          queues=%s
                                          jobtypes=%s
                                       """ % (config['HOST'] if config['HOST'] else "localhost", config['QUEUES'] if config['QUEUES'] else "jobqueue", config['JOBTYPES'] if ['JOBTYPES'] else "test")
+
         self.servicecontainer_conf = "%s/%s-%s/conf/servicecontainer.properties" % (self.install_dir, self.project_name, self.version)
+        self.service_conf =  "%s/%s-%s/conf/service.local.properties" % (self.install_dir, self.project_name, self.version)
         self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.project_name, self.version
         )
+        component_selection = config['COMPONENT_SELECTION'] if config['COMPONENT_SELECTION'] else {}
+        self.component_select_props = ""        
+        for component in component_selection:
+            self.component_select_props = "%s%s=%s\n" % component_select_props, component, component_selection.get(component)
         self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
         self.logger = log.Log(self.project_name)
@@ -55,6 +61,7 @@ class TransferServices():
         utils.setup_driver_init(self.driver_location, self.init_dir)
         utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
         utils.strtofile(self.servicecontainer_props, self.servicecontainer_conf, self.debug)
+        utils.strtofile(self.component_select_props, self.service_conf, self.debug)
         self.logger.info("Deploying %s drivers" % (self.project_name))
         return
 
