@@ -1,3 +1,18 @@
+<script type="text/javascript">
+var intervalID;
+
+function timedrefresh() {
+	//alert("timedrefresh");
+  	intervalID = setInterval(pagereload, 5*60000);
+}
+
+function pagereload()
+{
+	window.location="${contextPath}/taskinstance/index.html";
+}
+window.onload=timedrefresh
+</script>
+
 <div id="tasks">
     <ul id="localNav">
         <li><a href="#userTasks">
