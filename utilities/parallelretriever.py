@@ -109,6 +109,28 @@ def generate_package_identifier():
     return str(int(time.time()))
 
 
+def _subprocess(cmd):
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = p.communicate()
+    if p.returncode:
+        logging.info("""
+Subprocess Info
+---------------
+cmd: %s 
+
+stdout: 
+'''
+%s 
+'''
+
+stderr: 
+'''
+%s
+'''
+---------------
+""" % (" ".join(cmd), stdout, stderr))
+        raise subprocess.CalledProcessError(p.returncode, cmd)
+
 def fetch(filename, url):
     logging.debug("%s fetching: %s" % (threading.currentThread().getName(), url))
     progress_reporter.started(filename)
@@ -117,11 +139,11 @@ def fetch(filename, url):
     except OSError:
         pass # it's OK if the directories are already there
     if url.startswith('http') or url.startswith('https'):
-        ret = subprocess.call(
-            ["wget", "wget", "-q", "-O", filename, url])
+        cmd = ["wget", "-O", filename, url]
+        _subprocess(cmd)
     elif url.startswith('rsync'):
-        ret = subprocess.call(
-            ["rsync", "rsync", "-ar", url, filename])
+        cmd = ["rsync", "-ar", url, filename]
+        _subprocess(cmd)
     elif url.startswith('file'):
         url = urllib2.urlopen(url)
         f = file(filename, "wb")
@@ -132,17 +154,9 @@ def fetch(filename, url):
             else:
                 f.close()
                 break
-        ret = 0
     else:
         raise Exception("unexpected url type")
-    if ret==0:
-        progress_reporter.finished(filename)
-    elif ret<0:
-        logging.error("child process was terminated by signal %s" % -ret)
-        return ret
-    else:
-        logging.error("Error in child process %s" % ret)        
-        return ret
+    finished_queue.put(filename)
 
 
 def retrieve_package(options):
