@@ -1,3 +1,18 @@
+<script type="text/javascript">
+var intervalID;
+
+function timedrefresh() {
+	//alert("timedrefresh");
+  	intervalID = setInterval(pagereload, 5*60000);
+}
+
+function pagereload()
+{
+	window.location="${contextPath}/index.html";
+}
+window.onload=timedrefresh
+</script>
+
 <div id="home">
 	<fieldset>
 	    <legend><b><a href="${contextPath}/taskinstance/index.html">Tasks</a></b></legend>
