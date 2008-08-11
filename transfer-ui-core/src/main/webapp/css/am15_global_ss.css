@@ -1,0 +1,301 @@
+body {
+	color:#333;
+	margin:0px;
+	padding:0px;
+	text-align:center;
+	background: #fff;
+	font:100% verdana, helvetica, sans-serif;
+}
+
+h1 {
+	margin: 0px 0px 0px 0px;
+	font: bold 90%/110% georgia, times, serif;
+	color: #333;
+	
+}
+h2 {
+	font: bold 90%/95% georgia, times, serif;
+	font-weight: 900;
+	color: #333;
+	margin:0px 0px 0px 0px;
+	padding:0px;
+	background: transparent;
+}
+h3 {
+	font: bold 90%/95% georgia, times, serif;
+	font-weight: 900;
+	color: #333;
+	margin:0px 0px 5px 0px;
+	padding:0px;
+}
+h4 {
+	font: bold 90%/95% georgia, times, serif;
+	font-weight: 900;
+	color: #333;
+	margin:0px 0px 0px 0px;
+	padding:0px;
+}
+h5 {
+	font: bold 80%/85% georgia, times, serif;
+	font-weight: 900;
+	color: #333;
+	margin:0px 0px 0px 0px;
+	padding:0px;
+}
+h6 {
+	font: bold 90%/95% georgia, times, serif;
+	font-weight: 900;
+	color: #333;
+	margin:0px 0px 0px 0px;
+	padding:0px;
+}
+p {
+	font:80% verdana, helvetica, sans-serif;
+	margin:0px;
+	text-align: left;
+	padding:0px;
+}
+
+a {
+	color:#003366;
+	font-size:85%;
+	font-family:verdana, helvetica, sans-serif;
+	font-weight:600;
+	text-decoration: underline;
+}
+a#skip {
+	position: absolute;
+	top:-100px;
+}
+
+a:link {
+	color: #003366;
+	text-decoration: underline;
+}
+
+a:visited {
+	color:#003366;
+	text-decoration: underline;
+}
+a:hover {
+	color:#333;
+	text-decoration: underline;
+}
+a:link.collect {
+	font-weight: 200;
+}
+a:visited.collect {
+	font-weight: 200;
+}
+ol li {
+	list-style-type: decimal; 
+}
+ul {
+	list-style: none;
+	margin: 0px;
+	padding: 0px 0px 7px 12px;
+	font-size: 90%;
+}
+li {
+	font: 100% verdana, helvetica, sans-serif;
+	padding-left: 10px;
+	list-style: none;
+}
+img {
+	border: 0px solid #333;
+}
+#container {
+	width:750px;
+	margin-right:auto;
+	margin-left:auto;
+	margin-top:0px;
+	margin-bottom:5px;
+	padding:0px;
+	background-color: #fff; 
+	border-color: #999;
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	text-align: center;
+	color:#333;
+}/*  top navigation    */	
+div#topnav	{
+	height: 45px;
+	width: 750px;
+	margin: 0 0 0 0px;
+	padding-top: 10px;
+	border: 0;
+	background: #fff url(../images/line_bottom.gif) top left no-repeat;
+}
+div#topnav h2{
+	float:left;
+	margin-left:10px;
+	font-size: 240%;
+	font-weight: bold;
+	font-family: verdana, Helvetica, sans-serif;
+}
+div#topnav h2 a{
+	text-decoration:none;
+}
+div#topnav ul#menu	{
+	margin: 0;
+	padding: 25px 10px 0 0;
+	position: relative;
+	float:right;
+}
+div#topnav ul#menu li {
+	list-style: none;
+	position: relative;
+	display:inline;
+	width: 40px;
+}
+ul#menu li, ul#menu a {
+	/*height: 20px;
+	display: block;
+	margin: 37px 0 0 0;*/
+}
+div#topnav ul#menu li a {
+	text-decoration: none;
+}
+div#topnav form {
+    float:right;
+    height:50px;
+    padding:0 0 0 0;
+    width:235px;
+}
+#logo { 
+	background: transparent url(../images/logo.gif) no-repeat;
+	left:2px;
+	width: 200px;
+}	
+/*#home	{
+	left: 212px; 
+	width: 55px;
+}*/
+/*#global_home	{left: 200px; width: 55px;}
+#global_tasks	{left: 255px; width: 55px;}
+#global_workflows	{left: 318px; width: 55px;}
+#global_admin {left: 395px; width: 50px;}
+#global_help {left: 450px; width: 50px;}*/
+
+label {
+    margin:0 0 0 -150px;
+    padding: 0 0 0 0;
+	font-family: verdana, Helvetica, sans-serif;
+	font-size: 80%;
+	color: #666;
+}
+form input.button,  form td input.button{
+		background-color: #fff;
+		font-weight: bold;
+		color: #ff6600;
+		margin: 0px 0px 1px 0px;
+		font-size: 85%;
+		border: 2px solid #ff6600;
+}
+/* bread crumb  navigation  */
+#crumb_nav {
+	clear: both;
+	height: 31px;
+	padding: 0px 0px 0px 15px;
+	color: #fff;
+	background-color: #6699cc;
+	border-top: 1px solid #99ccff;
+	border-bottom: 1px solid #336699;
+}
+#crumb_nav h1 {
+	text-align: left;
+	padding-top: 10px;
+	font: 85% georgia, times, serif;
+	font-weight:bold;
+	color: #fff;
+}
+#crumb_nav h1 a {
+	font: bold 100% Georgia, "Times New Roman", Times, serif;
+	text-decoration: none;
+	color: #fff;
+}
+#crumb_nav #crumb a {
+	color: #e1edf9;
+	font-size: 100%;
+	font-weight: 100;
+}
+#crumb_nav #crumb span {
+	color: #e1edf9;
+	font: 100% Verdana, Helvetica, sans-serif;
+	font-weight: 100;
+}
+#crumb_nav #crumb {
+	color: #fff;
+	text-align: right;
+	padding: 0px 20px 0px 0px;
+	font:70% Verdana, Helvetica, sans-serif;
+	font-weight: 100;
+	margin:-15px 0 0 0;
+}
+/* crumb nav ends*/
+
+/*  in order for short pages to have a growing grey footer  this white background div shell is needed */
+#back_white {
+	background-color: #fff;
+	margin: 0;
+	padding: 15px 0px 15px 0px;
+}
+/*content formatting begins*/
+#content {
+	border: 5px solid #d5e9f1;
+	margin:0px 15px 0px 15px;
+	font:90% verdana, helvetica, sans-serif;
+	background-color: #fff;
+	line-height: 110%;
+	text-align:left;
+	padding: 0px 0px 0px 0px;
+}
+*.logo {
+	margin: 15px 15px 15px 15px;
+	font-size: 85%;
+}
+/*content formatting ends*/
+#footer {
+	clear: both;
+	font: 80% verdana, helvetica, sans-serif;
+	height: 30px;
+	text-align: left;
+	border-color: #005194;
+	border-width: 0px 0px 0px 0px;
+	background: #efefef url(../images/line_bottom.gif) top left no-repeat;
+	padding: 15px 0px 0px 15px;
+}
+#footer a{
+	color:#666;
+	font-size: 80%;
+	font-family: verdana, helvetica, sans-serif;
+	font-weight: normal;
+	text-decoration:underline;
+}
+#footer a:hover {
+	color: #333;
+	font-size: 80%;
+	font-family: verdana, helvetica, sans-serif;
+	font-weight: normal;
+	text-decoration: underline;
+}
+#footer #align {
+	position: relative;
+	width: 200px;
+	color: #666;
+	font-size: 80%;
+	top: -13px;
+	left: 510px;
+	text-align: right;	
+	padding-left: 10px;
+}	
+
+.pagedisplay {
+    border:none;
+    width:50px;
+}
+
+ul.homeNav li{
+    padding: 0px 0 0px 0;
+    margin: 5px 0 5px 12px;
+}

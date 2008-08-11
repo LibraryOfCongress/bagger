@@ -1,0 +1,37 @@
+#!/usr/bin/env perl
+
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+use strict;
+use warnings;
+use Transport::Events;
+
+##----------------------------------------------------------------------
+
+my ($ticket, $system, $hostname, $package, $repository, $root) = @ARGV;
+
+sub usage {
+    my $name = basename($0);
+    "Usage: $name id system hostname package repository root\n"
+}
+
+die usage() 
+  unless ($ticket && $system && $hostname && 
+          $package && $repository && $root);
+
+##----------------------------------------------------------------------
+
+chdir abs_path($root);
+
+my $verify = "transport-verify-package $root";
+do_task($hostname, $system, "fixity verification", $ticket, $verify);
+
+my $register = "register-package --package-name '$package'";
+my $load     = "load-inventory --repository '$repository'";
+my $cmd = "$register | $load";
+
+do_task($hostname, $system, "package registration", $ticket, $cmd);

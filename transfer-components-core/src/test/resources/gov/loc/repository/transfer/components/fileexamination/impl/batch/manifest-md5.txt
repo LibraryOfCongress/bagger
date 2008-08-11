@@ -1,0 +1,5 @@
+8ad8757baa8564dc136c1e07507f4a98  batch1\dir1\test3.txt
+e3d704f3542b44a621ebed70dc0efe13  batch1\dir2\dir3\test5.txt
+86985e105f79b95d6bc918fb45ec7727  batch1\dir2\test4.txt
+5a105e8b9d40e1329780d62ea2265d8a  batch1\test1.txt
+ad0234829205b9033196ba818f7a872b  batch1\test2.txt

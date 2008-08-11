@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<toolbox>
+  <tool>
+    <key>tiles</key>
+    <scope>request</scope>
+    <class>org.apache.velocity.tools.struts.TilesTool</class>
+  </tool><tool>
+   <key>date</key>
+   <scope>application</scope>
+   <class>org.apache.velocity.tools.generic.DateTool</class>
+  </tool><tool>
+   <key>list</key>
+   <scope>application</scope>
+   <class>org.apache.velocity.tools.generic.ListTool</class>
+ </tool><tool>
+   <key>sorter</key>
+   <scope>application</scope>
+   <class>org.apache.velocity.tools.generic.SortTool</class>
+ </tool><tool>
+   <key>mill</key>
+   <scope>application</scope>
+   <class>org.apache.velocity.tools.generic.IteratorTool</class>
+ </tool><tool>
+   <scope>request</scope>
+   <key>parser</key>
+   <class>org.apache.velocity.tools.generic.ValueParser</class>
+ </tool><tool>
+  <key>math</key>
+  <scope>application</scope>
+  <class>org.apache.velocity.tools.generic.MathTool</class>
+ </tool><tool>
+   <key>number</key>
+   <scope>application</scope>
+   <class>org.apache.velocity.tools.generic.NumberTool</class>
+   <parameter name="format" value="#0.0"/>
+ </tool><tool>
+  <key>render</key>
+  <scope>application</scope>
+  <class>org.apache.velocity.tools.generic.RenderTool</class>
+ </tool><tool>
+  <key>escape</key>
+  <scope>application</scope>
+  <class>org.apache.velocity.tools.generic.EscapeTool</class>
+ </tool><tool>
+   <key>alternator</key>
+   <scope>application</scope>
+   <class>org.apache.velocity.tools.generic.AlternatorTool</class>
+   <parameter name="auto-alternate" value="true"/>
+ </tool> <tool>
+   <key>context</key>
+   <scope>request</scope>
+   <class>org.apache.velocity.tools.view.tools.ContextTool</class>
+ </tool><tool>
+   <key>i18n</key>
+   <scope>request</scope>
+   <class>org.apache.velocity.tools.view.tools.ViewResourceTool</class>
+   <parameter name="bundles" value="resources"/>
+ </tool>
+
+</toolbox>

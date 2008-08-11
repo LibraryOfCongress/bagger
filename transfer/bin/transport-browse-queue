@@ -1,0 +1,33 @@
+#!/usr/bin/env perl
+
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+use strict;
+use warnings;
+use Transport::Tickets;
+
+##-----------------------------------------------------------------
+
+foreach my $ticket (queued_tickets()) {
+    print <<"    EOF";
+Ticket: $ticket->{ticket}
+Package: $ticket->{package}
+Repository: $ticket->{repository}
+Estimated-Size: $ticket->{size}
+    EOF
+    
+    foreach my $location (@{$ticket->{locations}}) {
+        my $descriptor = "$location->{hostname}:$location->{dir}";
+        $descriptor = "$location->{owner}\@$descriptor"
+            unless $location->{role} eq "workspace";
+        print "\u$location->{role}: $descriptor\n"
+    }
+    print "\n";
+}
+
+##-----------------------------------------------------------------
+

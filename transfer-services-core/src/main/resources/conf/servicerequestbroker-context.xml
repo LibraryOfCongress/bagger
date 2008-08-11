@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"              
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd                                 
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<import resource="servicerequestbroker-config-context.xml" />
+	
+	<context:component-scan base-package="gov.loc.repository.serviceBroker"/>
+			
+	<bean id="abstractServiceBrokerSessionFactory" abstract="true" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="configLocation" value="classpath:conf/servicerequestbroker.hibernate.cfg.xml" />
+		<!-- Still needs a datasource and hibernate properties (hibernate.dialect) -->
+	</bean>
+
+	<bean id="serviceBrokerTransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="serviceBrokerSessionFactory" />
+	</bean>
+	
+	<bean id="abstractRequestServiceBroker" abstract="true" class="gov.loc.repository.serviceBroker.impl.RequestingServiceBrokerImpl">
+		<constructor-arg ref="serviceBroker" />
+		<!-- This bean needs to be configured. -->
+		<!-- 
+		<constructor-arg ref="requester" />
+		-->
+	</bean>	
+
+	<bean id="abstractResponseServiceBroker" abstract="true" class="gov.loc.repository.serviceBroker.impl.RespondingServiceBrokerImpl">
+		<constructor-arg ref="serviceBroker" />
+		<!--  These beans need to be configured.
+		<constructor-arg ref="responder" />
+		<constructor-arg ref="queues" />
+		<constructor-arg ref="jobTypes" />
+		-->
+	</bean>	
+
+	<tx:advice id="serviceRequestDaoTxAdvice" transaction-manager="serviceBrokerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="save*" />
+    		<tx:method name="find*" />
+    		<tx:method name="delete*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<aop:pointcut id="serviceRequestDaoMethods" expression="execution(* gov.loc.repository.serviceBroker.dao.impl.ServiceRequestDAOImpl.*(..))" />
+    	<aop:advisor advice-ref="serviceRequestDaoTxAdvice" pointcut-ref="serviceRequestDaoMethods" />    	
+    </aop:config>	
+
+	<tx:advice id="requestingServiceBrokerTxAdvice" transaction-manager="serviceBrokerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="find*" />
+    		<tx:method name="resume*" />
+    		<tx:method name="suspend*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<aop:pointcut id="requestingServiceBrokerMethods" expression="execution(* gov.loc.repository.serviceBroker.impl.RequestingServiceBrokerImpl.*(..))" />
+    	<aop:advisor advice-ref="requestingServiceBrokerTxAdvice" pointcut-ref="requestingServiceBrokerMethods" />    	
+    </aop:config>	
+
+	<tx:advice id="respondingServiceBrokerTxAdvice" transaction-manager="serviceBrokerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="find*" />
+    		<tx:method name="report*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<aop:pointcut id="respondingServiceBrokerMethods" expression="execution(* gov.loc.repository.serviceBroker.impl.RespondingServiceBrokerImpl.*(..))" />
+    	<aop:advisor advice-ref="requestingServiceBrokerTxAdvice" pointcut-ref="respondingServiceBrokerMethods" />    	
+    </aop:config>	
+
+			
+</beans>

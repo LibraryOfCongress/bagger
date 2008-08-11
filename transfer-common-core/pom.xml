@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <parent>
+    <artifactId>transfer-maven-core</artifactId>
+    <groupId>loc-repository</groupId>
+    <version>1.7</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>transfer-common-core</artifactId>
+  <name>Transfer Common (Core)</name>
+  <scm>
+    <connection>scm:svn:https://rdc.lctl.gov/svn/transfer/trunk/transfer-common-core</connection>
+    <url>https://rdc.lctl.gov/trac/transfer/browser</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+    </dependency>    
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
+  </dependencies>
+</project>

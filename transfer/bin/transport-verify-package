@@ -1,0 +1,71 @@
+#!/usr/bin/env perl
+
+BEGIN {
+	use File::Basename;
+	use Cwd qw(cwd abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+use strict;
+use warnings;
+use Transfer::Process;
+
+##-----------------------------------------------------------------
+
+=head1 NAME
+
+transport-verify-package - verify a package with its manifest file
+
+=head1 SYNOPSIS
+
+transport-verify-package directory
+
+=head1 DESCRIPTION
+
+transport-verify-package is a wrapper around md5deep and friends.  It finds
+the specific manifest used within a package, verifies the package against
+the manifest, and returns the result from md5deep.
+
+=cut
+
+my $dir = shift;
+chdir $dir;
+
+##-----------------------------------------------------------------
+
+sub check_manifest($) {
+    my $algorithm = shift;
+    
+    my ($out) = run_or_die("${algorithm}deep -rlx manifest-${algorithm}.txt .");
+    
+    ## Split out into warnings and errors
+    my @files = split("\n", $out);
+    my (@warnings, @errors);
+    my $basepath = abs_path(cwd());
+    foreach my $file (@files) {
+        if (abs_path(dirname($file)) eq $basepath) {
+            push(@warnings, $file);
+        } else {
+            push(@errors, $file);
+        }    
+    }
+    
+    print join("\n", @warnings, "");
+        
+    runtime_error("${algorithm}deep", "verification failed for @errors\n")
+        if @errors;
+}
+
+my $manifest_count = 0;
+
+## Validate against all manifests found
+foreach my $algorithm (qw(md5 sha1 sha256 tiger whirlpool)) {
+    if (-f "manifest-${algorithm}.txt") {
+        $manifest_count++;
+        check_manifest($algorithm);
+    }
+}
+
+## No version of check_manifest() run.  No manifest found, so raise
+## an error and quit.
+runtime_error("", "No manifest file found.\n") unless $manifest_count;

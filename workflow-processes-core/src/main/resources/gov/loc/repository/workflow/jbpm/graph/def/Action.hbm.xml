@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-access="field">
+  <class name="gov.loc.repository.workflow.jbpm.graph.def.Action"
+         table="JBPM_ACTION"
+         discriminator-value="A">
+    <cache usage="nonstrict-read-write"/>
+    <id name="id" column="ID_"><generator class="native" /></id>
+    <discriminator type="char" />
+    <!-- A : org.jbpm.graph.def.Action -->
+    <!-- S : org.jbpm.graph.action.Script -->
+    <!-- C : org.jbpm.scheduler.def.CreateTimerAction -->
+    <!-- I : org.jbpm.scheduler.def.CancelTimerAction -->
+    <!-- M : org.jbpm.graph.action.MailAction -->
+
+    <property name="name" column="NAME_"/>
+    <property name="isPropagationAllowed" column="ISPROPAGATIONALLOWED_"/>
+    <property name="actionExpression" column="ACTIONEXPRESSION_"/>
+    <property name="isAsync" column="ISASYNC_"/>
+
+    <many-to-one name="referencedAction" 
+                 column="REFERENCEDACTION_"
+                 cascade="all"
+                 foreign-key="FK_ACTION_REFACT" />
+    <many-to-one name="actionDelegation"
+                 column="ACTIONDELEGATION_"
+                 cascade="all"  
+                 foreign-key="FK_ACTION_ACTNDEL"
+                 index="IDX_ACTION_ACTNDL" />
+    <many-to-one name="event"
+                 column="EVENT_" 
+                 foreign-key="FK_ACTION_EVENT"
+                 index="IDX_ACTION_EVENT" />
+    <many-to-one name="processDefinition" 
+                 column="PROCESSDEFINITION_"
+                 foreign-key="FK_ACTION_PROCDEF"
+                 index="IDX_ACTION_PROCDF" />
+
+  </class>
+</hibernate-mapping>

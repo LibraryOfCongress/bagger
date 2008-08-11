@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path cwd);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+##----------------------------------------------------------------------
+
+use strict;
+use warnings;
+use Transfer::DB;
+
+my ($id, $status) = @ARGV;
+@ARGV = ();
+my $root = cwd();
+
+##----------------------------------------------------------------------
+
+my %addl = (
+	started   => "initiated_timestamp=NOW()", 
+	copmleted => "completed_timestamp=NOW()"
+);
+
+my @fields = ("status=?", "updated_timestamp=NOW()");
+push(@fields, $addl{$status}) if $addl{$status};
+
+my $fields = join(", ", @fields);
+
+my $dbh = dbhandle();
+$dbh->do("UPDATE transport.tickets SET $fields WHERE ticket_id=?", 
+	     {}, $status, $id) or die "Cannot update for ticket $id.\n";
+

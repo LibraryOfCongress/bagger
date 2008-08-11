@@ -1,0 +1,63 @@
+#!/usr/bin/env perl
+
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+=head1 NAME
+
+transport-add-user - add a requester to the transport database
+
+=head1 SYNOPSIS
+
+transport-add-user --username ... --realname ... [OPTIONS]
+
+  Required values:
+    --username          User's login name
+    --realname          User's real name
+
+  Options:
+    --help
+    --email             Email Address
+
+=head1 DESCRIPTION
+
+transport-add-user registers a user with the database.  Once registered,
+and after SSH keys have been distributed appropriately, this user will
+be able to initiate transport requests with transport-queue-package.
+
+=cut
+
+use strict;
+use warnings;
+use Pod::Usage;
+use Getopt::Long;
+
+
+##----------------------------------------------------------------------
+
+my %OPTIONS;
+
+GetOptions \%OPTIONS, 'username=s', 'realname=s', 'email=s', 'help';
+
+# print help if appropriate
+pod2usage({exitval => 0, verbose => 2}) if $OPTIONS{help};
+
+pod2usage({exitval => -1, verbose => 2}) 
+    unless (defined($OPTIONS{username}) && defined($OPTIONS{realname}));
+
+##----------------------------------------------------------------------
+
+use Transfer::Query;
+
+add_master(
+	"transport.users",
+	username => $OPTIONS{username},
+	realname => $OPTIONS{realname}, 
+	email    => $OPTIONS{email}
+);
+
+##----------------------------------------------------------------------
+

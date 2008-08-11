@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"    
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd           
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+    
+    <import resource="classpath:conf/packagemodeler-core-config-context.xml" />
+
+  	<context:component-scan base-package="gov.loc.repository.packagemodeler" />           
+    <context:component-scan base-package="gov.loc.repository.packagemodeler.impl" />
+        
+    <tx:advice id="packageModelDaoTxAdvice" transaction-manager="packageModelerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="find*" />
+    		<tx:method name="load*" />
+    		<tx:method name="compare*" read-only="true" propagation="REQUIRED" />
+    		<tx:method name="*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<!-- <aop:pointcut id="packageModelDaoMethods" expression="execution(* gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl.*(..))" />-->
+    	<aop:pointcut id="packageModelDaoMethods" expression="bean(packageModelDao)" />
+    	<aop:advisor advice-ref="packageModelDaoTxAdvice" pointcut-ref="packageModelDaoMethods" />    	
+    </aop:config>
+
+    <tx:advice id="dataDriverTxAdvice" transaction-manager="packageModelerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<aop:pointcut id="dataDriverMethods" expression="execution(* gov.loc.repository.packagemodeler.drivers.MapDataDriver.execute*(..))" />
+    	<aop:advisor advice-ref="dataDriverTxAdvice" pointcut-ref="dataDriverMethods" />
+    </aop:config>
+
+    <tx:advice id="fixtureDriverTxAdvice" transaction-manager="packageModelerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<aop:pointcut id="fixtureDriverMethods" expression="execution(* gov.loc.repository.packagemodeler.drivers.MapFixtureDriver.execute*(..))" />
+    	<aop:advisor advice-ref="fixtureDriverTxAdvice" pointcut-ref="fixtureDriverMethods" />
+    </aop:config>
+	
+	<bean id="packageModelDao" class="gov.loc.repository.packagemodeler.dao.impl.PackageModelDAOImpl" lazy-init="true">
+		<constructor-arg ref="packageModelerSessionFactory" />
+	</bean>	
+	  	        
+    <bean id="abstractPackageModelerSessionFactory" abstract="true" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="configLocations" value="classpath*:conf/packagemodeler.*.hibernate.cfg.xml" />
+		<property name="entityInterceptor">
+			<bean class="gov.loc.repository.utilities.persistence.TimestampedInterceptor" />
+		</property>
+		<!-- Still needs a datasource and hibernate properties (hibernate.dialect) -->
+	</bean>
+ 	
+ 	<bean id="packageModelerTransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager" lazy-init="true">
+		<property name="sessionFactory" ref="packageModelerSessionFactory" />
+	</bean>
+    	
+	
+</beans>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"    
+       xmlns:aop="http://www.springframework.org/schema/aop"       
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd                                 
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<import resource="classpath:conf/packagemodeler-core-context.xml" />
+	<import resource="classpath:conf/bagit-context.xml" />
+	<import resource="classpath:conf/common-core-context.xml" />
+	
+	<context:component-scan base-package="gov.loc.repository.transfer.components"/>
+	
+	<bean id="abstractPackageModelAwareComponent" abstract="true">
+		<constructor-arg ref="modelerFactory" />
+		<constructor-arg ref="packageModelDao" />
+		<constructor-arg value="${pom.build.finalName}" />
+	</bean>
+	
+	<!-- Archival Remote Directory Copier -->
+	<bean id="archivalRemoteDirectoryCopier" class="gov.loc.repository.transfer.components.filemanagement.impl.ArchivalRemoteDirectoryCopier">
+		<constructor-arg value="$comp{components.archivalremotedirectorycopier.keyfile}" />
+	</bean>
+
+	<!-- Archival Remote Bag Copier -->
+	<bean id="archivalRemoteBagCopierComponent" class="gov.loc.repository.transfer.components.filemanagement.impl.ArchivalRemoteBagCopierImpl" parent="abstractPackageModelAwareComponent">
+		<constructor-arg ref="javaSecurityBagGeneratorVerifier" />
+		<constructor-arg ref="bagFileCopyVerifier" />
+		<constructor-arg ref="archivalRemoteDirectoryCopier" />
+	</bean>
+	
+	
+	<tx:advice id="archivalRemoteBagCopierTxAdvice" transaction-manager="packageModelerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="copy*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<aop:pointcut id="archivalRemoteBagCopierMethods" expression="execution(* gov.loc.repository.transfer.components.filemanagement.impl.ArchivalRemoteBagCopierImpl.*(..))" />
+    	<aop:advisor advice-ref="archivalRemoteBagCopierTxAdvice" pointcut-ref="archivalRemoteBagCopierMethods" />    	
+    </aop:config>
+
+	
+	<!-- ZFS File System Creator -->
+	<bean id="zfsFileSystemCreator" class="gov.loc.repository.transfer.components.filemanagement.impl.ZFSFileSystemCreatorImpl">
+		<constructor-arg value="$comp{components.zfsfilesystemcreator.pool}" />
+		<constructor-arg ref="processBuilderWrapper" />
+	</bean>
+
+	<!-- Files On Disk Inventories -->
+	<bean id="filesOnDiskInventorier" class="gov.loc.repository.transfer.components.fileexamination.impl.FilesOnDiskInventorierImpl" parent="abstractPackageModelAwareComponent">
+		<constructor-arg ref="javaSecurityFixityGenerator" />
+	</bean>
+	
+	<tx:advice id="filesOnDiskInventorierTxAdvice" transaction-manager="packageModelerTransactionManager">
+    	<tx:attributes>
+    		<tx:method name="inventory*" />
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+    	<aop:pointcut id="filesOnDiskInventorierMethods" expression="execution(* gov.loc.repository.transfer.components.fileexamination.impl.FilesOnDiskInventorierImpl.*(..))" />
+    	<aop:advisor advice-ref="filesOnDiskInventorierTxAdvice" pointcut-ref="filesOnDiskInventorierMethods" />    	
+    </aop:config>
+    
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:conf/components.local.properties" />
+		<property name="placeholderPrefix" value="$comp{" />
+		<property name="placeholderSuffix" value="}" />
+		<property name="properties">
+    		<value>
+       			components.zfsfilesystemcreator.pool=
+       			components.archivalremotedirectorycopier.keyfile=/home/transfer/.ssh/id_rsa
+     		</value>
+   		</property>
+   		<property name="ignoreResourceNotFound" value="true" />   		
+	</bean>
+    
+    	
+</beans>

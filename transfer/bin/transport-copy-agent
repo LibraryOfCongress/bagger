@@ -1,0 +1,208 @@
+#!/usr/bin/env perl
+
+BEGIN {
+	use File::Basename;
+	use Cwd qw(abs_path cwd);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+use strict;
+use warnings;
+use Fcntl qw(:flock);  ## import LOCK_* style constants
+use Transfer::Process;
+use Transport::Events;
+use Transport::Tickets;
+
+## Before we begin, make sure no other copy agent processes are running.
+my $lockfile = "/tmp/transport-copy-agent.lock";
+open(my $fh, ">$lockfile");
+unless (flock($fh, LOCK_EX | LOCK_NB)) {
+    close($fh);
+    my $name = basename $0;
+    print "$name: Process already in use.  Exiting.\n";
+    exit(0);
+}
+
+##----------------------------------------------------------------------
+
+my $system = shift(@ARGV);
+my $hostname = shift(@ARGV);
+chomp($system = `hostname`) unless $system;
+chomp($hostname = $system)  unless $hostname;
+
+##----------------------------------------------------------------------
+
+sub make_copy($$$$$$) {
+    my ($event, $ticket, $src_host, $src, $dst_host, $dst) = @_;
+
+	my $source = "(cd $src; tar cf - .)";
+	my $dest   = "(cd $dst; tar xvf - )";
+
+	$source = "$src_host \"$source\"" if $src_host;
+	$dest   = "$dst_host \"$dest\""   if $dst_host;
+    do_task($hostname, $system, $event, $ticket, "$source | $dest");
+}
+
+sub check_copy($$) {
+    my ($ticket, $dir) = @_;
+    my $event = "fixity verification";
+    my $cmd = "transport-verify-package $dir";
+    
+    do_task_with_warnings($hostname, $system, $event, $ticket, $cmd);
+}
+
+##----------------------------------------------------------------------
+
+sub one_step_copy($) {
+    my $ticket = shift;
+    
+    my $source_ssh = "ssh $ticket->{source_user}\@$ticket->{source_host}";
+    my $dest_ssh   = "ssh $ticket->{dest_user}\@$ticket->{dest_host}";
+    
+
+    run_or_fail($ticket->{id}, "$dest_ssh mkdir -p $ticket->{dest_dir}");
+    
+    make_copy("archive copy", $ticket->{id},
+              $source_ssh, $ticket->{source_dir}, 
+              $dest_ssh,   $ticket->{dest_dir});
+                            
+    ## Assume SSH to the destination was on the local system,
+    ## and only used to preserve ownership.  Assume further that
+    ## the current process can access this directory, and the
+    ## file owner does not have access to the transport tools
+    check_copy($ticket->{id}, $ticket->{dest_dir});
+}
+
+sub two_step_copy($) {
+    my $ticket = shift;
+    
+    ## Assume transfer can log in as itself onto the source host
+    my $ssh = "ssh $ticket->{source_host}";
+    
+    run_or_fail($ticket->{id}, "mkdir -p $ticket->{work_dir}");
+    
+    make_copy("workspace copy", $ticket->{id},
+              $ssh, $ticket->{source_dir},
+              "",   $ticket->{work_dir});
+    check_copy($ticket->{id}, $ticket->{work_dir});
+
+    ## Log in as the destination's owner on the current machine
+    $ssh = "ssh $ticket->{dest_user}\@$ticket->{dest_host}";
+    run_or_fail($ticket->{id}, "$ssh mkdir -p $ticket->{dest_dir}");
+    
+    make_copy("archive copy", $ticket->{id}, 
+              "",   $ticket->{work_dir},
+              $ssh, $ticket->{dest_dir});
+
+    ## See above about checking the destination copy
+    check_copy($ticket->{id}, $ticket->{dest_dir});
+
+    ## The copy succeeded.  Purge the workspace _immediately_
+    run_or_fail($ticket->{id}, "rm -Rf $ticket->{work_dir}");
+}
+
+##----------------------------------------------------------------------
+
+sub register($$$) {
+    my ($ticket, $start, $end) = @_;
+	my $old_cwd = cwd();
+    my $end_time = now();
+    my $namespace  = "gov.loc.repository.packagemodeler.events";
+
+	chdir($ticket->{dest_dir});
+
+    ## Register the file location
+    do_task($hostname, $system, "location registration", 
+		$ticket->{id}, <<"    EOF");
+        datadriver createfilelocation \\
+            -repository    $ticket->{repo}\\
+            -package       $ticket->{package}\\
+            -storagesystem $ticket->{dest_host} \\
+            -basepath      $ticket->{dest_dir} \\
+            -ismanaged true \\
+            -islcpackagestructure true
+    EOF
+
+    ## Note that this file location was from a copy
+    do_task($hostname, $system, "location registration", 
+		$ticket->{id}, <<"    EOF");
+        datadriver createfilelocationevent \\
+            -eventtype           $namespace.filelocation.FileCopyEvent \\
+            -repository          $ticket->{repo} \\
+            -package             $ticket->{package} \\
+            -sourcestoragesystem $ticket->{source_host} \\
+            -sourcebasepath      $ticket->{source_dir} \\
+            -storagesystem       $ticket->{dest_host} \\
+            -basepath            $ticket->{dest_dir} \\
+            -performingagent     transport-1.0 \\
+            -eventstart          $start \\
+            -eventend            $end
+    EOF
+
+    ## Re-inventory the package in the new location
+    $start = now();
+    do_task($hostname, $system, "location registration", 
+		$ticket->{id}, <<"    EOF");
+        datadriver inventoryfrommanifest \\
+            -repository    $ticket->{repo}\\
+            -package       $ticket->{package}\\
+            -storagesystem $ticket->{dest_host} \\
+            -basepath      $ticket->{dest_dir} \\
+            -requestingagent transport-1.0 \\
+            -createcanonicalfiles false
+    EOF
+
+    ## Note the verification with an event
+    $end=now();
+    do_task($hostname, $system, "location registration", 
+		$ticket->{id}, <<"    EOF");
+        datadriver createfilelocationevent \\
+            -eventtype     $namespace.filelocation.VerifyAgainstManifestEvent \\
+            -repository    $ticket->{repo} \\
+            -package       $ticket->{package} \\
+            -storagesystem $ticket->{dest_host} \\
+            -basepath      $ticket->{dest_dir} \\
+            -performingagent transport-1.0 \\
+            -eventstart    $start \\
+            -eventend      $end 
+    EOF
+
+
+	chdir($old_cwd);
+}
+
+##----------------------------------------------------------------------
+
+## Get the first ticket in the queue
+my ($ticket) = get_ticket_queue();
+
+## Stop now if there's nothing to do
+unless ($ticket) {
+    my $name = basename $0;
+    print "$name: No queued tickets.  Exiting.\n";
+    exit(0);
+}
+
+## We have a ticket.  Mark this ticket as 'failed' if any errors occur 
+## from here on.
+track_ticket_failures(1);
+
+my $start = now();
+
+$ticket->{workspace} ||= "";
+start_ticket($ticket->{id});
+
+if ($ticket->{workspace}) {
+    two_step_copy($ticket);
+} else {
+    one_step_copy($ticket);
+}
+
+register($ticket, $start, now());
+
+finish_ticket($ticket->{id});
+
+flock($fh, LOCK_UN);
+close($fh);
+unlink($fh);
+

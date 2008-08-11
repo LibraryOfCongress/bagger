@@ -1,0 +1,291 @@
+#!/usr/bin/env perl
+
+BEGIN {
+	use File::Basename;
+	use Cwd qw(cwd abs_path);
+	use lib abs_path(dirname($0) . "/../lib");
+}
+
+use strict;
+use warnings;
+use Pod::Usage;
+use Getopt::Long;
+
+use Transfer::DB;
+use Transfer::Process;
+use Transfer::Query;
+use Transport::Tickets;
+
+
+##-----------------------------------------------------------------
+
+
+=head1 NAME
+
+transport-queue-package - register a package with transport database for copying
+
+=head1 SYNOPSIS
+
+transport-queue-package [OPTIONS]
+
+  Options:
+    --username      User's login name (default: current user)
+    --repository    Collection of content where this package belongs
+    --package       Unique package name within this repository
+                    (default: current directory)
+    --source        Current location of the package
+                    (default: current directory on the current host)
+    --workspace     Location of the scratch space on the remote server
+    --destination   Desired location of the package within the archive
+    --archive-owner Owner of the files in the archive
+    --help
+
+=head1 DESCRIPTION
+
+transport-queue-package registers a package on the local system to be
+copied to the archival server, possibly using an intermediate 
+workspace during copying.
+
+The user, local and remote systems must all be registered with the
+transport system.  The archive owner must be:
+  - a valid account on the archive system
+  - an account with write permission to the desired archive location
+  - an account that grants access to the transfer account copy files
+
+=cut
+
+
+my %OPTIONS;
+my $login = getlogin();
+chomp(my $hostname = `hostname`);
+my $cwd = abs_path(cwd());
+
+my $script = basename($0);
+
+##-----------------------------------------------------------------
+
+sub parse_path($) {
+    my $path = shift;
+    my ($user, $host, $dir) = ($path =~ m/^(?:(.*?)@)?(?:(.*?):)?(.*)$/);
+    
+    ## Set defaults to the local user on the current machine
+    $user = $login    unless defined $user;
+    $host = $hostname unless defined $host;
+    return ($user, $host, $dir);
+}
+
+sub check_registry($$$$){
+    my ($datum, $table, $column, $value) = @_;
+    
+    my $result = select_one("SELECT * FROM $table WHERE $column=?", $value);
+
+    unless ($result) {
+        runtime_error("", "No such $datum '$value'.\n");
+    }
+}
+
+sub create_ticket() {
+    add_row('transport.tickets', 
+            requester      => $OPTIONS{username}, 
+            package_name   => $OPTIONS{package},
+            repository     => $OPTIONS{repository}, 
+            estimated_size => 0,
+    );
+
+    select_one("SELECT currval('transport.tickets_ticket_id_seq')")->[0];
+}
+
+sub create_location ($$$$$$) {
+    my ($id, $user, $host, $hostname, $dir, $role) = @_;
+
+    add_row_or_die('transport.locations',
+                   ticket_id      => $id, 
+                   file_owner     => $user,
+                   system_name    => $host, 
+                   hostname       => $hostname, 
+                   root_directory => $dir, 
+                   role           => $role, 
+    );
+}
+
+##-----------------------------------------------------------------
+
+GetOptions \%OPTIONS, 'username=s', 'repository=s', 'package=s', 'source=s',
+                      'workspace=s', 'destination=s', 'archive-owner=s', 'help';
+
+# print help if appropriate
+pod2usage({exitval => 0, verbose => 2}) if $OPTIONS{help};
+
+my $dbh = dbhandle();
+
+##-----------------------------------------------------------------
+## Set defaults, as promised
+$OPTIONS{username} = $login           unless defined $OPTIONS{username};
+## Repository will be created in the inventory database, if necessary
+$OPTIONS{package}  = basename($cwd)   unless defined $OPTIONS{package};
+$OPTIONS{source}   = "$hostname:$cwd" unless defined $OPTIONS{source};
+## workspace is optional
+## destination is required, and not defaulted
+## archive-owner can be inferred from destination, if fully specified
+
+sub present(@) {
+    my $ok = 1;
+    $ok &&= defined($OPTIONS{$_}) for @_;
+    $ok;
+}
+
+my $all_present = present(qw(username repository package source destination));
+pod2usage({exitval => -1, verbose => 2}) unless ($all_present);
+
+##-----------------------------------------------------------------
+## Require 2 or 3 locations to perform a copy:
+## A source (manditory), a workspace (optional), and a destination (manditory)
+## Presume the current user and current host when none are specified
+my ($source_user, $source_host, $source_dir) = parse_path($OPTIONS{source});
+$source_dir = abs_path($source_dir);
+my ($work_user, $work_host, $work_dir);
+($work_user, $work_host, $work_dir) = parse_path($OPTIONS{workspace})
+    if defined $OPTIONS{workspace};
+my ($dest_user, $dest_host, $dest_dir) = parse_path($OPTIONS{destination});
+
+## Always use 'archive-owner' when specified.
+$dest_user = $OPTIONS{'archive-owner'} if defined $OPTIONS{'archive-owner'};
+
+##-----------------------------------------------------------------
+## All of these values must be registered in the transport database.
+check_registry(user => 'transport.users', username => $OPTIONS{username});
+check_registry(host => 'transport.systems', short_name => $source_host);
+check_registry(host => 'transport.systems', short_name => $work_host)
+    if defined $work_dir;  ## workspaces are optional
+check_registry(host => 'transport.systems', short_name => $dest_host);
+
+##-----------------------------------------------------------------
+## Convert aliases to hostnames
+my $sql = "SELECT hostname FROM transport.systems WHERE short_name = ?";
+my ($source_hostname, $work_hostname, $dest_hostname);
+$source_hostname = select_one($sql, $source_host)->[0];
+$work_hostname   = select_one($sql, $work_host)->[0] if defined $work_dir;
+$dest_hostname   = select_one($sql, $dest_host)->[0];
+
+my $id = create_ticket();
+
+create_location($id, 
+    $source_user, $source_host, $source_hostname, $source_dir, 'source');
+create_location($id, 
+    $work_user, $work_host, $work_hostname, $work_dir, 'workspace')
+    if defined $work_dir;
+create_location($id, 
+    $dest_user, $dest_host, $dest_hostname, $dest_dir, 'destination');
+
+print <<EOF;
+Creating ticket:
+    Ticket ID: $id
+    Copying from
+        Requester:  $OPTIONS{username}
+        Host:       $source_host ($source_hostname)
+        Directory:  $source_dir
+EOF
+
+print <<EOF if $work_dir;
+    Copying via
+        Host:       $work_host ($work_hostname)
+        Directory:  $work_dir
+EOF
+
+print <<EOF;
+    Copying to
+        Host:       $dest_host ($dest_hostname)
+        Directory:  $dest_dir
+        Owner:      $dest_user
+        Repository: $OPTIONS{repository}
+        Package:    $OPTIONS{package}
+EOF
+
+##-----------------------------------------------------------------
+## Register the package with the inventory system.  If that succeeds,
+## then continue on and queue the package with the Transfer system.
+##
+## NOTE: The only error that can occur from the inventory system is
+## during inventoryfrommanifest, which *MUST* occur after the package
+## is created and registered to a file location.
+##-----------------------------------------------------------------
+
+## First, use transport-verify-package to make sure this package
+## *can* be verified.  The package will be re-verified (with 
+## transport-verify-package) after it is copied.  If it cannot
+## be verified now, it won't be able to be verified later.
+run_or_die("transport-verify-package $source_dir");
+
+my ($output, $errors);
+my $namespace  = "gov.loc.repository.packagemodeler.events";
+
+## Create the package with the inventory system
+($output, $errors) = run(<<"EOF") unless $errors;
+    datadriver createpackage \\
+        -repository $OPTIONS{repository} \\
+        -package    $OPTIONS{package}
+EOF
+
+## Note that the package was created
+($output, $errors) = run(<<"EOF") unless $errors;
+    datadriver createpackageevent \\
+        -eventtype  $namespace.packge.PackageReceivedEvent \\
+        -repository $OPTIONS{repository} \\
+        -package    $OPTIONS{package} \\
+        -performingagent transport-1.0 \\
+        -message    "Package queued by $script"
+EOF
+
+## Create _this_ file location in the inventory system
+## (necessary to perform an inventory from manifest)
+($output, $errors) = run(<<"EOF") unless $errors;
+    datadriver createfilelocation \\
+        -repository    $OPTIONS{repository} \\
+        -package       $OPTIONS{package} \\
+        -storagesystem $source_host \\
+        -basepath      $source_dir \\
+        -ismanaged     true \\
+        -islcpackagestructure true
+EOF
+
+## Now perform inventory on the source
+my $start = now();
+($output, $errors) = run(<<"EOF") unless $errors;
+    datadriver inventoryfrommanifest \\
+        -repository    $OPTIONS{repository} \\
+        -package       $OPTIONS{package} \\
+        -storagesystem $source_host \\
+        -basepath      $source_dir \\
+        -requestingagent transport-1.0 \\
+        -createcanonicalfiles true
+EOF
+
+## Note that the file location was created
+my $end = now();
+($output, $errors) = run(<<"EOF") unless $errors;
+    datadriver createfilelocationevent \\
+        -eventtype     $namespace.filelocation.VerifyAgainstManifestEvent \\
+        -repository    $OPTIONS{repository} \\
+        -package       $OPTIONS{package} \\
+        -storagesystem $source_host \\
+        -basepath      $source_dir \\
+        -performingagent transport-1.0 \\
+        -eventstart    $start \\
+        -eventend      $end 
+EOF
+
+if ($errors) {
+    track_ticket_failures(1);
+    fail_ticket($id);
+    runtime_error("(inventory system)", $errors);
+} else {
+    local $| = 1;
+    my $size = `du -sk $source_dir`;
+    ($size) = $size =~ m/(\d+)/;
+    print "    Estimated size: $size KB\n";
+
+    update_ticket_size($id, $size);
+    queue_ticket($id);
+    my $name = basename($0);
+    print "$name: Package marked as 'queued'.  Awaiting remote copy.\n"
+}

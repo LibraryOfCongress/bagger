@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets TYPE="urn:library-of-congress:ndnp:mets:microfilmReel" PROFILE="urn:library-of-congress:mets:profiles:ndnp:microfilmReel:v1.4" LABEL="100493238" 
+     xmlns:mix="http://www.loc.gov/mix/" xmlns:ndnp="http://www.loc.gov/ndnp" xmlns:premis="http://www.loc.gov/standards/premis" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns="http://www.loc.gov/METS/">
+
+     <!--METS HEADER-->
+     <metsHdr CREATEDATE="2005-11-22T22:02:10">
+        <agent ROLE="CREATOR" TYPE="ORGANIZATION">
+            <name>Library of Congress</name>
+        </agent>
+    </metsHdr>
+
+    <!--Descriptive metadata for tech target-->
+    <dmdSec ID="techTargetModsBib">                
+        <mdWrap MDTYPE="MODS" LABEL="Tech Target metadata">
+            <xmlData>
+                <mods:mods>
+                    <mods:titleInfo>
+                            <mods:title>ISO 16067 Calibrated Target</mods:title>
+                    </mods:titleInfo>
+                    <mods:note type="agencyResponsibleForReproduction" displayLabel="Library of Congress, Washington, DC">DLC</mods:note>
+                </mods:mods>
+            </xmlData>
+        </mdWrap>
+    </dmdSec>	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 
+    
+    <dmdSec ID="targetModsBib1">                
+        <mdWrap MDTYPE="MODS" LABEL="Target metadata">
+            <xmlData>
+                <mods:mods>
+                    <mods:relatedItem type="original">
+                        <mods:physicalDescription>
+                            <mods:form type="microfilm" />
+                        </mods:physicalDescription>                        
+                        <mods:identifier type="reel number">100493238</mods:identifier>
+                        <mods:identifier type="reel sequence number">1</mods:identifier>
+                        <mods:location>
+                            <mods:physicalLocation authority="marcorg" displayLabel="Library of Congress, Washington, DC">DLC</mods:physicalLocation>
+                        </mods:location>
+                    </mods:relatedItem>
+                    <mods:note type="agencyResponsibleForReproduction" displayLabel="Library of Congress, Washington, DC">DLC</mods:note>
+                </mods:mods>
+            </xmlData>
+        </mdWrap>
+    </dmdSec>
+    
+    <dmdSec ID="targetModsBib2">                
+        <mdWrap MDTYPE="MODS" LABEL="Target metadata">
+            <xmlData>
+                <mods:mods>
+                    <mods:relatedItem type="original">
+                        <mods:physicalDescription>
+                            <mods:form type="microfilm" />
+                        </mods:physicalDescription>
+
+                        <mods:identifier type="reel number">100493238</mods:identifier>
+                        <mods:identifier type="reel sequence number">2</mods:identifier>
+                        <mods:location>
+                            <mods:physicalLocation authority="marcorg" displayLabel="Library of Congress, Washington, DC">DLC</mods:physicalLocation>
+                        </mods:location>
+                    </mods:relatedItem>
+                    <mods:note type="agencyResponsibleForReproduction" displayLabel="Library of Congress, Washington, DC">DLC</mods:note>
+                </mods:mods>
+            </xmlData>
+        </mdWrap>
+    </dmdSec>
+                            
+    <amdSec>
+        <!--TECHNICAL METADATA-->
+        
+        <techMD ID="reelTechMD">
+            <mdWrap MDTYPE="OTHER" OTHERMDTYPE="NDNP Reel Technical Metadata" LABEL="NDNP technical metadata for microfilm reel">
+                <xmlData>
+                    <ndnp:reelTechMD>
+                        <ndnp:titles>Colored American</ndnp:titles>
+                        <ndnp:startDate>1903-01-10</ndnp:startDate>
+                        <ndnp:endDate>1904-02-27</ndnp:endDate>
+                        <ndnp:position>1a</ndnp:position>
+                        <ndnp:reductionRatio>NaN</ndnp:reductionRatio>
+                        <ndnp:captureResolutionOriginal measurement="pixels/inch">300</ndnp:captureResolutionOriginal>
+                        <ndnp:captureResolutionFilm measurement="pixels/inch">6000</ndnp:captureResolutionFilm>
+                        <ndnp:guideToContentsPresentFlag>false</ndnp:guideToContentsPresentFlag>
+                        <ndnp:dateMicrofilmCreated>1947</ndnp:dateMicrofilmCreated>
+                        <ndnp:looseLeavesFlag>0</ndnp:looseLeavesFlag>
+                        <ndnp:boundVolumeFlag>1</ndnp:boundVolumeFlag>
+                        <ndnp:dimensions>11x15</ndnp:dimensions>
+                        <ndnp:pagesPerIssue>16</ndnp:pagesPerIssue>
+                        <ndnp:numberOfResolutionTargets>0</ndnp:numberOfResolutionTargets>
+                        <ndnp:densityReadingMaster>1.11</ndnp:densityReadingMaster>
+                        <ndnp:densityReadingMaster>1.2</ndnp:densityReadingMaster>
+                        <ndnp:densityReadingMaster>1.21</ndnp:densityReadingMaster>
+                        <ndnp:densityReadingMaster>1.29</ndnp:densityReadingMaster>
+                        <ndnp:densityReadingMaster>1.26</ndnp:densityReadingMaster>
+                        <ndnp:densityReadingMaster>1.25</ndnp:densityReadingMaster>
+                        <ndnp:densityReadingMaster>1.14</ndnp:densityReadingMaster>
+                        <ndnp:densityReadingMaster>1.2</ndnp:densityReadingMaster>
+                        <ndnp:densityReadingMaster>1.22</ndnp:densityReadingMaster>
+                        <ndnp:densityReadingMaster>1.17</ndnp:densityReadingMaster>
+                        <ndnp:averageDensityMaster>1.21</ndnp:averageDensityMaster>
+                        <ndnp:dminMaster>0.25</ndnp:dminMaster>
+                        <ndnp:densityReadingDuplicateNegative>1.03</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:densityReadingDuplicateNegative>1.08</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:densityReadingDuplicateNegative>1.1</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:densityReadingDuplicateNegative>1.2</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:densityReadingDuplicateNegative>1.14</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:densityReadingDuplicateNegative>1.16</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:densityReadingDuplicateNegative>1.07</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:densityReadingDuplicateNegative>1.08</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:densityReadingDuplicateNegative>1.1</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:densityReadingDuplicateNegative>1.05</ndnp:densityReadingDuplicateNegative>
+                        <ndnp:averageDensityDuplicateNegative>1.1</ndnp:averageDensityDuplicateNegative>
+                        <ndnp:dminDuplicateNegative>0.26</ndnp:dminDuplicateNegative>                                                
+                    </ndnp:reelTechMD>
+                </xmlData>
+            </mdWrap>
+        </techMD>                    
+    </amdSec>
+    
+    <!--FILE SECTION-->
+    <fileSec>
+        
+
+        <fileGrp ID="targetFileGrp1">
+            <file ID="masterFile1" USE="master" >
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0000.tif" />                                    
+            </file>
+            <file ID="serviceFile1" USE="service" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0000.jp2" />                                                
+            </file>
+            <file ID="otherDerivativeFile1" USE="derivative" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0000.pdf" />                                                
+            </file>            
+            <file ID="ocrFile1" USE="ocr" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0000.xml" />                                                
+            </file>                       
+        </fileGrp>
+                
+        
+
+        <fileGrp ID="targetFileGrp2">
+            <file ID="masterFile2" USE="master" >
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0001.tif" />                                    
+            </file>
+            <file ID="serviceFile2" USE="service" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0001.jp2" />                                                
+            </file>
+            <file ID="otherDerivativeFile2" USE="derivative" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0001.pdf" />                                                
+            </file>            
+            <file ID="ocrFile2" USE="ocr" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0001.xml" />                                                
+            </file>                       
+        </fileGrp>
+                
+        
+
+        <fileGrp ID="targetFileGrp3">
+            <file ID="masterFile3" USE="master" >
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0002.tif" />                                    
+            </file>
+            <file ID="serviceFile3" USE="service" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0002.jp2" />                                                
+            </file>
+            <file ID="otherDerivativeFile3" USE="derivative" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0002.pdf" />                                                
+            </file>            
+            <file ID="ocrFile3" USE="ocr" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0002.xml" />                                                
+            </file>                       
+        </fileGrp>
+                
+        
+
+        <fileGrp ID="targetFileGrp4">
+            <file ID="masterFile4" USE="master" >
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0003.tif" />                                    
+            </file>
+            <file ID="serviceFile4" USE="service" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0003.jp2" />                                                
+            </file>
+            <file ID="otherDerivativeFile4" USE="derivative" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0003.pdf" />                                                
+            </file>            
+            <file ID="ocrFile4" USE="ocr" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0003.xml" />                                                
+            </file>                       
+        </fileGrp>
+                
+        
+
+        <fileGrp ID="targetFileGrp5">
+            <file ID="masterFile5" USE="master" >
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0004.tif" />                                    
+            </file>
+            <file ID="serviceFile5" USE="service" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0004.jp2" />                                                
+            </file>
+            <file ID="otherDerivativeFile5" USE="derivative" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0004.pdf" />                                                
+            </file>            
+            <file ID="ocrFile5" USE="ocr" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0004.xml" />                                                
+            </file>                       
+        </fileGrp>
+                
+        
+
+        <fileGrp ID="targetFileGrp6">
+            <file ID="masterFile6" USE="master" >
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0005.tif" />                                    
+            </file>
+            <file ID="serviceFile6" USE="service" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0005.jp2" />                                                
+            </file>
+            <file ID="otherDerivativeFile6" USE="derivative" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0005.pdf" />                                                
+            </file>            
+            <file ID="ocrFile6" USE="ocr" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0005.xml" />                                                
+            </file>                       
+        </fileGrp>
+                
+        
+
+        <fileGrp ID="targetFileGrp7">
+            <file ID="masterFile7" USE="master" >
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0006.tif" />                                    
+            </file>
+            <file ID="serviceFile7" USE="service" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0006.jp2" />                                                
+            </file>
+            <file ID="otherDerivativeFile7" USE="derivative" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0006.pdf" />                                                
+            </file>            
+            <file ID="ocrFile7" USE="ocr" >               
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="file" xlink:href="0006.xml" />                                                
+            </file>                       
+        </fileGrp>
+                
+                
+    </fileSec>
+
+    <!--STRUCTURAL MAP-->    
+    <structMap xmlns:np="urn:library-of-congress:ndnp:mets:newspaper">
+        <div TYPE="np:reel" ADMID="reelTechMD">
+            <div TYPE="np:techtargetreel">
+                <div TYPE="np:target" DMDID="techTargetModsBib">
+                    <fptr FILEID="masterFile1" />
+                    <fptr FILEID="serviceFile1" />
+                    <fptr FILEID="otherDerivativeFile1" />
+                    <fptr FILEID="ocrFile1" />
+                </div>                
+                <!--div repeated for each target.  There must be 5.-->        
+
+                <div TYPE="np:target" DMDID="techTargetModsBib">
+                    <fptr FILEID="masterFile2" />
+                    <fptr FILEID="serviceFile2" />
+                    <fptr FILEID="otherDerivativeFile2" />
+                    <fptr FILEID="ocrFile2" />
+                </div>                
+                <!--div repeated for each target.  There must be 5.-->        
+
+                <div TYPE="np:target" DMDID="techTargetModsBib">
+                    <fptr FILEID="masterFile3" />
+                    <fptr FILEID="serviceFile3" />
+                    <fptr FILEID="otherDerivativeFile3" />
+                    <fptr FILEID="ocrFile3" />
+                </div>                
+                <!--div repeated for each target.  There must be 5.-->        
+
+                <div TYPE="np:target" DMDID="techTargetModsBib">
+                    <fptr FILEID="masterFile4" />
+                    <fptr FILEID="serviceFile4" />
+                    <fptr FILEID="otherDerivativeFile4" />
+                    <fptr FILEID="ocrFile4" />
+                </div>                
+                <!--div repeated for each target.  There must be 5.-->        
+
+                <div TYPE="np:target" DMDID="techTargetModsBib">
+                    <fptr FILEID="masterFile5" />
+                    <fptr FILEID="serviceFile5" />
+                    <fptr FILEID="otherDerivativeFile5" />
+                    <fptr FILEID="ocrFile5" />
+                </div>                
+                <!--div repeated for each target.  There must be 5.-->        
+            </div>
+            
+            
+            
+            
+            
+            <div TYPE="np:target" DMDID="targetModsBib1">
+                <fptr FILEID="masterFile6" />
+                <fptr FILEID="serviceFile6" />
+                <fptr FILEID="otherDerivativeFile6" />
+                <fptr FILEID="ocrFile6" />
+            </div>                
+            
+            <div TYPE="np:target" DMDID="targetModsBib2">
+                <fptr FILEID="masterFile7" />
+                <fptr FILEID="serviceFile7" />
+                <fptr FILEID="otherDerivativeFile7" />
+                <fptr FILEID="ocrFile7" />
+            </div>                                        
+        </div>
+    </structMap>
+    
+</mets>
