@@ -95,7 +95,7 @@ public class SimpleContinuationControllerImpl implements
 				//Suspend service requests
 				this.suspendServiceRequests(jbpmContext, token);
 			}
-			
+			jbpmContext.save(token);
 		}
 		finally
 		{

@@ -129,7 +129,8 @@ public class CommandLineFixtureDriver {
 		options.addOption(OptionBuilder.withArgName(OPT_ID_TYPE).hasArg().withDescription(OPT_ID_DESCRIPTION).create(OPT_ID));
 		options.addOption(OptionBuilder.withArgName(OPT_NAME_TYPE).hasArg().withDescription(OPT_NAME_DESCRIPTION).create(OPT_NAME));		
 		options.addOption(OptionBuilder.withArgName(OPT_ROLES_TYPE).hasArg().withDescription(OPT_ROLES_DESCRIPTION).create(OPT_ROLES));
-		options.addOption(OptionBuilder.withArgName(OPT_SURNAME_TYPE).hasArg().withDescription(OPT_SURNAME_DESCRIPTION).create(OPT_SURNAME));		
+		options.addOption(OptionBuilder.withArgName(OPT_SURNAME_TYPE).hasArg().withDescription(OPT_SURNAME_DESCRIPTION).create(OPT_SURNAME));
+		options.addOption(OptionBuilder.withArgName(OPT_HOST_TYPE).hasArg().withDescription(OPT_HOST_DESCRIPTION).create(OPT_HOST));
 
 	}
 	

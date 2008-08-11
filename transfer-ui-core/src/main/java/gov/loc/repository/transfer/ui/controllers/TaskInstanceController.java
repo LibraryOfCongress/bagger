@@ -6,6 +6,7 @@ import gov.loc.repository.transfer.ui.commands.TaskInstanceUpdateCommand;
 import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
 import gov.loc.repository.transfer.ui.model.UserBean;
+import gov.loc.repository.transfer.ui.model.VariableBean;
 import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
@@ -82,7 +83,7 @@ public class TaskInstanceController extends AbstractRestController {
 			mav.setError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}	
-		
+				
 		//Configure the view
 		mav.setViewName("taskinstance");
 		mav.addObject("taskInstanceBean", taskInstanceBean);
@@ -138,7 +139,9 @@ public class TaskInstanceController extends AbstractRestController {
 		if (mav.getStatusCode() != null) { return; }
 		//This will add an errorList to mav
 		command.validatePut();
-			
+		
+		dao.save(taskInstanceBean);
+		
 		if (taskInstanceBean.isEnded()) {
 			mav.setViewName("redirect:/");
 		}else{

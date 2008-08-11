@@ -40,8 +40,8 @@ class TransferServices():
         )
         component_selection = config['COMPONENT_SELECTION'] if config['COMPONENT_SELECTION'] else {}
         self.component_select_props = ""        
-        for component in component_selection:
-            self.component_select_props = "%s%s=%s\n" % component_select_props, component, component_selection.get(component)
+        for component in component_selection.keys():
+            self.component_select_props = "%s%s=%s\n" % (self.component_select_props, component, component_selection.get(component))
         self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
         self.logger = log.Log(self.project_name)

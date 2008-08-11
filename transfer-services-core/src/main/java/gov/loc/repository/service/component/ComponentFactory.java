@@ -80,7 +80,6 @@ public class ComponentFactory implements ApplicationContextAware {
 		Map<String, String> jobTypeMap = new HashMap<String, String>();
 		//Inspect the available beans to see which jobTypes they support
 		Map<String,Component> beanMap = context.getBeansOfType(Component.class);
-		System.out.println("!!!!!!!!!!!!!!!!!!!:" + beanMap.size());
 		Iterator<String> iter = beanMap.keySet().iterator();
 		while(iter.hasNext())
 		{
