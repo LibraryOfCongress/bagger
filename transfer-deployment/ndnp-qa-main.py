@@ -15,9 +15,9 @@ config = {
     'CATALINA_HOME': "", # Tell me where to find Tomcat (default = '/opt/coolstack/tomcat')    
     'DB_PREFIX': 'qa', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
     'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
-    'INSTALL_DIR': 'install', # Set the directory that the CLI tools will be unzipped to (default = '.')
+    'INSTALL_DIR': '/opt/transfer', # Set the directory that the CLI tools will be unzipped to (default = '.')
     'VERSION': '1.6', # This is the version of the release being deployed
-    'SQL_FILES_LOCATION': 'CHANGEME', #Set the location of the sql files (default = '')
+    'SQL_FILES_LOCATION': 'db', #Set the location of the sql files (default = '')
     'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
     'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
     'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            

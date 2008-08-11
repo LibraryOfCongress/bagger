@@ -9,10 +9,10 @@ case "$1" in
 			exit 1
 		}
 		[ -x $COMMAND ] || chmod u+x $COMMAND
-		$cmd	
+		$COMMAND	
 	    ;;
     stop)
-		pkill servicecontainerdriver
+		pkill -f transfer-services-co
         ;;
     restart)
 		$0 stop

@@ -6,10 +6,10 @@ from transfer.core import services
 
 config = {
     'DEBUG': False, # If True, will print out actions rather than take them (e.g., will not hit database)
-    'TRANSFER_SERVICES_INSTALL_DIR': 'install', # Set the directory that the CLI tools will be unzipped to (default = '.')
+    'TRANSFER_SERVICES_INSTALL_DIR': '/opt/transfer', # Set the directory that the CLI tools will be unzipped to (default = '.')
     'VERSION': '1.6', # This is the version of the release being deployed
     'COMPONENT_PROJECTS': ("core","ndnp"),
-    'HOST': '', #The hostname, e.g., localhost or ac, that the service container is to be exposed under.  Also used to identify the responder.  Default is localhost.
+    'HOST': 'CHANGEME', #The hostname, e.g., localhost or ac, that the service container is to be exposed under.  Also used to identify the responder.  Default is localhost.
     'QUEUES': "jobqueue,firewirejobqueue", #List of the queues to listen to, e.g., jobqueue,firewirejobqueue.  Default is jobqueue
     'JOBTYPES': "test,inventoryfilesondisk,ndnplocalcopy,calculatedirectorysize", #List of the job types to handle, e.g., test,inventoryfilesondisk.  Default is test
     'COMPONENT_SELECTION': {'filesystemcreate': "mkDirFileSystemCreator"}, #Map of jobTypes to beanIds.  Used to select beans to use when there are multiple beans for a single jobType.
