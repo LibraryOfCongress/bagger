@@ -266,6 +266,14 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return (Repository)query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Agent> List<T> findAgents(Class<T> agentType) {
+		Query query = this.getSession().createQuery(
+				"from " + getImplClassName(agentType));
+		return query.list();
+	}
+	
 	public <T extends Agent> T findRequiredAgent(Class<T> agentType, String agentId) throws RequiredEntityNotFound {
 		Object agent = this.find(agentType, agentId);
 		if (agent == null)
@@ -310,6 +318,14 @@ public class PackageModelDAOImpl implements PackageModelDAO {
 		return this.find(Role.class, roleId);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Role> findRoles() {
+		Query query = this.getSession().createQuery(
+				"from Role");
+		return query.list();
+	}
+	
 	public void save(Object object) {
 		this.getSession().saveOrUpdate(object);		
 	}

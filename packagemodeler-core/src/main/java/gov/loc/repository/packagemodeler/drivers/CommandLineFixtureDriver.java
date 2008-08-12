@@ -77,7 +77,7 @@ public class CommandLineFixtureDriver {
 	private static void printUsages()
 	{
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp(MessageFormat.format("fixturedriver {0}|{1}|{2}|{3}|{4}|{5} [options]", ACTION_REPOSITORY, ACTION_ROLE, ACTION_PERSON, ACTION_ORGANIZATION, ACTION_SYSTEM, ACTION_SOFTWARE), options, false);
+		formatter.printHelp(MessageFormat.format("fixturedriver {0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12} [options]", ACTION_CREATE_REPOSITORY, ACTION_LIST_REPOSITORIES, ACTION_CREATE_ROLE, ACTION_LIST_ROLES, ACTION_CREATE_PERSON, ACTION_LIST_PERSONS, ACTION_CREATE_ORGANIZATION, ACTION_LIST_ORGANIZATIONS, ACTION_CREATE_SYSTEM, ACTION_LIST_SYSTEMS, ACTION_CREATE_SOFTWARE, ACTION_LIST_SOFTWARE, ACTION_TEST), options, false);
 		System.out.println("Lists are comma separated (without spaces).");
 		System.out.println(MessageFormat.format("Returns {0} for success.", RETURN_SUCCESS));
 		System.out.println(MessageFormat.format("Returns {0} for failure or error.", RETURN_ERROR));
@@ -86,37 +86,54 @@ public class CommandLineFixtureDriver {
 				ACTION_TEST));
 		System.out.println("To create a Repository, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1}", 
-				ACTION_REPOSITORY,
+				ACTION_CREATE_REPOSITORY,
 				OPT_ID));
+		System.out.println("To list Repositories, use:");
+		System.out.println(MessageFormat.format("driver {0}", 
+				ACTION_LIST_REPOSITORIES));		
 		System.out.println("To create a Role, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1}", 
-				ACTION_ROLE,
+				ACTION_CREATE_ROLE,
 				OPT_ID));
+		System.out.println("To list Roles, use:");
+		System.out.println(MessageFormat.format("driver {0}", 
+				ACTION_LIST_ROLES));		
 		System.out.println("To create a Person, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1} -{2} -{3} -{4}", 
-				ACTION_PERSON,
+				ACTION_CREATE_PERSON,
 				OPT_ID,
 				OPT_FIRSTNAME,
 				OPT_SURNAME,
 				OPT_ROLES));
+		System.out.println("To list people, use:");
+		System.out.println(MessageFormat.format("driver {0}", 
+				ACTION_LIST_PERSONS));				
 		System.out.println("To create an Organization, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1} -{2} -{3}", 
-				ACTION_ORGANIZATION,
+				ACTION_CREATE_ORGANIZATION,
 				OPT_ID,
 				OPT_NAME,
 				OPT_ROLES));
+		System.out.println("To list Organizations, use:");
+		System.out.println(MessageFormat.format("driver {0}", 
+				ACTION_LIST_ORGANIZATIONS));				
 		System.out.println("To create a Software, use:");		
 		System.out.println(MessageFormat.format("driver {0} -{1} -{2}", 
-				ACTION_SOFTWARE,
+				ACTION_CREATE_SOFTWARE,
 				OPT_ID,
 				OPT_ROLES));
+		System.out.println("To list Software, use:");
+		System.out.println(MessageFormat.format("driver {0}", 
+				ACTION_LIST_SOFTWARE));				
 		System.out.println("To create a System, use:");		
 		System.out.println(MessageFormat.format("driver {0} -{1} -{2} -{3}", 
-				ACTION_SYSTEM,
+				ACTION_CREATE_SYSTEM,
 				OPT_ID,
 				OPT_HOST,
 				OPT_ROLES));
-
+		System.out.println("To list Systems, use:");
+		System.out.println(MessageFormat.format("driver {0}", 
+				ACTION_LIST_SYSTEMS));		
 
 	}
 	

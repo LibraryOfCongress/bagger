@@ -76,11 +76,15 @@ public interface PackageModelDAO {
 	public Repository findRequiredRepository(String repositoryId) throws RequiredEntityNotFound;
 					
 	//Agent
+	public <T extends Agent> List<T> findAgents(Class<T> agentType);
+	
 	public <T extends Agent> T findAgent(Class<T> agentType, String agentId);
 	
 	public <T extends Agent> T findRequiredAgent(Class<T> agentType, String agentId) throws RequiredEntityNotFound;
 
 	//Role
+	public abstract List<Role> findRoles();
+	
 	public abstract Role findRole(String roleId);
 
 	public abstract Role findRequiredRole(String roleId) throws RequiredEntityNotFound;	

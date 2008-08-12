@@ -1,6 +1,8 @@
 package gov.loc.repository.packagemodeler.drivers;
 
 
+import java.util.Collection;
+
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Organization;
@@ -25,12 +27,18 @@ public class MapFixtureDriver {
     public static final String TYPE_ID_LIST = "list of ids";
         
     //Actions
-    public static final String ACTION_REPOSITORY = "createrepository";
-    public static final String ACTION_ROLE = "createrole";
-    public static final String ACTION_PERSON = "createperson";
-    public static final String ACTION_ORGANIZATION = "createorganization";
-    public static final String ACTION_SYSTEM = "createsystem";
-    public static final String ACTION_SOFTWARE = "createsoftware";
+    public static final String ACTION_CREATE_REPOSITORY = "createrepository";
+    public static final String ACTION_LIST_REPOSITORIES = "listrepositories";
+    public static final String ACTION_CREATE_ROLE = "createrole";
+    public static final String ACTION_LIST_ROLES = "listroles";
+    public static final String ACTION_CREATE_PERSON = "createperson";
+    public static final String ACTION_LIST_PERSONS = "listpersons";
+    public static final String ACTION_CREATE_ORGANIZATION = "createorganization";
+    public static final String ACTION_LIST_ORGANIZATIONS = "listorganizations";
+    public static final String ACTION_CREATE_SYSTEM = "createsystem";
+    public static final String ACTION_LIST_SYSTEMS = "listsystems";
+    public static final String ACTION_CREATE_SOFTWARE = "createsoftware";
+    public static final String ACTION_LIST_SOFTWARE = "listsoftware";
     public static final String ACTION_TEST = "test";
     
     //Options
@@ -85,17 +93,25 @@ public class MapFixtureDriver {
             dao.findRepository("foo");
             java.lang.System.out.println("Database connection is good.");
         }
-        else if (ACTION_REPOSITORY.equalsIgnoreCase(action))
+        else if (ACTION_CREATE_REPOSITORY.equalsIgnoreCase(action))
         {
             Repository repository = factory.createRepository(options.getRequired(OPT_ID));
             dao.save(repository);
         }
-        else if (ACTION_ROLE.equalsIgnoreCase(action))
+        else if (ACTION_LIST_REPOSITORIES.equalsIgnoreCase(action))
+        {
+        	this.printCollection(dao.findRepositories());
+        }
+        else if (ACTION_CREATE_ROLE.equalsIgnoreCase(action))
         {
             Role role = factory.createRole(options.getRequired(OPT_ID));
             dao.save(role);
         }
-        else if (ACTION_PERSON.equalsIgnoreCase(action))
+        else if (ACTION_LIST_ROLES.equalsIgnoreCase(action))
+        {
+        	this.printCollection(dao.findRoles());
+        }
+        else if (ACTION_CREATE_PERSON.equalsIgnoreCase(action))
         {
             Person agent = factory.createAgent(Person.class, options.getRequired(OPT_ID));
             dao.save(agent);
@@ -103,26 +119,42 @@ public class MapFixtureDriver {
             agent.setSurname(options.getRequired(OPT_SURNAME));
             addRoles(agent);
         }
-        else if (ACTION_ORGANIZATION.equalsIgnoreCase(action))
+        else if (ACTION_LIST_PERSONS.equalsIgnoreCase(action))
+        {
+        	this.printCollection(dao.findAgents(Person.class));
+        }
+        else if (ACTION_CREATE_ORGANIZATION.equalsIgnoreCase(action))
         {
             Organization agent = factory.createAgent(Organization.class, options.getRequired(OPT_ID));
             dao.save(agent);
             agent.setName(options.getRequired(OPT_NAME));
             addRoles(agent);
         }
-        else if (ACTION_SOFTWARE.equalsIgnoreCase(action))
+        else if (ACTION_LIST_ORGANIZATIONS.equalsIgnoreCase(action))
+        {
+        	this.printCollection(dao.findAgents(Organization.class));
+        }
+        else if (ACTION_CREATE_SOFTWARE.equalsIgnoreCase(action))
         {
             Software agent = factory.createAgent(Software.class, options.getRequired(OPT_ID));
             dao.save(agent);
             addRoles(agent);
-        }            
-        else if (ACTION_SYSTEM.equalsIgnoreCase(action))
+        }
+        else if (ACTION_LIST_SOFTWARE.equalsIgnoreCase(action))
+        {
+        	this.printCollection(dao.findAgents(Software.class));
+        }        
+        else if (ACTION_CREATE_SYSTEM.equalsIgnoreCase(action))
         {
             System agent = factory.createAgent(System.class, options.getRequired(OPT_ID));
             agent.setHost(options.get(OPT_HOST, null));
             dao.save(agent);
             addRoles(agent);
-        }                        
+        }
+        else if (ACTION_LIST_SYSTEMS.equalsIgnoreCase(action))
+        {
+        	this.printCollection(dao.findAgents(System.class));
+        }        
         else
         {
             throw new Exception(action + " is an unrecognized action");
@@ -140,5 +172,13 @@ public class MapFixtureDriver {
         {
             agent.addRole(dao.findRequiredRole(roleId));
         }
+    }
+    
+    private void printCollection(Collection<?> collection)
+    {
+    	for(Object obj : collection)
+    	{
+    		java.lang.System.out.println(obj.toString());
+    	}
     }
 }
