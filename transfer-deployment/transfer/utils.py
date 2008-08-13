@@ -182,6 +182,18 @@ def localize_datasources_props(file, db_server, db_port, db_name, db_prefix, rol
         f.close()
         return "localized datasources.properties file" 
 
+def append_props(props, file, debug=False):
+    """ appends properties to a properties file """
+    str = "\n"
+    for prop in props.keys():
+        str = "%s%s=%s\n" % (str, prop, props.get(prop))
+    if not debug:    
+        f = open(file, 'a')
+        f.write(str)
+        f.close()        
+    return "appending %s to %s\n" % (str, file)
+
+
 def deploy_process_def(driver, process_def):
     """ deploys process definition """
     return os.popen4("%s deploy -file %s" % (driver, process_def))[1].read()

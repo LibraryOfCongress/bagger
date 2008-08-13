@@ -16,13 +16,17 @@ config = {
     'DB_PREFIX': 'qa', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
     'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
     'INSTALL_DIR': '/opt/transfer', # Set the directory that the CLI tools will be unzipped to (default = '.')
-    'VERSION': '1.6', # This is the version of the release being deployed
+    'VERSION': 'CHANGEME', # This is the version of the release being deployed
     'SQL_FILES_LOCATION': 'db', #Set the location of the sql files (default = '')
     'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
     'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
     'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')            
     'TOMCAT_START': '', # Set the invocation of starting tomcat (default = '/usr/sbin/svcadm disable svc:/application/csk-tomcat')
     'TOMCAT_STOP': '', # Set the invocation of stopping tomcat (default = '/usr/sbin/svcadm enable svc:/application/csk-tomcat')
+    'WORKFLOW_NDNP_PROPS': {
+        'storage.staging.ndnp.basedirectory':'/tmp/staging',
+        'storage.archive.ndnp.basedirectory':'/tmp/archive',
+    }
 }
 
 jbpm = workflow.Jbpm(config)

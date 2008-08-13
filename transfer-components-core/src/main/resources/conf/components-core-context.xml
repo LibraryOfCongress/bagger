@@ -28,6 +28,7 @@
 	<!-- Archival Remote Directory Copier -->
 	<bean id="archivalRemoteDirectoryCopier" class="gov.loc.repository.transfer.components.filemanagement.impl.ArchivalRemoteDirectoryCopier">
 		<constructor-arg value="$comp{components.archivalremotedirectorycopier.keyfile}" />
+		<constructor-arg value="$comp{components.archivalremotedirectorycopier.staging.basepath}" />
 	</bean>
 
 	<!-- Archival Remote Bag Copier -->
@@ -80,6 +81,7 @@
     		<value>
        			components.zfsfilesystemcreator.pool=
        			components.archivalremotedirectorycopier.keyfile=/home/transfer/.ssh/id_rsa
+       			components.archivalremotedirectorycopier.staging.basepath=/tmp
      		</value>
    		</property>
    		<property name="ignoreResourceNotFound" value="true" />   		

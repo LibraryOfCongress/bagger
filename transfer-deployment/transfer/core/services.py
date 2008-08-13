@@ -38,10 +38,12 @@ class TransferServices():
         self.datasources_props = "%s/%s-%s/conf/datasources.properties" % (
             self.install_dir, self.project_name, self.version
         )
-        component_selection = config['COMPONENT_SELECTION'] if config['COMPONENT_SELECTION'] else {}
+        component_selection = config['COMPONENT_SELECTION'] if config.has_key('COMPONENT_SELECTION') else {}
         self.component_select_props = ""        
         for component in component_selection.keys():
             self.component_select_props = "%s%s=%s\n" % (self.component_select_props, component, component_selection.get(component))
+        self.components_conf = "%s/%s-%s/conf/components.local.properties" % (self.install_dir, self.project_name, self.version)
+        self.components_props = config['COMPONENTS_PROPS'] if config.has_key('COMPONENTS_PROPS') else {}            
         self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
         self.logger = log.Log(self.project_name)
@@ -67,6 +69,7 @@ class TransferServices():
         utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
         utils.strtofile(self.servicecontainer_props, self.servicecontainer_conf, self.debug)
         utils.strtofile(self.component_select_props, self.service_conf, self.debug)
+        utils.append_props(self.components_props, self.components_conf)
         self.logger.info("Deploying %s drivers" % (self.project_name))
         return
 

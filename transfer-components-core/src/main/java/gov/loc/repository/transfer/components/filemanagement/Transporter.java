@@ -1,7 +1,5 @@
 package gov.loc.repository.transfer.components.filemanagement;
    
-import static gov.loc.repository.transfer.components.ComponentConstants.DEFAULT_STAGING_BASEPATH;
-
 import java.io.File;
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -31,6 +29,7 @@ public class Transporter {
     private static final Log log = LogFactory.getLog(Transporter.class);
 
     private String keyFile;
+    private String stagingBasePath;
     protected ProcessBuilderWrapper pb = new ProcessBuilderWrapperImpl();
     
     public static void main(String[] args) throws Exception
@@ -59,33 +58,34 @@ public class Transporter {
     	JSAPResult config = jsap.parse(args);    
         if ( jsap.messagePrinted() ) System.exit( 1 );
 
-        Transporter transporter = new Transporter(config.getString(KEYFILE));
-        transporter.pullAndArchive(config.getString(REMOTE_USERNAME), config.getString(REMOTE_HOST), config.getString(STAGING_BASE_PATH), config.getString(SOURCE_PATH), config.getString(DEST_PATH), config.getString(OWNER));
+        Transporter transporter = new Transporter(config.getString(KEYFILE), config.getString(STAGING_BASE_PATH));
+        transporter.pullAndArchive(config.getString(REMOTE_USERNAME), config.getString(REMOTE_HOST), config.getString(SOURCE_PATH), config.getString(DEST_PATH), config.getString(OWNER));
     }
     
-    public Transporter(String keyFile) {
+    public Transporter(String keyFile, String stagingBasePath) {
         this.keyFile = keyFile;
+        this.stagingBasePath= stagingBasePath;
+        if (! this.stagingBasePath.endsWith("/")) {
+            this.stagingBasePath += "/";
+        }            
+        
     }
         
-    public void pullAndArchive(String remoteUsername, String remoteHost, String stagingBasePath, String srcPath, String destPath, String owner)
+    public void pullAndArchive(String remoteUsername, String remoteHost, String srcPath, String destPath, String owner)
     {
-        stagingBasePath= stagingBasePath != null ? stagingBasePath : DEFAULT_STAGING_BASEPATH;
-            
-        if (! stagingBasePath.endsWith("/")) {
-            stagingBasePath += "/";
-        }            
-    	this.pull(remoteUsername, remoteHost, stagingBasePath, srcPath);
+                    
+    	this.pull(remoteUsername, remoteHost, srcPath);
         this.archive(stagingBasePath, srcPath, owner, destPath);
     }
 
     public void pullAndArchive(String remoteUsername, String remoteHost, CopyDescription copyDescription)
     {
         
-        this.pullAndArchive(remoteUsername, remoteHost, copyDescription.additionalParameters.get("stagingBasePath"), copyDescription.srcPath, copyDescription.destCopyToPath, copyDescription.additionalParameters.get(Chowner.USER_KEY));
+        this.pullAndArchive(remoteUsername, remoteHost, copyDescription.srcPath, copyDescription.destCopyToPath, copyDescription.additionalParameters.get(Chowner.USER_KEY));
     }
     
     
-    private void pull(String remoteUsername, String remoteHost, String stagingBasePath, String srcPath)
+    private void pull(String remoteUsername, String remoteHost, String srcPath)
     {
         log.debug(MessageFormat.format("stagingBasePath set to {0}", stagingBasePath));
         String commandLine = MessageFormat.format("scp -B -q -o StrictHostKeyChecking=no -r -i {0} {1} {2}", this.keyFile, this.toUri(remoteUsername, remoteHost, srcPath), stagingBasePath);

@@ -14,7 +14,9 @@ class WebApp(CoreWebApp):
         self.file_location = "files"
         self.webapps_location = "%s/webapps/transfer" % (self.catalina_home)
         self.warfile = "%s/transfer-ui-ndnp-%s-template.war" % (self.file_location, self.version)
-        self.datasources_props = "%s/WEB-INF/classes/conf/datasources.properties" % (self.webapps_location)
+        self.datasources_conf = "%s/WEB-INF/classes/conf/datasources.properties" % (self.webapps_location)
+        self.workflow_ndnp_conf = "%s/WEB-INF/classes/conf/workflow.ndnp.properties" % (self.webapps_location)
+        self.workflow_ndnp_props = config['WORKFLOW_NDNP_PROPS'] if config.has_key('WORKFLOW_NDNP_PROPS') else {}
         self.db_prefix = config['DB_PREFIX'] + "_" if config['DB_PREFIX'] else ''
         self.role_prefix = config['ROLE_PREFIX'] + "_" if config['ROLE_PREFIX'] else ''
         self.db_name = ""
@@ -52,7 +54,8 @@ class WebApp(CoreWebApp):
         except IOError, e:
             self.logger.error("Could not unzip warfile '%s' into '%s': %s" % (self.warfile, self.webapps_location, e))
             raise RuntimeError("Could not unzip driver '%s' into '%s': %s" % (self.warfile, self.webapps_location, e))
-        utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)        
+        utils.localize_datasources_props(self.datasources_conf, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
+        utils.append_props(self.workflow_ndnp_props, self.workflow_ndnp_conf)        
         utils.start_tomcat(self.tomcat_start, self.debug)
         self.logger.info("Deploying %s webapp" % (self.project_name))
         return
