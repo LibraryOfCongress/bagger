@@ -6,6 +6,7 @@ import gov.loc.repository.service.annotations.ResultParam;
 import gov.loc.repository.service.component.ComponentRequest.ObjectEntry;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -65,6 +66,12 @@ public class ComponentInvoker {
 			{
 				req.respondSuccess(true);
 			}
+			
+		}
+		catch(InvocationTargetException ex)
+		{
+			log.error(ex.getCause());
+			req.respondFailure(ex.getCause());
 			
 		}
 		catch(Exception ex)

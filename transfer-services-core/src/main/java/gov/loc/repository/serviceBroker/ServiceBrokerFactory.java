@@ -10,8 +10,8 @@ public class ServiceBrokerFactory {
 		return new ServiceRequestImpl(correlationKey, queue, jobType);
 	}
 	
-	public ServiceContainerRegistration createServiceContainerRegistration(String serviceUrl)
+	public ServiceContainerRegistration createServiceContainerRegistration(String host, Integer port)
 	{
-		return new ServiceContainerRegistrationImpl(serviceUrl);
+		return new ServiceContainerRegistrationImpl(host, port);
 	}
 }

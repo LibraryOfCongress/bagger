@@ -50,6 +50,11 @@
 		<put name="content"         value="admin.vm" />
 	</definition>
 
+	<definition name="healthcheck" extends="base">
+		<put name="title"           value="Healthcheck" />
+		<put name="content"         value="healthcheck.vm" />
+	</definition>
+
 	<definition name="completedrequestlistener" extends="base">
 		<put name="title"           value="Transfer UI Admin Completed Request Listener" />
 		<put name="content"         value="completedrequestlistener.vm" />

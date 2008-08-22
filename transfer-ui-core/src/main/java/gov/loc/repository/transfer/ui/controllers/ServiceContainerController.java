@@ -1,29 +1,24 @@
 package gov.loc.repository.transfer.ui.controllers;
 
-import gov.loc.repository.serviceBroker.ServiceContainerRegistry;
+import gov.loc.repository.serviceBroker.ServiceContainerRegistration;
+import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
-import gov.loc.repository.workflow.continuations.CompletedServiceRequestListener.State;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jmx.support.MBeanServerConnectionFactoryBean;
-import org.springframework.jmx.support.MBeanServerFactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,19 +26,27 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ServiceContainerController {
-
+	
 	private static final Log log = LogFactory.getLog(ServiceContainerController.class);
 	
-	private ServiceContainerRegistry registry;
+	private ServiceRequestDAO dao;
+
+	private Long latency; 
+	
 	
 	@Required
-	@Resource(name="serviceContainerRegistry")
-	public void setServiceContainerRegistry(ServiceContainerRegistry registry)
+	@Resource(name="serviceBroker")
+	public void setServiceBroker(ServiceRequestDAO dao)
 	{
-		this.registry = registry;
+		this.dao = dao;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Required
+	public void setLatency(Long latency)
+	{
+		this.latency = latency;
+	}
+	
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView handleGet(HttpServletRequest req) throws Exception {
 		ModelAndView mav = new ModelAndView("servicecontainer");
@@ -54,10 +57,10 @@ public class ServiceContainerController {
 			mav.addObject("permissions", permissions);
 			
 			List<ServiceContainerBean> serviceContainerBeanList = new ArrayList<ServiceContainerBean>(); 
-			List<String> serviceUrlList = this.registry.listServiceContainers();
-			for(String serviceUrl : serviceUrlList)
+			List<ServiceContainerRegistration> serviceContainerRegistrationList = this.dao.findServiceContainerRegistrations(latency);
+			for(ServiceContainerRegistration registration : serviceContainerRegistrationList)
 			{
-				ServiceContainerBean serviceContainerBean = this.loadServiceContainerBean(serviceUrl);
+				ServiceContainerBean serviceContainerBean = this.loadServiceContainerBean(registration.getServiceUrl());
 				if (serviceContainerBean != null)
 				{
 					serviceContainerBeanList.add(serviceContainerBean);
@@ -87,8 +90,7 @@ public class ServiceContainerController {
 		}
 		catch(Exception ex)
 		{
-			log.warn(MessageFormat.format("Attempt to connect to {0} failed, so unregistering.", serviceUrl));
-			this.registry.unregister(serviceUrl);
+			log.warn(MessageFormat.format("Attempt to connect to {0} failed", serviceUrl));
 		}
 		return null;
 	}

@@ -1,9 +1,21 @@
 package gov.loc.repository.serviceBroker;
 
+import java.util.Date;
+
 public interface ServiceContainerRegistration {
 
-	public abstract void setServiceUrl(String serviceUrl);
-
-	public abstract String getServiceUrl();
-
+	void setHost(String host);
+	
+	String getHost();
+	
+	void setPort(Integer port);
+	
+	Integer getPort();
+	
+	void beat();
+	
+	Date getTimestamp();
+	
+	String getServiceUrl();
+	
 }

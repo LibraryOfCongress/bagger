@@ -25,6 +25,14 @@
                 </tr></tfoot>
                 <tbody>
 			        <tr>
+				        <td><a href="${contextPath}/admin/healthcheck.html">
+				            <b>Healthcheck</b>
+				        </a><p>
+				            A check of the health of the system, including remote services.				            
+				        </p>
+				        </td>
+				    </tr>					
+			        <tr>
 				        <td><a href="${contextPath}/admin/servicerequestbroker.html">
 				            <b>Service Request Broker</b>
 				        </a><p>

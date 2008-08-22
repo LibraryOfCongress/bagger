@@ -38,7 +38,7 @@ public class ServiceContainerDriver {
         while(container.getState() != State.SHUTDOWN)
         {
         	System.out.println(MessageFormat.format("{0} ({1} active requests)", container.getState(), container.getActiveServiceRequestCount()));
-        	Thread.sleep(5000);
+        	Thread.sleep(10000);
         }
 	}
 

@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 import gov.loc.repository.service.component.ComponentFactory;
 import gov.loc.repository.service.component.ComponentInvoker;
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
-import gov.loc.repository.serviceBroker.ServiceContainerRegistry;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 
 import org.apache.commons.logging.Log;
@@ -31,16 +30,14 @@ public class ServiceContainer implements Runnable {
 	private Long wait = 10000L;
 	private State state = State.STOPPED;
 	private RespondingServiceBroker broker;
-	private String serviceUrl;
-	private ServiceContainerRegistry registry;
+	private ServiceContainerHeartbeat heartbeat;
 	
-	public ServiceContainer(ThreadPoolTaskExecutor executor, RespondingServiceBroker broker, ComponentFactory factory, String serviceUrl, ServiceContainerRegistry registry) {
+	public ServiceContainer(ThreadPoolTaskExecutor executor, RespondingServiceBroker broker, ComponentFactory factory, ServiceContainerHeartbeat registry) {
 		this.factory = factory;
 		this.executor = executor;
 		this.executor.setWaitForTasksToCompleteOnShutdown(true);
 		this.broker = broker;
-		this.serviceUrl = serviceUrl;
-		this.registry = registry;
+		this.heartbeat = registry;
 	}
 	
 	public void setWait(Long wait)
@@ -94,21 +91,22 @@ public class ServiceContainer implements Runnable {
 
 	public void shutdown()
 	{
-		log.debug("Shutting down");		
+		log.debug("Shutting down");
 		this.state = State.SHUTTINGDOWN;
+		this.run();
 	}
 	
 	public void run()
 	{
-		this.state = State.STARTED;
-		log.debug("Starting");
+		if (this.state == State.STARTING)
+		{
+			this.state = State.STARTED;
+			log.debug("Starting");
+			this.heartbeat.start();
+		}
+		
 		while(this.state != State.SHUTDOWN)
 		{
-			if (this.state == State.STARTED || this.state == State.STOPPED)
-			{
-				//Register
-				this.registry.register(serviceUrl);				
-			}
 			if (this.state == State.STARTED)
 			{
 				try
@@ -139,8 +137,7 @@ public class ServiceContainer implements Runnable {
 			else if (this.state == State.STOPPING || this.state == State.SHUTTINGDOWN)
 			{
 				this.executor.shutdown();
-				
-				
+								
 				if (this.state == State.STOPPING)
 				{
 					log.debug("Stopped");
@@ -148,11 +145,11 @@ public class ServiceContainer implements Runnable {
 				}
 				else
 				{
-					this.registry.unregister(serviceUrl);
-					this.state = State.SHUTTINGDOWN;
+					this.state = State.SHUTDOWN;
 				}
 			}
 		}
+		this.heartbeat.stop();		
 		log.debug("Shutdown");
 	}
 	

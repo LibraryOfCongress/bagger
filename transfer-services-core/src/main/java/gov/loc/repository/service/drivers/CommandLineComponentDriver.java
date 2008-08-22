@@ -31,7 +31,14 @@ public class CommandLineComponentDriver {
 			{
 				if (key != null)
 				{
-					if (arg.equalsIgnoreCase("true"))
+					if (arg.startsWith("[") && arg.endsWith("]"))
+					{
+						//Strip and treat as a string
+						//This allows something like [664] to be treated as a string
+						req.addRequestString(key, arg.substring(1, arg.length()-1));
+						
+					}
+					else if (arg.equalsIgnoreCase("true"))
 					{
 						req.addRequestBoolean(key, true);
 					}

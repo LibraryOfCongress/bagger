@@ -1,0 +1,30 @@
+<div id="healthcheck">
+	<h2>Healthcheck</h2>
+
+    <fieldset>
+        <legend><b>Problems</b></legend>
+        <table id="problem_table">
+            <tbody>
+            	#foreach($problem in $problemList)
+            		<tr>
+            			<td>${problem}</td>
+            		</tr>
+            	#end
+		    </tbody>
+	    </table>
+	</fieldset>
+
+    <fieldset>
+        <legend><b>Passed tests</b></legend>
+        <table id="passedTest_table">
+            <tbody>
+            	#foreach($test in $passedTestList)
+            		<tr>
+            			<td>${test}</td>
+            		</tr>
+            	#end
+		    </tbody>
+	    </table>
+	</fieldset>
+
+</div>

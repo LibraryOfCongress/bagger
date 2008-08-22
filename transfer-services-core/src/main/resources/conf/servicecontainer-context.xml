@@ -25,8 +25,14 @@
 		</constructor-arg>
 		<constructor-arg ref="respondingServiceBroker" />
 		<constructor-arg ref="componentFactory" />
-		<constructor-arg ref="serviceUrl" />
-		<constructor-arg ref="serviceContainerRegistry" />
+		<constructor-arg>
+			<bean class="gov.loc.repository.service.container.ServiceContainerHeartbeat">
+				<constructor-arg ref="serviceBroker" />
+				<constructor-arg value="$s{host}" />
+				<constructor-arg value="$s{port}" />
+				<constructor-arg value="$s{interval} " />			
+			</bean>
+		</constructor-arg>
 	</bean>
 	
 	<bean id="respondingServiceBroker" parent="abstractResponseServiceBroker">
@@ -42,21 +48,18 @@
 		<property name="properties">
 			<value>
 				port=9874
+				interval=300000
 			</value>
 		</property>
 	</bean>
 
 	<context:mbean-server />
- 	
- 	<bean id="serviceUrl" class="java.lang.String">
- 		<constructor-arg value="service:jmx:hessian://$s{host}:$s{port}/" type="java.lang.String"/>
- 	</bean>
- 	 
+ 	 	 
 	<context:mbean-export server="mbeanServer"/>
 
 	<bean id="serverConnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
   		<property name="objectName" value="connector:name=hessian"/>
-  		<property name="serviceUrl" ref="serviceUrl"/>
+  		<property name="serviceUrl" value="service:jmx:hessian://$s{host}:$s{port}/"/>
   		<property name="server" ref="mbeanServer" />  		     
   	</bean>
 		

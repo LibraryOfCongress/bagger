@@ -22,8 +22,8 @@ public abstract class AbstractServiceBrokerTest {
 	protected static final String QUEUE_2 = "specificJobQueue";
 	protected static final String JOBTYPE_1 = "test_job1";
 	protected static final String JOBTYPE_2 = "test_job2";
-	protected static final String REGISTRATION_1 = "reg1";
-	protected static final String REGISTRATION_2 =  "reg2";
+	protected static final String HOST_1 = "server1";
+	protected static final String HOST_2 = "server2";
 
 	protected ServiceBrokerFactory serviveBrokerFactory = new ServiceBrokerFactory();
 

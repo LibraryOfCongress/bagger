@@ -24,6 +24,8 @@ public class ByFileDirectoryCopier implements DirectoryCopier {
 	public ByFileDirectoryCopier(ByFileCopyFilter filter, FileCopier fileCopier, Chmoder chmoder, Chowner chowner) {
 		this.fileCopier = fileCopier;
 		this.filter = filter;
+		this.chmoder = chmoder;
+		this.chowner = chowner;
 	}
 
 	@Override

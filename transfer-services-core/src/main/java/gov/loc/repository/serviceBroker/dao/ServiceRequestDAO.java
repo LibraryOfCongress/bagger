@@ -25,5 +25,5 @@ public interface ServiceRequestDAO {
 	
 	public void delete(ServiceContainerRegistration registration);
 	
-	public List<ServiceContainerRegistration> findServiceContainerRegistrations();
+	public List<ServiceContainerRegistration> findServiceContainerRegistrations(Long latency);
 }

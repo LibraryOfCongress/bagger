@@ -1,6 +1,8 @@
 package gov.loc.repository.serviceBroker.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -139,9 +141,20 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ServiceContainerRegistration> findServiceContainerRegistrations() {
-		String queryString = "from ServiceContainerRegistration";
+	public List<ServiceContainerRegistration> findServiceContainerRegistrations(Long latency) {
+		String queryString = "from ServiceContainerRegistration sc";
+		if (latency != null)
+		{
+			queryString += " where sc.timestamp >= :date";
+		}
 		Query query = this.sessionFactory.getCurrentSession().createQuery(queryString);
+		if (latency != null)
+		{
+			Date date = new Date(Calendar.getInstance().getTime().getTime() - latency);
+			query.setTimestamp("date", date);
+			
+		}
+		
 		return query.list();
 	}
 }

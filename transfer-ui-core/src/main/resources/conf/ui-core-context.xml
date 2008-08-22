@@ -45,10 +45,10 @@
         <property name="mappings">
             <value>
                 /reports/index.html=reportsController
-                /admin/index.html=adminController
                 /admin/completedrequestlistener.html=completedServiceRequestListenerController
                 /admin/servicerequestbroker.html=serviceRequestBrokerController
                 /admin/servicecontainer.html=serviceContainerController
+                /admin/*=adminController                
                 /login/*=loginController
                 /processinstance/*/comment.*=commentController
                 /processinstance/*.*=processInstanceController
@@ -107,6 +107,14 @@
 		<property name="sessionFactory" ref="packageModelerSessionFactory" />
 	</bean>
     
+    <bean id="serviceContainerController" class="gov.loc.repository.transfer.ui.controllers.ServiceContainerController">
+    	<property name="latency" value="$ui{healthcheck.servicecontainers.latency}" />
+    </bean>
+
+	<bean id="adminController" class="gov.loc.repository.transfer.ui.controllers.AdminController">
+		<property name="configResource" ref="uiProperties" />
+	</bean>
+    
     <bean id="tilesConfigurer" class="gov.loc.repository.transfer.ui.springframework.TilesConfigurer">
 	    <property name="factoryClass" value="org.apache.struts.tiles.xmlDefinition.I18nFactorySet"/>
 		<property name="definitionPath" value="/WEB-INF/views/" />
@@ -151,5 +159,16 @@
     <property name="suffix"                   value="" />
     <property name="viewClass"                value="gov.loc.repository.transfer.ui.springframework.VelocityTilesView" />
   </bean>
+  
+  <bean id="uiProperties" class="org.springframework.core.io.ClassPathResource">
+  	<constructor-arg value="conf/ui.local.properties" />
+  </bean>
+  
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" ref="uiProperties" />
+		<property name="placeholderPrefix" value="$ui{" />
+		<property name="placeholderSuffix" value="}" />
+	</bean>
+  
   
 </beans>

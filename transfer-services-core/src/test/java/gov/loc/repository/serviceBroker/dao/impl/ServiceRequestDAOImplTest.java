@@ -1,5 +1,8 @@
 package gov.loc.repository.serviceBroker.dao.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import gov.loc.repository.serviceBroker.AbstractServiceBrokerTest;
 import gov.loc.repository.serviceBroker.ServiceContainerRegistration;
 import gov.loc.repository.serviceBroker.ServiceRequest;
@@ -165,21 +168,25 @@ public class ServiceRequestDAOImplTest extends AbstractServiceBrokerTest {
 	}
 	
 	@Test
-	public void testRegistration()
+	public void testRegistration() throws Exception
 	{
-		assertTrue(broker.findServiceContainerRegistrations().isEmpty());
-		ServiceContainerRegistration registration = this.serviveBrokerFactory.createServiceContainerRegistration(REGISTRATION_1); 
+		assertTrue(broker.findServiceContainerRegistrations(null).isEmpty());
+		ServiceContainerRegistration registration = this.serviveBrokerFactory.createServiceContainerRegistration(HOST_1, 9874);
+		assertEquals("service:jmx:hessian://" + HOST_1 + ":9874/", registration.getServiceUrl());
 		broker.save(registration);
-		assertEquals(1, broker.findServiceContainerRegistrations().size());
-		assertEquals(REGISTRATION_1, broker.findServiceContainerRegistrations().get(0).getServiceUrl());
+		assertEquals(1, broker.findServiceContainerRegistrations(null).size());
+		assertEquals(1, broker.findServiceContainerRegistrations(300000L).size());
+		Thread.sleep(5000);		
+		assertEquals(0, broker.findServiceContainerRegistrations(3000L).size());
+		assertEquals(HOST_1, broker.findServiceContainerRegistrations(null).get(0).getHost());
 		//Make sure can save twice without throwing error
-		broker.save(this.serviveBrokerFactory.createServiceContainerRegistration(REGISTRATION_1));
+		broker.save(this.serviveBrokerFactory.createServiceContainerRegistration(HOST_1, 9874));
 		
-		broker.save(this.serviveBrokerFactory.createServiceContainerRegistration(REGISTRATION_2));
-		assertEquals(2, broker.findServiceContainerRegistrations().size());
+		broker.save(this.serviveBrokerFactory.createServiceContainerRegistration(HOST_2, 9874));
+		assertEquals(2, broker.findServiceContainerRegistrations(null).size());
 		
 		broker.delete(registration);
-		assertEquals(1, broker.findServiceContainerRegistrations().size());
+		assertEquals(1, broker.findServiceContainerRegistrations(null).size());
 		
 		//Make sure can delete twice without throwing error		
 		broker.delete(registration);				

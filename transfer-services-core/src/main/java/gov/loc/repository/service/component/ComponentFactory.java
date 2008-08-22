@@ -2,7 +2,6 @@ package gov.loc.repository.service.component;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -92,14 +91,17 @@ public class ComponentFactory implements ApplicationContextAware {
 				{
 					if (jobTypeMap.containsKey(jobType))
 					{
-						throw new FatalBeanException("Multiple components can process jobType " + jobType);
+						log.warn("Multiple components can process jobType " + jobType);
 					}
-					log.debug(MessageFormat.format("Adding beanId {0} for jobType {1} tp jobTypeToBeanIdMap", beanId, jobType));
-					jobTypeMap.put(jobType, beanId);
+					else
+					{
+						log.debug(MessageFormat.format("Adding beanId {0} for jobType {1} tp jobTypeToBeanIdMap", beanId, jobType));
+						jobTypeMap.put(jobType, beanId);
+					}
 				}
 				else
 				{
-					log.debug(MessageFormat.format("Not adding beanId {0} for jobType {1} tp jobTypeToBeanIdMap", beanId, jobType));					
+					log.debug(MessageFormat.format("Not adding beanId {0} for jobType {1} to jobTypeToBeanIdMap", beanId, jobType));					
 				}
 			}
 		}
