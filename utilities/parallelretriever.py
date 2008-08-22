@@ -156,7 +156,7 @@ def fetch(filename, url):
                 break
     else:
         raise Exception("unexpected url type")
-    finished_queue.put(filename)
+    progress_reporter.finished(filename)
 
 
 def retrieve_package(options):
