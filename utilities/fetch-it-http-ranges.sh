@@ -68,9 +68,9 @@ wait
 FINAL_BAG_NAME=$(basename $BAGURL)
 
 for (( PROC=0 ; PROC < $NUM_PROCS ; PROC++ )) ; do
-    cat .bag.${PROC}.$$ >> $FINAL_BAG_NAME.$$
+    cat .bag.${PROC}.$$ >> .$FINAL_BAG_NAME.$$
     rm .bag.${PROC}.$$
 done
 
-mv $FINAL_BAG_NAME.$$ $FINAL_BAG_NAME
+mv .$FINAL_BAG_NAME.$$ $FINAL_BAG_NAME
 
