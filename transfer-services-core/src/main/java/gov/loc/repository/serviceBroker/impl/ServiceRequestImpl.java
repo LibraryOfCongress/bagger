@@ -152,7 +152,22 @@ public class ServiceRequestImpl extends ComponentRequestImpl implements ServiceR
 	
 	@Override
 	public String toString() {
-		return MessageFormat.format("Service Request with key {0}, requester {1}, jobType {2} and queue {3}.  Request string entries contains {4}.  Request integer entries contains {5}.  Request boolean entries contains {6}.  Response string entries contains {7}.  Response integer entries contains {8}.  Response boolean entries contains {9}", this.key, this.requester, this.jobType, this.queue, collectionToString(this.requestStringEntries), collectionToString(this.requestIntegerEntries), collectionToString(this.requestBooleanEntries),collectionToString(this.responseStringEntries), collectionToString(this.responseIntegerEntries), collectionToString(this.responseBooleanEntries));
+		String s = MessageFormat.format("Service Request with key {0}, correlation key {1}, requester {2}, jobType {3} and queue {4}.  Request string entries contains {5}.  Request integer entries contains {6}.  Request boolean entries contains {7}.", this.key, this.correlationKey, this.requester, this.jobType, this.queue, collectionToString(this.requestStringEntries), collectionToString(this.requestIntegerEntries), collectionToString(this.requestBooleanEntries));
+		if (responder != null)
+		{
+			s+= MessageFormat.format(" Responder is {0}.", this.responder);
+		}
+		if (isSuccess != null)
+		{
+			s+= MessageFormat.format(" IsSuccess is {0}.", isSuccess);
+			if (errorMessage != null)
+			{
+				s+= MessageFormat.format(" ErrorMessage is {0}. ErrorDetail is {1}.", errorMessage, errorDetail);
+			}
+			s+= MessageFormat.format("Response string entries contains {0}.  Response integer entries contains {1}.  Response boolean entries contains {2}.", collectionToString(this.responseStringEntries), collectionToString(this.responseIntegerEntries), collectionToString(this.responseBooleanEntries));
+		}		  		  
+		return s;
+		
 	}
 				
 	@Override

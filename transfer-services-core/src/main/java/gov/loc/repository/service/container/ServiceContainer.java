@@ -1,7 +1,5 @@
 package gov.loc.repository.service.container;
 
-import java.text.MessageFormat;
-
 import javax.annotation.PostConstruct;
 
 import gov.loc.repository.service.component.ComponentFactory;
@@ -229,12 +227,12 @@ public class ServiceContainer implements Runnable {
 			{
 				ComponentInvoker helper = new ComponentInvoker();
 				//Invoke and return taskResult
-				log.debug("Invoking for Service Request " + req);
+				log.info("Received request: " + req);
 				System.out.println("Starting " + req);
 				helper.invoke(component, req);
 			}
 			
-			log.debug( MessageFormat.format("Responding {0} for Service Request {1}", req.isSuccess(), req));
+			log.info("Responding to request: " + req);
 			System.out.println("Responding " + req);
 			broker.sendResponse(req);
 								
