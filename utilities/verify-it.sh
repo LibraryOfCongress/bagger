@@ -32,23 +32,17 @@ ALG=$(echo $MANIFEST | sed -e 's/manifest-//' | sed -e 's/.txt//')
 MANIFEST_LENGTH=$(wc -l < $MANIFEST)
 SPLIT_SIZE=$(expr $MANIFEST_LENGTH / $NUM_PROCS + 1)
 split -l $SPLIT_SIZE $(basename $MANIFEST) .manifest-$ALG-split.$$.
-i=0
 
 # Kick off an md5sum process for each split file, and collect the process ids.
 for SPLIT_FILE in .manifest-$ALG-split.$$.*
 do
     ${ALG}sum -c $SPLIT_FILE > $SPLIT_FILE.out &
-    CHILD_PIDS[i]=$!
-    ((i++))
 done
 
-trap 'for p in ${CHILD_PIDS[*]} ; do kill $p ; done' 2
+trap 'for p in $(jobs -p); do kill $p ; done' 2
 
 # Wait for everyone to finish.
-for p in ${CHILD_PIDS[*]}
-do
-    wait $p
-done
+wait
 
 # Collect the results, and look for any failures.
 cat .manifest-$ALG-split.$$.*.out | grep -v OK > manifest-$ALG-bad.txt
