@@ -37,7 +37,7 @@ public class CommandLineChowner implements Chowner {
 		String user = copyDescription.additionalParameters.get(Chowner.USER_KEY);
 		String group = copyDescription.additionalParameters.get(Chowner.GROUP_KEY);
 		
-		String commandLine = MessageFormat.format("find {0} ! -user {1} -o ! -group {2} | xargs -r chown {1}:{2}", copyDescription.destMountPath, user, group);
+		String commandLine = MessageFormat.format("find {0} ! -user {1} -o ! -group {2} | xargs -r chown {1}:{2}", copyDescription.destPath, user, group);
 		log.debug("Commandline is " + commandLine);
 		ProcessBuilderResult result = pb.execute(commandLine);
 		if (result.getExitValue() != 0)

@@ -18,4 +18,6 @@ public interface ServiceContainerRegistration {
 	
 	String getServiceUrl();
 	
+	Long getBeatCount();
+	
 }

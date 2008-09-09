@@ -13,10 +13,10 @@ config = {
     'PGUSER': 'postgres', # This is a username on PostgreSQL with SUPERUSER privlidges (default = postgres)
     'PGPASSWORD': '', # This is the password for the user specified above (default = '')
     'CATALINA_HOME': "", # Tell me where to find Tomcat (default = '/opt/coolstack/tomcat')    
-    'DB_PREFIX': 'qa', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
-    'ROLE_PREFIX': 'qa', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
+    'DB_PREFIX': 'dev', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
+    'ROLE_PREFIX': 'dev', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
     'INSTALL_DIR': '/opt/transfer', # Set the directory that the CLI tools will be unzipped to (default = '.')
-    'VERSION': 'CHANGEME', # This is the version of the release being deployed
+    'VERSION': 'CHANGEME_VERSION', # This is the version of the release being deployed
     'SQL_FILES_LOCATION': 'db', #Set the location of the sql files (default = '')
     'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
     'JBPM_PASSWD': '', # Set a password for the jbpm role (default = 'jbpm_user')
@@ -24,8 +24,13 @@ config = {
     'TOMCAT_START': '', # Set the invocation of starting tomcat (default = '/usr/sbin/svcadm disable svc:/application/csk-tomcat')
     'TOMCAT_STOP': '', # Set the invocation of stopping tomcat (default = '/usr/sbin/svcadm enable svc:/application/csk-tomcat')
     'WORKFLOW_NDNP_PROPS': {
-        'storage.staging.ndnp.basedirectory':'/tmp/staging',
-        'storage.archive.ndnp.basedirectory':'/tmp/archive',
+        'storage.staging.ndnp.basedirectory':'/vol/ndnp/transfer_dev/staging',
+        'storage.archive.ndnp.basedirectory':'/vol/ndnp/transfer_dev/archive',
+	'storage.archive.ndnp.user':'justin',
+	'storage.archive.ndnp.group':'justin',
+    },
+    'UI_PROPS': {
+        'healthcheck.servicecontainers.hosts':'plutonium,gold',
     }
 }
 
@@ -88,9 +93,13 @@ core_modeler.create_fixtures(fixtures=(
     'createrole -id repository_system',
     'createsystem -id ndnp-staging-repository -roles repository_system',
     'createrole -id storage_system',
-    'createsystem -id rdc -host beryllium.rdc.lctl.gov -roles storage_system',
+#    'createsystem -id rdc -host ingest.rdc.lctl.gov -roles storage_system',
+    #Gold is going to pretend to be ingest
+    'createsystem -id rdc -host gold.rdc.internal -roles storage_system',
     'createsystem -id rs15 -host rs15.loc.gov -roles storage_system',
-    'createsystem -id rs25 -host rs25.loc.gov -roles storage_system',
+#    'createsystem -id rs25 -host rs25.loc.gov -roles storage_system',
+    #Plutonium is going to pretend to be rs25
+    'createsystem -id rs25 -host plutonium.rdc.internal -roles storage_system',
     'createrole -id ndnp_awardee',
     'createorganization -id CU-Riv -name "CA - University of California, Riverside" -roles ndnp_awardee',
     'createorganization -id FUG -name "FL - University of Florida Libraries, Gainesville" -roles ndnp_awardee',

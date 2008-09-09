@@ -58,13 +58,18 @@ public class ServiceContainerController {
 			
 			List<ServiceContainerBean> serviceContainerBeanList = new ArrayList<ServiceContainerBean>(); 
 			List<ServiceContainerRegistration> serviceContainerRegistrationList = this.dao.findServiceContainerRegistrations(latency);
+			log.debug(MessageFormat.format("Registry contains {0} service containers", serviceContainerRegistrationList.size()));
 			for(ServiceContainerRegistration registration : serviceContainerRegistrationList)
 			{
 				ServiceContainerBean serviceContainerBean = this.loadServiceContainerBean(registration.getServiceUrl());
 				if (serviceContainerBean != null)
 				{
 					serviceContainerBeanList.add(serviceContainerBean);
-				}	
+				}
+				else
+				{
+					log.debug("Unable to load ServiceContainerBean: " + registration.getHost());
+				}
 			}
 			
 			mav.addObject("serviceContainerBeanList", serviceContainerBeanList);

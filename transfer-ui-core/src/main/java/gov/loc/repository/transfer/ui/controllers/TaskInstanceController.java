@@ -6,12 +6,9 @@ import gov.loc.repository.transfer.ui.commands.TaskInstanceUpdateCommand;
 import gov.loc.repository.transfer.ui.dao.WorkflowDao;
 import gov.loc.repository.transfer.ui.model.TaskInstanceBean;
 import gov.loc.repository.transfer.ui.model.UserBean;
-import gov.loc.repository.transfer.ui.model.VariableBean;
 import gov.loc.repository.transfer.ui.model.WorkflowBeanFactory;
 import gov.loc.repository.transfer.ui.springframework.ModelAndView;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
-import gov.loc.repository.utilities.ExceptionHelper;
-import gov.loc.repository.workflow.actionhandlers.ActionHandlerException;
 
 import java.util.Map;
 

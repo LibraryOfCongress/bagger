@@ -20,4 +20,11 @@
       </includes>
     </fileSet>
   </fileSets>
+  <files>
+  	<file>
+  		<source>${project.build.directory}/driver</source>
+  		<outputDirectory>bin</outputDirectory>
+  		<destName>processdeployer</destName>
+  	</file>
+  </files>  
 </assembly>

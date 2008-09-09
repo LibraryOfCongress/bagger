@@ -15,9 +15,10 @@ public class ProcessBuilderWrapperImplTest {
 	public void testExecute() {
 		ProcessBuilderWrapper pb = new ProcessBuilderWrapperImpl();
 		String command = "echo foo";
-		if (OperatingSystemHelper.isWindows())
+		if (OperatingSystemHelper.isLinux() || OperatingSystemHelper.isWindows())
 		{
-			command = "cmd /C " + command;
+			//Making sure pipe works
+			command += " | xargs echo";
 		}
 		ProcessBuilderResult result = pb.execute(new File("."), command);
 		assertEquals("foo", result.getOutput());

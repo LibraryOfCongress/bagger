@@ -6,7 +6,6 @@ import gov.loc.repository.serviceBroker.RequestingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.impl.ServiceRequestImpl;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
-import gov.loc.repository.workflow.continuations.CompletedServiceRequestListener.State;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -52,12 +51,12 @@ public class CompletedServiceRequestListenerTest {
 		}});		
 		
 		//ContinuationController
-		listener = new CompletedServiceRequestListener(broker, controller);
+		listener = new CompletedServiceRequestListener(broker, controller, 500L);
 		listener.start();
-		assertTrue(State.STARTED == listener.getState() || State.STARTING == listener.getState());
-		Thread.sleep(2000L);
+		assertTrue(listener.isRunning());
+		Thread.sleep(1000L);
 		listener.stop();
-		assertTrue(State.STOPPED == listener.getState() || State.STOPPING == listener.getState());
+		assertFalse(listener.isRunning());
 	}
 	
 }

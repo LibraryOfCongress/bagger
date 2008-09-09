@@ -21,8 +21,7 @@ class TransferServices():
         self.url = 'https://beryllium.rdc.lctl.gov/trac/transfer/browser/trunk/transfer-services-core/release/transfer-services-core-%s-bin.zip?format=raw' % (self.version)
         self.driver_location = "%s/%s-%s/bin" % (self.install_dir, self.project_name, self.version)
         self.drivers = ("componentdriver","servicecontainerdriver")
-        self.driver_init = "%s/service_container.sh" % (self.driver_location)
-        self.init_dir = "/etc/init.d/"
+        self.init_driver = "servicecontainer"
         self.component_location = "%s/%s-%s" % (self.install_dir, self.project_name, self.version)
         self.component_packages = {}
         for project in config['COMPONENT_PROJECTS']:
@@ -46,11 +45,17 @@ class TransferServices():
         self.components_props = config['COMPONENTS_PROPS'] if config.has_key('COMPONENTS_PROPS') else {}            
         self.db_server = config['PGHOST'] if config['PGHOST'] else 'localhost'
         self.db_port = config['PGPORT'] if config['PGPORT'] else '5432'
+        self.user = config['USER'] if config['USER'] else 'transfer'
+        self.group = config['GROUP'] if config['GROUP'] else 'transfer'
+	self.run_number = config['RUN_NUMBER'] if config['RUN_NUMBER'] else '85'
         self.logger = log.Log(self.project_name)
+        if not utils.check_java_home():
+            self.logger.error("JAVA_HOME is not set properly: '%s'" % (os.environ['JAVA_HOME']))
+            raise RuntimeError("JAVA_HOME is not set properly: '%s'" % (os.environ['JAVA_HOME']))        
 
     def start_container(self):
         """ starts up the service_container """
-        utils.restart_container(self.init_dir + "service_container.sh")
+	utils.restart_container("/etc/init.d/%s" % (self.init_driver))
         return
 
     def deploy_drivers(self):
@@ -64,12 +69,13 @@ class TransferServices():
         for component_package in self.component_packages.keys():
             utils.unzip(component_package, self.component_location, self.debug)        
         for driver in self.drivers:
-            utils.chmod("+x", "%s/%s" % (self.driver_location, driver), self.debug)
-        utils.setup_driver_init(self.driver_location, self.init_dir)
+            utils.chmod("754", "%s/%s" % (self.driver_location, driver), self.debug)
+        utils.setup_driver_init(self.init_driver, "servicecontainerdriver", self.driver_location, self.user, self.run_number)
         utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)
         utils.strtofile(self.servicecontainer_props, self.servicecontainer_conf, self.debug)
         utils.strtofile(self.component_select_props, self.service_conf, self.debug)
         utils.append_props(self.components_props, self.components_conf)
+        utils.chown(self.user, self.group, "%s/%s-%s" % (self.install_dir, self.project_name, self.version), True)
         self.logger.info("Deploying %s drivers" % (self.project_name))
         return
 

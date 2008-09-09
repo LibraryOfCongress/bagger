@@ -164,7 +164,7 @@ public class ServiceRequestImpl extends ComponentRequestImpl implements ServiceR
 			{
 				s+= MessageFormat.format(" ErrorMessage is {0}. ErrorDetail is {1}.", errorMessage, errorDetail);
 			}
-			s+= MessageFormat.format("Response string entries contains {0}.  Response integer entries contains {1}.  Response boolean entries contains {2}.", collectionToString(this.responseStringEntries), collectionToString(this.responseIntegerEntries), collectionToString(this.responseBooleanEntries));
+			s+= MessageFormat.format(" Response string entries contains {0}.  Response integer entries contains {1}.  Response boolean entries contains {2}.", collectionToString(this.responseStringEntries), collectionToString(this.responseIntegerEntries), collectionToString(this.responseBooleanEntries));
 		}		  		  
 		return s;
 		

@@ -160,8 +160,17 @@ public class ComponentRequestImpl implements ComponentRequest, Serializable {
 			throw new IllegalStateException("This request has already been responded to.");
 		}
 		this.isSuccess = false;
-		this.errorMessage = errorMessage;
+		this.errorMessage = clean(errorMessage, 255);
 		this.errorDetail = errorDetail;		
+	}
+	
+	private String clean(String string, int length)
+	{		
+		if (string == null || string.length() <= length)
+		{
+			return string;
+		}
+		return string.substring(0, length-1);
 	}
 	
 	@Override

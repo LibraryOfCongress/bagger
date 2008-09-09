@@ -166,8 +166,8 @@ public class SimpleContinuationControllerImpl implements
 			
 			this.addContextVariables(executionContext, contextVariableMap);
 						
-			executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION, error);
-			executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION_DETAIL, errorDetail);
+			executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION, clean(error));
+			executionContext.getContextInstance().createVariable(VARIABLE_LAST_EXCEPTION_DETAIL, clean(errorDetail));
 			
 			if (this.hasTransition(token, troubleshootTransition))
 			{
@@ -191,6 +191,15 @@ public class SimpleContinuationControllerImpl implements
 		
 	}
 
+	private String clean(String str)
+	{
+		if (str.length() > 255)
+		{
+			return str.substring(0, 254);
+		}
+		return str;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public boolean hasTransition(Token token, String transitionName)
 	{

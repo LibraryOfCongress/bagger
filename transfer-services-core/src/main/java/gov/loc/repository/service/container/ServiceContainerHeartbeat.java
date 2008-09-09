@@ -51,7 +51,11 @@ public class ServiceContainerHeartbeat {
 		@Override
 		public void run() {
 			log.debug("Running heartbeat");
-			ServiceContainerRegistration registration = factory.createServiceContainerRegistration(host, port);
+			ServiceContainerRegistration registration = this.dao.findServiceContainerRegistration(host);
+			if (registration == null)
+			{
+				registration = factory.createServiceContainerRegistration(host, port);
+			}
 			registration.beat();
 			this.dao.save(registration);
 		}

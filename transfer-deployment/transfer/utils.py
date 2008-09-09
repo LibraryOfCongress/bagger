@@ -75,6 +75,23 @@ def chmod(mode, file, debug=False):
     else:
         return os.popen4('chmod %s "%s"' % (mode, file))[1].read()
 
+def chown(user, group, file, recursive=False, debug=False): 
+    """ changes the ownership of a file to user:group """
+    if debug:
+        return "changing owner of %s to %s:%s\n" % (file, user, group)
+    else:
+        flag = ""
+        if recursive:
+            flag = " -R"
+        return os.popen4('chown%s %s:%s "%s"' % (flag, user, group, file))[1].read()
+
+def ln(from_file, to_file, debug=False):
+    """ creates a link to a file """
+    if debug:
+        return "linking %s to %s" % (from_file, to_file)
+    else:
+        return os.popen4("ln -s %s %s" % (from_file, to_file))[1].read()
+
 def mkdir(path, debug=False):
     """ makes directory path """
     if debug:
@@ -142,18 +159,38 @@ def replace_passwds_in_file(file, passwds):
     pattern = r'(\w+)_passwd'
     return re.sub(pattern, getrepl, file)
 
-def setup_driver_init(driver_location, init_dir):
-    """ localize init script for servicecontainerdriver and move to /etc/init.d """
-    init_script = "%s/service_container.sh" % (driver_location)
-    driver = "%s/servicecontainerdriver" % (driver_location)
-    f = open(init_script, 'r')
+def setup_driver_init(init_script, driver_script, init_location, user, run_number):
+    """ localize init script and move to /etc/init.d """
+    source_init_script = "%s/%s" % (init_location, init_script)
+    driver = "%s/%s" % (init_location, driver_script)
+    f = open(source_init_script, 'r')
     contents = f.read()
     f.close()
-    contents = re.compile(r'^COMMAND=.+$', re.M).sub(r'COMMAND=%s' % (driver), contents)
-    f = open(init_script, 'w')
+    contents = re.compile(r'^EXEC=.+$', re.M).sub(r'EXEC=%s' % (driver), contents)
+    contents = re.compile(r'^JAVA_HOME=.+$', re.M).sub(r'JAVA_HOME=%s' % (os.environ['JAVA_HOME']), contents)
+    contents = re.compile(r'^USER=.+$', re.M).sub(r'USER=%s' % (user), contents)
+    f = open(source_init_script, 'w')
     f.write(contents)
     f.close()
-    cp(init_script, init_dir)
+    initd_script= "/etc/init.d/%s" % (init_script)
+    cp(source_init_script, initd_script)
+    os_name = os.uname()[0]
+    #if sun
+    if os_name == 'SunOS':
+        perms = 744
+        group = "sys"
+        run_level=3
+    #if linux
+    elif os_name == 'Linux':
+        perms = 755
+        group = "root"
+        run_level=2
+    #else error
+    else:
+        raise RuntimeError("Unknown OS %s" % (os_name))
+    chmod(perms, initd_script)
+    chown("root", group, initd_script)
+    ln(initd_script, "/etc/rc%s.d/S%s%s" % (run_level, run_number, init_script))
     return
 
 def localize_datasources_props(file, db_server, db_port, db_name, db_prefix, role_prefix, passwds, debug=False):
@@ -200,4 +237,14 @@ def deploy_process_def(driver, process_def):
 
 def restart_container(command):
     """ restarts service container """
-    return os.popen4("%s restart" % command)[1].read()
+    os.popen4("%s restart &" % command)
+    return
+    
+def check_java_home():
+    """ checks JAVA_HOME to make sure references correct version """
+    if not os.path.isfile("%s/bin/java" % (os.environ['JAVA_HOME'])):
+        return False
+    stdin, stdout = os.popen4("java -version")
+    version_line = stdout.next()
+    return version_line.startswith("java version \"1.6.")
+    

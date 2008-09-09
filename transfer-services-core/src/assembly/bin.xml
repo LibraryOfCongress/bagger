@@ -20,4 +20,16 @@
       </includes>
     </fileSet>
   </fileSets>
+  <files>
+  	<file>
+  		<source>${project.build.directory}/driver</source>
+  		<outputDirectory>bin</outputDirectory>
+  		<destName>componentdriver</destName>
+  	</file>
+  	<file>
+  		<source>${project.build.directory}/driver</source>
+  		<outputDirectory>bin</outputDirectory>
+  		<destName>servicecontainerdriver</destName>
+  	</file>  	
+  </files>
 </assembly>

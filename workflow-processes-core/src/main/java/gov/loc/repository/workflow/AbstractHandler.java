@@ -206,13 +206,16 @@ public abstract class AbstractHandler implements ActionHandler, DecisionHandler
 		log.error(MessageFormat.format("Process instance {0}, token {1} threw an exception.  Current node is {2}.  Current action is {3}.", processInstanceId, tokenId, nodeName, actionName), ex);
 
 		//Try taking a troubleshoot transition
-		if (executionContext != null && executionContext.getNode() != null && executionContext.getNode().hasLeavingTransition(TRANSITION_TROUBLESHOOT))
+		//Can't do this if this is an event action
+		if (executionContext != null && executionContext.getNode() != null && executionContext.getAction().getEvent() == null && executionContext.getNode().hasLeavingTransition(TRANSITION_TROUBLESHOOT))
 		{
+			log.debug("Taking troubleshoot transition");
 			executionContext.leaveNode(TRANSITION_TROUBLESHOOT);
 		}
 		//Try suspending
 		else if (executionContext != null && executionContext.getToken() != null)
 		{
+			log.debug("Suspending");
 			tokenId = executionContext.getToken().getId();
 			executionContext.getToken().suspend();
 			if (this.springContext != null && this.springContext.containsBean("requestServiceBroker"))
@@ -224,7 +227,7 @@ public abstract class AbstractHandler implements ActionHandler, DecisionHandler
 		//Throw exception
 		else
 		{
-				
+			log.debug("Throwing exception");	
 			throw new ActionHandlerException(processInstanceId, tokenId, nodeName, actionName, ex);
 		}
 	}

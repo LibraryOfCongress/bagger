@@ -16,8 +16,8 @@
             <legend>Status of listener</legend>
 	        <table cellspacing="3" cellpadding="7">
                 <tr id="status" >
-                <td><label for="status_value">Status</label></td>
-                <td><span id="status_value">$listener.state</span></td>
+                <td><label for="status_value">Running</label></td>
+                <td><span id="status_value">$listener.isRunning()</span></td>
                 <td><span class="description">Whether the listener is currently running.
                 </span></td>
 		    </table>

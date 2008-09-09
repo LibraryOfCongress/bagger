@@ -1,11 +1,8 @@
-#!/bin/sh
+#! /bin/bash
 
-# If JAVA_HOME is not set, uncomment and use below
-# JAVA_HOME=/opt/sun-jdk-1.5.0
-
-# DO NOT EDIT BELOW THIS LINE
 MAXMEM=512m
 
+# DO NOT EDIT BELOW THIS LINE
 if [ "$JAVA_HOME" = "" ] ; then
   echo "ERROR: JAVA_HOME not found in your environment."
   echo
@@ -14,7 +11,7 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
-PRG="$0"
+PRG=$0
 
 # need this for relative symlinks
 while [ -h "$PRG" ] ; do
@@ -27,13 +24,14 @@ while [ -h "$PRG" ] ; do
     fi
 done
 
-saveddir=`pwd`
-
-APP_HOME=`dirname "$PRG"`/..
+APP_HOME=`dirname $PRG`/..
 
 # make it fully qualified
-APP_HOME=`cd "$APP_HOME" && pwd`
+APP_HOME=`cd $APP_HOME && pwd`
 
-cd "$saveddir"
+# Needed since Java logging points to "../logs"
+cd $APP_HOME/bin
 
-exec ${JAVA_HOME}/bin/java -Xmx$MAXMEM -classpath "$APP_HOME"/lib/classworlds-1.1.jar -Dclassworlds.conf="$APP_HOME"/bin/fixturedriver.classworlds.conf "-Dapp.home=$APP_HOME" org.codehaus.classworlds.Launcher "$@"
+APP_NAME=`basename $PRG`
+
+$JAVA_HOME/bin/java -Xmx$MAXMEM -classpath $APP_HOME/lib/classworlds-1.1.jar -Dclassworlds.conf=$APP_HOME/bin/$APP_NAME.classworlds.conf -Dapp.home=$APP_HOME org.codehaus.classworlds.Launcher "$@"

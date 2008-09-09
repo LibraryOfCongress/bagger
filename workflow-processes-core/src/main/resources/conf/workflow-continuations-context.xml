@@ -12,4 +12,9 @@
 
 	 	<context:component-scan base-package="gov.loc.repository.workflow.continuations"/>	
 	
+		<bean id="completedServiceRequestListener" class="gov.loc.repository.workflow.continuations.CompletedServiceRequestListener">
+			<constructor-arg ref="requestServiceBroker" />
+			<constructor-arg ref="continuationController" />
+			<constructor-arg value="10000" />
+		</bean>
 </beans>

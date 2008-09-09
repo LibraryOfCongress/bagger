@@ -3,7 +3,6 @@ package gov.loc.repository.transfer.ui.controllers;
 import gov.loc.repository.transfer.ui.UIConstants;
 import gov.loc.repository.transfer.ui.utilities.PermissionsHelper;
 import gov.loc.repository.workflow.continuations.CompletedServiceRequestListener;
-import gov.loc.repository.workflow.continuations.CompletedServiceRequestListener.State;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -43,13 +42,8 @@ public class CompletedServiceRequestListenerController
 		PermissionsHelper permissions = new PermissionsHelper(req);
 		
 		ModelAndView mav = new ModelAndView("completedrequestlistener");
-		try {
-			mav.addObject("listener", this.listener);
-			mav.addObject("permissions", permissions);
-		} catch (Exception e) {
-			log.error("CompletedServiceRequestListenerController.handleGet: " + e.getMessage());
-			req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Unable to get Completed Request Listener");
-		}
+		mav.addObject("listener", this.listener);
+		mav.addObject("permissions", permissions);
 		return mav;		
 	}
 
@@ -57,11 +51,11 @@ public class CompletedServiceRequestListenerController
 	public ModelAndView handlePost(HttpServletRequest req) throws Exception {
 		try
 		{
-			if (req.getParameter("start") != null && this.listener.getState() == State.STOPPED) {
+			if (req.getParameter("start") != null && ! this.listener.isRunning()) {
 				this.listener.start();
 				req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Started Service Request Listener");
 			}
-			else if (req.getParameter("stop") != null && this.listener.getState() == State.STARTED) {
+			else if (req.getParameter("stop") != null && this.listener.isRunning()) {
 				this.listener.stop();
 				req.getSession().setAttribute(UIConstants.SESSION_MESSAGE, "Stopped Service Request Listener");
 			}

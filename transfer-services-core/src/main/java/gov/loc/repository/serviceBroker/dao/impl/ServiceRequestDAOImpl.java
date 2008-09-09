@@ -142,19 +142,35 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ServiceContainerRegistration> findServiceContainerRegistrations(Long latency) {
+		//Unfortunately, there is no good cross-db way of doing this date calculation
+		Date comparisonTimestamp = null;
+		if (latency != null)
+		{
+			Query timeStampQuery = this.sessionFactory.getCurrentSession().createSQLQuery("select distinct CURRENT_TIMESTAMP from service_container_registry");
+			Date currentTimestamp = (Date)timeStampQuery.uniqueResult();
+			comparisonTimestamp = new Date(currentTimestamp.getTime() - latency);
+		}
+		
 		String queryString = "from ServiceContainerRegistration sc";
 		if (latency != null)
 		{
-			queryString += " where sc.timestamp >= :date";
+			queryString += " where sc.timestamp > :comparisonTimestamp";
 		}
 		Query query = this.sessionFactory.getCurrentSession().createQuery(queryString);
 		if (latency != null)
 		{
-			Date date = new Date(Calendar.getInstance().getTime().getTime() - latency);
-			query.setTimestamp("date", date);
-			
+			query.setTimestamp("comparisonTimestamp", comparisonTimestamp);
 		}
-		
 		return query.list();
+	}
+	
+	@Override
+	public ServiceContainerRegistration findServiceContainerRegistration(
+			String host) {
+		String queryString = "from ServiceContainerRegistration sc " +
+			"where sc.host = :host";
+		Query query = this.sessionFactory.getCurrentSession().createQuery(queryString);
+		query.setString("host", host);
+		return (ServiceContainerRegistration)query.uniqueResult();
 	}
 }

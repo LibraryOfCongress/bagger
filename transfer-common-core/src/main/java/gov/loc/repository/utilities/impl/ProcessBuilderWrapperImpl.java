@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import gov.loc.repository.utilities.OperatingSystemHelper;
 import gov.loc.repository.utilities.ProcessBuilderWrapper;
 
 @Component("processBuilderWrapper")
@@ -22,11 +23,22 @@ public class ProcessBuilderWrapperImpl implements ProcessBuilderWrapper {
 		try
 		{
 			List<String> commandList = new ArrayList<String>();
-			String[] commandArray = commandLine.split(" ");
-			for(int i=0; i < commandArray.length; i++)
+			if (OperatingSystemHelper.isLinux() || OperatingSystemHelper.isSolaris())
 			{
-				commandList.add(commandArray[i]);
+				commandList.add("/bin/sh");
+				commandList.add("-c");
 			}
+			else if (OperatingSystemHelper.isWindows())
+			{
+				commandList.add("cmd");
+				commandList.add("/C");
+				
+			}
+			else
+			{
+				throw new RuntimeException("OS not supported");
+			}
+			commandList.add(commandLine);
 			
 			//Check free space
 			ProcessBuilder builder = new ProcessBuilder(commandList);		

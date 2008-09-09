@@ -31,7 +31,7 @@ class AbstractDB():
         os.environ['PGPORT'] = self.db_port
         os.environ['PGUSER'] = config['PGUSER'] if config['PGUSER'] else 'postgres'
         os.environ['PGPASSWORD'] = config['PGPASSWORD'] if config['PGPASSWORD'] else ""
-        if not self.java_home():
+        if not utils.check_java_home():
             self.logger.error("JAVA_HOME is not set properly: '%s'" % (os.environ['JAVA_HOME']))
             raise RuntimeError("JAVA_HOME is not set properly: '%s'" % (os.environ['JAVA_HOME']))
         if not self.connect():
@@ -123,7 +123,7 @@ class AbstractDB():
         except IOError, e:
             self.logger.error("Could not unzip driver '%s' into '%s': %s" % (self.driver_package, self.install_dir, e))
             raise RuntimeError("Could not unzip driver '%s' into '%s': %s" % (self.driver_package, self.install_dir, e))
-        if utils.chmod("+x", self.driver, self.debug).find("Operation not permitted") != -1:
+        if utils.chmod("0754", self.driver, self.debug).find("Operation not permitted") != -1:
             self.logger.error("Could not chmod driver '%s'" % (self.driver))
             raise RuntimeError("Could not chmod driver '%s'" % (self.driver))
         utils.localize_datasources_props(self.datasources_props, self.db_server, self.db_port, self.original_db_name, self.db_prefix, self.role_prefix, self.passwds, self.debug)

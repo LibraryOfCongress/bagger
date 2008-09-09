@@ -18,6 +18,7 @@ import com.martiansoftware.jsap.JSAPResult;
 import com.martiansoftware.jsap.Parameter;
 import com.martiansoftware.jsap.SimpleJSAP;
 
+import gov.loc.repository.results.SimpleResult;
 import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCopier.Chowner;
 import gov.loc.repository.transfer.components.filemanagement.impl.ConfigurableCopier.CopyDescription;
 import gov.loc.repository.utilities.ProcessBuilderWrapper;
@@ -102,19 +103,29 @@ public class Transporter {
     {
                                                 
         String stagingPath = stagingBasePath + (new File(srcPath)).getName();
-
-        boolean isArchiveSuccess = this.execute(owner, "cp -rf " + stagingPath + " " + destPath);
-        if (isArchiveSuccess) {
-            this.execute(owner, "rm -rf " + stagingPath);
-        } 
-        else {
-            throw new RuntimeException(MessageFormat.format("Archive of {0} to {1} by user {2} was not successful. Also, {0} not cleaned", stagingPath, destPath, owner));
+    	//Need to make directory
+    	SimpleResult result1 = this.execute(owner, MessageFormat.format("[[ -d {0} ]] || mkdir -p {0}", destPath));
+        if (! result1.isSuccess()) {
+            throw new RuntimeException(MessageFormat.format("Creating {0} by user {1} was not successful. Reason is {2}.", destPath, owner, result1.getMessage()));
         }
+        SimpleResult result2 = this.execute(owner, "cp -rf " + stagingPath + "/* " + destPath);
+        if (! result2.isSuccess()) {
+            throw new RuntimeException(MessageFormat.format("Archive of {0} to {1} by user {2} was not successful. Reason is {3}. Also, {0} not cleaned", stagingPath, destPath, owner, result2.getMessage()));
+        }        
+        String commandLine = "rm -rf " + stagingPath;
+        log.debug("Commandline is " + commandLine);
+        ProcessBuilderResult result = pb.execute(commandLine);
+        if (result.getExitValue() != 0)
+        {
+            log.error(MessageFormat.format("{0} returned {1}.  Output was {2}", commandLine, result.getExitValue(), result.getOutput()));
+            throw new RuntimeException(MessageFormat.format("Deleting {0} failed", commandLine));
+        }        
     }
     
-    private boolean execute(String archiveOwner, String cmd) {
+    private SimpleResult execute(String archiveOwner, String cmd) {
         try {
-            // re-using keyFile from before, start an ssh connection to loopback
+            log.debug(MessageFormat.format("Executing {0} as {1}", cmd, archiveOwner));
+        	// re-using keyFile from before, start an ssh connection to loopback
             // and kick off a copy
             // cp and rm must be on the path of archiveOwner's local account
             JSch jsch = new JSch();
@@ -146,15 +157,21 @@ public class Transporter {
                 try {
                     Thread.sleep(1000);
                 }
-                catch (Exception ee) { return false; }
+                catch (Exception ee) {
+                	return new SimpleResult(false, ee.getMessage());
+                }
             }
             channel.disconnect();
             session.disconnect();
-            return (channel.getExitStatus() == 0);
+            if (channel.getExitStatus() == 0)
+            {
+            	return new SimpleResult(true);
+            }
+            return new SimpleResult(false, "Exit status is " + channel.getExitStatus());
         }
         catch (Exception e) {
             log.error(MessageFormat.format("transport error: {0}", e.getMessage()));
-            return false;
+            return new SimpleResult(false, e.getMessage());
         }
     }
 

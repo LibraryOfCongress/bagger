@@ -4,7 +4,6 @@ import gov.loc.repository.serviceBroker.ServiceContainerRegistration;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -12,8 +11,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.SQLInsert;
+import org.hibernate.annotations.SQLUpdate;
+
 @Entity(name="ServiceContainerRegistration")
 @Table(name = "service_container_registry")
+@SQLInsert(sql="INSERT INTO service_container_registry(beat_count, port,host,timestamp) VALUES(?,?,?,CURRENT_TIMESTAMP)")
+@SQLUpdate(sql="UPDATE service_container_registry SET beat_count=?, port=?, timestamp=CURRENT_TIMESTAMP WHERE host=?")
 public class ServiceContainerRegistrationImpl implements Serializable, ServiceContainerRegistration {
 
 	private static final long serialVersionUID = 1L;
@@ -25,8 +31,12 @@ public class ServiceContainerRegistrationImpl implements Serializable, ServiceCo
 	@Column(name="port", nullable = false)
 	private Integer port;
 	
-	@Column(name="timestamp", nullable = false)
-	private Date timestamp = Calendar.getInstance().getTime();
+	@Generated(GenerationTime.ALWAYS)
+	@Column(name="timestamp", nullable = true, insertable=false, updatable=false)
+	private Date timestamp;
+	
+	@Column(name="beat_count", nullable = false)
+	private Long beatCount = 0L;
 	
 	public ServiceContainerRegistrationImpl() {
 	
@@ -45,7 +55,7 @@ public class ServiceContainerRegistrationImpl implements Serializable, ServiceCo
 
 	@Override
 	public void beat() {
-		this.timestamp = Calendar.getInstance().getTime();
+		this.beatCount = this.beatCount + 1;
 		
 	}
 
@@ -76,5 +86,8 @@ public class ServiceContainerRegistrationImpl implements Serializable, ServiceCo
 		
 	}
 	
-	
+	@Override
+	public Long getBeatCount() {
+		return this.beatCount;
+	}
 }

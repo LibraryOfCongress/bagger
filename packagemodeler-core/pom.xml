@@ -23,6 +23,31 @@
       </resource>
     </resources>
     <plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-dependency-plugin</artifactId>
+			<executions>
+				<execution>
+					<id>unpack</id>
+					<phase>package</phase>
+					<goals>
+						<goal>unpack</goal>
+					</goals>
+					<configuration>
+						<artifactItems>
+							<artifactItem>
+								<groupId>loc-repository</groupId>
+								<artifactId>transfer-common-core</artifactId>
+								<version>${pom.version}</version>
+								<type>jar</type>
+								<outputDirectory>${project.build.directory}</outputDirectory>
+								<includes>driver</includes>
+							</artifactItem>
+						</artifactItems>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>    	    
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>hibernate3-maven-plugin</artifactId>
