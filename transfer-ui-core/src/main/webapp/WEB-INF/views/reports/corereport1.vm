@@ -136,7 +136,7 @@
 			    			</tr>
 			    			<tr>
 			    				<td>LC package structure</td>
-			    				<td>$fileLocation.lCPackageStructure</td>
+			    				<td>$fileLocation.isBag()</td>
 			    			</tr>
 			    			<tr>
 			    				<td>File instance count</td>

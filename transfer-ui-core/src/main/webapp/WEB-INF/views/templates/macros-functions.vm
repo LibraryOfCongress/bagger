@@ -69,7 +69,7 @@
 #*
   -Writes out collection of ObjectEntries
 *#
-#macro( object_entries $req )
+#macro( object_entries $entries )
 	#set($sep = "")
-	{#foreach($entry in $req.entries)$sep$entry.key=$!{entry.value}#set($sep = ", ")#end}
+	{#foreach($entry in $entries)$sep$entry.key=$!{entry.value}#set($sep = ", ")#end}
 #end

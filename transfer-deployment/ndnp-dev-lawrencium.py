@@ -30,7 +30,7 @@ config = {
 	'storage.archive.ndnp.group':'justin',
     },
     'UI_PROPS': {
-        'healthcheck.servicecontainers.hosts':'plutonium,gold',
+        'healthcheck.servicecontainers.hosts':'plutonium,cobalt',
     }
 }
 
@@ -95,7 +95,7 @@ core_modeler.create_fixtures(fixtures=(
     'createrole -id storage_system',
 #    'createsystem -id rdc -host ingest.rdc.lctl.gov -roles storage_system',
     #Gold is going to pretend to be ingest
-    'createsystem -id rdc -host gold.rdc.internal -roles storage_system',
+    'createsystem -id rdc -host cobalt.rdc.internal -roles storage_system',
     'createsystem -id rs15 -host rs15.loc.gov -roles storage_system',
 #    'createsystem -id rs25 -host rs25.loc.gov -roles storage_system',
     #Plutonium is going to pretend to be rs25

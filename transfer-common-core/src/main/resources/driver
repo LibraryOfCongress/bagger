@@ -1,6 +1,6 @@
 #! /bin/bash
 
-MAXMEM=512m
+MAXMEM=2048m
 
 # DO NOT EDIT BELOW THIS LINE
 if [ "$JAVA_HOME" = "" ] ; then

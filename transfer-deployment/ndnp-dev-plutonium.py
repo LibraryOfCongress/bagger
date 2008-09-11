@@ -18,8 +18,8 @@ config = {
     'ROLE_PREFIX': 'dev', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
     'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
     'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')
-    'USER':'', #Set the user that the service container should run as (default = 'transfer')
-    'GROUP':'datandnp', #Set the group that the service container should run as (default = 'transfer')
+    'USER':'devtransfer', #Set the user that the service container should run as (default = 'transfer')
+    'GROUP':'devtransfer', #Set the group that the service container should run as (default = 'transfer')
     'RUN_NUMBER':'', #Set the run number for the service container (default = 85)
     'COMPONENTS_PROPS': {
 #        'components.zfsfilesystemcreator.pool':'zpool',

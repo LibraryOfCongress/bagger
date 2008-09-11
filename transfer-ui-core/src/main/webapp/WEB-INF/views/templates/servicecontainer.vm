@@ -29,7 +29,19 @@
             		<tr>
             			<td>Active service request count</td>
             			<td>$serviceContainerBean.activeServiceRequestCount</td>
-		            </tr>            		
+		            </tr>
+		            <tr>
+		            	<td>Max Alloted Memory</td>
+		            	<td>$serviceContainerBean.maxMemory</td>
+		            </tr>
+		            <tr>
+		            	<td>Total Memory In Use</td>
+		            	<td>$serviceContainerBean.totalMemory</td>
+		            </tr>
+		            <tr>
+		            	<td>Free Memory</td>
+		            	<td>$serviceContainerBean.freeMemory</td>
+		            </tr>             		
 	            </table>
 	            #if ($permissions.canAdministerServiceContainer())
 					<form method="post" action="${contextPath}/admin/servicecontainer.html">

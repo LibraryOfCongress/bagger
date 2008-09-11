@@ -9,7 +9,7 @@ config = {
     'TRANSFER_SERVICES_INSTALL_DIR': '/opt/transfer', # Set the directory that the CLI tools will be unzipped to (default = '.')
     'VERSION': 'CHANGEME_VERSION', # This is the version of the release being deployed
     'COMPONENT_PROJECTS': ("core","ndnp"),
-    'HOST': 'gold', #The hostname, e.g., localhost or ac, that the service container is to be exposed under.  Also used to identify the responder.  Default is localhost.    
+    'HOST': 'cobalt', #The hostname, e.g., localhost or ac, that the service container is to be exposed under.  Also used to identify the responder.  Default is localhost.    
     'QUEUES': "jobqueue,firewirejobqueue,nasheadjobqueue", #List of the queues to listen to, e.g., jobqueue,firewirejobqueue.  Default is jobqueue
     'JOBTYPES': "test,inventoryfilesondisk,ndnplocalcopy,calculatedirectorysize,filesystemcreate", #List of the job types to handle, e.g., test,inventoryfilesondisk.  Default is test
     'COMPONENT_SELECTION': {'filesystemcreate': "mkDirFileSystemCreator"}, #Map of jobTypes to beanIds.  Used to select beans to use when there are multiple beans for a single jobType.
@@ -19,8 +19,8 @@ config = {
     'ROLE_PREFIX': 'dev', # This will prepend a custom prefix to the roles that will get created.  An _ will be appended. (default = '')
     'TRANSFER_PASSWD': '', # Set a password for the package modeler user role (default = 'transfer_user')
     'REQUEST_BROKER_PASSWD': '', # Set a password for the service_request_broker role (default = 'service_request_broker_user')
-    'USER':'', #Set the user that the service container should run as (default = 'transfer')
-    'GROUP':'datandnp', #Set the group for the service container (default = 'transfer')
+    'USER':'devtransfer', #Set the user that the service container should run as (default = 'transfer')
+    'GROUP':'devtransfer', #Set the group for the service container (default = 'transfer')
     'RUN_NUMBER':'', #Set the run number for the service container (default = 85)
 
 }

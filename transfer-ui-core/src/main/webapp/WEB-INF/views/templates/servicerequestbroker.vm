@@ -16,7 +16,7 @@
                         <th>Queue</th>
                         <th>JobType</th>
                         <th>Corr. key</th>
-                        <th>Variables</th>
+                        <th>Req. entries</th>
                         <th>Requester</th>
                         <th>Req. date</th>
                         <th>Responder</th>
@@ -30,7 +30,7 @@
 						<td>$req.queue</td>
 						<td>$req.jobType</td>
 						<td>$req.correlationKey</td>
-						<td>#object_entries($req)</td>
+						<td>#object_entries($req.requestEntries)</td>
 						<td>$req.requester</td>
 						<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestDate)}</td>
 						<td>$!req.responder</td>

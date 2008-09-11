@@ -187,6 +187,21 @@ public class ServiceContainerController {
 			return (Integer)getAttribute("ActiveServiceRequestCount");
 		}
 		
+		public Long getMaxMemory()
+		{
+			return (Long)getAttribute("MaxMemory");
+		}
+		
+		public Long getFreeMemory()
+		{
+			return (Long)getAttribute("FreeMemory");
+		}
+		
+		public Long getTotalMemory()
+		{
+			return (Long)getAttribute("TotalMemory");
+		}
+		
 		public void start()
 		{
 			this.invoke("start");

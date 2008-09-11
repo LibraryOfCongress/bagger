@@ -67,6 +67,25 @@ public class ServiceContainer implements Runnable {
 		return this.executor.getActiveCount();
 	}
 	
+	@ManagedAttribute
+	public Long getMaxMemory()
+	{
+		return Runtime.getRuntime().maxMemory()/1024;		
+	}
+
+	@ManagedAttribute
+	public Long getTotalMemory()
+	{
+		return Runtime.getRuntime().totalMemory()/1024;		
+	}
+	
+	@ManagedAttribute
+	public Long getFreeMemory()
+	{
+		return Runtime.getRuntime().freeMemory()/1024;		
+	}
+	
+	
 	@PostConstruct
 	public void init() {		
 		for(String jobType : this.broker.getJobTypes())

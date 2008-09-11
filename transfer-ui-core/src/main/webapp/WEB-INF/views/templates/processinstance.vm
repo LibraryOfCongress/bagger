@@ -265,12 +265,13 @@
 			                        <th>Key</th>
 			                        <th>Queue</th>
 			                        <th>JobType</th>
-			                        <th>Variables</th>
+			                        <th>Req. entries</th>
 			                        <th>Req. date</th>
 			                        <th>Responder</th>
 			                        <th>Req. ack. date</th>
 			                        <th>Resp. date</th>
 			                        <th>Resp. ack. date</th>
+			                        <th>Resp. entries</th>
 			                        <th>Suspended</th>
 			                        <th>Success</th>
 			                        <th>Error</th>
@@ -282,12 +283,13 @@
 									<td>$req.key</td>
 									<td>$req.queue</td>
 									<td>$req.jobType</td>									
-									<td>#object_entries($req)</td>
+									<td>#object_entries($req.requestEntries)</td>
 									<td>${date.format('yyyy-MM-dd hh:mm', $req.requestDate)}</td>
 									<td>$!req.responder</td>
 									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.requestAcknowledgedDate)}</td>
 									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.responseDate)}</td>
 									<td>$!{date.format('yyyy-MM-dd hh:mm', $req.responseAcknowledgedDate)}</td>
+									<td>#object_entries($req.responseEntries)</td>
 									<td>$!{req.isSuspended()}</td>
 									<td>$!{req.isSuccess()}</td>
 									<td>$!req.errorMessage</td>
