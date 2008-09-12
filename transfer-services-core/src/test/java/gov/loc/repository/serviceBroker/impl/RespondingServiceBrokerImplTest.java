@@ -6,6 +6,7 @@ import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,7 +17,14 @@ public class RespondingServiceBrokerImplTest extends AbstractServiceBrokerTest {
 	
 	@Autowired
 	private ServiceRequestDAO dao;
-		
+	
+	@Before
+	public void setup()
+	{
+		broker.setJobTypes(new String[] {JOBTYPE_1});
+		broker.setQueues(new String[] {QUEUE_1});
+	}
+	
 	@Test
 	public void testFindAndAcknowledgeNextServiceRequest() {
 		assertTrue(this.dao.findServiceRequests(false, false, false).isEmpty());

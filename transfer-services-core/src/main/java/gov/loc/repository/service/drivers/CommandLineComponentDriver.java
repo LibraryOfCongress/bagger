@@ -23,7 +23,7 @@ public class CommandLineComponentDriver {
 				if (key != null)
 				{
 					System.err.println(MessageFormat.format("key {0} follows another key", arg));
-					return;
+					System.exit(1);
 				}
 				key = arg.substring(1);
 			}
@@ -68,14 +68,14 @@ public class CommandLineComponentDriver {
 				else
 				{
 					System.err.println(MessageFormat.format("JobType is already defined as {0} and there is no key for value {1}", req.getJobType(), arg));
-					return;
+					System.exit(1);
 				}
 			}
 		}
 		if (req.getJobType() == null)
 		{
 			System.err.println("jobType is not defined");
-			return;
+			System.exit(1);
 		}
 		System.out.println("jobType:  " + req.getJobType());
 		System.out.println("request entries:");

@@ -1,11 +1,21 @@
 package gov.loc.repository.service.container;
 
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import gov.loc.repository.service.component.ComponentFactory;
 import gov.loc.repository.service.component.ComponentInvoker;
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
+import gov.loc.repository.utilities.ProcessBuilderWrapper;
+import gov.loc.repository.utilities.ProcessBuilderWrapper.ProcessBuilderResult;
+import gov.loc.repository.utilities.impl.ProcessBuilderWrapperImpl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,13 +39,31 @@ public class ServiceContainer implements Runnable {
 	private State state = State.STOPPED;
 	private RespondingServiceBroker broker;
 	private ServiceContainerHeartbeat heartbeat;
+	private List<String> delegateJobTypeList = new ArrayList<String>();
 	
-	public ServiceContainer(ThreadPoolTaskExecutor executor, RespondingServiceBroker broker, ComponentFactory factory, ServiceContainerHeartbeat registry) {
+	public ServiceContainer(ThreadPoolTaskExecutor executor, RespondingServiceBroker broker, ComponentFactory factory, ServiceContainerHeartbeat registry, String[] queues, String[] jobTypes, String[] delegateJobTypes) {
 		this.factory = factory;
 		this.executor = executor;
 		this.executor.setWaitForTasksToCompleteOnShutdown(true);
 		this.broker = broker;
 		this.heartbeat = registry;
+		
+		List<String> mergedJobTypeList = new ArrayList<String>();
+		for(String jobType : jobTypes)
+		{
+			mergedJobTypeList.add(jobType);
+		}
+		for(String jobType : delegateJobTypes)
+		{
+			if (! mergedJobTypeList.contains(jobType))
+			{
+				mergedJobTypeList.add(jobType);
+			}
+			delegateJobTypeList.add(jobType);
+		}
+		this.broker.setJobTypes(mergedJobTypeList.toArray(new String[] {}));
+		this.broker.setQueues(queues);
+				
 	}
 	
 	public void setWait(Long wait)
@@ -121,7 +149,6 @@ public class ServiceContainer implements Runnable {
 			log.debug("Starting");
 			this.heartbeat.start();
 		}
-		
 		while(this.state != State.SHUTDOWN)
 		{
 			if (this.state == State.STARTED)
@@ -131,7 +158,17 @@ public class ServiceContainer implements Runnable {
 					ServiceRequest req = this.getNextServiceRequest();
 					while(req != null)
 					{					
-						this.executor.execute(new ServiceRunnable(req, this.broker, this.factory));					
+						if (! this.delegateJobTypeList.contains(req.getJobType()))
+						{
+							log.debug("Executing request with ServiceRunnable");
+							this.executor.execute(new ServiceRunnable(req, this.broker, this.factory));	
+						}
+						else
+						{
+							log.debug("Executing request with DelegationRunnable");
+							this.executor.execute(new DelegationRunnable(req, this.broker));
+						}
+											
 						req = this.getNextServiceRequest();
 					}
 					try
@@ -255,6 +292,52 @@ public class ServiceContainer implements Runnable {
 			System.out.println("Responding " + req);
 			broker.sendResponse(req);
 								
+		}
+				
+	}
+	
+	public class DelegationRunnable implements Runnable
+	{
+		private ServiceRequest req;
+		private RespondingServiceBroker broker;
+		
+		public DelegationRunnable(ServiceRequest req, RespondingServiceBroker broker) {
+			this.req = req;
+			this.broker = broker;
+		}
+		
+		public ServiceRequest getServiceRequest()
+		{
+			return this.req;
+		}
+		
+		@Override
+		public void run() {
+			ProcessBuilderWrapper pb = new ProcessBuilderWrapperImpl();
+			Map<String, String> env = new HashMap<String, String>();
+			env.put("JAVA_OPTS", "-Dlog_suffix=-" + System.currentTimeMillis());
+			ProcessBuilderResult result = pb.execute(new File("."), "./delegationdriver " + this.req.getKey(), env);
+			if (result.getExitValue() != 0)
+			{
+				log.error(MessageFormat.format("Call to delegationdriver for ServiceRequest {0} returned {1}.  Output is {2}", this.req.getKey(), result.getExitValue(), result.getOutput()));
+				try
+				{
+					req = broker.findRequiredServiceRequest(req.getKey());
+					if (req.getResponseDate() == null)
+					{
+						req.respondFailure("Call to delegationdriver returned " + result.getExitValue(), result.getOutput());
+						log.info("Responding to request: " + req);
+						System.out.println("Responding " + req);
+						broker.sendResponse(req);
+					}
+					
+				}
+				catch(Exception ex)
+				{
+					log.error(ex);
+				}
+				
+			}											
 		}
 	}
 	

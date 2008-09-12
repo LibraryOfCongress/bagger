@@ -1,6 +1,5 @@
 package gov.loc.repository.transfer.components.filemanagement.impl;
 
-import static gov.loc.repository.transfer.components.ComponentConstants.TRANSPORT_USERNAME;
 import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
@@ -17,19 +16,21 @@ public class ArchivalRemoteDirectoryCopier implements DirectoryCopier {
 	
 	private String keyFile;
 	private String stagingBasePath;
+	private String remoteUser;
     
-	public ArchivalRemoteDirectoryCopier(String keyFile, String stagingBasePath) {
+	public ArchivalRemoteDirectoryCopier(String keyFile, String stagingBasePath, String remoteUser) {
 		this.keyFile = keyFile;
 		this.stagingBasePath = stagingBasePath;
+		this.remoteUser = remoteUser;
 	}
 	
 	@Override
 	public void copy(CopyDescription copyDescription) {
         log.debug(MessageFormat.format("Performing copy from {0} to {1}", copyDescription.srcPath, copyDescription.destCopyToPath));
 
-		String remoteHost = ((StorageSystemFileLocation)copyDescription.destFileLocation).getStorageSystem().getHost();
+		String remoteHost = ((StorageSystemFileLocation)copyDescription.srcFileLocation).getStorageSystem().getHost();
         Transporter transport = new Transporter(this.keyFile, this.stagingBasePath);
        
-		transport.pullAndArchive(TRANSPORT_USERNAME, remoteHost, copyDescription);
+		transport.pullAndArchive(remoteUser, remoteHost, copyDescription);
 	}
 }

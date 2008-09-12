@@ -33,12 +33,13 @@
 				<constructor-arg value="$s{interval} " />			
 			</bean>
 		</constructor-arg>
+		<constructor-arg value="$s{queues}" />
+		<constructor-arg value="$s{jobtypes}" />
+		<constructor-arg value="$s{delegatejobtypes}" />		
 	</bean>
 	
 	<bean id="respondingServiceBroker" parent="abstractResponseServiceBroker">
 		<constructor-arg value="$s{host}" />
-		<constructor-arg value="$s{queues}" />
-		<constructor-arg value="$s{jobtypes}" />
 	</bean>		
 		
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -49,6 +50,7 @@
 			<value>
 				port=9874
 				interval=300000
+				delegatejobtypes=
 			</value>
 		</property>
 	</bean>

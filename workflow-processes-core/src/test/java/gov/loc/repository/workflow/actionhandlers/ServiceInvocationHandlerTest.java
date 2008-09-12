@@ -74,6 +74,8 @@ public class ServiceInvocationHandlerTest {
 		workflowConfig.addProperty("none.TestComponent.queue", QUEUE_1);
 		
 		actionHandler.setBeanFactory(this.applicationContext);
+		broker.setJobTypes(new String[] {"test"});
+		broker.setQueues(new String[] {"jobQueue"});
 	}
 	
 	@Test

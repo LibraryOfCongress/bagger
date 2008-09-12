@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -18,8 +19,12 @@ public class ProcessBuilderWrapperImpl implements ProcessBuilderWrapper {
 	public ProcessBuilderResult execute(String commandLine) {
 		return this.execute(new File("."), commandLine);
 	}
-	
+
 	public ProcessBuilderResult execute(File directory, String commandLine) {
+		return this.execute(directory, commandLine, null);
+	}
+	
+	public ProcessBuilderResult execute(File directory, String commandLine, Map<String,String> env) {
 		try
 		{
 			List<String> commandList = new ArrayList<String>();
@@ -39,9 +44,13 @@ public class ProcessBuilderWrapperImpl implements ProcessBuilderWrapper {
 				throw new RuntimeException("OS not supported");
 			}
 			commandList.add(commandLine);
+						
+			ProcessBuilder builder = new ProcessBuilder(commandList);
+			if (env != null)
+			{
+				builder.environment().putAll(env);
+			}
 			
-			//Check free space
-			ProcessBuilder builder = new ProcessBuilder(commandList);		
 			//Set working directory to the package directory
 			builder.directory(directory);		
 			//redirects stderror to stdout
@@ -60,10 +69,12 @@ public class ProcessBuilderWrapperImpl implements ProcessBuilderWrapper {
 			}
 			String output = buf.toString();
 			int exitValue = process.waitFor();
+			/*
 			if (exitValue != 0)
 			{
 				throw new RuntimeException(MessageFormat.format("{0} returned {1}.  Output was {2}", commandLine, exitValue, output));
 			}
+			*/
 			return new ProcessBuilderResult(exitValue, output);
 		}
 		catch(Exception ex)

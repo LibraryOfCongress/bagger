@@ -11,6 +11,10 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
+if [ "$JAVA_OPTS" = "" ] ; then
+  JAVA_OPTS="-Dfoo=bar"
+fi
+
 PRG=$0
 
 # need this for relative symlinks
@@ -34,4 +38,4 @@ cd $APP_HOME/bin
 
 APP_NAME=`basename $PRG`
 
-$JAVA_HOME/bin/java -Xmx$MAXMEM -classpath $APP_HOME/lib/classworlds-1.1.jar -Dclassworlds.conf=$APP_HOME/bin/$APP_NAME.classworlds.conf -Dapp.home=$APP_HOME org.codehaus.classworlds.Launcher "$@"
+$JAVA_HOME/bin/java "$JAVA_OPTS" -Xmx$MAXMEM -classpath $APP_HOME/lib/classworlds-1.1.jar -Dclassworlds.conf=$APP_HOME/bin/$APP_NAME.classworlds.conf -Dapp.home=$APP_HOME org.codehaus.classworlds.Launcher "$@"

@@ -1,5 +1,7 @@
 package gov.loc.repository.serviceBroker;
 
+import gov.loc.repository.exceptions.RequiredEntityNotFound;
+
 public interface RespondingServiceBroker {
 	
 	public ServiceRequest findAndAcknowledgeNextServiceRequest();
@@ -13,8 +15,14 @@ public interface RespondingServiceBroker {
 
 	public String getResponder();
 	
+	public void setQueues(String[] queues);
+	
 	public String[] getQueues();
 	
+	public void setJobTypes(String[] jobTypes);
+	
 	public String[] getJobTypes();
+	
+	public ServiceRequest findRequiredServiceRequest(Long key) throws RequiredEntityNotFound;
 	
 }

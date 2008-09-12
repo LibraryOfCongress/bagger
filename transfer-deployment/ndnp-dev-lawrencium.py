@@ -28,6 +28,8 @@ config = {
         'storage.archive.ndnp.basedirectory':'/vol/ndnp/transfer_dev/archive',
 	'storage.archive.ndnp.user':'justin',
 	'storage.archive.ndnp.group':'justin',
+    'storage.staging.ndnp.user':'devtransfer',
+    'storage.staging.ndnp.group':'datandnp',    
     },
     'UI_PROPS': {
         'healthcheck.servicecontainers.hosts':'plutonium,cobalt',

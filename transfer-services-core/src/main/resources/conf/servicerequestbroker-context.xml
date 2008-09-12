@@ -38,8 +38,6 @@
 		<constructor-arg ref="serviceBroker" />
 		<!--  These beans need to be configured.
 		<constructor-arg ref="responder" />
-		<constructor-arg ref="queues" />
-		<constructor-arg ref="jobTypes" />
 		-->
 	</bean>	
 

@@ -30,7 +30,8 @@ class TransferServices():
         self.servicecontainer_props = """host=%s
                                          queues=%s
                                          jobtypes=%s
-                                      """ % (config['HOST'] if config['HOST'] else "localhost", config['QUEUES'] if config['QUEUES'] else "jobqueue", config['JOBTYPES'] if ['JOBTYPES'] else "test")
+                                         delegatejobtypes=%s
+                                      """ % (config['HOST'] if config['HOST'] else "localhost", config['QUEUES'] if config['QUEUES'] else "jobqueue", config['JOBTYPES'] if ['JOBTYPES'] else "test", config['DELEGATE_JOBTYPES'] if ['DELEGATE_JOBTYPES'] else "")
 
         self.servicecontainer_conf = "%s/%s-%s/conf/servicecontainer.properties" % (self.install_dir, self.project_name, self.version)
         self.service_conf =  "%s/%s-%s/conf/service.local.properties" % (self.install_dir, self.project_name, self.version)

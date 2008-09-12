@@ -30,6 +30,11 @@
   		<source>${project.build.directory}/driver</source>
   		<outputDirectory>bin</outputDirectory>
   		<destName>servicecontainerdriver</destName>
-  	</file>  	
+  	</file>
+  	<file>
+  		<source>${project.build.directory}/driver</source>
+  		<outputDirectory>bin</outputDirectory>
+  		<destName>delegationdriver</destName>
+  	</file>  	  	  	
   </files>
 </assembly>

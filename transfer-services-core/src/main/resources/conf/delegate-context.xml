@@ -9,9 +9,25 @@
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd                      
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<import resource="servicerequestbroker-context.xml" />
+	<import resource="service-context.xml" />
 	
-	<bean id="responseServiceBroker" parent="abstractResponseServiceBroker">
-		<constructor-arg value="responder1" />
+	
+	<bean id="respondingServiceBroker" parent="abstractResponseServiceBroker">
+		<constructor-arg value="$s{host}" />
 	</bean>		
-				
+		
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:conf/servicecontainer.properties" />
+		<property name="placeholderPrefix" value="$s{" />
+		<property name="placeholderSuffix" value="}" />
+		<property name="properties">
+			<value>
+				port=9874
+				interval=300000
+				delegatejobtypes=
+			</value>
+		</property>
+	</bean>		
 </beans>

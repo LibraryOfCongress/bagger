@@ -1,7 +1,9 @@
 package gov.loc.repository.serviceBroker.impl;
 
+import java.text.MessageFormat;
 import java.util.List;
 
+import gov.loc.repository.exceptions.RequiredEntityNotFound;
 import gov.loc.repository.serviceBroker.RespondingServiceBroker;
 import gov.loc.repository.serviceBroker.ServiceRequest;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
@@ -13,11 +15,9 @@ public class RespondingServiceBrokerImpl implements RespondingServiceBroker {
 	private String[] queues;
 	private String[] jobTypes;
 	
-	public RespondingServiceBrokerImpl(ServiceRequestDAO dao, String responder, String[] queues, String[] jobTypes) {
+	public RespondingServiceBrokerImpl(ServiceRequestDAO dao, String responder) {
 		this.dao = dao;
 		this.responder = responder;
-		this.queues = queues;
-		this.jobTypes = jobTypes;
 	}
 	
 	@Override
@@ -60,5 +60,24 @@ public class RespondingServiceBrokerImpl implements RespondingServiceBroker {
 	public String getResponder() {
 		return this.responder;
 	}
+	
+	@Override
+	public void setJobTypes(String[] jobTypes) {
+		this.jobTypes = jobTypes;	
+	}
 
+	@Override
+	public void setQueues(String[] queues) {
+		this.queues = queues;		
+	}
+	
+	@Override
+	public ServiceRequest findRequiredServiceRequest(Long key) throws RequiredEntityNotFound {
+		ServiceRequest req = this.dao.findServiceRequest(key);
+		if (req == null)
+		{
+			throw new RequiredEntityNotFound(MessageFormat.format("ServiceRequest with key {0} not found", key));
+		}
+		return req;
+	}
 }

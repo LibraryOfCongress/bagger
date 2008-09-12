@@ -12,6 +12,7 @@ config = {
     'HOST': 'plutonium', #The hostname, e.g., localhost or ac, that the service container is to be exposed under.  Also used to identify the responder.  Default is localhost.    
     'QUEUES': "rs25jobqueue", #List of the queues to listen to, e.g., jobqueue,firewirejobqueue.  Default is jobqueue
     'JOBTYPES': "archivalremotebagcopy", #List of the job types to handle, e.g., test,inventoryfilesondisk.  Default is test
+    'DELEGATE_JOBTYPES': "archivalremotebagcopy",    
     'PGHOST': 'lawrencium', # This is the host that the PostgreSQL database lives on (default = localhost)
     'PGPORT': '5432', # This is the port that PostgreSQL listens on (default = 5432)      
     'DB_PREFIX': 'dev', # This will prepend a custom prefix to the database name that will get created.  An _ will be appended. (default = '')
@@ -23,8 +24,9 @@ config = {
     'RUN_NUMBER':'', #Set the run number for the service container (default = 85)
     'COMPONENTS_PROPS': {
 #        'components.zfsfilesystemcreator.pool':'zpool',
-        'components.archivalremotedirectorycopier.keyfile':'/home/justin/.ssh/id_rsa',
-        'components.archivalremotedirectorycopier.staging.basepath':'/vol/ndnp/transfer_dev/archive_tmp'
+        'components.archivalremotedirectorycopier.keyfile':'/home/devtransfer/.ssh/id_rsa',
+        'components.archivalremotedirectorycopier.staging.basepath':'/vol/ndnp/transfer_dev/archive_tmp',
+        'components.archivalremotedirectorycopier.remote.user':'devtransfer'
     }                
 }
 
