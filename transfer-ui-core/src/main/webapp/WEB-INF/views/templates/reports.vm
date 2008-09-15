@@ -8,27 +8,7 @@
 		<h2>Reports</h2>
         <fieldset>
             <legend><b>Available Basic Reports</b></legend>
-            #if( $reportList.size() > 10 )
-		    <table>
-		        <tbody><tr><td>
-                    <form id="reports_pager" class="pager">
-                		<img src="${contextPath}/images/icons/first.png" class="first"/>
-                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-                		<label for="reports_pagedisplay">Showing page </label>
-                		<input id="reports_pagedisplay" type="text" class="pagedisplay"/>
-                		<img src="${contextPath}/images/icons/next.png" class="next"/>
-                		<img src="${contextPath}/images/icons/last.png" class="last"/>
-                		<label for="reports_pagesize">Results per page: </label>
-                		<select id="reports_pagesize" class="pagesize">
-                			<option selected="selected"  value="10">10</option>
-                			<option value="20">20</option>
-                			<option value="30">30</option>
-                			<option  value="40">40</option>
-                		</select>
-                    </form>
-                </td></tr></tbody>
-            </table>
-            #end
+            #tablesorter('reports' $reportList.size())
 	        <table id="reports_table" class="tablesorter pageable"  >
 	            <thead><tr>
 	            	<th> Category </th>

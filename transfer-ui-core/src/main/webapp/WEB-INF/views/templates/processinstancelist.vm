@@ -16,27 +16,7 @@
 		<h2>Active Workflows</h2>
         <fieldset>
             <legend>These workflows are currently active.</legend>
-            #if( $processInstanceBeanList.size() > 10 )
-		    <table>
-		        <tbody><tr><td>
-                    <form id="activeWorkflows_pager" class="pager">
-                		<img src="${contextPath}/images/icons/first.png" class="first"/>
-                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-                		<label for="activeWorkflows_pagedisplay">Showing page </label>
-                		<input id="activeWorkflows_pagedisplay" type="text" class="pagedisplay"/>
-                		<img src="${contextPath}/images/icons/next.png" class="next"/>
-                		<img src="${contextPath}/images/icons/last.png" class="last"/>
-                		<label for="activeWorkflows_pagesize">Results per page: </label>
-                		<select id="activeWorkflows_pagesize" class="pagesize">
-                			<option selected="selected"  value="10">10</option>
-                			<option value="20">20</option>
-                			<option value="30">30</option>
-                			<option  value="40">40</option>
-                		</select>
-                    </form>
-                </td></tr></tbody>
-            </table>
-            #end
+            #tablesorter('activeWorkflows' $processInstanceBeanList.size())            
 	        <table id="activeWorkflows_table" class="tablesorter pageable"  >
 	            <thead><tr>
                         <th>Package</th>
@@ -76,27 +56,7 @@
 		<fieldset>
             <legend><div style="word-wrap:break-word;width:600px;">These workflows have either been suspended by a user, have tokens that have been suspended 
             because an error occurred, or are at troubleshoot nodes.</div></legend>
-            #if( $suspendedProcessInstanceBeanList.size() > 10)
-            <table>
-		        <tbody><tr><td>
-                    <form id="problemWorkflows_pager" class="pager">
-                		<img src="${contextPath}/images/icons/first.png" class="first"/>
-                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-                		<label for="suspendedWorkflows_pagedisplay">Showing page </label>
-                		<input id="suspendedWorkflows_pagedisplay" type="text" class="pagedisplay"/>
-                		<img src="${contextPath}/images/icons/next.png" class="next"/>
-                		<img src="${contextPath}/images/icons/last.png" class="last"/>
-                		<label for="problemWorkflows_pagesize">Results per page: </label>
-                		<select id="problemWorkflows_pagesize" class="pagesize">
-                			<option selected="selected"  value="10">10</option>
-                			<option value="20">20</option>
-                			<option value="30">30</option>
-                			<option  value="40">40</option>
-                		</select>
-                    </form>
-                </td></tr></tbody>
-            </table>
-            #end
+            #tablesorter('problemWorkflows' $suspendedProcessInstanceBeanList.size())
 		    <table id="problemWorkflows_table" class="tablesorter pageable"  >
 	            <thead>
 	                <tr>

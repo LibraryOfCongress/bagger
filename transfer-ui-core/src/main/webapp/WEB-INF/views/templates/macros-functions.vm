@@ -73,3 +73,34 @@
 	#set($sep = "")
 	{#foreach($entry in $entries)$sep$entry.key=$!{entry.value}#set($sep = ", ")#end}
 #end
+
+#*
+  -Writes the header table for a sortable pagable table
+*#
+#macro ( tablesorter $id $size)
+	#if( $size > 10)
+	    <table>
+	        <tbody>
+	        	<tr>
+	        		<td>
+			            <form id="${id}_pager" class="pager">
+			        		<img src="${contextPath}/images/icons/first.png" class="first"/>
+			        		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
+			        		<label for="${id}_pagedisplay">Showing page </label>
+			        		<input id="${id}_pagedisplay" type="text" class="pagedisplay"/>
+			        		<img src="${contextPath}/images/icons/next.png" class="next"/>
+			        		<img src="${contextPath}/images/icons/last.png" class="last"/>
+			        		<label for="${id}_pagesize">Results per page: </label>
+			        		<select id="${id}_pagesize" class="pagesize">
+			        			<option selected="selected" value="10">10</option>
+			        			<option value="25">25</option>
+			        			<option value="50">50</option>
+			        			<option value="100">100</option>			        			
+			        		</select>
+			            </form>
+	        		</td>
+	        	</tr>
+	        </tbody>
+	    </table>
+    #end
+#end

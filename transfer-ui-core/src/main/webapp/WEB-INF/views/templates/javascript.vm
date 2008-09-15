@@ -26,7 +26,7 @@
         }).tablesorterPager({
             seperator:" of ",
             positionFixed:false,
-            container: $("#groupTasks_pager")
+            container: $("#unassignedTasks_pager")
         });
         
         //TABLE activeProcessInstances
@@ -39,12 +39,12 @@
         });
         
         //TABLE suspendedProcessInstances
-        $("#suspendedWorkflows_table").tablesorter({
+        $("#problemWorkflows_table").tablesorter({
             widgets: ['zebra']
         }).tablesorterPager({
             seperator:" of ",
             positionFixed:false,
-            container: $("#suspendedWorkflows_pager")
+            container: $("#problemWorkflows_pager")
         });
         
         //TABLE systemProcesses
@@ -69,6 +69,14 @@
             container: $("#reportData_pager")
         });
 
+        //TABLE reports
+        $("#reports_table").tablesorter({
+            widgets: ['zebra']
+        }).tablesorterPager({
+            seperator:" of ",
+            positionFixed:false,
+            container: $("#reports_pager")
+        });
         
         //HELP
         $("#helpTopics > li").click(function() {

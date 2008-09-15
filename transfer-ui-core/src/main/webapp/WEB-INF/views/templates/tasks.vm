@@ -27,27 +27,7 @@ window.onload=timedrefresh
         <fieldset>
             <legend>These pending tasks still require completion.</legend>
             #if ($userBean)
-	            #if( $userBean.userTaskInstanceBeanList.size() > 10 )
-			    <table>
-			        <tbody><tr><td>
-	                    <form id="userTasks_pager" class="pager">
-	                		<img src="${contextPath}/images/icons/first.png" class="first"/>
-	                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-	                		<label for="myTasks_pagedisplay">Showing page </label>
-	                		<input id="myTasks_pagedisplay" type="text" class="pagedisplay"/>
-	                		<img src="${contextPath}/images/icons/next.png" class="next"/>
-	                		<img src="${contextPath}/images/icons/last.png" class="last"/>
-	                		<label for="myTasks_pagesize">Results per page: </label>
-	                		<select id="myTasks_pagesize" class="pagesize">
-	                			<option selected="selected"  value="10">10</option>
-	                			<option value="20">20</option>
-	                			<option value="30">30</option>
-	                			<option  value="40">40</option>
-	                		</select>
-	                    </form>
-	                </td></tr></tbody>
-	            </table>
-	            #end
+	 			#tablesorter('userTasks' $userBean.userTaskInstanceBeanList.size())            
 		        <table id="userTasks_table" class="tablesorter pageable"  >
 		            <thead>
 		                <tr id="taskDetailsHeader">
@@ -63,7 +43,7 @@ window.onload=timedrefresh
 	                </tr></tfoot>
 	                <tbody>
 				        #foreach($taskInstanceBean in $userBean.userTaskInstanceBeanList)
-				        <tr id="task${taskInstanceBean.id}" >
+				        <tr id="task_${taskInstanceBean.id}" >
 					        <td><a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">
 					            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)
 					        </a></td>
@@ -88,28 +68,8 @@ window.onload=timedrefresh
 		<fieldset>
             <legend>These unassigned tasks are available for anyone to complete.</legend>
             #if ($userBean)
-	            #if( $userBean.groupTaskInstanceBeanList.size() > 10)
-			    <table>
-			        <tbody><tr><td>
-	                    <form id="unassignedTasks_pager" class="pager">
-	                		<img src="${contextPath}/images/icons/first.png" class="first"/>
-	                		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-	                		<label for="unassignedTasks_pagedisplay">Showing page </label>
-	                		<input id="unassignedTasks_pagedisplay" type="text" class="pagedisplay"/>
-	                		<img src="${contextPath}/images/icons/next.png" class="next"/>
-	                		<img src="${contextPath}/images/icons/last.png" class="last"/>
-	                		<label for="unassignedTasks_pagesize">Results per page: </label>
-	                		<select id="unassignedTasks_pagesize" class="pagesize">
-	                			<option selected="selected"  value="10">10</option>
-	                			<option value="20">20</option>
-	                			<option value="30">30</option>
-	                			<option  value="40">40</option>
-	                		</select>
-	                    </form>
-	                </td></tr></tbody>
-	            </table>
-	            #end
-		        <table id="groupTasks_table" class="tablesorter pageable"  >
+            	#tablesorter('unassignedTasks' $userBean.groupTaskInstanceBeanList.size())            
+		        <table id="unassignedTasks_table" class="tablesorter pageable"  >
 		            <thead>
 		                <tr >
 	                        <th>Name</th>
@@ -126,7 +86,7 @@ window.onload=timedrefresh
 	                </tr></tfoot>
 	                <tbody>
 	                    #foreach($taskInstanceBean in $userBean.groupTaskInstanceBeanList)
-				        <tr id="task${taskInstanceBean.id}" >
+				        <tr id="task_${taskInstanceBean.id}" >
 					        <td><a href="${contextPath}/taskinstance/${taskInstanceBean.id}.html">
 					            ${taskInstanceBean.taskBean.name} ($taskInstanceBean.id)
 					        </a></td>
