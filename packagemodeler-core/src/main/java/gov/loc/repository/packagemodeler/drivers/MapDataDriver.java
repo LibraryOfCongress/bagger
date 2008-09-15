@@ -9,6 +9,7 @@ import java.util.List;
 
 import gov.loc.repository.bagit.bag.BagHelper;
 import gov.loc.repository.bagit.manifest.ManifestReader;
+import gov.loc.repository.drivers.AbstractCommandLineDriver.MapDriver;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.PackageModelerConstants;
 import gov.loc.repository.packagemodeler.agents.Agent;
@@ -33,7 +34,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component("mapDataDriver")
-public class MapDataDriver {
+public class MapDataDriver implements MapDriver {
 
     //Arg types
     public static final String TYPE_TIMESTAMP = "timestamp";
@@ -71,9 +72,6 @@ public class MapDataDriver {
     public static final String OPT_EVENT_TYPE = "eventtype";
     public static final String OPT_EVENT_TYPE_DESCRIPTION = "Class of the Event to create.";
     public static final String OPT_EVENT_TYPE_TYPE = TYPE_CLASS;
-
-    public static final String OPT_HELP = "help";
-    public static final String OPT_HELP_DESCRIPTION = "Print this message";
 
     public static final String OPT_IS_LC_PACKAGE_STRUCTURE = "islcpackagestructure";
     public static final String OPT_IS_LC_PACKAGE_STRUCTURE_DESCRIPTION = "Whether a file location is lc package structured.  Default is true.";

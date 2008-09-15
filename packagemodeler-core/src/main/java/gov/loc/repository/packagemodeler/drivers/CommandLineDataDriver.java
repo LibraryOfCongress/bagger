@@ -5,80 +5,37 @@ import static gov.loc.repository.packagemodeler.drivers.MapDataDriver.*;
 
 import java.text.MessageFormat;
 
+import gov.loc.repository.drivers.AbstractCommandLineDriver;
 import gov.loc.repository.packagemodeler.events.filelocation.FileCopyEvent;
 import gov.loc.repository.packagemodeler.events.filelocation.FileDeleteEvent;
 import gov.loc.repository.packagemodeler.events.filelocation.FileLocationAnomalyEvent;
 import gov.loc.repository.packagemodeler.events.filelocation.VerifyAgainstManifestEvent;
 import gov.loc.repository.packagemodeler.events.packge.PackageReceivedEvent;
-import gov.loc.repository.utilities.EnhancedHashMap;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CommandLineDataDriver {
-	
-	
-	
-	private static Options options;
-	private static CommandLine line;
+public class CommandLineDataDriver extends AbstractCommandLineDriver {
 		
-	private static final Log log = LogFactory.getLog(CommandLineDataDriver.class);	
+	Options options;
+	MapDriver mapDriver;
+
+	public CommandLineDataDriver() {
+		this.defineOptions();
+		ApplicationContext context = new ClassPathXmlApplicationContext("conf/packagemodeler-core-context.xml"); 
+		this.mapDriver = (MapDriver)context.getBean("mapDataDriver");
+	}
 	
-	private static final int RETURN_SUCCESS = 0;
-	private static final int RETURN_ERROR = 1;
-		
 	public static void main(String args[]) throws Exception
 	{
-		defineCommandLine();
-		CommandLineParser parser = new GnuParser();
-		try
-		{
-			line = parser.parse(options, args);
-		
-			if (line.hasOption(OPT_HELP))
-			{
-				printUsages();
-				return;
-			}
-			if (line.getArgList().size() != 1)
-			{
-				throw new ParseException("One and only one action may be provided");
-			}
-			String action = (String)line.getArgList().get(0);
-			EnhancedHashMap<String,String> optionsMap = commandLineToEnhancedHashMap(line);
-			ApplicationContext context = new ClassPathXmlApplicationContext("conf/packagemodeler-core-context.xml"); 
-			MapDataDriver componentDriver = (MapDataDriver)context.getBean("mapDataDriver");
-			componentDriver.execute(action, optionsMap);
-			System.exit(RETURN_SUCCESS);
-		}
-		catch(ParseException ex)
-		{
-			System.err.println("Parsing of commandline failed due to: " + ex.getMessage());
-			printUsages();
-			System.exit(RETURN_ERROR);
-		}
-		catch(Exception ex)
-		{
-
-			String msg = "An error occurred: " + ex.getMessage();
-			System.err.println(msg);
-			log.error(msg, ex);
-			System.exit(RETURN_ERROR);
-		}
-			
+		CommandLineDataDriver driver = new CommandLineDataDriver();
+		driver.parse(args);		
 	}
 		
-	private static void printUsages()
+	public void printUsages()
 	{
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp(MessageFormat.format("datadriver {0}|{1}|{2}|{3}|{4}|{5} [options]", ACTION_PACKAGE, ACTION_FILELOCATION, ACTION_PACKAGE_EVENT, ACTION_FILELOCATION_EVENT, ACTION_INVENTORY_FROM_MANIFEST, ACTION_CANONICALIZE_FROM_FILELOCATION), options, false);
@@ -88,6 +45,8 @@ public class CommandLineDataDriver {
 		System.out.println("To test the database connection, use:");
 		System.out.println(MessageFormat.format("driver {0}", 
 				ACTION_TEST));
+		System.out.println("To execute a list of commands from a file, use:");
+		System.out.println(MessageFormat.format("driver -{0}", OPT_FILE));		
 		System.out.println("To create a Package, use:");
 		System.out.println(MessageFormat.format("driver {0} -{1} -{2} -{3}", 
 				ACTION_PACKAGE,
@@ -194,7 +153,7 @@ public class CommandLineDataDriver {
 	}
 	
 	@SuppressWarnings("static-access")
-	private static void defineCommandLine()
+	private void defineOptions()
 	{
 		options = new Options();
 		options.addOption(new Option(OPT_HELP, OPT_HELP_DESCRIPTION));
@@ -215,16 +174,18 @@ public class CommandLineDataDriver {
 		options.addOption(OptionBuilder.withArgName(OPT_SOURCE_STORAGE_SYSTEM_TYPE).hasArg().withDescription(OPT_SOURCE_STORAGE_SYSTEM_DESCRIPTION).create(OPT_SOURCE_STORAGE_SYSTEM));		
 		options.addOption(OptionBuilder.withArgName(OPT_STORAGE_SYSTEM_TYPE).hasArg().withDescription(OPT_STORAGE_SYSTEM_DESCRIPTION).create(OPT_STORAGE_SYSTEM));		
 		options.addOption(OptionBuilder.withArgName(OPT_SUCCESS_TYPE).hasArg().withDescription(OPT_SUCCESS_DESCRIPTION).create(OPT_SUCCESS));
+		options.addOption(OptionBuilder.withArgName(OPT_FILE_TYPE).hasArg().withDescription(OPT_FILE_DESCRIPTION).create(OPT_FILE));
 
 	}
 	
-	private static EnhancedHashMap<String,String> commandLineToEnhancedHashMap(CommandLine line)
-	{
-		EnhancedHashMap<String,String> optionMap = new EnhancedHashMap<String, String>();
-		for(Option option : line.getOptions())
-		{
-			optionMap.put(option.getOpt(), option.getValue());
-		}				
-		return optionMap;
+	@Override
+	protected MapDriver getMapDriver() {
+		return this.mapDriver;
 	}
+	
+	@Override
+	protected Options getOptions() {
+		return this.options;
+	}
+	
 }

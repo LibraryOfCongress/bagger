@@ -18,7 +18,7 @@ case "$1" in
 		$COMMAND >/dev/null 2>&1 &
 	    ;;
     stop)
-		pkill -f transfer-services* -U $USER
+		pkill -U $USER
         ;;
     restart)
 		$0 stop

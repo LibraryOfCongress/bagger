@@ -169,15 +169,21 @@ public class AdminController {
 			{
 				serviceContainerHosts = props.getProperty(HOSTS_KEY, "").split(",");
 			}
-					
+
+			log.debug("Finding servicecontainer registrations");
 			List<ServiceContainerRegistration> registrationList = this.dao.findServiceContainerRegistrations(latency);
 			boolean passed = true;
+			log.debug("Checking expected service containers are found");
 			for(String host : serviceContainerHosts)
 			{
 				if (! this.hasHost(host, registrationList))
 				{
 					problemList.add(MessageFormat.format("Expected service container {0} is missing", host));;
 					passed = false;
+				}
+				else
+				{
+					log.debug(MessageFormat.format("Expected service container {0} is found", host));
 				}
 			}
 			
@@ -187,12 +193,17 @@ public class AdminController {
 			}
 			
 			passed = true;
+			log.debug("Checking no unexpected service containers are found");
 			for(ServiceContainerRegistration registration : registrationList)
 			{
 				if (! this.hasHost(registration.getHost(), serviceContainerHosts))
 				{
 					problemList.add(MessageFormat.format("Unexpected service container {0} found", registration.getHost()));;
 					passed = false;
+				}
+				else
+				{
+					log.debug(MessageFormat.format("Expected service container {0} found", registration.getHost()));
 				}
 			}
 			
@@ -201,7 +212,8 @@ public class AdminController {
 				passedTestList.add("No unexpected service containers found");
 			}
 		}
-		
+
+		log.debug("Tests complete");
 		mav.addObject("passedTestList", passedTestList);
 		mav.addObject("problemList", problemList);
 		

@@ -3,6 +3,7 @@ package gov.loc.repository.packagemodeler.drivers;
 
 import java.util.Collection;
 
+import gov.loc.repository.drivers.AbstractCommandLineDriver.MapDriver;
 import gov.loc.repository.packagemodeler.ModelerFactory;
 import gov.loc.repository.packagemodeler.agents.Agent;
 import gov.loc.repository.packagemodeler.agents.Organization;
@@ -19,7 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component("mapFixtureDriver")
-public class MapFixtureDriver {
+public class MapFixtureDriver implements MapDriver{
 
     //Arg types
     public static final String TYPE_ID = "id";
@@ -46,9 +47,6 @@ public class MapFixtureDriver {
     public static final String OPT_FIRSTNAME_DESCRIPTION = "The first name of the person.";
     public static final String OPT_FIRSTNAME_TYPE = TYPE_NAME;
     
-    public static final String OPT_HELP = "help";
-    public static final String OPT_HELP_DESCRIPTION = "Print this message";
-
     public static final String OPT_HOST = "host";
     public static final String OPT_HOST_DESCRIPTION = "The hostname of the system.";
     public static final String OPT_HOST_TYPE = TYPE_NAME;
@@ -69,7 +67,7 @@ public class MapFixtureDriver {
     public static final String OPT_SURNAME = "surname";
     public static final String OPT_SURNAME_DESCRIPTION = "The surname of the person.";
     public static final String OPT_SURNAME_TYPE = TYPE_NAME;
-            
+        
     private PackageModelDAO dao;
     private ModelerFactory factory;
 
@@ -80,10 +78,7 @@ public class MapFixtureDriver {
 		this.dao = dao;
 		this.factory = factory;
 	}
-    
-    public MapFixtureDriver() {
-	}
-    
+        
     public void execute(String action, EnhancedHashMap<String,String> options) throws Exception
     {
         this.options = options;

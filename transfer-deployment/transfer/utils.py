@@ -123,6 +123,16 @@ def cp(srcfile, destfile, debug=False):
     else:
         return os.popen4('cp "%s" "%s"' % (srcfile, destfile))[1].read()
 
+def rm(file, debug=False):
+    """ removes file """
+    if debug:
+        return "deleting %s\n" % (file)
+    else:
+        try:
+            return os.remove(file).__str__()
+        except OSError:
+            return os.popen4("rm '%s'" % (file))[1].read()
+
 def strtofile(str, file, debug=False):
     """ creates a file from a string """
     if debug:

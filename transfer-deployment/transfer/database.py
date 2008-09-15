@@ -97,8 +97,13 @@ class AbstractDB():
         """ creates database fixtures """
         result = ""
         if isinstance(fixtures, tuple):
+            commands=""
             for fixture in fixtures:
-                result += utils.driver("%s %s" % (self.driver, fixture), self.debug)
+                commands = commands + fixture + "\n"
+            command_file = "%s/commands.txt" % os.getcwd() 
+            utils.strtofile(commands, command_file)
+            result += utils.driver("%s -file %s" % (self.driver, command_file), self.debug)
+            utils.rm(command_file, self.debug)
         elif isinstance(fixtures, str):
             os.environ['PGDATABASE'] = self.db_name
             # probably want to wrap this in a try block
