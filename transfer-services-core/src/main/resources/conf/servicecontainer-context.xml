@@ -20,7 +20,7 @@
 			<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 				<property name="corePoolSize" value="$s{threads}" />
 				<property name="maxPoolSize" value="$s{threads}" />
-				<property name="queueCapacity" value="0" />
+				<property name="queueCapacity" value="$s{threads}" />
 			</bean>
 		</constructor-arg>
 		<constructor-arg ref="respondingServiceBroker" />

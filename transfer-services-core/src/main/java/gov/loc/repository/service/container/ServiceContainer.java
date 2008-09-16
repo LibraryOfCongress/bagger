@@ -234,8 +234,9 @@ public class ServiceContainer implements Runnable {
 	
 	private boolean threadsAreAvailable()
 	{
-		log.debug(MessageFormat.format("TaskExecutor active count is {0}.  Task count is {1}.  Completed task count is {2}.", this.executor.getActiveCount(), this.executor.getThreadPoolExecutor().getTaskCount(), this.executor.getThreadPoolExecutor().getCompletedTaskCount()));
-		return this.executor.getActiveCount() < this.executor.getMaxPoolSize();
+		log.debug(MessageFormat.format("TaskExecutor active count is {0}.  Task count is {1}.  Completed task count is {2}.  Queue size is {3}.", this.executor.getActiveCount(), this.executor.getThreadPoolExecutor().getTaskCount(), this.executor.getThreadPoolExecutor().getCompletedTaskCount(), this.executor.getThreadPoolExecutor().getQueue().size()));
+		//return (this.executor.getActiveCount() + this.executor.getThreadPoolExecutor().getQueue().size()) < this.executor.getMaxPoolSize();
+		return (this.executor.getThreadPoolExecutor().getTaskCount() - this.executor.getThreadPoolExecutor().getCompletedTaskCount()) < this.executor.getMaxPoolSize();
 	}
 		
 	public State getState()
