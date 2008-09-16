@@ -136,7 +136,7 @@ public class ServiceContainer implements Runnable {
 
 	public void shutdown()
 	{
-		log.debug("Shutting down");
+		log.info("Shutting down");
 		this.state = State.SHUTTINGDOWN;
 		this.run();
 	}
@@ -146,7 +146,8 @@ public class ServiceContainer implements Runnable {
 		if (this.state == State.STARTING)
 		{
 			this.state = State.STARTED;
-			log.debug("Starting");
+			log.info("Starting");
+			log.debug(MessageFormat.format("MaxPoolSize is {0}.  Queue is a {1}.", this.executor.getMaxPoolSize(), this.executor.getThreadPoolExecutor().getQueue().getClass()));
 			this.heartbeat.start();
 		}
 		while(this.state != State.SHUTDOWN)
@@ -194,7 +195,7 @@ public class ServiceContainer implements Runnable {
 								
 				if (this.state == State.STOPPING)
 				{
-					log.debug("Stopped");
+					log.info("Stopped");
 					this.state = State.STOPPED;
 				}
 				else
@@ -204,7 +205,7 @@ public class ServiceContainer implements Runnable {
 			}
 		}
 		this.heartbeat.stop();		
-		log.debug("Shutdown");
+		log.info("Shutdown");
 	}
 	
 	@ManagedOperation
@@ -233,6 +234,7 @@ public class ServiceContainer implements Runnable {
 	
 	private boolean threadsAreAvailable()
 	{
+		log.debug(MessageFormat.format("TaskExecutor active count is {0}.  Task count is {1}.  Completed task count is {2}.", this.executor.getActiveCount(), this.executor.getThreadPoolExecutor().getTaskCount(), this.executor.getThreadPoolExecutor().getCompletedTaskCount()));
 		return this.executor.getActiveCount() < this.executor.getMaxPoolSize();
 	}
 		

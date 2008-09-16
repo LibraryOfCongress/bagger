@@ -44,7 +44,7 @@ public class ServiceContainerTest {
 	}
 
 	
-	@Test(timeout=10000)
+	@Test(timeout=15000)
 	public void testProcessRequests() throws Exception
 	{
 		container.start();

@@ -18,9 +18,9 @@
 	<bean id="serviceContainer" class="gov.loc.repository.service.container.ServiceContainer">
 		<constructor-arg>
 			<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-				<property name="corePoolSize" value="2" />
-				<property name="maxPoolSize" value="3" />
-				<property name="queueCapacity" value="3" />
+				<property name="corePoolSize" value="$s{threads}" />
+				<property name="maxPoolSize" value="$s{threads}" />
+				<property name="queueCapacity" value="0" />
 			</bean>
 		</constructor-arg>
 		<constructor-arg ref="respondingServiceBroker" />
@@ -51,6 +51,7 @@
 				port=9874
 				interval=300000
 				delegatejobtypes=
+				threads=3
 			</value>
 		</property>
 	</bean>
