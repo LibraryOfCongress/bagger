@@ -183,7 +183,7 @@ def retrieve_package(options):
 
     # populate queue with fetch items
     for line in file(options.retrieval_order).readlines():
-        parts = line.strip().split()
+        parts = line.strip().split(None, 2)
         if len(parts)==0:
             logging.warning("skipping over blank line")
             continue
