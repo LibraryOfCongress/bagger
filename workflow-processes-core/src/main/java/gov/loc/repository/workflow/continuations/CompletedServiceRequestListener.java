@@ -64,6 +64,7 @@ public class CompletedServiceRequestListener
 		
 		@Override
 		public void run() {
+			log.debug("Running");
 			ServiceRequest req = this.broker.findAndAcknowledgeNextServiceRequestWithResponse();
 			if (req != null)
 			{

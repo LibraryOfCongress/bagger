@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static gov.loc.repository.workflow.WorkflowConstants.*;
 import gov.loc.repository.workflow.continuations.ResponseParameterMapper;
 import gov.loc.repository.workflow.continuations.SimpleContinuationController;
 import gov.loc.repository.workflow.jbpm.spring.LocalSessionFactoryBean;
@@ -189,7 +190,7 @@ public class SimpleContinuationControllerTest
 		{
 			jbpmContext.close();
 		}
-		
+		((SimpleContinuationControllerImpl)controller).setTroubleshootTransition(TRANSITION_TROUBLESHOOT);
 	}
 	
 	

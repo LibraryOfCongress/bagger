@@ -1,10 +1,13 @@
 package gov.loc.repository.serviceBroker.dao.impl;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import gov.loc.repository.serviceBroker.impl.ServiceRequestImpl;
 public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 
 	private SessionFactory sessionFactory;
+	protected static final Log log = LogFactory.getLog(ServiceRequestDAOImpl.class);
 	
 	@Autowired
 	public ServiceRequestDAOImpl(@Qualifier(value="serviceBrokerSessionFactory")SessionFactory factory) {
@@ -143,14 +147,17 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 	@Override
 	public List<ServiceContainerRegistration> findServiceContainerRegistrations(Long latency) {
 		//Unfortunately, there is no good cross-db way of doing this date calculation
+		log.debug("Latency is " + latency);
 		Date comparisonTimestamp = null;
 		if (latency != null)
 		{
-			Query timeStampQuery = this.sessionFactory.getCurrentSession().createSQLQuery("select distinct CURRENT_TIMESTAMP from service_container_registry");
+			log.debug("Getting current timestamp");
+			Query timeStampQuery = this.sessionFactory.getCurrentSession().createSQLQuery("select CURRENT_TIMESTAMP");
 			Date currentTimestamp = (Date)timeStampQuery.uniqueResult();
 			comparisonTimestamp = new Date(currentTimestamp.getTime() - latency);
+			log.debug(MessageFormat.format("Current timestamp is {0}.  Comparison timestamp is {1}", currentTimestamp, comparisonTimestamp));
 		}
-		
+		log.debug("Getting service container registrations");
 		String queryString = "from ServiceContainerRegistration sc";
 		if (latency != null)
 		{
@@ -160,8 +167,8 @@ public class ServiceRequestDAOImpl implements ServiceRequestDAO {
 		if (latency != null)
 		{
 			query.setTimestamp("comparisonTimestamp", comparisonTimestamp);
-		}
-		return query.list();
+		}		
+		return (List<ServiceContainerRegistration>)query.list();
 	}
 	
 	@Override

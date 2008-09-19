@@ -1,6 +1,10 @@
 <div id="healthcheck">
-	<h2>Healthcheck</h2>
-
+#if($problemList.isEmpty())
+        #set($status="Pass")
+#else
+        #set($status="Fail")
+#end
+	<h2>Healthcheck: <span class="status">$status</span></h2>
     <fieldset>
         <legend><b>Problems</b></legend>
         <table id="problem_table">

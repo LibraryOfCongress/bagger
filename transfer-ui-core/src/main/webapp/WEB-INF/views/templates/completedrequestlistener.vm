@@ -31,7 +31,7 @@
 		<div id="administer">
 			<h2>Administer</h2>
 			<form method="post" action="${contextPath}/admin/completedrequestlistener.html">
-				#if (${listener.state.toString()} == "STARTED")
+				#if ($listener.isRunning())
 	                <fieldset title="Stop listener">
 			            <legend>
 			            	Service request listener
@@ -40,7 +40,7 @@
 						<input type="submit" class="button" value="stop"/>
 						<label>Stop the service request listener.</label>
 				    </fieldset>
-			   #elseif (${listener.state.toString()} == "STOPPED")
+			   #else
 	                <fieldset title="Start listener">
 			            <legend>
 			            	Service request listener
@@ -49,8 +49,6 @@
 						<input type="submit" class="button" value="start"/>
 						<label>Start the service request listener.</label>
 				    </fieldset>
-			   #else
-			   		<p>Listener is in process of starting or stopping.</p>
 			   #end					
 			</form>						
 		</div>    	

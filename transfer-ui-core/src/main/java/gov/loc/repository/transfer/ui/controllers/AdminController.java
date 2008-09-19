@@ -4,6 +4,9 @@ import gov.loc.repository.serviceBroker.ServiceContainerRegistration;
 import gov.loc.repository.serviceBroker.dao.ServiceRequestDAO;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +16,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,8 +126,9 @@ public class AdminController {
 
 		List<String> passedTestList = new ArrayList<String>();
 		List<String> problemList = new ArrayList<String>();
-				
+		
 		//Check the dbs
+		log.debug("Checking PackageModeler datasource");
 		if (this.checkDb(this.packageModelerDataSource))
 		{
 			passedTestList.add("PackageModeler db is OK");
@@ -133,6 +138,7 @@ public class AdminController {
 			problemList.add("PackageModeler db is not connected");
 		}
 
+		log.debug("Checking Jbpm datasource");
 		if (this.checkDb(this.jbpmDataSource))
 		{
 			passedTestList.add("Jbpm db is OK");
@@ -141,8 +147,10 @@ public class AdminController {
 		{
 			problemList.add("Jbpm db is not connected");
 		}
-		
+
 		boolean serviceRequestBrokerDbOK = true;
+
+		log.debug("Checking ServiceRequestBroker datasource");
 		if (this.checkDb(this.serviceRequestBrokerDataSource))
 		{
 			passedTestList.add("ServiceRequestBroker db is OK");
@@ -153,15 +161,16 @@ public class AdminController {
 			serviceRequestBrokerDbOK = false;
 		}
 		
-		
 		if (serviceRequestBrokerDbOK)
 		{
 		
 			//Load every times so that get changes
-			Properties props = new Properties();		
-			props.load(new FileInputStream(this.configResource.getFile()));
+			Properties props = new Properties();
+			InputStream in = new FileInputStream(this.configResource.getFile()); 
+			props.load(in);
+			in.close();
 		
-			Long latency = Long.getLong(props.getProperty(LATENCY_KEY));
+			Long latency = Long.parseLong(props.getProperty(LATENCY_KEY));
 			String hostsString = props.getProperty(HOSTS_KEY, "");
 			log.debug(MessageFormat.format("Hosts string is {0}", hostsString));
 			String[] serviceContainerHosts = new String[] {};
@@ -169,7 +178,6 @@ public class AdminController {
 			{
 				serviceContainerHosts = props.getProperty(HOSTS_KEY, "").split(",");
 			}
-
 			log.debug("Finding servicecontainer registrations");
 			List<ServiceContainerRegistration> registrationList = this.dao.findServiceContainerRegistrations(latency);
 			boolean passed = true;
@@ -224,12 +232,19 @@ public class AdminController {
 	{
 		try
 		{
-			log.debug(dataSource.getConnection().getCatalog());
+			BasicDataSource bds = (BasicDataSource)dataSource;
+			log.debug(MessageFormat.format("NumActive: {0}, NumIdle: {1}", bds.getNumActive(), bds.getNumIdle()));
+			Connection con = dataSource.getConnection();
+			PreparedStatement stmt = con.prepareStatement("select 1");
+			stmt.executeQuery();
+			stmt.close();
+			con.close();
+			
 			return true;
 			
 		}
 		catch(Exception ex)
-		{
+		{			
 			log.warn(ex);
 		}
 		return false;

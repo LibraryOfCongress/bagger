@@ -17,7 +17,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.access.BeanFactoryLocator;
 import org.springframework.beans.factory.access.BeanFactoryReference;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import gov.loc.repository.serviceBroker.RequestingServiceBroker;
@@ -27,7 +26,6 @@ import gov.loc.repository.workflow.continuations.SimpleContinuationController;
 import gov.loc.repository.workflow.jbpm.spring.JbpmFactoryLocator;
 
 @Component("continuationController")
-@Scope("prototype")
 public class SimpleContinuationControllerImpl implements
 		SimpleContinuationController {
 	
@@ -126,7 +124,7 @@ public class SimpleContinuationControllerImpl implements
 		if (beanFactory != null && beanFactory.containsBean("requestServiceBroker"))
 		{
 			RequestingServiceBroker broker = (RequestingServiceBroker)beanFactory.getBean("requestServiceBroker");
-			log.debug("Suspending service requests for " + token.getId());
+			log.debug("Suspending service requests for token " + token.getId());
 			broker.suspend(Long.toString(token.getId()));
 		}
 	}
@@ -203,14 +201,17 @@ public class SimpleContinuationControllerImpl implements
 	@SuppressWarnings("unchecked")
 	public boolean hasTransition(Token token, String transitionName)
 	{
+		
 		Set<Transition> transitions = token.getAvailableTransitions();
 		for(Transition transition : transitions)
 		{
 			if (transitionName.equals(transition.getName()))
 			{
+				log.debug(MessageFormat.format("Token {0} has transition {1}", token.getId(), transitionName));
 				return true;
 			}
 		}
+		log.debug(MessageFormat.format("Token {0} does not have transition {1}", token.getId(), transitionName));
 		return false;
 	}
 
