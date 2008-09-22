@@ -32,7 +32,7 @@ class WebApp(CoreWebApp):
         self.tomcat_start = config['TOMCAT_START'] if config['TOMCAT_START'] else "/usr/sbin/svcadm enable svc:/application/csk-tomcat"
         self.tomcat_stop = config['TOMCAT_STOP'] if config['TOMCAT_STOP'] else "/usr/sbin/svcadm disable svc:/application/csk-tomcat"
         self.logger = log.Log(self.project_name)
-        self.url = 'https://beryllium.rdc.lctl.gov/trac/ndnptransfer/browser/trunk/transfer-ui-ndnp/releases/transfer-ui-ndnp-%s-template.war?format=raw' % (self.version)
+        self.url = 'https://beryllium.rdc.lctl.gov/trac/ndnptransfer/browser/trunk/transfer-ui-ndnp/release/transfer-ui-ndnp-%s-template.war?format=raw' % (self.version)
         os.environ['CATALINA_HOME'] = self.catalina_home
         if not self.tomcat_exists():
             self.logger.error("One of the Tomcat scripts is not set properly")

@@ -26,7 +26,7 @@ class TransferServices():
         self.component_packages = {}
         for project in config['COMPONENT_PROJECTS']:
             trac_project = "" if project == "core" else project
-            self.component_packages["%s/transfer-components-%s-%s-bin.zip" % (self.file_location, project, config['VERSION'])] = "https://beryllium.rdc.lctl.gov/trac/%stransfer/browser/trunk/transfer-components-%s/releases/transfer-components-%s-%s-bin.zip?format=raw" % (trac_project, project, project, self.version)
+            self.component_packages["%s/transfer-components-%s-%s-bin.zip" % (self.file_location, project, config['VERSION'])] = "https://beryllium.rdc.lctl.gov/trac/%stransfer/browser/trunk/transfer-components-%s/release/transfer-components-%s-%s-bin.zip?format=raw" % (trac_project, project, project, self.version)
         self.servicecontainer_props = """host=%s
                                          queues=%s
                                          jobtypes=%s
