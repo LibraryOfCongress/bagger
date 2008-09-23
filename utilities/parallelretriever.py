@@ -86,21 +86,31 @@ class FetchWorker(threading.Thread):
     """
     Worker to fetch items in fetch.txt
     """
-    def __init__(self, queue, package_directory):
+    def __init__(self, queue, retriever):
         threading.Thread.__init__(self)
         self.queue = queue
-        self.package_directory = package_directory
+        self.package_directory = retriever.package_directory
 
     def run(self):
         while True:
-            item = self.queue.get()
+            try:
+                item = self.queue.get(block=False)
+            except Queue.Empty, ee:
+                break
+            logging.info("item: %s" % ", ".join(item))
             try:
                 url, filesize, filename = item
                 filename = os.path.join(self.package_directory, filename)
-                fetch(filename, url)
+                retriever.fetch(filename, url)
+            except subprocess.CalledProcessError, e:
+                logging.info("error on task: %s %s" % (url, filename))
+                logging.error(e)
+                break
             finally:
+                logging.info("task_done: %s %s" % (url, filename))
                 self.queue.task_done()
             logging.debug("size: %s" % self.queue.qsize())
+        logging.info("Worker %s finished" % self)
 
 
 def generate_package_identifier():
@@ -131,70 +141,84 @@ stderr:
 """ % (" ".join(cmd), stdout, stderr))
         raise subprocess.CalledProcessError(p.returncode, cmd)
 
-def fetch(filename, url):
-    logging.debug("%s fetching: %s" % (threading.currentThread().getName(), url))
-    progress_reporter.started(filename)
-    try:
-        os.makedirs(os.path.dirname(filename))
-    except OSError:
-        pass # it's OK if the directories are already there
-    if url.startswith('http') or url.startswith('https'):
-        cmd = ["wget", "-O", filename, url]
-        _subprocess(cmd)
-    elif url.startswith('rsync'):
-        cmd = ["rsync", "-ar", url, filename]
-        _subprocess(cmd)
-    elif url.startswith('file'):
-        url = urllib2.urlopen(url)
-        f = file(filename, "wb")
-        while True:
-            d = url.read(1024)
-            if d:
-                f.write(d)
-            else:
-                f.close()
-                break
-    else:
-        raise Exception("unexpected url type")
-    progress_reporter.finished(filename)
+
+class Retriever(object):
+
+    def __init__(self, options):
+        self.options = options
+
+    def fetch(self, filename, url):
+        logging.debug("%s fetching: %s" % (threading.currentThread().getName(), url))
+        progress_reporter.started(filename)
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError:
+            pass # it's OK if the directories are already there
+        if url.startswith('http') or url.startswith('https'):
+            cmd = ["wget", "-O", filename, url]
+            _subprocess(cmd)
+        elif url.startswith('rsync'):
+            cmd = ["rsync", "-ar", url, filename]
+            _subprocess(cmd)
+        elif url.startswith('file'):
+            url = urllib2.urlopen(url)
+            f = file(filename, "wb")
+            while True:
+                d = url.read(1024)
+                if d:
+                    f.write(d)
+                else:
+                    f.close()
+                    break
+        elif url.startswith('ftp'):
+            cmd = ["curl"]
+            if self.options.user_password:
+                cmd.extend(["--user", self.options.user_password]) 
+            cmd.extend(["--output", filename, url])
+            _subprocess(cmd)
+        else:
+            raise Exception("unexpected url type")
+        progress_reporter.finished(filename)
 
 
-def retrieve_package(options):
-    """
-    Retrieve the package using the desired number of workers.
-    """
-    logging.info("Retrieving Package with options: %s" % repr(options))
-    package_directory = os.path.join(options.destination_path,
-                                     options.package_identifier)
-    if not os.path.isdir(package_directory):
-        os.mkdir(package_directory)
+    def retrieve_package(self):
+        """
+        Retrieve the package using the desired number of workers.
+        """
+        options = self.options
+        logging.info("Retrieving Package with options: %s" % repr(options))
+        package_directory = os.path.join(options.destination_path,
+                                         options.package_identifier)
+        self.package_directory = package_directory
+        if not os.path.isdir(package_directory):
+            os.mkdir(package_directory)
 
-    shutil.copy(options.file_manifest,   package_directory)
-    shutil.copy(options.retrieval_order, package_directory)
-                    
-    queue = Queue.Queue()
+        shutil.copy(options.file_manifest,   package_directory)
+        shutil.copy(options.retrieval_order, package_directory)
 
-    # spawn a pool of worker threads
-    for i in range(options.num_processes):
-        t = FetchWorker(queue, package_directory)
-        t.setName("Fetch Worker #%d" % i)
-        t.setDaemon(True)
-        t.start()
+        queue = Queue.Queue()
 
-    # populate queue with fetch items
-    for line in file(options.retrieval_order).readlines():
-        parts = line.strip().split(None, 2)
-        if len(parts)==0:
-            logging.warning("skipping over blank line")
-            continue
-        if len(parts)!=3:
-            logging.error("line does not have three parts as expected. Line: '%s'" % line)
-            sys.exit(-1)
-        item = tuple(parts)
-        queue.put(item)
+        # populate queue with fetch items
+        for line in file(options.retrieval_order).readlines():
+            parts = line.strip().split(None, 2)
+            if len(parts)==0:
+                logging.warning("skipping over blank line")
+                continue
+            if len(parts)!=3:
+                logging.error("line does not have three parts as expected. Line: '%s'" % line)
+                sys.exit(-1)
+            item = tuple(parts)
+            queue.put(item)
 
-    #wait on the queue until everything has been processed     
-    queue.join()
+        # spawn a pool of worker threads
+        for i in range(options.num_processes):
+            t = FetchWorker(queue, self)
+            t.setName("Fetch Worker #%d" % i)
+            t.setDaemon(True)
+            t.start()
+
+        #wait on the queue until everything has been processed     
+        queue.join()
 
 
 if __name__ == '__main__':
@@ -210,6 +234,9 @@ if __name__ == '__main__':
                       help="path to the retrieval order (fetch.txt) for this package")
     parser.add_option("-d", "--destination-path", dest="destination_path",
                       help="path in which to create the package")
+
+    parser.add_option("-u", "--user", dest="user_password",
+                      help="<user>:<password>")
     options, args = parser.parse_args()
 
     if options.file_manifest is None:
@@ -224,14 +251,21 @@ if __name__ == '__main__':
     if options.destination_path is None:
         options.destination_path = os.getcwd()
 
+    log_filename = '%s-retrieval.log' % options.package_identifier
     logging.basicConfig(level=logging.INFO, 
                         format='%(asctime)s %(levelname)-8s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
-                        filename='%s-retrieval.log' % options.package_identifier)
+                        filename=log_filename)
+    print """
+logging to %s
+""" % log_filename
 
     try:
-        retrieve_package(options)
+        retriever = Retriever(options)
+        retriever.retrieve_package()
     except KeyboardInterrupt, ki:
+        print "\nStopped retrieve due to keyboard interrupt."
         logging.info("Bye Bye")
     except Exception, e:
         logging.exception(e)
+        print "Error retrieving package. See log file for details"
