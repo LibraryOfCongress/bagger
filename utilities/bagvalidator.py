@@ -5,6 +5,8 @@
    Does not consider checksums. 
 
    Requires Python 2.3 or newer.
+   
+   $Id$
 """
 
 

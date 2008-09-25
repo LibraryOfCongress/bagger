@@ -15,6 +15,8 @@ as in:
   RSYNC_PASSWORD=pass ./parallelretriever.py -m manifest-md5.txt -r fetch.txt 
 
 Run with '-h' for documentation.
+
+$Id$
 """
 
 import os
