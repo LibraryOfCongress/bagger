@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>User info</h1>
+<dl>
+	<dt>username</dt><dd>{{ user.username }}</dd>
+	<dt>is active</dt><dd>{{ user.is_active }}</dd>
+	<dt>first name</dt><dd>{{ user.first_name }}</dd>
+	<dt>last name</dt><dd>{{ user.last_name }}</dd>
+	<dt>address</dt><dd>{{ user_profile.address }}</dd>
+	<dt>email</dt><dd>{{ user.email }}</dd>
+    {% if user_profile %}
+        <dt>organization</dt><dd>{{ user_profile.organization }}</dd>
+        <dt>phone</dt><dd>{{ user_profile.phone }}</dd>
+    {% else %}
+        <dt>staff</dt><dd>{{ user.is_staff }}</dd>
+        <dt>superuser</dt><dd>{{ user.is_superuser }}</dd>
+    {% endif %}
+</dl>
+
+{% if is_user %}
+    {% if user_profile %}
+        <h1>Initiate a new transfer</h1>
+            {% for project in user_profile.projects.all %}			
+                <li><a href="{{ project.get_absolute_url }}">{{ project }}</a>:
+                    <ul>
+                        {% if project.network_transfer_type %}
+                            <li><a href="{% url create_transfer_url project.network_transfer_type %}?project_id={{project.id}}">{{ project.get_network_transfer_type_display }}</a></li>
+                        {% endif %}
+                        {% if project.shipment_transfer_type %}
+                            <li><a href="{% url create_transfer_url project.shipment_transfer_type %}?project_id={{project.id}}">{{ project.get_shipment_transfer_type_display }}</a></li>
+                        {% endif %}				
+                    </ul>
+                </li>
+            {% endfor %}
+
+        <h1>Reports</h1>
+        <ul>
+            <li><a href="{% url transfers_url %}?username={{ user.username }}">List my transfers</a></li>
+            <li>List transfers by project:
+                <ul>
+                    {% for project in user_profile.projects.all %}			
+                        <li><a href="{% url transfers_url %}?project_id={{ project.id }}">{{ project }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    {% else %}
+        {% if user.is_staff or user.is_superuser %}
+            <h1>Administer</h1>
+            <a href="{% url admin_url %}">Go to Admin Site</a>
+            
+            <h1>Reports</h1>
+            <ul>
+                <li>List transfers by project:
+                    <ul>
+                        {% for project in projects.all %}			
+                            <li><a href="{% url transfers_url %}?project_id={{ project.id }}">{{ project }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+            
+        {% endif %}
+    {% endif %}
+
+    <h1>Update user info</h1>
+    <p>You're the user so you should get the option of updating info about yourself.</p>
+
+    <h1>Change password</h1>
+    <p>You're the user so you should get the option to change your password.</p>
+{% endif %}
+
+{% endblock %}

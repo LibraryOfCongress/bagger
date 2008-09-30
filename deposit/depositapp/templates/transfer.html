@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<dl>
+    <dt>Transfer id</dt><dd>{{ transfer.id }}</dd>
+    <dt>Package ids</dt><dd>{{ transfer.package_ids }}</dd>
+    <dt>User</dt><dd><a href="{{ transfer.user.get_absolute_url }}">{{ transfer.user }}</a></dd>
+    <dt>Project</dt><dd><a href="{{ transfer.project.get_absolute_url }}">{{ transfer.project }}</a></dd>
+    <dt>Initiated</dt><dd>{{ transfer.create_timestamp }}</dd>
+    {% block transfer_content %}{% endblock %}
+</dl>
+{% endblock %}

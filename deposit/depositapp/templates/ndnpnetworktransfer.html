@@ -1,0 +1,6 @@
+{% extends "networktransfer.html" %}
+
+{% block transfer_content %}
+    {{ block.super }}
+    {% include "transfer_ndnp_include.html" %}
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "transfer.html" %}
+
+{% block transfer_content %}
+    {{ block.supper }}
+    <dt>Location</dt><dd>{{ transfer.location }}</dd>
+    <dt>Username</dt><dd>{{ transfer.username }}</dd>
+    <dt>Password</dt><dd>{{ transfer.password }}</dd>
+    <dt>Estimated size</dt><dd>{{ transfer.estimated_size }}</dd>
+{% endblock %}
