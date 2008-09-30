@@ -27,6 +27,7 @@ public class ConsolePane extends JPanel {
 	//private GridLayout layout = new GridLayout(0, 2, 10, 10);
     private GridBagLayout layout = new GridBagLayout();
     private GridBagConstraints gbc = new GridBagConstraints();
+    private String messages = new String();
 
     private Bag bag;
 
@@ -43,6 +44,14 @@ public class ConsolePane extends JPanel {
         createFormControl();
     }
     
+    public ConsolePane(Bag bag, String messages) {
+        super();
+        this.setLayout(layout);
+        this.bag = bag;
+        this.messages = messages;
+        createFormControl();
+    }
+
     public void setBag(Bag bag) {
     	this.bag = bag;
     }
@@ -50,13 +59,21 @@ public class ConsolePane extends JPanel {
     public Bag getBag() {
     	return this.bag;
     }
+    
+    public void setMessages(String messages) {
+    	this.messages = messages;
+    }
+    
+    public String getMessages() {
+    	return this.messages;
+    }
 
     protected JComponent createFormControl() {
     	this.setMaximumSize(dimension);
     	Dimension formDimension = new Dimension(150, 50);
         Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
 /* */
-    	JLabel completeLabel = new JLabel("Is Complete?: ");
+    	JLabel completeLabel = new JLabel("Is Complete? ");
     	Font font = completeLabel.getFont().deriveFont(Font.BOLD);
     	completeLabel.setFont(font);
     	completeLabel.setPreferredSize(formDimension);
@@ -91,7 +108,7 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(completeResult, gbc);
         this.add(completeResult);
 
-    	JLabel validLabel = new JLabel("Is Valid?: ");
+    	JLabel validLabel = new JLabel("Is Valid? ");
     	font = validLabel.getFont().deriveFont(Font.BOLD);
     	validLabel.setFont(font);
     	validLabel.setPreferredSize(formDimension);
@@ -126,7 +143,7 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(validResult, gbc);
         this.add(validResult);
 
-    	JLabel serializedLabel = new JLabel("Is Packaged?: ");
+    	JLabel serializedLabel = new JLabel("Is Packaged? ");
     	font = serializedLabel.getFont().deriveFont(Font.BOLD);
     	serializedLabel.setFont(font);
     	serializedLabel.setPreferredSize(formDimension);
@@ -161,7 +178,7 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(serializedResult, gbc);
         this.add(serializedResult);
 
-    	JTextArea serializedArea = new JTextArea("");
+    	JTextArea serializedArea = new JTextArea(this.messages);
     	if (bag != null) serializedArea.append("");
     	serializedArea.setEditable(false);
     	serializedArea.setLineWrap(false);
