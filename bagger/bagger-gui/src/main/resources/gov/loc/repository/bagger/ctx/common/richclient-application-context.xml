@@ -10,8 +10,8 @@
 
   <bean id="applicationDescriptor"
     class="org.springframework.richclient.application.support.DefaultApplicationDescriptor">
-    <property name="version" value="1.0" />
-    <property name="buildId" value="20080909001" />
+    <property name="version" value="1.2" />
+    <property name="buildId" value="20080930-1.2" />
   </bean>
 
   <bean id="baggerLifecycleAdvisor"
@@ -115,7 +115,9 @@
     <property name="imageSourceId">
       <idref bean="imageSource" />
     </property>
-    <!--property name="messageSourceId"><idref bean="messageSource"/></property-->
+    <property name="messageSourceId">
+      <idref bean="messageSource"/>
+    </property>
     <property name="rulesSourceId">
       <idref bean="rulesSource" />
     </property>
