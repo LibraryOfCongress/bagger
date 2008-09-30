@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JTree;
+import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.NamedEntity;
 import gov.loc.repository.bagger.util.FileUtililties;
 
@@ -39,18 +40,23 @@ public class Bag extends NamedEntity {
 
 	private Date createDate;
 	private File rootSrc;
+	private File rootDir;
 
+	private Project project;
 	private List<Manifest> manifests;
+	private List<TagManifest> tagManifests = null;
 	private Fetch fetch;
 	private BagIt bagIt;
 	private BagItInfo info;
 	private Data data;
 	
+	private BagGeneratorVerifier verifier = new BagGeneratorVerifierImpl(new FixityGeneratorManifestGeneratorVerifier(new JavaSecurityFixityGenerator()));
 	private boolean isHoley = false;	
 	private boolean isFetch = false;	
 	private boolean isComplete = false;	
 	private boolean isValid = false;	
 	private boolean isSerialized = false;
+	private boolean isCopyright = false;
 
 	public Bag() {
 		super();
@@ -69,6 +75,14 @@ public class Bag extends NamedEntity {
 	public Date getCreateDate() {
 		return this.createDate;
 	}
+	
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
+	public Project getProject() {
+		return this.project;
+	}
 
 	public void setRootSrc(File rootSrc) {
 		this.rootSrc = rootSrc;
@@ -76,6 +90,14 @@ public class Bag extends NamedEntity {
 	
 	public File getRootSrc() {
 		return this.rootSrc;
+	}
+	
+	public void setRootDir(File rootDir) {
+		this.rootDir = rootDir;
+	}
+	
+	public File getRootDir() {
+		return this.rootDir;
 	}
 
 	public void setManifests(List<Manifest> manifests) {
@@ -88,6 +110,18 @@ public class Bag extends NamedEntity {
 
 	public void addManifest(Manifest manifest) {
 		manifests.add(manifest);
+	}
+	
+	public void setTagManifests(List<TagManifest> tagManifests) {
+		this.tagManifests = tagManifests;
+	}
+	
+	public List<TagManifest> getTagManifests() {
+		return this.tagManifests;
+	}
+	
+	public void addTagManifest(TagManifest tagManifest) {
+		tagManifests.add(tagManifest);
 	}
 
 	public void setFetch(Fetch fetch) {
@@ -108,6 +142,7 @@ public class Bag extends NamedEntity {
 
 	public void setInfo(BagItInfo bagItInfo) {
 		this.info = bagItInfo;
+		this.setName(bagItInfo.getBagName());
 	}
 
 	public BagItInfo getInfo() {
@@ -153,6 +188,14 @@ public class Bag extends NamedEntity {
 	public boolean getIsSerialized() {
 		return this.isSerialized;
 	}
+	
+	public void setIsCopyright(boolean b) {
+		this.isCopyright = b;
+	}
+	
+	public boolean getIsCopyright() {
+		return this.isCopyright;
+	}
 
 	public void setIsComplete(boolean b) {
 		this.isComplete = b;
@@ -166,86 +209,130 @@ public class Bag extends NamedEntity {
 		// TODO: Load bag information from persisted storage
 	}
 	
+	public String validate() {
+		String messages = null;
+
+		SimpleResult result = verifier.isComplete(this.rootDir);
+		messages = "Is Complete? \n" + result.getMessage();
+		this.isComplete = result.isSuccess();
+		messages += "\n";
+		messages += "Is Valid? \n";
+		if (this.isComplete) {
+			result = verifier.isValid(this.rootDir);
+			messages += result.getMessage();
+			this.isValid = result.isSuccess();
+		} else {
+			messages += "Bag is not complete.";
+		}
+		messages += "\n";
+
+		return messages;
+	}
+	
 	public String write(File path) {
 		String errorMessages = null;
 		boolean isComplete = false;
 		boolean isValid = false;
+		boolean success = false;
 
-		// create and open bag name directory
-		display("Bag.writePath: " + path.getParent());
-		File rootDir = new File(path.getAbsolutePath());
-		boolean success = rootDir.mkdir();
-	    if (!success) {
-	    	errorMessages = reportError(errorMessages, "BagView.write failed to create directory: " + rootDir);
-			log.error(errorMessages);
-	    }
-		// create and write manifest-<type>.txt in bag name directory
-    	for (int i=0; i < manifests.size(); i++) {
-    		Manifest manifest = manifests.get(i);
-    		manifest.writeData();
-    		manifest.write(rootDir);
-    	}
-		// create and write fetch.txt in bag name directory
-	    fetch.setName(BagHelper.FETCH);
-	    fetch.writeData();
-	    fetch.write(rootDir);
-		// create and write bagit-info.txt in bag name directory
-		info.setName(BagHelper.INFO);
-		info.writeData();
-		info.write(rootDir);
-		// create and write bagit.txt in bag name directory
-		bagIt.setName(BagHelper.BAGIT);
-		bagIt.writeData();
-		bagIt.write(rootDir);
-		// create and open data directory
-		File dataDir = new File(rootDir, BagHelper.DATA_DIRECTORY);
-		success = dataDir.mkdir();
-	    if (!success) {
-	    	errorMessages = reportError(errorMessages, "ERROR in BagView.write failed to create directory: " + dataDir);
-			log.error(errorMessages);
-	    }
-		// create and write data directory
-		//List<File> fileList = data.getFiles();
-		File parent = this.getRootSrc();
-		
-		try
-		{
-			display("Bag.write copyFiles: " + parent.getAbsolutePath() + " to: " + dataDir.getAbsolutePath());
-			FileUtililties.copyFiles(parent, dataDir);
-		}
-		catch(IOException e)
-		{
-	    	errorMessages = reportError(errorMessages, "ERROR in BagView.write copyFiles: " + e.getMessage());
-	    	log.error(errorMessages);
-		}
+		try {
+			// create and open bag name directory
+			if (path.getAbsolutePath() == null || this.getName() == null) {
+		    	errorMessages = reportError(errorMessages, "BagView.write failed to create directory: NULL");
+				log.error(errorMessages);
+				return errorMessages;			
+			}
+//			display("Bag.writePath: " + path.getParent());
+			display("Bag.writePath: " + path.getAbsolutePath() + "/" + this.getName());
+			File rootDir = new File(path.getAbsolutePath(), this.getName());
+			success = rootDir.mkdir();
+		    if (!success) {
+		    	errorMessages = reportError(errorMessages, "BagView.write failed to create directory: " + rootDir);
+				log.error(errorMessages);
+				return errorMessages;
+		    }
+			this.setRootDir(rootDir);
+			// create and write manifest-<type>.txt in bag name directory
+	    	for (int i=0; i < manifests.size(); i++) {
+	    		Manifest manifest = manifests.get(i);
+	    		manifest.writeData();
+	    		manifest.write(rootDir);
+	    	}
+	    	if (this.isHoley) {
+	    		// create and write fetch.txt in bag name directory
+	    	    fetch.setName(BagHelper.FETCH);
+	    	    fetch.writeData();
+	    	    fetch.write(rootDir);    		
+	    	}
+			// create and write bagit-info.txt in bag name directory
+			info.setName(BagHelper.INFO);
+			info.writeData();
+			info.write(rootDir);
+			// create and write bagit.txt in bag name directory
+			bagIt.setName(BagHelper.BAGIT);
+			bagIt.writeData();
+			bagIt.write(rootDir);
+			// create and write tagmanifest-<type>.txt in bag name directory
+	    	for (int i=0; i < tagManifests.size(); i++) {
+	    		TagManifest tagManifest = tagManifests.get(i);
+	    		tagManifest.setType(ManifestType.MD5);
+	    		tagManifest.writeData();
+	    		tagManifest.write(rootDir);
+	    		tagManifests.set(i, tagManifest);
+	    	}
+	    	this.setTagManifests(tagManifests);
+			// create and open data directory
+			File dataDir = new File(rootDir, BagHelper.DATA_DIRECTORY);
+			success = dataDir.mkdir();
+		    if (!success) {
+		    	errorMessages = reportError(errorMessages, "ERROR in BagView.write failed to create directory: " + dataDir);
+				log.error(errorMessages);
+		    }
+			// create and write data directory
+			//List<File> fileList = data.getFiles();
+			File parent = this.getRootSrc();
+			
+			try
+			{
+				display("Bag.write copyFiles: " + parent.getAbsolutePath() + " to: " + dataDir.getAbsolutePath());
+				FileUtililties.copyFiles(parent, dataDir);
+			}
+			catch(IOException e)
+			{
+		    	errorMessages = reportError(errorMessages, "ERROR in BagView.write copyFiles: " + e.getMessage());
+		    	log.error(errorMessages);
+			}
 
-		BagGeneratorVerifier verifier = new BagGeneratorVerifierImpl(new FixityGeneratorManifestGeneratorVerifier(new JavaSecurityFixityGenerator()));
-		SimpleResult result = verifier.isComplete(rootDir);
-		isComplete = result.isSuccess();
-		this.isComplete = isComplete;
-		display("Bag.write isComplete: " + isComplete);
-		if (errorMessages == null && isComplete) {
-			result = verifier.isValid(rootDir);
-			isValid = result.isSuccess();
-			this.isValid = isValid;
-			display("Bag.write isValid: " + isValid);
-			if (isValid) {
-				String msg = null;
-				// Create a  zip file for serialized transfer of the bag
-				msg = FileUtililties.createZip(rootDir);
-				if (msg == null) {
-					// Clean up the files since bag zip is created
-					this.isSerialized = true;
-					boolean b = FileUtililties.deleteDir(rootDir);
-					if (!b) reportError(errorMessages, "Error deleting directory: " + rootDir);					
+			SimpleResult result = verifier.isComplete(rootDir);
+			isComplete = result.isSuccess();
+			this.isComplete = isComplete;
+			display("Bag.write isComplete: " + isComplete);
+			if (errorMessages == null && isComplete) {
+				result = verifier.isValid(rootDir);
+				isValid = result.isSuccess();
+				this.isValid = isValid;
+				display("Bag.write isValid: " + isValid);
+				if (isValid) {
+					String msg = null;
+					// Create a  zip file for serialized transfer of the bag
+					msg = FileUtililties.createZip(rootDir);
+					if (msg == null) {
+						// Clean up the files since bag zip is created
+						this.isSerialized = true;
+						boolean b = FileUtililties.deleteDir(rootDir);
+						if (!b) reportError(errorMessages, "Error deleting directory: " + rootDir);					
+					} else {
+						reportError(errorMessages, msg);					
+					}				
 				} else {
-					reportError(errorMessages, msg);					
-				}				
+					errorMessages = reportError(errorMessages, result.getMessage());
+				}
 			} else {
 				errorMessages = reportError(errorMessages, result.getMessage());
 			}
-		} else {
-			errorMessages = reportError(errorMessages, result.getMessage());
+		} catch (Exception e) {
+			errorMessages += "\n" + "Exception while creating bag:\n" + e.getMessage();
+			log.error(e.getMessage());
 		}
 		return errorMessages;
 	}
