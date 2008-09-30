@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import gov.loc.repository.bagit.manifest.ManifestGeneratorVerifier;
 import gov.loc.repository.bagit.manifest.impl.FixityGeneratorManifestGeneratorVerifier;
 import gov.loc.repository.bagit.manifest.impl.JavaSecurityFixityGenerator;
+import gov.loc.repository.bagit.utilities.FilenameHelper;
 import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.MD5Checksum;
 import gov.loc.repository.bagit.bag.BagHelper;
@@ -54,28 +55,34 @@ public class TagManifest extends FileEntity {
 		List<File> fileList = new ArrayList<File>();
 		fileList.add(this.bag.getBagIt().getFile());
 		fileList.add(this.bag.getInfo().getFile());
-		fileList.add(this.bag.getFetch().getFile());
+    	if (this.bag.getIsHoley()) fileList.add(this.bag.getFetch().getFile());
 		List<Manifest> mlist = this.bag.getManifests();
 		for (int m=0; m < mlist.size(); m++) {
 			fileList.add(mlist.get(m).getFile());
 		}
 
+		//log.info("TagManifest.buildTagManifestList::" + fileList.size() );
 		tagManifestList = new ArrayList<FileEntity>();
 		for (int i=0; i < fileList.size(); i++) {
 			File file = fileList.get(i);
-			FileEntity fileEntity = new FileEntity();
-			fileEntity.setFile(file);
-			String filename = file.getAbsolutePath();
-			try {
-				String checksum = MD5Checksum.getMD5Checksum(filename);
-				fileEntity.setChecksum(checksum);
-				fileEntity.setName(filename);
-				fileEntity.setPath(file.getParent());
-			} catch (Exception e) {
-				log.error("Manifest.buildTagManifestList checksum: " + e);
+			if (file != null) {
+				//log.info("TagManifest.fileList: " + file.getName() );
+				FileEntity fileEntity = new FileEntity();
+				fileEntity.setFile(file);
+				String filename = file.getAbsolutePath();
+				//log.info("TagManifest.tagManifestList filename::" + filename );
+				try {
+					String checksum = MD5Checksum.getMD5Checksum(filename);
+					fileEntity.setChecksum(checksum);
+					fileEntity.setName(filename);
+					fileEntity.setPath(file.getParent());
+				} catch (Exception e) {
+					log.error("Manifest.buildTagManifestList checksum: " + e);
+				}
+				tagManifestList.add(fileEntity);				
 			}
-			tagManifestList.add(fileEntity);
 		}
+		//log.info("TagManifest.tagManifestList::" + tagManifestList.size() );
 	}
 
 	public void setType(String type) {
@@ -99,18 +106,24 @@ public class TagManifest extends FileEntity {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		File parent = this.bag.getRootDir();
 		for (int i=0; i < tagManifestList.size(); i++) {
 			FileEntity fe = tagManifestList.get(i);
 			sb.append(fe.getChecksum());
-			sb.append(" ");
-			sb.append(fe.getName());
+			sb.append("  ");
+			String filename = fe.getName();
+			if (parent != null) filename = FilenameHelper.removeBasePath(parent.getAbsolutePath(), fe.getName());
+			sb.append(filename);
 			sb.append('\n');
 		}
 
+		//log.info("TagManifest.toString:: " + sb.toString());
 		return sb.toString();
 	}
 
 	public void writeData() {
+		//log.info("TagManifest.writeData");
+		buildTagManifestList();
 		this.fromString(toString());
 	}
 }
