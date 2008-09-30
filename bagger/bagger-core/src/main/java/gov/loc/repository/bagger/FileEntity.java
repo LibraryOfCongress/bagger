@@ -77,6 +77,7 @@ public class FileEntity extends BaseEntity {
 			Writer writer = new OutputStreamWriter(new FileOutputStream(file),"UTF-8");
 			writer.write(this.data);
 			writer.close();
+			this.setFile(file);
 		}
 		catch(IOException e)
 		{
