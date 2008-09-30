@@ -66,12 +66,12 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("INSERT INTO users VALUES ('justin', 'justin', true)");
         template.execute("INSERT INTO users VALUES ('liz', 'liz', true)");
         template.execute("INSERT INTO users VALUES ('jkunze', 'jkunze', true)");
-        template.execute("INSERT INTO authorities VALUES ('jste', 'ROLE_BAGIT_STAFF')");
-        template.execute("INSERT INTO authorities VALUES ('lesliej', 'ROLE_BAGIT_STAFF')");
-        template.execute("INSERT INTO authorities VALUES ('aboyko', 'ROLE_BAGIT_USER')");
-        template.execute("INSERT INTO authorities VALUES ('justin', 'ROLE_BAGIT_STAFF')");
-        template.execute("INSERT INTO authorities VALUES ('liz', 'ROLE_BAGIT_STAFF')");
-        template.execute("INSERT INTO authorities VALUES ('jkunze', 'ROLE_BAGIT_USER')");
+        template.execute("INSERT INTO authorities VALUES ('jste', 'ROLE_BAGGER_STAFF')");
+        template.execute("INSERT INTO authorities VALUES ('lesliej', 'ROLE_BAGGER_STAFF')");
+        template.execute("INSERT INTO authorities VALUES ('aboyko', 'ROLE_BAGGER_USER')");
+        template.execute("INSERT INTO authorities VALUES ('justin', 'ROLE_BAGGER_STAFF')");
+        template.execute("INSERT INTO authorities VALUES ('liz', 'ROLE_BAGGER_STAFF')");
+        template.execute("INSERT INTO authorities VALUES ('jkunze', 'ROLE_BAGGER_USER')");
 
         // Schema: Bagger
         template.execute("CREATE TABLE person (id INT NOT NULL IDENTITY PRIMARY KEY, first_name VARCHAR(30), middle_init VARCHAR(1), last_name VARCHAR(30))");
@@ -145,6 +145,7 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("INSERT INTO profile VALUES (3, 'jkunze', 6, 3, 4, 'A', '2002-04-17')");
         template.execute("INSERT INTO profile VALUES (4, 'aboyko', 3, 5, 3, 'D', '2002-04-17')");
 
+        template.execute("INSERT INTO person_projects VALUES (1, 1);");
         template.execute("INSERT INTO person_projects VALUES (1, 5);");
         template.execute("INSERT INTO person_projects VALUES (1, 6);");
         template.execute("INSERT INTO person_projects VALUES (2, 5);");
