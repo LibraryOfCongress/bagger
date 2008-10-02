@@ -31,7 +31,7 @@ public class BagIt extends FileEntity {
 	private String versionLabel = "BagIt-version: ";
 	private String version = BagGeneratorVerifierImpl.VERSION;
 	private String encodingLabel = "Tag-File-Character-Encoding: ";
-	private String encoding = "UTF-8";
+	private String encoding = "UTF-8"; // Currently the only encoding type allowed for meta-data files
 
 	public void setVersion(String version) {
 		this.version = version;

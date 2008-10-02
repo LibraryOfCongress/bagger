@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
         |   bagit.txt
         |   [optional additional tag files]
         |      fetch.txt
-        |      bagit-info.txt
+        |      bag-info.txt
         \--- data/
               |   [optional file hierarchy]
   *
@@ -264,7 +264,7 @@ public class Bag extends NamedEntity {
 	    	    fetch.writeData();
 	    	    fetch.write(rootDir);    		
 	    	}
-			// create and write bagit-info.txt in bag name directory
+			// create and write bag-info.txt in bag name directory
 			info.setName(BagHelper.INFO);
 			info.writeData();
 			info.write(rootDir);
