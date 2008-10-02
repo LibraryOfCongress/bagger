@@ -23,7 +23,7 @@ import gov.loc.repository.bagit.bag.BagHelper;
 |
 |    (e9c5753d65b1ef5aeb281c0bb880c6c8 manifest-md5.txt                  )
 |    (93c53193ef96732c76e00b3fdd8f9dd3 bagit.txt                         )
-|    (61c96810788283dc7be157b340e4eff4 bagit-info.txt                    )
+|    (61c96810788283dc7be157b340e4eff4 bag-info.txt                    )
 |    (55c7c80c6635d5a4c8fe76a940bf353e fetch.txt                         )
 |
  *

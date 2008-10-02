@@ -1,6 +1,7 @@
 package gov.loc.repository.bagger.bag;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,7 +11,7 @@ import gov.loc.repository.bagger.FileEntity;
 /**
  * Simple JavaBean domain object representing bagit information.
  *
-|   bagit-info.txt
+|   bag-info.txt
 |    (Source-Organization: California Digital Library                      )
 |    (Organization-Address: 415 20th Street, 4th Floor, Oakland, CA. 94612 )
 |    (Contact-Name: A. E. Newman                                           )
@@ -38,22 +39,15 @@ public class BagItInfo extends FileEntity {
 
 	private String bagName = new String("bag_1");
 	private BagOrganization bagOrganization = new BagOrganization();
-
 	private String externalDescription = "";
-
-	private String packingDate = "";
-
+	private String packingDate = ""; // YYYY-MM-DD
 	private String externalIdentifier = "";
-
 	private String bagSize = "";
-
 	private String bagGroupIdentifier = "";
-
-	private String bagCount = "";
-
+	private String bagCount = "1 of 1";
 	private String internalSenderIdentifier = "";
-
 	private String internalSenderDescription = "";
+	private String publisher = "";
 
 	public void setBagName(String name) {
 		this.bagName = name;
@@ -64,6 +58,10 @@ public class BagItInfo extends FileEntity {
 	}
 
 	public void setBagOrganization(BagOrganization bagOrganization) {
+	    String pattern = "YYYY-MM-DD";
+	    SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+		Date todaysDate = new Date();
+		this.packingDate = formatter.format(todaysDate);
 		this.bagOrganization = bagOrganization;
 		this.bagOrganization.setOrgName(bagOrganization.getOrgName());
 		this.bagOrganization.setOrgAddress(bagOrganization.getOrgAddress());
@@ -139,6 +137,14 @@ public class BagItInfo extends FileEntity {
 	public String getInternalSenderDescription() {
 		return this.internalSenderDescription;
 	}
+	
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
+	}
+	
+	public String getPublisher() {
+		return this.publisher;
+	}
 
 	@Override
 	public String toString() {
@@ -181,6 +187,9 @@ public class BagItInfo extends FileEntity {
 		sb.append('\n');
 		sb.append("Internal-Sender-Description: ");
 		sb.append(this.internalSenderDescription);
+		sb.append('\n');
+		sb.append("Publisher: ");
+		sb.append(this.publisher);
 		sb.append('\n');
 
 		return sb.toString();
