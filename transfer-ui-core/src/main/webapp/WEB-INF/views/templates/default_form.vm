@@ -1,10 +1,3 @@
-<fieldset>
-<legend>Variables</legend>
-<table>
 #foreach ($variableBean in $taskInstanceBean.taskBean.variableBeanList)
-	<tr>
-		#variable($variableBean $taskInstanceBean)
-	</tr>
+	#variable($variableBean $taskInstanceBean)
 #end
-</table>
-</fieldset>

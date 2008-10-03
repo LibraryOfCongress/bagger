@@ -45,24 +45,23 @@
 	#set($variableValue = "")
 	#set($variableValue = $taskInstanceBean.variableMap.get($variableBean.id))
 	#if($variableBean.writable)
-		<td><label for="variable${variableBean.id}">
-		    ${variableBean.name}		    
-		<label></td>
-		<td><input id="variable${variableBean.id}"
+		<label for="variable${variableBean.id}">
+		    ${variableBean.name}:		    
+		<label>
+		<input id="variable${variableBean.id}"
 		    type="text" 
 		    name="variable.${variableBean.id}" 
 		    value="$variableValue" />
 		#if ($variableBean.required)
 			&nbsp;&nbsp;(Required)
 		#end
-		</td>
 	#else
-	    <td><label for="variable${variableBean.id}">
-		    $variableBean.name
-	    <label></td>
-		<td><span id="variable${variableBean.id}">
+	    <label for="variable${variableBean.id}">
+		    $variableBean.name:
+	    <label>
+		<span id="variable${variableBean.id}">
 		    $variableValue
-		</span></td>
+		</span>
 	#end
 #end
 
@@ -79,28 +78,40 @@
 *#
 #macro ( tablesorter $id $size)
 	#if( $size > 10)
-	    <table>
-	        <tbody>
-	        	<tr>
-	        		<td>
-			            <form id="${id}_pager" class="pager">
-			        		<img src="${contextPath}/images/icons/first.png" class="first"/>
-			        		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
-			        		<label for="${id}_pagedisplay">Showing page </label>
-			        		<input id="${id}_pagedisplay" type="text" class="pagedisplay"/>
-			        		<img src="${contextPath}/images/icons/next.png" class="next"/>
-			        		<img src="${contextPath}/images/icons/last.png" class="last"/>
-			        		<label for="${id}_pagesize">Results per page: </label>
-			        		<select id="${id}_pagesize" class="pagesize">
-			        			<option selected="selected" value="10">10</option>
-			        			<option value="25">25</option>
-			        			<option value="50">50</option>
-			        			<option value="100">100</option>			        			
-			        		</select>
-			            </form>
-	        		</td>
-	        	</tr>
-	        </tbody>
-	    </table>
+		<div id="${id}_pager" class="pager">
+	        <form>
+	    		<img src="${contextPath}/images/icons/first.png" class="first"/>
+	    		<img src="${contextPath}/images/icons/prev.png" class="prev"/>
+	    		<label for="${id}_pagedisplay">Showing page </label>
+	    		<input id="${id}_pagedisplay" type="text" class="pagedisplay"/>
+	    		<img src="${contextPath}/images/icons/next.png" class="next"/>
+	    		<img src="${contextPath}/images/icons/last.png" class="last"/>
+	    		<label for="${id}_pagesize">Results per page: </label>
+	    		<select id="${id}_pagesize" class="pagesize">
+	    			<option selected="selected" value="10">10</option>
+	    			<option value="25">25</option>
+	    			<option value="50">50</option>
+	    			<option value="100">100</option>			        			
+	    		</select>
+	        </form>
+	    </div>
     #end
+#end
+
+#*
+	-Writes comments
+*#
+#macro ( list_comments $commentBeanList)
+	#foreach($commentBean in $sorter.sort($commentBeanList, 'createDate:desc'))
+		<div>
+			<dl>
+				<dt>User:</dt>
+				<dd>$commentBean.userBean.name</dd>
+				<dt>Comment date:</dt>
+				<dd>${date.format('yyyy-MM-dd hh:mm', $commentBean.createDate)}</dd>
+				<dt>Comment:</dt>
+				<dd><p>$escape.html($commentBean.message)</p></dd>
+	        </dl>
+	    </div>
+	#end
 #end

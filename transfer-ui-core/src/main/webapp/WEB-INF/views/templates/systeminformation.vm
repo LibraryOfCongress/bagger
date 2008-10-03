@@ -1,0 +1,24 @@
+<div id="systeminfo">
+   	<div id="vitalStatistics">
+   		<h2>Vital Statistics</h2>
+        <img src="http://chart.apis.google.com/chart?cht=bhs&chs=200x50&chd=t:${totalMemory}|${maxMemory}&chco=4d89f9,c6d9fd&chbh=20&chds=0,${maxMemory}"/>
+        <dl>
+        	<dt>Max Alloted Memory:</dt>
+        	<dd>${maxMemory}</dd>
+        	<dt>Total Memory In Use:</dt>
+        	<dd>${totalMemory}</dd>
+        	<dt>Free Memory:</dt>
+        	<dd>${freeMemory}</dd>
+        </dl>
+    </div>
+		
+	<div id="environment">
+		<h2>Environment Information</h2>
+		<dl>
+	        #foreach($info in ${systemInfo.keySet()})
+	        	<dt>${info}</dt>
+	        	<dd>${systemInfo.get("$info")}</dd>
+	        #end
+		</dl>
+	</div>    
+</div>

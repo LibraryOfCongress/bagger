@@ -1,30 +1,12 @@
-<div id="tasks">
-    <ul id="localNav">
-        <li><a href="#status">
-            <span>Status </span>
-        </a></li>
-        #if ($permissions.canAdministerServiceRequestListener())
-	        <li><a href="#administer">
-	            <span>Administer </span>
-	        </a></li>
-        #end
-    </ul>
-	<div id="status">
-		<h2>Status</h2>
-        <form method="get" action="${contextPath}/admin/completedrequestlistener.html" >
-        <fieldset>
-            <legend>Status of listener</legend>
-	        <table cellspacing="3" cellpadding="7">
-                <tr id="status" >
-                <td><label for="status_value">Running</label></td>
-                <td><span id="status_value">$listener.isRunning()</span></td>
-                <td><span class="description">Whether the listener is currently running.
-                </span></td>
-		    </table>
-		</fieldset>
-	            <input type="hidden" name="refresh" value="true" />
-        	    <input type="submit" class="button" value="  Refresh  " style="float:right"/>
-	    </form>
+<div id="completedRequestListener">
+	<div id="details">
+		<h2>Details</h2>
+		<dl>
+			<dt>Status:</dt>
+			<dd>
+				#if ($listener.isRunning()) Running #else Not running #end
+			</dd>
+		</dl>
 	</div>
 
     #if ($permissions.canAdministerServiceRequestListener())
@@ -54,6 +36,3 @@
 		</div>    	
     #end    
 </div>
-<form method="get" action="${contextPath}/admin/index.html" >
-	<input type="submit" class="button" value="  Back  " style="float:left" />
-</form>

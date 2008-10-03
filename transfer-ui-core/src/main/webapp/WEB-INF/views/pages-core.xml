@@ -6,18 +6,16 @@
   
 	<definition name="base"             page="base.vm">
 	    <put name="springXhtmlCompliant"  value="true"/>
-		<put name="meta"                  value="meta.vm" />
 		<put name="css"                   value="css.vm" />
 		<put name="javascript"            value="javascript.vm" />
 		<put name="top-nav"               value="top-nav.vm" />
-		<put name="search"                value="search.vm" />
 		<put name="crumb-nav"             value="crumb-nav.vm" />
-		<put name="footer"                value="footer.vm" />
 	</definition>
 
 	<definition name="home" extends="base">
 		<put name="title"           value="Transfer UI Home" />
 		<put name="content"         value="home.vm" />
+		<put name="jquery_ready"	value="home_jquery_ready.vm" />
 	</definition>
 	
 	<definition name="login" extends="base">
@@ -28,6 +26,7 @@
 	<definition name="tasks" extends="base">
 		<put name="title"           value="Transfer UI Tasks" />
 		<put name="content"         value="tasks.vm" />
+		<put name="jquery_ready"	value="tasks_jquery_ready.vm" />
 	</definition>
 	
 	<definition name="taskinstance" extends="base">
@@ -38,6 +37,7 @@
 	<definition name="processinstancelist" extends="base">
 		<put name="title"           value="Transfer UI Workflows" />
 		<put name="content"         value="processinstancelist.vm" />
+		<put name="jquery_ready"	value="processinstancelist_jquery_ready.vm" />
 	</definition>
 
 	<definition name="processinstance" extends="base">
@@ -48,6 +48,11 @@
 	<definition name="admin" extends="base">
 		<put name="title"           value="Transfer UI Admin Panel" />
 		<put name="content"         value="admin.vm" />
+	</definition>
+
+	<definition name="systeminformation" extends="base">
+		<put name="title"           value="Transfer UI System Information" />
+		<put name="content"         value="systeminformation.vm" />
 	</definition>
 
 	<definition name="healthcheck" extends="base">

@@ -10,14 +10,12 @@
     </h1>
     <div id="crumb">
         #if ($jbpmcontext.actorId)
-            <span>&nbsp;|&nbsp;</span>
             You are logged in as <span id="currentUser">$jbpmcontext.actorId</span>
             <span>&nbsp;|&nbsp;</span>
             <a href="${contextPath}/login/logout.html">logout</a>
         #else
             #if($tiles.getAttribute('title') != 'Login')
-            <span>&nbsp;|&nbsp;</span>
-            <a href="${contextPath}/login/login.html#if($referer)?referer=$escape.url($referer)#end">login</a>
+	            <a href="${contextPath}/login/login.html#if($referer)?referer=$escape.url($referer)#end">login</a>
             #end
         #end
     </div>

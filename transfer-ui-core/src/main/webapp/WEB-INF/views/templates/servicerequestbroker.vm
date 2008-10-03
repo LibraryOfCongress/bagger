@@ -1,29 +1,22 @@
-<div id="tasks">
-    <ul id="localNav">
-        <li><a href="#requests">
-            <span>Service Requests </span>
-        </a></li>
-    </ul>
-	<div id="requests">
-		<h2>Service Requests</h2>
-    <form method="get" action="${contextPath}/admin/servicerequestbroker.html" >
-        <fieldset>
-            <legend>Service Requests that have not been completed</legend>
-	        <table cellspacing="3" cellpadding="7">
-	        	<thead>
-	                <tr>
-                        <th>Key</th>
-                        <th>Queue</th>
-                        <th>JobType</th>
-                        <th>Corr. key</th>
-                        <th>Req. entries</th>
-                        <th>Requester</th>
-                        <th>Req. date</th>
-                        <th>Responder</th>
-                        <th>Req. ack. date</th>
-                        <th>Suspended</th>
-                    </tr>
-	            </thead>
+<div id="serviceRequests">
+	<div id="incompleteServiceRequests">
+    	<h2>Incomplete Service Requests</h2>
+    	<table class="tablesorter">
+        	<thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Queue</th>
+                    <th>JobType</th>
+                    <th>Corr. key</th>
+                    <th>Req. entries</th>
+                    <th>Requester</th>
+                    <th>Req. date</th>
+                    <th>Responder</th>
+                    <th>Req. ack. date</th>
+                    <th>Suspended</th>
+                </tr>
+            </thead>
+            <tbody>
 	            #foreach($req in $serviceRequestList)
 		        	<tr>
 						<td>$req.key</td>
@@ -38,13 +31,9 @@
 						<td>$req.isSuspended()</td>
 		        	</tr>
 	        	#end
-		    </table>
-		</fieldset>
-	            <input type="hidden" name="refresh" value="true" />
-        	    <input type="submit" class="button" value="  Refresh  " style="float:right"/>
-    </form>
-	</div>
-
+	        </tbody>
+	    </table>
+	</div>	
     #if ($permissions.canAdministerJobListener())
 		<div id="administer">
 			<h2>Administer</h2>
@@ -74,6 +63,3 @@
 		</div>    	
     #end    
 </div>
-<form method="get" action="${contextPath}/admin/index.html" >
-	<input type="submit" class="button" value="  Back  " style="float:left" />
-</form>

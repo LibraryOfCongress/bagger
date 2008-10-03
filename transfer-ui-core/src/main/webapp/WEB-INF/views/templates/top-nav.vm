@@ -18,6 +18,5 @@
     <li id="global_admin">
       <a href="${contextPath}/admin/index.html">admin</a>
     </li>
-    ##block("search")
   </ul>
 </div>

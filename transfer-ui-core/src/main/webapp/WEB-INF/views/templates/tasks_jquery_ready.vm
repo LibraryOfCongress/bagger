@@ -1,0 +1,17 @@
+//TABLE userTasks
+$("#userTasks_table").tablesorter({
+    widgets: ['zebra']
+}).tablesorterPager({
+    seperator:" of ",
+    positionFixed:false,
+    container: $("#userTasks_pager")
+});
+
+//TABLE unassignedTasks
+$("#unassignedTasks_table").tablesorter({
+    widgets: ['zebra']
+}).tablesorterPager({
+    seperator:" of ",
+    positionFixed:false,
+    container: $("#unassignedTasks_pager")
+});

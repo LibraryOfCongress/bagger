@@ -24,9 +24,9 @@ fi
 
 if [ $SUBST = 1 ]; then
 	cd $DEST/transfer-deployment
-	sed -e "s/CHANGEME_VERSION/1.8-SNAPSHOT/" -i ndnp-dev-lawrencium.py
-	sed -e "s/CHANGEME_VERSION/1.8-SNAPSHOT/" -i ndnp-dev-cobalt.py
-	sed -e "s/'qa'/'dev'/g" -e "s/CHANGEME_VERSION/1.8-SNAPSHOT/" -i ndnp-dev-plutonium.py
+	sed -e "s/CHANGEME_VERSION/1.9-SNAPSHOT/" -i ndnp-dev-lawrencium.py
+	sed -e "s/CHANGEME_VERSION/1.9-SNAPSHOT/" -i ndnp-dev-cobalt.py
+	sed -e "s/'qa'/'dev'/g" -e "s/CHANGEME_VERSION/1.9-SNAPSHOT/" -i ndnp-dev-plutonium.py
 fi
 
 if [ $INSTALL = 1 ]; then

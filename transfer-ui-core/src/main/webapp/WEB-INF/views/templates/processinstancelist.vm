@@ -1,114 +1,68 @@
-<div id="workflows">
-    
-    <ul id="localNav">
-        <li><a href="#activeWorkflows">
-            <span> Active  ( $processInstanceBeanList.size() )  </span>
-        </a></li>
-        <li><a href="#problemWorkflows">
-            <span> Problem  ( $problemProcessInstanceBeanList.size() )  </span>
-        </a></li>
-        <li><a href="#newWorkflow">
-            <span> Start New </span>
-        </a></li>
-    </ul>
-    
+<div id="workflows">    
 	<div id="activeWorkflows">
-		<h2>Active Workflows</h2>
-        <fieldset>
-            <legend>These workflows are currently active.</legend>
-            #tablesorter('activeWorkflows' $processInstanceBeanList.size())            
-	        <table id="activeWorkflows_table" class="tablesorter pageable"  >
-	            <thead><tr>
-                        <th>Package</th>
-                        <th>Workflow</th>
-                        <th>Start date</th>
-                </tr></thead>
-                <tfoot><tr>
-                        <th>Package</th>
-                        <th>Workflow</th>
-                        <th>Start date</th>
-                </tr></tfoot>
-                <tbody>
-			        #foreach($processInstanceBean in $processInstanceBeanList)
-			        <tr id="workflow_${processInstanceBean.id}" >
-				        <td>
-    				    #if($processInstanceBean.packageName) $processInstanceBean.packageName #else none #end
-				        </td>
-				        <td>
-                            <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
-				            ${processInstanceBean.processDefinitionBean.name}
-                            (${processInstanceBean.id}) </a>
-                        </td>
-				        <td>
-				            ${date.format('yyyy-MM-dd hh:mm', $processInstanceBean.startDate)}
-				        </td>				        
-				    </tr>					
-			        #end
-			    </tbody>
-		    </table>
-		</fieldset>
-		
+        <h2>Active Workflows</h2>
+        #tablesorter('activeWorkflows' $processInstanceBeanList.size())            
+        <table id="activeWorkflows_table" class="tablesorter"  >
+            <thead><tr>
+                    <th>Package</th>
+                    <th>Workflow</th>
+                    <th>Start date</th>
+            </tr></thead>
+            <tbody>
+		        #foreach($processInstanceBean in $processInstanceBeanList)
+		        <tr id="workflow_${processInstanceBean.id}" >
+			        <td>
+				    #if($processInstanceBean.packageName) $processInstanceBean.packageName #else none #end
+			        </td>
+			        <td>
+                        <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
+			            ${processInstanceBean.processDefinitionBean.name}
+                        (${processInstanceBean.id}) </a>
+                    </td>
+			        <td>
+			            ${date.format('yyyy-MM-dd hh:mm', $processInstanceBean.startDate)}
+			        </td>				        
+			    </tr>					
+		        #end
+		    </tbody>
+	    </table>
 	</div>
-
-
 	<div id="problemWorkflows">
 		<h2>Problem Workflows</h2>
-		<fieldset>
-            <legend><div style="word-wrap:break-word;width:600px;">These workflows have either been suspended by a user, have tokens that have been suspended 
-            because an error occurred, or are at troubleshoot nodes.</div></legend>
-            #tablesorter('problemWorkflows' $suspendedProcessInstanceBeanList.size())
-		    <table id="problemWorkflows_table" class="tablesorter pageable"  >
-	            <thead>
-	                <tr>
-                        <th>Package</th>
-                        <th>Workflow</th>
-                    </tr>
-                </thead>
-                <tfoot><tr>
-                        <th>Package</th>
-                        <th>Workflow</th>
-                </tr></tfoot>
-                <tbody>
-		    	#foreach($processInstanceBean in $problemProcessInstanceBeanList)
-			        <tr id="workflow_${processInstanceBean.id}" >
-				        <td>
-    				    #if($processInstanceBean.packageName) $processInstanceBean.packageName #else none #end
-				        </td>
-				        <td>
-                            <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
-				            ${processInstanceBean.processDefinitionBean.name}
-                            (${processInstanceBean.id}) </a>
-                        </td>
-				    </tr>					
-    			#end	
-                </tbody>
-            </table>
-        </fieldset>
+        #tablesorter('problemWorkflows' $suspendedProcessInstanceBeanList.size())
+	    <table id="problemWorkflows_table" class="tablesorter"  >
+            <thead>
+                <tr>
+                    <th>Package</th>
+                    <th>Workflow</th>
+                </tr>
+            </thead>
+            <tbody>
+	    	#foreach($processInstanceBean in $problemProcessInstanceBeanList)
+		        <tr id="workflow_${processInstanceBean.id}" >
+			        <td>
+				    #if($processInstanceBean.packageName) $processInstanceBean.packageName #else none #end
+			        </td>
+			        <td>
+                        <a href="${contextPath}/processinstance/${processInstanceBean.id}.html">
+			            ${processInstanceBean.processDefinitionBean.name}
+                        (${processInstanceBean.id}) </a>
+                    </td>
+			    </tr>					
+			#end	
+            </tbody>
+        </table>
 	</div>
-
-
 	<div id="newWorkflow">
-		<h2>Workflows Types</h2>
+		<h2>Start New Workflow</h2>
 		#if ($processDefinitionBeanList)					
 			<ul>
 				#foreach($processDefinitionBean in $processDefinitionBeanList)
 				<li>					
 					<form method="post" action="${contextPath}/processdefinition/${processDefinitionBean.id}.html">
-	                    <fieldset title="Start a New Transfer Workflow">
-				            <legend>
-				            #if ($processDefinitionBean.id)
-	        		            ${processDefinitionBean.name}
-	        		            (${processDefinitionBean.id})
-	        		        #else
-	        		        	No process definition found.
-	        		        #end
-	        		        </legend>
-				            <input type="hidden" name="referer" value="/index.html" />
-				            #if ($processDefinitionBean.id)
-		    					<input type="submit" class="button" value="start"/>
-	        		        #end
-	    					<label>Creating a new Transfer Workflow allows tracking a new transfer process.</label>
-					    </fieldset>					
+        		        ${processDefinitionBean.name} (${processDefinitionBean.id})
+			            <input type="hidden" name="referer" value="/index.html" />
+    					<input type="submit" class="button" value="start"/>
 	    			</form>
 				</li>					
 				#end

@@ -1,73 +1,51 @@
-<div id="tasks">
-    <ul id="localNav">
-        <li><a href="#requests">
-            <span>Service Containers </span>
-        </a></li>
-    </ul>
-	<div id="requests">
-		<h2>Service Containers</h2>
-        #foreach($serviceContainerBean in $serviceContainerBeanList)
-	        <fieldset>
-	            <legend>Service container ($serviceContainerBean.serviceUrl)</legend>
-	            <table>
-	            	<tr>
-	            		<td>Responder</td>
-	            		<td>$serviceContainerBean.responder</td>	            		
-		            </tr>
-		            <tr>
-		            	<td>Queues</td>
-		            	<td>$serviceContainerBean.queues</td>
-            		</tr>
-		            <tr>
-		            	<td>Job Types</td>
-		            	<td>$serviceContainerBean.jobTypes</td>
-            		</tr>
-		            <tr>
-		            	<td>State</td>
-		            	<td>$serviceContainerBean.state</td>
-            		</tr>            		
-            		<tr>
-            			<td>Active service request count</td>
-            			<td>$serviceContainerBean.activeServiceRequestCount</td>
-		            </tr>
-		            <tr>
-		            	<td>Max Alloted Memory</td>
-		            	<td>$serviceContainerBean.maxMemory</td>
-		            </tr>
-		            <tr>
-		            	<td>Total Memory In Use</td>
-		            	<td>$serviceContainerBean.totalMemory</td>
-		            </tr>
-		            <tr>
-		            	<td>Free Memory</td>
-		            	<td>$serviceContainerBean.freeMemory</td>
-		            </tr>             		
-	            </table>
+<div id="serviceContainers">
+	<h2>Service Containers</h2>
+	<table class="tablesorter">
+		<thead>
+			<tr>
+				<th>Responder</th>
+				<th>Queues</th>
+				<th>Job Types</th>
+				<th>State</th>
+				<th>Active service request count</th>
+				<th>Max Memory</th>
+				<th>Memory In Use</th>
+				<th>Free Memory</th>
 	            #if ($permissions.canAdministerServiceContainer())
-					<form method="post" action="${contextPath}/admin/servicecontainer.html">
-						<input type="hidden" name="serviceUrl" value="$serviceContainerBean.serviceUrl" />
-						#if (${serviceContainerBean.state} == "STARTED")
-				            <input type="hidden" name="stop" value="true" />
-							<input type="submit" class="button" value="stop"/>
-							<label>Stop the service container.</label>
-					   #elseif (${serviceContainerBean.state} == "STOPPED")
-				            <input type="hidden" name="start" value="true" />
-							<input type="submit" class="button" value="start"/>
-							<label>Start the service container.</label>
-					   #else
-					   		<p>Service container is in process of starting or stopping.</p>
-					   #end					
-					</form>
-				#end         
-			</fieldset>
-		#end
-	    <form method="get" action="${contextPath}/admin/servicecontainer.html" >
-			<input type="hidden" name="refresh" value="true" />
-   			<input type="submit" class="button" value="  Refresh  " style="float:right"/>
-	    </form>
-	</div>    
-</div>
-
-<form method="get" action="${contextPath}/admin/index.html" >
-	<input type="submit" class="button" value="  Back  " style="float:left" />
-</form>
+	            	<th>Administer</th>
+	            #end
+	        </tr>
+	    </thead>
+	    <tbody>
+	        #foreach($serviceContainerBean in $serviceContainerBeanList)
+    			<tr>
+            		<td>$serviceContainerBean.responder</td>	            		
+	            	<td>$serviceContainerBean.queues</td>
+	            	<td>$serviceContainerBean.jobTypes</td>
+	            	<td>$serviceContainerBean.state</td>
+        			<td>$serviceContainerBean.activeServiceRequestCount</td>
+	            	<td>$serviceContainerBean.maxMemory</td>
+	            	<td>$serviceContainerBean.totalMemory</td>
+	            	<td>$serviceContainerBean.freeMemory</td>
+		            #if ($permissions.canAdministerServiceContainer())
+						<form method="post" action="${contextPath}/admin/servicecontainer.html">
+							<input type="hidden" name="serviceUrl" value="$serviceContainerBean.serviceUrl" />
+							#if (${serviceContainerBean.state} == "STARTED")
+					            <input type="hidden" name="stop" value="true" />
+								<input type="submit" class="button" value="stop"/>
+								<label>Stop the service container.</label>
+						   #elseif (${serviceContainerBean.state} == "STOPPED")
+					            <input type="hidden" name="start" value="true" />
+								<input type="submit" class="button" value="start"/>
+								<label>Start the service container.</label>
+						   #else
+						   		<p>Currently starting or stopping.</p>
+						   #end					
+						</form>
+					#end         
+				</tr>
+			#end
+	    
+	    </tbody>
+	</table>
+</div>					
