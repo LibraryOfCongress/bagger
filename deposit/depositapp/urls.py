@@ -14,8 +14,8 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^admin/$', admin.site.root, name="admin_url"),
     (r'^admin/(.*)', admin.site.root),
+    url(r'^admin/$', admin.site.root, name="admin_url"),
     #(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
     url(r'^login/$', 'deposit.depositapp.views.login', name="login_url"),    
     #url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', {'login_url':reverse('login_url')}, name="logout_url"),
