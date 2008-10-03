@@ -55,19 +55,8 @@ public class Manifest extends FileEntity {
 		buildManifestList();
 	}
 
-	private void generateManifest() {
-		ManifestGeneratorVerifier generator;
-		generator = new FixityGeneratorManifestGeneratorVerifier(new JavaSecurityFixityGenerator());
-		BagGeneratorVerifier verifier = new BagGeneratorVerifierImpl(null);
-	}
-	
-	private void completeManifest() {
-	}
-	
-	private void validateManifest() {
-	}
-
 	private void buildManifestList() {
+		log.debug("Manifest.buildManifestList begin...");
 		// add data files to manifest
 		List<File> fileList = data.getFiles();
 		manifestList = new ArrayList<FileEntity>();
@@ -77,7 +66,7 @@ public class Manifest extends FileEntity {
 			fileEntity.setFile(file);
 			String filename = file.getAbsolutePath();
 			File parent = this.bag.getRootSrc();
-			//if (parent != null) log.info("Manifest.buildManifestList parent: " + parent.getAbsolutePath() + ", filename: " + filename);
+			if (parent != null) log.debug("Manifest.buildManifestList parent: " + parent.getAbsolutePath() + ", filename: " + filename);
 			try {
 				String checksum = MD5Checksum.getMD5Checksum(filename);
 				fileEntity.setChecksum(checksum);
@@ -88,6 +77,7 @@ public class Manifest extends FileEntity {
 			}
 			manifestList.add(fileEntity);
 		}
+		log.debug("finished...Manifest.buildManifestList");
 	}
 
 	public void setType(String type) {
