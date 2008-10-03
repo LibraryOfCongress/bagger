@@ -181,10 +181,12 @@ public class ConsolePane extends JPanel {
     	JTextArea serializedArea = new JTextArea(this.messages);
     	if (bag != null) serializedArea.append("");
     	serializedArea.setEditable(false);
-    	serializedArea.setLineWrap(false);
+    	serializedArea.setLineWrap(true);
     	serializedArea.setRows(20);
     	serializedArea.setColumns(10);
     	serializedArea.setBackground(Color.white);
+    	serializedArea.setWrapStyleWord(true);
+    	serializedArea.setAutoscrolls(true);
     	serializedArea.setPreferredSize(new Dimension(500, 500));
     	serializedArea.setBorder(BorderFactory.createLineBorder(Color.black));
         gbc.gridx = 0;
