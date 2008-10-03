@@ -85,22 +85,23 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JFrame rootFrame;
     private DefaultTreeModel bagsTreeModel;
     private OrganizationInfoForm bagInfoForm;
+    private OrganizationGeneralForm organizationGeneralForm;
+    private OrganizationContactForm organizationContactForm;
 
-    private JPanel publisherPanel;
-    private JTextField publisherField;
     private JScrollPane filePane;
     private JPanel filePanel;
     private JPanel mainPanel;
     private JPanel infoPanel;
+    private JTabbedPane infoPane;
     private JTabbedPane compositePane;
     private JScrollPane consoleScrollPane;
     private ConsolePane consolePane;
     private BagIt bagIt = null;
     private BagItPane bagItPane;
     private JScrollPane bagItScrollPane;
-    private BagItInfo bagItInfo = null;
-    private BagItInfoPane bagItInfoPane;
-    private JScrollPane bagItInfoScrollPane;
+    private BagInfo bagInfo = null;
+    private BagInfoPane bagInfoPane;
+    private JScrollPane bagInfoScrollPane;
     private Data data = null;
     private DataPane dataPane;
     private JScrollPane dataScrollPane;
@@ -116,21 +117,16 @@ public class BagView extends AbstractView implements ApplicationListener {
     private Action openAction;
     private Action saveAction;
     private Action validateAction;
-    private Action updatePropAction;
-    private Action propAction;
     private Action ftpAction;
     private JButton openButton;
     private JButton saveButton;
     private JButton validateButton;
     private JButton updatePropButton;
-    private JButton propButton;
     private JButton ftpButton;
     
     private ValidateExecutor validateExecutor = new ValidateExecutor();
     private FtpExecutor ftpExecutor = new FtpExecutor();
     private FtpPropertiesExecutor ftpPropertiesExecutor = new FtpPropertiesExecutor();
-    private PropertiesExecutor propertiesExecutor = new PropertiesExecutor();
-    private OrganizationPropertiesExecutor organizationPropertiesExecutor = new OrganizationPropertiesExecutor();
 
     public void setBagger(Bagger bagger) {
         Assert.notNull(bagger, "The bagger property is required");
@@ -164,7 +160,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 	}
 	
     protected void registerLocalCommandExecutors(PageComponentContext context) {
-        context.register(GlobalCommandIds.PROPERTIES, propertiesExecutor);
         context.register(GlobalCommandIds.PROPERTIES, validateExecutor);
     }
 
@@ -258,25 +253,39 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     private JPanel createMainPanel() {
+    	Dimension dimension;
     	GridLayout gridLayout = new GridLayout(2,1,10,10);
     	gridLayout.setHgap(10);
     	gridLayout.setVgap(10);
         mainPanel = new JPanel(gridLayout);
         
 /* */
-        HierarchicalFormModel infoFormModel;
-        infoFormModel = FormModelHelper.createCompoundFormModel(this.bag.getInfo());
-        bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null));
-/* */
-        propAction = new PropertyAction();
-        propButton = new JButton("Bag Properties");
-        propButton.addActionListener(propAction);
-        propButton.setMnemonic('p');
-        propertiesExecutor.setEnabled(true);
-        Border border = new EmptyBorder(5, 5, 5, 5);
-        propButton.setBorder(border);
+        HierarchicalFormModel organizationFormModel;
+        BagOrganization bagOrganization = bagInfo.getBagOrganization();
+        organizationFormModel = FormModelHelper.createCompoundFormModel(bagOrganization);
+        organizationGeneralForm = new OrganizationGeneralForm(FormModelHelper.createChildPageFormModel(organizationFormModel, null));
+
+        HierarchicalFormModel contactFormModel;
+        Contact contact = bagInfo.getBagOrganization().getContact();
+        if (contact == null) contact = new Contact();
+        contactFormModel = FormModelHelper.createCompoundFormModel(contact);
+        organizationContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(contactFormModel, null));
         
-        updatePropAction = new UpdatePropertyAction();
+        HierarchicalFormModel infoFormModel;
+        infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
+        bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null));
+        dimension = bagInfoForm.getControl().getPreferredSize();
+        bagInfoForm.getControl().setPreferredSize(dimension);
+        
+        infoPane = new JTabbedPane();
+        infoPane.addTab("Information", bagInfoForm.getControl());
+        infoPane.addTab("Organization", organizationGeneralForm.getControl());
+        infoPane.addTab("Contact", organizationContactForm.getControl());
+        infoPane.setMinimumSize(dimension);
+        /* */
+        Border border = new EmptyBorder(5, 5, 5, 5);
+        
+        Action updatePropAction = new UpdatePropertyAction();
         updatePropButton = new JButton("Save Updates");
         updatePropButton.addActionListener(updatePropAction);
         updatePropButton.setMnemonic('u');
@@ -304,23 +313,8 @@ public class BagView extends AbstractView implements ApplicationListener {
                 }
             	if (selected.equalsIgnoreCase("copyright")) {
             		bag.setIsCopyright(true);
-            		//publisherPanel.show();
-                    publisherField.setEnabled(true);
-                    publisherField.setEditable(true);
-                    //publisherPanel.invalidate();
-                    //publisherPanel.repaint();
-                    publisherField.invalidate();
-                    publisherField.repaint();
-                    //infoPanel.invalidate();
-                    //infoPanel.repaint();
-                    //mainPanel.invalidate();
-                    //mainPanel.repaint();
             	} else {
             		bag.setIsCopyright(false);
-                    publisherField.setEnabled(false);
-                    publisherField.setEditable(false);
-                    publisherField.invalidate();
-                    publisherField.repaint();            		
             	}
             }
         });
@@ -328,9 +322,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         JScrollPane listPane = new JScrollPane(projectList);
         projectPane.add(new JLabel("Bag project: "), BorderLayout.WEST);
         projectPane.add(listPane, BorderLayout.CENTER);
-        
-        JCheckBox holeyCheckbox = new JCheckBox("Holey Bag");
-        holeyCheckbox.setBorder(border);
         
         JLabel groupLabel = new JLabel("Checksum Type: ");        
         JRadioButton md5Button = new JRadioButton("MD5");
@@ -345,114 +336,61 @@ public class BagView extends AbstractView implements ApplicationListener {
         groupPanel.add(md5Button);
         groupPanel.add(sha1Button);
         groupPanel.setBorder(border);
-        
-        publisherPanel = new JPanel(new BorderLayout());
-        JLabel publisherLabel = new JLabel("Publisher: ");
-        publisherField = new JTextField("");
-        publisherField.setColumns(30);
-        publisherField.setEditable(false);
-        publisherField.setEnabled(false);
-        publisherPanel.add(publisherLabel, BorderLayout.WEST);
-        publisherPanel.add(publisherField, BorderLayout.CENTER);
 
+        JCheckBox holeyCheckbox = new JCheckBox("Holey Bag");
+        holeyCheckbox.setBorder(border);
+        
         GridBagLayout infoLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
+
+        buildConstraints(gbc, 0, 0, 1, 4, 70, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        infoLayout.setConstraints(infoPane, gbc);
+
+        buildConstraints(gbc, 1, 0, 1, 1, 10, 20, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        infoLayout.setConstraints(updatePropButton, gbc);
+
+        buildConstraints(gbc, 1, 1, 1, 1, 10, 20, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        infoLayout.setConstraints(projectPane, gbc);
+
+        buildConstraints(gbc, 1, 2, 1, 1, 10, 20, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        infoLayout.setConstraints(groupPanel, gbc);
+
+        buildConstraints(gbc, 1, 3, 1, 1, 10, 20, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        infoLayout.setConstraints(holeyCheckbox, gbc);
+
         infoPanel = new JPanel(infoLayout);
         Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
         infoPanel.setBorder(emptyBorder);
-
-        int row = 0;
-        
-        gbc.gridx = 0;
-        gbc.gridy = row++;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
-        infoLayout.setConstraints(projectPane, gbc);
-        infoPanel.add(projectPane);
-
-        gbc.gridx = 1;
-        gbc.gridy = row-1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-        infoLayout.setConstraints(propButton, gbc);
-        infoPanel.add(propButton);
-
-        gbc.gridx = 0;
-        gbc.gridy = row++;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 10;
-        gbc.weighty = 5;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.WEST;
-        infoLayout.setConstraints(bagInfoForm.getControl(), gbc);
-        infoPanel.add(bagInfoForm.getControl());
-
-        gbc.gridx = 1;
-        gbc.gridy = row-1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.NORTH;
-        infoLayout.setConstraints(propButton, gbc);
+        infoPanel.add(infoPane);
         infoPanel.add(updatePropButton);
-
-        gbc.gridx = 0;
-        gbc.gridy = row++;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
-        infoLayout.setConstraints(holeyCheckbox, gbc);
+        infoPanel.add(projectPane);
         infoPanel.add(holeyCheckbox);
-
-        gbc.gridx = 1;
-        gbc.gridy = row-1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
-        infoLayout.setConstraints(groupPanel, gbc);
         infoPanel.add(groupPanel);
-
-        gbc.gridx = 0;
-        gbc.gridy = row++;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
-        infoLayout.setConstraints(publisherPanel, gbc);
-        infoPanel.add(publisherPanel);
-
-//      publisherPanel.hide();
         
         bagsTree = new JTree();
-        bagsTree.setPreferredSize(getMinimumSize());      
+        bagsTree.setLargeModel(true);
+        bagsTree.setPreferredSize(this.getMinimumSize());
         filePane = new JScrollPane();
         filePane.setViewportView(bagsTree);
         filePanel = new JPanel(new FlowLayout());
+        filePanel.setPreferredSize(this.getMinimumSize());
         filePanel.add(filePane);
 
         mainPanel.add(filePanel);
         mainPanel.add(infoPanel);
 
         return mainPanel;
+    }
+
+    private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
+    	gbc.gridx = x; // start cell in a row
+    	gbc.gridy = y; // start cell in a column
+    	gbc.gridwidth = w; // how many column does the control occupy in the row
+    	gbc.gridheight = h; // how many column does the control occupy in the column
+    	gbc.weightx = wx; // relative horizontal size
+    	gbc.weighty = wy; // relative vertical size
+    	gbc.fill = fill; // the way how the control fills cells
+    	gbc.anchor = anchor; // alignment
     }
 
     private JTabbedPane createBagPane() {
@@ -474,10 +412,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     	tagManifestScrollPane.setViewportView(tagManifestPane);
     	compositePane.addTab("TagManifest", tagManifestScrollPane);
 
-    	bagItInfoScrollPane = new JScrollPane();
-        bagItInfoPane = new BagItInfoPane();
-        bagItInfoScrollPane.setViewportView(bagItInfoPane);
-        compositePane.addTab("Bag It Info", bagItInfoScrollPane);
+    	bagInfoScrollPane = new JScrollPane();
+        bagInfoPane = new BagInfoPane();
+        bagInfoScrollPane.setViewportView(bagInfoPane);
+        compositePane.addTab("Bag It Info", bagInfoScrollPane);
 
         dataScrollPane = new JScrollPane();
     	dataPane = new DataPane();
@@ -541,10 +479,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     	tagManifestScrollPane.setViewportView(tagManifestPane);
     	compositePane.addTab("TagManifest", tagManifestScrollPane);
 
-    	bagItInfoScrollPane = new JScrollPane();
-        bagItInfoPane = new BagItInfoPane(bag.getInfo());
-        bagItInfoScrollPane.setViewportView(bagItInfoPane);
-        compositePane.addTab("Bag It Info", bagItInfoScrollPane);
+    	bagInfoScrollPane = new JScrollPane();
+        bagInfoPane = new BagInfoPane(bag.getInfo());
+        bagInfoScrollPane.setViewportView(bagInfoPane);
+        compositePane.addTab("Bag It Info", bagInfoScrollPane);
 
         dataScrollPane = new JScrollPane();
     	dataPane = new DataPane(bag.getData());
@@ -571,9 +509,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         if (fetch == null) fetch = new Fetch();
         else fetch = bag.getFetch();
         bag.setFetch(fetch);
-        if (bagItInfo == null) bagItInfo = new  BagItInfo();
-        else bagItInfo = bag.getInfo();
-        bag.setInfo(bagItInfo);
+        if (bagInfo == null) bagInfo = new  BagInfo();
+        else bagInfo = bag.getInfo();
+        bag.setInfo(bagInfo);
         if (bagIt == null) bagIt = new BagIt();
         else bagIt = bag.getBagIt();
         bag.setBagIt(bagIt);
@@ -599,24 +537,28 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private void initializeBag() {
     	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-    	this.username = a.getName();
-    	display("BagView.creatControl getAuthenticationUser:: " + this.username);
-    	display("BagView.createControl projects: " + bagger.getProjects());
-    	Collection<Profile> profiles = bagger.findProfiles(a.getName());
-    	Object[] profileArray = profiles.toArray();
-    	for (int i=0; i < profileArray.length; i++) {
-    		display("BagView.createControl profile:\n" + profileArray[i].toString());
-    		Profile profile = (Profile) profileArray[i];
-    		userProjects = bagger.findProjects(profile.getPerson().getId());
-    		Organization org = profile.getPerson().getOrganization();
-    		Address address = org.getAddress();
-    		bagItInfo = bag.getInfo();
-    		BagOrganization bagOrg = bagItInfo.getBagOrganization();
-    		bagOrg.setContact(profile.getContact());
-    		bagOrg.setOrgName(org.getName());
-    		bagOrg.setOrgAddress(address.toString(true));
-    		bagItInfo.setBagOrganization(bagOrg);
-    		bag.setInfo(bagItInfo);
+    	if (a != null) {
+        	this.username = a.getName();
+        	display("BagView.creatControl getAuthenticationUser:: " + this.username);
+        	display("BagView.createControl projects: " + bagger.getProjects());
+        	Collection<Profile> profiles = bagger.findProfiles(a.getName());
+        	Object[] profileArray = profiles.toArray();
+        	for (int i=0; i < profileArray.length; i++) {
+        		display("BagView.createControl profile:\n" + profileArray[i].toString());
+        		Profile profile = (Profile) profileArray[i];
+        		userProjects = bagger.findProjects(profile.getPerson().getId());
+        		Organization org = profile.getPerson().getOrganization();
+        		Address address = org.getAddress();
+        		bagInfo = bag.getInfo();
+        		BagOrganization bagOrg = bagInfo.getBagOrganization();
+        		bagOrg.setContact(profile.getContact());
+        		bagOrg.setOrgName(org.getName());
+        		bagOrg.setOrgAddress(address.toString(true));
+        		bagInfo.setBagOrganization(bagOrg);
+        		bag.setInfo(bagInfo);
+        	}
+    	} else {
+    		userProjects = bagger.getProjects();
     	}
     }
     	    
@@ -639,21 +581,27 @@ public class BagView extends AbstractView implements ApplicationListener {
             // Get the selected file
             if (option == JFileChooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
-                rootSrc = file.getAbsoluteFile(); //file.getParentFile();
-                display("OpenFileAction.actionPerformed filePath: " + file.getPath() + " rootPath: " + rootSrc.getPath() );
-            	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            	/* */
-                bag = getBag();
-                bagInfoForm.commit();
-                BagItInfo newInfo = (BagItInfo)bagInfoForm.getFormObject();
-                bag.setInfo(newInfo);
-                setBag(bag);
-            	/* */
-                updateTree(file);
-                bag.setRootDir(rootSrc);
-            	rootFrame.setCursor(Cursor.getDefaultCursor());
+                openBag(file);
             }
         }
+    }
+    
+    private void openBag(File file) {
+    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        rootSrc = file.getAbsoluteFile(); //file.getParentFile();
+        display("OpenFileAction.actionPerformed filePath: " + file.getPath() + " rootPath: " + rootSrc.getPath() );
+        String messages = "Adding " + file.getPath() + " to the bag.";
+        updateMessages(messages);
+    	/* */
+        bag = getBag();
+        bagInfoForm.commit();
+        BagInfo newInfo = (BagInfo)bagInfoForm.getFormObject();
+        bag.setInfo(newInfo);
+        setBag(bag);
+    	/* */
+        updateTree(file);
+        bag.setRootDir(rootSrc);
+    	rootFrame.setCursor(Cursor.getDefaultCursor());
     }
     
  // This action creates and shows a modal save-file dialog.
@@ -676,21 +624,29 @@ public class BagView extends AbstractView implements ApplicationListener {
             // Get the selected file
             if (option == JFileChooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
-                display("BagView.SaveFileAction: " + file);
-            	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            	/* */
-                bag = getBag();
-                bagInfoForm.commit();
-                BagItInfo newInfo = (BagItInfo)bagInfoForm.getFormObject();
-                bag.setInfo(newInfo);
-                setBag(bag);
-            	/* */
-                String errorMessages = bag.write(file);
-            	rootFrame.setCursor(Cursor.getDefaultCursor());
-            	updateTabs(errorMessages);
-            	display("\nBagView.SaveFileAction ERROR: " + errorMessages);
+                saveBag(file);
             }
         }
+    }
+    
+    private void saveBag(File file) {
+    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        display("BagView.SaveFileAction: " + file);
+        String messages = "Creating the bag...";
+        updateMessages(messages);
+
+        bag = getBag();
+        bagInfoForm.commit();
+        BagInfo newInfo = (BagInfo)bagInfoForm.getFormObject();
+        bag.setInfo(newInfo);
+        setBag(bag);
+
+    	// TODO Break this down into multiple steps so that each step can send bag progress message to the console.
+        // TODO What if file already exists?  Error or message to overwrite
+        messages = bag.write(file);
+       	display("\nBagView.SaveFileAction: " + messages);
+    	updateTabs(messages);
+    	rootFrame.setCursor(Cursor.getDefaultCursor());
     }
 
     private class ValidateBagAction extends AbstractAction {
@@ -707,21 +663,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             }
         }
     }
-
-    private class PropertyAction extends AbstractAction {
-		private static final long serialVersionUID = 7726904847537574542L;
-
-		PropertyAction() {
-            super("Organization Properties...");
-        }
-    
-        public void actionPerformed(ActionEvent e) {
-            // Show dialog; this method does not return until dialog is closed
-            if (propertiesExecutor.isEnabled()) {
-                propertiesExecutor.execute();
-            }
-        }
-    }
     
     private class UpdatePropertyAction extends AbstractAction {
 		private static final long serialVersionUID = 7203526831992572675L;
@@ -731,15 +672,25 @@ public class BagView extends AbstractView implements ApplicationListener {
         }
     
         public void actionPerformed(ActionEvent e) {
-        	String messages = new String();
-            bag = getBag();
+            String messages = new String();
+
+            organizationContactForm.commit();
+            Contact newContact = (Contact)organizationContactForm.getFormObject();
+
             bagInfoForm.commit();
-            BagItInfo newInfo = (BagItInfo)bagInfoForm.getFormObject();
+            BagInfo newInfo = (BagInfo)bagInfoForm.getFormObject();
+
+            organizationGeneralForm.commit();
+            BagOrganization newOrganization = (BagOrganization)organizationGeneralForm.getFormObject();
+
+            bag = getBag();
+            newOrganization.setContact(newContact);
+            newInfo.setBagOrganization(newOrganization);
             bag.setInfo(newInfo);
             setBag(bag);
             messages = "Organization and Contact information has been updated.";
 
-            updateTabs(messages);
+            updateMessages(messages);
         }
     }
     
@@ -768,6 +719,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
         rootTree = new ArrayList<File>();
         createBagManagerTree(file);
+        bagsTree.setLargeModel(true);
         bagsTree.setPreferredSize(getMinimumSize());      
         filePane.setViewportView(bagsTree);
         messages = "The files to be included have been changed.";
@@ -775,6 +727,36 @@ public class BagView extends AbstractView implements ApplicationListener {
         
     	bagView.validate();
     	bagView.repaint();
+    }
+
+    private void updateMessages(String messages) {
+    	if (compositePane.getComponentCount() > 0) {
+    		compositePane.removeAll();
+            compositePane.invalidate();
+            consolePane.invalidate();
+            consoleScrollPane.invalidate();
+    	}
+        /* */
+    	consoleScrollPane = new JScrollPane();
+    	consolePane = new ConsolePane(bag, messages);
+    	consoleScrollPane.setViewportView(consolePane);
+    	compositePane.addTab("Console", consoleScrollPane);
+    	manifestScrollPane.setViewportView(manifestPane);
+    	compositePane.addTab("Manifest", manifestScrollPane);
+    	compositePane.addTab("TagManifest", tagManifestScrollPane);
+        compositePane.addTab("Bag It Info", bagInfoScrollPane);
+    	compositePane.addTab("Data", dataScrollPane);
+    	if (this.bag.getIsHoley()) {
+            compositePane.addTab("Fetch", fetchScrollPane);    		
+    	}
+        compositePane.addTab("Bag It", bagItScrollPane);
+    	/* */
+        consolePane.validate();
+        consolePane.repaint();
+        consoleScrollPane.validate();
+        consoleScrollPane.repaint();
+        compositePane.validate();
+        compositePane.repaint();
     }
 
     private void updateTabs(String messages) {
@@ -852,103 +834,13 @@ public class BagView extends AbstractView implements ApplicationListener {
         public void execute() {
             if (getBag() != null) {
             	display("ValidateExecutor");
-                String messages = bag.validate();
+                String messages = bag.validateAndBag();
             	display(messages);
             	updateTabs(messages);
             }
         }
     }
 
-    private class PropertiesExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-            if (getBag() != null) {
-                organizationPropertiesExecutor.execute();
-            }
-        }
-    }
-
-    /**
-     * Command to create a new Bag Organization and Contact information. 
-     * Pops up a dialog which is reused by using the {@link CloseAction#HIDE}.
-     *
-     * @see ApplicationDialog
-     * @see CloseAction
-     */
-      private class OrganizationPropertiesExecutor extends AbstractActionCommandExecutor {
-        OrganizationGeneralForm organizationGeneralForm;
-        OrganizationContactForm organizationContactForm;
-        OrganizationInfoForm organizationInfoForm;
-
-        private CompositeDialogPage compositePage;
-        private TitledPageApplicationDialog dialog;
-        private FormBackedDialogPage dialogPage;
-
-	    protected AbstractDialogPage createOrganizationPanel() {
-            HierarchicalFormModel organizationFormModel;
-            BagOrganization bagOrganization = bagItInfo.getBagOrganization();
-            organizationFormModel = FormModelHelper.createCompoundFormModel(bagOrganization);
-            organizationGeneralForm = new OrganizationGeneralForm(FormModelHelper.createChildPageFormModel(organizationFormModel, null));
-
-            HierarchicalFormModel contactFormModel;
-            Contact contact = bagItInfo.getBagOrganization().getContact();
-            contactFormModel = FormModelHelper.createCompoundFormModel(contact);
-            organizationContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(contactFormModel, null));
-            
-            HierarchicalFormModel infoFormModel;
-            infoFormModel = FormModelHelper.createCompoundFormModel(bagItInfo);
-            organizationInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null));
-
-            dialogPage = new FormBackedDialogPage(organizationGeneralForm);
-            compositePage = new TabbedDialogPage("organizationProperties");
-            compositePage.addForm(organizationGeneralForm);
-            compositePage.addForm(organizationContactForm);
-            compositePage.addForm(organizationInfoForm);
-            
-            return compositePage;
-	    }
-
-        private void createDialog() {
-        	AbstractDialogPage abstractDialog = createOrganizationPanel();
-                dialog = new TitledPageApplicationDialog(abstractDialog, getWindowControl(), CloseAction.HIDE) {        		
-        	    protected void onAboutToShow() {
-                	organizationGeneralForm.requestFocusInWindow();
-                    setEnabled(dialogPage.isPageComplete());
-                }
-
-                protected boolean onFinish() {
-                    String messages = new String();
-
-                    organizationContactForm.commit();
-                    Contact newContact = (Contact)organizationContactForm.getFormObject();
-
-                	organizationInfoForm.commit();
-                    BagItInfo newInfo = (BagItInfo)organizationInfoForm.getFormObject();
-
-                    organizationGeneralForm.commit();
-                    BagOrganization newOrganization = (BagOrganization)organizationGeneralForm.getFormObject();
-
-                    bag = getBag();
-                    newOrganization.setContact(newContact);
-                    newInfo.setBagOrganization(newOrganization);
-                    bag.setInfo(newInfo);
-                    setBag(bag);
-                    messages = "Organization and Contact information has been updated.";
-
-                    updateTabs(messages);
-                    
-                    // TODO: Persist the organization updates to local or remote storage
-                    return true;
-                }
-            };
-        }
-
-	    public void execute() {
-            if (dialog == null) createDialog();
-
-            //organizationGeneralForm.setFormObject(new BagOrganization());
-            dialog.showDialog();
-        }
-    }
 /* */
   	private class FtpExecutor extends AbstractActionCommandExecutor {
         public void execute() {
