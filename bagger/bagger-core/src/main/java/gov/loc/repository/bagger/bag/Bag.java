@@ -47,14 +47,15 @@ public class Bag extends NamedEntity {
 	private List<TagManifest> tagManifests = null;
 	private Fetch fetch;
 	private BagIt bagIt;
-	private BagItInfo info;
+	private BagInfo bagInfo;
 	private Data data;
 	
 	private BagGeneratorVerifier verifier = new BagGeneratorVerifierImpl(new FixityGeneratorManifestGeneratorVerifier(new JavaSecurityFixityGenerator()));
 	private boolean isHoley = false;	
 	private boolean isFetch = false;	
 	private boolean isComplete = false;	
-	private boolean isValid = false;	
+	private boolean isValid = false;
+	private boolean isValidMetadata = false;
 	private boolean isSerialized = false;
 	private boolean isCopyright = false;
 
@@ -140,13 +141,13 @@ public class Bag extends NamedEntity {
 		return this.bagIt;
 	}
 
-	public void setInfo(BagItInfo bagItInfo) {
-		this.info = bagItInfo;
-		this.setName(bagItInfo.getBagName());
+	public void setInfo(BagInfo bagInfo) {
+		this.bagInfo = bagInfo;
+		this.setName(bagInfo.getBagName());
 	}
 
-	public BagItInfo getInfo() {
-		return this.info;
+	public BagInfo getInfo() {
+		return this.bagInfo;
 	}
 
 	public void setData(Data data) {
@@ -180,6 +181,14 @@ public class Bag extends NamedEntity {
 	public boolean getIsValid() {
 		return this.isValid;
 	}
+	
+	public void setIsValidMetadata(boolean b) {
+		this.isValidMetadata = b;
+	}
+	
+	public boolean getIsValidMetadata() {
+		return this.isValidMetadata;
+	}
 
 	public void setIsSerialized(boolean b) {
 		this.isSerialized = b;
@@ -208,71 +217,51 @@ public class Bag extends NamedEntity {
 	public void initialize() {
 		// TODO: Load bag information from persisted storage
 	}
-	
-	public String validate() {
-		String messages = null;
-
-		SimpleResult result = verifier.isComplete(this.rootDir);
-		messages = "Is Complete? \n" + result.getMessage();
-		this.isComplete = result.isSuccess();
-		messages += "\n";
-		messages += "Is Valid? \n";
-		if (this.isComplete) {
-			result = verifier.isValid(this.rootDir);
-			messages += result.getMessage();
-			this.isValid = result.isSuccess();
-		} else {
-			messages += "Bag is not complete.";
-		}
-		messages += "\n";
-
-		return messages;
-	}
-	
+		
+	// Break this down into multiple steps so that each step can send bag progress message to the console.
 	public String write(File path) {
-		String errorMessages = null;
+		String messages = "";
 		boolean isComplete = false;
 		boolean isValid = false;
 		boolean success = false;
 
 		try {
-			// create and open bag name directory
+			display("Bag.write: create and open bag name directory");
 			if (path.getAbsolutePath() == null || this.getName() == null) {
-		    	errorMessages = reportError(errorMessages, "BagView.write failed to create directory: NULL");
-				log.error(errorMessages);
-				return errorMessages;			
+		    	messages = reportError(messages, "BagView.write failed to create directory: NULL");
+				log.error(messages);
+				return messages;			
 			}
-//			display("Bag.writePath: " + path.getParent());
 			display("Bag.writePath: " + path.getAbsolutePath() + "/" + this.getName());
 			File rootDir = new File(path.getAbsolutePath(), this.getName());
 			success = rootDir.mkdir();
 		    if (!success) {
-		    	errorMessages = reportError(errorMessages, "BagView.write failed to create directory: " + rootDir);
-				log.error(errorMessages);
-				return errorMessages;
+		    	messages = reportError(messages, "BagView.write failed to create directory: " + rootDir);
+				log.error(messages);
+				return messages;
 		    }
 			this.setRootDir(rootDir);
-			// create and write manifest-<type>.txt in bag name directory
+			display("Bag.write: create and write manifest-<type>.txt in bag name directory");
 	    	for (int i=0; i < manifests.size(); i++) {
 	    		Manifest manifest = manifests.get(i);
 	    		manifest.writeData();
 	    		manifest.write(rootDir);
 	    	}
 	    	if (this.isHoley) {
-	    		// create and write fetch.txt in bag name directory
+				display("Bag.write: isHoley - create and write fetch.txt in bag name directory");
 	    	    fetch.setName(BagHelper.FETCH);
 	    	    fetch.writeData();
 	    	    fetch.write(rootDir);    		
 	    	}
-			// create and write bag-info.txt in bag name directory
-			info.setName(BagHelper.INFO);
-			info.writeData();
-			info.write(rootDir);
-			// create and write bagit.txt in bag name directory
+			display("Bag.write: create and write bag-info.txt in bag name directory");
+			bagInfo.setName(BagHelper.INFO);
+			bagInfo.writeData();
+			bagInfo.write(rootDir);
+			display("Bag.write: create and write bagit.txt in bag name directory");
 			bagIt.setName(BagHelper.BAGIT);
 			bagIt.writeData();
 			bagIt.write(rootDir);
-			// create and write tagmanifest-<type>.txt in bag name directory
+			display("Bag.write: create and write tagmanifest-<type>.txt in bag name directory");
 	    	for (int i=0; i < tagManifests.size(); i++) {
 	    		TagManifest tagManifest = tagManifests.get(i);
 	    		tagManifest.setType(ManifestType.MD5);
@@ -281,17 +270,15 @@ public class Bag extends NamedEntity {
 	    		tagManifests.set(i, tagManifest);
 	    	}
 	    	this.setTagManifests(tagManifests);
-			// create and open data directory
+			display("Bag.write: create and open data directory");
 			File dataDir = new File(rootDir, BagHelper.DATA_DIRECTORY);
 			success = dataDir.mkdir();
 		    if (!success) {
-		    	errorMessages = reportError(errorMessages, "ERROR in BagView.write failed to create directory: " + dataDir);
-				log.error(errorMessages);
+		    	messages = reportError(messages, "ERROR in BagView.write failed to create directory: " + dataDir);
+				log.error(messages);
 		    }
-			// create and write data directory
-			//List<File> fileList = data.getFiles();
+			display("Bag.write: create and write data directory");
 			File parent = this.getRootSrc();
-			
 			try
 			{
 				display("Bag.write copyFiles: " + parent.getAbsolutePath() + " to: " + dataDir.getAbsolutePath());
@@ -299,44 +286,72 @@ public class Bag extends NamedEntity {
 			}
 			catch(IOException e)
 			{
-		    	errorMessages = reportError(errorMessages, "ERROR in BagView.write copyFiles: " + e.getMessage());
-		    	log.error(errorMessages);
+		    	messages = reportError(messages, "ERROR in BagView.write copyFiles: " + e.getMessage());
+		    	log.error(messages);
 			}
 
-			SimpleResult result = verifier.isComplete(rootDir);
-			isComplete = result.isSuccess();
-			this.isComplete = isComplete;
-			display("Bag.write isComplete: " + isComplete);
-			if (errorMessages == null && isComplete) {
-				result = verifier.isValid(rootDir);
-				isValid = result.isSuccess();
-				this.isValid = isValid;
-				display("Bag.write isValid: " + isValid);
-				if (isValid) {
-					String msg = null;
-					// Create a  zip file for serialized transfer of the bag
-					msg = FileUtililties.createZip(rootDir);
-					if (msg == null) {
-						// Clean up the files since bag zip is created
-						this.isSerialized = true;
-						boolean b = FileUtililties.deleteDir(rootDir);
-						if (!b) reportError(errorMessages, "Error deleting directory: " + rootDir);					
-					} else {
-						reportError(errorMessages, msg);					
-					}				
-				} else {
-					errorMessages = reportError(errorMessages, result.getMessage());
-				}
-			} else {
-				errorMessages = reportError(errorMessages, result.getMessage());
-			}
+			display("Bag.write: validateAndBag");
+			messages += validateAndBag();
 		} catch (Exception e) {
-			errorMessages += "\n" + "Exception while creating bag:\n" + e.getMessage();
+			messages += "\n" + "Exception while creating bag:\n" + e.getMessage();
+			e.printStackTrace();
 			log.error(e.getMessage());
 		}
-		return errorMessages;
+		return messages;
 	}
 	
+	public String validateAndBag() {
+		String messages = null;
+
+		display("Bag.write: verifier isComplete?");
+		SimpleResult result = verifier.isComplete(this.rootDir);
+		messages = "Is bag complete? \n";
+		if (result.getMessage() != null) messages += result.getMessage();
+		this.isComplete = result.isSuccess();
+		display("Bag.write isComplete: " + isComplete);
+		if (this.isComplete) {
+			display("Bag.write: verifier isValid?");
+			messages += "Bag is complete.\n";
+			messages += "Is Valid? \n";
+			result = verifier.isValid(this.rootDir);
+			if (result.getMessage() != null) messages += result.getMessage();
+			this.isValid = result.isSuccess();
+			display("Bag.write isValid: " + isValid);
+			if (this.isValid) {
+				messages += "Bag is valid.\n";
+				messages += "Is Valid Metadata? \n";
+				result = verifier.isValidMetadata(this.rootDir);
+				if (result.getMessage() != null) messages += result.getMessage();
+				this.isValidMetadata = result.isSuccess();
+				if (this.isValidMetadata) {
+					messages += "Bag metadata is valid.\n";
+					String msg = null;
+					display("Bag.write: Create a  zip file for serialized transfer of the bag");
+					msg = FileUtililties.createZip(rootDir);
+					if (msg == null) {
+						display("Bag.write: Clean up the files since bag zip is created");
+						messages += "Creating zip file and cleaning up bag directory.";
+						this.isSerialized = true;
+						boolean b = FileUtililties.deleteDir(rootDir);
+						if (!b) reportError(messages, "Error deleting directory: " + rootDir);
+						else messages += "Successfully created bag: " + this.getInfo().getBagName();
+					} else {
+						reportError(messages, msg);	
+					}				
+				} else {
+					reportError(messages, "Bag metadata is not valid.");
+				}
+			} else {
+				reportError(messages, "Bag is not valid.");	
+			}
+		} else {
+			reportError(messages, "Bag is not complete.");
+		}
+		messages += "\n";
+
+		return messages;
+	}
+
 	private String reportError(String errors, String message) {
 		if (errors == null) errors = message;
 		else errors += "\n" + message;
