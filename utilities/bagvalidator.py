@@ -10,92 +10,168 @@
 """
 
 
-import sys, os
+import sys, os, glob
 from sets import Set
 
-def normalize_relative_path(path):
-    """Fixup manifest relative-paths for comparison:  
-         - convert backslashes to forward slashes
-         - strip off a leading "." on the path
-    """
-    path = path.replace('\\', '/')
-    if path.startswith("./"):
-        path = path[2:]
-    return path
-
-def build_manifest_entries(manifest):
-    """Builds a dictionary of manifest entries, from filename -> hash.
-    """
-    entries = {}
+class Bag:
+    """A representation of a bag."""
+    def __init__(self, dir):
+        self.dir = dir
+        self.tags = {}
+        self.entries = {}
+        self.algs = []
     
-    for entry in manifest_entries(manifest):
-        hash, path = entry
+    def open(self):
+        """Opens the bag and loads the tag files and the manifests."""
         
-        if entries.has_key(path):
-            print "*** Duplicate manifest entry: %s" % path
-        else:
-            entries[path] = hash
+        # Open the bagit.txt file, and load any tags from it, including
+        # the required version and encoding.
+        bagit_file_path = os.path.join(self.dir, "bagit.txt")
+        
+        if not os.path.isfile(bagit_file_path):
+            raise BagError("No bagit.txt found.  Are you sure this is a bag?")
+
+        self.load_tag_file(bagit_file_path)
+        self.version = self.tags["BagIt-Version"]
+        self.encoding = self.tags["Tag-File-Character-Encoding"]
+        
+        # Open and load the package-info.txt, if it's there.
+        if os.path.isfile(os.path.join(self.dir, "package-info.txt")):
+            self.load_tag_file(os.path.join(self.dir, "package-info.txt"))
+
+        for manifest_file in self.manifest_files():
+            alg = os.path.basename(manifest_file).replace("manifest-", "").replace(".txt", "")
+            self.algs.append(alg)
+
+            manifest_file = open(manifest_file, "r")
             
-    return entries
+            try:
+                for line in manifest_file:
+                    line = line.strip()
+                    if line == "" or line.startswith("#"):
+                        continue
+                        
+                    entry = line.split(None, 1)
+                    
+                    # Format is FILENAME *CHECKSUM
+                    if len(entry) != 2:
+                        print "*** Invalid %s manifest entry: %s" % (alg, line)
+                        continue
+                    
+                    hash = entry[0]
+                    path = os.path.normpath(entry[1].lstrip("*"))
+                    
+                    if self.entries.has_key(path):
+                        if self.entries[path].has_key(alg):
+                            print "*** Duplicate %s manifest entry: %s" % (alg, path)
 
-def manifest_entries(manifest):
-    """Generator, returning pairs of (checksum, filename) 
-       found in a manifest file."""
-    # manifest lines are "CHECKSUM FILENAME"
-    for line in manifest:
-        line = line.strip()
-        if line == '' or line.startswith("#"): 
-            continue 
-        # tolerate whitespace in filenames by limiting the splitting
-        entry = line.strip().split(None, 1)
-        yield (entry[0], normalize_relative_path(entry[1]))
+                        self.entries[path][alg] = hash
+                    else:
+                        self.entries[path] = {}
+                        self.entries[path][alg] = hash
+            finally:
+                manifest_file.close()
+            
+    def manifest_files(self):
+        for file in glob.glob(os.path.join(self.dir, "manifest-*.txt")):
+            yield file
+            
+    def load_tag_file(self, tag_file_name):
+        tag_file = open(tag_file_name, "r")
+        
+        try:
+            for tag_name, tag_value in parse_tags(tag_file):
+                self.tags[tag_name] = tag_value
+        finally:
+            tag_file.close()
 
+    def compare_manifests_with_fs(self):
+        files_on_fs = Set(self.payload_files())
+        files_in_manifest = Set(self.entries.keys())
+        
+        return (list(files_in_manifest - files_on_fs),
+             list(files_on_fs - files_in_manifest))
+             
+    def compare_fetch_with_fs(self):
+        files_on_fs = Set(self.payload_files())
+        files_in_fetch = Set(self.files_to_be_fetched())
+        
+        return (list(files_in_fetch - files_on_fs),
+                list(files_on_fs - files_in_fetch))
 
-def files_in_manifest(manifest):
-    """Generator returning the relative paths found in a manifest file."""
-    for entry in manifest_entries(manifest):
-        yield entry[1]
+    def payload_files(self):
+        payload_dir = os.path.join(self.dir, "data")
+        
+        for dirpath, dirnames, filenames in os.walk(payload_dir):
+            for f in filenames:
+                rel_path = os.path.join(dirpath, os.path.normpath(f.replace('\\', '/')))
+                rel_path = rel_path.replace(self.dir + os.path.sep, "", 1)
+                yield rel_path
+                
+    def fetch_entries(self):
+        fetch_file_path = os.path.join(self.dir, "fetch.txt")
+        
+        if os.path.isfile(fetch_file_path):
+            fetch_file = open(fetch_file_path, "r")
+            
+            try:
+                for line in fetch_file:
+                    parts = line.strip().split(None, 3)
+                    yield (parts[0], parts[1], parts[2])
+            finally:
+                fetch_file.close()
+            
+    def files_to_be_fetched(self):
+        for url, size, path in self.fetch_entries():
+            yield path
+            
+    def urls_to_be_fetched(self):
+        for url, size, path in self.fetch_entries():
+            yield url
+        
+class BagError(Exception):
 
-
-def files_in_directory(directory_name):
-    """Generator returning the relative paths found in a directory."""
-    for dirpath, dirnames, filenames in os.walk(directory_name):
-        # ignore "tag" files (in the base directory of the bag)
-        if dirpath == ".": continue
-        for f in filenames:
-            yield normalize_relative_path(os.path.join(dirpath, f))
-
-
-def reconcile(manifestname, directoryname):
-    """Given a manifest name, returns a tuple of two lists: 
-           - the files named in the manifest but not found in the current dir
-           - the files found in the current dir not named in the manifest
-    """
-    manifest = open(manifestname, "r")
-    manifest_entries = build_manifest_entries(manifest)
-    manifest_contents = Set(manifest_entries.keys())
-    discovered_files  = Set(files_in_directory(directoryname))
-
-    return (list(manifest_contents - discovered_files), 
-            list(discovered_files - manifest_contents))
-
+    def __init__(self, message):
+        self.message = message
+    
+    def __str__(self):
+        return repr(self.message)
+        
+def parse_tags(file):
+    for line in file:
+        parts = line.strip().split(':', 1)
+        tag_name = parts[0].strip()
+        tag_value = parts[1].strip()
+        yield (tag_name, tag_value)
 
 if __name__ == "__main__":
-    if len(sys.argv) not in (2, 3):  
-        print "Syntax: %s manifest_name [directory_name]" % sys.argv[0]
+    if len(sys.argv) not in (1, 2):  
+        print "Syntax: %s [bagdir]" % sys.argv[0]
+        print "  bagdir: The directory containing the bag.  Defaults: ."
         sys.exit(1)
 
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 1:
         sys.argv.extend(".")
-    missing, extra = reconcile(sys.argv[1], 
-                               sys.argv[2])
-
-    import pprint
+    
+    bag_dir = os.path.normpath(sys.argv[1])
+    
+    bag = Bag(bag_dir)
+    bag.open()
+    
+    missing, extra = bag.compare_manifests_with_fs()
+    # already_fetched, to_fetch = bag.compare_fetch_with_fs()
     
     if len(missing) > 0:
-        print "*** Missing:"
-        pprint.pprint(missing)
-
+        print "*** Found %s missing files:" % len(missing)
+        for file in missing:
+            print file
+            
     if len(extra) > 0:
-        print "*** Extra:"
-        pprint.pprint(extra)
+        print "*** Found %s extra files:" % len(extra)
+        for file in extra:
+            print file
+
+    #if len(already_fetched) > 0:
+    #    print "*** Found %s files in fetch.txt which are already here: " % len(already_fetched)
+    #    for file in already_fetched:
+    #        print file
