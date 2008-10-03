@@ -11,8 +11,8 @@ from django.core.urlresolvers import reverse
 
 def index(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect("/user/%s" % request.user.username)
-    return HttpResponseRedirect(LOGIN_URL)    
+        return HttpResponseRedirect(reverse('user_url', args=[request.user.username]))
+    return HttpResponseRedirect(reverse('login_url'))    
 
 def login(request, redirect_field_name=REDIRECT_FIELD_NAME):
     if request.method == 'POST':
@@ -24,7 +24,6 @@ def logout(request):
     return logout_then_login(request, login_url=reverse('login_url'))
 
 def user(request, username):
-    print reverse('login_url')
     try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
@@ -88,7 +87,7 @@ def create_transfer(request, transfer_type):
     return render_to_response(template_name, {'form':form, 'project_id':project_id, 'transfer_type':transfer_type}, context_instance=RequestContext(request))
 
 def list_transfer(request):
-        if not request.user.is_authenticated():
+    if not request.user.is_authenticated():
         return HttpResponseForbidden()
     if request.method == 'POST':
         return HttpResponseNotAllowed()
