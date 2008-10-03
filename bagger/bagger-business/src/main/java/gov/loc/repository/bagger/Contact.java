@@ -23,11 +23,11 @@ public class Contact {
 	
 	private int organizationId;
 
-	private String contactName = "Edna Janssen";
+	private String contactName = "";
 
-	private String telephone = "+1 408-555-1212";
+	private String telephone = "";
 
-	private String email = "ej@spengler.edu";
+	private String email = "";
 	
 	public int getId() {
 		return this.id;
