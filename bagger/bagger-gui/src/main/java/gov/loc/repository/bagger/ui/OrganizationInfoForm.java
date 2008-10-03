@@ -16,6 +16,7 @@
 package gov.loc.repository.bagger.ui;
 
 import javax.swing.JComponent;
+import java.awt.Dimension;
 
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.form.AbstractForm;
@@ -25,6 +26,7 @@ public class OrganizationInfoForm extends AbstractForm {
     public static final String INFO_FORM_PAGE = "infoPage";
 
     private JComponent infoField;
+    private Dimension dimension = new Dimension(500, 300);
 
     public OrganizationInfoForm(FormModel formModel) {
         super(formModel, INFO_FORM_PAGE);
@@ -36,11 +38,13 @@ public class OrganizationInfoForm extends AbstractForm {
         formBuilder.row();
         formBuilder.add("externalDescription");
         formBuilder.row();
-        formBuilder.add("packingDate");
+        formBuilder.add("baggingDate");
         formBuilder.row();
         formBuilder.add("externalIdentifier");
         formBuilder.row();
         formBuilder.add("bagSize");
+        formBuilder.row();
+        formBuilder.add("payloadOssum");
         formBuilder.row();
         formBuilder.add("bagGroupIdentifier");
         formBuilder.row();
@@ -49,7 +53,11 @@ public class OrganizationInfoForm extends AbstractForm {
         formBuilder.add("internalSenderIdentifier");
         formBuilder.row();
         formBuilder.add("internalSenderDescription");
-        return formBuilder.getForm();
+        formBuilder.row();
+        formBuilder.add("publisher");
+        infoField = formBuilder.getForm();
+        infoField.setPreferredSize(dimension);
+        return infoField;
     }
 
     public boolean requestFocusInWindow() {
