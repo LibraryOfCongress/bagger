@@ -302,13 +302,6 @@ public class FileUtililties {
         return dir.delete();
     }
 	
-	public static void testWrite(File directory, File file) throws IOException {
-		File testFile = new File(directory, file.getName());
-		Writer writer = new OutputStreamWriter(new FileOutputStream(testFile),"UTF-8");
-		writer.write("Test content.");
-		writer.close();
-	}
-	
 	public static void display(String s) {
 		//log.debug(s);
 		System.out.println(s);
