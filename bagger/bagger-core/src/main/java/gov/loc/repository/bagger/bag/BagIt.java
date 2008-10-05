@@ -1,13 +1,11 @@
 package gov.loc.repository.bagger.bag;
 
-import java.util.Collection;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagit.bag.impl.BagGeneratorVerifierImpl;
-
+import gov.loc.repository.bagit.bag.BagHelper;
 
 /**
  * The high-level BagIt business interface.
@@ -19,8 +17,8 @@ import gov.loc.repository.bagit.bag.impl.BagGeneratorVerifierImpl;
 examplebag/
 |
 |   bagit.txt
-|    (BagIt-version: 0.95                                                   )
-|    (Tag-File-Character-Encoding: UTF-8                                   )
+|    (BagIt-version: M.N                                                   )
+|    (Tag-File-Character-Encoding: UTF-<N>                                   )
 |
  *
  * @author Jon Steinbach
@@ -31,7 +29,7 @@ public class BagIt extends FileEntity {
 	private String versionLabel = "BagIt-version: ";
 	private String version = BagGeneratorVerifierImpl.VERSION;
 	private String encodingLabel = "Tag-File-Character-Encoding: ";
-	private String encoding = "UTF-8"; // Currently the only encoding type allowed for meta-data files
+	private String encoding = BagHelper.BAG_ENCODING; // Currently the only encoding type allowed for meta-data files
 
 	public void setVersion(String version) {
 		this.version = version;
