@@ -55,6 +55,7 @@ public class Bag extends NamedEntity {
 	private boolean isFetch = false;	
 	private boolean isComplete = false;	
 	private boolean isValid = false;
+	private boolean isValidForms = false;
 	private boolean isValidMetadata = false;
 	private boolean isSerialized = false;
 	private boolean isCopyright = false;
@@ -182,6 +183,14 @@ public class Bag extends NamedEntity {
 		return this.isValid;
 	}
 	
+	public void setIsValidForms(boolean b) {
+		this.isValidForms = b;
+	}
+	
+	public boolean getIsValidForms() {
+		return this.isValidForms;
+	}
+	
 	public void setIsValidMetadata(boolean b) {
 		this.isValidMetadata = b;
 	}
@@ -221,82 +230,128 @@ public class Bag extends NamedEntity {
 	// Break this down into multiple steps so that each step can send bag progress message to the console.
 	public String write(File path) {
 		String messages = "";
-		boolean isComplete = false;
-		boolean isValid = false;
 		boolean success = false;
 
 		try {
-			display("Bag.write: create and open bag name directory");
-			if (path.getAbsolutePath() == null || this.getName() == null) {
-		    	messages = reportError(messages, "BagView.write failed to create directory: NULL");
-				log.error(messages);
-				return messages;			
-			}
-			display("Bag.writePath: " + path.getAbsolutePath() + "/" + this.getName());
-			File rootDir = new File(path.getAbsolutePath(), this.getName());
-			success = rootDir.mkdir();
-		    if (!success) {
-		    	messages = reportError(messages, "BagView.write failed to create directory: " + rootDir);
-				log.error(messages);
-				return messages;
-		    }
-			this.setRootDir(rootDir);
-			display("Bag.write: create and write manifest-<type>.txt in bag name directory");
-	    	for (int i=0; i < manifests.size(); i++) {
-	    		Manifest manifest = manifests.get(i);
-	    		manifest.writeData();
-	    		manifest.write(rootDir);
-	    	}
-	    	if (this.isHoley) {
-				display("Bag.write: isHoley - create and write fetch.txt in bag name directory");
-	    	    fetch.setName(BagHelper.FETCH);
-	    	    fetch.writeData();
-	    	    fetch.write(rootDir);    		
-	    	}
-			display("Bag.write: create and write bag-info.txt in bag name directory");
-			bagInfo.setName(BagHelper.INFO);
-			bagInfo.writeData();
-			bagInfo.write(rootDir);
-			display("Bag.write: create and write bagit.txt in bag name directory");
-			bagIt.setName(BagHelper.BAGIT);
-			bagIt.writeData();
-			bagIt.write(rootDir);
-			display("Bag.write: create and write tagmanifest-<type>.txt in bag name directory");
-	    	for (int i=0; i < tagManifests.size(); i++) {
-	    		TagManifest tagManifest = tagManifests.get(i);
-	    		tagManifest.setType(ManifestType.MD5);
-	    		tagManifest.writeData();
-	    		tagManifest.write(rootDir);
-	    		tagManifests.set(i, tagManifest);
-	    	}
-	    	this.setTagManifests(tagManifests);
-			display("Bag.write: create and open data directory");
-			File dataDir = new File(rootDir, BagHelper.DATA_DIRECTORY);
-			success = dataDir.mkdir();
-		    if (!success) {
-		    	messages = reportError(messages, "ERROR in BagView.write failed to create directory: " + dataDir);
-				log.error(messages);
-		    }
-			display("Bag.write: create and write data directory");
-			File parent = this.getRootSrc();
-			try
-			{
-				display("Bag.write copyFiles: " + parent.getAbsolutePath() + " to: " + dataDir.getAbsolutePath());
-				FileUtililties.copyFiles(parent, dataDir);
-			}
-			catch(IOException e)
-			{
-		    	messages = reportError(messages, "ERROR in BagView.write copyFiles: " + e.getMessage());
-		    	log.error(messages);
-			}
-
 			display("Bag.write: validateAndBag");
-			messages += validateAndBag();
+			messages += validateForms();
+			if (isValidForms) {
+				display("Bag.write: create and open bag name directory");
+				messages += "Create and open bag name directory.\n";
+				if (path.getAbsolutePath() == null || this.getName() == null) {
+			    	messages += reportError(messages, "BagView.write failed to create directory: NULL");
+					log.error(messages);
+					return messages;			
+				}
+				display("Bag.writePath: " + path.getAbsolutePath() + "/" + this.getName());
+				File rootDir = new File(path.getAbsolutePath(), this.getName());
+				if (rootDir.exists()) success = true;
+				else success = rootDir.mkdir();
+			    if (!success) {
+			    	messages += reportError(messages, "BagView.write failed to create directory: " + rootDir);
+					log.error(messages);
+					return messages;
+			    }
+				this.setRootDir(rootDir);
+				display("Bag.write: create and write manifest-<type>.txt in bag name directory");
+		    	for (int i=0; i < manifests.size(); i++) {
+		    		Manifest manifest = manifests.get(i);
+					messages += "Create and write manifest-"+ manifest.getType() +".txt in bag name directory.\n";
+		    		manifest.writeData();
+		    		manifest.write(rootDir);
+		    	}
+		    	if (this.isHoley) {
+					display("Bag.write: isHoley - create and write fetch.txt in bag name directory");
+					messages += "Create and write fetch.txt in bag name directory.\n";
+		    	    fetch.setName(BagHelper.FETCH);
+		    	    fetch.writeData();
+		    	    fetch.write(rootDir);    		
+		    	}
+				display("Bag.write: create and write bag-info.txt in bag name directory");
+				messages += "Create and write bag-info.txt in bag name directory.\n";
+				bagInfo.setName(BagHelper.INFO);
+				bagInfo.writeData();
+				bagInfo.write(rootDir);
+				display("Bag.write: create and write bagit.txt in bag name directory");
+				messages += "Create and write bagit.txt in bag name directory.\n";
+				bagIt.setName(BagHelper.BAGIT);
+				bagIt.writeData();
+				bagIt.write(rootDir);
+				display("Bag.write: create and write tagmanifest-<type>.txt in bag name directory");
+		    	for (int i=0; i < tagManifests.size(); i++) {
+		    		TagManifest tagManifest = tagManifests.get(i);
+					messages += "Create and write tagmanifest-"+ tagManifest.getType() +".txt in bag name directory.\n";
+		    		tagManifest.setType(ManifestType.MD5);
+		    		tagManifest.writeData();
+		    		tagManifest.write(rootDir);
+		    		tagManifests.set(i, tagManifest);
+		    	}
+		    	this.setTagManifests(tagManifests);
+				display("Bag.write: create and open data directory");
+				messages += "Create and write data payload directory.\n";
+				File dataDir = new File(rootDir, BagHelper.DATA_DIRECTORY);
+				if (dataDir.exists()) success = true;
+				else success = dataDir.mkdir();
+			    if (!success) {
+			    	messages += reportError(messages, "ERROR in BagView.write failed to create directory: " + dataDir);
+					log.error(messages);
+					messages += cleanup();
+					return messages;
+			    }
+				display("Bag.write: create and write data directory");
+				File parent = this.getRootSrc();
+				try
+				{
+					display("Bag.write copyFiles: " + parent.getAbsolutePath() + " to: " + dataDir.getAbsolutePath());
+					FileUtililties.copyFiles(parent, dataDir);
+				}
+				catch(IOException e)
+				{
+			    	messages += reportError(messages, "ERROR in BagView.write copyFiles: " + e.getMessage());
+			    	log.error(messages);
+					messages += cleanup();
+			    	return messages;
+				}
+
+				if (isValidForms) {
+					messages += validateAndBag();				
+				}
+				messages += cleanup();
+			}
 		} catch (Exception e) {
-			messages += "\n" + "Exception while creating bag:\n" + e.getMessage();
+			messages += "\n" + "Exception while creating bag:\n" + e.toString();
 			e.printStackTrace();
 			log.error(e.getMessage());
 		}
+		return messages;
+	}
+	
+	private String cleanup() {
+		boolean b = false;
+		String messages = "";
+		display("Bag.write: Clean up the files");
+		b = FileUtililties.deleteDir(rootDir);
+		if (!b) messages += reportError(messages, "Error deleting directory: " + rootDir);
+		else messages += "Cleaning up bag directory.";
+		return messages;
+	}
+	
+	public String validateForms() {
+		String messages = "";
+		
+		this.isValidForms = true;
+		messages = "Is bag form input valid? \n";
+		if (this.isCopyright) {
+			String publisher = this.getInfo().getPublisher();
+			if (publisher == null || publisher.trim().isEmpty()) {
+				this.isValidForms = false;
+				messages += "Copyright projects require a publisher.";
+			}
+		}
+		if (this.isValidForms) {
+			messages += "Bag form input is valid.";
+		}
+		messages += "\n";
 		return messages;
 	}
 	
@@ -329,12 +384,9 @@ public class Bag extends NamedEntity {
 					display("Bag.write: Create a  zip file for serialized transfer of the bag");
 					msg = FileUtililties.createZip(rootDir);
 					if (msg == null) {
-						display("Bag.write: Clean up the files since bag zip is created");
-						messages += "Creating zip file and cleaning up bag directory.";
+						messages += "Creating serialized zip file.";
 						this.isSerialized = true;
-						boolean b = FileUtililties.deleteDir(rootDir);
-						if (!b) reportError(messages, "Error deleting directory: " + rootDir);
-						else messages += "Successfully created bag: " + this.getInfo().getBagName();
+						messages += "Successfully created bag: " + this.getInfo().getBagName();
 					} else {
 						reportError(messages, msg);	
 					}				
