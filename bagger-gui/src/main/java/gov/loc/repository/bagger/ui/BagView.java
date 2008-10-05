@@ -316,10 +316,20 @@ public class BagView extends AbstractView implements ApplicationListener {
             	} else {
             		bag.setIsCopyright(false);
             	}
+            	log.info("BagView.setIsCopyright: " + bag.getIsCopyright());
             }
         });
         JPanel projectPane = new JPanel(new BorderLayout());
         JScrollPane listPane = new JScrollPane(projectList);
+        /* */
+    	String selected = (String) projectList.getSelectedValue();
+    	if (selected.equalsIgnoreCase("copyright")) {
+    		bag.setIsCopyright(true);
+    	} else {
+    		bag.setIsCopyright(false);
+    	}
+    	log.info("BagView.setIsCopyright: " + bag.getIsCopyright());
+    	/* */
         projectPane.add(new JLabel("Bag project: "), BorderLayout.WEST);
         projectPane.add(listPane, BorderLayout.CENTER);
         
