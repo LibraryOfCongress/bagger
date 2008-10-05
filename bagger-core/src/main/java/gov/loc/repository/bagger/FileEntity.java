@@ -1,6 +1,6 @@
 package gov.loc.repository.bagger;
 
-import gov.loc.repository.bagger.bag.Bag;
+import gov.loc.repository.bagit.bag.BagHelper;
 
 import java.io.File;
 import java.io.Writer;
@@ -74,7 +74,7 @@ public class FileEntity extends BaseEntity {
 		try
 		{
 			File file = new File(rootDir, name);
-			Writer writer = new OutputStreamWriter(new FileOutputStream(file),"UTF-8");
+			Writer writer = new OutputStreamWriter(new FileOutputStream(file), BagHelper.BAG_ENCODING);
 			writer.write(this.data);
 			writer.close();
 			this.setFile(file);
