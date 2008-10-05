@@ -8,7 +8,6 @@
 	<classpathentry kind="src" path="bagger-business/src/main/java"/>
 	<classpathentry kind="src" path="bagger-ftpclient/src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="bagit/target/bagit-1.1.jar"/>
 	<classpathentry kind="lib" path="bagger-business/target/bagger-business-1.2.jar"/>
 	<classpathentry kind="lib" path="bagger-common/target/bagger-common-1.2.jar"/>
 	<classpathentry kind="lib" path="bagger-core/target/bagger-core-1.2.jar"/>
@@ -53,5 +52,6 @@
 	<classpathentry kind="lib" path="C:/Documents and Settings/jsteinbach/My Documents/repository/trunk/bagger/bagger-lib/spring-richclient-sandbox-1.0.0.jar"/>
 	<classpathentry kind="lib" path="C:/Documents and Settings/jsteinbach/My Documents/repository/trunk/bagger/bagger-lib/spring-richclient-support-1.0.0.jar"/>
 	<classpathentry kind="lib" path="C:/Documents and Settings/jsteinbach/My Documents/repository/trunk/bagger/bagger-lib/spring-tx-2.5.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/jsteinbach/My Documents/repository/trunk/bagit/target/bagit-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
