@@ -25,7 +25,6 @@ import javax.swing.JComponent;
 import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
 import javax.swing.JList;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ButtonGroup;
@@ -47,6 +46,8 @@ import org.springframework.util.Assert;
 import org.springframework.binding.form.HierarchicalFormModel;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.richclient.application.Application;
+import org.springframework.richclient.application.ApplicationWindow;
 import org.springframework.richclient.application.PageComponentContext;
 import org.springframework.richclient.application.event.LifecycleApplicationEvent;
 import org.springframework.richclient.application.support.AbstractView;
@@ -54,12 +55,9 @@ import org.springframework.richclient.command.support.AbstractActionCommandExecu
 import org.springframework.richclient.command.support.GlobalCommandIds;
 import org.springframework.richclient.dialog.ApplicationDialog;
 import org.springframework.richclient.dialog.CloseAction;
-import org.springframework.richclient.dialog.CompositeDialogPage;
-import org.springframework.richclient.dialog.FormBackedDialogPage;
-import org.springframework.richclient.dialog.TabbedDialogPage;
-import org.springframework.richclient.dialog.AbstractDialogPage;
-import org.springframework.richclient.dialog.TitledPageApplicationDialog;
 import org.springframework.richclient.form.FormModelHelper;
+import org.springframework.richclient.progress.BusyIndicator;
+import org.springframework.richclient.progress.ProgressMonitor;
 
 import gov.loc.repository.bagger.Address;
 import gov.loc.repository.bagger.Contact;
@@ -74,6 +72,8 @@ import com.ravnaandtines.ftp.*;
 public class BagView extends AbstractView implements ApplicationListener {
 	private static final Log log = LogFactory.getLog(BagView.class);
 
+	private ApplicationWindow window;
+	private ProgressMonitor progressMonitor;
 	private String username;
 	private Bagger bagger;
     private Bag bag;
@@ -185,6 +185,8 @@ public class BagView extends AbstractView implements ApplicationListener {
  */
     @Override
     protected JComponent createControl() {
+    	window = Application.instance().getActiveWindow();
+
     	resize(this.getActiveWindow().getControl());
 
         BorderLayout borderLayout = new BorderLayout();
@@ -597,7 +599,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     private void openBag(File file) {
-    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
+    	progressMonitor = window.getStatusBar().getProgressMonitor();
+    	progressMonitor.taskStarted("Bagger called", -1);
+//    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         rootSrc = file.getAbsoluteFile(); //file.getParentFile();
         display("OpenFileAction.actionPerformed filePath: " + file.getPath() + " rootPath: " + rootSrc.getPath() );
         String messages = "Adding " + file.getPath() + " to the bag.";
@@ -611,7 +616,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     	/* */
         updateTree(file);
         bag.setRootDir(rootSrc);
-    	rootFrame.setCursor(Cursor.getDefaultCursor());
+//    	rootFrame.setCursor(Cursor.getDefaultCursor());
+    	progressMonitor.done();
+    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
  // This action creates and shows a modal save-file dialog.
@@ -640,7 +647,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     private void saveBag(File file) {
-    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
+    	progressMonitor = window.getStatusBar().getProgressMonitor();
+    	progressMonitor.taskStarted("Bagger called", -1);
+//    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         display("BagView.SaveFileAction: " + file);
         String messages = "Creating the bag...";
         updateMessages(messages);
@@ -656,7 +666,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         messages = bag.write(file);
        	display("\nBagView.SaveFileAction: " + messages);
     	updateTabs(messages);
-    	rootFrame.setCursor(Cursor.getDefaultCursor());
+//    	rootFrame.setCursor(Cursor.getDefaultCursor());
+    	progressMonitor.done();
+    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
     private class ValidateBagAction extends AbstractAction {
@@ -786,13 +798,16 @@ public class BagView extends AbstractView implements ApplicationListener {
     }    
 
     private void createBagManagerTree(File file) { 
-    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
+    	progressMonitor = window.getStatusBar().getProgressMonitor();
+    	progressMonitor.taskStarted("Bagger called", -1);
+//    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     	display("createBagManagerTree: rootTree");
     	RecursiveFileListIterator fit = new RecursiveFileListIterator(file);
     	for (Iterator<File> it=fit; it.hasNext(); ) {
             File f = it.next();
             rootTree.add(f);
-            display(f.getAbsoluteFile().toString());
+            //display(f.getAbsoluteFile().toString());
         }
     	display("bagsTree.getRootDir");
     	DefaultMutableTreeNode rootDir = new DefaultMutableTreeNode();
@@ -800,7 +815,10 @@ public class BagView extends AbstractView implements ApplicationListener {
 		rootDir = addNodes(null, file);
 		display("createBagManagerTree: files.size: " + rootDir.getChildCount());
 		bagsTree = new JTree(rootDir);
-		rootFrame.setCursor(Cursor.getDefaultCursor());
+		bagsTree.requestFocus();
+//		rootFrame.setCursor(Cursor.getDefaultCursor());
+    	progressMonitor.done();
+    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
 	/** Add nodes from under "dir" into curTop. Highly recursive. */
