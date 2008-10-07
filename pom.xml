@@ -39,7 +39,6 @@
   </reporting>
 
   <modules>
-    <module>bagit</module>
     <module>bagger-ftpclient</module>
     <module>bagger-common</module>
     <module>bagger-core</module>
@@ -52,11 +51,6 @@
   <dependencyManagement>
     <dependencies>
       <!-- Internal -->
-      <dependency>
-        <groupId>gov.loc.repository.bagit</groupId>
-        <artifactId>bagit</artifactId>
-        <version>${pom.version}</version>
-      </dependency>
       <dependency>
         <groupId>com.ravnaandtines.ftp</groupId>
         <artifactId>bagger-ftpclient</artifactId>
