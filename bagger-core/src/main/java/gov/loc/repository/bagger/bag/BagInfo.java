@@ -2,6 +2,7 @@ package gov.loc.repository.bagger.bag;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +50,8 @@ public class BagInfo extends FileEntity {
 	private String internalSenderIdentifier = "";
 	private String internalSenderDescription = "";
 	private String publisher = "";
+	private String awardeePhase = "";
+	public static final HashMap<String,String> bagInfoRules = initRules();
 
 	public void setBagName(String name) {
 		this.bagName = name;
@@ -154,6 +157,14 @@ public class BagInfo extends FileEntity {
 	public String getPublisher() {
 		return this.publisher;
 	}
+	
+	public void setAwardeePhase(String phase) {
+		this.awardeePhase = phase;
+	}
+	
+	public String getAwardeePhase() {
+		return this.awardeePhase;
+	}
 
 	@Override
 	public String toString() {
@@ -202,6 +213,8 @@ public class BagInfo extends FileEntity {
 		sb.append('\n');
 		sb.append("Publisher: ");
 		sb.append(this.publisher);
+		sb.append("Awardee Phase: ");
+		sb.append(this.awardeePhase);
 		sb.append('\n');
 
 		return sb.toString();
@@ -209,5 +222,27 @@ public class BagInfo extends FileEntity {
 
 	public void writeData() {
 		this.fromString(toString());
+	}
+	
+	public static HashMap<String,String> initRules() {
+		HashMap<String,String> rules = new HashMap<String,String>();
+		rules.put("Source-Organization: ", "");
+		rules.put("Organization-Address: ", "");
+		rules.put("Contact-Name: ", "");
+		rules.put("Contact-Phone: ", "");
+		rules.put("Contact-Email: ", "[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}");
+		rules.put("External-Description: ", "");
+		rules.put("Bagging-Date: ", "(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])");
+		rules.put("External-Identifier: ", "");
+		rules.put("Bag-Size: ", "");
+		rules.put("Payload-Ossum: ", "");
+		rules.put("Bag-Group-Identifier: ", "");
+		rules.put("Bag-Count: ", "");
+		rules.put("Internal-Sender-Identifier: ", "");
+		rules.put("Internal-Sender-Description: ", "");
+		rules.put("Publisher: ", "");
+		rules.put("Awardee Phase: ", "");
+		
+		return rules;
 	}
 }
