@@ -375,7 +375,7 @@ public class Bag extends NamedEntity {
 			if (this.isValid) {
 				messages += "Bag is valid.\n";
 				messages += "Is Valid Metadata? \n";
-				result = verifier.isValidMetadata(this.rootDir);
+				result = verifier.isValidMetadata(this.rootDir, BagInfo.bagInfoRules);
 				if (result.getMessage() != null) messages += result.getMessage();
 				this.isValidMetadata = result.isSuccess();
 				if (this.isValidMetadata) {
