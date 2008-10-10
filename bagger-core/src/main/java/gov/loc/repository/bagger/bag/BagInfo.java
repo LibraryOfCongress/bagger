@@ -38,6 +38,7 @@ import gov.loc.repository.bagger.FileEntity;
 public class BagInfo extends FileEntity {
 	private static final Log log = LogFactory.getLog(BagInfo.class);
 
+	private Bag bag;
 	private String bagName = new String("bag_1");
 	private BagOrganization bagOrganization = new BagOrganization();
 	private String externalDescription = "";
@@ -51,8 +52,22 @@ public class BagInfo extends FileEntity {
 	private String internalSenderDescription = "";
 	private String publisher = "";
 	private String awardeePhase = "";
-	public static final HashMap<String,String> bagInfoRules = initRules();
+	public HashMap<String,String> bagInfoRules;
 
+	public BagInfo(Bag bag) {
+		super();
+		this.bag = bag;
+		bagInfoRules = initRules();
+	}
+	
+	public void setRules(HashMap<String,String> rules) {
+		this.bagInfoRules = rules;
+	}
+	
+	public HashMap<String,String> getRules() {
+		return this.bagInfoRules;
+	}
+	
 	public void setBagName(String name) {
 		this.bagName = name;
 	}
@@ -110,6 +125,14 @@ public class BagInfo extends FileEntity {
 		return this.bagSize;
 	}
 	
+	/* 
+	 * The "octetstream sum" of the payload, namely, a two-part number of the form "OctetCount.StreamCount", 
+	 * where OctetCount is the total number of octets (8-bit bytes) across all payload file content and 
+	 * StreamCount is the total number of payload files. Payload-Ossum is easy to compute 
+	 * (e.g., on Unix "wc -lc `find data/ -type f`" does the hard part) and should be included in 
+	 * "bag-info.txt" if at all possible. Compared to Bag-Size (above), Payload-Ossum is more intended for 
+	 * machine consumption. 
+	 */
 	public void setPayloadOssum(String ossum) {
 		this.payloadOssum = ossum;
 	}
@@ -213,6 +236,7 @@ public class BagInfo extends FileEntity {
 		sb.append('\n');
 		sb.append("Publisher: ");
 		sb.append(this.publisher);
+		sb.append('\n');
 		sb.append("Awardee Phase: ");
 		sb.append(this.awardeePhase);
 		sb.append('\n');
@@ -224,24 +248,28 @@ public class BagInfo extends FileEntity {
 		this.fromString(toString());
 	}
 	
-	public static HashMap<String,String> initRules() {
+	public HashMap<String,String> initRules() {
 		HashMap<String,String> rules = new HashMap<String,String>();
-		rules.put("Source-Organization: ", "");
-		rules.put("Organization-Address: ", "");
-		rules.put("Contact-Name: ", "");
-		rules.put("Contact-Phone: ", "");
-		rules.put("Contact-Email: ", "[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}");
-		rules.put("External-Description: ", "");
-		rules.put("Bagging-Date: ", "(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])");
-		rules.put("External-Identifier: ", "");
-		rules.put("Bag-Size: ", "");
-		rules.put("Payload-Ossum: ", "");
-		rules.put("Bag-Group-Identifier: ", "");
-		rules.put("Bag-Count: ", "");
-		rules.put("Internal-Sender-Identifier: ", "");
-		rules.put("Internal-Sender-Description: ", "");
-		rules.put("Publisher: ", "");
-		rules.put("Awardee Phase: ", "");
+		rules.put("Source-Organization", "required");
+		rules.put("Organization-Address", "required");
+		rules.put("Contact-Name", "required");
+		rules.put("Contact-Phone", "required");
+		rules.put("Contact-Email", "required,[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}");
+		rules.put("External-Description", "required");
+		rules.put("Bagging-Date", "required,(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])");
+		rules.put("External-Identifier", "required");
+		rules.put("Bag-Size", "required");
+		rules.put("Payload-Ossum", "required");
+		rules.put("Bag-Group-Identifier", "");
+		rules.put("Bag-Count", "");
+		rules.put("Internal-Sender-Identifier", "");
+		rules.put("Internal-Sender-Description", "");
+		if (bag.getIsCopyright()) {
+			rules.put("Publisher", "required");
+		} else {
+			rules.put("Publisher", "");
+		}
+		rules.put("Awardee Phase", "");
 		
 		return rules;
 	}
