@@ -353,7 +353,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         JList projectList = new JList(listModel);
         projectList.setName("Bag Project");
         projectList.setSelectedIndex(0);
-        projectList.setVisibleRowCount(1);
+        projectList.setVisibleRowCount(3);
         projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         projectList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
@@ -387,8 +387,10 @@ public class BagView extends AbstractView implements ApplicationListener {
         JLabel groupLabel = new JLabel("Checksum Type: ");        
         JRadioButton md5Button = new JRadioButton("MD5");
         md5Button.setSelected(true);
+        md5Button.setEnabled(true);
         JRadioButton sha1Button = new JRadioButton("SHA1");
         sha1Button.setSelected(false);
+        sha1Button.setEnabled(false);
         ButtonGroup group = new ButtonGroup();
         group.add(md5Button);
         group.add(sha1Button);
@@ -397,7 +399,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         groupPanel.add(md5Button);
         groupPanel.add(sha1Button);
         groupPanel.setBorder(border);
-        groupPanel.setEnabled(false);
 
         // Holey bag control
         JLabel holeyLabel = new JLabel("Holey Bag?: ");
@@ -409,20 +410,24 @@ public class BagView extends AbstractView implements ApplicationListener {
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         
-        buildConstraints(gbc, 0, 0, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 0, 0, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(projectLabel, gbc);
-        buildConstraints(gbc, 1, 0, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, 0, 1, 1, 60, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(projectPane, gbc);
 
-        buildConstraints(gbc, 0, 1, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 0, 1, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(holeyLabel, gbc);
-        buildConstraints(gbc, 1, 1, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, 1, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(holeyCheckbox, gbc);
 
-        buildConstraints(gbc, 0, 2, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 0, 2, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(groupLabel, gbc);
-        buildConstraints(gbc, 1, 2, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, 2, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(groupPanel, gbc);
+        
+        JLabel filler = new JLabel("");
+        buildConstraints(gbc, 0, 3, 2, 1, 1, 10, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        gridLayout.setConstraints(filler, gbc);
 
         JPanel checkPanel = new JPanel(gridLayout);
         checkPanel.add(projectLabel);
@@ -431,6 +436,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         checkPanel.add(holeyCheckbox);
         checkPanel.add(groupLabel);
         checkPanel.add(groupPanel);
+        checkPanel.add(filler);
 
         return checkPanel;
     }
