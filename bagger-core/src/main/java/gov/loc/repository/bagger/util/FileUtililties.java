@@ -294,11 +294,11 @@ public class FileUtililties {
             for (int i=0; i<children.length; i++) {
                 boolean success = deleteDir(new File(dir, children[i]));
                 if (!success) {
+                	display("FileUtilities deleteDir unsuccessful: " + dir + "->" + children[i]);
                     return false;
                 }
             }
         }
-		dir.deleteOnExit();
         // The directory is now empty so delete it
         return dir.delete();
     }
