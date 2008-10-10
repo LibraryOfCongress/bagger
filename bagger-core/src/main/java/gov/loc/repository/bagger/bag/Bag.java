@@ -339,13 +339,15 @@ public class Bag extends NamedEntity {
 	private String cleanup() {
 		boolean b = false;
 		String messages = "";
-		display("Bag.write: Clean up the files");
-		display("Bag space: " + rootDir.getTotalSpace());
-		b = FileUtililties.deleteDir(rootDir);
-		if (!b) messages += reportError(messages, "Error deleting directory: " + rootDir);
-		else messages += "Cleaning up bag directory.";
+		if (this.isSerial) {
+			display("Bag.write: Clean up the files");
+			display("Bag space: " + rootDir.getTotalSpace());
+			b = FileUtililties.deleteDir(rootDir);
+			if (!b) messages += reportError(messages, "Could not delete directory: " + rootDir);
+			else messages += "Cleaning up bag directory.";
 
-		rootDir.deleteOnExit();
+			rootDir.deleteOnExit();			
+		}
 		return messages;
 	}
 	
