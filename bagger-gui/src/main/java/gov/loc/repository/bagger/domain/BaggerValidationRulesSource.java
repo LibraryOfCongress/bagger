@@ -49,7 +49,6 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
                 add("contactName", getNameValueConstraint());
                 add("telephone", required());
                 add("email", getEmailConstraint());
-//              add(not(eqProperty("firstName", "lastName")));
             }
         };
     }
@@ -67,7 +66,12 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
         return new Rules(BagInfo.class) {
             protected void initRules() {
                 add("bagName", required());
+                add("externalDescription", required());
                 add("baggingDate", getDateConstraint());
+                add("externalIdentifier", required());
+                add("bagSize", required());
+                if (bag != null && bag.getIsCopyright()) add("publisher", required());
+                add("payloadOssum", required());
             }
         };
     }
@@ -79,19 +83,20 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
                 add("name", getNameValueConstraint());
                 add("birthDate", required());
                 add("birthDate", lt(new Date()));
+//              add(not(eqProperty("firstName", "lastName")));
             }
         };
     }
 /* */
     private Constraint getNameValueConstraint() {
-        return all(new Constraint[] {required(), maxLength(50), regexp("[a-zA-Z]*", "alphabetic")});
+        return all(new Constraint[] {required(), maxLength(50), regexp("[a-zA-Z ]*", "alphabetic")});
     }
     
     private Constraint getEmailConstraint() {
-    	return all(new Constraint[] {required(), maxLength(50), regexp("[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}")});
+    	return all(new Constraint[] {required(), maxLength(50), regexp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", "emailRule")});
     }
     
     private Constraint getDateConstraint() {
-    	return all(new Constraint[] {required(), maxLength(10), regexp("(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])")});
+    	return all(new Constraint[] {required(), maxLength(10), regexp("(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])", "dateRule")});
     }
 }
