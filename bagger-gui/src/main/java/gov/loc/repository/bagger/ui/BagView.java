@@ -250,10 +250,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     	GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
 
-        buildConstraints(glbc, 0, 0, 1, 1, 0, 10, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        buildConstraints(glbc, 0, 0, 1, 1, 10, 20, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         gridLayout.setConstraints(filePanel, glbc);
 
-        buildConstraints(glbc, 0, 1, 1, 1, 0, 10, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        buildConstraints(glbc, 0, 1, 1, 1, 10, 80, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         gridLayout.setConstraints(infoScrollPane, glbc);
 
         mainPanel = new JPanel(gridLayout);
@@ -264,28 +264,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     private JScrollPane createInfoPane() {
-    	// Create a panel for the form error messages and the update button
-        Action updatePropAction = new UpdatePropertyAction();
-        updatePropButton = new JButton("Save Updates");
-        updatePropButton.addActionListener(updatePropAction);
-        updatePropButton.setMnemonic('u');
-        updatePropButton.setBorder(new EmptyBorder(5, 5, 5, 5));
-        
-        BorderLayout labelLayout = new BorderLayout();
-        labelLayout.setHgap(10);
-        infoLabelPanel = new JPanel(labelLayout);
-        infoMessagePane = new BagTextPane("");
-        if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors()) {
-        	infoMessagePane.setMessage("Form errors exist.");        	
-        }
-        Dimension labelDimension = infoPane.getPreferredSize();
-        int offset = updatePropButton.getWidth();
-        if (offset == 0) offset = 80;
-        labelDimension.setSize(labelDimension.getWidth()-offset, 25);
-        infoMessagePane.setPreferredSize(labelDimension);
-        infoLabelPanel.add(infoMessagePane, "Center");
-        infoLabelPanel.add(updatePropButton, "East");
-
         // Define the information forms
     	HierarchicalFormModel organizationFormModel;
         BagOrganization bagOrganization = bagInfo.getBagOrganization();
@@ -310,11 +288,33 @@ public class BagView extends AbstractView implements ApplicationListener {
         infoPane.addTab("Controls", createCheckboxPanel());
         infoPane.setPreferredSize(bagInfoForm.getControl().getPreferredSize());
 
+    	// Create a panel for the form error messages and the update button
+        Action updatePropAction = new UpdatePropertyAction();
+        updatePropButton = new JButton("Save Updates");
+        updatePropButton.addActionListener(updatePropAction);
+        updatePropButton.setMnemonic('u');
+        updatePropButton.setBorder(new EmptyBorder(5, 5, 5, 5));
+        
+        BorderLayout labelLayout = new BorderLayout();
+        labelLayout.setHgap(10);
+        infoLabelPanel = new JPanel(labelLayout);
+        infoMessagePane = new BagTextPane("");
+        if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors()) {
+        	infoMessagePane.setMessage("Form errors exist.");
+        }
+        Dimension labelDimension = infoPane.getPreferredSize();
+        int offset = updatePropButton.getWidth();
+        if (offset == 0) offset = 80;
+        labelDimension.setSize(labelDimension.getWidth()-offset, 25);
+        infoMessagePane.setPreferredSize(labelDimension);
+        infoLabelPanel.add(infoMessagePane, "Center");
+        infoLabelPanel.add(updatePropButton, "East");
+
         // Combine the information panel with the forms pane
         GridBagLayout infoLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
 
-        buildConstraints(gbc, 0, 0, 1, 1, 10, 20, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 0, 0, 1, 1, 10, 20, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         infoLayout.setConstraints(infoLabelPanel, gbc);
 
         buildConstraints(gbc, 0, 1, 1, 1, 70, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
@@ -344,11 +344,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     
     private JPanel createCheckboxPanel() {
         Border border = new EmptyBorder(5, 5, 5, 5);
-    	GridLayout gridLayout = new GridLayout(3,1,10,10);
-    	gridLayout.setHgap(10);
-    	gridLayout.setVgap(10);
-        JPanel checkPanel = new JPanel(gridLayout);
 
+        // Project control
+        JLabel projectLabel = new JLabel("Bag project: ");
         DefaultListModel listModel = new DefaultListModel();
         Object[] array = userProjects.toArray();
         for (int i=0; i < userProjects.size(); i++) listModel.addElement(((Project)array[i]).getName());
@@ -377,39 +375,61 @@ public class BagView extends AbstractView implements ApplicationListener {
             	log.info("BagView.setIsCopyright: " + bag.getIsCopyright());
             }
         });
-        JPanel projectPane = new JPanel(new BorderLayout());
-        JScrollPane listPane = new JScrollPane(projectList);
-        /* */
     	String selected = (String) projectList.getSelectedValue();
     	if (selected.equalsIgnoreCase("copyright")) {
     		bag.setIsCopyright(true);
     	} else {
     		bag.setIsCopyright(false);
     	}
-    	log.info("BagView.setIsCopyright: " + bag.getIsCopyright());
-    	/* */
-        projectPane.add(new JLabel("Bag project: "), BorderLayout.WEST);
-        projectPane.add(listPane, BorderLayout.CENTER);
-        
+        JScrollPane projectPane = new JScrollPane(projectList);
+
+        // Checksum control
         JLabel groupLabel = new JLabel("Checksum Type: ");        
         JRadioButton md5Button = new JRadioButton("MD5");
         md5Button.setSelected(true);
         JRadioButton sha1Button = new JRadioButton("SHA1");
-        sha1Button.setSelected(false);        
+        sha1Button.setSelected(false);
         ButtonGroup group = new ButtonGroup();
         group.add(md5Button);
-        group.add(sha1Button);        
+        group.add(sha1Button);
         JPanel groupPanel = new JPanel(new FlowLayout());
         groupPanel.add(groupLabel);
         groupPanel.add(md5Button);
         groupPanel.add(sha1Button);
         groupPanel.setBorder(border);
+        groupPanel.setEnabled(false);
 
+        // Holey bag control
+        JLabel holeyLabel = new JLabel("Holey Bag?: ");
+        Action holeyAction = new HoleyAction();
         JCheckBox holeyCheckbox = new JCheckBox("Holey Bag");
         holeyCheckbox.setBorder(border);
+        holeyCheckbox.addActionListener(holeyAction);
 
+        GridBagLayout gridLayout = new GridBagLayout();
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        buildConstraints(gbc, 0, 0, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(projectLabel, gbc);
+        buildConstraints(gbc, 1, 0, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(projectPane, gbc);
+
+        buildConstraints(gbc, 0, 1, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(holeyLabel, gbc);
+        buildConstraints(gbc, 1, 1, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(holeyCheckbox, gbc);
+
+        buildConstraints(gbc, 0, 2, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(groupLabel, gbc);
+        buildConstraints(gbc, 1, 2, 1, 1, 0, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(groupPanel, gbc);
+
+        JPanel checkPanel = new JPanel(gridLayout);
+        checkPanel.add(projectLabel);
         checkPanel.add(projectPane);
+        checkPanel.add(holeyLabel);
         checkPanel.add(holeyCheckbox);
+        checkPanel.add(groupLabel);
         checkPanel.add(groupPanel);
 
         return checkPanel;
@@ -511,21 +531,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         rootSrc = file.getAbsoluteFile(); //file.getParentFile();
         display("OpenFileAction.actionPerformed filePath: " + file.getPath() + " rootPath: " + rootSrc.getPath() );
         String messages = "Adding " + file.getPath() + " to the bag.";
-        compositePane.updateMessages(bag, messages);
     	/* */
-        bag = getBag();
-        if (!organizationGeneralForm.hasErrors() && !organizationContactForm.hasErrors() && !bagInfoForm.hasErrors()) {
-            try {
-                bagInfoForm.commit();
-                organizationContactForm.commit();
-                organizationGeneralForm.commit();            
-            } catch (Exception e) {
-            	display("openBag exception: " + e.getMessage());
-            }        	
-        }
-        BagInfo newInfo = (BagInfo)bagInfoForm.getFormObject();
-        bag.setInfo(newInfo);
-        setBag(bag);
+        messages = updateForms();
     	/* */
         updateTree(file);
         bag.setRootDir(rootSrc);
@@ -563,29 +570,37 @@ public class BagView extends AbstractView implements ApplicationListener {
     	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         display("BagView.SaveFileAction: " + file);
         String messages = "Creating the bag...";
-        if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors()) {
-        	messages = "The Bag Information Form contains errors.";
-            compositePane.updateMessages(bag, messages);
-        } else {
-            try {
-                bagInfoForm.commit();
-                organizationContactForm.commit();
-                organizationGeneralForm.commit();            
-                bag = getBag();
-                BagInfo newInfo = (BagInfo)bagInfoForm.getFormObject();
-                bag.setInfo(newInfo);
-                setBag(bag);
-            	// TODO Break this down into multiple steps so that each step can send bag progress message to the console.
-                // TODO What if file already exists?  Error or message to overwrite
-                messages = bag.write(file);
-               	display("\nBagView.SaveFileAction: " + messages);
-            	updateTabs(messages);
-            } catch (Exception e) {
-            	display("saveBag exception: " + e.getMessage());
-            }        	
-        }
+
+        messages = updateForms();
+    	// TODO Break this down into multiple steps so that each step can send bag progress message to the console.
+        // TODO What if file already exists?  Error or message to overwrite
+        messages = bag.write(file);
+       	//display("\nBagView.SaveFileAction: " + messages);
+    	updateTabs(messages);
     	rootFrame.setCursor(Cursor.getDefaultCursor());
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
+    }
+
+    private class HoleyAction extends AbstractAction {
+		private static final long serialVersionUID = 5181439466649332875L;
+
+		HoleyAction() {
+            super("Changed Holey Property...");
+        }
+    
+        public void actionPerformed(ActionEvent e) {
+            JCheckBox cb = (JCheckBox)e.getSource();
+            
+            // Determine status
+            boolean isSel = cb.isSelected();
+            if (isSel) {
+            	bag.setIsHoley(true);
+            } else {
+            	bag.setIsHoley(false);
+            }
+            String messages = updateForms();
+            compositePane.updateTabs(bag, messages);
+        }
     }
 
     private class UpdatePropertyAction extends AbstractAction {
@@ -596,40 +611,45 @@ public class BagView extends AbstractView implements ApplicationListener {
         }
     
         public void actionPerformed(ActionEvent e) {
-            String messages = new String();
-
-            if (!organizationContactForm.hasErrors()) {
-                organizationContactForm.commit();            	
-            }
-            Contact newContact = (Contact)organizationContactForm.getFormObject();
-
-            if (!bagInfoForm.hasErrors()) {
-                bagInfoForm.commit();            	
-            }
-            BagInfo newInfo = (BagInfo)bagInfoForm.getFormObject();
-
-            if (!organizationGeneralForm.hasErrors()) {
-                organizationGeneralForm.commit();            	
-            }
-            BagOrganization newOrganization = (BagOrganization)organizationGeneralForm.getFormObject();
-
-            bag = getBag();
-            newOrganization.setContact(newContact);
-            newInfo.setBagOrganization(newOrganization);
-            bag.setInfo(newInfo);
-            setBag(bag);
-            messages = "Organization and Contact information has been updated.";
-
-            if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors()) {
-            	messages += "\nBag Information form errors exist.";
-            	infoMessagePane.setMessage("Form errors exist");
-            } else {
-            	infoMessagePane.setMessage("");
-            }
-            infoMessagePane.invalidate();
-            infoLabelPanel.invalidate();
+            String messages = updateForms();
             compositePane.updateTabs(bag, messages);
         }
+    }
+    
+    private String updateForms() {
+        String messages = new String();
+        if (!organizationContactForm.hasErrors()) {
+            organizationContactForm.commit();            	
+        }
+        Contact newContact = (Contact)organizationContactForm.getFormObject();
+
+        if (!bagInfoForm.hasErrors()) {
+            bagInfoForm.commit();            	
+        }
+        BagInfo newInfo = (BagInfo)bagInfoForm.getFormObject();
+
+        if (!organizationGeneralForm.hasErrors()) {
+            organizationGeneralForm.commit();            	
+        }
+        BagOrganization newOrganization = (BagOrganization)organizationGeneralForm.getFormObject();
+
+        bag = getBag();
+
+        newOrganization.setContact(newContact);
+        newInfo.setBagOrganization(newOrganization);
+        bag.setInfo(newInfo);
+        setBag(bag);
+        messages = "Organization and Contact information has been updated.";
+        if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors()) {
+        	messages += "\nBag Information form errors exist.";
+        	infoMessagePane.setMessage("Form errors exist");
+        } else {
+        	infoMessagePane.setMessage("");
+        }
+        infoMessagePane.invalidate();
+        infoLabelPanel.invalidate();
+        
+        return messages;
     }
     
     /* */
