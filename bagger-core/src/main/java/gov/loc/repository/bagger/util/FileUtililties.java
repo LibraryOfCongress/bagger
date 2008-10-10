@@ -201,10 +201,10 @@ public class FileUtililties {
   public static void copyFiles(File src, File dest) throws IOException {
   	//Check to ensure that the source is valid...
   	if (!src.exists()) {
-  		System.out.println("FileUtilities.copyFiles: Can not find source: " + src.getAbsolutePath()+".");
+  		log.error("FileUtilities.copyFiles: Can not find source: " + src.getAbsolutePath()+".");
   		throw new IOException("copyFiles: Can not find source: " + src.getAbsolutePath()+".");
   	} else if (!src.canRead()) { //check to ensure we have rights to the source...
-  		System.out.println("FileUtilities.copyFiles: No right to source: " + src.getAbsolutePath()+".");
+  		log.error("FileUtilities.copyFiles: No right to source: " + src.getAbsolutePath()+".");
   		throw new IOException("copyFiles: No right to source: " + src.getAbsolutePath()+".");
   	}
   	//is this a directory copy?
@@ -212,7 +212,7 @@ public class FileUtililties {
   		if (!dest.exists()) { //does the destination already exist?
   			//if not we need to make it exist if possible (note this is mkdirs not mkdir)
   			if (!dest.mkdirs()) {
-  		  		System.out.println("FileUtilities.copyFiles: Could not create direcotry: " + dest.getAbsolutePath()+".");
+  		  		log.error("FileUtilities.copyFiles: Could not create direcotry: " + dest.getAbsolutePath()+".");
   				throw new IOException("copyFiles: Could not create direcotry: " + dest.getAbsolutePath() + ".");
   			}
   		}
@@ -298,6 +298,7 @@ public class FileUtililties {
                 }
             }
         }
+		dir.deleteOnExit();
         // The directory is now empty so delete it
         return dir.delete();
     }
