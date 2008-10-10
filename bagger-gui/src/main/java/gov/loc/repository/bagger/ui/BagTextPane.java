@@ -33,7 +33,7 @@ public class BagTextPane extends JTextPane {
         this.setStyledDocument(document);
         this.setAutoscrolls(true);
         this.setEditable(false);
-        this.setBackground(Color.white);
+        this.setBackground(Color.LIGHT_GRAY);
     }
     
     private void buildDocument() {
