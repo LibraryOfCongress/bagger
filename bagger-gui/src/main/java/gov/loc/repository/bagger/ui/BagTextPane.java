@@ -36,6 +36,16 @@ public class BagTextPane extends JTextPane {
         this.setBackground(Color.LIGHT_GRAY);
     }
     
+    public void setMessage(String message) {
+    	this.message = message;
+    	this.buildDocument();
+    	this.setStyledDocument(document);
+    }
+    
+    public String getMessage() {
+    	return this.message;
+    }
+    
     private void buildDocument() {
         StyleContext context = new StyleContext();
         document = new DefaultStyledDocument(context);
