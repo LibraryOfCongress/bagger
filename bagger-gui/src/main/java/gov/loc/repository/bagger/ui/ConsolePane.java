@@ -23,7 +23,7 @@ public class ConsolePane extends JPanel {
 	private static final long serialVersionUID = -4290352509246639528L;
 
 	public static final String CONSOLE_PANE = "consolePane";
-	private Dimension dimension = new Dimension(300, 300);
+	private Dimension dimension = new Dimension(100, 300);
 	//private GridLayout layout = new GridLayout(0, 2, 10, 10);
     private GridBagLayout layout = new GridBagLayout();
     private GridBagConstraints gbc = new GridBagConstraints();
@@ -70,21 +70,15 @@ public class ConsolePane extends JPanel {
 
     protected JComponent createFormControl() {
     	this.setMaximumSize(dimension);
-    	Dimension formDimension = new Dimension(150, 50);
+    	Dimension formDimension = new Dimension(150, 25);
+    	Dimension consoleDimension = new Dimension(300, 500);
         Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
 /* */
     	JLabel completeLabel = new JLabel("Is Complete? ");
     	Font font = completeLabel.getFont().deriveFont(Font.BOLD);
     	completeLabel.setFont(font);
     	completeLabel.setPreferredSize(formDimension);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.WEST;
+        buildConstraints(gbc, 0, 0, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeLabel, gbc);
         this.add(completeLabel);
 
@@ -97,14 +91,7 @@ public class ConsolePane extends JPanel {
     	font = completeResult.getFont().deriveFont(Font.BOLD);
     	completeResult.setFont(font);
     	completeResult.setPreferredSize(formDimension);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
+        buildConstraints(gbc, 1, 0, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeResult, gbc);
         this.add(completeResult);
 
@@ -112,14 +99,7 @@ public class ConsolePane extends JPanel {
     	font = validLabel.getFont().deriveFont(Font.BOLD);
     	validLabel.setFont(font);
     	validLabel.setPreferredSize(formDimension);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
+        buildConstraints(gbc, 0, 1, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validLabel, gbc);
         this.add(validLabel);
 
@@ -132,29 +112,36 @@ public class ConsolePane extends JPanel {
     	font = validResult.getFont().deriveFont(Font.BOLD);
     	validResult.setFont(font);
     	validResult.setPreferredSize(formDimension);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
+        buildConstraints(gbc, 1, 1, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validResult, gbc);
         this.add(validResult);
+
+    	JLabel validMetaLabel = new JLabel("Is Valid Metadata? ");
+    	font = validMetaLabel.getFont().deriveFont(Font.BOLD);
+    	validMetaLabel.setFont(font);
+    	validMetaLabel.setPreferredSize(formDimension);
+        buildConstraints(gbc, 0, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        layout.setConstraints(validMetaLabel, gbc);
+        this.add(validMetaLabel);
+
+    	JLabel validMetaResult = new JLabel("");
+    	if (bag != null) {
+    		validMetaResult.setText(""+bag.getIsValidMetadata());
+    		if (bag.getIsValidMetadata()) validMetaResult.setForeground(Color.green);
+    		else validMetaResult.setForeground(Color.red);
+    	}
+    	font = validMetaResult.getFont().deriveFont(Font.BOLD);
+    	validMetaResult.setFont(font);
+    	validMetaResult.setPreferredSize(formDimension);
+        buildConstraints(gbc, 1, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        layout.setConstraints(validMetaResult, gbc);
+        this.add(validMetaResult);
 
     	JLabel serializedLabel = new JLabel("Is Packaged? ");
     	font = serializedLabel.getFont().deriveFont(Font.BOLD);
     	serializedLabel.setFont(font);
     	serializedLabel.setPreferredSize(formDimension);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
+        buildConstraints(gbc, 0, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(serializedLabel, gbc);
         this.add(serializedLabel);
 
@@ -167,14 +154,7 @@ public class ConsolePane extends JPanel {
     	font = serializedResult.getFont().deriveFont(Font.BOLD);
     	serializedResult.setFont(font);
     	serializedResult.setPreferredSize(formDimension);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
+        buildConstraints(gbc, 1, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(serializedResult, gbc);
         this.add(serializedResult);
 
@@ -184,19 +164,12 @@ public class ConsolePane extends JPanel {
     	serializedArea.setLineWrap(true);
     	serializedArea.setRows(20);
     	serializedArea.setColumns(10);
-    	serializedArea.setBackground(Color.white);
+    	serializedArea.setBackground(Color.LIGHT_GRAY);
     	serializedArea.setWrapStyleWord(true);
     	serializedArea.setAutoscrolls(true);
-    	serializedArea.setPreferredSize(new Dimension(500, 500));
+    	serializedArea.setPreferredSize(consoleDimension);
     	serializedArea.setBorder(BorderFactory.createLineBorder(Color.black));
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.gridheight = 4;
-        gbc.weightx = 10;
-        gbc.weighty = 10;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.CENTER;
+        buildConstraints(gbc, 0, 4, 2, 4, 10, 10, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         layout.setConstraints(serializedArea, gbc);
         this.add(serializedArea);
 
@@ -214,6 +187,17 @@ public class ConsolePane extends JPanel {
  */
     	
     	return this;
+    }
+
+    private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
+    	gbc.gridx = x; // start cell in a row
+    	gbc.gridy = y; // start cell in a column
+    	gbc.gridwidth = w; // how many column does the control occupy in the row
+    	gbc.gridheight = h; // how many column does the control occupy in the column
+    	gbc.weightx = wx; // relative horizontal size
+    	gbc.weighty = wy; // relative vertical size
+    	gbc.fill = fill; // the way how the control fills cells
+    	gbc.anchor = anchor; // alignment
     }
 
     public boolean requestFocusInWindow() {
