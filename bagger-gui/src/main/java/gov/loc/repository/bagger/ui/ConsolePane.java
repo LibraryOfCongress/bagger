@@ -71,7 +71,7 @@ public class ConsolePane extends JPanel {
     protected JComponent createFormControl() {
     	this.setMaximumSize(dimension);
     	Dimension formDimension = new Dimension(150, 25);
-    	Dimension consoleDimension = new Dimension(300, 500);
+    	Dimension consoleDimension = new Dimension(300, 400);
         Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
 /* */
     	JLabel completeLabel = new JLabel("Is Complete? ");
