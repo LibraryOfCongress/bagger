@@ -51,7 +51,8 @@ public class Bag extends NamedEntity {
 	private Data data;
 	
 	private BagGeneratorVerifier verifier = new BagGeneratorVerifierImpl(new FixityGeneratorManifestGeneratorVerifier(new JavaSecurityFixityGenerator()));
-	private boolean isHoley = false;	
+	private boolean isHoley = false;
+	private boolean isSerial = true;
 	private boolean isFetch = false;	
 	private boolean isComplete = false;	
 	private boolean isValid = false;
@@ -165,6 +166,14 @@ public class Bag extends NamedEntity {
 	
 	public boolean getIsHoley() {
 		return this.isHoley;
+	}
+	
+	public void setIsSerial(boolean b) {
+		this.isSerial = b;
+	}
+	
+	public boolean getIsSerial() {
+		return this.isSerial;
 	}
 
 	public void setIsFetch(boolean b) {
@@ -379,15 +388,19 @@ public class Bag extends NamedEntity {
 				this.isValidMetadata = result.isSuccess();
 				if (this.isValidMetadata) {
 					String msg = null;
-					display("Bag.write: Create a  zip file for serialized transfer of the bag");
-					msg = FileUtililties.createZip(rootDir);
-					if (msg == null) {
-						messages += "Creating serialized zip file.";
-						this.isSerialized = true;
-						messages += "Successfully created bag: " + this.getInfo().getBagName();
+					if (this.isSerial) {
+						display("Bag.write: Create a  zip file for serialized transfer of the bag");
+						msg = FileUtililties.createZip(rootDir);
+						if (msg == null) {
+							messages += "Creating serialized zip file.";
+							this.isSerialized = true;
+							messages += "Successfully created bag: " + this.getInfo().getBagName();
+						} else {
+							reportError(messages, msg);	
+						}
 					} else {
-						reportError(messages, msg);	
-					}				
+						messages += "Successfully created bag: " + this.getInfo().getBagName();						
+					}
 				} else {
 					reportError(messages, "Bag metadata is not valid.");
 				}
