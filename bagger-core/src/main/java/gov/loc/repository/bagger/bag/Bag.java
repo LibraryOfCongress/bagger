@@ -314,6 +314,7 @@ public class Bag extends NamedEntity {
 				}
 
 				if (isValidForms) {
+					display("Bag write.getTotalSpace: " + rootDir.getTotalSpace());
 					messages += validateAndBag();				
 				}
 				messages += cleanup();
@@ -330,6 +331,7 @@ public class Bag extends NamedEntity {
 		boolean b = false;
 		String messages = "";
 		display("Bag.write: Clean up the files");
+		display("Bag space: " + rootDir.getTotalSpace());
 		b = FileUtililties.deleteDir(rootDir);
 		if (!b) messages += reportError(messages, "Error deleting directory: " + rootDir);
 		else messages += "Cleaning up bag directory.";
@@ -356,30 +358,24 @@ public class Bag extends NamedEntity {
 	}
 	
 	public String validateAndBag() {
-		String messages = null;
+		String messages = "";
 
 		display("Bag.write: verifier isComplete?");
 		SimpleResult result = verifier.isComplete(this.rootDir);
-		messages = "Is bag complete? \n";
 		if (result.getMessage() != null) messages += result.getMessage();
 		this.isComplete = result.isSuccess();
 		display("Bag.write isComplete: " + isComplete);
 		if (this.isComplete) {
 			display("Bag.write: verifier isValid?");
-			messages += "Bag is complete.\n";
-			messages += "Is Valid? \n";
 			result = verifier.isValid(this.rootDir);
 			if (result.getMessage() != null) messages += result.getMessage();
 			this.isValid = result.isSuccess();
 			display("Bag.write isValid: " + isValid);
 			if (this.isValid) {
-				messages += "Bag is valid.\n";
-				messages += "Is Valid Metadata? \n";
-				result = verifier.isValidMetadata(this.rootDir, BagInfo.bagInfoRules);
+				result = verifier.isValidMetadata(this.rootDir, bagInfo.getRules());
 				if (result.getMessage() != null) messages += result.getMessage();
 				this.isValidMetadata = result.isSuccess();
 				if (this.isValidMetadata) {
-					messages += "Bag metadata is valid.\n";
 					String msg = null;
 					display("Bag.write: Create a  zip file for serialized transfer of the bag");
 					msg = FileUtililties.createZip(rootDir);
