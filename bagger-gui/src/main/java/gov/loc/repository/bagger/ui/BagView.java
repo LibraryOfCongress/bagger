@@ -57,7 +57,9 @@ import org.springframework.richclient.dialog.ApplicationDialog;
 import org.springframework.richclient.dialog.CloseAction;
 import org.springframework.richclient.form.FormModelHelper;
 import org.springframework.richclient.progress.BusyIndicator;
-import org.springframework.richclient.progress.ProgressMonitor;
+//import org.springframework.richclient.progress.ProgressMonitor;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingWorker;
 
 import gov.loc.repository.bagger.Address;
 import gov.loc.repository.bagger.Contact;
@@ -145,13 +147,17 @@ public class BagView extends AbstractView implements ApplicationListener {
     public void setBagNameToDisplay(String bagName) {
         this.bag.setName(bagName);
     }
+    
+    private Dimension getTreeSize() {
+    	return new Dimension(480, 100);
+    }
 
 	public Dimension getMinimumSize() {
-		return new Dimension(800, 100);
+		return new Dimension(1024, 768);
 	}
 
 	public Dimension getPreferredSize() {
-		return new Dimension(1000, 800);
+		return new Dimension(1024, 768);
 	}
 
 	public void display(String s) {
@@ -167,12 +173,12 @@ public class BagView extends AbstractView implements ApplicationListener {
     	rootFrame = f;
         Dimension	sz = Toolkit.getDefaultToolkit().getScreenSize();
         int fud = 200;
-        int width = sz.width-fud;
-   	    int height = sz.height-fud;
+        int width = 1024; //sz.width-fud;
+   	    int height = 768; //sz.height-fud;
    	    Dimension bd = new Dimension(width, height);
    	    display("BagView.createControl dimensions: " + bd.width + " x " + bd.height);
   	    f.setResizable(true);
-  	    f.setLocation(100, 100);
+//  	    f.setLocation(100, 100);
   	    f.setSize( bd.width, bd.height );
     }
 
@@ -248,19 +254,14 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         panel.add(openButton);
         panel.add(saveButton);
-        panel.add(validateButton);
+//        panel.add(validateButton);
         panel.add(ftpButton);
         
         return panel;
     }
     
     private JPanel createMainPanel() {
-    	Dimension dimension;
-    	GridLayout gridLayout = new GridLayout(2,1,10,10);
-    	gridLayout.setHgap(10);
-    	gridLayout.setVgap(10);
-        mainPanel = new JPanel(gridLayout);
-        
+    	Dimension dimension;        
 /* */
         HierarchicalFormModel organizationFormModel;
         BagOrganization bagOrganization = bagInfo.getBagOrganization();
@@ -278,11 +279,14 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null));
         dimension = bagInfoForm.getControl().getPreferredSize();
         bagInfoForm.getControl().setPreferredSize(dimension);
+
+        JPanel checkPanel = createCheckboxPanel();
         
         infoPane = new JTabbedPane();
         infoPane.addTab("Information", bagInfoForm.getControl());
         infoPane.addTab("Organization", organizationGeneralForm.getControl());
         infoPane.addTab("Contact", organizationContactForm.getControl());
+        infoPane.addTab("Controls", checkPanel);
         infoPane.setMinimumSize(dimension);
         /* */
         Border border = new EmptyBorder(5, 5, 5, 5);
@@ -293,6 +297,89 @@ public class BagView extends AbstractView implements ApplicationListener {
         updatePropButton.setMnemonic('u');
         updatePropButton.setBorder(border);
         
+        GridBagLayout infoLayout = new GridBagLayout();
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        buildConstraints(gbc, 0, 0, 1, 1, 10, 20, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        infoLayout.setConstraints(updatePropButton, gbc);
+
+        buildConstraints(gbc, 0, 1, 1, 1, 70, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        infoLayout.setConstraints(infoPane, gbc);
+
+    	infoPanel = new JPanel(infoLayout);
+        Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
+        infoPanel.setBorder(emptyBorder);
+        infoPanel.add(infoPane);
+        infoPanel.add(updatePropButton);
+        
+    	JScrollPane infoScrollPane = new JScrollPane();
+    	infoScrollPane.setViewportView(infoPanel);
+/* */ 
+    	String[] strs = {"swing",     // 0
+    					"platf",     // 1
+    					"basic",     // 2
+    					"metal",     // 3
+    					"JTree"};    // 4
+    	
+    	CheckboxTreeNode[] nodes = new CheckboxTreeNode[strs.length];
+    	for (int i=0;i<strs.length;i++) {
+    		nodes[i] = new CheckboxTreeNode(strs[i]); 
+    	}
+    	nodes[0].add(nodes[1]);
+    	nodes[1].add(nodes[2]);
+    	nodes[1].add(nodes[3]);
+    	nodes[0].add(nodes[4]);
+    	nodes[3].setSelected(true);
+/* */
+//        bagsTree = new CheckboxTree(nodes[0]);
+    	bagsTree = new CheckboxTree();
+        bagsTree.setLargeModel(true);
+        bagsTree.setPreferredSize(this.getTreeSize());
+        filePane = new JScrollPane();
+        filePane.setViewportView(bagsTree);
+        filePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        filePanel = new JPanel(new FlowLayout());
+        filePanel.setPreferredSize(new Dimension(480, 100));
+        filePanel.add(filePane);
+/*
+    	GridLayout gridLayout = new GridLayout(2,1,10,10);
+    	gridLayout.setHgap(10);
+    	gridLayout.setVgap(10);
+*/
+        GridBagLayout gridLayout = new GridBagLayout();
+        GridBagConstraints glbc = new GridBagConstraints();
+
+        buildConstraints(glbc, 0, 0, 1, 1, 0, 10, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        gridLayout.setConstraints(filePanel, glbc);
+
+        buildConstraints(glbc, 0, 1, 1, 1, 100, 10, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        gridLayout.setConstraints(infoScrollPane, glbc);
+
+        mainPanel = new JPanel(gridLayout);
+        mainPanel.add(filePanel);
+        mainPanel.add(infoScrollPane);
+
+        return mainPanel;
+    }
+
+    private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
+    	gbc.gridx = x; // start cell in a row
+    	gbc.gridy = y; // start cell in a column
+    	gbc.gridwidth = w; // how many column does the control occupy in the row
+    	gbc.gridheight = h; // how many column does the control occupy in the column
+    	gbc.weightx = wx; // relative horizontal size
+    	gbc.weighty = wy; // relative vertical size
+    	gbc.fill = fill; // the way how the control fills cells
+    	gbc.anchor = anchor; // alignment
+    }
+    
+    private JPanel createCheckboxPanel() {
+        Border border = new EmptyBorder(5, 5, 5, 5);
+    	GridLayout gridLayout = new GridLayout(3,1,10,10);
+    	gridLayout.setHgap(10);
+    	gridLayout.setVgap(10);
+        JPanel checkPanel = new JPanel(gridLayout);
+
         DefaultListModel listModel = new DefaultListModel();
         Object[] array = userProjects.toArray();
         for (int i=0; i < userProjects.size(); i++) listModel.addElement(((Project)array[i]).getName());
@@ -351,58 +438,12 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         JCheckBox holeyCheckbox = new JCheckBox("Holey Bag");
         holeyCheckbox.setBorder(border);
-        
-        GridBagLayout infoLayout = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
-        buildConstraints(gbc, 0, 0, 1, 4, 70, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
-        infoLayout.setConstraints(infoPane, gbc);
+        checkPanel.add(projectPane);
+        checkPanel.add(holeyCheckbox);
+        checkPanel.add(groupPanel);
 
-        buildConstraints(gbc, 1, 0, 1, 1, 10, 20, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        infoLayout.setConstraints(updatePropButton, gbc);
-
-        buildConstraints(gbc, 1, 1, 1, 1, 10, 20, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-        infoLayout.setConstraints(projectPane, gbc);
-
-        buildConstraints(gbc, 1, 2, 1, 1, 10, 20, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-        infoLayout.setConstraints(groupPanel, gbc);
-
-        buildConstraints(gbc, 1, 3, 1, 1, 10, 20, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-        infoLayout.setConstraints(holeyCheckbox, gbc);
-
-        infoPanel = new JPanel(infoLayout);
-        Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
-        infoPanel.setBorder(emptyBorder);
-        infoPanel.add(infoPane);
-        infoPanel.add(updatePropButton);
-        infoPanel.add(projectPane);
-        infoPanel.add(holeyCheckbox);
-        infoPanel.add(groupPanel);
-        
-        bagsTree = new JTree();
-        bagsTree.setLargeModel(true);
-        bagsTree.setPreferredSize(this.getMinimumSize());
-        filePane = new JScrollPane();
-        filePane.setViewportView(bagsTree);
-        filePanel = new JPanel(new FlowLayout());
-        filePanel.setPreferredSize(this.getMinimumSize());
-        filePanel.add(filePane);
-
-        mainPanel.add(filePanel);
-        mainPanel.add(infoPanel);
-
-        return mainPanel;
-    }
-
-    private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
-    	gbc.gridx = x; // start cell in a row
-    	gbc.gridy = y; // start cell in a column
-    	gbc.gridwidth = w; // how many column does the control occupy in the row
-    	gbc.gridheight = h; // how many column does the control occupy in the column
-    	gbc.weightx = wx; // relative horizontal size
-    	gbc.weighty = wy; // relative vertical size
-    	gbc.fill = fill; // the way how the control fills cells
-    	gbc.anchor = anchor; // alignment
+        return checkPanel;
     }
 
     private JTabbedPane createBagPane() {
@@ -521,7 +562,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         if (fetch == null) fetch = new Fetch();
         else fetch = bag.getFetch();
         bag.setFetch(fetch);
-        if (bagInfo == null) bagInfo = new  BagInfo();
+        if (bagInfo == null) bagInfo = new BagInfo(bag);
         else bagInfo = bag.getInfo();
         bag.setInfo(bagInfo);
         if (bagIt == null) bagIt = new BagIt();
@@ -600,8 +641,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     
     private void openBag(File file) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-    	progressMonitor = window.getStatusBar().getProgressMonitor();
-    	progressMonitor.taskStarted("Bagger called", -1);
+//    	progressMonitor = window.getStatusBar().getProgressMonitor();
+//    	progressMonitor.taskStarted("Bagger called", -1);
 //    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         rootSrc = file.getAbsoluteFile(); //file.getParentFile();
         display("OpenFileAction.actionPerformed filePath: " + file.getPath() + " rootPath: " + rootSrc.getPath() );
@@ -617,7 +658,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         updateTree(file);
         bag.setRootDir(rootSrc);
 //    	rootFrame.setCursor(Cursor.getDefaultCursor());
-    	progressMonitor.done();
+//    	progressMonitor.done();
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
@@ -648,9 +689,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     
     private void saveBag(File file) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-    	progressMonitor = window.getStatusBar().getProgressMonitor();
-    	progressMonitor.taskStarted("Bagger called", -1);
-//    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//    	progressMonitor = window.getStatusBar().getProgressMonitor();
+//    	progressMonitor.taskStarted("Bagger called", -1);
+    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         display("BagView.SaveFileAction: " + file);
         String messages = "Creating the bag...";
         updateMessages(messages);
@@ -666,8 +707,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         messages = bag.write(file);
        	display("\nBagView.SaveFileAction: " + messages);
     	updateTabs(messages);
-//    	rootFrame.setCursor(Cursor.getDefaultCursor());
-    	progressMonitor.done();
+    	rootFrame.setCursor(Cursor.getDefaultCursor());
+//    	progressMonitor.done();
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
@@ -742,8 +783,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         rootTree = new ArrayList<File>();
         createBagManagerTree(file);
         bagsTree.setLargeModel(true);
-        bagsTree.setPreferredSize(getMinimumSize());      
+        bagsTree.setPreferredSize(getTreeSize());
         filePane.setViewportView(bagsTree);
+        filePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         messages = "The files to be included have been changed.";
     	updateTabs(messages);
         
@@ -799,9 +841,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private void createBagManagerTree(File file) { 
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-    	progressMonitor = window.getStatusBar().getProgressMonitor();
-    	progressMonitor.taskStarted("Bagger called", -1);
-//    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//    	progressMonitor = window.getStatusBar().getProgressMonitor();
+//    	progressMonitor.taskStarted("Bagger called", -1);
+    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     	display("createBagManagerTree: rootTree");
     	RecursiveFileListIterator fit = new RecursiveFileListIterator(file);
     	for (Iterator<File> it=fit; it.hasNext(); ) {
@@ -810,14 +852,19 @@ public class BagView extends AbstractView implements ApplicationListener {
             //display(f.getAbsoluteFile().toString());
         }
     	display("bagsTree.getRootDir");
+    	//CheckboxTreeNode rootDir = new CheckboxTreeNode();
     	DefaultMutableTreeNode rootDir = new DefaultMutableTreeNode();
     	display("createBagManagerTree: fileTree");
 		rootDir = addNodes(null, file);
+    	//rootDir = addNodes(file);
 		display("createBagManagerTree: files.size: " + rootDir.getChildCount());
-		bagsTree = new JTree(rootDir);
+//		bagsTree = new JTree(rootDir);
+		bagsTree = new CheckboxTree(rootDir);
+		bagsTree.setLargeModel(true);
+		bagsTree.setPreferredSize(this.getTreeSize());
 		bagsTree.requestFocus();
-//		rootFrame.setCursor(Cursor.getDefaultCursor());
-    	progressMonitor.done();
+		rootFrame.setCursor(Cursor.getDefaultCursor());
+//    	progressMonitor.done();
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
