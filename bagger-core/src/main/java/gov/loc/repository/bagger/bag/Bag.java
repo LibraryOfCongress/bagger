@@ -314,7 +314,7 @@ public class Bag extends NamedEntity {
 				}
 
 				if (isValidForms) {
-					display("Bag write.getTotalSpace: " + rootDir.getTotalSpace());
+					//display("Bag write.getTotalSpace: " + rootDir.getTotalSpace());
 					messages += validateAndBag();				
 				}
 				messages += cleanup();
@@ -335,6 +335,8 @@ public class Bag extends NamedEntity {
 		b = FileUtililties.deleteDir(rootDir);
 		if (!b) messages += reportError(messages, "Error deleting directory: " + rootDir);
 		else messages += "Cleaning up bag directory.";
+
+		rootDir.deleteOnExit();
 		return messages;
 	}
 	
