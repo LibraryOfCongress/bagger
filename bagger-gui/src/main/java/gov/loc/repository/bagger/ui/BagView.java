@@ -107,10 +107,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     private Action openAction;
     private Action saveAction;
     private Action ftpAction;
-    private JButton openButton;
-    private JButton saveButton;
-    private JButton updatePropButton;
-    private JButton ftpButton;
     
     private FtpExecutor ftpExecutor = new FtpExecutor();
     private FtpPropertiesExecutor ftpPropertiesExecutor = new FtpPropertiesExecutor();
@@ -212,25 +208,24 @@ public class BagView extends AbstractView implements ApplicationListener {
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 
         openAction = new OpenFileAction(frame, fc);
-    	openButton = new JButton("Bag Data Chooser");
+    	JButton openButton = new JButton("Bag Data Chooser");
     	openButton.addActionListener(openAction);
         openButton.setMnemonic('o');
+        panel.add(openButton);
 
         saveAction = new SaveFileAction(frame, fc);
-        saveButton = new JButton("Bag Creator");
+        JButton saveButton = new JButton("Bag Creator");
         saveButton.addActionListener(saveAction);
         saveButton.setMnemonic('s');
-
+        panel.add(saveButton);
+/*
         ftpAction = new FtpAction();
-        ftpButton = new JButton("Bag Transfer");
+        JButton ftpButton = new JButton("Bag Transfer");
         ftpButton.addActionListener(ftpAction);
         ftpButton.setMnemonic('t');
         ftpExecutor.setEnabled(true);
-
-        panel.add(openButton);
-        panel.add(saveButton);
-//        panel.add(ftpButton);
-        
+        panel.add(ftpButton);
+ */
         return panel;
     }
     
@@ -289,11 +284,15 @@ public class BagView extends AbstractView implements ApplicationListener {
         infoPane.setPreferredSize(bagInfoForm.getControl().getPreferredSize());
 
     	// Create a panel for the form error messages and the update button
-        Action updatePropAction = new UpdatePropertyAction();
-        updatePropButton = new JButton("Save Updates");
-        updatePropButton.addActionListener(updatePropAction);
+        JButton updatePropButton = new JButton("Save Updates");
         updatePropButton.setMnemonic('u');
         updatePropButton.setBorder(new EmptyBorder(5, 5, 5, 5));
+        updatePropButton.addActionListener(new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                String messages = updateForms();
+                compositePane.updateTabs(bag, messages);
+            }
+        });
         
         BorderLayout labelLayout = new BorderLayout();
         labelLayout.setHgap(10);
@@ -402,10 +401,44 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         // Holey bag control
         JLabel holeyLabel = new JLabel("Holey Bag?: ");
-        Action holeyAction = new HoleyAction();
         JCheckBox holeyCheckbox = new JCheckBox("Holey Bag");
         holeyCheckbox.setBorder(border);
-        holeyCheckbox.addActionListener(holeyAction);
+        holeyCheckbox.addActionListener(new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                JCheckBox cb = (JCheckBox)e.getSource();
+                
+                // Determine status
+                boolean isSel = cb.isSelected();
+                if (isSel) {
+                	bag.setIsHoley(true);
+                } else {
+                	bag.setIsHoley(false);
+                }
+                String messages = updateForms();
+                compositePane.updateTabs(bag, messages);
+            }
+        });
+
+        // Bag is to be serialized control
+        JLabel serialLabel = new JLabel("Serialize Bag?: ");
+        JCheckBox serialCheckbox = new JCheckBox("Serial Bag");
+        serialCheckbox.setBorder(border);
+        serialCheckbox.setSelected(true);
+        serialCheckbox.addActionListener(new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                JCheckBox cb = (JCheckBox)e.getSource();
+                
+                // Determine status
+                boolean isSel = cb.isSelected();
+                if (isSel) {
+                	bag.setIsSerial(true);
+                } else {
+                	bag.setIsSerial(false);
+                }
+                String messages = updateForms();
+                compositePane.updateTabs(bag, messages);
+            }
+        });
 
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -421,12 +454,17 @@ public class BagView extends AbstractView implements ApplicationListener {
         gridLayout.setConstraints(holeyCheckbox, gbc);
 
         buildConstraints(gbc, 0, 2, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(groupLabel, gbc);
+        gridLayout.setConstraints(serialLabel, gbc);
         buildConstraints(gbc, 1, 2, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(serialCheckbox, gbc);
+
+        buildConstraints(gbc, 0, 3, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(groupLabel, gbc);
+        buildConstraints(gbc, 1, 3, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(groupPanel, gbc);
         
         JLabel filler = new JLabel("");
-        buildConstraints(gbc, 0, 3, 2, 1, 1, 10, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        buildConstraints(gbc, 0, 4, 2, 1, 1, 10, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         gridLayout.setConstraints(filler, gbc);
 
         JPanel checkPanel = new JPanel(gridLayout);
@@ -434,6 +472,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         checkPanel.add(projectPane);
         checkPanel.add(holeyLabel);
         checkPanel.add(holeyCheckbox);
+        checkPanel.add(serialLabel);
+        checkPanel.add(serialCheckbox);
         checkPanel.add(groupLabel);
         checkPanel.add(groupPanel);
         checkPanel.add(filler);
@@ -587,41 +627,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
-    private class HoleyAction extends AbstractAction {
-		private static final long serialVersionUID = 5181439466649332875L;
-
-		HoleyAction() {
-            super("Changed Holey Property...");
-        }
-    
-        public void actionPerformed(ActionEvent e) {
-            JCheckBox cb = (JCheckBox)e.getSource();
-            
-            // Determine status
-            boolean isSel = cb.isSelected();
-            if (isSel) {
-            	bag.setIsHoley(true);
-            } else {
-            	bag.setIsHoley(false);
-            }
-            String messages = updateForms();
-            compositePane.updateTabs(bag, messages);
-        }
-    }
-
-    private class UpdatePropertyAction extends AbstractAction {
-		private static final long serialVersionUID = 7203526831992572675L;
-
-		UpdatePropertyAction() {
-            super("Save Updated Properties...");
-        }
-    
-        public void actionPerformed(ActionEvent e) {
-            String messages = updateForms();
-            compositePane.updateTabs(bag, messages);
-        }
-    }
-    
     private String updateForms() {
         String messages = new String();
         if (!organizationContactForm.hasErrors()) {
