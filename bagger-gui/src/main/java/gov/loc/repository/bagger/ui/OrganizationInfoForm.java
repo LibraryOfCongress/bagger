@@ -26,7 +26,7 @@ public class OrganizationInfoForm extends AbstractForm {
     public static final String INFO_FORM_PAGE = "infoPage";
 
     private JComponent infoField;
-    private Dimension dimension = new Dimension(500, 300);
+    private Dimension dimension = new Dimension(400, 400);
 
     public OrganizationInfoForm(FormModel formModel) {
         super(formModel, INFO_FORM_PAGE);
@@ -55,6 +55,8 @@ public class OrganizationInfoForm extends AbstractForm {
         formBuilder.add("internalSenderDescription");
         formBuilder.row();
         formBuilder.add("publisher");
+        formBuilder.row();
+        formBuilder.add("awardeePhase");
         infoField = formBuilder.getForm();
         infoField.setPreferredSize(dimension);
         return infoField;
