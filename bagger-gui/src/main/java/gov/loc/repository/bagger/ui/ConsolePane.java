@@ -12,6 +12,7 @@ import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -82,14 +83,11 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(completeLabel, gbc);
         this.add(completeLabel);
 
-    	JLabel completeResult = new JLabel("");
+        JCheckBox completeResult = new JCheckBox("");
     	if (bag != null) {
-    		completeResult.setText(""+bag.getIsComplete());
-    		if (bag.getIsComplete()) completeResult.setForeground(Color.green);
-    		else completeResult.setForeground(Color.red);
+    		if (bag.getIsComplete()) completeResult.setSelected(true);
+    		else completeResult.setSelected(false);
     	}
-    	font = completeResult.getFont().deriveFont(Font.BOLD);
-    	completeResult.setFont(font);
     	completeResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, 0, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeResult, gbc);
@@ -103,14 +101,11 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(validLabel, gbc);
         this.add(validLabel);
 
-    	JLabel validResult = new JLabel("");
+        JCheckBox validResult = new JCheckBox("");
     	if (bag != null) {
-    		validResult.setText(""+bag.getIsValid());
-    		if (bag.getIsValid()) validResult.setForeground(Color.green);
-    		else validResult.setForeground(Color.red);
+    		if (bag.getIsValid()) validResult.setSelected(true);
+    		else validResult.setSelected(false);
     	}
-    	font = validResult.getFont().deriveFont(Font.BOLD);
-    	validResult.setFont(font);
     	validResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, 1, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validResult, gbc);
@@ -124,40 +119,35 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(validMetaLabel, gbc);
         this.add(validMetaLabel);
 
-    	JLabel validMetaResult = new JLabel("");
+        JCheckBox validMetaResult = new JCheckBox("");
     	if (bag != null) {
-    		validMetaResult.setText(""+bag.getIsValidMetadata());
-    		if (bag.getIsValidMetadata()) validMetaResult.setForeground(Color.green);
-    		else validMetaResult.setForeground(Color.red);
+    		if (bag.getIsValidMetadata()) validMetaResult.setSelected(true);
+    		else validMetaResult.setSelected(false);
     	}
-    	font = validMetaResult.getFont().deriveFont(Font.BOLD);
-    	validMetaResult.setFont(font);
     	validMetaResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validMetaResult, gbc);
         this.add(validMetaResult);
 
-    	JLabel serializedLabel = new JLabel("Is Packaged? ");
-    	font = serializedLabel.getFont().deriveFont(Font.BOLD);
-    	serializedLabel.setFont(font);
-    	serializedLabel.setPreferredSize(formDimension);
-        buildConstraints(gbc, 0, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(serializedLabel, gbc);
-        this.add(serializedLabel);
+        if (bag == null || (bag != null && bag.getIsSerial())) {
+        	JLabel serializedLabel = new JLabel("Is Packaged? ");
+        	font = serializedLabel.getFont().deriveFont(Font.BOLD);
+        	serializedLabel.setFont(font);
+        	serializedLabel.setPreferredSize(formDimension);
+            buildConstraints(gbc, 0, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+            layout.setConstraints(serializedLabel, gbc);
+            this.add(serializedLabel);
 
-    	JLabel serializedResult = new JLabel("");
-    	if (bag != null) {
-    		serializedResult.setText(""+bag.getIsSerialized());
-    		if (bag.getIsSerialized()) serializedResult.setForeground(Color.green);
-    		else serializedResult.setForeground(Color.red);
-    	}
-    	font = serializedResult.getFont().deriveFont(Font.BOLD);
-    	serializedResult.setFont(font);
-    	serializedResult.setPreferredSize(formDimension);
-        buildConstraints(gbc, 1, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(serializedResult, gbc);
-        this.add(serializedResult);
-
+            JCheckBox serializedResult = new JCheckBox("");
+        	if (bag != null) {
+        		if (bag.getIsSerialized()) serializedResult.setSelected(true);
+        		else serializedResult.setSelected(false);
+        	}
+        	serializedResult.setPreferredSize(formDimension);
+            buildConstraints(gbc, 1, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+            layout.setConstraints(serializedResult, gbc);
+            this.add(serializedResult);        	
+        }
     	JTextArea serializedArea = new JTextArea(this.messages);
     	if (bag != null) serializedArea.append("");
     	serializedArea.setEditable(false);
@@ -174,18 +164,7 @@ public class ConsolePane extends JPanel {
         this.add(serializedArea);
 
         this.setBorder(emptyBorder);
-/* */
-
-/* 
-    	add(completeLabel);
-    	add(completeResult);
-    	add(validLabel);
-    	add(validResult);
-    	add(serializedLabel);
-    	add(serializedResult);
-    	add(serializedArea);
- */
-    	
+/* */    	
     	return this;
     }
 
