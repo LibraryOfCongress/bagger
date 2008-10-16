@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="java"/>
 	<classpathentry kind="src" path="bagger-standalone/src/main/java"/>
 	<classpathentry kind="src" path="bagger-core/src/main/java"/>
 	<classpathentry kind="src" path="bagger-common/src/main/java"/>
@@ -46,12 +45,12 @@
 	<classpathentry kind="lib" path="bagger-lib/spring-richclient-support-1.0.0.jar"/>
 	<classpathentry kind="lib" path="bagger-lib/spring-tx-2.5.1.jar"/>
 	<classpathentry kind="lib" path="bagger-lib/swingx-0.9.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Documents and Settings/jsteinbach/My Documents/repository/bagger/trunk/bagit/target/bagit-1.1.jar"/>
 	<classpathentry kind="lib" path="bagger-business/target/bagger-business-1.2.jar"/>
 	<classpathentry kind="lib" path="bagger-common/target/bagger-common-1.2.jar"/>
 	<classpathentry kind="lib" path="bagger-core/target/bagger-core-1.2.jar"/>
 	<classpathentry kind="lib" path="bagger-ftpclient/target/bagger-ftpclient-1.0.jar"/>
 	<classpathentry kind="lib" path="bagger-gui/target/bagger-gui-1.2.jar"/>
 	<classpathentry kind="lib" path="bagger-standalone/target/bagger-standalone-1.2.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/jsteinbach/My Documents/repository/bagger/trunk/bagit/target/bagit-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
