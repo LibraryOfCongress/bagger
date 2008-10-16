@@ -25,22 +25,16 @@ import gov.loc.repository.bagger.Contact;
 import org.springframework.core.closure.Constraint;
 import org.springframework.rules.Rules;
 import org.springframework.rules.support.DefaultRulesSource;
+import org.springframework.rules.constraint.property.RequiredIfTrue;
 import org.springframework.util.Assert;
 
 public class BaggerValidationRulesSource extends DefaultRulesSource {
-
-	private Bag bag;
 	
     public BaggerValidationRulesSource() {
         super();
         addRules(createContactRules());
         addRules(createBagOrganizationRules());
         addRules(createBagInfoRules());
-    }
-
-    public void setBag(Bag bag) {
-        Assert.notNull(bag, "The bag property is required");
-        this.bag = bag;
     }
 
     private Rules createContactRules() {
@@ -70,7 +64,8 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
                 add("baggingDate", getDateConstraint());
                 add("externalIdentifier", required());
                 add("bagSize", required());
-                if (bag != null && bag.getIsCopyright()) add("publisher", required());
+                RequiredIfTrue isPublisherReq = new RequiredIfTrue("publisher", eq("isCopyright", true));
+               	add(isPublisherReq);
                 add("payloadOssum", required());
             }
         };
