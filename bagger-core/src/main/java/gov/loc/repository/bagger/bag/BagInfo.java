@@ -52,12 +52,31 @@ public class BagInfo extends FileEntity {
 	private String internalSenderDescription = "";
 	private String publisher = "";
 	private String awardeePhase = "";
+	private boolean isCopyright = false;
+	private boolean isNdnp = false;
 	public HashMap<String,String> bagInfoRules;
 
 	public BagInfo(Bag bag) {
 		super();
 		this.bag = bag;
+		this.setIsCopyright(bag.getIsCopyright());
 		bagInfoRules = initRules();
+	}
+	
+	public void setIsCopyright(boolean b) {
+		this.isCopyright = b;
+	}
+	
+	public boolean getIsCopyright() {
+		return this.isCopyright;
+	}
+	
+	public void setIsNdnp(boolean b) {
+		this.isNdnp = b;
+	}
+	
+	public boolean getIsNdnp() {
+		return this.isNdnp;
 	}
 	
 	public void setRules(HashMap<String,String> rules) {
