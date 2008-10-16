@@ -50,6 +50,7 @@ import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationWindow;
 import org.springframework.richclient.application.PageComponentContext;
 import org.springframework.richclient.application.event.LifecycleApplicationEvent;
+import org.springframework.richclient.application.setup.SetupWizard;
 import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.command.support.AbstractActionCommandExecutor;
 import org.springframework.richclient.command.support.GlobalCommandIds;
@@ -69,6 +70,7 @@ import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.Bagger;
 import gov.loc.repository.bagger.bag.*;
 import gov.loc.repository.bagger.util.RecursiveFileListIterator;
+import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import com.ravnaandtines.ftp.*;
 
 public class BagView extends AbstractView implements ApplicationListener {
@@ -159,13 +161,6 @@ public class BagView extends AbstractView implements ApplicationListener {
   	    f.setSize( bd.width, bd.height );
     }
 
-/* 
- * 
- * **************************************************************
- *                      ASCII Layout Here
- * **************************************************************
- * 
- */
     @Override
     protected JComponent createControl() {
     	window = Application.instance().getActiveWindow();
@@ -368,8 +363,10 @@ public class BagView extends AbstractView implements ApplicationListener {
                 }
             	if (selected.equalsIgnoreCase("copyright")) {
             		bag.setIsCopyright(true);
+            		bag.getInfo().setIsCopyright(true);
             	} else {
             		bag.setIsCopyright(false);
+            		bag.getInfo().setIsCopyright(false);
             	}
             	log.info("BagView.setIsCopyright: " + bag.getIsCopyright());
             }
@@ -684,6 +681,10 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private void updateTabs(String messages) {
     	createBag();
+    	BaggerValidationRulesSource rulesSource = (BaggerValidationRulesSource) Application.services().getService(BaggerValidationRulesSource.class);
+//    	Application.instance().getApplicationContext().toString();
+//    	getApplication().getApplicationContext().getBean("setupWizard", SetupWizard.class)    	
+//    	bagInfoForm.getFormModel().
     	compositePane.updateTabs(bag, messages);
     }    
 
