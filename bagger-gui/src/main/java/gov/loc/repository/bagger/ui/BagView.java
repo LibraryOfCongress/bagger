@@ -684,7 +684,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	BaggerValidationRulesSource rulesSource = (BaggerValidationRulesSource) Application.services().getService(BaggerValidationRulesSource.class);
 //    	Application.instance().getApplicationContext().toString();
 //    	getApplication().getApplicationContext().getBean("setupWizard", SetupWizard.class)    	
-//    	bagInfoForm.getFormModel().
+//    	bagInfoForm.getFormModel()
     	compositePane.updateTabs(bag, messages);
     }    
 
