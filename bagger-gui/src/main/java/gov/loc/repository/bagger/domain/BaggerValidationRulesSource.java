@@ -25,7 +25,7 @@ import gov.loc.repository.bagger.Contact;
 import org.springframework.core.closure.Constraint;
 import org.springframework.rules.Rules;
 import org.springframework.rules.support.DefaultRulesSource;
-import org.springframework.rules.constraint.property.RequiredIfTrue;
+import org.springframework.rules.constraint.property.*;
 import org.springframework.util.Assert;
 
 public class BaggerValidationRulesSource extends DefaultRulesSource {
@@ -64,11 +64,35 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
                 add("baggingDate", getDateConstraint());
                 add("externalIdentifier", required());
                 add("bagSize", required());
-                RequiredIfTrue isPublisherReq = new RequiredIfTrue("publisher", eq("isCopyright", true));
-               	add(isPublisherReq);
-                add("payloadOssum", required());
+//            	add("publisher", getIsCopyright());
+//                add("payloadOssum", required() );
             }
         };
+    }
+    private Constraint getNameValueConstraint() {
+    	Constraint res;
+    	res = all(new Constraint[] {required(), maxLength(50), regexp("[a-zA-Z ]*", "alphabetic")});
+    	return res;
+    }
+    
+    private Constraint getEmailConstraint() {
+    	Constraint res;
+    	res = all(new Constraint[] {required(), maxLength(50), regexp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", "emailRule")});
+    	return res;
+    }
+    
+    private Constraint getDateConstraint() {
+    	Constraint res;
+    	res = all(new Constraint[] {required(), maxLength(10), regexp("(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])", "dateRule")});
+    	return res;
+    }
+
+    private Constraint getIsCopyright() {
+    	Constraint res;
+    	// TODO: RequiredIfTrue does not work.  This class needs to be rewritten without Spring RC
+    	RequiredIfTrue isPublisherReq = new RequiredIfTrue("publisher", eq("isCopyright", "true"));
+        res = isPublisherReq.getConstraint();
+        return res;
     }
 /* */
     private Rules createRules() {
@@ -83,15 +107,5 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
         };
     }
 /* */
-    private Constraint getNameValueConstraint() {
-        return all(new Constraint[] {required(), maxLength(50), regexp("[a-zA-Z ]*", "alphabetic")});
-    }
-    
-    private Constraint getEmailConstraint() {
-    	return all(new Constraint[] {required(), maxLength(50), regexp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", "emailRule")});
-    }
-    
-    private Constraint getDateConstraint() {
-    	return all(new Constraint[] {required(), maxLength(10), regexp("(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])", "dateRule")});
-    }
 }
+
