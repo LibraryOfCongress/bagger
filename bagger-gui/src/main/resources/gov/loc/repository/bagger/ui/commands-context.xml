@@ -16,8 +16,8 @@
     <property name="members">
       <list>
         <ref bean="fileMenu" />
-        <ref bean="editMenu" />
-        <ref bean="windowMenu" />
+<!--         <ref bean="editMenu" /> -->
+<!--         <ref bean="windowMenu" /> -->
         <ref bean="helpMenu" />
       </list>
     </property>
@@ -37,9 +37,11 @@
       <list>
         <ref bean="newMenu" />
         <value>separator</value>
+<!--
         <ref bean="loginCommand" />
         <ref bean="logoutCommand" />
         <value>separator</value>
+ -->
         <bean class="org.springframework.richclient.command.support.ExitCommand" />
       </list>
     </property>
@@ -48,13 +50,13 @@
   <bean id="newMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <ref bean="newOrganizationCommand" />
+        <ref bean="newProfileCommand" />
       </list>
     </property>
   </bean>
 
-  <bean id="newOrganizationCommand" class="org.springframework.richclient.command.TargetableActionCommand">
-    <property name="commandExecutor" ref="newOrganizationWizard" />
+  <bean id="newProfileCommand" class="org.springframework.richclient.command.TargetableActionCommand">
+    <property name="commandExecutor" ref="newProfileWizard" />
   </bean>
 
   <bean id="editMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
