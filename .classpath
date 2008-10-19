@@ -52,5 +52,7 @@
 	<classpathentry kind="lib" path="bagger-ftpclient/target/bagger-ftpclient-1.0.jar"/>
 	<classpathentry kind="lib" path="bagger-gui/target/bagger-gui-1.2.jar"/>
 	<classpathentry kind="lib" path="bagger-standalone/target/bagger-standalone-1.2.jar"/>
+	<classpathentry kind="lib" path="bagger-lib/lablib-checkboxtree-2.2.2.jar"/>
+	<classpathentry kind="lib" path="/bagit/target/bagit-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
