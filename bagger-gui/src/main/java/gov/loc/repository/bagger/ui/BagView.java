@@ -272,6 +272,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         // Create a tabbed pane for the information forms and checkbox panel
         infoPane = new JTabbedPane();
+        infoPane.setName("Profile");
         infoPane.addTab("Information", bagInfoForm.getControl());
         infoPane.addTab("Organization", organizationGeneralForm.getControl());
         infoPane.addTab("Contact", organizationContactForm.getControl());
@@ -497,13 +498,16 @@ public class BagView extends AbstractView implements ApplicationListener {
         if (bagIt == null) bagIt = new BagIt();
         else bagIt = bag.getBagIt();
         bag.setBagIt(bagIt);
-    	if (data == null) data = new Data();
+        if (data == null) data = new Data();
     	else data = bag.getData();
     	data.setFiles(rootTree);
     	bag.setData(data);
     	if (rootSrc != null) bag.setRootSrc(rootSrc);
     	manifest = new Manifest(bag);
     	manifest.setType(ManifestType.MD5);
+    	data.setSizeFiles(manifest.getTotalSize());
+    	data.setNumFiles(manifest.getNumFiles());
+    	bag.setData(data);
     	ArrayList<Manifest> mset = new ArrayList<Manifest>();
     	mset.add(manifest);
     	bag.setManifests(mset);
@@ -654,6 +658,22 @@ public class BagView extends AbstractView implements ApplicationListener {
         } else {
         	infoMessagePane.setMessage("");
         }
+        infoPane.removeAll();
+        infoPane.addTab("Information", bagInfoForm.getControl());
+        infoPane.addTab("Organization", organizationGeneralForm.getControl());
+        infoPane.addTab("Contact", organizationContactForm.getControl());
+        infoPane.addTab("Controls", createCheckboxPanel());
+        // TODO:
+        if (bagInfoForm.hasErrors()) {
+        	bagInfoForm.requestFocusInWindow();
+        	infoPane.setSelectedIndex(0);
+        } else if (organizationGeneralForm.hasErrors()) {
+        	organizationGeneralForm.requestFocusInWindow();
+        	infoPane.setSelectedIndex(1);
+        } else if (organizationContactForm.hasErrors()) {
+        	organizationContactForm.requestFocusInWindow();
+        	infoPane.setSelectedIndex(2);
+        }
         infoMessagePane.invalidate();
         infoLabelPanel.invalidate();
         
@@ -672,7 +692,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         createBagManagerTree(file);
         filePane.setViewportView(bagsTree);
         filePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        messages = "The files to be bagged have been updated.";
+        messages = "Additional files have been added to the bag.";
     	updateTabs(messages);
         
     	bagView.validate();
@@ -681,7 +701,23 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private void updateTabs(String messages) {
     	createBag();
-    	BaggerValidationRulesSource rulesSource = (BaggerValidationRulesSource) Application.services().getService(BaggerValidationRulesSource.class);
+        messages += "\n";
+        messages += "Number of files added: " + bag.getData().getNumFiles();
+        messages += "\n";
+        long fsize = bag.getData().getSizeFiles();
+        if (fsize > Bag.GB) {
+        	fsize /= Bag.GB;
+            messages += "Total size of files added (GB): " + fsize;
+        } else if (fsize > Bag.MB) {
+        	fsize /= Bag.MB;
+            messages += "Total size of files added (MB): " + fsize;
+        } else if (fsize > Bag.KB) {
+        	fsize /= Bag.KB;
+            messages += "Total size of files added (KB): " + fsize;
+        } else {
+            messages += "Total size of files added: 0-1 KB";
+        }
+//    	BaggerValidationRulesSource rulesSource = (BaggerValidationRulesSource) Application.services().getService(BaggerValidationRulesSource.class);
 //    	Application.instance().getApplicationContext().toString();
 //    	getApplication().getApplicationContext().getBean("setupWizard", SetupWizard.class)    	
 //    	bagInfoForm.getFormModel()
