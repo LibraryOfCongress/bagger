@@ -29,6 +29,8 @@ public class Data extends FileEntity {
 
 	private List<File> files;
 	private List<FileEntity> data;
+	private long sizeFiles = 0;
+	private int numFiles = 0;
 
 	private JTree tree;
 
@@ -46,6 +48,22 @@ public class Data extends FileEntity {
 
 	public List<File> getFiles() {
 		return this.files;
+	}
+	
+	public void setSizeFiles(long size) {
+		this.sizeFiles = size;
+	}
+	
+	public long getSizeFiles() {
+		return this.sizeFiles;
+	}
+	
+	public void setNumFiles(int num) {
+		this.numFiles = num;
+	}
+	
+	public int getNumFiles() {
+		return this.numFiles;
 	}
 
 	@Override
