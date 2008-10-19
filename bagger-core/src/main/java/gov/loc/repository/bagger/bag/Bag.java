@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import javax.swing.JTree;
 import gov.loc.repository.bagger.Project;
-import gov.loc.repository.bagger.NamedEntity;
+import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.FileUtililties;
 
 import gov.loc.repository.bagit.bag.BagGeneratorVerifier;
@@ -35,7 +35,11 @@ import org.apache.commons.logging.LogFactory;
   *
  * @author Jon Steinbach
  */
-public class Bag extends NamedEntity {
+public class Bag extends FileEntity {
+	public static final int KB = 1024;
+	public static final int MB = KB*KB;
+	public static final int GB = MB*MB;
+	public static final int MAX_SIZE = 100*MB;
 	private static final Log log = LogFactory.getLog(Bag.class);
 
 	private Date createDate;
@@ -392,11 +396,17 @@ public class Bag extends NamedEntity {
 					String msg = null;
 					if (this.isSerial) {
 						display("Bag.write: Create a  zip file for serialized transfer of the bag");
-						msg = FileUtililties.createZip(rootDir);
+						messages += "\nSuccessfully created bag: " + this.getInfo().getBagName();
+						msg = FileUtililties.createZip(this, rootDir);
 						if (msg == null) {
 							messages += "Creating serialized zip file.";
 							this.isSerialized = true;
-							messages += "Successfully created bag: " + this.getInfo().getBagName();
+							String zipName = this.getFile().getName();
+							long zipSize = this.getSize() / MB;
+							messages += "\nSuccessfully created zip file: " + zipName + " of size: " + zipSize + "(MB)";
+							if (zipSize > 100) {
+								messages += "\nWARNING: You may not be able to network transfer files > 100 MB!";
+							}
 						} else {
 							reportError(messages, msg);	
 						}
@@ -404,7 +414,7 @@ public class Bag extends NamedEntity {
 						messages += "Successfully created bag: " + this.getInfo().getBagName();						
 					}
 				} else {
-					reportError(messages, "Bag metadata is not valid.");
+					reportError(messages, "Bag metadata is not valid for the project selected.");
 				}
 			} else {
 				reportError(messages, "Bag is not valid.");	
