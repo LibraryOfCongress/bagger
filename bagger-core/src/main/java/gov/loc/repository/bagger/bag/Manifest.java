@@ -37,6 +37,10 @@ public class Manifest extends FileEntity {
 	private String type;
 
 	private List<FileEntity> manifestList;
+	
+	private long totalSize = 0;
+	
+	private int numFiles = 0;
 
 	private Bag bag;
 	
@@ -55,15 +59,29 @@ public class Manifest extends FileEntity {
 		buildManifestList();
 	}
 
+	public long getTotalSize() {
+		return this.totalSize;
+	}
+	
+	public int getNumFiles() {
+		return this.numFiles;
+	}
+	
 	private void buildManifestList() {
 		log.debug("Manifest.buildManifestList begin...");
 		// add data files to manifest
+		totalSize = 0;
+		numFiles = 0;
 		List<File> fileList = data.getFiles();
 		manifestList = new ArrayList<FileEntity>();
 		for (int i=0; i < fileList.size(); i++) {
 			File file = fileList.get(i);
 			FileEntity fileEntity = new FileEntity();
 			fileEntity.setFile(file);
+			numFiles++;
+			long fileSize = file.length();
+			totalSize += fileSize;
+			fileEntity.setSize(fileSize);
 			String filename = file.getAbsolutePath();
 			File parent = this.bag.getRootSrc();
 			if (parent != null) log.debug("Manifest.buildManifestList parent: " + parent.getAbsolutePath() + ", filename: " + filename);
