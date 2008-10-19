@@ -36,10 +36,10 @@ import org.apache.commons.logging.LogFactory;
  * @author Jon Steinbach
  */
 public class Bag extends FileEntity {
-	public static final int KB = 1024;
-	public static final int MB = KB*KB;
-	public static final int GB = MB*MB;
-	public static final int MAX_SIZE = 100*MB;
+	public static final long KB = 1024;
+	public static final long MB = 1048576;
+//	public static final long GB = 1099511627776;
+	public static final long MAX_SIZE = 104857600;
 	private static final Log log = LogFactory.getLog(Bag.class);
 
 	private Date createDate;
