@@ -7,11 +7,6 @@ import java.io.File;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import gov.loc.repository.bagit.bag.BagGeneratorVerifier;
-import gov.loc.repository.bagit.bag.impl.BagGeneratorVerifierImpl;
-import gov.loc.repository.bagit.manifest.ManifestGeneratorVerifier;
-import gov.loc.repository.bagit.manifest.impl.FixityGeneratorManifestGeneratorVerifier;
-import gov.loc.repository.bagit.manifest.impl.JavaSecurityFixityGenerator;
 import gov.loc.repository.bagit.utilities.FilenameHelper;
 import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.MD5Checksum;
