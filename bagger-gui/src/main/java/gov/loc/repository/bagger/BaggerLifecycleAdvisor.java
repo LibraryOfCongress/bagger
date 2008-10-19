@@ -2,6 +2,7 @@
 package gov.loc.repository.bagger;
 
 import gov.loc.repository.bagger.bag.Bag;
+import java.awt.Dimension;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,7 +49,7 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor
         super.onPreWindowOpen(configurer);
         // comment out to hide the menubar, or reduce window size...
         //configurer.setShowMenuBar(false);
-        //configurer.setInitialSize(new Dimension(640, 480));
+        configurer.setInitialSize(new Dimension(1024, 768));
     }
 
     /**
@@ -57,6 +58,6 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor
     public void onCommandsCreated(ApplicationWindow window)
     {
         ActionCommand command = (ActionCommand) window.getCommandManager().getCommand("loginCommand", ActionCommand.class);
-        command.execute();
+//        command.execute();
     }
 }
