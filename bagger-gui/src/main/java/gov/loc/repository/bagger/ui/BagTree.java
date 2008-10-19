@@ -29,7 +29,7 @@ public class BagTree extends JTree {
 	public BagTree(File file) {
     	DefaultMutableTreeNode rootDir = new DefaultMutableTreeNode();
 		rootDir = addNodes(null, file);
-		System.out.println("BagTree: files.size: " + rootDir.getChildCount());
+		//System.out.println("BagTree: files.size: " + rootDir.getChildCount());
 		setModel(new DefaultTreeModel(rootDir));
 		initialize();
 	}
