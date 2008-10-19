@@ -22,6 +22,8 @@ public class FileEntity extends BaseEntity {
 
 	private File file;
 	
+	private long size;
+	
 	private String path;
 	
 	private String name;
@@ -53,6 +55,14 @@ public class FileEntity extends BaseEntity {
 	public String getPath() {
 		return this.path;
 	}
+	
+	public void setSize(long size) {
+		this.size = size;
+	}
+	
+	public long getSize() {
+		return this.size;
+	}
 
 	public void fromString(String data) {
 		this.data = data;
@@ -70,7 +80,8 @@ public class FileEntity extends BaseEntity {
 		return this.checksum;
 	}
 
-	public void write(File rootDir) {
+	public String write(File rootDir) {
+		String message = null;
 		try
 		{
 			File file = new File(rootDir, name);
@@ -81,7 +92,9 @@ public class FileEntity extends BaseEntity {
 		}
 		catch(IOException e)
 		{
+			message = e.getMessage();
 			log.error("EXCEPTION: FileEntity.write: " + e.getMessage());
 		}
+		return message;
 	}
 }
