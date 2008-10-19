@@ -1,59 +1,44 @@
 package gov.loc.repository.bagger.ui;
 
-import javax.swing.JTree;
+import gov.loc.repository.bagger.bag.Manifest;
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeCellEditor;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.TreeNode;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.awt.Dimension;
 import java.io.File;
 import java.util.Collections;
 import java.util.Vector;
 
-public class BagTree extends JTree {
+public class BagTree extends it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTree {
 	private static final long serialVersionUID = -5361474872106399068L;
+	private static final Log log = LogFactory.getLog(Manifest.class);
+
 	private File bagDir;
 	private DefaultTreeModel bagTreeModel;
 	
 	public BagTree() {
 		super();
-		initialize();
-	}
-	
-	public BagTree(File file) {
-    	DefaultMutableTreeNode rootDir = new DefaultMutableTreeNode();
-		rootDir = addNodes(null, file);
-		//System.out.println("BagTree: files.size: " + rootDir.getChildCount());
-		setModel(new DefaultTreeModel(rootDir));
-		initialize();
+        setPreferredSize(getTreeSize());
 	}
 
-	public BagTree(TreeNode root) {
-		super(root);
-		initialize();
-	}
-	
-    private void initialize() {
+	public BagTree(File file) {
+		super();
+    	DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+		rootNode = addNodes(null, file);
+		setModel(new DefaultTreeModel(rootNode));
 		setLargeModel(true);
         setPreferredSize(getTreeSize());
-/*
-	    CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
-	    setCellRenderer(renderer);
-		//setCellRenderer(new CheckRenderer());
-	    setCellEditor(new CheckBoxNodeEditor(this));
-	    setEditable(true);
-	    getSelectionModel().setSelectionMode(
-	    		TreeSelectionModel.SINGLE_TREE_SELECTION
-	    );
-	    putClientProperty("JTree.lineStyle", "Angled");
-	    addMouseListener(new NodeSelectionListener(this));
- */
+        addTreeCheckingListener(new TreeCheckingListener() {
+            public void valueChanged(TreeCheckingEvent e) {
+                log.info("BagTree Checked paths changed: user clicked on " + (e.getLeadingPath().getLastPathComponent()));
+            }
+        });	
+        getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE);
 	}
 
 	public File getBagDir() {
