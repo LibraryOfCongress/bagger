@@ -164,7 +164,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     @Override
     protected JComponent createControl() {
     	window = Application.instance().getActiveWindow();
-    	window = this.getActiveWindow();
     	// Initial size set by BaggerLifecycleAdvisor
     	//resize(window.getControl());
 
@@ -574,8 +573,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     private void openBag(File file) {
-    	BusyIndicator.showAt(window.getControl());
-    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
+//    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         rootSrc = file.getAbsoluteFile(); //file.getParentFile();
         display("OpenFileAction.actionPerformed filePath: " + file.getPath() + " rootPath: " + rootSrc.getPath() );
         String messages = "Adding " + file.getPath() + " to the bag.";
@@ -584,8 +583,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	/* */
         updateTree(file);
         bag.setRootDir(rootSrc);
-    	rootFrame.setCursor(Cursor.getDefaultCursor());
-    	BusyIndicator.clearAt(window.getControl());
+//    	rootFrame.setCursor(Cursor.getDefaultCursor());
+    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
  // This action creates and shows a modal save-file dialog.
@@ -614,8 +613,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     private void saveBag(File file) {
-    	BusyIndicator.showAt(window.getControl());
-    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
+//    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         display("BagView.SaveFileAction: " + file);
         String messages = "Creating the bag...";
 
@@ -625,8 +624,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         messages = bag.write(file);
        	//display("\nBagView.SaveFileAction: " + messages);
     	updateTabs(messages);
-    	rootFrame.setCursor(Cursor.getDefaultCursor());
-    	BusyIndicator.clearAt(window.getControl());
+//    	rootFrame.setCursor(Cursor.getDefaultCursor());
+    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
     private String updateForms() {
@@ -706,10 +705,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         messages += "Number of files added: " + bag.getData().getNumFiles();
         messages += "\n";
         long fsize = bag.getData().getSizeFiles();
-        if (fsize > Bag.GB) {
-        	fsize /= Bag.GB;
-            messages += "Total size of files added (GB): " + fsize;
-        } else if (fsize > Bag.MB) {
+        if (fsize > Bag.MB) {
         	fsize /= Bag.MB;
             messages += "Total size of files added (MB): " + fsize;
         } else if (fsize > Bag.KB) {
@@ -726,10 +722,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     }    
 
     private void createBagManagerTree(File file) { 
-    	BusyIndicator.showAt(window.getControl());
-//    	progressMonitor = window.getStatusBar().getProgressMonitor();
+    	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
+//    	progressMonitor = Application.instance().getActiveWindow().getStatusBar().getProgressMonitor();
 //    	progressMonitor.taskStarted("Bagger called", -1);
-    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//    	rootFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     	display("createBagManagerTree: rootTree");
     	RecursiveFileListIterator fit = new RecursiveFileListIterator(file);
     	for (Iterator<File> it=fit; it.hasNext(); ) {
@@ -739,9 +735,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         }
 		bagsTree = new BagTree(file);
 		bagsTree.requestFocus();
-		rootFrame.setCursor(Cursor.getDefaultCursor());
+//		rootFrame.setCursor(Cursor.getDefaultCursor());
 //    	progressMonitor.done();
-    	BusyIndicator.clearAt(window.getControl());
+    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
     private class FtpAction extends AbstractAction {
