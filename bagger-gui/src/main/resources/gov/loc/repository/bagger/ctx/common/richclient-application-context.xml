@@ -21,7 +21,7 @@
     <property name="startingPageId" value="bagView" />
     <property name="registerableExceptionHandler" ref="exceptionHandler" />
     <property name="menubarBeanName" value="menuBar" />
-    <property name="toolbarBeanName" value="toolBar" />
+<!--   <property name="toolbarBeanName" value="toolBar" /> -->
     <property name="windowCommandManagerBeanName" value="windowCommandManager" />
   </bean>
 
@@ -210,7 +210,7 @@
     </property>
   </bean>
 
-  <bean id="newOrganizationWizard" class="gov.loc.repository.bagger.ui.NewOrganizationWizard">
+  <bean id="newProfileWizard" class="gov.loc.repository.bagger.ui.NewProfileWizard">
   </bean>
 
   <bean id="exceptionHandlingView" class="org.springframework.richclient.application.support.DefaultViewDescriptor">
