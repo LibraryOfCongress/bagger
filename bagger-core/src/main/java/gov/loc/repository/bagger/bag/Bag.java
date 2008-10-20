@@ -38,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
 public class Bag extends FileEntity {
 	public static final long KB = 1024;
 	public static final long MB = 1048576;
-//	public static final long GB = 1099511627776;
+	public static final long GB = 1073741824;
 	public static final long MAX_SIZE = 104857600;
 	private static final Log log = LogFactory.getLog(Bag.class);
 
