@@ -2,9 +2,11 @@ package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.bag.Manifest;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.tree.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +22,7 @@ public class BagTree extends it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTr
 
 	private File bagDir;
 	private DefaultTreeModel bagTreeModel;
+	private TreePath rootPath;
 	
 	public BagTree() {
 		super();
@@ -33,12 +36,40 @@ public class BagTree extends it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTr
 		setModel(new DefaultTreeModel(rootNode));
 		setLargeModel(true);
         setPreferredSize(getTreeSize());
+        rootPath = new TreePath(rootNode.getPath());
+        setCheckingPath(rootPath);
+        setAnchorSelectionPath(rootPath);
+        makeVisible(rootPath);
+        getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE);
+        initListeners();
+//      expandAll();
+	}
+	
+	private void initListeners() {
         addTreeCheckingListener(new TreeCheckingListener() {
             public void valueChanged(TreeCheckingEvent e) {
+            	TreePath epath = new TreePath(e.getLeadingPath().getLastPathComponent());
                 log.info("BagTree Checked paths changed: user clicked on " + (e.getLeadingPath().getLastPathComponent()));
+                scrollPathToVisible(epath);
+                makeVisible(epath);
             }
         });	
-        getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE);
+        addTreeExpansionListener(new TreeExpansionListener() {
+        	public void treeExpanded(TreeExpansionEvent e) {
+            	TreePath epath = new TreePath(e.getPath().getLastPathComponent());
+                int rows = 20 * getRowCount();
+                setPreferredSize(new Dimension(500, rows));
+//                scrollPathToVisible(epath);
+//                makeVisible(epath);
+        	}
+        	public void treeCollapsed(TreeExpansionEvent e) {
+            	TreePath epath = new TreePath(e.getPath().getLastPathComponent());
+                int rows = 20 * getRowCount();
+                setPreferredSize(new Dimension(500, rows));
+//                scrollPathToVisible(epath);
+//                makeVisible(epath);
+        	}
+        });
 	}
 
 	public File getBagDir() {
@@ -57,8 +88,8 @@ public class BagTree extends it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTr
 		this.bagTreeModel = model;
 	}
 
-    private Dimension getTreeSize() {
-    	return new Dimension(480, 200);
+    public Dimension getTreeSize() {
+    	return new Dimension(500, 190);
     }
 
 	/** Add nodes from under "dir" into curTop. Highly recursive. */
