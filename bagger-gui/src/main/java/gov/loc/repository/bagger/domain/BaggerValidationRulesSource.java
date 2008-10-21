@@ -90,7 +90,7 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
     private Constraint getIsCopyright() {
     	Constraint res;
     	// TODO: RequiredIfTrue does not work.  This class needs to be rewritten without Spring RC
-    	RequiredIfTrue isPublisherReq = new RequiredIfTrue("publisher", eq("isCopyright", "true"));
+    	RequiredIfTrue isPublisherReq = new RequiredIfTrue("publisher", eq("isCopyright", true));
         res = isPublisherReq.getConstraint();
         return res;
     }
