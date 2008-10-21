@@ -1,6 +1,7 @@
 package gov.loc.repository.bagger.bag;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 import java.io.File;
 import java.io.IOException;
@@ -10,12 +11,13 @@ import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.FileUtililties;
 
-import gov.loc.repository.bagit.bag.BagGeneratorVerifier;
-import gov.loc.repository.bagit.bag.BagHelper;
-import gov.loc.repository.bagit.bag.impl.BagGeneratorVerifierImpl;
-import gov.loc.repository.bagit.manifest.impl.FixityGeneratorManifestGeneratorVerifier;
-import gov.loc.repository.bagit.manifest.impl.JavaSecurityFixityGenerator;
+import gov.loc.repository.bagit.impl.AbstractBagConstants;
+import gov.loc.repository.bagit.v0_95.impl.BagImpl;
+import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.utilities.SimpleResult;
+import gov.loc.repository.bagit.VerifyStrategy;
+import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
+import gov.loc.repository.bagit.verify.RequiredBagInfoTxtFieldsStrategy;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,7 +56,6 @@ public class Bag extends FileEntity {
 	private BagInfo bagInfo;
 	private Data data;
 	
-	private BagGeneratorVerifier verifier = new BagGeneratorVerifierImpl(new FixityGeneratorManifestGeneratorVerifier(new JavaSecurityFixityGenerator()));
 	private boolean isHoley = false;
 	private boolean isSerial = true;
 	private boolean isFetch = false;	
@@ -236,10 +237,6 @@ public class Bag extends FileEntity {
 		return this.isComplete;
 	}
 	
-	public void initialize() {
-		// TODO: Load bag information from persisted storage
-	}
-		
 	// Break this down into multiple steps so that each step can send bag progress message to the console.
 	public String write(File path) {
 		String messages = "";
@@ -276,18 +273,18 @@ public class Bag extends FileEntity {
 		    	if (this.isHoley) {
 					display("Bag.write: isHoley - create and write fetch.txt in bag name directory");
 					messages += "Create and write fetch.txt in bag name directory.\n";
-		    	    fetch.setName(BagHelper.FETCH);
+		    	    fetch.setName("fetch.txt");
 		    	    fetch.writeData();
 		    	    fetch.write(rootDir);    		
 		    	}
 				display("Bag.write: create and write bag-info.txt in bag name directory");
 				messages += "Create and write bag-info.txt in bag name directory.\n";
-				bagInfo.setName(BagHelper.INFO);
+				bagInfo.setName(AbstractBagConstants.BAGINFO_TXT);
 				bagInfo.writeData();
 				bagInfo.write(rootDir);
 				display("Bag.write: create and write bagit.txt in bag name directory");
 				messages += "Create and write bagit.txt in bag name directory.\n";
-				bagIt.setName(BagHelper.BAGIT);
+				bagIt.setName(AbstractBagConstants.BAGIT_TXT);
 				bagIt.writeData();
 				bagIt.write(rootDir);
 				display("Bag.write: create and write tagmanifest-<type>.txt in bag name directory");
@@ -302,7 +299,7 @@ public class Bag extends FileEntity {
 		    	this.setTagManifests(tagManifests);
 				display("Bag.write: create and open data directory");
 				messages += "Create and write data payload directory.\n";
-				File dataDir = new File(rootDir, BagHelper.DATA_DIRECTORY);
+				File dataDir = new File(rootDir, AbstractBagConstants.DATA_DIRECTORY);
 				if (dataDir.exists()) success = true;
 				else success = dataDir.mkdir();
 			    if (!success) {
@@ -376,55 +373,85 @@ public class Bag extends FileEntity {
 	
 	public String validateAndBag() {
 		String messages = "";
-
-		display("Bag.write: verifier isComplete?");
-		SimpleResult result = verifier.isComplete(this.rootDir);
-		if (result.getMessage() != null) messages += result.getMessage();
-		this.isComplete = result.isSuccess();
-		display("Bag.write isComplete: " + isComplete);
-		if (this.isComplete) {
-			display("Bag.write: verifier isValid?");
-			result = verifier.isValid(this.rootDir);
-			if (result.getMessage() != null) messages += result.getMessage();
-			this.isValid = result.isSuccess();
-			display("Bag.write isValid: " + isValid);
-			if (this.isValid) {
-				result = verifier.isValidMetadata(this.rootDir, bagInfo.getRules());
-				if (result.getMessage() != null) messages += result.getMessage();
-				this.isValidMetadata = result.isSuccess();
-				if (this.isValidMetadata) {
-					String msg = null;
-					if (this.isSerial) {
-						display("Bag.write: Create a  zip file for serialized transfer of the bag");
-						messages += "\nSuccessfully created bag: " + this.getInfo().getBagName();
-						msg = FileUtililties.createZip(this, rootDir);
-						if (msg == null) {
-							messages += "Creating serialized zip file.";
-							this.isSerialized = true;
-							String zipName = this.getFile().getName();
-							long zipSize = this.getSize() / MB;
-							messages += "\nSuccessfully created zip file: " + zipName + " of size: " + zipSize + "(MB)";
-							if (zipSize > 100) {
-								messages += "\nWARNING: You may not be able to network transfer files > 100 MB!";
+		System.out.println("validateAndBag: " + this.rootDir.getAbsolutePath());
+		try {
+			//BagFactory bagFactory = new BagFactory();
+			gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(this.rootDir);	
+			display("Bag.write: verifier isComplete?");
+			SimpleResult result = bagitBag.isComplete();
+			if (result.messagesToString() != null) messages += result.messagesToString();
+			this.isComplete = result.isSuccess();
+			display("Bag.write isComplete: " + isComplete);
+			if (this.isComplete) {
+				display("Bag.write: verifier isValid?");
+				result = bagitBag.isValid();
+				if (result.messagesToString() != null) messages += result.messagesToString();
+				this.isValid = result.isSuccess();
+				display("Bag.write isValid: " + isValid);
+				if (this.isValid) {
+					VerifyStrategy strategy = getBagInfoStrategy();
+					result = bagitBag.additionalVerify(strategy);
+					if (result.messagesToString() != null) messages += result.messagesToString();
+					this.isValidMetadata = result.isSuccess();
+					if (this.isValidMetadata) {
+						String msg = null;
+						if (this.isSerial) {
+							display("Bag.write: Create a  zip file for serialized transfer of the bag");
+							messages += "\nSuccessfully created bag: " + this.getInfo().getBagName();
+							msg = FileUtililties.createZip(this, rootDir);
+							if (msg == null) {
+								messages += "Creating serialized zip file.";
+								this.isSerialized = true;
+								String zipName = this.getFile().getName();
+								long zipSize = this.getSize() / MB;
+								messages += "\nSuccessfully created zip file: " + zipName + " of size: " + zipSize + "(MB)";
+								if (zipSize > 100) {
+									messages += "\nWARNING: You may not be able to network transfer files > 100 MB!";
+								}
+							} else {
+								reportError(messages, msg);	
 							}
 						} else {
-							reportError(messages, msg);	
+							messages += "Successfully created bag: " + this.getInfo().getBagName();						
 						}
 					} else {
-						messages += "Successfully created bag: " + this.getInfo().getBagName();						
+						reportError(messages, "Bag metadata is not valid for the project selected.");
 					}
 				} else {
-					reportError(messages, "Bag metadata is not valid for the project selected.");
+					reportError(messages, "Bag is not valid.");	
 				}
 			} else {
-				reportError(messages, "Bag is not valid.");	
+				reportError(messages, "Bag is not complete.");
 			}
-		} else {
-			reportError(messages, "Bag is not complete.");
+			messages += "\n";
+		} catch (Exception e) {
+			e.printStackTrace();
+			reportError(messages, e.getMessage());
 		}
-		messages += "\n";
 
 		return messages;
+	}
+	
+	private VerifyStrategy getBagInfoStrategy() {
+		List<String> rulesList = new ArrayList<String>();
+		rulesList.add(BagInfoTxtImpl.SOURCE_ORGANIZATION);
+		rulesList.add(BagInfoTxtImpl.ORGANIZATION_ADDRESS);
+		rulesList.add(BagInfoTxtImpl.CONTACT_NAME);
+		rulesList.add(BagInfoTxtImpl.CONTACT_PHONE);
+		rulesList.add(BagInfoTxtImpl.CONTACT_EMAIL);
+		rulesList.add(BagInfoTxtImpl.EXTERNAL_DESCRIPTION);
+		rulesList.add(BagInfoTxtImpl.BAGGING_DATE);
+		rulesList.add(BagInfoTxtImpl.EXTERNAL_IDENTIFIER);
+		rulesList.add(BagInfoTxtImpl.BAG_SIZE);
+		if (getIsCopyright()) {
+			rulesList.add("Publisher");			
+		}
+		String[] rules = new String[rulesList.size()];
+		for (int i=0; i< rulesList.size(); i++) rules[i] = new String(rulesList.get(i));
+		
+		VerifyStrategy strategy = new RequiredBagInfoTxtFieldsStrategy(rules);
+
+		return strategy;		
 	}
 
 	private String reportError(String errors, String message) {
