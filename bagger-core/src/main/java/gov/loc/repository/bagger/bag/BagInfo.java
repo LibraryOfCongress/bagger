@@ -61,6 +61,10 @@ public class BagInfo extends FileEntity {
 		this.bag = bag;
 		this.setIsCopyright(bag.getIsCopyright());
 		bagInfoRules = initRules();
+	    String pattern = "yyyy-MM-dd";
+	    SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+		Date todaysDate = new Date();
+		this.baggingDate = formatter.format(todaysDate);
 	}
 	
 	public void setIsCopyright(boolean b) {
@@ -96,10 +100,6 @@ public class BagInfo extends FileEntity {
 	}
 
 	public void setBagOrganization(BagOrganization bagOrganization) {
-	    String pattern = "yyyy-MM-dd";
-	    SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-		Date todaysDate = new Date();
-		this.baggingDate = formatter.format(todaysDate);
 		this.bagOrganization = bagOrganization;
 		this.bagOrganization.setOrgName(bagOrganization.getOrgName());
 		this.bagOrganization.setOrgAddress(bagOrganization.getOrgAddress());
@@ -278,7 +278,7 @@ public class BagInfo extends FileEntity {
 		rules.put("Bagging-Date", "required,(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])");
 		rules.put("External-Identifier", "required");
 		rules.put("Bag-Size", "required");
-		rules.put("Payload-Ossum", "required");
+		rules.put("Payload-Ossum", "");
 		rules.put("Bag-Group-Identifier", "");
 		rules.put("Bag-Count", "");
 		rules.put("Internal-Sender-Identifier", "");
