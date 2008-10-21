@@ -4,8 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import gov.loc.repository.bagger.FileEntity;
-import gov.loc.repository.bagit.bag.impl.BagGeneratorVerifierImpl;
-import gov.loc.repository.bagit.bag.BagHelper;
+import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 /**
  * The high-level BagIt business interface.
@@ -27,9 +26,9 @@ public class BagIt extends FileEntity {
 	private static final Log log = LogFactory.getLog(BagIt.class);
 
 	private String versionLabel = "BagIt-version: ";
-	private String version = BagGeneratorVerifierImpl.VERSION;
+	private String version = "0.95";
 	private String encodingLabel = "Tag-File-Character-Encoding: ";
-	private String encoding = BagHelper.BAG_ENCODING; // Currently the only encoding type allowed for meta-data files
+	private String encoding = AbstractBagConstants.BAG_ENCODING; // Currently the only encoding type allowed for meta-data files
 
 	public void setVersion(String version) {
 		this.version = version;
