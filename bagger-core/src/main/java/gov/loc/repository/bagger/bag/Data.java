@@ -7,7 +7,7 @@ import javax.swing.JTree;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import gov.loc.repository.bagit.bag.BagHelper;
+import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagger.FileEntity;
 
 /**
@@ -71,7 +71,7 @@ public class Data extends FileEntity {
 		StringBuffer sb = new StringBuffer();
 		if (this.files == null) {
 		} else {
-			sb.append(BagHelper.DATA_DIRECTORY + "/");
+			sb.append(AbstractBagConstants.DATA_DIRECTORY + "/");
 			sb.append('\n');
 	    	for (int i=0; i < files.size(); i++) {
 	    		sb.append(files.get(i).toString());
