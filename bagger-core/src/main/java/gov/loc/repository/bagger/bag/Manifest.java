@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import gov.loc.repository.bagit.utilities.FilenameHelper;
 import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.MD5Checksum;
-import gov.loc.repository.bagit.bag.BagHelper;
+import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 /**
  *
@@ -95,7 +95,7 @@ public class Manifest extends FileEntity {
 
 	public void setType(String type) {
 		this.type = type;
-		this.fname = BagHelper.MANIFEST_PREFIX + type + BagHelper.MANIFEST_SUFFIX;
+		this.fname = AbstractBagConstants.PAYLOAD_MANIFEST_PREFIX + type + AbstractBagConstants.PAYLOAD_MANIFEST_SUFFIX;
 		setName(this.fname);
 	}
 
@@ -126,7 +126,7 @@ public class Manifest extends FileEntity {
 		for (int i=0; i < manifestList.size(); i++) {
 			FileEntity fe = manifestList.get(i);
 			sb.append(fe.getChecksum());
-			sb.append("  " + BagHelper.DATA_DIRECTORY + "/");
+			sb.append("  " + AbstractBagConstants.DATA_DIRECTORY + "/");
 			String filename = fe.getName();
 			if (parent != null) filename = FilenameHelper.removeBasePath(parent.getAbsolutePath(), fe.getName());
 			sb.append(filename);
