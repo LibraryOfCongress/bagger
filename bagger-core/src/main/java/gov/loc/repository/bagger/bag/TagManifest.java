@@ -7,13 +7,10 @@ import java.io.File;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import gov.loc.repository.bagit.manifest.ManifestGeneratorVerifier;
-import gov.loc.repository.bagit.manifest.impl.FixityGeneratorManifestGeneratorVerifier;
-import gov.loc.repository.bagit.manifest.impl.JavaSecurityFixityGenerator;
 import gov.loc.repository.bagit.utilities.FilenameHelper;
 import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.MD5Checksum;
-import gov.loc.repository.bagit.bag.BagHelper;
+import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 /**
  *
@@ -87,7 +84,7 @@ public class TagManifest extends FileEntity {
 
 	public void setType(String type) {
 		this.type = type;
-		this.fname = BagHelper.TAG_MANIFEST_PREFIX + type + BagHelper.TAG_MANIFEST_SUFFIX;
+		this.fname = AbstractBagConstants.TAG_MANIFEST_PREFIX + type + AbstractBagConstants.TAG_MANIFEST_SUFFIX;
 		setName(this.fname);
 	}
 
