@@ -9,9 +9,9 @@ package gov.loc.repository.bagger;
  * @author Jon Steinbach
  */
 public class FtpProperties {
-	private String ipAddress;
-	private String username;
-	private String password;
+	private String ipAddress = "";
+	private String username = "guest";
+	private String password = "";
 	
 	public void setIpAddress(String ip) {
 		this.ipAddress = ip;

@@ -1,18 +1,4 @@
-/*
- * Copyright 2002-2004 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
+
 package gov.loc.repository.bagger.domain;
 
 import javax.sql.DataSource;
@@ -66,18 +52,20 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("INSERT INTO users VALUES ('justin', 'justin', true)");
         template.execute("INSERT INTO users VALUES ('liz', 'liz', true)");
         template.execute("INSERT INTO users VALUES ('jkunze', 'jkunze', true)");
+        template.execute("INSERT INTO users VALUES ('user', 'user', true)");
         template.execute("INSERT INTO authorities VALUES ('jste', 'ROLE_BAGGER_STAFF')");
         template.execute("INSERT INTO authorities VALUES ('lesliej', 'ROLE_BAGGER_STAFF')");
         template.execute("INSERT INTO authorities VALUES ('aboyko', 'ROLE_BAGGER_USER')");
         template.execute("INSERT INTO authorities VALUES ('justin', 'ROLE_BAGGER_STAFF')");
         template.execute("INSERT INTO authorities VALUES ('liz', 'ROLE_BAGGER_STAFF')");
         template.execute("INSERT INTO authorities VALUES ('jkunze', 'ROLE_BAGGER_USER')");
+        template.execute("INSERT INTO authorities VALUES ('user', 'ROLE_BAGGER_USER')");
 
         // Schema: Bagger
         template.execute("CREATE TABLE person (id INT NOT NULL IDENTITY PRIMARY KEY, first_name VARCHAR(30), middle_init VARCHAR(1), last_name VARCHAR(30))");
         template.execute("CREATE TABLE projects (id INT NOT NULL IDENTITY PRIMARY KEY, name VARCHAR(80))");
         template.execute("CREATE TABLE contact_types (id INT NOT NULL IDENTITY PRIMARY KEY, name VARCHAR(80))");
-        template.execute("CREATE TABLE address (id INT NOT NULL IDENTITY PRIMARY KEY, address1 VARCHAR(64), address2 VARCHAR(65), city VARCHAR(80), state VARCHAR(80), country VARCHAR(80), postal_code VARCHAR(12))");
+        template.execute("CREATE TABLE address (id INT NOT NULL IDENTITY PRIMARY KEY, address1 VARCHAR(60), address2 VARCHAR(60), city VARCHAR(30), state VARCHAR(30), country VARCHAR(30), postal_code VARCHAR(12), address VARCHAR(256))");
 
         template.execute("CREATE TABLE organization (id INT NOT NULL IDENTITY PRIMARY KEY, name VARCHAR(80), address_id INT NOT NULL)");
         template.execute("alter table organization add constraint fk_org_address foreign key (address_id) references address(id)");
@@ -105,6 +93,7 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("alter table bag add constraint fk_bag_profile foreign key (profile_id) references profile(id)");
 
         // Data: Bagger
+        // "CREATE TABLE person (id, first_name, middle_init, last_name");
         template.execute("INSERT INTO person VALUES (1, 'Jon', '', 'Steinbach')");
         template.execute("INSERT INTO person VALUES (2, 'Leslie', '', 'Johnston')");
         template.execute("INSERT INTO person VALUES (3, 'Andy', '', 'Boyko')");
@@ -112,27 +101,33 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("INSERT INTO person VALUES (5, 'Liz', '', 'Madden')");
         template.execute("INSERT INTO person VALUES (6, 'John', 'A', 'Kunze')");
 
-        template.execute("INSERT INTO projects VALUES (1, 'copyright')");
+        // "CREATE TABLE projects (id, name");
+        template.execute("INSERT INTO projects VALUES (1, 'eDeposit')");
         template.execute("INSERT INTO projects VALUES (2, 'ndiip')");
         template.execute("INSERT INTO projects VALUES (3, 'ndnp')");
         template.execute("INSERT INTO projects VALUES (4, 'wdl')");
         template.execute("INSERT INTO projects VALUES (5, 'transfer')");
         template.execute("INSERT INTO projects VALUES (6, 'admin')");
 
+        // "CREATE TABLE contact_types (id, name");
         template.execute("INSERT INTO contact_types VALUES (1, 'library of congress');");
         template.execute("INSERT INTO contact_types VALUES (2, 'copyright office');");
         template.execute("INSERT INTO contact_types VALUES (3, 'publisher');");
         template.execute("INSERT INTO contact_types VALUES (4, 'library');");
         template.execute("INSERT INTO contact_types VALUES (5, 'organization');");
 
-        template.execute("INSERT INTO address VALUES (1, '101 Independence Ave. SE', '', 'Washington', 'DC', 'US', '20540');");
-        template.execute("INSERT INTO address VALUES (2, '101 Independence Ave. SE', '', 'Washington', 'DC', 'US', '20559-6000');");
-        template.execute("INSERT INTO address VALUES (3, '415 20th St, 4th Floor', '', 'Oakland', 'CA', 'US', '94612');");
+        // "CREATE TABLE address (id, address1, address2, city, state, country, postal_code");
+        template.execute("INSERT INTO address VALUES (1, '101 Independence Ave. SE', '', 'Washington', 'DC', 'US', '20540', '');");
+        template.execute("INSERT INTO address VALUES (2, '101 Independence Ave. SE', '', 'Washington', 'DC', 'US', '20559-6000', '');");
+        template.execute("INSERT INTO address VALUES (3, '415 20th St, 4th Floor', '', 'Oakland', 'CA', 'US', '94612', '');");
+        template.execute("INSERT INTO address VALUES (4, '', '', '', '', '', '', '101 Independence Ave. SE, Washington, DC 20540, US');");
 
+        // "CREATE TABLE organization (id, name, address_id");
         template.execute("INSERT INTO organization VALUES (1, 'Library of Congress', 1);");
         template.execute("INSERT INTO organization VALUES (2, 'U.S. Copyright Office', 2);");
         template.execute("INSERT INTO organization VALUES (3, 'California Digital Library', 3);");
 
+        // "CREATE TABLE contact (id, type_id, person_id, organization_id, email, telephone");
         template.execute("INSERT INTO contact VALUES (1, 1, 1, 1, 'jste@loc.gov', '202-555-7371');");
         template.execute("INSERT INTO contact VALUES (2, 1, 2, 1, 'lesliej@loc.gov', '202-555-7372');");
         template.execute("INSERT INTO contact VALUES (3, 1, 3, 1, 'aboyko@loc.gov', '202-555-7373');");
@@ -140,17 +135,23 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("INSERT INTO contact VALUES (5, 1, 5, 1, 'lizm@loc.gov', '202-555-7375');");
         template.execute("INSERT INTO contact VALUES (6, 4, 6, 3, 'jak@ucop.edu', '202-555-7373');");
 
+        // "CREATE TABLE profile (id, username, profile_person_id, project_id, contact_id, status, create_date");
+        // "(1, 'eDeposit')(2, 'ndiip')(3, 'ndnp')(4, 'wdl')(5, 'transfer')(6, 'admin')");
         template.execute("INSERT INTO profile VALUES (1, 'jste', 1, 6, 2, 'A', '2008-09-18')");
-        template.execute("INSERT INTO profile VALUES (2, 'lesliej', 2, 5, 2, 'A', '2008-08-06')");
-        template.execute("INSERT INTO profile VALUES (3, 'jkunze', 6, 3, 4, 'A', '2002-04-17')");
-        template.execute("INSERT INTO profile VALUES (4, 'aboyko', 3, 5, 3, 'D', '2002-04-17')");
+        template.execute("INSERT INTO profile VALUES (2, 'jste', 1, 1, 3, 'A', '2008-10-20')");
+        template.execute("INSERT INTO profile VALUES (3, 'jste', 1, 5, 4, 'A', '2008-10-20')");
+        template.execute("INSERT INTO profile VALUES (4, 'lesliej', 2, 5, 2, 'A', '2008-08-06')");
+        template.execute("INSERT INTO profile VALUES (5, 'jkunze', 6, 3, 4, 'A', '2002-04-17')");
+        template.execute("INSERT INTO profile VALUES (6, 'aboyko', 3, 5, 3, 'D', '2002-04-17')");
 
+        // "CREATE TABLE person_projects (person_id, project_id");
         template.execute("INSERT INTO person_projects VALUES (1, 1);");
         template.execute("INSERT INTO person_projects VALUES (1, 5);");
         template.execute("INSERT INTO person_projects VALUES (1, 6);");
         template.execute("INSERT INTO person_projects VALUES (2, 5);");
         template.execute("INSERT INTO person_projects VALUES (6, 5);");
 
+        // "CREATE TABLE user_contact (username, contact_id");
         template.execute("INSERT INTO user_contact VALUES ('jste', 1);");
     }
 }

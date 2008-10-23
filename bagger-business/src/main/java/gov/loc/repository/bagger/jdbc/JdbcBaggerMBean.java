@@ -1,6 +1,8 @@
 package gov.loc.repository.bagger.jdbc;
 
 import java.util.Collection;
+
+import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.Organization;
 
@@ -27,6 +29,8 @@ public interface JdbcBaggerMBean {
 
 	Organization loadOrganization(int id) throws DataAccessException;
 
+	void storeProfile(Profile prof) throws DataAccessException;
+	
 	void storeOrganization(Organization org) throws DataAccessException;
 /* */
 }

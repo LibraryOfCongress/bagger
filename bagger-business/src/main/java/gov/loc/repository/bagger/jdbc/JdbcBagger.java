@@ -71,30 +71,14 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	public void init(DataSource dataSource) {
 		this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
 
-		this.insertPerson = new SimpleJdbcInsert(dataSource)
-			.withTableName("person")
-			.usingGeneratedKeyColumns("id");
-		this.insertProject = new SimpleJdbcInsert(dataSource)
-			.withTableName("projects")
-			.usingGeneratedKeyColumns("id");
-		this.insertContactTypes = new SimpleJdbcInsert(dataSource)
-			.withTableName("contact_types")
-			.usingGeneratedKeyColumns("id");
-		this.insertAddress = new SimpleJdbcInsert(dataSource)
-			.withTableName("address")
-			.usingGeneratedKeyColumns("id");
-		this.insertOrganization = new SimpleJdbcInsert(dataSource)
-			.withTableName("organization")
-			.usingGeneratedKeyColumns("id");
-		this.insertContact = new SimpleJdbcInsert(dataSource)
-			.withTableName("contact")
-			.usingGeneratedKeyColumns("id");
-		this.insertProfile = new SimpleJdbcInsert(dataSource)
-			.withTableName("profile")
-			.usingGeneratedKeyColumns("id");
-		this.insertBag = new SimpleJdbcInsert(dataSource)
-			.withTableName("bag")
-			.usingGeneratedKeyColumns("id");
+		this.insertPerson = new SimpleJdbcInsert(dataSource).withTableName("person").usingGeneratedKeyColumns("id");
+		this.insertProject = new SimpleJdbcInsert(dataSource).withTableName("projects").usingGeneratedKeyColumns("id");
+		this.insertContactTypes = new SimpleJdbcInsert(dataSource).withTableName("contact_types").usingGeneratedKeyColumns("id");
+		this.insertAddress = new SimpleJdbcInsert(dataSource).withTableName("address").usingGeneratedKeyColumns("id");
+		this.insertOrganization = new SimpleJdbcInsert(dataSource).withTableName("organization").usingGeneratedKeyColumns("id");
+		this.insertContact = new SimpleJdbcInsert(dataSource).withTableName("contact").usingGeneratedKeyColumns("id");
+		this.insertProfile = new SimpleJdbcInsert(dataSource).withTableName("profile").usingGeneratedKeyColumns("id");
+		this.insertBag = new SimpleJdbcInsert(dataSource).withTableName("bag").usingGeneratedKeyColumns("id");
 	}
 
 
@@ -103,33 +87,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	public void refreshCache() throws DataAccessException {
 		synchronized (this.orgs) {
 			this.logger.info("Refreshing vets cache");
-/*
-			// Retrieve the list of all vets.
-			this.orgs.clear();
-			this.orgs.addAll(this.simpleJdbcTemplate.query(
-					"SELECT id, first_name, last_name FROM vets ORDER BY last_name,first_name",
-					ParameterizedBeanPropertyRowMapper.newInstance(Vet.class)));
-
-			// Retrieve the list of all possible specialties.
-			final List<Specialty> specialties = this.simpleJdbcTemplate.query(
-					"SELECT id, name FROM specialties",
-					ParameterizedBeanPropertyRowMapper.newInstance(Specialty.class));
-
-			// Build each vet's list of specialties.
-			for (Vet vet : this.vets) {
-				final List<Integer> vetSpecialtiesIds = this.simpleJdbcTemplate.query(
-						"SELECT specialty_id FROM vet_specialties WHERE vet_id=?",
-						new ParameterizedRowMapper<Integer>() {
-							public Integer mapRow(ResultSet rs, int row) throws SQLException {
-								return Integer.valueOf(rs.getInt(1));
-							}},
-						vet.getId().intValue());
-				for (int specialtyId : vetSpecialtiesIds) {
-					Specialty specialty = EntityUtils.getById(specialties, Specialty.class, specialtyId);
-					vet.addSpecialty(specialty);
-				}
-			}
-*/
 		}
 	}
 
@@ -207,16 +164,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			profile.setContact(contact);
 			Project project = loadProject(profile.getProjectId());
 			profile.setProject(project);
-/*
-			System.out.println("JdbcBagger.findProfiles id: " + profile.getId() + ", username: " + profile.getUsername() );
-			System.out.println("JdbcBagger.findProfiles personId: " + profile.getProfilePersonId() + ", contactId: " + profile.getContactId() + ", projectId: " + profile.getProjectId());
-			Organization org = loadOrganization(1);
-			System.out.println("JdbcBagger.loadOrganization id: " + org.getId() + ", name: " + org.getName() + ", addressId: " + org.getAddressId() + ", address: " + org.getAddress() );
-			person = loadPerson(1);
-			System.out.println("JdbcBagger.loadPerson id: " + person.getId() + ", firstname: " + person.getFirstName() + ", lastname: " + person.getLastName() );
-			Address address = loadAddress(1);
-			System.out.println("jdbcBagger.loadAddress id: " + address.getId());
-*/
 		}
 		catch (EmptyResultDataAccessException ex) {
 			throw new ObjectRetrievalFailureException(Profile.class, new Integer(id));
@@ -342,6 +289,25 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 	}
 
+
+	@Transactional
+	public void storeProfile(Profile prof) throws DataAccessException {
+		try {
+			Profile profile = loadProfile(prof.getId());
+			Number newKey = this.insertProfile.executeAndReturnKey(new BeanPropertySqlParameterSource(prof));
+			profile.setId(newKey.intValue());
+		}
+		catch (Exception ex) {
+			try {
+				this.simpleJdbcTemplate.update(
+						"UPDATE profile SET username=:username, profile_person_id=:profilePersonId, project_id=:projectId, contact_id=:contactId WHERE id=:id",
+						new BeanPropertySqlParameterSource(prof));
+			}
+			catch (Exception exception) {
+				throw new UnsupportedOperationException("Profile update not supported");				
+			}
+		}
+	}
 
 	/**
 	 * Creates a {@link MapSqlParameterSource} based on data values from the

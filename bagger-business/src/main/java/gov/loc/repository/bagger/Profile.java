@@ -5,7 +5,7 @@ import gov.loc.repository.bagger.Project;
 
 public class Profile {
 	private int id;
-	private String username;
+	private String username = "";
 	private int profilePersonId;
 	private Contact  person;
 	private int contactId;
@@ -79,6 +79,9 @@ public class Profile {
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		sb.append("Project Id: ");
+		sb.append(this.id);
+		sb.append('\n');
 		sb.append("Username: ");
 		sb.append(this.username);
 		sb.append('\n');

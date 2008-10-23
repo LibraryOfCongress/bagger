@@ -2,12 +2,13 @@ package gov.loc.repository.bagger;
 
 public class Address {
 	private int id;
-	private String address1;
-	private String address2;
-	private String city;
-	private String state;
-	private String country;
-	private String postalCode;
+	private String address1 = "";
+	private String address2 = "";
+	private String city = "";
+	private String state = "";
+	private String country = "";
+	private String postalCode = "";
+	private String address = "";
 	
 	public void setId(int id) {
 		this.id = id;
@@ -15,6 +16,14 @@ public class Address {
 	
 	public int getId() {
 		return this.id;
+	}
+
+	public void setAddress(String s) {
+		this.address = s;
+	}
+	
+	public String getAddress() {
+		return this.address;
 	}
 	
 	public void setAddress1(String s) {
@@ -74,19 +83,23 @@ public class Address {
 		if (inline) delim = ", ";
 		else delim = "\n";
 		StringBuffer sb = new StringBuffer();
-		sb.append(this.getAddress1());
-		sb.append(delim);
-		if (!this.getAddress2().isEmpty()) {
-			sb.append(this.getAddress2());
+		if (this.address1 == null || this.address1.isEmpty()) {
+			sb.append(this.getAddress());
+		} else {
+			sb.append(this.getAddress1());
 			sb.append(delim);
+			if (!this.getAddress2().isEmpty()) {
+				sb.append(this.getAddress2());
+				sb.append(delim);
+			}
+			sb.append(this.getCity());
+			sb.append(", ");
+			sb.append(this.getState());
+			sb.append(' ');
+			sb.append(this.getPostalCode());
+			sb.append(delim);
+			sb.append(this.getCountry());			
 		}
-		sb.append(this.getCity());
-		sb.append(", ");
-		sb.append(this.getState());
-		sb.append(' ');
-		sb.append(this.getPostalCode());
-		sb.append(delim);
-		sb.append(this.getCountry());
 		
 		return sb.toString();
 	}

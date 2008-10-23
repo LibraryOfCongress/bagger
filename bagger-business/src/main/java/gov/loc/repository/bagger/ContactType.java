@@ -2,7 +2,7 @@ package gov.loc.repository.bagger;
 
 public class ContactType {
 	private int id;
-	private String name;
+	private String name = "";
 
 	public void setId(int id) {
 		this.id = id;

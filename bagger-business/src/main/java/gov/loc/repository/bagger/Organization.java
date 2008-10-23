@@ -2,7 +2,7 @@ package gov.loc.repository.bagger;
 
 public class Organization {
 	private int id;
-	private String name;
+	private String name = "";
 	private Address address;
 	private int addressId;
 

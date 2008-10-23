@@ -10,25 +10,16 @@ package gov.loc.repository.bagger;
  */
 public class Contact {
 	private int id;
-	
 	private int typeId;
-	
 	private ContactType contactType;
-	
 	private Person person;
-	
 	private int personId;
-	
 	private Organization organization;
-	
 	private int organizationId;
-
 	private String contactName = "";
-
 	private String telephone = "";
-
 	private String email = "";
-	
+
 	public int getId() {
 		return this.id;
 	}

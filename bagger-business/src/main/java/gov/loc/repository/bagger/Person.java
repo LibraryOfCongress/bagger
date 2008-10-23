@@ -10,9 +10,9 @@ package gov.loc.repository.bagger;
  */
 public class Person {
 	private int id;
-	private String firstName;
-	private String middleInit;
-	private String lastName;
+	private String firstName = "";
+	private String middleInit = "";
+	private String lastName = "";
 
 	public void setId(int id) {
 		this.id = id;

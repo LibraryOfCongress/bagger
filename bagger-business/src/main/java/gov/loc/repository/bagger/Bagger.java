@@ -36,6 +36,8 @@ public interface Bagger {
 	
 	Project loadProject(int id) throws DataAccessException;
 
+	void storeProfile(Profile prof) throws DataAccessException;
+	
 	void storeOrganization(Organization org) throws DataAccessException;
 
 }
