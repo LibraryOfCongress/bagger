@@ -103,9 +103,15 @@ public class BagInfo extends FileEntity {
 		this.bagOrganization = bagOrganization;
 		this.bagOrganization.setOrgName(bagOrganization.getOrgName());
 		this.bagOrganization.setOrgAddress(bagOrganization.getOrgAddress());
-		this.bagOrganization.getContact().setContactName(bagOrganization.getContact().getContactName());
-		this.bagOrganization.getContact().setTelephone(bagOrganization.getContact().getTelephone());
-		this.bagOrganization.getContact().setEmail(bagOrganization.getContact().getEmail());
+		if (bagOrganization.getContact() == null) {
+			this.bagOrganization.getContact().setContactName("");
+			this.bagOrganization.getContact().setTelephone("");
+			this.bagOrganization.getContact().setEmail("");
+		} else {
+			this.bagOrganization.getContact().setContactName(bagOrganization.getContact().getContactName());
+			this.bagOrganization.getContact().setTelephone(bagOrganization.getContact().getTelephone());
+			this.bagOrganization.getContact().setEmail(bagOrganization.getContact().getEmail());			
+		}
 	}
 
 	public BagOrganization getBagOrganization() {
