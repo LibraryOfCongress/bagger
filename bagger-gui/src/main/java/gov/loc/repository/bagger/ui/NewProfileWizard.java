@@ -1,22 +1,14 @@
-/*
- * Copyright 2002-2004 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
+
 package gov.loc.repository.bagger.ui;
 
+import gov.loc.repository.bagger.Address;
 import gov.loc.repository.bagger.Contact;
+import gov.loc.repository.bagger.ContactType;
+import gov.loc.repository.bagger.Organization;
+import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.BagOrganization;
+
+import org.springframework.binding.form.HierarchicalFormModel;
 import org.springframework.richclient.application.event.LifecycleApplicationEvent;
 import org.springframework.richclient.command.ActionCommandExecutor;
 import org.springframework.richclient.form.CompoundForm;
@@ -30,7 +22,9 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
     private WizardDialog wizardDialog;
 
     private CompoundForm wizardForm;
-    
+    private OrganizationContactForm userContactForm;    
+    private OrganizationGeneralForm organizationGeneralForm;
+    private OrganizationContactForm organizationContactForm;    
     private Contact contact;
 
     public NewProfileWizard() {
@@ -38,30 +32,62 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
     }
 
     public void addPages() {
-        addPage(new FormBackedWizardPage(new OrganizationGeneralForm(FormModelHelper.createChildPageFormModel(wizardForm.getFormModel()))));
-        addPage(new FormBackedWizardPage(new OrganizationContactForm(FormModelHelper.createChildPageFormModel(wizardForm.getFormModel()))));
+        HierarchicalFormModel contactFormModel;
+        contactFormModel = FormModelHelper.createCompoundFormModel(new Contact());
+        userContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(contactFormModel, null));
+        addPage(new FormBackedWizardPage(userContactForm));
+
+    	HierarchicalFormModel organizationFormModel;
+        organizationFormModel = FormModelHelper.createCompoundFormModel(new BagOrganization());
+        organizationGeneralForm = new OrganizationGeneralForm(FormModelHelper.createChildPageFormModel(organizationFormModel, null));
+        addPage(new FormBackedWizardPage(organizationGeneralForm));
+
+        organizationContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(contactFormModel, null));
+        addPage(new FormBackedWizardPage(organizationContactForm));
     }
 
     public void execute() {
         if (wizardDialog == null) {
             wizardForm = new CompoundForm();
-            wizardForm.setFormObject(new BagOrganization());
+            wizardForm.setFormObject(new Profile());
             wizardDialog = new WizardDialog(this);
         }
-        wizardForm.setFormObject(new BagOrganization());
+        wizardForm.setFormObject(new Profile());
         wizardDialog.showDialog();
     }
 
     protected boolean onFinish() {
-        BagOrganization newOrganization = getNewOrganization();
+        Profile newProfile = getNewProfile();
         getApplicationContext()
-                .publishEvent(new LifecycleApplicationEvent(LifecycleApplicationEvent.CREATED, newOrganization));
+                .publishEvent(new LifecycleApplicationEvent(LifecycleApplicationEvent.CREATED, newProfile));
         return true;
     }
 
-    private BagOrganization getNewOrganization() {
-        wizardForm.commit();
-        return (BagOrganization)wizardForm.getFormObject();
+    private Profile getNewProfile() {
+    	Profile profile = new Profile();
+        if (!organizationGeneralForm.hasErrors()) {
+            organizationGeneralForm.commit();
+        }
+        BagOrganization newOrganization = (BagOrganization)organizationGeneralForm.getFormObject();
+        Organization org = new Organization();
+        org.setName(newOrganization.getOrgName());
+        Address address = new Address();
+        address.setAddress(newOrganization.getOrgAddress());
+        org.setAddress(address);
+
+        if (!userContactForm.hasErrors()) {
+        	userContactForm.commit();
+        }
+        Contact newUser = (Contact)userContactForm.getFormObject();
+        newUser.setOrganization(org);
+        profile.setPerson(newUser);
+
+        if (!organizationContactForm.hasErrors()) {
+        	organizationContactForm.commit();
+        }
+        Contact newContact = (Contact)organizationContactForm.getFormObject();
+        profile.setContact(newContact);
+        return profile;
     }
 
 }
