@@ -99,7 +99,7 @@ public class CompositePane extends JTabbedPane {
     public void createBagPane() {
 //    	createBag();
 //    	initializeBag();
-    	if (bagsTree == null) System.out.println("createBagPane: NULL");
+//    	if (bagsTree == null) System.out.println("createBagPane: NULL");
 
     	consoleScrollPane = new JScrollPane();
     	consolePane = new ConsolePane();
@@ -238,7 +238,21 @@ public class CompositePane extends JTabbedPane {
     
     // setBag must be called before updateTabs is called
     public void updateTabs(Bag bag, String messages) {
-    	setBag(bag);
+        messages += "\n";
+        messages += "Number of files added: " + bag.getData().getNumFiles();
+        messages += "\n";
+        long fsize = bag.getData().getSizeFiles();
+        if (fsize > Bag.MB) {
+        	fsize /= Bag.MB;
+            messages += "Total size of files added (MB): " + fsize;
+        } else if (fsize > Bag.KB) {
+        	fsize /= Bag.KB;
+            messages += "Total size of files added (KB): " + fsize;
+        } else {
+            messages += "Total size of files added: 0-1 KB";
+        }
+
+        setBag(bag);
     	if (this.getComponentCount() > 0) {
     		this.removeAll();
             this.invalidate();
@@ -252,9 +266,5 @@ public class CompositePane extends JTabbedPane {
         consoleScrollPane.repaint();
         this.validate();
         this.repaint();
-    }
-
-    public boolean requestFocusInWindow() {
-        return this.requestFocusInWindow();
     }
 }
