@@ -47,15 +47,18 @@ public class Bag extends FileEntity {
 	private Date createDate;
 	private File rootSrc;
 	private File rootDir;
+	private List<File> rootTree;
 
 	private Project project;
-	private List<Manifest> manifests;
+    private BagIt bagIt = null;
+    private BagInfo bagInfo = null;
+    private Data data = null;
+    private Fetch fetch = null;
+    private List<Manifest> manifests;
+    private Manifest manifest = null;
 	private List<TagManifest> tagManifests = null;
-	private Fetch fetch;
-	private BagIt bagIt;
-	private BagInfo bagInfo;
-	private Data data;
-	
+    private TagManifest tagManifest = null;
+
 	private boolean isHoley = false;
 	private boolean isSerial = true;
 	private boolean isFetch = false;	
@@ -69,11 +72,47 @@ public class Bag extends FileEntity {
 	public Bag() {
 		super();
 	}
-
-	public Bag(JTree tree) {
-		super();
-		data = new Data();
-		data.setData(tree);
+	
+	public void init() {
+        if (fetch == null) fetch = new Fetch();
+        else fetch = this.getFetch();
+        this.setFetch(fetch);
+        if (bagInfo == null) bagInfo = new BagInfo(this);
+        else bagInfo = this.getInfo();
+        this.setInfo(bagInfo);
+        if (bagIt == null) bagIt = new BagIt();
+        else bagIt = this.getBagIt();
+        this.setBagIt(bagIt);
+        if (data == null) data = new Data();
+    	else data = this.getData();
+        if (rootTree == null) rootTree = new ArrayList<File>();
+    	data.setFiles(rootTree);
+    	this.setData(data);
+    	if (rootSrc != null) this.setRootSrc(rootSrc);
+    	Manifest manifest = new Manifest(this);
+    	manifest.setType(ManifestType.MD5);
+    	data.setSizeFiles(manifest.getTotalSize());
+    	data.setNumFiles(manifest.getNumFiles());
+    	this.setData(data);
+    	ArrayList<Manifest> mset = new ArrayList<Manifest>();
+    	mset.add(manifest);
+    	this.setManifests(mset);
+    	List<TagManifest> tagManifestList = this.getTagManifests();
+    	if (tagManifestList == null || tagManifestList.isEmpty()) {
+        	ArrayList<TagManifest> tmset = new ArrayList<TagManifest>();
+        	TagManifest tagManifest = new TagManifest(this);
+        	tagManifest.setType(ManifestType.MD5);
+        	tmset.add(tagManifest);    		
+        	this.setTagManifests(tmset);
+    	}
+	}
+	
+	public void setRootTree(List<File> rootTree) {
+		this.rootTree = rootTree;
+	}
+	
+	public List<File> getRootTree() {
+		return this.rootTree;
 	}
 
 	public void setCreateDate(Date createDate) {
@@ -361,7 +400,7 @@ public class Bag extends FileEntity {
 			String publisher = this.getInfo().getPublisher();
 			if (publisher == null || publisher.trim().isEmpty()) {
 				this.isValidForms = false;
-				messages += "Copyright projects require a publisher.";
+				messages += "eDeposit project require a publisher.";
 			}
 		}
 		if (this.isValidForms) {
