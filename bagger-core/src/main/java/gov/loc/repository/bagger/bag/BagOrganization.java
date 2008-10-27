@@ -25,7 +25,7 @@ public class BagOrganization {
 
 	private String orgAddress = "";
 
-	private Contact contact;
+	private Contact contact = new Contact();
 
 	public String getOrgName() {
 		return this.orgName;
