@@ -1,48 +1,83 @@
 package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.bag.Manifest;
+import gov.loc.repository.bagger.util.RecursiveFileListIterator;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
+
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.richclient.application.Application;
+import org.springframework.richclient.progress.BusyIndicator;
 
 import java.awt.Dimension;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Vector;
 
-public class BagTree extends it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTree {
+public class BagTree extends CheckboxTree {
 	private static final long serialVersionUID = -5361474872106399068L;
 	private static final Log log = LogFactory.getLog(Manifest.class);
+	private static final int BAGTREE_WIDTH = 420; // 500 - 60 for Add button width
+	private static final int BAGTREE_HEIGHT = 180;
+	private static final int BAGTREE_ROW_MODIFIER = 22;
 
 	private File bagDir;
 	private DefaultTreeModel bagTreeModel;
 	private TreePath rootPath;
+	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+	private DefaultMutableTreeNode displayNode = null;
+	private ArrayList<File> rootTree;
 	
 	public BagTree() {
 		super();
-        setPreferredSize(getTreeSize());
+        init(new File("data"));
 	}
 
 	public BagTree(File file) {
 		super();
-    	DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-		rootNode = addNodes(null, file);
+		init(file);
+	}
+	
+	public void init(File file) {
+		rootNode = addNodes(null, null, file);
 		setModel(new DefaultTreeModel(rootNode));
-		setLargeModel(true);
-        setPreferredSize(getTreeSize());
         rootPath = new TreePath(rootNode.getPath());
-        setCheckingPath(rootPath);
+
+		setCheckingPath(rootPath);
         setAnchorSelectionPath(rootPath);
         makeVisible(rootPath);
         getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE);
+		setLargeModel(true);
+        setPreferredSize(getTreeSize());
         initListeners();
-//      expandAll();
+	}
+	
+	public void update(File file) {
+		// TODO: Will need to make rootTree and bagTree additive so won't create anew each time.
+        rootTree = new ArrayList<File>();
+    	RecursiveFileListIterator fit = new RecursiveFileListIterator(file);
+    	for (Iterator<File> it=fit; it.hasNext(); ) {
+            File f = it.next();
+            rootTree.add(f);
+        }
+		init(file);
+		requestFocus();
+		setScrollsOnExpand(true);
+	}
+
+	
+	public void setRootTree(ArrayList<File> rootTree) {
+		this.rootTree = rootTree;
+	}
+	
+	public ArrayList<File> getRootTree() {
+		return this.rootTree;
 	}
 	
 	private void initListeners() {
@@ -57,17 +92,19 @@ public class BagTree extends it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTr
         addTreeExpansionListener(new TreeExpansionListener() {
         	public void treeExpanded(TreeExpansionEvent e) {
             	TreePath epath = new TreePath(e.getPath().getLastPathComponent());
-                int rows = 20 * getRowCount();
-                setPreferredSize(new Dimension(500, rows));
-//                scrollPathToVisible(epath);
-//                makeVisible(epath);
+                int rows = BAGTREE_ROW_MODIFIER * getRowCount();
+                //System.out.println("BagTree rows: " + rows);
+                setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+                invalidate();
+                repaint();
         	}
         	public void treeCollapsed(TreeExpansionEvent e) {
             	TreePath epath = new TreePath(e.getPath().getLastPathComponent());
-                int rows = 20 * getRowCount();
-                setPreferredSize(new Dimension(500, rows));
-//                scrollPathToVisible(epath);
-//                makeVisible(epath);
+                int rows = BAGTREE_ROW_MODIFIER * getRowCount();
+                //System.out.println("BagTree rows: " + rows);
+                setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+                invalidate();
+                repaint();
         	}
         });
 	}
@@ -89,21 +126,27 @@ public class BagTree extends it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTr
 	}
 
     public Dimension getTreeSize() {
-    	return new Dimension(500, 190);
+    	return new Dimension(BAGTREE_WIDTH, BAGTREE_HEIGHT);
     }
 
 	/** Add nodes from under "dir" into curTop. Highly recursive. */
-	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir) {
-    	//display("createBagManagerTree: addNodes: " + dir.toString());
+	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, DefaultMutableTreeNode displayTop, File dir) {
 		String curPath = dir.getPath();
+		String displayPath = dir.getName();
 		DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(curPath);
+		DefaultMutableTreeNode displayDir = new DefaultMutableTreeNode(displayPath);
 		if (curTop != null) { // should only be null at root
+//			System.out.println("addNodes curTop: " + curPath);
 			curTop.add(curDir);
+			displayTop.add(displayDir);
 		}
 		Vector<String> ol = new Vector<String>();
+		//System.out.println("addNodes: " + dir.list());
 		String[] tmp = dir.list();
-		for (int i = 0; i < tmp.length; i++)
-			ol.addElement(tmp[i]);
+		if (tmp != null && tmp.length > 0) {
+			for (int i = 0; i < tmp.length; i++)
+				ol.addElement(tmp[i]);
+		}
 
 		Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
 		File f;
@@ -117,15 +160,21 @@ public class BagTree extends it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTr
 			else
 				newPath = curPath + File.separator + thisObject;
 			if ((f = new File(newPath)).isDirectory())
-				addNodes(curDir, f);
+				addNodes(curDir, displayDir, f);
 			else
 				files.addElement(thisObject);
 		}
 		// Pass two: for files.
     	//display("createBagManagerTree: files.size: " + files.size());
-		for (int fnum = 0; fnum < files.size(); fnum++)
-			curDir.add(new DefaultMutableTreeNode(files.elementAt(fnum)));
+		for (int fnum = 0; fnum < files.size(); fnum++) {
+			String elem = files.elementAt(fnum);
+			DefaultMutableTreeNode elemNode = new DefaultMutableTreeNode(elem);
+			//System.out.println("addNodes curDir: " + elem);
+			curDir.add(elemNode);
+			displayDir.add(elemNode);
+		}
 
-		return curDir;
+		//return curDir;
+		return displayDir;
 	}
 }
