@@ -1,7 +1,7 @@
 package gov.loc.repository.bagger.util;
 
 import gov.loc.repository.bagit.utilities.FilenameHelper;
-import gov.loc.repository.bagger.bag.Bag;
+import gov.loc.repository.bagger.bag.BaggerBag;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +27,7 @@ public class FileUtililties {
 
 	public static int BUFFER_SIZE = 10240;
 
-	public static String createZip(Bag bag, File rootDir) {
+	public static String createZip(BaggerBag baggerBag, File rootDir) {
 		String errorMessage = null;
 		File parentDir = rootDir.getParentFile();
 		File zipFile = new File(parentDir, rootDir.getName() + ".zip");
@@ -43,10 +43,10 @@ public class FileUtililties {
 		try {
 			if (errorMessage == null) {
 				String checksum = MD5Checksum.getMD5Checksum(zipFile.getAbsolutePath());
-		    	bag.setFile(zipFile);
-		    	bag.setSize(zipFile.length());
-		    	bag.setPath(zipFile.getParent());
-		    	bag.setChecksum(checksum);				
+		    	baggerBag.setFile(zipFile);
+		    	baggerBag.setSize(zipFile.length());
+		    	//baggerBag.setPath(zipFile.getParent());
+		    	//baggerBag.setChecksum(checksum);				
 			}
 		} catch (Exception e) {
 			errorMessage = "Error occured creating checksum for zip file: " + zipFile.getName() + " ->" + e.getMessage();
