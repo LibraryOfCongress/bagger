@@ -3,7 +3,7 @@ package gov.loc.repository.bagger.domain;
 
 import java.util.Date;
 
-import gov.loc.repository.bagger.bag.Bag;
+import gov.loc.repository.bagger.bag.BaggerBag;
 import gov.loc.repository.bagger.bag.BagInfo;
 import gov.loc.repository.bagger.bag.BagOrganization;
 import gov.loc.repository.bagger.Contact;
