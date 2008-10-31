@@ -37,6 +37,7 @@
       <list>
         <ref bean="newMenu" />
         <value>separator</value>
+        <ref bean="saveCommand" />
 <!--
         <ref bean="loginCommand" />
         <ref bean="logoutCommand" />
@@ -91,6 +92,9 @@
 
   <bean id="aboutCommand" class="org.springframework.richclient.command.support.AboutCommand">
     <property name="aboutTextPath" value="gov/loc/repository/bagger/about.txt" />
+  </bean>
+  
+  <bean id="saveCommand" class="gov.loc.repository.bagger.SaveCommand">
   </bean>
 
   <bean id="loginCommand" class="org.springframework.richclient.security.LoginCommand">
