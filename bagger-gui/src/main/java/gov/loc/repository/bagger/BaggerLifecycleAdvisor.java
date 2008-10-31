@@ -1,7 +1,7 @@
 
 package gov.loc.repository.bagger;
 
-import gov.loc.repository.bagger.bag.Bag;
+import gov.loc.repository.bagger.bag.BaggerBag;
 import java.awt.Dimension;
 
 import org.apache.commons.logging.Log;
