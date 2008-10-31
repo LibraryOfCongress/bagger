@@ -1,6 +1,6 @@
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.bag.Manifest;
+import gov.loc.repository.bagger.bag.BaggerManifest;
 import gov.loc.repository.bagger.util.RecursiveFileListIterator;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
 
@@ -22,9 +22,9 @@ import java.util.Vector;
 
 public class BagTree extends CheckboxTree {
 	private static final long serialVersionUID = -5361474872106399068L;
-	private static final Log log = LogFactory.getLog(Manifest.class);
-	private static final int BAGTREE_WIDTH = 420; // 500 - 60 for Add button width
-	private static final int BAGTREE_HEIGHT = 180;
+	private static final Log log = LogFactory.getLog(BaggerManifest.class);
+	private static final int BAGTREE_WIDTH = 400; // 500 - 60 for Add button width
+	private static final int BAGTREE_HEIGHT = 160;
 	private static final int BAGTREE_ROW_MODIFIER = 22;
 
 	private File bagDir;
@@ -96,7 +96,6 @@ public class BagTree extends CheckboxTree {
                 //System.out.println("BagTree rows: " + rows);
                 setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
                 invalidate();
-                repaint();
         	}
         	public void treeCollapsed(TreeExpansionEvent e) {
             	TreePath epath = new TreePath(e.getPath().getLastPathComponent());
@@ -104,7 +103,6 @@ public class BagTree extends CheckboxTree {
                 //System.out.println("BagTree rows: " + rows);
                 setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
                 invalidate();
-                repaint();
         	}
         });
 	}

@@ -4,11 +4,8 @@ package gov.loc.repository.bagger.ui;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Font;
 import java.awt.Color;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -17,20 +14,22 @@ import javax.swing.JLabel;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 
-import gov.loc.repository.bagger.bag.Bag;
+import gov.loc.repository.bagger.bag.BaggerBag;
 
 public class ConsolePane extends JPanel {
 	private static final long serialVersionUID = -4290352509246639528L;
 
 	public static final String CONSOLE_PANE = "consolePane";
-	private Dimension dimension = new Dimension(100, 300);
-	//private GridLayout layout = new GridLayout(0, 2, 10, 10);
+	private Dimension maxDimension = new Dimension(400, 400);
+	private Dimension preferredDimension = new Dimension(400, 200);
     private GridBagLayout layout = new GridBagLayout();
     private GridBagConstraints gbc = new GridBagConstraints();
     private String messages = new String();
+    private Color textBackground = new Color(240, 240, 240);
 
-    private Bag bag;
+    private BaggerBag baggerBag;
 
     public ConsolePane() {
         super();
@@ -38,27 +37,27 @@ public class ConsolePane extends JPanel {
         createFormControl();
     }
 
-    public ConsolePane(Bag bag) {
+    public ConsolePane(BaggerBag baggerBag) {
         super();
         this.setLayout(layout);
-        this.bag = bag;
+        this.baggerBag = baggerBag;
         createFormControl();
     }
     
-    public ConsolePane(Bag bag, String messages) {
+    public ConsolePane(BaggerBag baggerBag, String messages) {
         super();
         this.setLayout(layout);
-        this.bag = bag;
+        this.baggerBag = baggerBag;
         this.messages = messages;
         createFormControl();
     }
 
-    public void setBag(Bag bag) {
-    	this.bag = bag;
+    public void setBag(BaggerBag baggerBag) {
+    	this.baggerBag = baggerBag;
     }
     
-    public Bag getBag() {
-    	return this.bag;
+    public BaggerBag getBag() {
+    	return this.baggerBag;
     }
     
     public void setMessages(String messages) {
@@ -70,9 +69,9 @@ public class ConsolePane extends JPanel {
     }
 
     protected JComponent createFormControl() {
-    	this.setMaximumSize(dimension);
+    	this.setMaximumSize(maxDimension);
     	Dimension formDimension = new Dimension(150, 25);
-    	Dimension consoleDimension = new Dimension(300, 400);
+    	Dimension consoleDimension = new Dimension(300, 200);
         Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
 /* */
     	JLabel completeLabel = new JLabel("Is Complete? ");
@@ -84,8 +83,8 @@ public class ConsolePane extends JPanel {
         this.add(completeLabel);
 
         JCheckBox completeResult = new JCheckBox("");
-    	if (bag != null) {
-    		if (bag.getIsComplete()) completeResult.setSelected(true);
+    	if (baggerBag != null) {
+    		if (baggerBag.getIsComplete()) completeResult.setSelected(true);
     		else completeResult.setSelected(false);
     	}
     	completeResult.setPreferredSize(formDimension);
@@ -102,8 +101,8 @@ public class ConsolePane extends JPanel {
         this.add(validLabel);
 
         JCheckBox validResult = new JCheckBox("");
-    	if (bag != null) {
-    		if (bag.getIsValid()) validResult.setSelected(true);
+    	if (baggerBag != null) {
+    		if (baggerBag.getIsValid()) validResult.setSelected(true);
     		else validResult.setSelected(false);
     	}
     	validResult.setPreferredSize(formDimension);
@@ -120,8 +119,8 @@ public class ConsolePane extends JPanel {
         this.add(validMetaLabel);
 
         JCheckBox validMetaResult = new JCheckBox("");
-    	if (bag != null) {
-    		if (bag.getIsValidMetadata()) validMetaResult.setSelected(true);
+    	if (baggerBag != null) {
+    		if (baggerBag.getIsValidMetadata()) validMetaResult.setSelected(true);
     		else validMetaResult.setSelected(false);
     	}
     	validMetaResult.setPreferredSize(formDimension);
@@ -129,7 +128,7 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(validMetaResult, gbc);
         this.add(validMetaResult);
 
-        if (bag == null || (bag != null && bag.getIsSerial())) {
+        if (baggerBag == null || (baggerBag != null && baggerBag.getIsSerial())) {
         	JLabel serializedLabel = new JLabel("Is Packaged? ");
         	font = serializedLabel.getFont().deriveFont(Font.BOLD);
         	serializedLabel.setFont(font);
@@ -139,8 +138,8 @@ public class ConsolePane extends JPanel {
             this.add(serializedLabel);
 
             JCheckBox serializedResult = new JCheckBox("");
-        	if (bag != null) {
-        		if (bag.getIsSerialized()) serializedResult.setSelected(true);
+        	if (baggerBag != null) {
+        		if (baggerBag.getIsSerialized()) serializedResult.setSelected(true);
         		else serializedResult.setSelected(false);
         	}
         	serializedResult.setPreferredSize(formDimension);
@@ -149,21 +148,23 @@ public class ConsolePane extends JPanel {
             this.add(serializedResult);        	
         }
     	JTextArea serializedArea = new JTextArea(this.messages);
-    	if (bag != null) serializedArea.append("");
+    	if (baggerBag != null) serializedArea.append("");
     	serializedArea.setEditable(false);
     	serializedArea.setLineWrap(true);
     	serializedArea.setRows(20);
     	serializedArea.setColumns(10);
-    	serializedArea.setBackground(Color.LIGHT_GRAY);
+    	serializedArea.setBackground(textBackground);
     	serializedArea.setWrapStyleWord(true);
     	serializedArea.setAutoscrolls(true);
     	serializedArea.setPreferredSize(consoleDimension);
     	serializedArea.setBorder(BorderFactory.createLineBorder(Color.black));
         buildConstraints(gbc, 0, 4, 2, 4, 10, 10, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
-        layout.setConstraints(serializedArea, gbc);
-        this.add(serializedArea);
+        JScrollPane serializedPane = new JScrollPane(serializedArea);
+        layout.setConstraints(serializedPane, gbc);
+        this.add(serializedPane);
 
         this.setBorder(emptyBorder);
+        this.setPreferredSize(preferredDimension);
 /* */    	
     	return this;
     }

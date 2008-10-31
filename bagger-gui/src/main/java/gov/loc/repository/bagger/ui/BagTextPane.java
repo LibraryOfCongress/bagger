@@ -24,6 +24,7 @@ public class BagTextPane extends JTextPane {
 
 	private StyledDocument document;
     private String message = "";
+    private Color textBackground = new Color(240, 240, 240);
 
     public BagTextPane(String message) {
     	super();
@@ -33,7 +34,7 @@ public class BagTextPane extends JTextPane {
         this.setStyledDocument(document);
         this.setAutoscrolls(true);
         this.setEditable(false);
-        this.setBackground(Color.LIGHT_GRAY);
+        this.setBackground(textBackground);
     }
     
     public void setMessage(String message) {
@@ -66,28 +67,12 @@ public class BagTextPane extends JTextPane {
         StyleConstants.setBold(attributes, true);
         StyleConstants.setItalic(attributes, true);
 
-        // Insert content
-//        try {
-//         document.insertString(document.getLength(), "File Content", attributes);
-//        } catch (BadLocationException badLocationException) {
-//          log.error(badLocationException.getMessage());
-//        }
-
         // Third style for icon/component
         Style labelStyle = context.getStyle(StyleContext.DEFAULT_STYLE);
 
         Icon icon = new ImageIcon("Computer.gif");
         JLabel label = new JLabel(icon);
         StyleConstants.setComponent(labelStyle, label);
-
-        // Insert content
-/*
-        try {
-          document.insertString(document.getLength(), "Ignored", labelStyle);
-        } catch (BadLocationException badLocationException) {
-            log.error(badLocationException.getMessage());
-        }    	
-*/
     }
 
     public boolean requestFocusInWindow() {

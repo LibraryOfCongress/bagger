@@ -3,7 +3,7 @@ package gov.loc.repository.bagger.ui;
 
 import javax.swing.JComponent;
 
-import gov.loc.repository.bagger.bag.Manifest;
+import gov.loc.repository.bagger.bag.BaggerManifest;
 
 public class ManifestPane extends BagTextPane {
 	private static final long serialVersionUID = 28997773979305889L;

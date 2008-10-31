@@ -41,7 +41,7 @@ public class BagTreePanel extends JScrollPane {
     		}
     	}
     	init();
-    	validate();
+    	invalidate();
     	repaint();
     }
 }
