@@ -1,5 +1,10 @@
 package gov.loc.repository.bagger.bag;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,6 +12,8 @@ import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import gov.loc.repository.bagit.impl.AbstractBagConstants;
+import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
 import gov.loc.repository.bagger.FileEntity;
 
 /**
@@ -35,38 +42,40 @@ import gov.loc.repository.bagger.FileEntity;
  *
  * @author Jon Steinbach
  */
-public class BagInfo extends FileEntity {
+public class BagInfo extends BagInfoTxtImpl {
 	private static final Log log = LogFactory.getLog(BagInfo.class);
 
-	private Bag bag;
+	private BaggerBag baggerBag;
 	private String bagName = new String("bag_1");
 	private BagOrganization bagOrganization = new BagOrganization();
-	private String externalDescription = "";
 	private String baggingDate = ""; // YYYY-MM-DD
-	private String externalIdentifier = "";
-	private String bagSize = "";
-	private String payloadOssum = "";
-	private String bagGroupIdentifier = "";
-	private String bagCount = "1 of 1";
-	private String internalSenderIdentifier = "";
-	private String internalSenderDescription = "";
 	private String publisher = "";
 	private String awardeePhase = "";
 	private boolean isCopyright = false;
 	private boolean isNdnp = false;
 	public HashMap<String,String> bagInfoRules;
+	private String name;
+	private String content;
 
-	public BagInfo(Bag bag) {
-		super();
-		this.bag = bag;
-		this.setIsCopyright(bag.getIsCopyright());
+	public BagInfo(BaggerBag baggerBag) {
+		super(baggerBag.getBagConstants());
+		this.baggerBag = baggerBag;
+		init();
+		baggerBag.setName(bagName);
+	}
+		
+	private void init() {
+		this.setBagOrganization(new BagOrganization());
+		this.baggerBag = baggerBag;
+		this.setIsCopyright(baggerBag.getIsCopyright());
 		bagInfoRules = initRules();
 	    String pattern = "yyyy-MM-dd";
 	    SimpleDateFormat formatter = new SimpleDateFormat(pattern);
 		Date todaysDate = new Date();
 		this.baggingDate = formatter.format(todaysDate);
+		this.setBaggingDate(baggingDate);		
 	}
-	
+
 	public void setIsCopyright(boolean b) {
 		this.isCopyright = b;
 	}
@@ -100,17 +109,16 @@ public class BagInfo extends FileEntity {
 	}
 
 	public void setBagOrganization(BagOrganization bagOrganization) {
-		this.bagOrganization = bagOrganization;
-		this.bagOrganization.setOrgName(bagOrganization.getOrgName());
-		this.bagOrganization.setOrgAddress(bagOrganization.getOrgAddress());
+		this.setSourceOrganization(bagOrganization.getOrgName());
+		this.setOrganizationAddress(bagOrganization.getOrgAddress());
 		if (bagOrganization.getContact() == null) {
-			this.bagOrganization.getContact().setContactName("");
-			this.bagOrganization.getContact().setTelephone("");
-			this.bagOrganization.getContact().setEmail("");
+			this.setContactName("");
+			this.setContactPhone("");
+			this.setContactEmail("");
 		} else {
-			this.bagOrganization.getContact().setContactName(bagOrganization.getContact().getContactName());
-			this.bagOrganization.getContact().setTelephone(bagOrganization.getContact().getTelephone());
-			this.bagOrganization.getContact().setEmail(bagOrganization.getContact().getEmail());			
+			this.setContactName(bagOrganization.getContact().getContactName());
+			this.setContactPhone(bagOrganization.getContact().getTelephone());
+			this.setContactEmail(bagOrganization.getContact().getEmail());
 		}
 	}
 
@@ -118,86 +126,6 @@ public class BagInfo extends FileEntity {
 		return this.bagOrganization;
 	}
 
-	public void setExternalDescription(String description) {
-		this.externalDescription = description;
-	}
-
-	public String getExternalDescription() {
-		return this.externalDescription;
-	}
-
-	public void setBaggingDate(String bagDate) {
-		this.baggingDate = bagDate;
-	}
-
-	public String getBaggingDate() {
-		return this.baggingDate;
-	}
-
-	public void setExternalIdentifier(String externalIdentifier) {
-		this.externalIdentifier = externalIdentifier;
-	}
-
-	public String getExternalIdentifier() {
-		return this.externalIdentifier;
-	}
-
-	public void setBagSize(String bagSize) {
-		this.bagSize = bagSize;
-	}
-
-	public String getBagSize() {
-		return this.bagSize;
-	}
-	
-	/* 
-	 * The "octetstream sum" of the payload, namely, a two-part number of the form "OctetCount.StreamCount", 
-	 * where OctetCount is the total number of octets (8-bit bytes) across all payload file content and 
-	 * StreamCount is the total number of payload files. Payload-Ossum is easy to compute 
-	 * (e.g., on Unix "wc -lc `find data/ -type f`" does the hard part) and should be included in 
-	 * "bag-info.txt" if at all possible. Compared to Bag-Size (above), Payload-Ossum is more intended for 
-	 * machine consumption. 
-	 */
-	public void setPayloadOssum(String ossum) {
-		this.payloadOssum = ossum;
-	}
-	
-	public String getPayloadOssum() {
-		return this.payloadOssum;
-	}
-
-	public void setBagGroupIdentifier(String bagGroupIdentifier) {
-		this.bagGroupIdentifier = bagGroupIdentifier;
-	}
-
-	public String getBagGroupIdentifier() {
-		return this.bagGroupIdentifier;
-	}
-
-	public void setBagCount(String bagCount) {
-		this.bagCount = bagCount;
-	}
-
-	public String getBagCount() {
-		return this.bagCount;
-	}
-
-	public void setInternalSenderIdentifier(String internalSenderIdentifier) {
-		this.internalSenderIdentifier = internalSenderIdentifier;
-	}
-
-	public String getInternalSenderIdentifier() {
-		return this.internalSenderIdentifier;
-	}
-
-	public void setInternalSenderDescription(String internalSenderDescription) {
-		this.internalSenderDescription = internalSenderDescription;
-	}
-
-	public String getInternalSenderDescription() {
-		return this.internalSenderDescription;
-	}
-	
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
 	}
@@ -218,46 +146,46 @@ public class BagInfo extends FileEntity {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Source-Organization: ");
-		sb.append(bagOrganization.getOrgName());
+		sb.append(this.getSourceOrganization());
 		sb.append('\n');
 		sb.append("Organization-Address: ");
-		sb.append(bagOrganization.getOrgAddress());
+		sb.append(this.getOrganizationAddress());
 		sb.append('\n');
 		sb.append("Contact-Name: ");
-		sb.append(bagOrganization.getContact().getContactName());
+		sb.append(this.getContactName());
 		sb.append('\n');
 		sb.append("Contact-Phone: ");
-		sb.append(bagOrganization.getContact().getTelephone());
+		sb.append(this.getContactPhone());
 		sb.append('\n');
 		sb.append("Contact-Email: ");
-		sb.append(bagOrganization.getContact().getEmail());
+		sb.append(this.getContactEmail());
 		sb.append('\n');
 		sb.append("External-Description: ");
-		sb.append(this.externalDescription);
+		sb.append(this.getExternalDescription());
 		sb.append('\n');
 		sb.append("Bagging-Date: ");
-		sb.append(this.baggingDate);
+		sb.append(this.getBaggingDate());
 		sb.append('\n');
 		sb.append("External-Identifier: ");
-		sb.append(this.externalIdentifier);
+		sb.append(this.getExternalIdentifier());
 		sb.append('\n');
 		sb.append("Bag-Size: ");
-		sb.append(this.bagSize);
+		sb.append(this.getBagSize());
 		sb.append('\n');
 		sb.append("Payload-Ossum: ");
-		sb.append(this.payloadOssum);
+		sb.append(this.getPayloadOssum());
 		sb.append('\n');
 		sb.append("Bag-Group-Identifier: ");
-		sb.append(this.bagGroupIdentifier);
+		sb.append(this.getBagGroupIdentifier());
 		sb.append('\n');
 		sb.append("Bag-Count: ");
-		sb.append(this.bagCount);
+		sb.append(this.getBagCount());
 		sb.append('\n');
 		sb.append("Internal-Sender-Identifier: ");
-		sb.append(this.internalSenderIdentifier);
+		sb.append(this.getInternalSenderIdentifier());
 		sb.append('\n');
 		sb.append("Internal-Sender-Description: ");
-		sb.append(this.internalSenderDescription);
+		sb.append(this.getInternalSenderDescription());
 		sb.append('\n');
 		sb.append("Publisher: ");
 		sb.append(this.publisher);
@@ -269,10 +197,44 @@ public class BagInfo extends FileEntity {
 		return sb.toString();
 	}
 
-	public void writeData() {
-		this.fromString(toString());
+	public void setName(String name) {
+		this.name = name;
 	}
 	
+	public String getName() {
+		return this.name;
+	}
+
+	public void setContent(String data) {
+		this.content = data;
+	}
+
+	public String getContent() {
+		return this.content;
+	}
+	
+	public String write(File rootDir) {
+		String message = null;
+		try
+		{
+			File file = new File(rootDir, name);
+			Writer writer = new OutputStreamWriter(new FileOutputStream(file), AbstractBagConstants.BAG_ENCODING);
+			writer.write(this.toString());
+			writer.close();
+//			this.setFile(file);
+		}
+		catch(IOException e)
+		{
+			message = e.getMessage();
+			log.error("EXCEPTION: FileEntity.write: " + e.getMessage());
+		}
+		return message;
+	}
+
+	public void writeData() {
+		this.getContent();
+	}
+
 	public HashMap<String,String> initRules() {
 		HashMap<String,String> rules = new HashMap<String,String>();
 		rules.put("Source-Organization", "required");
@@ -289,7 +251,7 @@ public class BagInfo extends FileEntity {
 		rules.put("Bag-Count", "");
 		rules.put("Internal-Sender-Identifier", "");
 		rules.put("Internal-Sender-Description", "");
-		if (bag.getIsCopyright()) {
+		if (baggerBag.getIsCopyright()) {
 			rules.put("Publisher", "required");
 		} else {
 			rules.put("Publisher", "");
