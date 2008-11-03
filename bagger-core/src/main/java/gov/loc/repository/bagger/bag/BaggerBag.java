@@ -49,9 +49,9 @@ public class BaggerBag extends BagImpl {
 	private static final Log log = LogFactory.getLog(BaggerBag.class);
 
 	private Date createDate;
-	private File rootSrc;
+	private List<BaggerFileEntity> rootSrc;
 	private File rootDir;
-	private List<File> rootTree;
+	private List<BaggerFileEntity> rootTree;
 	private String name;
 	private long size;
 	private File file;
@@ -80,7 +80,8 @@ public class BaggerBag extends BagImpl {
 	}
 	
 	public void generate() {
-        if (rootTree == null) rootTree = new ArrayList<File>();
+		if (rootSrc == null) rootSrc = new ArrayList<BaggerFileEntity>();
+        if (rootTree == null) rootTree = new ArrayList<BaggerFileEntity>();
         if (fetch == null) fetch = new Fetch(this);
 		if (bagIt == null) bagIt = new BagIt(getBagConstants());
 		if (bagInfo == null) bagInfo = new BagInfo(this);
@@ -92,7 +93,6 @@ public class BaggerBag extends BagImpl {
     	manifest.setType(ManifestType.MD5);
     	data.setSizeFiles(manifest.getTotalSize());
     	data.setNumFiles(manifest.getNumFiles());
-//    	this.setData(data);
     	ArrayList<BaggerManifest> mset = new ArrayList<BaggerManifest>();
     	mset.add(manifest);
     	this.setBaggerManifests(mset);
@@ -114,7 +114,7 @@ public class BaggerBag extends BagImpl {
 		isNewBag = false;
         setRootDir(rootDir);
         gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir);	
-        if (rootTree == null) rootTree = new ArrayList<File>();
+        if (rootTree == null) rootTree = new ArrayList<BaggerFileEntity>();
 		fetch = (Fetch) bagitBag.getFetchTxt();
 		BagItTxt bagItTxt = bagitBag.getBagItTxt();
 		bagIt.setEncoding(bagItTxt.getCharacterEncoding());
@@ -145,10 +145,10 @@ public class BaggerBag extends BagImpl {
 		System.out.println("BaggerBag.openBag");
 		for (int i=0; i < listManifest.length; i++) {
 			BagFile bagFile = (BagFile) listManifest[i];
-			System.out.println("openBagFile: " + bagFile.getFilepath());
 			File file = new File(rootDir, bagFile.getFilepath());
-			System.out.println("newFile: " + file.getAbsolutePath());
-			rootTree.add(file);
+			System.out.println("BaggerBag.addTree: " + file.getAbsolutePath());
+			BaggerFileEntity bfe = new BaggerFileEntity(file);
+			rootTree.add(bfe);
 		}
 		data.setFiles(rootTree);
 
@@ -198,11 +198,11 @@ public class BaggerBag extends BagImpl {
 		return this.file;
 	}
 
-	public void setRootTree(List<File> rootTree) {
+	public void setRootTree(List<BaggerFileEntity> rootTree) {
 		this.rootTree = rootTree;
 	}
 	
-	public List<File> getRootTree() {
+	public List<BaggerFileEntity> getRootTree() {
 		return this.rootTree;
 	}
 
@@ -222,12 +222,12 @@ public class BaggerBag extends BagImpl {
 		return this.project;
 	}
 
-	public void setRootSrc(File rootSrc) {
-		this.rootSrc = rootSrc;
+	public List<BaggerFileEntity> getRootSrc() {
+		return this.rootSrc;
 	}
 	
-	public File getRootSrc() {
-		return this.rootSrc;
+	public boolean addRootSrc(BaggerFileEntity src) {
+		return this.rootSrc.add(src);
 	}
 	
 	public void setRootDir(File rootDir) {
@@ -498,19 +498,29 @@ public class BaggerBag extends BagImpl {
 			messages += cleanup();
 			return messages;
 	    }
-		display("Bag.write: create and write data directory");
-		File parent = this.getRootSrc();
-		try
-		{
-			display("Bag.write copyFiles: " + parent.getAbsolutePath() + " to: " + dataDir.getAbsolutePath());
-			FileUtililties.copyFiles(parent, dataDir);
-		}
-		catch(IOException e)
-		{
-	    	messages += reportError(messages, "ERROR in BagView.write copyFiles: " + e.getMessage());
-	    	log.error(messages);
-			messages += cleanup();
-	    	return messages;
+		display("Bag.write: create and write list of src data to the bag data directory");
+		// TODO: for each source directory added, copy that directory to the bag directory
+		List<BaggerFileEntity> srcList = this.getRootSrc();
+		for (int i=0; i<srcList.size(); i++) {
+			BaggerFileEntity bfe = srcList.get(i);
+			if (!bfe.getIsInBag()) {
+				File srcDir = bfe.getRootSrc().getParentFile();
+				try
+				{
+					// TODO: Create the tree list of selected nodes, then in copyFiles 
+					// check to see whether file to be copy is in the nodes list otherwise 
+					// don't copy it.  If it already exists it needs to be deleted.
+					display("Bag.write copyFiles: " + srcDir.getAbsolutePath() + " to: " + dataDir.getAbsolutePath());
+					FileUtililties.copyFiles(srcDir, dataDir);
+				}
+				catch(IOException e)
+				{
+			    	messages += reportError(messages, "ERROR in BagView.write copyFiles: " + e.getMessage());
+			    	log.error(messages);
+					messages += cleanup();
+			    	return messages;
+				}				
+			}
 		}
 		return messages;
 	}
