@@ -71,7 +71,6 @@ public class BagTree extends CheckboxTree {
 		log.info("buildNodes getRoot: " + rootNode.getRoot());
 		srcNodes.add(rootNode);
 		parentNode = rootNode;
-//		parentNode.add(rootNode);
 		initialize();
 	}
 
@@ -80,7 +79,7 @@ public class BagTree extends CheckboxTree {
         RecursiveFileListIterator fit = new RecursiveFileListIterator(file);
     	for (Iterator<File> it=fit; it.hasNext(); ) {
             File f = it.next();
-            //log.info("BagTree.addRootTree: " + f.getAbsolutePath());
+            log.info("BagTree.addRootTree: " + f.getAbsolutePath());
             BaggerFileEntity bfe = new BaggerFileEntity(parent, f, bagRoot);
             rootTree.add(bfe);
         }
