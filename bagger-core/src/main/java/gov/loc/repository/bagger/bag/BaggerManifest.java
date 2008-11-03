@@ -118,39 +118,40 @@ public class BaggerManifest extends ManifestImpl {
 	
 	private void buildManifestList() {
 		log.debug("Manifest.buildManifestList begin...");
-		System.out.println("BaggerManifest.buildManifestList");
 		// add data files to manifest
 		totalSize = 0;
 		numFiles = 0;
 		Collection<BagFile> bagFileList = baggerBag.getPayloadFiles();
 //		Object[] fileList = bagFileList.toArray();
-		List<File> fileList = data.getFiles();
+		List<BaggerFileEntity> fileList = data.getFiles();
 		manifestList = new ArrayList<FileEntity>();
 		int size = fileList.size();
-		System.out.println("buildManifestList: " + size);
+		log.info("buildManifestList: " + size);
 		for (int i=0; i < size; i++) {
 //			BagFile bagFile = (BagFile) fileList[i];
 //			File file = new File(bagFile.getFilepath());
-			File file = fileList.get(i);
-			System.out.println("buildManifestList: " + file.getAbsolutePath());
-			FileEntity fileEntity = new FileEntity();
-			fileEntity.setFile(file);
-			numFiles++;
-			long fileSize = file.length();
-			totalSize += fileSize;
-			fileEntity.setSize(fileSize);
-			String filename = file.getAbsolutePath();
-			File parent = this.baggerBag.getRootSrc();
-			if (parent != null) log.debug("Manifest.buildManifestList parent: " + parent.getAbsolutePath() + ", filename: " + filename);
-			try {
-				String checksum = MD5Checksum.getMD5Checksum(filename);
-				fileEntity.setChecksum(checksum);
-				fileEntity.setName(filename);
-				fileEntity.setPath(file.getParent());
-			} catch (Exception e) {
-				log.error("Manifest.buildManifestList checksum: " + e);
+			BaggerFileEntity bfe = fileList.get(i);
+			if (bfe.getIsIncluded()) {
+				File file = bfe.getRootSrc();
+				//System.out.println("buildManifestList: " + file.getAbsolutePath());
+				FileEntity fileEntity = new FileEntity();
+				fileEntity.setFile(file);
+				numFiles++;
+				long fileSize = file.length();
+				totalSize += fileSize;
+				fileEntity.setSize(fileSize);
+				String filename = file.getAbsolutePath();
+				try {
+					String checksum = MD5Checksum.getMD5Checksum(filename);
+					fileEntity.setChecksum(checksum);
+					fileEntity.setName(bfe.getNormalizedName());
+//					fileEntity.setName(filename);
+					fileEntity.setPath(bfe.getRootParent().getAbsolutePath());
+				} catch (Exception e) {
+					log.error("Manifest.buildManifestList checksum: " + e);
+				}
+				manifestList.add(fileEntity);				
 			}
-			manifestList.add(fileEntity);
 		}
 		log.debug("finished...Manifest.buildManifestList");
 	}
@@ -183,14 +184,11 @@ public class BaggerManifest extends ManifestImpl {
 /* */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		File parent = this.baggerBag.getRootSrc();
-        System.out.println("BaggerManifest.toString rootSrc" + baggerBag.getRootSrc().getAbsolutePath());
 		for (int i=0; i < manifestList.size(); i++) {
 			FileEntity fe = manifestList.get(i);
 			sb.append(fe.getChecksum());
 			sb.append("  " + AbstractBagConstants.DATA_DIRECTORY + "/");
 			String filename = fe.getName();
-			if (parent != null) filename = FilenameHelper.removeBasePath(parent.getAbsolutePath(), fe.getName());
 			sb.append(filename);
 			sb.append('\n');
 		}
