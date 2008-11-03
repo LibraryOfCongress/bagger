@@ -245,12 +245,9 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } else {
                 	bagInfoInputPane.setSelectedIndex(0);
                 }
-/* */
-                String messages = bagInfoInputPane.updateForms(baggerBag);
-                messages += updateMessages(messages);
-                messages += updateProfile();
-                bagDisplayPane.updateTabs(baggerBag, messages);
-/* */
+                if (bagInfoInputPane.hasFormErrors()) {
+                	infoFormMessagePane.setMessage(formErrorsMessage);
+                }
                 bagInfoInputPane.invalidate();
             }
         });
