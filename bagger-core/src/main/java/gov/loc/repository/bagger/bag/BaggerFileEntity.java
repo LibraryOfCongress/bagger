@@ -33,7 +33,7 @@ public class BaggerFileEntity {
 	private File rootSrc;					// c:\\user\my documents\datadir\dir1\file1
 	private File bagParent;					// c:\\user\my documents\bag\
 	private File bagSrc;					// c:\\user\my documents\bag\data\datadir\dir1\file
-	private String normalizedName;
+	private String normalizedName;			// datadir\dir1\file1
 	private boolean isInBag = false;
 	private boolean isIncluded = true;
 
@@ -49,14 +49,12 @@ public class BaggerFileEntity {
 		this.rootSrc = rootSrc;
 		this.bagParent = bagParent;
     	File bagDataDir = new File(bagParent, AbstractBagConstants.DATA_DIRECTORY);
-    	this.normalizedName = removeBasePath(rootParent.getAbsolutePath(), rootSrc.getAbsolutePath());           	
-//		log.info("BaggerFileEntity.normalizedName: " + normalizedName);
+    	this.normalizedName = removeBasePath(rootParent.getAbsolutePath(), rootSrc.getAbsolutePath());
 		this.bagSrc = new File(bagDataDir, normalizedName);
-//		log.info("BaggerFileEntity.bagSrc: " + this.bagSrc.getAbsolutePath());
-		
 		if (this.rootSrc.getAbsolutePath().equalsIgnoreCase(this.bagSrc.getAbsolutePath())) {
 			isInBag = true;
 		}
+//		log.info("BaggerFileEntity.bagSrc: " + this.bagSrc.getAbsolutePath());		
 	}
 
 	public BaggerFileEntity(File rootParent, File rootSrc, File bagParent, File bagSrc) {
@@ -150,6 +148,8 @@ public class BaggerFileEntity {
 		}		
 		String normBasePath = normalize(basePath);
 		String normFilename = normalize(filename);
+		//log.info("normBasePath: " + normBasePath + " [" + normBasePath.length() + "]");
+		//log.info("normFilename: " + normFilename);
 		String filenameWithoutBasePath = null;
 		if (basePath == null) {
 			filenameWithoutBasePath = normFilename;
@@ -162,9 +162,11 @@ public class BaggerFileEntity {
 				filenameWithoutBasePath = "";
 			}
 			else {
-				int delta = 0; // if MS 0, else 1
+				int delta;
+				if (normBasePath.endsWith("/") || normBasePath.endsWith("\\")) delta = 0;
+				else delta = 1;
 				filenameWithoutBasePath = normFilename.substring(normBasePath.length() + delta);
-//				System.out.println("filenamewithoutbasepath: " + filenameWithoutBasePath);
+				//log.info("filenamewithoutbasepath: " + filenameWithoutBasePath);
 			}
 		}
 		log.debug(MessageFormat.format("Removing {0} from {1} resulted in {2}", basePath, filename, filenameWithoutBasePath));
