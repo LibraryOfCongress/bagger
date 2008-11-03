@@ -120,7 +120,7 @@ public class BaggerBag extends BagImpl {
 		isNewBag = false;
         setRootDir(rootDir);
         gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir);	
-		fetch = (Fetch) bagitBag.getFetchTxt();
+
 		BagItTxt bagItTxt = bagitBag.getBagItTxt();
 		bagIt.setEncoding(bagItTxt.getCharacterEncoding());
 		bagIt.setVersion(bagItTxt.getVersion());
@@ -144,43 +144,6 @@ public class BaggerBag extends BagImpl {
 		this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
 		this.bagInfo.setInternalSenderIdentifier(bagInfoTxt.getInternalSenderIdentifier());
 		this.bagInfo.setPayloadOssum(bagInfoTxt.getPayloadOssum());
-/*
-		Collection<BagFile> bagFiles = bagitBag.getPayloadFiles();
-		Object[] listManifest = bagFiles.toArray();
-		File parentSrc = rootDir.getParentFile().getAbsoluteFile();
-		for (int i=0; i < listManifest.length; i++) {
-			BagFile bagFile = (BagFile) listManifest[i];
-			File file = new File(rootDir, bagFile.getFilepath());
-			System.out.println("BaggerBag.openBag addTree: " + file.getAbsolutePath());
-	    	BaggerFileEntity bfe = new BaggerFileEntity(parentSrc, file, getRootDir());
-			rootTree.add(bfe);
-		}
-*/
-		data.setFiles(rootTree);
-
-		String fname = AbstractBagConstants.PAYLOAD_MANIFEST_PREFIX + ManifestType.MD5 + AbstractBagConstants.PAYLOAD_MANIFEST_SUFFIX;
-		List<gov.loc.repository.bagit.Manifest> manifests = bagitBag.getPayloadManifests();
-    	BaggerManifest manifest = new BaggerManifest(fname, this);
-    	manifest.setType(ManifestType.MD5);
-    	data.setSizeFiles(manifest.getTotalSize());
-    	data.setNumFiles(manifest.getNumFiles());
-    	this.setData(data);
-    	ArrayList<BaggerManifest> mset = new ArrayList<BaggerManifest>();
-    	mset.add(manifest);
-    	this.setBaggerManifests(mset);
-
-    	ArrayList<BaggerTagManifest> tmset = new ArrayList<BaggerTagManifest>();
-		List<gov.loc.repository.bagit.Manifest> tagManifests = bagitBag.getTagManifests();
-    	List<BaggerTagManifest> tagManifestList = this.getBaggerTagManifests();
-    	if (tagManifestList == null || tagManifestList.isEmpty()) {
-    		for (int i=0; i<tagManifests.size(); i++) {
-    			gov.loc.repository.bagit.Manifest tagManifest = tagManifests.get(i);
-            	BaggerTagManifest bagTagManifest = new BaggerTagManifest(this);
-            	bagTagManifest.setType(ManifestType.MD5);
-            	tmset.add(bagTagManifest);
-    		}
-        	this.setBaggerTagManifests(tmset);
-    	}
 	}
 	
 	public void setName(String name) {
@@ -254,16 +217,7 @@ public class BaggerBag extends BagImpl {
 	public List<BaggerManifest> getBaggerManifests() {
 		return this.baggerManifests;
 	}
-/*
-	public List<Manifest> getManifests() {
-		return this.getPayloadManifests();
-	}
 
-	public void addManifest(Manifest manifest) {
-		this.addManifest(manifest);
-	}
- */
-/* */
 	public void setBaggerTagManifests(List<BaggerTagManifest> tagManifests) {
 		this.baggerTagManifests = tagManifests;
 	}
