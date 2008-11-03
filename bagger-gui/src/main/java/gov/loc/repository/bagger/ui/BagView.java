@@ -245,7 +245,13 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } else {
                 	bagInfoInputPane.setSelectedIndex(0);
                 }
-            	bagInfoInputPane.invalidate();
+/* */
+                String messages = bagInfoInputPane.updateForms(baggerBag);
+                messages += updateMessages(messages);
+                messages += updateProfile();
+                bagDisplayPane.updateTabs(baggerBag, messages);
+/* */
+                bagInfoInputPane.invalidate();
             }
         });
     	// Create a panel for the form error messages and the update button
@@ -648,20 +654,29 @@ public class BagView extends AbstractView implements ApplicationListener {
 	// TODO: create a new empty bag
     private void newBag(File file) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-    	bagRootPath = file;
     	String messages = "";
         messages = bagInfoInputPane.updateForms(baggerBag);
-//    	messages += baggerBag.createBagDir(file);
-    	messages += updateMessages(messages);
+        log.info("BagView.newBag.getName: " + baggerBag.getName());
+    	bagRootPath = file;
+    	log.info("BagView.newBag: " + file.getAbsolutePath() + ", bag: " + baggerBag.getName());
+    	try {
+    		File rootDir = new File(file.getAbsolutePath(), baggerBag.getName());
+    		baggerBag.setRootDir(rootDir);    		
+        	messages += updateMessages(messages);
+    	} catch (Exception e) {
+        	messages += "\n" + "Failed to create new bag: " + baggerBag.getName();    		
+    	}
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
     private void openExistingBag(File file) {
     	String messages = "";
-		baggerBag.setRootSrc(new File(file, AbstractBagConstants.DATA_DIRECTORY));
+    	File rootSrc = new File(file, AbstractBagConstants.DATA_DIRECTORY);
+    	BaggerFileEntity bfe = new BaggerFileEntity(rootSrc);
+		baggerBag.addRootSrc(bfe);
 		baggerBag.openBag(file);
-    	bagTree.init(baggerBag.getRootSrc());
-    	bagTreePanel.update(bagTree);
+    	bagTree.addNodes(rootSrc);
+    	bagTreePanel.refresh(bagTree);
     	baggerBag.generate(); // TODO: Is this needed since openBag was already called!
         bagInfoInputPane.populateForms(baggerBag);
         messages = bagInfoInputPane.updateForms(baggerBag);
@@ -676,34 +691,23 @@ public class BagView extends AbstractView implements ApplicationListener {
     private void addBagData(File file) {
     	String messages = "";
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-    	baggerBag.addPayload(file);
-    	File addSrc = file.getAbsoluteFile();
+    	File parentSrc = file.getParentFile().getAbsoluteFile();
+    	log.info("BagView.addBagData parent: " + parentSrc.getAbsolutePath());
+    	log.info("BagView.addBagData: " + file.getAbsolutePath());
+    	log.info("BagView.BagRootDir: " + baggerBag.getRootDir());
 
-        if (baggerBag.getIsNewBag()) {
-/*
-        	List<File> rootTree = baggerBag.getRootTree();
-			Collection<BagFile> bagFiles = baggerBag.getPayloadFiles();
-			Object[] listManifest = bagFiles.toArray();
-			System.out.println("addBagData---- ");
-			for (int i=0; i < listManifest.length; i++) {
-				BagFile bagFile = (BagFile) listManifest[i];
-				File f = new File(bagFile.getFilepath());
-				System.out.println("addBagData: " + f.getAbsolutePath());
-				rootTree.add(f);
-			}
-			baggerBag.setRootTree(rootTree);
-*/
-//	    	bagTree.init(file);
-	        bagTree.update(file);
-//			baggerBag.setRootSrc(new File(baggerBag.getRootDir(), AbstractBagConstants.DATA_DIRECTORY));
-	        baggerBag.setRootSrc(file);
-	        baggerBag.setRootTree(bagTree.getRootTree());
-	    	bagTreePanel.update(bagTree);
-	    	baggerBag.generate();
-        } else {
-        	baggerBag.addPayload(file);
-        }
-        messages += "Files have been added to the bag from: " + file.getName();
+    	baggerBag.addPayload(file);
+
+    	BaggerFileEntity bfe = new BaggerFileEntity(parentSrc, file, baggerBag.getRootDir());
+    	bagTree.addNodes(bfe);
+        bagTree.addTree(parentSrc, file, baggerBag.getRootDir());
+        baggerBag.addRootSrc(bfe);
+
+        baggerBag.setRootTree(bagTree.getRootTree());
+    	bagTreePanel.refresh(bagTree);
+    	baggerBag.generate();
+
+    	messages += "Files have been added to the bag from: " + file.getName();
     	bagDisplayPane.updateTabs(baggerBag, messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
