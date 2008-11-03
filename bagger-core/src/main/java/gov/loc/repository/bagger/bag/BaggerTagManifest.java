@@ -50,18 +50,18 @@ public class BaggerTagManifest extends FileEntity {
 	private void buildTagManifestList() {
 		// add data files to manifest
 		List<File> fileList = new ArrayList<File>();
-		File bagItFile = new File(AbstractBagConstants.BAGIT_TXT);
+		File bagItFile = new File(baggerBag.getRootDir(), AbstractBagConstants.BAGIT_TXT);
 		fileList.add(bagItFile);
-		File bagInfoFile = new File(AbstractBagConstants.BAGINFO_TXT);
+		File bagInfoFile = new File(baggerBag.getRootDir(), AbstractBagConstants.BAGINFO_TXT);
 		fileList.add(bagInfoFile);
     	if (this.baggerBag.getIsHoley()) {
-    		File fetchFile = new File(AbstractBagConstants.FETCH_TXT);
+    		File fetchFile = new File(baggerBag.getRootDir(), AbstractBagConstants.FETCH_TXT);
     		fileList.add(fetchFile);
     	}
 		List<BaggerManifest> mlist = this.baggerBag.getBaggerManifests();
 		for (int m=0; m < mlist.size(); m++) {
 			BaggerManifest manifest = mlist.get(m);
-			File mfile = new File(manifest.getName());
+			File mfile = new File(baggerBag.getRootDir(), manifest.getName());
 			fileList.add(mfile);
 		}
 
@@ -116,7 +116,11 @@ public class BaggerTagManifest extends FileEntity {
 			sb.append(fe.getChecksum());
 			sb.append("  ");
 			String filename = fe.getName();
-			if (parent != null) filename = FilenameHelper.removeBasePath(parent.getAbsolutePath(), fe.getName());
+			try {
+				if (parent != null && filename != null) filename = FilenameHelper.removeBasePath(parent.getAbsolutePath(), fe.getName());
+			} catch (Exception e) {
+				log.error("BaggerTagmanifest.toString: " + e.getMessage());
+			}
 			sb.append(filename);
 			sb.append('\n');
 		}
