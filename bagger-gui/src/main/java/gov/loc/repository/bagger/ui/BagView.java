@@ -672,6 +672,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     	BaggerFileEntity bfe = new BaggerFileEntity(rootSrc);
 		baggerBag.addRootSrc(bfe);
 		baggerBag.openBag(file);
+		baggerBag.setName(file.getName());
+		baggerBag.setRootDir(file);
+		baggerBag.getInfo().setName(file.getName());
     	bagTree.addNodes(rootSrc);
     	bagTreePanel.refresh(bagTree);
     	baggerBag.generate(); // TODO: Is this needed since openBag was already called!
