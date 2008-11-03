@@ -245,6 +245,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } else {
                 	bagInfoInputPane.setSelectedIndex(0);
                 }
+                String messages = bagInfoInputPane.verifyForms(baggerBag);
                 if (bagInfoInputPane.hasFormErrors()) {
                 	infoFormMessagePane.setMessage(formErrorsMessage);
                 }
@@ -668,16 +669,26 @@ public class BagView extends AbstractView implements ApplicationListener {
     
     private void openExistingBag(File file) {
     	String messages = "";
-    	File rootSrc = new File(file, AbstractBagConstants.DATA_DIRECTORY);
-    	BaggerFileEntity bfe = new BaggerFileEntity(rootSrc);
-		baggerBag.addRootSrc(bfe);
 		baggerBag.openBag(file);
 		baggerBag.setName(file.getName());
 		baggerBag.setRootDir(file);
 		baggerBag.getInfo().setName(file.getName());
-    	bagTree.addNodes(rootSrc);
+    	File rootSrc = new File(file, AbstractBagConstants.DATA_DIRECTORY);
+
+		bagTree.addNodes(rootSrc);
+		File[] listFiles = rootSrc.listFiles();
+		for (int i=0; i<listFiles.length; i++) {
+			File f = listFiles[i];
+			System.out.println("listFiles: " + f.getAbsolutePath());
+	    	BaggerFileEntity bfeSrc = new BaggerFileEntity(rootSrc, f, baggerBag.getRootDir());
+	        bagTree.addTree(rootSrc, f, baggerBag.getRootDir());
+	        baggerBag.addRootSrc(bfeSrc);
+		}
+
+        baggerBag.setRootTree(bagTree.getRootTree());
     	bagTreePanel.refresh(bagTree);
-    	baggerBag.generate(); // TODO: Is this needed since openBag was already called!
+    	baggerBag.generate();
+
         bagInfoInputPane.populateForms(baggerBag);
         messages = bagInfoInputPane.updateForms(baggerBag);
         messages += updateMessages(messages);
