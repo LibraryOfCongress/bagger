@@ -111,10 +111,15 @@ public class BaggerBag extends BagImpl {
 	
 	// TODO: If zip read contents, else open bag and call createBag(file)
 	public void openBag(File rootDir) {
+		if (rootSrc == null) rootSrc = new ArrayList<BaggerFileEntity>();
+        if (rootTree == null) rootTree = new ArrayList<BaggerFileEntity>();
+        if (fetch == null) fetch = new Fetch(this);
+		if (bagIt == null) bagIt = new BagIt(getBagConstants());
+		if (bagInfo == null) bagInfo = new BagInfo(this);
+        if (data == null) data = new Data();
 		isNewBag = false;
         setRootDir(rootDir);
         gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir);	
-        if (rootTree == null) rootTree = new ArrayList<BaggerFileEntity>();
 		fetch = (Fetch) bagitBag.getFetchTxt();
 		BagItTxt bagItTxt = bagitBag.getBagItTxt();
 		bagIt.setEncoding(bagItTxt.getCharacterEncoding());
@@ -139,17 +144,18 @@ public class BaggerBag extends BagImpl {
 		this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
 		this.bagInfo.setInternalSenderIdentifier(bagInfoTxt.getInternalSenderIdentifier());
 		this.bagInfo.setPayloadOssum(bagInfoTxt.getPayloadOssum());
-
+/*
 		Collection<BagFile> bagFiles = bagitBag.getPayloadFiles();
 		Object[] listManifest = bagFiles.toArray();
-		System.out.println("BaggerBag.openBag");
+		File parentSrc = rootDir.getParentFile().getAbsoluteFile();
 		for (int i=0; i < listManifest.length; i++) {
 			BagFile bagFile = (BagFile) listManifest[i];
 			File file = new File(rootDir, bagFile.getFilepath());
-			System.out.println("BaggerBag.addTree: " + file.getAbsolutePath());
-			BaggerFileEntity bfe = new BaggerFileEntity(file);
+			System.out.println("BaggerBag.openBag addTree: " + file.getAbsolutePath());
+	    	BaggerFileEntity bfe = new BaggerFileEntity(parentSrc, file, getRootDir());
 			rootTree.add(bfe);
 		}
+*/
 		data.setFiles(rootTree);
 
 		String fname = AbstractBagConstants.PAYLOAD_MANIFEST_PREFIX + ManifestType.MD5 + AbstractBagConstants.PAYLOAD_MANIFEST_SUFFIX;
@@ -163,13 +169,16 @@ public class BaggerBag extends BagImpl {
     	mset.add(manifest);
     	this.setBaggerManifests(mset);
 
+    	ArrayList<BaggerTagManifest> tmset = new ArrayList<BaggerTagManifest>();
 		List<gov.loc.repository.bagit.Manifest> tagManifests = bagitBag.getTagManifests();
     	List<BaggerTagManifest> tagManifestList = this.getBaggerTagManifests();
     	if (tagManifestList == null || tagManifestList.isEmpty()) {
-        	ArrayList<BaggerTagManifest> tmset = new ArrayList<BaggerTagManifest>();
-        	BaggerTagManifest tagManifest = new BaggerTagManifest(this);
-        	tagManifest.setType(ManifestType.MD5);
-        	tmset.add(tagManifest);
+    		for (int i=0; i<tagManifests.size(); i++) {
+    			gov.loc.repository.bagit.Manifest tagManifest = tagManifests.get(i);
+            	BaggerTagManifest bagTagManifest = new BaggerTagManifest(this);
+            	bagTagManifest.setType(ManifestType.MD5);
+            	tmset.add(bagTagManifest);
+    		}
         	this.setBaggerTagManifests(tmset);
     	}
 	}
@@ -245,15 +254,15 @@ public class BaggerBag extends BagImpl {
 	public List<BaggerManifest> getBaggerManifests() {
 		return this.baggerManifests;
 	}
-	
+/*
 	public List<Manifest> getManifests() {
-		return this.getManifests();
+		return this.getPayloadManifests();
 	}
 
 	public void addManifest(Manifest manifest) {
 		this.addManifest(manifest);
 	}
-/* */
+ */
 /* */
 	public void setBaggerTagManifests(List<BaggerTagManifest> tagManifests) {
 		this.baggerTagManifests = tagManifests;
@@ -504,14 +513,15 @@ public class BaggerBag extends BagImpl {
 		for (int i=0; i<srcList.size(); i++) {
 			BaggerFileEntity bfe = srcList.get(i);
 			if (!bfe.getIsInBag()) {
-				File srcDir = bfe.getRootSrc().getParentFile();
+				File srcDir = bfe.getRootSrc();
 				try
 				{
 					// TODO: Create the tree list of selected nodes, then in copyFiles 
 					// check to see whether file to be copy is in the nodes list otherwise 
 					// don't copy it.  If it already exists it needs to be deleted.
 					display("Bag.write copyFiles: " + srcDir.getAbsolutePath() + " to: " + dataDir.getAbsolutePath());
-					FileUtililties.copyFiles(srcDir, dataDir);
+					File rootFile = new File(dataDir, srcDir.getName());
+					FileUtililties.copyFiles(srcDir, rootFile);
 				}
 				catch(IOException e)
 				{

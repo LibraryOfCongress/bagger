@@ -50,13 +50,20 @@ public class BaggerTagManifest extends FileEntity {
 	private void buildTagManifestList() {
 		// add data files to manifest
 		List<File> fileList = new ArrayList<File>();
-//		fileList.add(this.baggerBag.getBagIt().getFile());
-//		fileList.add(this.baggerBag.getInfo().getFile());
-//    	if (this.baggerBag.getIsHoley()) fileList.add(this.baggerBag.getFetch().getFile());
-//		List<Manifest> mlist = this.baggerBag.getManifests();
-//		for (int m=0; m < mlist.size(); m++) {
-//			fileList.add(mlist.get(m).getFile());
-//		}
+		File bagItFile = new File(AbstractBagConstants.BAGIT_TXT);
+		fileList.add(bagItFile);
+		File bagInfoFile = new File(AbstractBagConstants.BAGINFO_TXT);
+		fileList.add(bagInfoFile);
+    	if (this.baggerBag.getIsHoley()) {
+    		File fetchFile = new File(AbstractBagConstants.FETCH_TXT);
+    		fileList.add(fetchFile);
+    	}
+		List<BaggerManifest> mlist = this.baggerBag.getBaggerManifests();
+		for (int m=0; m < mlist.size(); m++) {
+			BaggerManifest manifest = mlist.get(m);
+			File mfile = new File(manifest.getName());
+			fileList.add(mfile);
+		}
 
 		//log.info("TagManifest.buildTagManifestList::" + fileList.size() );
 		tagManifestList = new ArrayList<FileEntity>();
