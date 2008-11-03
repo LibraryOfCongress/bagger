@@ -36,7 +36,7 @@ public class BagInfoInputPane extends JTabbedPane {
     private OrganizationContactForm userContactForm = null;
 	private String username;
 	private Contact user;
-	private Color selectedColor = new Color(200, 200, 220);
+	private Color selectedColor = new Color(180, 180, 200);
 	private Color unselectedColor = Color.black; //new Color(140, 140, 160);
 
     public BagInfoInputPane(BaggerBag b, String username, Contact c, JPanel bagSettingsPanel ) {
@@ -143,7 +143,7 @@ public class BagInfoInputPane extends JTabbedPane {
         bagSettingsPanel.setForeground(selectedColor);
     }
 
-    public String updateForms(BaggerBag baggerBag) {
+    public String verifyForms(BaggerBag baggerBag) {
         String messages = "";
 
         if (!userContactForm.hasErrors()) {
@@ -197,6 +197,14 @@ public class BagInfoInputPane extends JTabbedPane {
         if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors()) {
         	messages = "Bag Information form errors exist.\n";
         }
+        
+        return messages;
+    }
+    
+    public String updateForms(BaggerBag baggerBag) {
+        String messages = "";
+
+        messages = verifyForms(baggerBag);
         updateProfileForms();
         update();
         // TODO:
