@@ -3,9 +3,7 @@ package gov.loc.repository.bagger.ui;
 import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.BaggerManifest;
 import gov.loc.repository.bagger.util.RecursiveFileListIterator;
-import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
-import gov.loc.repository.bagit.utilities.FilenameHelper;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
 
 import javax.swing.event.TreeExpansionListener;
@@ -18,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Vector;
@@ -73,7 +70,8 @@ public class BagTree extends CheckboxTree {
 		log.info("buildNodes rootNode parent: " + rootNode.getParent());
 		log.info("buildNodes getRoot: " + rootNode.getRoot());
 		srcNodes.add(rootNode);
-		parentNode.add(rootNode);
+		parentNode = rootNode;
+//		parentNode.add(rootNode);
 		initialize();
 	}
 
@@ -88,6 +86,14 @@ public class BagTree extends CheckboxTree {
         }
 	}
 
+	public void setParentNode(DefaultMutableTreeNode parent) {
+		this.parentNode = parent;
+	}
+	
+	public DefaultMutableTreeNode getParentNode() {
+		return this.parentNode;
+	}
+	
 	public void setRootTree(ArrayList<BaggerFileEntity> rootTree) {
 		this.rootTree = rootTree;
 	}
