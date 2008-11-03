@@ -27,8 +27,7 @@ import gov.loc.repository.bagger.FileEntity;
 public class Data extends FileEntity {
 	private static final Log log = LogFactory.getLog(Data.class);
 
-	private List<File> files;
-	private List<FileEntity> data;
+	private List<BaggerFileEntity> files;
 	private long sizeFiles = 0;
 	private int numFiles = 0;
 
@@ -42,11 +41,11 @@ public class Data extends FileEntity {
 		return this.tree;
 	}
 
-	public void setFiles(List<File> files) {
+	public void setFiles(List<BaggerFileEntity> files) {
 		this.files = files;
 	}
 
-	public List<File> getFiles() {
+	public List<BaggerFileEntity> getFiles() {
 		return this.files;
 	}
 	
@@ -74,8 +73,11 @@ public class Data extends FileEntity {
 			sb.append(AbstractBagConstants.DATA_DIRECTORY + "/");
 			sb.append('\n');
 	    	for (int i=0; i < files.size(); i++) {
-	    		sb.append(files.get(i).toString());
-	    		sb.append('\n');
+	    		BaggerFileEntity bfe = files.get(i);
+	    		if (bfe.getIsIncluded()) {
+		    		sb.append(bfe.toString());
+		    		sb.append('\n');	    			
+	    		}
 	    	}
 		}
 		return sb.toString();
