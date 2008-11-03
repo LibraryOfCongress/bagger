@@ -184,6 +184,14 @@ public class BagInfoInputPane extends JTabbedPane {
         newOrganization.setContact(newContact);
         newInfo.setBagOrganization(newOrganization);
         baggerBag.setInfo(newInfo);
+        baggerBag.setName(newInfo.getName());
+        System.out.println("bagInfoInputPane.newInfo.getName: " + newInfo.getName());
+        if (newInfo.getName() == null) {
+        	System.out.println("info.getName: " + baggerBag.getInfo().getName());
+        	baggerBag.setName(baggerBag.getInfo().getName());
+        }
+        System.out.println("BagInfoInputPane.baggerBag.getName: " + baggerBag.getName());
+        if (baggerBag.getName() == null) baggerBag.setName("bag_1");
 //        setBag(bag);
 
         if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors()) {
