@@ -20,6 +20,7 @@ import gov.loc.repository.bagit.utilities.SimpleResult;
 import gov.loc.repository.bagit.VerifyStrategy;
 import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.BagItTxt;
+import gov.loc.repository.bagit.FetchTxt;
 import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
 import gov.loc.repository.bagit.verify.RequiredBagInfoTxtFieldsStrategy;
 
@@ -67,6 +68,7 @@ public class BaggerBag extends BagImpl {
     private boolean isNewBag = true;
 	private boolean isHoley = false;
 	private boolean isSerial = true;
+	private boolean isCleanup = false;
 	private boolean isFetch = false;	
 	private boolean isComplete = false;	
 	private boolean isValid = false;
@@ -79,7 +81,15 @@ public class BaggerBag extends BagImpl {
 		super();
 	}
 	
+	private void reset() {
+		this.isComplete = false;
+		this.isValid = false;
+		this.isValidMetadata = false;
+		this.isSerialized = false;
+	}
+	
 	public void generate() {
+		reset();
 		if (rootSrc == null) rootSrc = new ArrayList<BaggerFileEntity>();
         if (rootTree == null) rootTree = new ArrayList<BaggerFileEntity>();
         if (fetch == null) fetch = new Fetch(this);
@@ -111,6 +121,7 @@ public class BaggerBag extends BagImpl {
 	// The opens the given rootDir and tries to create a new bag out of it.
 	// TODO: If zip read contents, else open bag and call createBag(file)
 	public void openBag(File rootDir) {
+		reset();
 		if (rootSrc == null) rootSrc = new ArrayList<BaggerFileEntity>();
         if (rootTree == null) rootTree = new ArrayList<BaggerFileEntity>();
         if (fetch == null) fetch = new Fetch(this);
@@ -123,7 +134,9 @@ public class BaggerBag extends BagImpl {
 
 		BagItTxt bagItTxt = bagitBag.getBagItTxt();
 		bagIt.setEncoding(bagItTxt.getCharacterEncoding());
-		bagIt.setVersion(bagItTxt.getVersion());
+		System.out.println("bagIt version: " + bagItTxt.getVersion());
+		if (bagItTxt.getVersion() != null && !bagItTxt.getVersion().isEmpty() && !bagItTxt.getVersion().equalsIgnoreCase("null"))
+			bagIt.setVersion(bagItTxt.getVersion());
 
         BagInfoTxt bagInfoTxt = bagitBag.getBagInfoTxt();
 		BagOrganization bagOrganization = this.bagInfo.getBagOrganization();
@@ -181,11 +194,10 @@ public class BaggerBag extends BagImpl {
     	ArrayList<BaggerTagManifest> tagManifestList = new ArrayList<BaggerTagManifest>();
 		List<gov.loc.repository.bagit.Manifest> tagManifests = bagitBag.getTagManifests();
     	if (tagManifests != null && !tagManifests.isEmpty()) {
-    		System.out.println("BaggerBag.openBag tagManifests: " + tagManifests.size() );
         	for (int i=0; i < tagManifests.size(); i++) {
         		gov.loc.repository.bagit.Manifest manifest = tagManifests.get(i);
         		this.putTagFile(manifest);
-        		System.out.println("BaggerBag.openBag manifest: " + manifest.toString() );
+        		
         		BaggerTagManifest tagManifest = new BaggerTagManifest(this);
             	tagManifest.setType(ManifestType.MD5);
             	tagManifest.fromString(manifest.toString());
@@ -193,6 +205,13 @@ public class BaggerBag extends BagImpl {
         	}
         	this.setBaggerTagManifests(tagManifestList);
     	}
+/* */
+    	FetchTxt fetchTxt = bagitBag.getFetchTxt();
+    	if (fetchTxt != null && !fetchTxt.isEmpty()) {
+    		this.setIsHoley(true);
+    		this.fetch.setContent(fetchTxt.toString());
+    	}
+/* */
 	}
 	
 	public void setName(String name) {
@@ -328,6 +347,14 @@ public class BaggerBag extends BagImpl {
 		return this.isNewBag;
 	}
 	
+	public void setIsCleanup(boolean b) {
+		this.isCleanup = b;
+	}
+	
+	public boolean getIsCleanup() {
+		return this.isCleanup;
+	}
+	
 	public void setIsHoley(boolean b) {
 		this.isHoley = b;
 	}
@@ -418,7 +445,9 @@ public class BaggerBag extends BagImpl {
 				}
 				if (this.isValidMetadata) {
 					messages += serializeBag();
-					messages += cleanup();
+					if (this.isCleanup) {
+						messages += cleanup();
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -432,7 +461,7 @@ public class BaggerBag extends BagImpl {
 	public String createBagDir(File path) {
 		boolean success = false;
 		String messages = "";
-		display("Bag.write: create and open bag name directory");
+		display("Bag.write: create and open bag: " + path.getAbsolutePath() + " " + this.getName());
 		display("Bag.writePath: " + path.getAbsolutePath() + "/" + this.getName());
 		messages += "Create and open bag name directory.\n";
 		if (path.getAbsolutePath() == null || this.getName() == null) {
@@ -513,7 +542,7 @@ public class BaggerBag extends BagImpl {
 	    if (!success) {
 	    	messages += reportError(messages, "ERROR in BagView.write failed to create directory: " + dataDir);
 			log.error(messages);
-			messages += cleanup();
+			if (this.isCleanup)	messages += cleanup();
 			return messages;
 	    }
 		display("Bag.write: create and write list of src data to the bag data directory");
@@ -535,9 +564,9 @@ public class BaggerBag extends BagImpl {
 				{
 			    	messages += reportError(messages, "ERROR in BagView.write copyFiles: " + e.getMessage());
 			    	log.error(messages);
-					messages += cleanup();
+					if (this.isCleanup) messages += cleanup();
 			    	return messages;
-				}				
+				}
 			}
 		}
 		return messages;
@@ -578,6 +607,7 @@ public class BaggerBag extends BagImpl {
 	}
 	
 	public String validateAndBag() {
+		reset();
 		gov.loc.repository.bagit.Bag bagitBag = this;
 		String messages = "";
 		System.out.println("validateAndBag: " + this.rootDir.getAbsolutePath());
