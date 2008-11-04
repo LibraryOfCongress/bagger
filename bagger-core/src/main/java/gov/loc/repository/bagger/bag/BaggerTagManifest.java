@@ -69,7 +69,7 @@ public class BaggerTagManifest extends FileEntity {
 		tagManifestList = new ArrayList<FileEntity>();
 		for (int i=0; i < fileList.size(); i++) {
 			File file = fileList.get(i);
-			if (file != null) {
+			if (file != null && file.exists()) {
 				//log.info("TagManifest.fileList: " + file.getName() );
 				FileEntity fileEntity = new FileEntity();
 				fileEntity.setFile(file);
