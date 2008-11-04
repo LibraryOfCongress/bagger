@@ -93,35 +93,35 @@ public class CompositePane extends JTabbedPane {
     	consolePane = new ConsolePane();
     	consoleScrollPane.setViewportView(consolePane);
     	this.addTab("Console", consoleScrollPane);
-    	consolePane.setForeground(unselectedColor);
+    	//consolePane.setForeground(unselectedColor);
     	consoleScrollPane.setForeground(unselectedColor);
     	
     	manifestScrollPane = new JScrollPane();
     	manifestPane = new ManifestPane();
     	manifestScrollPane.setViewportView(manifestPane);
     	this.addTab("Manifest", manifestScrollPane);
-    	manifestPane.setForeground(selectedColor);
+    	//manifestPane.setForeground(selectedColor);
     	manifestScrollPane.setForeground(selectedColor);
 
     	tagManifestScrollPane = new JScrollPane();
     	tagManifestPane = new ManifestPane();
     	tagManifestScrollPane.setViewportView(tagManifestPane);
     	this.addTab("TagManifest", tagManifestScrollPane);
-    	tagManifestPane.setForeground(selectedColor);
+    	//tagManifestPane.setForeground(selectedColor);
     	tagManifestScrollPane.setForeground(selectedColor);
 
     	bagInfoScrollPane = new JScrollPane();
         bagInfoPane = new BagInfoPane();
         bagInfoScrollPane.setViewportView(bagInfoPane);
         this.addTab("Bag It Info", bagInfoScrollPane);
-        bagInfoPane.setForeground(selectedColor);
+        //bagInfoPane.setForeground(selectedColor);
         bagInfoScrollPane.setForeground(selectedColor);
 
         dataScrollPane = new JScrollPane();
     	dataPane = new DataPane();
     	dataScrollPane.setViewportView(dataPane);
     	this.addTab("Data", dataScrollPane);
-    	dataPane.setForeground(selectedColor);
+    	//dataPane.setForeground(selectedColor);
     	dataScrollPane.setForeground(selectedColor);
     	
     	fetchScrollPane = new JScrollPane();
@@ -130,14 +130,14 @@ public class CompositePane extends JTabbedPane {
     	if (this.baggerBag.getIsHoley()) {
             this.addTab("Fetch", fetchScrollPane);    		
     	}
-    	fetchPane.setForeground(selectedColor);
+    	//fetchPane.setForeground(selectedColor);
     	fetchScrollPane.setForeground(selectedColor);
 
         bagItScrollPane = new JScrollPane();
         bagItPane = new BagItPane();
         bagItScrollPane.setViewportView(bagItPane);
         this.addTab("Bag It", bagItScrollPane);
-        bagItPane.setForeground(selectedColor);
+        //bagItPane.setForeground(selectedColor);
         bagItScrollPane.setForeground(selectedColor);
     }
     
@@ -148,7 +148,7 @@ public class CompositePane extends JTabbedPane {
     	consolePane = new ConsolePane(baggerBag, messages);
     	consoleScrollPane.setViewportView(consolePane);
     	this.addTab("Console", consoleScrollPane);
-    	consolePane.setForeground(selectedColor);
+    	//consolePane.setForeground(selectedColor);
     	consoleScrollPane.setForeground(unselectedColor);
 
     	String mcontent = new String();
@@ -167,7 +167,7 @@ public class CompositePane extends JTabbedPane {
     	manifestPane = new ManifestPane(mcontent);
     	manifestScrollPane.setViewportView(manifestPane);
     	this.addTab("Manifest", manifestScrollPane);
-    	manifestPane.setForeground(selectedColor);
+    	//manifestPane.setForeground(selectedColor);
     	manifestScrollPane.setForeground(selectedColor);
 
     	String tmcontent = new String();
@@ -186,21 +186,21 @@ public class CompositePane extends JTabbedPane {
     	tagManifestPane = new ManifestPane(tmcontent);
     	tagManifestScrollPane.setViewportView(tagManifestPane);
     	this.addTab("TagManifest", tagManifestScrollPane);
-    	tagManifestPane.setForeground(selectedColor);
+    	//tagManifestPane.setForeground(selectedColor);
     	tagManifestScrollPane.setForeground(selectedColor);
 
     	bagInfoScrollPane = new JScrollPane();
         bagInfoPane = new BagInfoPane(baggerBag.getInfo());
         bagInfoScrollPane.setViewportView(bagInfoPane);
         this.addTab("Bag It Info", bagInfoScrollPane);
-        bagInfoPane.setForeground(selectedColor);
+        //bagInfoPane.setForeground(selectedColor);
         bagInfoScrollPane.setForeground(selectedColor);
 
         dataScrollPane = new JScrollPane();
     	dataPane = new DataPane(baggerBag.getData());
     	dataScrollPane.setViewportView(dataPane);
     	this.addTab("Data", dataScrollPane);
-    	dataPane.setForeground(selectedColor);
+    	//dataPane.setForeground(selectedColor);
     	dataScrollPane.setForeground(selectedColor);
 
     	fetchScrollPane = new JScrollPane();
@@ -208,7 +208,7 @@ public class CompositePane extends JTabbedPane {
     	fetchScrollPane.setViewportView(fetchPane);
     	if (this.baggerBag.getIsHoley()) {
             this.addTab("Fetch", fetchScrollPane);    		
-            fetchPane.setForeground(selectedColor);
+            //fetchPane.setForeground(selectedColor);
         	fetchScrollPane.setForeground(selectedColor);
     	}
 
@@ -216,7 +216,7 @@ public class CompositePane extends JTabbedPane {
         bagItPane = new BagItPane(baggerBag.getBagIt());
         bagItScrollPane.setViewportView(bagItPane);
         this.addTab("Bag It", bagItScrollPane);
-        bagItPane.setForeground(selectedColor);
+        //bagItPane.setForeground(selectedColor);
         bagItScrollPane.setForeground(selectedColor);
     }
 
