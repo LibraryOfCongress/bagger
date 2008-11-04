@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
-import gov.loc.repository.bagger.FileEntity;
 
 /**
  * Simple JavaBean domain object representing bagit information.
@@ -43,6 +42,8 @@ import gov.loc.repository.bagger.FileEntity;
  * @author Jon Steinbach
  */
 public class BagInfo extends BagInfoTxtImpl {
+	private static final long serialVersionUID = 1L;
+
 	private static final Log log = LogFactory.getLog(BagInfo.class);
 
 	private BaggerBag baggerBag;
@@ -60,13 +61,12 @@ public class BagInfo extends BagInfoTxtImpl {
 	public BagInfo(BaggerBag baggerBag) {
 		super(baggerBag.getBagConstants());
 		this.baggerBag = baggerBag;
-		init();
+		setup();
 		baggerBag.setName(bagName);
 	}
 		
-	private void init() {
+	private void setup() {
 		this.setBagOrganization(new BagOrganization());
-		this.baggerBag = baggerBag;
 		this.setIsCopyright(baggerBag.getIsCopyright());
 		bagInfoRules = initRules();
 	    String pattern = "yyyy-MM-dd";
@@ -127,7 +127,7 @@ public class BagInfo extends BagInfoTxtImpl {
 	}
 
 	public void setPublisher(String publisher) {
-		this.publisher = publisher;
+		if (publisher != null) this.publisher = publisher;
 	}
 	
 	public String getPublisher() {
@@ -135,7 +135,7 @@ public class BagInfo extends BagInfoTxtImpl {
 	}
 	
 	public void setAwardeePhase(String phase) {
-		this.awardeePhase = phase;
+		if (phase != null) this.awardeePhase = phase;
 	}
 	
 	public String getAwardeePhase() {
