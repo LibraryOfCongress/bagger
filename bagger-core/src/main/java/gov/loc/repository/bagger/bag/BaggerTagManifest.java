@@ -126,6 +126,7 @@ public class BaggerTagManifest extends FileEntity {
 		}
 
 		//log.info("TagManifest.toString:: " + sb.toString());
+		this.fromString(sb.toString());
 		return sb.toString();
 	}
 
