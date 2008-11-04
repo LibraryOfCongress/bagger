@@ -3,6 +3,7 @@ package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.*;
 import gov.loc.repository.bagger.bag.*;
+import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
@@ -245,9 +246,10 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } else {
                 	bagInfoInputPane.setSelectedIndex(0);
                 }
-                String messages = bagInfoInputPane.verifyForms(baggerBag);
                 if (bagInfoInputPane.hasFormErrors()) {
                 	infoFormMessagePane.setMessage(formErrorsMessage);
+                } else {
+                	infoFormMessagePane.setMessage("");
                 }
                 bagInfoInputPane.invalidate();
             }
@@ -673,13 +675,13 @@ public class BagView extends AbstractView implements ApplicationListener {
 		baggerBag.setName(file.getName());
 		baggerBag.setRootDir(file);
 		baggerBag.getInfo().setName(file.getName());
-    	File rootSrc = new File(file, AbstractBagConstants.DATA_DIRECTORY);
+    	bagRootPath = file.getParentFile();
 
-		bagTree.addNodes(rootSrc);
+		File rootSrc = new File(file, AbstractBagConstants.DATA_DIRECTORY);
+		bagTree.addParentNode(rootSrc);
 		File[] listFiles = rootSrc.listFiles();
 		for (int i=0; i<listFiles.length; i++) {
 			File f = listFiles[i];
-			System.out.println("listFiles: " + f.getAbsolutePath());
 	    	BaggerFileEntity bfeSrc = new BaggerFileEntity(rootSrc, f, baggerBag.getRootDir());
 	        bagTree.addTree(rootSrc, f, baggerBag.getRootDir());
 	        baggerBag.addRootSrc(bfeSrc);
@@ -694,11 +696,10 @@ public class BagView extends AbstractView implements ApplicationListener {
         messages += updateMessages(messages);
         messages += updateProfile();
         messages += "Files have been added to the bag from: " + file.getName();
+        bagInfoInputPane.update();
     	bagDisplayPane.updateTabs(baggerBag, messages);
     }
 
-	// TODO: call openBag and add contents to the current bag data directory
-	// Add directory to bag, then retrieve payload from bag to create the tree
     private void addBagData(File file) {
     	String messages = "";
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
@@ -710,7 +711,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	baggerBag.addPayload(file);
 
     	BaggerFileEntity bfe = new BaggerFileEntity(parentSrc, file, baggerBag.getRootDir());
-    	bagTree.addNodes(bfe);
+    	bagTree.addNodes(file);
         bagTree.addTree(parentSrc, file, baggerBag.getRootDir());
         baggerBag.addRootSrc(bfe);
 
