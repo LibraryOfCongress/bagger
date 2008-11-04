@@ -54,9 +54,9 @@ public class BagTree extends CheckboxTree {
 		setScrollsOnExpand(true);		
 	}
 
-	public void addNodes(BaggerFileEntity file) {
+	public void addNodes(File file) {
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-		rootNode = addNodes(null, null, file.getRootSrc());
+		rootNode = addNodes(null, null, file);
 		log.info("buildNodes rootNode parent: " + rootNode.getParent());
 		log.info("buildNodes getRoot: " + rootNode.getRoot());
 		srcNodes.add(rootNode);
@@ -64,7 +64,7 @@ public class BagTree extends CheckboxTree {
 		initialize();
 	}
 
-	public void addNodes(File file) {
+	public void addParentNode(File file) {
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 		rootNode = addNodes(null, null, file);
 		log.info("buildNodes rootNode parent: " + rootNode.getParent());
