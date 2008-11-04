@@ -9,7 +9,7 @@ import java.io.Writer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import gov.loc.repository.bagger.FileEntity;
+import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.Bag.BagConstants;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
@@ -32,10 +32,11 @@ examplebag/
  * @author Jon Steinbach
  */
 public class BagIt extends BagItTxtImpl {
+	private static final long serialVersionUID = 1L;
 	private static final Log log = LogFactory.getLog(BagIt.class);
 
 	private String versionLabel = "BagIt-version: ";
-	private String version = "0.96";
+	private String version = BagFactory.LATEST.versionString;
 	private String encodingLabel = "Tag-File-Character-Encoding: ";
 	private String encoding = AbstractBagConstants.BAG_ENCODING; // Currently the only encoding type allowed for meta-data files
 	private String name;
@@ -50,6 +51,7 @@ public class BagIt extends BagItTxtImpl {
 	}
 
 	public void setVersion(String version) {
+		;
 		this.version = version;
 	}
 
