@@ -105,9 +105,7 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("INSERT INTO projects VALUES (1, 'eDeposit')");
         template.execute("INSERT INTO projects VALUES (2, 'ndiip')");
         template.execute("INSERT INTO projects VALUES (3, 'ndnp')");
-        template.execute("INSERT INTO projects VALUES (4, 'wdl')");
-        template.execute("INSERT INTO projects VALUES (5, 'transfer')");
-        template.execute("INSERT INTO projects VALUES (6, 'admin')");
+        template.execute("INSERT INTO projects VALUES (4, 'transfer')");
 
         // "CREATE TABLE contact_types (id, name");
         template.execute("INSERT INTO contact_types VALUES (1, 'library of congress');");
@@ -136,20 +134,20 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("INSERT INTO contact VALUES (6, 4, 6, 3, 'jak@ucop.edu', '202-555-7373');");
 
         // "CREATE TABLE profile (id, username, profile_person_id, project_id, contact_id, status, create_date");
-        // "(1, 'eDeposit')(2, 'ndiip')(3, 'ndnp')(4, 'wdl')(5, 'transfer')(6, 'admin')");
-        template.execute("INSERT INTO profile VALUES (1, 'jste', 1, 6, 2, 'A', '2008-09-18')");
-        template.execute("INSERT INTO profile VALUES (2, 'jste', 1, 1, 3, 'A', '2008-10-20')");
-        template.execute("INSERT INTO profile VALUES (3, 'jste', 1, 5, 4, 'A', '2008-10-20')");
-        template.execute("INSERT INTO profile VALUES (4, 'lesliej', 2, 5, 2, 'A', '2008-08-06')");
-        template.execute("INSERT INTO profile VALUES (5, 'jkunze', 6, 3, 4, 'A', '2002-04-17')");
-        template.execute("INSERT INTO profile VALUES (6, 'aboyko', 3, 5, 3, 'D', '2002-04-17')");
+        // "(1, 'eDeposit')(2, 'ndiip')(3, 'ndnp')(4, 'transfer')");
+        template.execute("INSERT INTO profile VALUES (1, 'jste',    1, 4, 2, 'A', '2008-09-18')");
+        template.execute("INSERT INTO profile VALUES (2, 'jste',    1, 1, 3, 'A', '2008-10-20')");
+        template.execute("INSERT INTO profile VALUES (3, 'jste',    1, 3, 4, 'A', '2008-10-20')");
+        template.execute("INSERT INTO profile VALUES (4, 'lesliej', 2, 4, 6, 'A', '2008-08-06')");
+        template.execute("INSERT INTO profile VALUES (5, 'jkunze',  4, 3, 3, 'A', '2002-04-17')");
+        template.execute("INSERT INTO profile VALUES (6, 'aboyko',  3, 4, 5, 'D', '2002-04-17')");
 
         // "CREATE TABLE person_projects (person_id, project_id");
         template.execute("INSERT INTO person_projects VALUES (1, 1);");
-        template.execute("INSERT INTO person_projects VALUES (1, 5);");
-        template.execute("INSERT INTO person_projects VALUES (1, 6);");
-        template.execute("INSERT INTO person_projects VALUES (2, 5);");
-        template.execute("INSERT INTO person_projects VALUES (6, 5);");
+        template.execute("INSERT INTO person_projects VALUES (1, 3);");
+        template.execute("INSERT INTO person_projects VALUES (1, 4);");
+        template.execute("INSERT INTO person_projects VALUES (2, 4);");
+        template.execute("INSERT INTO person_projects VALUES (6, 2);");
 
         // "CREATE TABLE user_contact (username, contact_id");
         template.execute("INSERT INTO user_contact VALUES ('jste', 1);");
