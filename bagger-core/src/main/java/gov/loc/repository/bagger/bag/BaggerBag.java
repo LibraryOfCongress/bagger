@@ -87,7 +87,7 @@ public class BaggerBag extends BagImpl {
 		if (bagInfo == null) bagInfo = new BagInfo(this);
         if (data == null) data = new Data();
     	data.setFiles(rootTree);
-/* */
+
 		String fname = AbstractBagConstants.PAYLOAD_MANIFEST_PREFIX + ManifestType.MD5 + AbstractBagConstants.PAYLOAD_MANIFEST_SUFFIX;
     	BaggerManifest manifest = new BaggerManifest(fname, this);
     	manifest.setType(ManifestType.MD5);
@@ -97,18 +97,18 @@ public class BaggerBag extends BagImpl {
     	mset.add(manifest);
     	this.setBaggerManifests(mset);
 /* */
-/* */
     	List<BaggerTagManifest> tagManifestList = this.getBaggerTagManifests();
     	if (tagManifestList == null || tagManifestList.isEmpty()) {
         	ArrayList<BaggerTagManifest> tmset = new ArrayList<BaggerTagManifest>();
         	BaggerTagManifest tagManifest = new BaggerTagManifest(this);
         	tagManifest.setType(ManifestType.MD5);
-        	tmset.add(tagManifest);    		
+        	tmset.add(tagManifest);
         	this.setBaggerTagManifests(tmset);
     	}
 /* */
 	}
 	
+	// The opens the given rootDir and tries to create a new bag out of it.
 	// TODO: If zip read contents, else open bag and call createBag(file)
 	public void openBag(File rootDir) {
 		if (rootSrc == null) rootSrc = new ArrayList<BaggerFileEntity>();
@@ -119,16 +119,13 @@ public class BaggerBag extends BagImpl {
         if (data == null) data = new Data();
 		isNewBag = false;
         setRootDir(rootDir);
-        gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir);	
+        gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir);
 
 		BagItTxt bagItTxt = bagitBag.getBagItTxt();
 		bagIt.setEncoding(bagItTxt.getCharacterEncoding());
 		bagIt.setVersion(bagItTxt.getVersion());
 
         BagInfoTxt bagInfoTxt = bagitBag.getBagInfoTxt();
-		this.bagInfo.setBagCount(bagInfoTxt.getBagCount());
-		this.bagInfo.setBaggingDate(bagInfoTxt.getBaggingDate());
-		this.bagInfo.setBagGroupIdentifier(bagInfoTxt.getBagGroupIdentifier());
 		BagOrganization bagOrganization = this.bagInfo.getBagOrganization();
 		Contact contact = bagOrganization.getContact();
 		contact.setContactName(bagInfoTxt.getContactName());
@@ -138,12 +135,64 @@ public class BaggerBag extends BagImpl {
 		bagOrganization.setOrgName(bagInfoTxt.getSourceOrganization());
 		bagOrganization.setOrgAddress(bagInfoTxt.getOrganizationAddress());
 		this.bagInfo.setBagOrganization(bagOrganization);
-		this.bagInfo.setBagSize(bagInfoTxt.getBagSize());
-		this.bagInfo.setExternalDescription(bagInfoTxt.getExternalDescription());
-		this.bagInfo.setExternalIdentifier(bagInfoTxt.getExternalIdentifier());
-		this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
-		this.bagInfo.setInternalSenderIdentifier(bagInfoTxt.getInternalSenderIdentifier());
-		this.bagInfo.setPayloadOssum(bagInfoTxt.getPayloadOssum());
+		if (bagInfoTxt.getExternalDescription() != null && !bagInfoTxt.getExternalDescription().equalsIgnoreCase("null"))
+			this.bagInfo.setExternalDescription(bagInfoTxt.getExternalDescription());
+		else
+			this.bagInfo.setExternalDescription("");
+		if (bagInfoTxt.getBaggingDate() != null && !bagInfoTxt.getBaggingDate().equalsIgnoreCase("null"))
+			this.bagInfo.setBaggingDate(bagInfoTxt.getBaggingDate());
+		else
+			this.bagInfo.setBaggingDate("");
+		if (bagInfoTxt.getExternalIdentifier() != null && !bagInfoTxt.getExternalIdentifier().equalsIgnoreCase("null"))
+			this.bagInfo.setExternalIdentifier(bagInfoTxt.getExternalIdentifier());
+		else
+			this.bagInfo.setExternalIdentifier("");
+		if (bagInfoTxt.getBagSize() != null && !bagInfoTxt.getBagSize().equalsIgnoreCase("null"))
+			this.bagInfo.setBagSize(bagInfoTxt.getBagSize());
+		else
+			this.bagInfo.setBagSize("");
+		if (bagInfoTxt.getPayloadOssum() != null && !bagInfoTxt.getPayloadOssum().equalsIgnoreCase("null"))
+			this.bagInfo.setPayloadOssum(bagInfoTxt.getPayloadOssum());
+		else
+			this.bagInfo.setPayloadOssum("");
+		if (bagInfoTxt.getBagGroupIdentifier() != null && !bagInfoTxt.getBagGroupIdentifier().equalsIgnoreCase("null"))
+			this.bagInfo.setBagGroupIdentifier(bagInfoTxt.getBagGroupIdentifier());
+		else
+			this.bagInfo.setBagGroupIdentifier("");
+		if (bagInfoTxt.getBagCount() != null && !bagInfoTxt.getBagCount().equalsIgnoreCase("null"))
+			this.bagInfo.setBagCount(bagInfoTxt.getBagCount());
+		else
+			this.bagInfo.setBagCount("");
+		if (bagInfoTxt.getInternalSenderIdentifier() != null && !bagInfoTxt.getInternalSenderIdentifier().equalsIgnoreCase("null"))
+			this.bagInfo.setInternalSenderIdentifier(bagInfoTxt.getInternalSenderIdentifier());
+		else
+			this.bagInfo.setInternalSenderIdentifier("");
+		if (bagInfoTxt.getInternalSenderDescription() != null && !bagInfoTxt.getInternalSenderDescription().equalsIgnoreCase("null"))
+			this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
+		else
+			this.bagInfo.setInternalSenderDescription("");
+/* */
+		List<gov.loc.repository.bagit.Manifest> payloadManifests = bagitBag.getPayloadManifests();
+		for (int index=0; index < payloadManifests.size(); index++) {
+    		gov.loc.repository.bagit.Manifest manifest = payloadManifests.get(index);
+    		this.putPayloadFile(manifest);
+		}
+/* */		
+    	ArrayList<BaggerTagManifest> tagManifestList = new ArrayList<BaggerTagManifest>();
+		List<gov.loc.repository.bagit.Manifest> tagManifests = bagitBag.getTagManifests();
+    	if (tagManifests != null && !tagManifests.isEmpty()) {
+    		System.out.println("BaggerBag.openBag tagManifests: " + tagManifests.size() );
+        	for (int i=0; i < tagManifests.size(); i++) {
+        		gov.loc.repository.bagit.Manifest manifest = tagManifests.get(i);
+        		this.putTagFile(manifest);
+        		System.out.println("BaggerBag.openBag manifest: " + manifest.toString() );
+        		BaggerTagManifest tagManifest = new BaggerTagManifest(this);
+            	tagManifest.setType(ManifestType.MD5);
+            	tagManifest.fromString(manifest.toString());
+            	tagManifestList.add(tagManifest);
+        	}
+        	this.setBaggerTagManifests(tagManifestList);
+    	}
 	}
 	
 	public void setName(String name) {
@@ -170,10 +219,14 @@ public class BaggerBag extends BagImpl {
 		return this.file;
 	}
 
+	// Sets the root tree for this bag.  The root tree is a list of all the files
+	// that are being display in the file tree selection window.
 	public void setRootTree(List<BaggerFileEntity> rootTree) {
 		this.rootTree = rootTree;
 	}
-	
+
+	// Returns the root tree for this bag.  The root tree is a list of all the files
+	// that are being display in the file tree selection window.
 	public List<BaggerFileEntity> getRootTree() {
 		return this.rootTree;
 	}
@@ -194,10 +247,16 @@ public class BaggerBag extends BagImpl {
 		return this.project;
 	}
 
+	// Returns the list of root sources for this bag.  A root source
+	// is a directory bag looks for when it wants to copy source files to the bag
+	// data directory.
 	public List<BaggerFileEntity> getRootSrc() {
 		return this.rootSrc;
 	}
 	
+	// Add a root source to the list of root sources for this bag.  A root source
+	// is a directory bag looks for when it wants to copy source files to the bag
+	// data directory.
 	public boolean addRootSrc(BaggerFileEntity src) {
 		return this.rootSrc.add(src);
 	}
@@ -224,10 +283,6 @@ public class BaggerBag extends BagImpl {
 	
 	public List<BaggerTagManifest> getBaggerTagManifests() {
 		return this.baggerTagManifests;
-	}
-	
-	public void addTagManifest(Manifest tagManifest) {
-		this.addTagManifest(tagManifest);
 	}
 /* */
 /* */
@@ -462,7 +517,6 @@ public class BaggerBag extends BagImpl {
 			return messages;
 	    }
 		display("Bag.write: create and write list of src data to the bag data directory");
-		// TODO: for each source directory added, copy that directory to the bag directory
 		List<BaggerFileEntity> srcList = this.getRootSrc();
 		for (int i=0; i<srcList.size(); i++) {
 			BaggerFileEntity bfe = srcList.get(i);
