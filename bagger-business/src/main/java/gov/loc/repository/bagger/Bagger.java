@@ -14,8 +14,6 @@ public interface Bagger {
 
 	Collection<Project> getProjects() throws DataAccessException;
 
-	Collection<ContactType> getContactTypes() throws DataAccessException;
-	
 	Collection<Organization> findOrganizations(String name) throws DataAccessException;
 
 	Collection<Profile> findProfiles(String name) throws DataAccessException;
@@ -26,13 +24,9 @@ public interface Bagger {
 	
 	Contact loadContact(int id) throws DataAccessException;
 	
-	ContactType loadContactType(int id) throws DataAccessException;
-	
 	Person loadPerson(int id) throws DataAccessException;
 
 	Organization loadOrganization(int id) throws DataAccessException;
-	
-	Address loadAddress(int id) throws DataAccessException;
 	
 	Project loadProject(int id) throws DataAccessException;
 

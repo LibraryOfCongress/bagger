@@ -11,7 +11,6 @@ package gov.loc.repository.bagger;
 public class Contact {
 	private int id;
 	private int typeId;
-	private ContactType contactType;
 	private Person person;
 	private int personId;
 	private Organization organization;
@@ -34,14 +33,6 @@ public class Contact {
 	
 	public void setTypeId(int id) {
 		this.typeId = id;
-	}
-	
-	public ContactType getContactType() {
-		return this.contactType;
-	}
-	
-	public void setContactType(ContactType type) {
-		this.contactType = type;
 	}
 	
 	public Person getPerson() {
@@ -104,8 +95,6 @@ public class Contact {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.getContactName());
-		sb.append('\n');
-		sb.append(this.getContactType().getName());
 		sb.append('\n');
 		sb.append(this.getOrganization().toString());
 		sb.append('\n');

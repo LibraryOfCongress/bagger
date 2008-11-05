@@ -23,10 +23,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.orm.ObjectRetrievalFailureException;
-import gov.loc.repository.bagger.Address;
 import gov.loc.repository.bagger.Bagger;
 import gov.loc.repository.bagger.Contact;
-import gov.loc.repository.bagger.ContactType;
 import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
@@ -56,8 +54,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 
 	private SimpleJdbcInsert insertPerson;
 	private SimpleJdbcInsert insertProject;
-	private SimpleJdbcInsert insertContactTypes;
-	private SimpleJdbcInsert insertAddress;
 	private SimpleJdbcInsert insertOrganization;
 	private SimpleJdbcInsert insertContact;
 	private SimpleJdbcInsert insertProfile;
@@ -73,8 +69,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 
 		this.insertPerson = new SimpleJdbcInsert(dataSource).withTableName("person").usingGeneratedKeyColumns("id");
 		this.insertProject = new SimpleJdbcInsert(dataSource).withTableName("projects").usingGeneratedKeyColumns("id");
-		this.insertContactTypes = new SimpleJdbcInsert(dataSource).withTableName("contact_types").usingGeneratedKeyColumns("id");
-		this.insertAddress = new SimpleJdbcInsert(dataSource).withTableName("address").usingGeneratedKeyColumns("id");
 		this.insertOrganization = new SimpleJdbcInsert(dataSource).withTableName("organization").usingGeneratedKeyColumns("id");
 		this.insertContact = new SimpleJdbcInsert(dataSource).withTableName("contact").usingGeneratedKeyColumns("id");
 		this.insertProfile = new SimpleJdbcInsert(dataSource).withTableName("profile").usingGeneratedKeyColumns("id");
@@ -104,14 +98,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				ParameterizedBeanPropertyRowMapper.newInstance(Project.class));
 	}
 	
-	@Transactional(readOnly = true)
-	public Collection<ContactType> getContactTypes() throws DataAccessException {
-		return this.simpleJdbcTemplate.query(
-				"SELECT * FROM contact_types ORDER BY name",
-				ParameterizedBeanPropertyRowMapper.newInstance(ContactType.class));
-	}
-
-
 	@Transactional(readOnly = true)
 	public Collection<Organization> findOrganizations(String name) throws DataAccessException {
 		List<Organization> orgs = this.simpleJdbcTemplate.query(
@@ -179,8 +165,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 					"SELECT * FROM contact WHERE id=?",
 					ParameterizedBeanPropertyRowMapper.newInstance(Contact.class),
 					id);
-			ContactType contactType = loadContactType(contact.getTypeId());
-			contact.setContactType(contactType);
 			Person person = loadPerson(contact.getPersonId());
 			contact.setPerson(person);
 			Organization organization = loadOrganization(contact.getOrganizationId());
@@ -192,21 +176,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		return contact;
 	}
 	
-	@Transactional(readOnly = true)
-	public ContactType loadContactType(int id) throws DataAccessException {
-		ContactType contactType;
-		try {
-			contactType = this.simpleJdbcTemplate.queryForObject(
-					"SELECT * FROM contact_types WHERE id=?",
-					ParameterizedBeanPropertyRowMapper.newInstance(ContactType.class),
-					id);
-		}
-		catch (EmptyResultDataAccessException ex) {
-			throw new ObjectRetrievalFailureException(ContactType.class, new Integer(id));
-		}
-		return contactType;
-	}
-
 	@Transactional(readOnly = true)
 	public Person loadPerson(int id) throws DataAccessException {
 		Person person;
@@ -230,28 +199,11 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 					"SELECT * FROM organization WHERE id=?",
 					ParameterizedBeanPropertyRowMapper.newInstance(Organization.class),
 					id);
-			Address address = loadAddress(org.getAddressId());
-			org.setAddress(address);
 		}
 		catch (EmptyResultDataAccessException ex) {
 			throw new ObjectRetrievalFailureException(Organization.class, new Integer(id));
 		}
 		return org;
-	}
-
-	@Transactional(readOnly = true)
-	public Address loadAddress(int id) throws DataAccessException {
-		Address address;
-		try {
-			address = this.simpleJdbcTemplate.queryForObject(
-					"SELECT * FROM address WHERE id=?",
-					ParameterizedBeanPropertyRowMapper.newInstance(Address.class),
-					id);
-		}
-		catch (EmptyResultDataAccessException ex) {
-			throw new ObjectRetrievalFailureException(Address.class, new Integer(id));
-		}
-		return address;
 	}
 
 	@Transactional(readOnly = true)
@@ -280,7 +232,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		catch (Exception ex) {
 			try {
 				this.simpleJdbcTemplate.update(
-						"UPDATE organization SET name=:name, address_id=:addressId WHERE id=:id",
+						"UPDATE organization SET name=:name, address=:address WHERE id=:id",
 						new BeanPropertySqlParameterSource(org));
 			}
 			catch (Exception exception) {

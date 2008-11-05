@@ -3,8 +3,7 @@ package gov.loc.repository.bagger;
 public class Organization {
 	private int id;
 	private String name = "";
-	private Address address;
-	private int addressId;
+	private String address = "";
 
 	public void setId(int id) {
 		this.id = id;
@@ -22,22 +21,14 @@ public class Organization {
 		return this.name;
 	}
 	
-	public void setAddressId(int id) {
-		this.addressId = id;
-	}
-	
-	public int getAddressId() {
-		return this.addressId;
-	}
-	
-	public void setAddress(Address a) {
+	public void setAddress(String a) {
 		this.address = a;
 	}
 	
-	public Address getAddress() {
+	public String getAddress() {
 		return this.address;
 	}
-
+	
 	public String toString() {
 		return toString(false);
 	}
@@ -49,7 +40,7 @@ public class Organization {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.getName());
 		sb.append(delim);
-		sb.append(this.getAddress().toString());
+		sb.append(this.getAddress());
 		
 		return sb.toString();
 	}
