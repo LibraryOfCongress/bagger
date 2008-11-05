@@ -8,8 +8,6 @@ import java.net.URLEncoder;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
@@ -29,21 +27,24 @@ public class BagInfoInputPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
 	private static final Log logger = LogFactory.getLog(BagInfoInputPane.class);
     private BaggerBag baggerBag;
-    private JPanel bagSettingsPanel;
     private OrganizationInfoForm bagInfoForm = null;
     private OrganizationGeneralForm organizationGeneralForm = null;
     private OrganizationContactForm organizationContactForm = null;
     private OrganizationContactForm userContactForm = null;
-	private String username;
+	private HierarchicalFormModel organizationFormModel = null;
+    private HierarchicalFormModel contactFormModel = null;
+    private HierarchicalFormModel userFormModel = null;
+    private HierarchicalFormModel infoFormModel = null;
+
+    private String username;
 	private Contact user;
 	private Color selectedColor = new Color(180, 180, 200);
 	private Color unselectedColor = Color.black; //new Color(140, 140, 160);
 
-    public BagInfoInputPane(BaggerBag b, String username, Contact c, JPanel bagSettingsPanel ) {
+    public BagInfoInputPane(BaggerBag b, String username, Contact c ) {
     	this.baggerBag = b;
     	this.user = c;
     	this.username = username;
-    	this.bagSettingsPanel = bagSettingsPanel;
     	populateForms(b);
         setPreferredSize(bagInfoForm.getControl().getPreferredSize());
         ChangeListener changeListener = new ChangeListener() {
@@ -59,6 +60,7 @@ public class BagInfoInputPane extends JTabbedPane {
         	}
         };
         this.addChangeListener(changeListener);
+        
 /* */
         InputMap im = this.getInputMap();
         im.put(KeyStroke.getKeyStroke("F2"), "tabNext");
@@ -94,53 +96,50 @@ public class BagInfoInputPane extends JTabbedPane {
     	return this.user;
     }
     
+    // Define the information forms
     public void populateForms(BaggerBag baggerBag) {
-        // Define the information forms
-    	HierarchicalFormModel organizationFormModel;
     	BagInfo bagInfo = baggerBag.getInfo();
         BagOrganization bagOrganization = bagInfo.getBagOrganization();
         organizationFormModel = FormModelHelper.createCompoundFormModel(bagOrganization);
         organizationGeneralForm = new OrganizationGeneralForm(FormModelHelper.createChildPageFormModel(organizationFormModel, null));
 
-        HierarchicalFormModel contactFormModel;
         Contact contact = bagInfo.getBagOrganization().getContact();
         if (contact == null) {
         	contact = new Contact();
-        	contact.setContactType(new ContactType());
         }
         contactFormModel = FormModelHelper.createCompoundFormModel(contact);
         organizationContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(contactFormModel, null));
         
-        HierarchicalFormModel userFormModel;
         Contact person = this.user;
         if (person == null) {
         	person = new Contact();
-        	person.setContactType(new ContactType());
         }
         userFormModel = FormModelHelper.createCompoundFormModel(person);
         userContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(userFormModel, null));
 
-        HierarchicalFormModel infoFormModel;
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
         bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null));
 
         updateProfileForms();
     }
 
+    // Create a tabbed pane for the information forms and checkbox panel
     private void updateProfileForms() {
-        // Create a tabbed pane for the information forms and checkbox panel
         this.removeAll();
+        this.invalidate();
         this.setName("Profile");
         this.addTab("Information", bagInfoForm.getControl());
-        bagInfoForm.getControl().setForeground(unselectedColor);
         this.addTab("User", userContactForm.getControl());
-        userContactForm.getControl().setForeground(selectedColor);
         this.addTab("Organization", organizationGeneralForm.getControl());
-        organizationGeneralForm.getControl().setForeground(selectedColor);
         this.addTab("Contact", organizationContactForm.getControl());
+
+//        HierarchicalFormModel model = bagInfoForm.getFormModel();
+//        System.out.println("bagInfoForm isDirty: " + bagInfoForm.isDirty());
+//        System.out.println("bagInfoForm model: " + model.toString());
+        bagInfoForm.getControl().setForeground(unselectedColor);
+        userContactForm.getControl().setForeground(selectedColor);
+        organizationGeneralForm.getControl().setForeground(selectedColor);
         organizationContactForm.getControl().setForeground(selectedColor);
-        this.addTab("Settings", bagSettingsPanel);
-        bagSettingsPanel.setForeground(selectedColor);
     }
 
     public String verifyForms(BaggerBag baggerBag) {
@@ -175,28 +174,22 @@ public class BagInfoInputPane extends JTabbedPane {
         BagOrganization newOrganization = (BagOrganization)organizationGeneralForm.getFormObject();
         Organization org = user.getOrganization();
         org.setName(newOrganization.getOrgName());
-        Address address = new Address();
-        address.setAddress(newOrganization.getOrgAddress());
-        org.setAddress(address);
+        org.setAddress(newOrganization.getOrgAddress());
         user.setOrganization(org);
 
-//        bag = getBag();
         newOrganization.setContact(newContact);
         newInfo.setBagOrganization(newOrganization);
         baggerBag.setInfo(newInfo);
         baggerBag.setName(newInfo.getName());
-        System.out.println("bagInfoInputPane.newInfo.getName: " + newInfo.getName());
-        if (newInfo.getName() == null) {
-        	System.out.println("info.getName: " + baggerBag.getInfo().getName());
+        if (newInfo.getName() == null || newInfo.getName().isEmpty() || newInfo.getName().equalsIgnoreCase("null")) {
         	baggerBag.setName(baggerBag.getInfo().getName());
         }
-        System.out.println("BagInfoInputPane.baggerBag.getName: " + baggerBag.getName());
-        if (baggerBag.getName() == null) baggerBag.setName("bag_1");
-//        setBag(bag);
+        //System.out.println("BagInfoInputPane.baggerBag.getName: " + baggerBag.getName());
 
         if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors()) {
         	messages = "Bag Information form errors exist.\n";
         }
+        update();
         
         return messages;
     }
@@ -207,19 +200,22 @@ public class BagInfoInputPane extends JTabbedPane {
         messages = verifyForms(baggerBag);
         updateProfileForms();
         update();
-        // TODO:
-        if (bagInfoForm.hasErrors()) {
-        	this.setSelectedIndex(0);
-        } else if (organizationGeneralForm.hasErrors()) {
-        	this.setSelectedIndex(2);
-        } else if (organizationContactForm.hasErrors()) {
-        	this.setSelectedIndex(3);
-        } else if (userContactForm.hasErrors()) {
-        	this.setSelectedIndex(1);
-        }
-//        messages += updateProfile();
         
         return messages;
+    }
+    
+    public void updateSelected() {
+        // TODO: Figure out why required field marker still appears after openBag
+    	if (bagInfoForm.hasErrors()) {
+    		this.setSelectedIndex(0);
+    	} else if (organizationGeneralForm.hasErrors()) {
+    		this.setSelectedIndex(2);
+    	} else if (organizationContactForm.hasErrors()) {
+    		this.setSelectedIndex(3);
+//    	} else if (userContactForm.hasErrors()) {
+//    		this.setSelectedIndex(1);
+    	}
+    	update();
     }
     
     public boolean hasFormErrors() {
@@ -231,17 +227,19 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public void update() {
+        java.awt.Component[] components = bagInfoForm.getControl().getComponents();
+        for (int i=0; i<components.length; i++) {
+        	java.awt.Component c = components[i];
+        	c.invalidate();
+        	c.repaint();
+        }
         bagInfoForm.getControl().invalidate();
         bagInfoForm.getControl().repaint();
         userContactForm.getControl().invalidate();
-        userContactForm.getControl().repaint();
         organizationGeneralForm.getControl().invalidate();
-        organizationGeneralForm.getControl().repaint();
         organizationContactForm.getControl().invalidate();
-        organizationContactForm.getControl().repaint();
-        bagSettingsPanel.invalidate();
-        bagSettingsPanel.repaint();
     	invalidate();
     	repaint();
     }
+
 }
