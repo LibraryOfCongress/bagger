@@ -1,9 +1,7 @@
 
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.Address;
 import gov.loc.repository.bagger.Contact;
-import gov.loc.repository.bagger.ContactType;
 import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.BagOrganization;
@@ -16,7 +14,6 @@ import org.springframework.richclient.form.FormModelHelper;
 import org.springframework.richclient.wizard.AbstractWizard;
 import org.springframework.richclient.wizard.FormBackedWizardPage;
 import org.springframework.richclient.wizard.WizardDialog;
-import org.springframework.util.Assert;
 
 public class NewProfileWizard extends AbstractWizard implements ActionCommandExecutor {
     private WizardDialog wizardDialog;
@@ -25,7 +22,6 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
     private OrganizationContactForm userContactForm;    
     private OrganizationGeneralForm organizationGeneralForm;
     private OrganizationContactForm organizationContactForm;    
-    private Contact contact;
 
     public NewProfileWizard() {
         super("newOrganizationWizard");
@@ -71,9 +67,7 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
         BagOrganization newOrganization = (BagOrganization)organizationGeneralForm.getFormObject();
         Organization org = new Organization();
         org.setName(newOrganization.getOrgName());
-        Address address = new Address();
-        address.setAddress(newOrganization.getOrgAddress());
-        org.setAddress(address);
+        org.setAddress(newOrganization.getOrgAddress());
 
         if (!userContactForm.hasErrors()) {
         	userContactForm.commit();
