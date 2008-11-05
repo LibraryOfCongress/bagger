@@ -610,9 +610,8 @@ public class BaggerBag extends BagImpl {
 		reset();
 		gov.loc.repository.bagit.Bag bagitBag = this;
 		String messages = "";
-		System.out.println("validateAndBag: " + this.rootDir.getAbsolutePath());
+//		System.out.println("validateAndBag: " + this.rootDir.getAbsolutePath());
 		try {
-//			if (this.isNewBag) {
 				bagitBag = BagFactory.createBag(this.rootDir);
 //			}
 			display("Bag.write: verifier isComplete?");
