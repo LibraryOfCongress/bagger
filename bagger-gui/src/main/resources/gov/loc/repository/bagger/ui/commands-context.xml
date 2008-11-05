@@ -8,6 +8,7 @@
     <property name="sharedCommandIds">
       <list>
         <value>deleteCommand</value>
+        <value>saveAsCommand</value>
       </list>
     </property>
   </bean>
@@ -36,9 +37,9 @@
     <property name="members">
       <list>
         <ref bean="newMenu" />
-        <value>separator</value>
-        <ref bean="saveCommand" />
+        <value>saveAsCommand</value>
 <!--
+        <value>separator</value>
         <ref bean="loginCommand" />
         <ref bean="logoutCommand" />
         <value>separator</value>
@@ -94,9 +95,6 @@
     <property name="aboutTextPath" value="gov/loc/repository/bagger/about.txt" />
   </bean>
   
-  <bean id="saveCommand" class="gov.loc.repository.bagger.SaveCommand">
-  </bean>
-
   <bean id="loginCommand" class="org.springframework.richclient.security.LoginCommand">
     <property name="closeOnCancel" value="false" />
   </bean>
