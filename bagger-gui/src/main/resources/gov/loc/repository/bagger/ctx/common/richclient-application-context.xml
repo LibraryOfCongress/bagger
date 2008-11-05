@@ -11,7 +11,7 @@
   <bean id="applicationDescriptor"
     class="org.springframework.richclient.application.support.DefaultApplicationDescriptor">
     <property name="version" value="1.2" />
-    <property name="buildId" value="20080930-1.2" />
+    <property name="buildId" value="20081023-1.2" />
   </bean>
 
   <bean id="baggerLifecycleAdvisor"
