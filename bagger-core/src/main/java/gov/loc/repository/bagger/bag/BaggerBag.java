@@ -134,7 +134,6 @@ public class BaggerBag extends BagImpl {
 
 		BagItTxt bagItTxt = bagitBag.getBagItTxt();
 		bagIt.setEncoding(bagItTxt.getCharacterEncoding());
-		System.out.println("bagIt version: " + bagItTxt.getVersion());
 		if (bagItTxt.getVersion() != null && !bagItTxt.getVersion().isEmpty() && !bagItTxt.getVersion().equalsIgnoreCase("null"))
 			bagIt.setVersion(bagItTxt.getVersion());
 
@@ -610,10 +609,8 @@ public class BaggerBag extends BagImpl {
 		reset();
 		gov.loc.repository.bagit.Bag bagitBag = this;
 		String messages = "";
-//		System.out.println("validateAndBag: " + this.rootDir.getAbsolutePath());
 		try {
-				bagitBag = BagFactory.createBag(this.rootDir);
-//			}
+			bagitBag = BagFactory.createBag(this.rootDir);
 			display("Bag.write: verifier isComplete?");
 			SimpleResult result = bagitBag.isComplete();
 			if (result.messagesToString() != null) messages += result.messagesToString();

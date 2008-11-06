@@ -133,7 +133,6 @@ public class BaggerManifest extends ManifestImpl {
 			BaggerFileEntity bfe = fileList.get(i);
 			if (bfe.getIsIncluded()) {
 				File file = bfe.getRootSrc();
-				//System.out.println("buildManifestList: " + file.getAbsolutePath());
 				FileEntity fileEntity = new FileEntity();
 				fileEntity.setFile(file);
 				numFiles++;
