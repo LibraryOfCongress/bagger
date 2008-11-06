@@ -149,7 +149,7 @@ public class BagInfoInputPane extends JTabbedPane {
             userContactForm.commit();
         }
         user = (Contact)userContactForm.getFormObject();
-        if (username == null || username.isEmpty()) {
+        if (username == null || username.length() == 0) {
     		try {
             	username = URLEncoder.encode(user.getContactName(), "utf-8");
     		}
@@ -187,11 +187,13 @@ public class BagInfoInputPane extends JTabbedPane {
         newOrganization.setContact(newContact);
         newInfo.setBagOrganization(newOrganization);
         baggerBag.setInfo(newInfo);
-        baggerBag.setName(newInfo.getName());
-        if (newInfo.getName() == null || newInfo.getName().isEmpty() || newInfo.getName().equalsIgnoreCase("null")) {
+        String bagName = newInfo.getBagName();
+        if (bagName == null || bagName.trim().length() == 0 || bagName.trim().equalsIgnoreCase("null")) {
         	baggerBag.setName(baggerBag.getInfo().getName());
+        } else {
+            baggerBag.setName(bagName);
         }
-        //System.out.println("BagInfoInputPane.baggerBag.getName: " + baggerBag.getName());
+        //System.out.println("baggerBag name: " + baggerBag.getName());
 
         if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors()) {
         	messages = "Bag Information form errors exist.\n";
