@@ -11,7 +11,7 @@
  -->
 
 
-<jnlp spec="0.2 1.0" codebase="http://localhost/bagger" href="bagger.jnlp">
+<jnlp spec="0.2 1.0" codebase="https://beryllium.rdc.lctl.gov/svn/transfer/bagger/trunk/htdocs/bagger/" href="bagger.jnlp">
    <information> 
       <title>Bagger App</title> 
       <vendor>Library of Congress</vendor>
@@ -21,10 +21,13 @@
       <icon href="images/bagger-splash.jpg"/>
       <offline-allowed/> 
    </information> 
+   <security>
+      <all-permissions/>
+   </security>
    <resources>
       <j2se version="1.3+" href="http://java.sun.com/products/autodl/j2se"/>
       <j2se version="1.3+"/>
       <jar href="bagger.jar" main="true" download="eager"/>
    </resources>
-   <application-desc main-class="BaggerStandalone"/>
+   <application-desc main-class="gov.loc.repository.bagger.BaggerStandalone"/>
 </jnlp> 
