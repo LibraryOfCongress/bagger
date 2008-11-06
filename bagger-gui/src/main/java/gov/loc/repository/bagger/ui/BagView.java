@@ -534,7 +534,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		}
             	}
             	if (!found) {
-            		System.out.println("profile does NOT exist: " + project.getId());
+            		log.info("profile does NOT exist: " + project.getId());
             		userProfiles.add(createProfile(project));
             	}
             	if (userProjects == null || userProjects.isEmpty()) {
@@ -581,7 +581,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         for (int i=0; i < userProjects.size(); i++) {
         	Project project = (Project)project_array[i];
         	if (selected.equalsIgnoreCase(project.getName())) {
-        		System.out.println("bagProject: " + project.getId());
+        		log.info("bagProject: " + project.getId());
         		baggerBag.setProject(project);
         		Object[] profiles = userProfiles.toArray();
         		for (int j=0; j < profiles.length; j++) {
@@ -905,7 +905,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     // Save the profiles to the database and write changes to disk
     private class SaveExecutor extends AbstractActionCommandExecutor {
         public void execute() {
-        	System.out.println("SaveExecutor");
         	String message = "\n";
         	// TODO: call the form and profile update for executing this
         	bagger.storeBaggerUpdates(userProfiles, userHomeDir);
