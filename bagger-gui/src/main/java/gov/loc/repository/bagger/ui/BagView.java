@@ -504,7 +504,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     		Organization org = new Organization();
     		user.setOrganization(org);    		
     	}
-    	if (this.username != null && !this.username.isEmpty()) {
+    	if (this.username != null && this.username.length() > 0) {
         	display("BagView.initializeBag getAuthenticationUser:: " + this.username);
         	display("BagView.initializeBag projects: " + bagger.getProjects());
         	Collection<Profile> profiles = bagger.findProfiles(this.username);
@@ -799,7 +799,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     private String updateMessages(String messages) {
-        if (!bagInfoInputPane.hasFormErrors() && (messages == null || messages.isEmpty())) {
+        if (!bagInfoInputPane.hasFormErrors() && (messages == null || messages.length() == 0)) {
             messages = "Organization and Contact information has been updated.";
             infoFormMessagePane.setMessage("");
             messages += "\n";
