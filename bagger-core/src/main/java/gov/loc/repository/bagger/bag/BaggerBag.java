@@ -134,7 +134,7 @@ public class BaggerBag extends BagImpl {
 
 		BagItTxt bagItTxt = bagitBag.getBagItTxt();
 		bagIt.setEncoding(bagItTxt.getCharacterEncoding());
-		if (bagItTxt.getVersion() != null && !bagItTxt.getVersion().isEmpty() && !bagItTxt.getVersion().equalsIgnoreCase("null"))
+		if (bagItTxt.getVersion() != null && bagItTxt.getVersion().length() > 0 && !bagItTxt.getVersion().equalsIgnoreCase("null"))
 			bagIt.setVersion(bagItTxt.getVersion());
 
         BagInfoTxt bagInfoTxt = bagitBag.getBagInfoTxt();
@@ -147,6 +147,8 @@ public class BaggerBag extends BagImpl {
 		bagOrganization.setOrgName(bagInfoTxt.getSourceOrganization());
 		bagOrganization.setOrgAddress(bagInfoTxt.getOrganizationAddress());
 		this.bagInfo.setBagOrganization(bagOrganization);
+		this.bagInfo.setAwardeePhase("");
+		this.bagInfo.setPublisher("");
 		if (bagInfoTxt.getExternalDescription() != null && !bagInfoTxt.getExternalDescription().equalsIgnoreCase("null"))
 			this.bagInfo.setExternalDescription(bagInfoTxt.getExternalDescription());
 		else
@@ -576,7 +578,7 @@ public class BaggerBag extends BagImpl {
 		String messages = "";
 		if (this.isSerial) {
 			display("Bag.write: Clean up the files");
-			display("Bag space: " + rootDir.getTotalSpace());
+			//display("Bag space: " + rootDir.getTotalSpace());
 			b = FileUtililties.deleteDir(rootDir);
 			if (!b) messages += reportError(messages, "Could not delete directory: " + rootDir);
 			else messages += "Cleaning up bag directory.";
@@ -593,7 +595,7 @@ public class BaggerBag extends BagImpl {
 		messages = "Is bag form input valid? \n";
 		if (this.isCopyright) {
 			String publisher = this.getInfo().getPublisher();
-			if (publisher == null || publisher.trim().isEmpty()) {
+			if (publisher == null || publisher.trim().length() == 0) {
 				this.isValidForms = false;
 				messages += "eDeposit project require a publisher.";
 			}
