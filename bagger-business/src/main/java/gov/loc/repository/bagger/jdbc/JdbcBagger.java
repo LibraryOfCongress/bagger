@@ -238,18 +238,18 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	public void storePerson(Person person) throws DataAccessException {
 		try {
 			Person p = this.loadPerson(person.getId());
-			Number newKey = this.insertPerson.executeAndReturnKey(new BeanPropertySqlParameterSource(person));
-			p.setId(newKey.intValue());
 			person.setId(p.getId());
-			sqlCommand = "INSERT INTO person VALUES (" + newKey.intValue() + ", '" + person.getFirstName() + "', '" + person.getMiddleInit() + "', '" + person.getLastName() + "');";
+			this.simpleJdbcTemplate.update(
+					"UPDATE person SET first_name=:firstName, middle_init=:middleInit, last_name=:lastName WHERE id=:id",
+					new BeanPropertySqlParameterSource(person));
+			sqlCommand = "UPDATE person SET first_name='" + person.getFirstName() + "', middle_init='" + person.getMiddleInit() + "', last_name='" + person.getLastName() + "' WHERE id=" + person.getId() + ";";
 			commandList.add(sqlCommand);
 		}
 		catch (Exception ex) {
 			try {
-				this.simpleJdbcTemplate.update(
-						"UPDATE person SET first_name=:firstName, middle_init=:middleInit, last_name=:lastName WHERE id=:id",
-						new BeanPropertySqlParameterSource(person));
-				sqlCommand = "UPDATE person SET first_name='" + person.getFirstName() + "', middle_init='" + person.getMiddleInit() + "', last_name='" + person.getLastName() + "' WHERE id=" + person.getId() + ";";
+				Number newKey = this.insertPerson.executeAndReturnKey(new BeanPropertySqlParameterSource(person));
+				person.setId(newKey.intValue());
+				sqlCommand = "INSERT INTO person VALUES (" + newKey.intValue() + ", '" + person.getFirstName() + "', '" + person.getMiddleInit() + "', '" + person.getLastName() + "');";
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
@@ -265,18 +265,18 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		Organization org = contact.getOrganization();
 		try {
 			Contact c = this.loadContact(contact.getId());
-			Number newKey = this.insertContact.executeAndReturnKey(new BeanPropertySqlParameterSource(contact));
-			c.setId(newKey.intValue());
 			contact.setId(c.getId());
-			sqlCommand = "INSERT INTO contact VALUES (" + newKey.intValue() + ", " + person.getId() + ", " + org.getId() + ", '" + contact.getEmail() + "', '" + contact.getTelephone() + "');";
+			this.simpleJdbcTemplate.update(
+					"UPDATE contact SET person_id=:personId, organization_id=:organizationId, email=:email, telephone=:telephone WHERE id=:id",
+					new BeanPropertySqlParameterSource(contact));
+			sqlCommand = "UPDATE contact SET person_id=" + person.getId() + ", organization_id=" + org.getId() + ", email='" + contact.getEmail() + "', telephone='" + contact.getTelephone() + "' WHERE id=" + contact.getId() + ";";
 			commandList.add(sqlCommand);
 		}
 		catch (Exception ex) {
 			try {
-				this.simpleJdbcTemplate.update(
-						"UPDATE contact SET person_id=:personId, organization_id=:organizationId, email=:email, telephone=:telephone WHERE id=:id",
-						new BeanPropertySqlParameterSource(contact));
-				sqlCommand = "UPDATE contact SET person_id=" + person.getId() + ", organization_id=" + org.getId() + ", email='" + contact.getEmail() + "', telephone='" + contact.getTelephone() + "' WHERE id=" + contact.getId() + ";";
+				Number newKey = this.insertContact.executeAndReturnKey(new BeanPropertySqlParameterSource(contact));
+				contact.setId(newKey.intValue());
+				sqlCommand = "INSERT INTO contact VALUES (" + newKey.intValue() + ", " + person.getId() + ", " + org.getId() + ", '" + contact.getEmail() + "', '" + contact.getTelephone() + "');";
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
@@ -290,19 +290,18 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	public void storeOrganization(Organization org) throws DataAccessException {
 		try {
 			Organization organization = loadOrganization(org.getId());
-			Number newKey = this.insertOrganization.executeAndReturnKey(
-						new BeanPropertySqlParameterSource(org));
-			organization.setId(newKey.intValue());
 			org.setId(organization.getId());
-			sqlCommand = "INSERT INTO organization VALUES (" + newKey.intValue() + ", '" + org.getName() + "', '" + org.getAddress() + "');";
+			this.simpleJdbcTemplate.update(
+					"UPDATE organization SET name=:name, address=:address WHERE id=:id",
+					new BeanPropertySqlParameterSource(org));
+			sqlCommand = "UPDATE organization SET name='" + org.getName() + "', address='" + org.getAddress() + "' WHERE id=" + org.getId() + ";";
 			commandList.add(sqlCommand);
 		}
 		catch (Exception ex) {
 			try {
-				this.simpleJdbcTemplate.update(
-						"UPDATE organization SET name=:name, address=:address WHERE id=:id",
-						new BeanPropertySqlParameterSource(org));
-				sqlCommand = "UPDATE organization SET name='" + org.getName() + "', address='" + org.getAddress() + "' WHERE id=" + org.getId() + ";";
+				Number newKey = this.insertOrganization.executeAndReturnKey(new BeanPropertySqlParameterSource(org));
+				org.setId(newKey.intValue());
+				sqlCommand = "INSERT INTO organization VALUES (" + newKey.intValue() + ", '" + org.getName() + "', '" + org.getAddress() + "');";
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
@@ -320,18 +319,18 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		Person userPerson = user.getPerson();
 		try {
 			Profile prof = loadProfile(profile.getId());
-			Number newKey = this.insertProfile.executeAndReturnKey(new BeanPropertySqlParameterSource(prof));
-			prof.setId(newKey.intValue());
 			profile.setId(prof.getId());
-			sqlCommand = "INSERT INTO profile VALUES (" + newKey.intValue() + ", '" + profile.getUsername() + "', " + userPerson.getId() + ", " + profile.getProjectId() + ", " + contact.getId() + ", 'A', '2008-09-18');";
+			this.simpleJdbcTemplate.update(
+					"UPDATE profile SET username=:username, profile_person_id=:profilePersonId, project_id=:projectId, contact_id=:contactId WHERE id=:id",
+					new BeanPropertySqlParameterSource(profile));
+			sqlCommand = "UPDATE profile SET username='" + profile.getUsername() + "', profile_person_id=" + userPerson.getId() + ", project_id=" + profile.getProjectId() + ", contact_id=" + contact.getId() + " WHERE id=" + profile.getId() + ";";
 			commandList.add(sqlCommand);
 		}
 		catch (Exception ex) {
 			try {
-				this.simpleJdbcTemplate.update(
-						"UPDATE profile SET username=:username, profile_person_id=:profilePersonId, project_id=:projectId, contact_id=:contactId WHERE id=:id",
-						new BeanPropertySqlParameterSource(profile));
-				sqlCommand = "UPDATE profile SET username='" + profile.getUsername() + "', profile_person_id=" + userPerson.getId() + ", project_id=" + profile.getProjectId() + ", contact_id=" + contact.getId() + " WHERE id=" + profile.getId() + ";";
+				Number newKey = this.insertProfile.executeAndReturnKey(new BeanPropertySqlParameterSource(profile));
+				profile.setId(newKey.intValue());
+				sqlCommand = "INSERT INTO profile VALUES (" + newKey.intValue() + ", '" + profile.getUsername() + "', " + userPerson.getId() + ", " + profile.getProjectId() + ", " + contact.getId() + ", 'A', '2008-09-18');";
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
@@ -401,8 +400,11 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				user.setOrganization(userOrg);
 				if (contact != null) this.storeContact(contact);
 				profile.setContact(contact);
+				profile.setContactId(contact.getId());
 				if (user != null) this.storeContact(user);
 				profile.setPerson(user);
+				profile.setProfilePersonId(user.getId());
+				profile.setProjectId(project.getId());
 				if (profile != null) this.storeProfile(profile);
 //				if (userPerson != null && project != null) this.storePersonProject(userPerson, project);
 //				if (profile != null & user != null) this.storeUserContact(profile.getUsername(), user);
