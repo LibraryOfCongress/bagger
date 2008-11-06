@@ -317,6 +317,5 @@ public class FileUtililties {
 	
 	public static void display(String s) {
 		log.debug(s);
-		//System.out.println(s);
 	}
 }
