@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+" codebase="https://beryllium.rdc.lctl.gov/svn/transfer/bagger/trunk/htdocs/bagger/" href="bagger.jnlp">
+<jnlp spec="1.0+" codebase="https://beryllium.rdc.lctl.gov/svn/transfer/bagger/trunk/htdocs/bagger/" href="bagger-qa.jnlp">
    <information> 
       <title>Bagger App</title> 
       <vendor>Library of Congress</vendor>
@@ -16,5 +16,5 @@
       <j2se version="1.5+"/>
       <jar href="bagger.jar"/>
    </resources>
-   <application-desc main-class="com.simontuffs.onejar.Boot"/>
+   <application-desc main-class="gov.loc.repository.bagger.BaggerStandalone"/>
 </jnlp> 
