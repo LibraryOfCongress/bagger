@@ -9,11 +9,11 @@ package gov.loc.repository.bagger;
  * @author Jon Steinbach
  */
 public class Contact {
-	private int id;
+	private int id = -1;
 	private int typeId;
-	private Person person;
+	private Person person = new Person();
 	private int personId;
-	private Organization organization;
+	private Organization organization = new Organization();
 	private int organizationId;
 	private String contactName = "";
 	private String telephone = "";
@@ -36,6 +36,7 @@ public class Contact {
 	}
 	
 	public Person getPerson() {
+		if (this.person.getFirstName() == null) person.parse(contactName);
 		return this.person;
 	}
 	

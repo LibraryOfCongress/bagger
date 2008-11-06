@@ -1,5 +1,8 @@
 package gov.loc.repository.bagger;
 
+import java.util.StringTokenizer;
+import java.util.ArrayList;
+
 /**
  * The high-level Bagger Profile business interface.
  *
@@ -9,7 +12,7 @@ package gov.loc.repository.bagger;
  * @author Jon Steinbach
  */
 public class Person {
-	private int id;
+	private int id = -1;
 	private String firstName = "";
 	private String middleInit = "";
 	private String lastName = "";
@@ -44,6 +47,20 @@ public class Person {
 	
 	public String getLastName() {
 		return this.lastName;
+	}
+	
+	public void parse(String name) {
+		ArrayList<String> tokens = new ArrayList<String>();
+		StringTokenizer st = new StringTokenizer(name, " ");
+		while (st.hasMoreTokens()) {
+			  String s=st.nextToken();
+			  tokens.add(s);
+		}
+		if (tokens != null && !tokens.isEmpty()) {
+			this.firstName = tokens.get(0);
+			if (tokens.size() > 1) this.lastName = tokens.get(tokens.size()-1);
+			if (tokens.size() > 2) this.middleInit = tokens.get(1);			
+		}
 	}
 
 	public String toString() {

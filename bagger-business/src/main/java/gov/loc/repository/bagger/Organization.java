@@ -1,7 +1,7 @@
 package gov.loc.repository.bagger;
 
 public class Organization {
-	private int id;
+	private int id = -1;
 	private String name = "";
 	private String address = "";
 

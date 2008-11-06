@@ -4,7 +4,7 @@ import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Project;
 
 public class Profile {
-	private int id;
+	private int id = -1;
 	private String username = "";
 	private int profilePersonId;
 	private Contact  person;

@@ -32,5 +32,7 @@ public interface JdbcBaggerMBean {
 	void storeProfile(Profile prof) throws DataAccessException;
 	
 	void storeOrganization(Organization org) throws DataAccessException;
-/* */
+
+	String storeBaggerUpdates(Collection<Profile> profiles, String homeDir) throws DataAccessException;
+	/* */
 }

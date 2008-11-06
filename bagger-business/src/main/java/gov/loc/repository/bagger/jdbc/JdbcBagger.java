@@ -1,5 +1,10 @@
 package gov.loc.repository.bagger.jdbc;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,7 +34,9 @@ import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.PersonProjects;
+import gov.loc.repository.bagger.UserContact;
 import gov.loc.repository.bagger.Organization;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,10 +65,14 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	private SimpleJdbcInsert insertContact;
 	private SimpleJdbcInsert insertProfile;
 	private SimpleJdbcInsert insertBag;
+	private SimpleJdbcInsert insertPersonProject;
+	private SimpleJdbcInsert insertUserContact;
 
 	private final List<Organization> orgs = new ArrayList<Organization>();
 	private final List<Project> projects = new ArrayList<Project>();
 
+	ArrayList<String> commandList = new ArrayList<String>();
+	String sqlCommand = "";
 
 	@Autowired
 	public void init(DataSource dataSource) {
@@ -72,6 +83,8 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		this.insertOrganization = new SimpleJdbcInsert(dataSource).withTableName("organization").usingGeneratedKeyColumns("id");
 		this.insertContact = new SimpleJdbcInsert(dataSource).withTableName("contact").usingGeneratedKeyColumns("id");
 		this.insertProfile = new SimpleJdbcInsert(dataSource).withTableName("profile").usingGeneratedKeyColumns("id");
+		this.insertPersonProject = new SimpleJdbcInsert(dataSource).withTableName("person_projects").usingGeneratedKeyColumns("id");
+		this.insertUserContact = new SimpleJdbcInsert(dataSource).withTableName("user_contact").usingGeneratedKeyColumns("id");
 		this.insertBag = new SimpleJdbcInsert(dataSource).withTableName("bag").usingGeneratedKeyColumns("id");
 	}
 
@@ -222,20 +235,78 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	}
 	
 	@Transactional
+	public void storePerson(Person person) throws DataAccessException {
+		try {
+			Person p = this.loadPerson(person.getId());
+			Number newKey = this.insertPerson.executeAndReturnKey(new BeanPropertySqlParameterSource(person));
+			p.setId(newKey.intValue());
+			person.setId(p.getId());
+			sqlCommand = "INSERT INTO person VALUES (" + newKey.intValue() + ", '" + person.getFirstName() + "', '" + person.getMiddleInit() + "', '" + person.getLastName() + "');";
+			commandList.add(sqlCommand);
+		}
+		catch (Exception ex) {
+			try {
+				this.simpleJdbcTemplate.update(
+						"UPDATE person SET first_name=:firstName, middle_init=:middleInit, last_name=:lastName WHERE id=:id",
+						new BeanPropertySqlParameterSource(person));
+				sqlCommand = "UPDATE person SET first_name='" + person.getFirstName() + "', middle_init='" + person.getMiddleInit() + "', last_name='" + person.getLastName() + "' WHERE id=" + person.getId() + ";";
+				commandList.add(sqlCommand);
+			}
+			catch (Exception exception) {
+				exception.printStackTrace();
+				throw new UnsupportedOperationException("Profile update not supported");				
+			}
+		}
+	}
+
+	@Transactional
+	public void storeContact(Contact contact) throws DataAccessException {
+		Person person = contact.getPerson();
+		Organization org = contact.getOrganization();
+		try {
+			Contact c = this.loadContact(contact.getId());
+			Number newKey = this.insertContact.executeAndReturnKey(new BeanPropertySqlParameterSource(contact));
+			c.setId(newKey.intValue());
+			contact.setId(c.getId());
+			sqlCommand = "INSERT INTO contact VALUES (" + newKey.intValue() + ", " + person.getId() + ", " + org.getId() + ", '" + contact.getEmail() + "', '" + contact.getTelephone() + "');";
+			commandList.add(sqlCommand);
+		}
+		catch (Exception ex) {
+			try {
+				this.simpleJdbcTemplate.update(
+						"UPDATE contact SET person_id=:personId, organization_id=:organizationId, email=:email, telephone=:telephone WHERE id=:id",
+						new BeanPropertySqlParameterSource(contact));
+				sqlCommand = "UPDATE contact SET person_id=" + person.getId() + ", organization_id=" + org.getId() + ", email='" + contact.getEmail() + "', telephone='" + contact.getTelephone() + "' WHERE id=" + contact.getId() + ";";
+				commandList.add(sqlCommand);
+			}
+			catch (Exception exception) {
+				exception.printStackTrace();
+				throw new UnsupportedOperationException("Profile update not supported");				
+			}
+		}
+	}
+
+	@Transactional
 	public void storeOrganization(Organization org) throws DataAccessException {
 		try {
 			Organization organization = loadOrganization(org.getId());
 			Number newKey = this.insertOrganization.executeAndReturnKey(
 						new BeanPropertySqlParameterSource(org));
 			organization.setId(newKey.intValue());
+			org.setId(organization.getId());
+			sqlCommand = "INSERT INTO organization VALUES (" + newKey.intValue() + ", '" + org.getName() + "', '" + org.getAddress() + "');";
+			commandList.add(sqlCommand);
 		}
 		catch (Exception ex) {
 			try {
 				this.simpleJdbcTemplate.update(
 						"UPDATE organization SET name=:name, address=:address WHERE id=:id",
 						new BeanPropertySqlParameterSource(org));
+				sqlCommand = "UPDATE organization SET name='" + org.getName() + "', address='" + org.getAddress() + "' WHERE id=" + org.getId() + ";";
+				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
+				exception.printStackTrace();
 				throw new UnsupportedOperationException("Organization update not supported");				
 			}
 		}
@@ -243,24 +314,129 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 
 
 	@Transactional
-	public void storeProfile(Profile prof) throws DataAccessException {
+	public void storeProfile(Profile profile) throws DataAccessException {
+		Contact contact = profile.getContact();
+		Contact user = profile.getPerson();
+		Person userPerson = user.getPerson();
 		try {
-			Profile profile = loadProfile(prof.getId());
+			Profile prof = loadProfile(profile.getId());
 			Number newKey = this.insertProfile.executeAndReturnKey(new BeanPropertySqlParameterSource(prof));
-			profile.setId(newKey.intValue());
+			prof.setId(newKey.intValue());
+			profile.setId(prof.getId());
+			sqlCommand = "INSERT INTO profile VALUES (" + newKey.intValue() + ", '" + profile.getUsername() + "', " + userPerson.getId() + ", " + profile.getProjectId() + ", " + contact.getId() + ", 'A', '2008-09-18');";
+			commandList.add(sqlCommand);
 		}
 		catch (Exception ex) {
 			try {
 				this.simpleJdbcTemplate.update(
 						"UPDATE profile SET username=:username, profile_person_id=:profilePersonId, project_id=:projectId, contact_id=:contactId WHERE id=:id",
-						new BeanPropertySqlParameterSource(prof));
+						new BeanPropertySqlParameterSource(profile));
+				sqlCommand = "UPDATE profile SET username='" + profile.getUsername() + "', profile_person_id=" + userPerson.getId() + ", project_id=" + profile.getProjectId() + ", contact_id=" + contact.getId() + " WHERE id=" + profile.getId() + ";";
+				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
+				exception.printStackTrace();
 				throw new UnsupportedOperationException("Profile update not supported");				
 			}
 		}
 	}
+	
+	public void storePersonProject(Person person, Project project) throws DataAccessException {
+		try {
+			PersonProjects personProject = new PersonProjects();
+			personProject.setPersonId(person.getId());
+			personProject.setProjectId(project.getId());
+			Number newKey = this.insertPersonProject.executeAndReturnKey(new BeanPropertySqlParameterSource(personProject));
+			personProject.setId(newKey.intValue());
+			sqlCommand = "INSERT INTO person_projects VALUES (" + newKey.intValue() + ", " + person.getId() + ", " + project.getId() + ");";
+			commandList.add(sqlCommand);
+		}
+		catch (Exception exception) {
+			exception.printStackTrace();
+		}
+	}
+	
+	public void storeUserContact(String username, Contact user) throws DataAccessException {
+		try {
+			UserContact userContact = new UserContact();
+			userContact.setUsername(username);
+			userContact.setContactId(user.getId());
+			Number newKey = this.insertUserContact.executeAndReturnKey(new BeanPropertySqlParameterSource(userContact));
+			userContact.setId(newKey.intValue());
+			sqlCommand = "INSERT INTO user_contact VALUES (" + newKey.intValue() + ", '" + username + "', " + user.getId() + ");";
+			commandList.add(sqlCommand);
+		}
+		catch (Exception exception) {
+			exception.printStackTrace();
+		}
+	}
 
+	@Transactional
+	public String storeBaggerUpdates(Collection<Profile> profiles, String homeDir) throws DataAccessException {
+		String messages = null;
+		try {
+			Object[] profileList = profiles.toArray();
+			for (int i=0; i < profileList.length; i++) {
+				Profile profile = (Profile) profileList[i];
+				Contact contact = profile.getContact();
+				Person person = contact.getPerson();
+				Organization org = contact.getOrganization();
+				Contact user = profile.getPerson();
+				Person userPerson = user.getPerson();
+				Project project = profile.getProject();
+				Organization userOrg = user.getOrganization();
+				
+				// TODO: Check if profile, contact, organization, etc. info exists
+				// if it exists create the update sql string and save it.
+				// If it doesn't exist create the insert sql string and save it.
+				// Store the list of all sql strings to a file which will be
+				// searched for, read, and executed on startup.
+				if (person != null) this.storePerson(person);
+				contact.setPerson(person);
+				if (userPerson!= null) this.storePerson(userPerson);
+				user.setPerson(userPerson);
+				if (org != null) this.storeOrganization(org);
+				contact.setOrganization(org);
+				if (userOrg != null) this.storeOrganization(userOrg);
+				user.setOrganization(userOrg);
+				if (contact != null) this.storeContact(contact);
+				profile.setContact(contact);
+				if (user != null) this.storeContact(user);
+				profile.setPerson(user);
+				if (profile != null) this.storeProfile(profile);
+//				if (userPerson != null && project != null) this.storePersonProject(userPerson, project);
+//				if (profile != null & user != null) this.storeUserContact(profile.getUsername(), user);
+			}
+			messages = write(homeDir);
+		}
+		catch (Exception ex) {
+			messages = "JdbcBagger.storeBaggerUpdates exception: " + ex.getMessage();
+			ex.printStackTrace();
+		}
+		return messages;
+	}
+
+	private String write(String homeDir) {
+		String message = null;
+		String name = "bagger.sql";
+		try
+		{
+			File file = new File(homeDir, name);
+			Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+			for (int i=0; i < this.commandList.size(); i++) {
+				String s = this.commandList.get(i);
+				writer.write(s+'\n');
+			}
+			writer.close();
+		}
+		catch(IOException e)
+		{
+			message = "JdbcBagger.write: " + e.getMessage();
+			e.printStackTrace();
+		}
+		return message;		
+	}
+	
 	/**
 	 * Creates a {@link MapSqlParameterSource} based on data values from the
 	 * supplied {@link Profile} instance.

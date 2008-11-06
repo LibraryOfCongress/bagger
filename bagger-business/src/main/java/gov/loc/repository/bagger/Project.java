@@ -1,7 +1,7 @@
 package gov.loc.repository.bagger;
 
 public class Project {
-	private int id;
+	private int id = -1;
 	private String name = "";
 
 	public void setId(int id) {
