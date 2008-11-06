@@ -157,11 +157,17 @@ public class BagInfoInputPane extends JTabbedPane {
     			logger.equals("ERROR BagView.updateForms username: " + user.getContactName() + " exception: " + ex );
     		}
         }
+        Person userPerson = user.getPerson();
+        userPerson.parse(user.getContactName());
+        user.setPerson(userPerson);
 
         if (!organizationContactForm.hasErrors()) {
             organizationContactForm.commit();            	
         }
         Contact newContact = (Contact)organizationContactForm.getFormObject();
+        Person contactPerson = newContact.getPerson();
+        contactPerson.parse(newContact.getContactName());
+        newContact.setPerson(contactPerson);
 
         if (!bagInfoForm.hasErrors()) {
             bagInfoForm.commit();            	
@@ -176,6 +182,7 @@ public class BagInfoInputPane extends JTabbedPane {
         org.setName(newOrganization.getOrgName());
         org.setAddress(newOrganization.getOrgAddress());
         user.setOrganization(org);
+        newContact.setOrganization(org);
 
         newOrganization.setContact(newContact);
         newInfo.setBagOrganization(newOrganization);

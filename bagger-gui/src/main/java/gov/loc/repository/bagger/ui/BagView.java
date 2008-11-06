@@ -71,6 +71,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private Collection<Profile> userProfiles;
 	private String username;
 	private Contact user;
+	private String userHomeDir;
     private String formErrorsMessage = "!! Form errors exist.";
 
 	private ProgressMonitor progressMonitor;
@@ -97,7 +98,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	ApplicationWindow window = Application.instance().getActiveWindow();
     	JFrame f = window.getControl();
     	f.setBackground(Color.red);
-        display("BagView.createControl - User Home Path: "+ System.getProperty("user.home"));
+    	this.userHomeDir = System.getProperty("user.home");
+        display("BagView.createControl - User Home Path: "+ userHomeDir);
         display("BagView.createControl - message.properties getMessage: " + getMessage("bagName.description"));
 
     	if (baggerBag == null) baggerBag = new BaggerBag();
@@ -248,12 +250,17 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } else {
                 	bagInfoInputPane.setSelectedIndex(0);
                 }
+                bagInfoInputPane.verifyForms(baggerBag);
+                updateProfile();
                 if (bagInfoInputPane.hasFormErrors()) {
                 	infoFormMessagePane.setMessage(formErrorsMessage);
                 } else {
                 	infoFormMessagePane.setMessage("");
                 }
                 bagInfoInputPane.invalidate();
+                java.awt.Component comp = bagInfoInputPane.getComponent(0);
+                comp.requestFocus();
+                comp.transferFocus();
             }
         });
     	// Create a panel for the form error messages and the update button
@@ -489,13 +496,19 @@ public class BagView extends AbstractView implements ApplicationListener {
     		bagProject = (Project) projectArray[0];
     		baggerBag.setProject(bagProject);
     	}
-
    		Authentication a = SecurityContextHolder.getContext().getAuthentication();
     	if (a != null) this.username = a.getName();
+    	else this.username = "user";
+    	if (user == null) {
+    		user = new Contact();
+    		Organization org = new Organization();
+    		user.setOrganization(org);    		
+    	}
     	if (this.username != null && !this.username.isEmpty()) {
         	display("BagView.initializeBag getAuthenticationUser:: " + this.username);
         	display("BagView.initializeBag projects: " + bagger.getProjects());
-        	Collection<Profile> profiles = bagger.findProfiles(a.getName());
+        	Collection<Profile> profiles = bagger.findProfiles(this.username);
+        	if (profiles == null) profiles = new ArrayList<Profile>();
         	userProfiles = profiles;
         	Object[] profileArray = profiles.toArray();
         	for (int p=0; p < projectArray.length; p++) {
@@ -523,6 +536,14 @@ public class BagView extends AbstractView implements ApplicationListener {
             	if (!found) {
             		System.out.println("profile does NOT exist: " + project.getId());
             		userProfiles.add(createProfile(project));
+            	}
+            	if (userProjects == null || userProjects.isEmpty()) {
+            		userProjects = bagger.getProjects();
+            		Object[] projList = userProjects.toArray();
+            		for (int i=0; i < projList.length; i++) {
+            			Project proj = (Project) projList[i];
+            			userProfiles.add(createProfile(proj));
+            		}
             	}
         	}
     	} else {
@@ -553,7 +574,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     private void changeProject(String selected) {
-        Object[] project_array = userProjects.toArray();
+        bagInfoInputPane.verifyForms(baggerBag);
+        updateProfile();
+
+    	Object[] project_array = userProjects.toArray();
         for (int i=0; i < userProjects.size(); i++) {
         	Project project = (Project)project_array[i];
         	if (selected.equalsIgnoreCase(project.getName())) {
@@ -563,7 +587,10 @@ public class BagView extends AbstractView implements ApplicationListener {
         		for (int j=0; j < profiles.length; j++) {
         			Profile profile = (Profile) profiles[j];
         			if (profile.getProjectId() == project.getId()) {
-                   		Organization org = profile.getPerson().getOrganization();
+        				Contact person = profile.getPerson();
+        				if (person == null) person = new Contact();
+                   		Organization org = person.getOrganization();
+                   		if (org == null) org = new Organization();
                    		BagInfo bagInfo = baggerBag.getInfo();
                    		BagOrganization bagOrg = bagInfo.getBagOrganization();
                    		Contact contact = profile.getContact();
@@ -800,7 +827,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     			profile.setPerson(user);
     			profile.setUsername(username);
     			try {
-    				bagger.storeProfile(profile);
+    				//bagger.storeProfile(profile);
     				message = "Profile for project: " + project.getName() + " has been saved.";
     				message += "\n";
     			} catch (Exception e) {
@@ -880,29 +907,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         public void execute() {
         	System.out.println("SaveExecutor");
         	String message = "\n";
-        	Project project = baggerBag.getProject();
-        	Object[] profiles = userProfiles.toArray();
-        	for (int i=0; i < profiles.length; i++) {
-        		Profile profile = (Profile) profiles[i];
-        		if (profile.getProject().getId() == project.getId()) {
-        			Contact contact = baggerBag.getInfo().getBagOrganization().getContact();
-        			profile.setContact(contact);
-        			profile.setContactId(contact.getId());
-        			profile.setProject(project);
-        			profile.setProjectId(project.getId());
-        			profile.setPerson(user);
-        			profile.setUsername(username);
-        			try {
-        				bagger.storeProfile(profile);
-        				message = "Profile for project: " + project.getName() + " has been saved.";
-        				message += "\n";
-        			} catch (Exception e) {
-        				message = "ERROR updating this profile: " + e.getMessage();
-        				display(message);
-        			}
-        			profiles[i] = profile;
-        		}
-        	}
+        	// TODO: call the form and profile update for executing this
+        	bagger.storeBaggerUpdates(userProfiles, userHomeDir);
         }
     }
 }
