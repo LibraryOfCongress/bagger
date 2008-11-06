@@ -69,7 +69,7 @@ public class BagInfoInputPane extends JTabbedPane {
         	private static final long serialVersionUID = 1L;
         	public void actionPerformed(ActionEvent evt) {
                 int selected = getSelectedIndex();
-                System.out.println("tabbedPane keyboard: " + selected + " of: " + getComponentCount());
+                //System.out.println("tabbedPane keyboard: " + selected + " of: " + getComponentCount());
                 int count = getComponentCount();
                 if (selected >= 0 && selected < count-1) {
                 	setSelectedIndex(selected+1);
