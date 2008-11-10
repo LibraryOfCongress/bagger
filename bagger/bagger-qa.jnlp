@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+" codebase="https://beryllium.rdc.lctl.gov/svn/transfer/bagger/trunk/htdocs/bagger/" href="bagger-qa.jnlp">
+<jnlp spec="1.0+"
+    codebase="https://beryllium.rdc.lctl.gov/trac/transfer/browser/bagger/trunk/htdocs/bagger/" href="bagger-qa.jnlp?format=raw">
    <information> 
       <title>Bagger App</title> 
       <vendor>Library of Congress</vendor>
