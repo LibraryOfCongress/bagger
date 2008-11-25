@@ -108,13 +108,11 @@ public class BaggerBag extends BagImpl {
     	this.setBaggerManifests(mset);
 /* */
     	List<BaggerTagManifest> tagManifestList = this.getBaggerTagManifests();
-    	if (tagManifestList == null || tagManifestList.isEmpty()) {
-        	ArrayList<BaggerTagManifest> tmset = new ArrayList<BaggerTagManifest>();
-        	BaggerTagManifest tagManifest = new BaggerTagManifest(this);
-        	tagManifest.setType(ManifestType.MD5);
-        	tmset.add(tagManifest);
-        	this.setBaggerTagManifests(tmset);
-    	}
+    	ArrayList<BaggerTagManifest> tmset = new ArrayList<BaggerTagManifest>();
+    	BaggerTagManifest tagManifest = new BaggerTagManifest(this);
+    	tagManifest.setType(ManifestType.MD5);
+    	tmset.add(tagManifest);
+    	this.setBaggerTagManifests(tmset);
 /* */
 	}
 	
