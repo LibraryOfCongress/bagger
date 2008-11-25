@@ -38,7 +38,8 @@ public class BagInfoInputPane extends JTabbedPane {
 
     private String username;
 	private Contact user;
-	private Color selectedColor = new Color(180, 180, 200);
+	private Color errorColor = new Color(200, 100, 100);
+	private Color selectedColor = new Color(100, 100, 120);
 	private Color unselectedColor = Color.black; //new Color(140, 140, 160);
 
     public BagInfoInputPane(BaggerBag b, String username, Contact c ) {
@@ -54,6 +55,28 @@ public class BagInfoInputPane extends JTabbedPane {
                 int selected = sourceTabbedPane.getSelectedIndex();
                 for (int i = 0; i < count; ++i) {
                     Color c = (i == selected) ? unselectedColor : selectedColor;
+                    switch(i) {
+                    case 0:
+                    	if (bagInfoForm.hasErrors()) {
+                    		c = errorColor;
+                    	}                    	break;
+                    case 1:
+                    	if (userContactForm.hasErrors()) {
+                    		c = errorColor;
+                    	}
+                    	break;
+                    case 2:
+                    	if (organizationGeneralForm.hasErrors()) {
+                    		c = errorColor;
+                    	}
+                    	break;
+                    case 3:
+                    	if (organizationContactForm.hasErrors()) {
+                    		c = errorColor;
+                    	}
+                    	break;
+                    default:
+                    }
                     sourceTabbedPane.setBackgroundAt(i, c);
                     sourceTabbedPane.setForegroundAt(i, c);
                 }
@@ -136,10 +159,26 @@ public class BagInfoInputPane extends JTabbedPane {
 //        HierarchicalFormModel model = bagInfoForm.getFormModel();
 //        System.out.println("bagInfoForm isDirty: " + bagInfoForm.isDirty());
 //        System.out.println("bagInfoForm model: " + model.toString());
-        bagInfoForm.getControl().setForeground(unselectedColor);
-        userContactForm.getControl().setForeground(selectedColor);
-        organizationGeneralForm.getControl().setForeground(selectedColor);
-        organizationContactForm.getControl().setForeground(selectedColor);
+    	if (bagInfoForm.hasErrors()) {
+            bagInfoForm.getControl().setForeground(errorColor);
+    	} else {
+            bagInfoForm.getControl().setForeground(unselectedColor);    		
+    	}
+    	if (userContactForm.hasErrors()) {
+            userContactForm.getControl().setForeground(errorColor);    		
+    	} else {
+            userContactForm.getControl().setForeground(selectedColor);    		
+    	}
+    	if (organizationGeneralForm.hasErrors()) {
+            organizationGeneralForm.getControl().setForeground(errorColor);
+    	} else {
+            organizationGeneralForm.getControl().setForeground(selectedColor);    		
+    	}
+    	if (organizationContactForm.hasErrors()) {
+            organizationContactForm.getControl().setForeground(errorColor);
+    	} else {
+            organizationContactForm.getControl().setForeground(selectedColor);    		
+    	}
     }
 
     public String verifyForms(BaggerBag baggerBag) {
@@ -221,8 +260,8 @@ public class BagInfoInputPane extends JTabbedPane {
     		this.setSelectedIndex(2);
     	} else if (organizationContactForm.hasErrors()) {
     		this.setSelectedIndex(3);
-//    	} else if (userContactForm.hasErrors()) {
-//    		this.setSelectedIndex(1);
+    	} else if (userContactForm.hasErrors()) {
+    		this.setSelectedIndex(1);
     	}
     	update();
     }
@@ -243,7 +282,6 @@ public class BagInfoInputPane extends JTabbedPane {
         	c.repaint();
         }
         bagInfoForm.getControl().invalidate();
-        bagInfoForm.getControl().repaint();
         userContactForm.getControl().invalidate();
         organizationGeneralForm.getControl().invalidate();
         organizationContactForm.getControl().invalidate();
