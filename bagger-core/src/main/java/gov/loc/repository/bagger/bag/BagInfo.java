@@ -172,8 +172,8 @@ public class BagInfo extends BagInfoTxtImpl {
 		sb.append("Bag-Size: ");
 		sb.append(this.getBagSize());
 		sb.append('\n');
-		sb.append("Payload-Ossum: ");
-		sb.append(this.getPayloadOssum());
+		sb.append("Payload-Oxum: ");
+		sb.append(this.getPayloadOxum());
 		sb.append('\n');
 		sb.append("Bag-Group-Identifier: ");
 		sb.append(this.getBagGroupIdentifier());
