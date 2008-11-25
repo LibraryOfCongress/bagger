@@ -175,6 +175,6 @@ public class BaggerFileEntity {
 
 	public static String normalize(String filename)
 	{
-		return FilenameHelper.normalize(filename);
+		return FilenameHelper.normalizePathSeparators(filename);
 	}
 }
