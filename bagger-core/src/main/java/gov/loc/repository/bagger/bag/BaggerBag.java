@@ -165,10 +165,10 @@ public class BaggerBag extends BagImpl {
 			this.bagInfo.setBagSize(bagInfoTxt.getBagSize());
 		else
 			this.bagInfo.setBagSize("");
-		if (bagInfoTxt.getPayloadOssum() != null && !bagInfoTxt.getPayloadOssum().equalsIgnoreCase("null"))
-			this.bagInfo.setPayloadOssum(bagInfoTxt.getPayloadOssum());
+		if (bagInfoTxt.getPayloadOxum() != null && !bagInfoTxt.getPayloadOxum().equalsIgnoreCase("null"))
+			this.bagInfo.setPayloadOxum(bagInfoTxt.getPayloadOxum());
 		else
-			this.bagInfo.setPayloadOssum("");
+			this.bagInfo.setPayloadOxum("");
 		if (bagInfoTxt.getBagGroupIdentifier() != null && !bagInfoTxt.getBagGroupIdentifier().equalsIgnoreCase("null"))
 			this.bagInfo.setBagGroupIdentifier(bagInfoTxt.getBagGroupIdentifier());
 		else
