@@ -82,11 +82,20 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(completeLabel, gbc);
         this.add(completeLabel);
 
+    	JLabel completeResult = new JLabel("no");
+    	font = completeResult.getFont().deriveFont(Font.BOLD);
+    	completeResult.setFont(font);
+    	if (baggerBag != null) {
+    		if (baggerBag.getIsComplete()) completeResult.setText("yes");
+    		else completeResult.setText("no");
+    	}
+/*
         JCheckBox completeResult = new JCheckBox("");
     	if (baggerBag != null) {
     		if (baggerBag.getIsComplete()) completeResult.setSelected(true);
     		else completeResult.setSelected(false);
     	}
+*/
     	completeResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, 0, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeResult, gbc);
@@ -100,11 +109,20 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(validLabel, gbc);
         this.add(validLabel);
 
+    	JLabel validResult = new JLabel("no");
+    	font = validResult.getFont().deriveFont(Font.BOLD);
+    	validResult.setFont(font);
+    	if (baggerBag != null) {
+    		if (baggerBag.getIsValid()) validResult.setText("yes");
+    		else validResult.setText("no");
+    	}
+/*
         JCheckBox validResult = new JCheckBox("");
     	if (baggerBag != null) {
     		if (baggerBag.getIsValid()) validResult.setSelected(true);
     		else validResult.setSelected(false);
     	}
+  */
     	validResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, 1, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validResult, gbc);
@@ -118,11 +136,20 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(validMetaLabel, gbc);
         this.add(validMetaLabel);
 
+    	JLabel validMetaResult = new JLabel("no");
+    	font = validMetaResult.getFont().deriveFont(Font.BOLD);
+    	validMetaResult.setFont(font);
+    	if (baggerBag != null) {
+    		if (baggerBag.getIsValidMetadata()) validMetaResult.setText("yes");
+    		else validMetaResult.setText("no");
+    	}
+/*
         JCheckBox validMetaResult = new JCheckBox("");
     	if (baggerBag != null) {
     		if (baggerBag.getIsValidMetadata()) validMetaResult.setSelected(true);
     		else validMetaResult.setSelected(false);
     	}
+*/
     	validMetaResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validMetaResult, gbc);
@@ -137,11 +164,20 @@ public class ConsolePane extends JPanel {
             layout.setConstraints(serializedLabel, gbc);
             this.add(serializedLabel);
 
+        	JLabel serializedResult = new JLabel("no");
+        	font = serializedResult.getFont().deriveFont(Font.BOLD);
+        	serializedResult.setFont(font);
+        	if (baggerBag != null) {
+        		if (baggerBag.getIsSerialized()) serializedResult.setText("yes");
+        		else serializedResult.setText("no");
+        	}
+/*
             JCheckBox serializedResult = new JCheckBox("");
         	if (baggerBag != null) {
         		if (baggerBag.getIsSerialized()) serializedResult.setSelected(true);
         		else serializedResult.setSelected(false);
         	}
+*/
         	serializedResult.setPreferredSize(formDimension);
             buildConstraints(gbc, 1, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
             layout.setConstraints(serializedResult, gbc);
