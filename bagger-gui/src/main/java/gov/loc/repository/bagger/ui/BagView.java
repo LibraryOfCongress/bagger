@@ -65,6 +65,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
 	private Bagger bagger;
     private BaggerBag baggerBag;
+    private int bagCount = 1;
     private File bagRootPath;
     private BagTree bagTree;
     private Collection<Project> userProjects;
@@ -86,7 +87,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JButton saveButton;
     private JButton validateButton;
     private SaveExecutor saveExecutor = new SaveExecutor();
-    
+    private Color errorColor = new Color(255, 128, 128);
+//    private Color infoColor = new Color(255,165,25);
+	private Color infoColor = new Color(100, 100, 120);
+
     public void setBagger(Bagger bagger) {
         Assert.notNull(bagger, "The bagger property is required");
         display("BagView.setBagger: " );
@@ -104,6 +108,11 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     	if (baggerBag == null) baggerBag = new BaggerBag();
     	baggerBag.generate();
+    	String bagName = baggerBag.getInfo().getBagName();
+    	bagName += "" + this.bagCount;
+		baggerBag.setName(bagName);
+		baggerBag.getInfo().setBagName(bagName);
+
     	initializeProfile();
     	updateCommands();
     	Color bgColor = new Color(20,20,100);
@@ -234,10 +243,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     	JPanel bagSettingsPanel = createBagSettingsPanel();
     	bagInfoInputPane = new BagInfoInputPane(baggerBag, username, user);
 
-        Color infoColor = new Color(255,165,25);
     	// Create a panel for the form error messages and the update button
         JButton nextButton = new JButton("Next");
-        nextButton.setBackground(infoColor);
+        //nextButton.setBackground(infoColor);
         nextButton.setMnemonic(KeyEvent.VK_ENTER); // ALT+Enter
         //nextButton.setBorder(new EmptyBorder(5, 5, 5, 5));
         nextButton.addActionListener(new AbstractAction() {
@@ -265,7 +273,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         });
     	// Create a panel for the form error messages and the update button
         JButton updatePropButton = new JButton("Save Updates");
-        updatePropButton.setBackground(infoColor);
+        //updatePropButton.setBackground(infoColor);
         updatePropButton.setMnemonic('u');
         //updatePropButton.setBorder(new EmptyBorder(5, 5, 5, 5));
         updatePropButton.addActionListener(new AbstractAction() {
@@ -289,10 +297,15 @@ public class BagView extends AbstractView implements ApplicationListener {
         if (offset == 0) offset = 80;
         labelDimension.setSize(labelDimension.getWidth()-offset, 25);
         infoFormMessagePane.setPreferredSize(labelDimension);
-        infoFormMessagePane.setBackground(infoColor);
         infoFormMessagePane.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         infoLabelPanel.add(infoFormMessagePane, "North");
-    	infoLabelPanel.setBackground(infoColor);
+        if (bagInfoInputPane.hasFormErrors()) {
+            infoFormMessagePane.setBackground(errorColor);
+        	//infoLabelPanel.setBackground(errorColor);
+        } else {
+            infoFormMessagePane.setBackground(infoColor);
+        	//infoLabelPanel.setBackground(infoColor);
+        }
 
         JLabel button = new JLabel("");
     	
@@ -693,16 +706,18 @@ public class BagView extends AbstractView implements ApplicationListener {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	String messages = "";
         messages = bagInfoInputPane.updateForms(baggerBag);
-        log.info("BagView.newBag.getName: " + baggerBag.getName());
     	bagRootPath = file;
-    	log.info("BagView.newBag: " + file.getAbsolutePath() + ", bag: " + baggerBag.getName());
+    	log.info("BagView.newBag location: " + file.getAbsolutePath() );
     	try {
     		File rootDir = new File(file.getAbsolutePath(), baggerBag.getName());
-    		baggerBag.setRootDir(rootDir);    		
+    		baggerBag.setRootDir(rootDir);
         	messages += updateMessages(messages);
     	} catch (Exception e) {
-        	messages += "\n" + "Failed to create new bag: " + baggerBag.getName();    		
+        	messages += "\n" + "Failed to create new bag! " + e.getMessage();
     	}
+    	this.bagCount++;
+    	clearExistingBag(messages);
+        log.info("BagView.newBag.getName: " + baggerBag.getName());
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
@@ -712,7 +727,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 		baggerBag.openBag(file);
 		baggerBag.setName(file.getName());
 		baggerBag.setRootDir(file);
-		baggerBag.getInfo().setName(file.getName());
+		baggerBag.getInfo().setBagName(file.getName());
     	bagRootPath = file.getParentFile();
 
 		File rootSrc = new File(file, AbstractBagConstants.DATA_DIRECTORY);
@@ -730,11 +745,11 @@ public class BagView extends AbstractView implements ApplicationListener {
     	baggerBag.generate();
 
         bagInfoInputPane.populateForms(baggerBag);
-//        messages = bagInfoInputPane.updateForms(baggerBag);
-//        messages += updateMessages(messages);
+        messages = bagInfoInputPane.updateForms(baggerBag);
+        messages += updateMessages(messages);
         // TODO: need to figure out why validation field is not updating for valid input
         bagInfoInputPane.updateSelected();
-//        messages += updateProfile();
+        messages += updateProfile();
         messages += "Files have been added to the bag from: " + file.getName();
         bagInfoInputPane.update();
         //bagInfoInputPane.updateSelected();
@@ -797,14 +812,40 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagDisplayPane.updateTabs(baggerBag, messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
+    
+    private void clearExistingBag(String messages) {
+    	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
+    	baggerBag = new BaggerBag();
+
+    	bagTree = new BagTree();
+        baggerBag.setRootTree(bagTree.getRootTree());
+    	bagTreePanel.refresh(bagTree);
+    	
+    	baggerBag.generate();
+    	String bagName = baggerBag.getInfo().getBagName();
+    	bagName += "" + this.bagCount;
+		baggerBag.setName(bagName);
+		baggerBag.getInfo().setBagName(bagName);
+    	initializeProfile();
+
+    	bagInfoInputPane.populateForms(baggerBag);
+        bagInfoInputPane.updateSelected();
+        messages += updateProfile();
+        bagInfoInputPane.update();
+        //bagInfoInputPane.updateSelected();
+        bagDisplayPane.updateTabs(baggerBag, messages);
+        BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
+    }
 
     private String updateMessages(String messages) {
         if (!bagInfoInputPane.hasFormErrors() && (messages == null || messages.length() == 0)) {
             messages = "Organization and Contact information has been updated.";
+            infoFormMessagePane.setBackground(infoColor);
             infoFormMessagePane.setMessage("");
             messages += "\n";
         } else {
             messages = "Organization and Contact information has form errors.";
+            infoFormMessagePane.setBackground(errorColor);
             infoFormMessagePane.setMessage(formErrorsMessage);
         	messages += "\n";
         }
