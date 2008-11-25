@@ -47,7 +47,7 @@ public class BagInfo extends BagInfoTxtImpl {
 	private static final Log log = LogFactory.getLog(BagInfo.class);
 
 	private BaggerBag baggerBag;
-	private String bagName = new String("bag_1");
+	private String bagName = new String("bag_");
 	private BagOrganization bagOrganization = new BagOrganization();
 	private String baggingDate = ""; // YYYY-MM-DD
 	private String publisher = "";
