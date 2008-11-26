@@ -30,7 +30,7 @@ public class OrganizationInfoForm extends AbstractForm {
         formBuilder.row();
         formBuilder.add("bagSize");
         formBuilder.row();
-        formBuilder.add("payloadOssum");
+        formBuilder.add("payloadOxum");
         formBuilder.row();
         formBuilder.add("bagGroupIdentifier");
         formBuilder.row();
