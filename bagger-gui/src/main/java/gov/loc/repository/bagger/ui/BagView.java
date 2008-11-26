@@ -518,8 +518,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     		user.setOrganization(org);    		
     	}
     	if (this.username != null && this.username.length() > 0) {
-        	display("BagView.initializeBag getAuthenticationUser:: " + this.username);
-        	display("BagView.initializeBag projects: " + bagger.getProjects());
+        	//display("BagView.initializeBag getAuthenticationUser:: " + this.username);
+        	//display("BagView.initializeBag projects: " + bagger.getProjects());
         	Collection<Profile> profiles = bagger.findProfiles(this.username);
         	if (profiles == null) profiles = new ArrayList<Profile>();
         	userProfiles = profiles;
@@ -528,11 +528,11 @@ public class BagView extends AbstractView implements ApplicationListener {
         		Project project = (Project) projectArray[p];
         		boolean found = false;
             	for (int i=0; i < profileArray.length; i++) {
-            		display("BagView.initializeBag profile:\n" + profileArray[i].toString());
+            		//display("BagView.initializeBag profile:\n" + profileArray[i].toString());
             		Profile profile = (Profile) profileArray[i];
             		if (project.getId() == profile.getProject().getId()) {
             			found = true;
-            			display("BagView.initializeBag profile exists for project: " + project.getId());
+            			//display("BagView.initializeBag profile exists for project: " + project.getId());
                    		if (project.getId() == bagProject.getId()) {
                        		Organization org = profile.getPerson().getOrganization();
                        		BagInfo bagInfo = baggerBag.getInfo();
@@ -749,7 +749,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         messages += updateMessages(messages);
         // TODO: need to figure out why validation field is not updating for valid input
         bagInfoInputPane.updateSelected();
-        messages += updateProfile();
+//        messages += updateProfile();
         messages += "Files have been added to the bag from: " + file.getName();
         bagInfoInputPane.update();
         //bagInfoInputPane.updateSelected();
@@ -830,7 +830,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     	bagInfoInputPane.populateForms(baggerBag);
         bagInfoInputPane.updateSelected();
-        messages += updateProfile();
+//        messages += updateProfile();
         bagInfoInputPane.update();
         //bagInfoInputPane.updateSelected();
         bagDisplayPane.updateTabs(baggerBag, messages);
