@@ -40,9 +40,15 @@ import java.util.Iterator;
            private final Iterator<File> files;
            private final FileFilter filter;
 
-           FileIterator(File file, FileFilter filter){
-       	   this.files = Arrays.asList(file.listFiles(filter)).iterator();
-           this.filter = filter;}
+           FileIterator(File file, FileFilter filter) {
+        	   File[] list = file.listFiles(filter);
+        	   if (list != null) {
+            	   this.files = Arrays.asList(list).iterator();        		   
+        	   } else {
+        		   this.files = null;
+        	   }
+        	   this.filter = filter;
+           }
 
            public void remove() { }
 
@@ -54,7 +60,10 @@ import java.util.Iterator;
            }
 
            public boolean hasNext() {
-               return this.files.hasNext();
+        	   if (this.files != null)
+        		   return this.files.hasNext();
+        	   else
+        		   return false;
            }
        }
 }
