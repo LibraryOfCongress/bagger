@@ -204,10 +204,13 @@ public class BagInfoInputPane extends JTabbedPane {
             organizationContactForm.commit();            	
         }
         Contact newContact = (Contact)organizationContactForm.getFormObject();
-        Person contactPerson = newContact.getPerson();
-        contactPerson.parse(newContact.getContactName());
-        newContact.setPerson(contactPerson);
-
+        try {
+        	Person contactPerson = newContact.getPerson();
+        	contactPerson.parse(newContact.getContactName());
+        	newContact.setPerson(contactPerson);
+        } catch (Exception e) {
+        	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
+        }
         if (!bagInfoForm.hasErrors()) {
             bagInfoForm.commit();            	
         }
@@ -217,11 +220,15 @@ public class BagInfoInputPane extends JTabbedPane {
             organizationGeneralForm.commit();
         }
         BagOrganization newOrganization = (BagOrganization)organizationGeneralForm.getFormObject();
-        Organization org = user.getOrganization();
-        org.setName(newOrganization.getOrgName());
-        org.setAddress(newOrganization.getOrgAddress());
-        user.setOrganization(org);
-        newContact.setOrganization(org);
+        try {
+            Organization org = user.getOrganization();
+            org.setName(newOrganization.getOrgName());
+            org.setAddress(newOrganization.getOrgAddress());
+            user.setOrganization(org);
+            newContact.setOrganization(org);        	
+        } catch (Exception e) {
+        	logger.error("BagInfoInputPane.verifyForms newOrganization: " + e.getMessage());        	
+        }
 
         newOrganization.setContact(newContact);
         newInfo.setBagOrganization(newOrganization);
