@@ -130,89 +130,97 @@ public class BaggerBag extends BagImpl {
         if (data == null) data = new Data();
 		isNewBag = false;
         setRootDir(rootDir);
-        gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir);
+        try {
+            gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir);
 
-		BagItTxt bagItTxt = bagitBag.getBagItTxt();
-		bagIt.setEncoding(bagItTxt.getCharacterEncoding());
-		if (bagItTxt.getVersion() != null && bagItTxt.getVersion().length() > 0 && !bagItTxt.getVersion().equalsIgnoreCase("null"))
-			bagIt.setVersion(bagItTxt.getVersion());
+    		BagItTxt bagItTxt = bagitBag.getBagItTxt();
+    		if (bagItTxt != null) bagIt.setEncoding(bagItTxt.getCharacterEncoding());
+    		if (bagItTxt.getVersion() != null && bagItTxt.getVersion().length() > 0 && !bagItTxt.getVersion().equalsIgnoreCase("null")) {
+    			bagIt.setVersion(bagItTxt.getVersion());
+    		}
+            BagInfoTxt bagInfoTxt = bagitBag.getBagInfoTxt();
+    		BagOrganization bagOrganization = this.bagInfo.getBagOrganization();
+    		Contact contact = bagOrganization.getContact();
+    		contact.setContactName(bagInfoTxt.getContactName());
+    		System.out.println("contact name: " + bagInfoTxt.getContactName());
+    		contact.setTelephone(bagInfoTxt.getContactPhone());
+    		System.out.println("contact phone: " + bagInfoTxt.getContactPhone());
+    		contact.setEmail(bagInfoTxt.getContactEmail());
+    		System.out.println("contact email: " + bagInfoTxt.getContactEmail());
+    		bagOrganization.setContact(contact);
+    		bagOrganization.setOrgName(bagInfoTxt.getSourceOrganization());
+    		System.out.println("source org: " + bagInfoTxt.getSourceOrganization());
+    		bagOrganization.setOrgAddress(bagInfoTxt.getOrganizationAddress());
+    		System.out.println("source address: " + bagInfoTxt.getOrganizationAddress());
+    		this.bagInfo.setBagOrganization(bagOrganization);
+    		this.bagInfo.setAwardeePhase("");
+    		this.bagInfo.setPublisher("");
+    		if (bagInfoTxt.getExternalDescription() != null && !bagInfoTxt.getExternalDescription().equalsIgnoreCase("null"))
+    			this.bagInfo.setExternalDescription(bagInfoTxt.getExternalDescription());
+    		else
+    			this.bagInfo.setExternalDescription("");
+    		if (bagInfoTxt.getBaggingDate() != null && !bagInfoTxt.getBaggingDate().equalsIgnoreCase("null"))
+    			this.bagInfo.setBaggingDate(bagInfoTxt.getBaggingDate());
+    		else
+    			this.bagInfo.setBaggingDate("");
+    		if (bagInfoTxt.getExternalIdentifier() != null && !bagInfoTxt.getExternalIdentifier().equalsIgnoreCase("null"))
+    			this.bagInfo.setExternalIdentifier(bagInfoTxt.getExternalIdentifier());
+    		else
+    			this.bagInfo.setExternalIdentifier("");
+    		if (bagInfoTxt.getBagSize() != null && !bagInfoTxt.getBagSize().equalsIgnoreCase("null"))
+    			this.bagInfo.setBagSize(bagInfoTxt.getBagSize());
+    		else
+    			this.bagInfo.setBagSize("");
+    		if (bagInfoTxt.getPayloadOxum() != null && !bagInfoTxt.getPayloadOxum().equalsIgnoreCase("null"))
+    			this.bagInfo.setPayloadOxum(bagInfoTxt.getPayloadOxum());
+    		else
+    			this.bagInfo.setPayloadOxum("");
+    		if (bagInfoTxt.getBagGroupIdentifier() != null && !bagInfoTxt.getBagGroupIdentifier().equalsIgnoreCase("null"))
+    			this.bagInfo.setBagGroupIdentifier(bagInfoTxt.getBagGroupIdentifier());
+    		else
+    			this.bagInfo.setBagGroupIdentifier("");
+    		if (bagInfoTxt.getBagCount() != null && !bagInfoTxt.getBagCount().equalsIgnoreCase("null"))
+    			this.bagInfo.setBagCount(bagInfoTxt.getBagCount());
+    		else
+    			this.bagInfo.setBagCount("");
+    		if (bagInfoTxt.getInternalSenderIdentifier() != null && !bagInfoTxt.getInternalSenderIdentifier().equalsIgnoreCase("null"))
+    			this.bagInfo.setInternalSenderIdentifier(bagInfoTxt.getInternalSenderIdentifier());
+    		else
+    			this.bagInfo.setInternalSenderIdentifier("");
+    		if (bagInfoTxt.getInternalSenderDescription() != null && !bagInfoTxt.getInternalSenderDescription().equalsIgnoreCase("null"))
+    			this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
+    		else
+    			this.bagInfo.setInternalSenderDescription("");
 
-        BagInfoTxt bagInfoTxt = bagitBag.getBagInfoTxt();
-		BagOrganization bagOrganization = this.bagInfo.getBagOrganization();
-		Contact contact = bagOrganization.getContact();
-		contact.setContactName(bagInfoTxt.getContactName());
-		contact.setTelephone(bagInfoTxt.getContactPhone());
-		contact.setEmail(bagInfoTxt.getContactEmail());
-		bagOrganization.setContact(contact);
-		bagOrganization.setOrgName(bagInfoTxt.getSourceOrganization());
-		bagOrganization.setOrgAddress(bagInfoTxt.getOrganizationAddress());
-		this.bagInfo.setBagOrganization(bagOrganization);
-		this.bagInfo.setAwardeePhase("");
-		this.bagInfo.setPublisher("");
-		if (bagInfoTxt.getExternalDescription() != null && !bagInfoTxt.getExternalDescription().equalsIgnoreCase("null"))
-			this.bagInfo.setExternalDescription(bagInfoTxt.getExternalDescription());
-		else
-			this.bagInfo.setExternalDescription("");
-		if (bagInfoTxt.getBaggingDate() != null && !bagInfoTxt.getBaggingDate().equalsIgnoreCase("null"))
-			this.bagInfo.setBaggingDate(bagInfoTxt.getBaggingDate());
-		else
-			this.bagInfo.setBaggingDate("");
-		if (bagInfoTxt.getExternalIdentifier() != null && !bagInfoTxt.getExternalIdentifier().equalsIgnoreCase("null"))
-			this.bagInfo.setExternalIdentifier(bagInfoTxt.getExternalIdentifier());
-		else
-			this.bagInfo.setExternalIdentifier("");
-		if (bagInfoTxt.getBagSize() != null && !bagInfoTxt.getBagSize().equalsIgnoreCase("null"))
-			this.bagInfo.setBagSize(bagInfoTxt.getBagSize());
-		else
-			this.bagInfo.setBagSize("");
-		if (bagInfoTxt.getPayloadOxum() != null && !bagInfoTxt.getPayloadOxum().equalsIgnoreCase("null"))
-			this.bagInfo.setPayloadOxum(bagInfoTxt.getPayloadOxum());
-		else
-			this.bagInfo.setPayloadOxum("");
-		if (bagInfoTxt.getBagGroupIdentifier() != null && !bagInfoTxt.getBagGroupIdentifier().equalsIgnoreCase("null"))
-			this.bagInfo.setBagGroupIdentifier(bagInfoTxt.getBagGroupIdentifier());
-		else
-			this.bagInfo.setBagGroupIdentifier("");
-		if (bagInfoTxt.getBagCount() != null && !bagInfoTxt.getBagCount().equalsIgnoreCase("null"))
-			this.bagInfo.setBagCount(bagInfoTxt.getBagCount());
-		else
-			this.bagInfo.setBagCount("");
-		if (bagInfoTxt.getInternalSenderIdentifier() != null && !bagInfoTxt.getInternalSenderIdentifier().equalsIgnoreCase("null"))
-			this.bagInfo.setInternalSenderIdentifier(bagInfoTxt.getInternalSenderIdentifier());
-		else
-			this.bagInfo.setInternalSenderIdentifier("");
-		if (bagInfoTxt.getInternalSenderDescription() != null && !bagInfoTxt.getInternalSenderDescription().equalsIgnoreCase("null"))
-			this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
-		else
-			this.bagInfo.setInternalSenderDescription("");
-/* */
-		List<gov.loc.repository.bagit.Manifest> payloadManifests = bagitBag.getPayloadManifests();
-		for (int index=0; index < payloadManifests.size(); index++) {
-    		gov.loc.repository.bagit.Manifest manifest = payloadManifests.get(index);
-    		this.putPayloadFile(manifest);
-		}
-/* */		
-    	ArrayList<BaggerTagManifest> tagManifestList = new ArrayList<BaggerTagManifest>();
-		List<gov.loc.repository.bagit.Manifest> tagManifests = bagitBag.getTagManifests();
-    	if (tagManifests != null && !tagManifests.isEmpty()) {
-        	for (int i=0; i < tagManifests.size(); i++) {
-        		gov.loc.repository.bagit.Manifest manifest = tagManifests.get(i);
-        		this.putTagFile(manifest);
-        		
-        		BaggerTagManifest tagManifest = new BaggerTagManifest(this);
-            	tagManifest.setType(ManifestType.MD5);
-            	tagManifest.fromString(manifest.toString());
-            	tagManifestList.add(tagManifest);
+    		List<gov.loc.repository.bagit.Manifest> payloadManifests = bagitBag.getPayloadManifests();
+    		for (int index=0; index < payloadManifests.size(); index++) {
+        		gov.loc.repository.bagit.Manifest manifest = payloadManifests.get(index);
+        		this.putPayloadFile(manifest);
+    		}
+
+        	ArrayList<BaggerTagManifest> tagManifestList = new ArrayList<BaggerTagManifest>();
+    		List<gov.loc.repository.bagit.Manifest> tagManifests = bagitBag.getTagManifests();
+        	if (tagManifests != null && !tagManifests.isEmpty()) {
+            	for (int i=0; i < tagManifests.size(); i++) {
+            		gov.loc.repository.bagit.Manifest manifest = tagManifests.get(i);
+            		this.putTagFile(manifest);
+            		
+            		BaggerTagManifest tagManifest = new BaggerTagManifest(this);
+                	tagManifest.setType(ManifestType.MD5);
+                	tagManifest.fromString(manifest.toString());
+                	tagManifestList.add(tagManifest);
+            	}
+            	this.setBaggerTagManifests(tagManifestList);
         	}
-        	this.setBaggerTagManifests(tagManifestList);
-    	}
-/* */
-    	FetchTxt fetchTxt = bagitBag.getFetchTxt();
-    	if (fetchTxt != null && !fetchTxt.isEmpty()) {
-    		this.setIsHoley(true);
-    		this.fetch.setContent(fetchTxt.toString());
-    	}
-/* */
+
+        	FetchTxt fetchTxt = bagitBag.getFetchTxt();
+        	if (fetchTxt != null && !fetchTxt.isEmpty()) {
+        		this.setIsHoley(true);
+        		this.fetch.setContent(fetchTxt.toString());
+        	}
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
 	}
 	
 	public void setName(String name) {
