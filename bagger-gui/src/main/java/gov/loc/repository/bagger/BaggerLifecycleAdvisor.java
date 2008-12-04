@@ -58,7 +58,7 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor
     public void onCommandsCreated(ApplicationWindow window)
     {
         ActionCommand command = (ActionCommand) window.getCommandManager().getCommand("loginCommand", ActionCommand.class);
-        // TODO: implement login and logout if db is on server
+        // TODO: implement login and logout if db is on remote server
         //command.execute();
     }
 }
