@@ -4,6 +4,7 @@ package gov.loc.repository.bagger.ui;
 import gov.loc.repository.bagger.*;
 import gov.loc.repository.bagger.bag.*;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
+import gov.loc.repository.bagit.utilities.FilenameHelper;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -46,6 +47,8 @@ import org.springframework.richclient.application.ApplicationWindow;
 import org.springframework.richclient.application.PageComponentContext;
 import org.springframework.richclient.command.support.AbstractActionCommandExecutor;
 import org.springframework.richclient.command.support.GlobalCommandIds;
+import org.springframework.richclient.dialog.CloseAction;
+import org.springframework.richclient.dialog.ConfirmationDialog;
 import org.springframework.richclient.application.event.LifecycleApplicationEvent;
 import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.progress.BusyIndicator;
@@ -65,7 +68,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
 	private Bagger bagger;
     private BaggerBag baggerBag;
-    private int bagCount = 1;
+    private int bagCount = 0;
     private File bagRootPath;
     private BagTree bagTree;
     private Collection<Project> userProjects;
@@ -228,9 +231,15 @@ public class BagView extends AbstractView implements ApplicationListener {
         saveButton.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent e) {
-				createBag(bagRootPath);
-                validateButton.setEnabled(true);
-            	topButtonPanel.invalidate();
+            	if (bagRootPath.exists()) {
+            		log.info("bagRootPath exists: " + bagRootPath.getAbsolutePath());
+                    showConfirmation();
+            	} else {
+            		log.info("bagRootPath does not exist: " + bagRootPath.getAbsolutePath());
+                    createBag(bagRootPath);
+                    validateButton.setEnabled(true);
+                	topButtonPanel.invalidate();
+            	}
             }
         });
         saveButton.setEnabled(false);
@@ -690,9 +699,13 @@ public class BagView extends AbstractView implements ApplicationListener {
                 	break;
                 case BAG_CREATE:
                 	bagRootPath = file;
-                    createBag(file);
-                    validateButton.setEnabled(true);
-                	topButtonPanel.invalidate();
+                	if (bagRootPath.exists()) {
+                        showConfirmation();
+                	} else {
+                        createBag(file);
+                        validateButton.setEnabled(true);
+                    	topButtonPanel.invalidate();
+                	}
                 	break;
                	default:
                 	display("The mode selected: " + mode + " is not supported.");
@@ -765,8 +778,13 @@ public class BagView extends AbstractView implements ApplicationListener {
     	log.info("BagView.addBagData: " + file.getAbsolutePath());
     	log.info("BagView.BagRootDir: " + baggerBag.getRootDir());
 
-    	baggerBag.addPayload(file);
-
+    	try {
+//        	String fileName = gov.loc.repository.bagit.utilities.FilenameHelper.normalizePathSeparators(file.getAbsolutePath());
+//        	baggerBag.addPayload(new File(fileName));
+        	baggerBag.addPayload(file);
+    	} catch (Exception e) {
+    		log.error("BagView.addBagData: " + file.getAbsolutePath() + " error: " + e.getMessage());
+    	}
     	BaggerFileEntity bfe = new BaggerFileEntity(parentSrc, file, baggerBag.getRootDir());
     	bagTree.addNodes(file);
         bagTree.addTree(parentSrc, file, baggerBag.getRootDir());
@@ -837,7 +855,22 @@ public class BagView extends AbstractView implements ApplicationListener {
         BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
-    private String updateMessages(String messages) {
+	private void showConfirmation() {
+	    ConfirmationDialog dialog = new ConfirmationDialog() {
+	        protected void onConfirm() {
+                createBag(bagRootPath);
+                validateButton.setEnabled(true);
+            	topButtonPanel.invalidate();
+	        }
+	    };
+
+	    dialog.setCloseAction(CloseAction.DISPOSE);
+	    dialog.setTitle("Create bag confirmation.");
+	    dialog.setConfirmationMessage("This bag name already exists, continuing will overwrite the existing bag.  Would you like to continue?");
+	    dialog.showDialog();
+	}
+
+	private String updateMessages(String messages) {
         if (!bagInfoInputPane.hasFormErrors() && (messages == null || messages.length() == 0)) {
             messages = "Organization and Contact information has been updated.";
             infoFormMessagePane.setBackground(infoColor);
