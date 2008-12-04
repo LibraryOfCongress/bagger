@@ -51,7 +51,7 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
                 add("externalIdentifier", required());
                 add("bagSize", required());
 //            	add("publisher", getIsCopyright());
-//                add("payloadOssum", required() );
+//                add("payloadOxum", required() );
             }
         };
     }
