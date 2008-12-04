@@ -12,7 +12,8 @@ import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.FileUtililties;
 
-import gov.loc.repository.bagit.v0_96.impl.BagImpl;
+//import gov.loc.repository.bagit.v0_96.impl.BagImpl;
+import gov.loc.repository.bagit.v0_95.impl.BagImpl;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.BagFactory;
@@ -171,10 +172,16 @@ public class BaggerBag extends BagImpl {
     			this.bagInfo.setBagSize(bagInfoTxt.getBagSize());
     		else
     			this.bagInfo.setBagSize("");
+    		if (bagInfoTxt.getPayloadOssum() != null && !bagInfoTxt.getPayloadOssum().equalsIgnoreCase("null"))
+    			this.bagInfo.setPayloadOssum(bagInfoTxt.getPayloadOssum());
+    		else
+    			this.bagInfo.setPayloadOssum("");
+/*
     		if (bagInfoTxt.getPayloadOxum() != null && !bagInfoTxt.getPayloadOxum().equalsIgnoreCase("null"))
     			this.bagInfo.setPayloadOxum(bagInfoTxt.getPayloadOxum());
     		else
     			this.bagInfo.setPayloadOxum("");
+*/
     		if (bagInfoTxt.getBagGroupIdentifier() != null && !bagInfoTxt.getBagGroupIdentifier().equalsIgnoreCase("null"))
     			this.bagInfo.setBagGroupIdentifier(bagInfoTxt.getBagGroupIdentifier());
     		else
