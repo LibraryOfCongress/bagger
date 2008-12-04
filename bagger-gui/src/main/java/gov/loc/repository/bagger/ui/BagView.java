@@ -88,7 +88,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JButton validateButton;
     private SaveExecutor saveExecutor = new SaveExecutor();
     private Color errorColor = new Color(255, 128, 128);
-//    private Color infoColor = new Color(255,165,25);
 	private Color infoColor = new Color(100, 100, 120);
 
     public void setBagger(Bagger bagger) {
@@ -108,6 +107,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     	if (baggerBag == null) baggerBag = new BaggerBag();
     	baggerBag.generate();
+    	// TODO: put this in baggerBag.generate
     	String bagName = baggerBag.getInfo().getBagName();
     	bagName += "" + this.bagCount;
 		baggerBag.setName(bagName);
