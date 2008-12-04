@@ -4,7 +4,7 @@ package gov.loc.repository.bagger.ui;
 import gov.loc.repository.bagger.*;
 import gov.loc.repository.bagger.bag.*;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
-import gov.loc.repository.bagit.utilities.FilenameHelper;
+//import gov.loc.repository.bagit.utilities.FilenameHelper;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -231,11 +231,11 @@ public class BagView extends AbstractView implements ApplicationListener {
         saveButton.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent e) {
-            	if (bagRootPath.exists()) {
-            		log.info("bagRootPath exists: " + bagRootPath.getAbsolutePath());
+				File bagFile = new File(bagRootPath, baggerBag.getName());
+            	if (bagFile.exists()) {
+            		log.info("bagRootPath exists: " + bagFile.getAbsolutePath());
                     showConfirmation();
             	} else {
-            		log.info("bagRootPath does not exist: " + bagRootPath.getAbsolutePath());
                     createBag(bagRootPath);
                     validateButton.setEnabled(true);
                 	topButtonPanel.invalidate();
@@ -779,7 +779,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	log.info("BagView.BagRootDir: " + baggerBag.getRootDir());
 
     	try {
-//        	String fileName = gov.loc.repository.bagit.utilities.FilenameHelper.normalizePathSeparators(file.getAbsolutePath());
+//        	String fileName = FilenameHelper.normalizePathSeparators(file.getAbsolutePath());
 //        	baggerBag.addPayload(new File(fileName));
         	baggerBag.addPayload(file);
     	} catch (Exception e) {
