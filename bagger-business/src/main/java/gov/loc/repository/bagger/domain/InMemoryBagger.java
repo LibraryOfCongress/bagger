@@ -11,6 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import gov.loc.repository.bagger.jdbc.JdbcBagger;
+import org.springframework.richclient.dialog.CloseAction;
+import org.springframework.richclient.dialog.ConfirmationDialog;
 
 /**
  * Provides an in-memory Bagger business object.
@@ -29,6 +31,7 @@ public class InMemoryBagger extends JdbcBagger {
 
     private DataSource dataSource;
 	private ArrayList<String> commandList = new ArrayList<String>();
+	private File baggerFile = null;
 
     /**
      * Note: the SimpleJdbcOrganization uses autowiring, we could do the same here.
@@ -100,52 +103,12 @@ public class InMemoryBagger extends JdbcBagger {
         commandList.add("INSERT INTO authorities VALUES ('tvoy', 'ROLE_BAGGER_STAFF')");
         commandList.add("INSERT INTO authorities VALUES ('user', 'ROLE_BAGGER_USER')");
 
-        // Data: Bagger
-        // "CREATE TABLE person (id, first_name, middle_init, last_name");
-/*        commandList.add("INSERT INTO person VALUES (1, 'Jon', '', 'Steinbach')");
-        commandList.add("INSERT INTO person VALUES (2, 'Leslie', '', 'Johnston')");
-        commandList.add("INSERT INTO person VALUES (3, 'Andy', '', 'Boyko')");
-        commandList.add("INSERT INTO person VALUES (4, 'Justin', '', 'Littman')");
-        commandList.add("INSERT INTO person VALUES (5, 'Ty', '', 'Voy')");
-        commandList.add("INSERT INTO person VALUES (6, 'John', 'A', 'Kunze')");
-*/
         // "CREATE TABLE projects (id, name");
         commandList.add("INSERT INTO projects VALUES (1, 'eDeposit')");
         commandList.add("INSERT INTO projects VALUES (2, 'ndiip')");
         commandList.add("INSERT INTO projects VALUES (3, 'ndnp')");
         commandList.add("INSERT INTO projects VALUES (4, 'transfer')");
 
-        // "CREATE TABLE organization (id, name, address");
-/*        commandList.add("INSERT INTO organization VALUES (1, 'Library of Congress', '101 Independence Ave. SE, Washington, DC 20540, USA');");
-        commandList.add("INSERT INTO organization VALUES (2, 'U.S. Copyright Office', '101 Independence Ave. S.E., Washington, D.C. 20559-6000');");
-        commandList.add("INSERT INTO organization VALUES (3, 'California Digital Library', '415 20th St, 4th Floor, Oakland, CA 94612, USA');");
-*/
-        // "CREATE TABLE contact (id, person_id, organization_id, email, telephone");
-/*        commandList.add("INSERT INTO contact VALUES (1, 1, 1, 'jste@loc.gov', '202-555-7371');");
-        commandList.add("INSERT INTO contact VALUES (2, 2, 1, 'lesliej@loc.gov', '202-555-7372');");
-        commandList.add("INSERT INTO contact VALUES (3, 3, 1, 'aboyko@loc.gov', '202-555-7373');");
-        commandList.add("INSERT INTO contact VALUES (4, 4, 1, 'jlit@loc.gov', '202-555-7374');");
-        commandList.add("INSERT INTO contact VALUES (5, 5, 1, 'tvoy@loc.gov', '202-555-7375');");
-        commandList.add("INSERT INTO contact VALUES (6, 6, 3, 'jak@ucop.edu', '202-555-7373');");
-*/
-        // "CREATE TABLE profile (id, username, profile_person_id, project_id, contact_id, status, create_date");
-        // "(1, 'eDeposit')(2, 'ndiip')(3, 'ndnp')(4, 'transfer')");
-/*        commandList.add("INSERT INTO profile VALUES (1, 'user',    1, 4, 2, 'A', '2008-09-18')");
-        commandList.add("INSERT INTO profile VALUES (2, 'user',    1, 1, 3, 'A', '2008-10-20')");
-        commandList.add("INSERT INTO profile VALUES (3, 'user',    1, 3, 4, 'A', '2008-10-20')");
-        commandList.add("INSERT INTO profile VALUES (4, 'lesliej', 2, 4, 6, 'A', '2008-08-06')");
-        commandList.add("INSERT INTO profile VALUES (5, 'jkunze',  4, 3, 3, 'A', '2002-04-17')");
-        commandList.add("INSERT INTO profile VALUES (6, 'tvoy',    5, 1, 5, 'A', '2002-04-17')");
-*/
-        // "CREATE TABLE person_projects (person_id, project_id");
-/*        commandList.add("INSERT INTO person_projects VALUES (1, 1);");
-        commandList.add("INSERT INTO person_projects VALUES (1, 3);");
-        commandList.add("INSERT INTO person_projects VALUES (1, 4);");
-        commandList.add("INSERT INTO person_projects VALUES (5, 1);");
-        commandList.add("INSERT INTO person_projects VALUES (6, 2);");
-*/
-        // "CREATE TABLE user_contact (username, contact_id");
-//        commandList.add("INSERT INTO user_contact VALUES ('user', 1);");
     	String userHomeDir = System.getProperty("user.home");
     	readCommandList(userHomeDir);
         
@@ -159,30 +122,58 @@ public class InMemoryBagger extends JdbcBagger {
 		{
 			File file = new File(homeDir, name);
 			if (file.exists()) {
-				InputStreamReader fr = new InputStreamReader(new FileInputStream(file), "UTF-8");
-				BufferedReader  reader = new BufferedReader(fr);
-				try
-				{
-					while(true)
-					{
-						String line = reader.readLine();
-						if (line == null) break;
-						this.commandList.add(line);
-					}
-				}
-				catch(IOException ex)
-				{
-					message = "InMemoryBagger.readCommandList: " + ex.getMessage();
-					ex.printStackTrace();
-					throw new RuntimeException(ex);
-				}				
+				baggerFile = file;
+				showConfirmation();
 			}
+		}
+		catch(Exception e)
+		{
+			message = "InMemoryBagger.readCommandList: " + e.getMessage();
+			e.printStackTrace();
+		}
+		return message;		
+	}
+	
+	private void loadProfiles(File file) {
+		String message = null;
+
+		try
+		{
+			InputStreamReader fr = new InputStreamReader(new FileInputStream(file), "UTF-8");
+			BufferedReader  reader = new BufferedReader(fr);
+			try
+			{
+				while(true)
+				{
+					String line = reader.readLine();
+					if (line == null) break;
+					this.commandList.add(line);
+				}
+			}
+			catch(Exception ex)
+			{
+				message = "InMemoryBagger.readCommandList: " + ex.getMessage();
+				ex.printStackTrace();
+				throw new RuntimeException(ex);
+			}				
 		}
 		catch(IOException e)
 		{
 			message = "InMemoryBagger.readCommandList: " + e.getMessage();
 			e.printStackTrace();
 		}
-		return message;		
+	}
+
+	private void showConfirmation() {
+	    ConfirmationDialog dialog = new ConfirmationDialog() {
+	        protected void onConfirm() {
+	        	loadProfiles(baggerFile);
+	        }
+	    };
+
+	    dialog.setCloseAction(CloseAction.DISPOSE);
+	    dialog.setTitle("Load profiles confirmation.");
+	    dialog.setConfirmationMessage("Saved profiles have been detected.  Would you like to load them?");
+	    dialog.showDialog();
 	}
 }
