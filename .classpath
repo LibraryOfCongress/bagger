@@ -53,6 +53,6 @@
 	<classpathentry kind="lib" path="bagger-standalone/target/bagger-standalone-1.2.jar"/>
 	<classpathentry kind="lib" path="bagger-lib/lablib-checkboxtree-2.2.2.jar"/>
 	<classpathentry kind="lib" path="bagger-lib/commons-vfs-1.0.jar"/>
-	<classpathentry kind="lib" path="/bagit/target/bagit-2.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/jsteinbach/My Documents/repository/bagger/trunk/bagger/bagger-lib/bagit-2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
