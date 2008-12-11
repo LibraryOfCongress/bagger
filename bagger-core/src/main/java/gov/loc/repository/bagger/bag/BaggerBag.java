@@ -12,11 +12,12 @@ import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.FileUtililties;
 
-//import gov.loc.repository.bagit.v0_96.impl.BagImpl;
-import gov.loc.repository.bagit.v0_95.impl.BagImpl;
+import gov.loc.repository.bagit.v0_96.impl.BagImpl;
+//import gov.loc.repository.bagit.v0_95.impl.BagImpl;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.BagFactory;
+import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.utilities.SimpleResult;
 import gov.loc.repository.bagit.VerifyStrategy;
 import gov.loc.repository.bagit.BagInfoTxt;
@@ -132,7 +133,8 @@ public class BaggerBag extends BagImpl {
 		isNewBag = false;
         setRootDir(rootDir);
         try {
-            gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir);
+            gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir, Version.V0_96);
+			bagitBag.complete();
 
     		BagItTxt bagItTxt = bagitBag.getBagItTxt();
     		if (bagItTxt != null) bagIt.setEncoding(bagItTxt.getCharacterEncoding());
@@ -172,16 +174,18 @@ public class BaggerBag extends BagImpl {
     			this.bagInfo.setBagSize(bagInfoTxt.getBagSize());
     		else
     			this.bagInfo.setBagSize("");
+/*
     		if (bagInfoTxt.getPayloadOssum() != null && !bagInfoTxt.getPayloadOssum().equalsIgnoreCase("null"))
     			this.bagInfo.setPayloadOssum(bagInfoTxt.getPayloadOssum());
     		else
     			this.bagInfo.setPayloadOssum("");
-/*
+*/
+/* */
     		if (bagInfoTxt.getPayloadOxum() != null && !bagInfoTxt.getPayloadOxum().equalsIgnoreCase("null"))
     			this.bagInfo.setPayloadOxum(bagInfoTxt.getPayloadOxum());
     		else
     			this.bagInfo.setPayloadOxum("");
-*/
+/* */
     		if (bagInfoTxt.getBagGroupIdentifier() != null && !bagInfoTxt.getBagGroupIdentifier().equalsIgnoreCase("null"))
     			this.bagInfo.setBagGroupIdentifier(bagInfoTxt.getBagGroupIdentifier());
     		else
@@ -627,7 +631,8 @@ public class BaggerBag extends BagImpl {
 		gov.loc.repository.bagit.Bag bagitBag = this;
 		String messages = "";
 		try {
-			bagitBag = BagFactory.createBag(this.rootDir);
+			bagitBag = BagFactory.createBag(this.rootDir, Version.V0_96);
+			bagitBag.complete();
 			display("Bag.write: verifier isComplete?");
 			SimpleResult result = bagitBag.isComplete();
 			if (result.messagesToString() != null) messages += result.messagesToString();
