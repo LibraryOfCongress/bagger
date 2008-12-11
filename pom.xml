@@ -4,7 +4,7 @@
   <artifactId>bagger</artifactId>
   <packaging>pom</packaging>
   <name>Spring richclient bagger</name>
-  <version>1.2</version>
+  <version>1.3</version>
   <description>Bagger application runnable in standalone form.</description>
   <developers>
     <developer>
