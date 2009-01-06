@@ -113,6 +113,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	// TODO: put this in baggerBag.generate
     	String bagName = baggerBag.getInfo().getBagName();
     	bagName += "" + this.bagCount;
+    	bagName = "No Project";
 		baggerBag.setName(bagName);
 		baggerBag.getInfo().setBagName(bagName);
 
@@ -164,7 +165,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     	createButton.setForeground(fgColor);
     	buttonPanel.add(createButton);
 
-        Action openAction = new FileAction(frame, fc, BAG_OPEN);
+        JFileChooser fo = new JFileChooser(selectFile);
+        fo.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        Action openAction = new FileAction(frame, fo, BAG_OPEN);
     	JButton openButton = new JButton("Open Existing Bag");
     	openButton.addActionListener(openAction);
     	openButton.setOpaque(true);
@@ -219,7 +222,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         File selectFile = new File(File.separator+".");
         JFrame frame = new JFrame();
         JFileChooser fc = new JFileChooser(selectFile);
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         
         Action addAction = new FileAction(frame, fc, BAG_ADD_DATA);
     	addDataButton = new JButton("Add Data");
@@ -227,10 +230,14 @@ public class BagView extends AbstractView implements ApplicationListener {
     	addDataButton.addActionListener(addAction);
         buttonPanel.add(addDataButton, BorderLayout.NORTH);
 
+        Action saveAction = new FileAction(frame, fc, BAG_CREATE);
     	saveButton = new JButton("Save Bag");
-        saveButton.addActionListener(new AbstractAction() {
+    	saveButton.addActionListener(saveAction);
+/*
+    	saveButton.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent e) {
+				// TODO: prompt for directory to save in
 				File bagFile = new File(bagRootPath, baggerBag.getName());
             	if (bagFile.exists()) {
             		log.info("bagRootPath exists: " + bagFile.getAbsolutePath());
@@ -242,6 +249,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             	}
             }
         });
+*/
         saveButton.setEnabled(false);
         buttonPanel.add(saveButton, BorderLayout.SOUTH);
         
@@ -366,7 +374,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         for (int i=0; i < userProjects.size(); i++) listModel.addElement(((Project)array[i]).getName());
         JList projectList = new JList(listModel);
         projectList.setName("Bag Project");
-        projectList.setSelectedIndex(0);
+        //projectList.setSelectedIndex(0);
         projectList.setVisibleRowCount(2);
         projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         projectList.addListSelectionListener(new ListSelectionListener() {
@@ -385,7 +393,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             }
         });
     	String selected = (String) projectList.getSelectedValue();
-    	if (selected.equalsIgnoreCase("eDeposit")) {
+    	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase("eDeposit")) {
     		baggerBag.setIsCopyright(true);
     	} else {
     		baggerBag.setIsCopyright(false);
@@ -746,11 +754,13 @@ public class BagView extends AbstractView implements ApplicationListener {
 		File rootSrc = new File(file, AbstractBagConstants.DATA_DIRECTORY);
 		bagTree.addParentNode(rootSrc);
 		File[] listFiles = rootSrc.listFiles();
-		for (int i=0; i<listFiles.length; i++) {
-			File f = listFiles[i];
-	    	BaggerFileEntity bfeSrc = new BaggerFileEntity(rootSrc, f, baggerBag.getRootDir());
-	        bagTree.addTree(rootSrc, f, baggerBag.getRootDir());
-	        baggerBag.addRootSrc(bfeSrc);
+		if (listFiles != null) {
+			for (int i=0; i<listFiles.length; i++) {
+				File f = listFiles[i];
+		    	BaggerFileEntity bfeSrc = new BaggerFileEntity(rootSrc, f, baggerBag.getRootDir());
+		        bagTree.addTree(rootSrc, f, baggerBag.getRootDir());
+		        baggerBag.addRootSrc(bfeSrc);
+			}			
 		}
 
         baggerBag.setRootTree(bagTree.getRootTree());
