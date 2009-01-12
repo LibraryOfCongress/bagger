@@ -668,9 +668,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     
         public void actionPerformed(ActionEvent evt) {
         	int option;
-        	if (mode == BAG_OPEN || mode == BAG_ADD_DATA) {
+        	if (mode == BAG_OPEN || mode == BAG_ADD_DATA || mode == BAG_NEW) {
             	option = chooser.showOpenDialog(frame);
-        	} else if (mode == BAG_NEW || mode == BAG_CREATE) {
+        	} else if (mode == BAG_CREATE) {
             	option = chooser.showSaveDialog(frame);
         	} else {
             	display("Unsupported mode: " + mode);
@@ -706,8 +706,8 @@ public class BagView extends AbstractView implements ApplicationListener {
                 	validateBag();
                 	break;
                 case BAG_CREATE:
-                	bagRootPath = file;
-                	if (bagRootPath.exists()) {
+    				File bagFile = new File(bagRootPath, baggerBag.getName());
+                	if (bagFile.exists()) {
                         showConfirmation();
                 	} else {
                         createBag(file);
