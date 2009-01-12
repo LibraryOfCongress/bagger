@@ -44,7 +44,7 @@
         <ref bean="logoutCommand" />
         <value>separator</value>
  -->
-        <bean class="org.springframework.richclient.command.support.ExitCommand" />
+        <bean class="gov.loc.repository.bagger.BaggerExit" />
       </list>
     </property>
   </bean>
