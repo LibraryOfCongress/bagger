@@ -3,6 +3,7 @@ package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.*;
 import gov.loc.repository.bagger.bag.*;
+import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
@@ -43,15 +44,17 @@ import javax.swing.ProgressMonitor;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.springframework.richclient.application.Application;
+import org.springframework.richclient.application.ApplicationServices;
 import org.springframework.richclient.application.ApplicationWindow;
 import org.springframework.richclient.application.PageComponentContext;
+import org.springframework.richclient.application.event.LifecycleApplicationEvent;
+import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.command.support.AbstractActionCommandExecutor;
 import org.springframework.richclient.command.support.GlobalCommandIds;
 import org.springframework.richclient.dialog.CloseAction;
 import org.springframework.richclient.dialog.ConfirmationDialog;
-import org.springframework.richclient.application.event.LifecycleApplicationEvent;
-import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.progress.BusyIndicator;
+import org.springframework.rules.RulesSource;
 import org.springframework.util.Assert;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -68,6 +71,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
 	private Bagger bagger;
     private BaggerBag baggerBag;
+    private BaggerValidationRulesSource baggerRules;
     private int bagCount = 0;
     private File bagRootPath;
     private BagTree bagTree;
@@ -88,9 +92,11 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JButton addDataButton;
     private JButton saveButton;
     private JButton validateButton;
+    private JButton updatePropButton;
     private SaveExecutor saveExecutor = new SaveExecutor();
     private Color errorColor = new Color(255, 128, 128);
 	private Color infoColor = new Color(100, 100, 120);
+	private Color buttonColor = new Color(100, 100, 120);
 
     public void setBagger(Bagger bagger) {
         Assert.notNull(bagger, "The bagger property is required");
@@ -120,6 +126,10 @@ public class BagView extends AbstractView implements ApplicationListener {
 		baggerBag.setName(bagName);
 		baggerBag.getInfo().setBagName(bagName);
 
+        ApplicationServices services = this.getApplicationServices();
+        Object rulesSource = services.getService(org.springframework.rules.RulesSource.class);
+        baggerRules = (BaggerValidationRulesSource) rulesSource;
+		
     	initializeProfile();
     	updateCommands();
     	Color bgColor = new Color(20,20,100);
@@ -275,7 +285,8 @@ public class BagView extends AbstractView implements ApplicationListener {
             }
         });
     	// Create a panel for the form error messages and the update button
-        JButton updatePropButton = new JButton(getMessage("button.saveUpdates"));
+        updatePropButton = new JButton(getMessage("button.saveUpdates"));
+        buttonColor = updatePropButton.getBackground();
         //updatePropButton.setBackground(infoColor);
         updatePropButton.setMnemonic('u');
         //updatePropButton.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -367,14 +378,17 @@ public class BagView extends AbstractView implements ApplicationListener {
             public void valueChanged(ListSelectionEvent e) {
             	JList jlist = (JList)e.getSource();
             	String selected = (String) jlist.getSelectedValue();
-            	display("valueChanged: " + selected);
-            	if (selected.equalsIgnoreCase(getMessage("bag.project.edeposit"))) {
+            	display("BagView.projectList valueChanged: " + selected);
+            	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(getMessage("bag.project.edeposit"))) {
+            		System.out.println("BagView.valueChanged true");
             		baggerBag.setIsCopyright(true);
             		baggerBag.getInfo().setIsCopyright(true);
             	} else {
+            		System.out.println("BagView.valueChanged false");
             		baggerBag.setIsCopyright(false);
             		baggerBag.getInfo().setIsCopyright(false);
             	}
+            	updateBaggerRules();
             	changeProject(selected);
             }
         });
@@ -592,7 +606,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	Object[] project_array = userProjects.toArray();
         for (int i=0; i < userProjects.size(); i++) {
         	Project project = (Project)project_array[i];
-        	if (selected.equalsIgnoreCase(project.getName())) {
+        	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(project.getName())) {
         		log.debug("bagProject: " + project.getId());
         		baggerBag.setProject(project);
         		Object[] profiles = userProfiles.toArray();
@@ -620,6 +634,17 @@ public class BagView extends AbstractView implements ApplicationListener {
         		}
         	}
         }
+    }
+    
+    private String updateBaggerRules() {
+        baggerRules.init(baggerBag.getIsCopyright());    	
+        String messages = "";
+        bagInfoInputPane.populateForms(baggerBag);
+        messages = bagInfoInputPane.updateForms(baggerBag);
+        messages += updateMessages(messages);
+        bagInfoInputPane.update();
+        
+        return messages;
     }
 
     // This action creates and shows a modal save-file dialog.
@@ -708,18 +733,21 @@ public class BagView extends AbstractView implements ApplicationListener {
     private void newBag(File file) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	String messages = "";
-        messages = bagInfoInputPane.updateForms(baggerBag);
     	bagRootPath = file;
     	display("BagView.newBag location: " + file.getAbsolutePath() );
     	try {
     		File rootDir = new File(file.getAbsolutePath(), baggerBag.getName());
     		baggerBag.setRootDir(rootDir);
-        	messages += updateMessages(messages);
+            //messages = bagInfoInputPane.updateForms(baggerBag);
+        	//messages += updateMessages(messages);
     	} catch (Exception e) {
         	messages += "\n" + getMessage("error.bag.create") + " " + e.getMessage();
     	}
     	this.bagCount++;
+    	messages = updateBaggerRules();
     	clearExistingBag(messages);
+        messages = bagInfoInputPane.updateForms(baggerBag);
+    	messages += updateMessages(messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
@@ -768,9 +796,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTreePanel.refresh(bagTree);
     	baggerBag.generate();
 
-        bagInfoInputPane.populateForms(baggerBag);
-        messages = bagInfoInputPane.updateForms(baggerBag);
-        messages += updateMessages(messages);
+        //bagInfoInputPane.populateForms(baggerBag);
+    	messages = updateBaggerRules();
+//        messages = bagInfoInputPane.updateForms(baggerBag);
+//        messages += updateMessages(messages);
         // TODO: need to figure out why validation field is not updating for valid input
         bagInfoInputPane.updateSelected();
         //messages += updateProfile();
@@ -882,17 +911,21 @@ public class BagView extends AbstractView implements ApplicationListener {
 	}
 
 	private String updateMessages(String messages) {
+		log.info("BagView.updateMessages: " + messages);
         if (!bagInfoInputPane.hasFormErrors() && (messages == null || messages.length() == 0)) {
             messages = getMessage("bag.message.info.update");
             infoFormMessagePane.setBackground(infoColor);
             infoFormMessagePane.setMessage("");
+            updatePropButton.setBackground(buttonColor);
             messages += "\n";
         } else {
             messages = getMessage("bag.message.info.error");
             infoFormMessagePane.setBackground(errorColor);
             infoFormMessagePane.setMessage(getMessage("error.form"));
+            updatePropButton.setBackground(errorColor);
         	messages += "\n";
         }
+        updatePropButton.invalidate();
         infoFormMessagePane.invalidate();
         return messages;
     }
