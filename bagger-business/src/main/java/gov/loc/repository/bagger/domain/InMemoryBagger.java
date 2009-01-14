@@ -105,7 +105,7 @@ public class InMemoryBagger extends JdbcBagger {
 
         // "CREATE TABLE projects (id, name");
         commandList.add("INSERT INTO projects VALUES (1, 'eDeposit')");
-        commandList.add("INSERT INTO projects VALUES (2, 'ndiip')");
+        commandList.add("INSERT INTO projects VALUES (2, 'ndiipp')");
         commandList.add("INSERT INTO projects VALUES (3, 'ndnp')");
         commandList.add("INSERT INTO projects VALUES (4, 'transfer')");
 
@@ -167,7 +167,11 @@ public class InMemoryBagger extends JdbcBagger {
 	private void showConfirmation() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	        protected void onConfirm() {
-	        	loadProfiles(baggerFile);
+	        	try {
+		        	loadProfiles(baggerFile);	        		
+	        	} catch (Exception e) {
+	        		logger.error("InMemoryBagger.showConfirmation: " + e.getMessage());
+	        	}
 	        }
 	    };
 
