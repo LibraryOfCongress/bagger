@@ -13,7 +13,7 @@ public class DataPane extends BagTextPane {
     private JComponent data;
 
     public DataPane() {
-        super("Data");
+        super("");
     }
 
     public DataPane(Data data) {

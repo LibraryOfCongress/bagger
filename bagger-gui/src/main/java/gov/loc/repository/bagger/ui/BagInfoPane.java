@@ -13,7 +13,7 @@ public class BagInfoPane extends BagTextPane {
     private BagInfo bagInfo;
 
     public BagInfoPane() {
-        super("BagInfo");
+        super("");
     }
 
     public BagInfoPane(BagInfo bagInfo) {

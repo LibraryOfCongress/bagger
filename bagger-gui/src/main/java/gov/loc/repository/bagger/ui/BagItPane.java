@@ -13,7 +13,7 @@ public class BagItPane extends BagTextPane {
     private BagIt bagIt;
 
     public BagItPane() {
-        super("BagIt");
+        super("");
     }
 
     public BagItPane(BagIt bagIt) {

@@ -29,25 +29,22 @@ public class ConsolePane extends JPanel {
     private String messages = new String();
     private Color textBackground = new Color(240, 240, 240);
 
+    private BagView parentView;
     private BaggerBag baggerBag;
 
-    public ConsolePane() {
+    public ConsolePane(BagView bagView) {
         super();
         this.setLayout(layout);
-        createFormControl();
-    }
-
-    public ConsolePane(BaggerBag baggerBag) {
-        super();
-        this.setLayout(layout);
-        this.baggerBag = baggerBag;
+        this.parentView = bagView;
+        this.baggerBag = bagView.getBag();
         createFormControl();
     }
     
-    public ConsolePane(BaggerBag baggerBag, String messages) {
+    public ConsolePane(BagView bagView, String messages) {
         super();
         this.setLayout(layout);
-        this.baggerBag = baggerBag;
+        this.parentView = bagView;
+        this.baggerBag = bagView.getBag();
         this.messages = messages;
         createFormControl();
     }
@@ -74,7 +71,7 @@ public class ConsolePane extends JPanel {
     	Dimension consoleDimension = new Dimension(300, 200);
         Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
 /* */
-    	JLabel completeLabel = new JLabel("Is Complete? ");
+    	JLabel completeLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isComplete"));
     	Font font = completeLabel.getFont().deriveFont(Font.BOLD);
     	completeLabel.setFont(font);
     	completeLabel.setPreferredSize(formDimension);
@@ -89,19 +86,12 @@ public class ConsolePane extends JPanel {
     		if (baggerBag.getIsComplete()) completeResult.setText("yes");
     		else completeResult.setText("no");
     	}
-/*
-        JCheckBox completeResult = new JCheckBox("");
-    	if (baggerBag != null) {
-    		if (baggerBag.getIsComplete()) completeResult.setSelected(true);
-    		else completeResult.setSelected(false);
-    	}
-*/
     	completeResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, 0, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeResult, gbc);
         this.add(completeResult);
 
-    	JLabel validLabel = new JLabel("Is Valid? ");
+    	JLabel validLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isValid"));
     	font = validLabel.getFont().deriveFont(Font.BOLD);
     	validLabel.setFont(font);
     	validLabel.setPreferredSize(formDimension);
@@ -116,19 +106,12 @@ public class ConsolePane extends JPanel {
     		if (baggerBag.getIsValid()) validResult.setText("yes");
     		else validResult.setText("no");
     	}
-/*
-        JCheckBox validResult = new JCheckBox("");
-    	if (baggerBag != null) {
-    		if (baggerBag.getIsValid()) validResult.setSelected(true);
-    		else validResult.setSelected(false);
-    	}
-  */
     	validResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, 1, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validResult, gbc);
         this.add(validResult);
 
-    	JLabel validMetaLabel = new JLabel("Is Valid Metadata? ");
+    	JLabel validMetaLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isMetadata"));
     	font = validMetaLabel.getFont().deriveFont(Font.BOLD);
     	validMetaLabel.setFont(font);
     	validMetaLabel.setPreferredSize(formDimension);
@@ -143,20 +126,13 @@ public class ConsolePane extends JPanel {
     		if (baggerBag.getIsValidMetadata()) validMetaResult.setText("yes");
     		else validMetaResult.setText("no");
     	}
-/*
-        JCheckBox validMetaResult = new JCheckBox("");
-    	if (baggerBag != null) {
-    		if (baggerBag.getIsValidMetadata()) validMetaResult.setSelected(true);
-    		else validMetaResult.setSelected(false);
-    	}
-*/
     	validMetaResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validMetaResult, gbc);
         this.add(validMetaResult);
 
         if (baggerBag == null || (baggerBag != null && baggerBag.getIsSerial())) {
-        	JLabel serializedLabel = new JLabel("Is Packaged? ");
+        	JLabel serializedLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isPackaged"));
         	font = serializedLabel.getFont().deriveFont(Font.BOLD);
         	serializedLabel.setFont(font);
         	serializedLabel.setPreferredSize(formDimension);
@@ -171,13 +147,6 @@ public class ConsolePane extends JPanel {
         		if (baggerBag.getIsSerialized()) serializedResult.setText("yes");
         		else serializedResult.setText("no");
         	}
-/*
-            JCheckBox serializedResult = new JCheckBox("");
-        	if (baggerBag != null) {
-        		if (baggerBag.getIsSerialized()) serializedResult.setSelected(true);
-        		else serializedResult.setSelected(false);
-        	}
-*/
         	serializedResult.setPreferredSize(formDimension);
             buildConstraints(gbc, 1, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
             layout.setConstraints(serializedResult, gbc);

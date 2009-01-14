@@ -13,7 +13,7 @@ public class FetchPane extends BagTextPane {
 	private JComponent fetch;
 
 	public FetchPane() {
-	    super("BagIt");
+	    super("");
 	}
 
 	public FetchPane(Fetch fetch) {

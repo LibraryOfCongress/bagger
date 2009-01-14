@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 public class BagInfoInputPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
 	private static final Log logger = LogFactory.getLog(BagInfoInputPane.class);
+	private BagView parentView;
     private BaggerBag baggerBag;
     private OrganizationInfoForm bagInfoForm = null;
     private OrganizationGeneralForm organizationGeneralForm = null;
@@ -42,11 +43,12 @@ public class BagInfoInputPane extends JTabbedPane {
 	private Color selectedColor = new Color(100, 100, 120);
 	private Color unselectedColor = Color.black; //new Color(140, 140, 160);
 
-    public BagInfoInputPane(BaggerBag b, String username, Contact c ) {
-    	this.baggerBag = b;
+    public BagInfoInputPane(BagView bagView, String username, Contact c ) {
+    	this.parentView = bagView;
+    	this.baggerBag = bagView.getBag();
     	this.user = c;
     	this.username = username;
-    	populateForms(b);
+    	populateForms(baggerBag);
         setPreferredSize(bagInfoForm.getControl().getPreferredSize());
         ChangeListener changeListener = new ChangeListener() {
         	public void stateChanged(ChangeEvent changeEvent) {
@@ -92,7 +94,6 @@ public class BagInfoInputPane extends JTabbedPane {
         	private static final long serialVersionUID = 1L;
         	public void actionPerformed(ActionEvent evt) {
                 int selected = getSelectedIndex();
-                //System.out.println("tabbedPane keyboard: " + selected + " of: " + getComponentCount());
                 int count = getComponentCount();
                 if (selected >= 0 && selected < count-1) {
                 	setSelectedIndex(selected+1);
@@ -147,18 +148,15 @@ public class BagInfoInputPane extends JTabbedPane {
     }
 
     // Create a tabbed pane for the information forms and checkbox panel
-    private void updateProfileForms() {
+    public void updateProfileForms() {
         this.removeAll();
         this.invalidate();
         this.setName("Profile");
-        this.addTab("Information", bagInfoForm.getControl());
-        this.addTab("User", userContactForm.getControl());
-        this.addTab("Organization", organizationGeneralForm.getControl());
-        this.addTab("Contact", organizationContactForm.getControl());
+        this.addTab(parentView.getPropertyMessage("infoInputPane.tab.details"), bagInfoForm.getControl());
+        this.addTab(parentView.getPropertyMessage("infoInputPane.tab.user"), userContactForm.getControl());
+        this.addTab(parentView.getPropertyMessage("infoInputPane.tab.organization"), organizationGeneralForm.getControl());
+        this.addTab(parentView.getPropertyMessage("infoInputPane.tab.contact"), organizationContactForm.getControl());
 
-//        HierarchicalFormModel model = bagInfoForm.getFormModel();
-//        System.out.println("bagInfoForm isDirty: " + bagInfoForm.isDirty());
-//        System.out.println("bagInfoForm model: " + model.toString());
     	if (bagInfoForm.hasErrors()) {
             bagInfoForm.getControl().setForeground(errorColor);
     	} else {
@@ -193,7 +191,7 @@ public class BagInfoInputPane extends JTabbedPane {
             	username = URLEncoder.encode(user.getContactName(), "utf-8");
     		}
     		catch(Exception ex) {
-    			logger.equals("ERROR BagView.updateForms username: " + user.getContactName() + " exception: " + ex );
+    			logger.equals("ERROR BagInfoInputPane.verifyForms username: " + user.getContactName() + " exception: " + ex );
     		}
         }
         Person userPerson = user.getPerson();
@@ -239,10 +237,9 @@ public class BagInfoInputPane extends JTabbedPane {
         } else {
             baggerBag.setName(bagName);
         }
-        //System.out.println("baggerBag name: " + baggerBag.getName());
 
         if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors()) {
-        	messages = "Bag Information form errors exist.\n";
+        	messages = parentView.getPropertyMessage("error.form") + "\n";
         }
         update();
         

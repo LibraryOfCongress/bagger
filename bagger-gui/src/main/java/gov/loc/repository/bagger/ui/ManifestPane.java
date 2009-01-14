@@ -13,7 +13,7 @@ public class ManifestPane extends BagTextPane {
     private JComponent manifest;
 
     public ManifestPane() {
-	    super("Manifest");
+	    super("");
     }
 
     public ManifestPane(String content) {

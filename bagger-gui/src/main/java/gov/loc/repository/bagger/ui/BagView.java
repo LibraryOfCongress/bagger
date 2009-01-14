@@ -3,8 +3,8 @@ package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.*;
 import gov.loc.repository.bagger.bag.*;
+import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
-//import gov.loc.repository.bagit.utilities.FilenameHelper;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -76,7 +76,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 	private String username;
 	private Contact user;
 	private String userHomeDir;
-    private String formErrorsMessage = "!! Form errors exist.";
 
 	private ProgressMonitor progressMonitor;
     private BagTreePanel bagTreePanel;
@@ -98,6 +97,10 @@ public class BagView extends AbstractView implements ApplicationListener {
         display("BagView.setBagger: " );
         this.bagger = bagger;
     }
+    
+    public String getPropertyMessage(String property) {
+    	return getMessage(property);
+    }
 
     @Override
     protected JComponent createControl() {
@@ -113,7 +116,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	// TODO: put this in baggerBag.generate
     	String bagName = baggerBag.getInfo().getBagName();
     	bagName += "" + this.bagCount;
-    	bagName = "No Project";
+    	bagName = getMessage("bag.label.name");
 		baggerBag.setName(bagName);
 		baggerBag.getInfo().setBagName(bagName);
 
@@ -158,7 +161,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buttonPanel.setBackground(bgColor);
 
         Action createAction = new FileAction(frame, fc, BAG_NEW);
-    	JButton createButton = new JButton("Start New Bag");
+    	JButton createButton = new JButton(getMessage("bag.button.create"));
     	createButton.addActionListener(createAction);
     	createButton.setOpaque(true);
     	createButton.setBackground(bgColor);
@@ -168,14 +171,14 @@ public class BagView extends AbstractView implements ApplicationListener {
         JFileChooser fo = new JFileChooser(selectFile);
         fo.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         Action openAction = new FileAction(frame, fo, BAG_OPEN);
-    	JButton openButton = new JButton("Open Existing Bag");
+    	JButton openButton = new JButton(getMessage("bag.button.open"));
     	openButton.addActionListener(openAction);
     	openButton.setOpaque(true);
     	openButton.setBackground(bgColor);
     	openButton.setForeground(fgColor);
     	buttonPanel.add(openButton);
 
-    	validateButton = new JButton("Validate Bag");
+    	validateButton = new JButton(getMessage("bag.button.validate"));
         validateButton.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 2922141723188929572L;
 			public void actionPerformed(ActionEvent e) {
@@ -195,7 +198,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagButtonPanel = createBagButtonPanel();
     	bagTree = new BagTree();
     	bagTreePanel = new BagTreePanel(bagTree);
-    	bagDisplayPane = new CompositePane(baggerBag);
+    	bagDisplayPane = new CompositePane(this);
 
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
@@ -225,31 +228,14 @@ public class BagView extends AbstractView implements ApplicationListener {
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         
         Action addAction = new FileAction(frame, fc, BAG_ADD_DATA);
-    	addDataButton = new JButton("Add Data");
+    	addDataButton = new JButton(getMessage("bag.button.add"));
     	addDataButton.setEnabled(false);
     	addDataButton.addActionListener(addAction);
         buttonPanel.add(addDataButton, BorderLayout.NORTH);
 
         Action saveAction = new FileAction(frame, fc, BAG_CREATE);
-    	saveButton = new JButton("Save Bag");
+    	saveButton = new JButton(getMessage("bag.button.save"));
     	saveButton.addActionListener(saveAction);
-/*
-    	saveButton.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-			public void actionPerformed(ActionEvent e) {
-				// TODO: prompt for directory to save in
-				File bagFile = new File(bagRootPath, baggerBag.getName());
-            	if (bagFile.exists()) {
-            		log.info("bagRootPath exists: " + bagFile.getAbsolutePath());
-                    showConfirmation();
-            	} else {
-                    createBag(bagRootPath);
-                    validateButton.setEnabled(true);
-                	topButtonPanel.invalidate();
-            	}
-            }
-        });
-*/
         saveButton.setEnabled(false);
         buttonPanel.add(saveButton, BorderLayout.SOUTH);
         
@@ -258,10 +244,10 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private JScrollPane createInfoInputPane() {
     	JPanel bagSettingsPanel = createBagSettingsPanel();
-    	bagInfoInputPane = new BagInfoInputPane(baggerBag, username, user);
+    	bagInfoInputPane = new BagInfoInputPane(this, username, user);
 
     	// Create a panel for the form error messages and the update button
-        JButton nextButton = new JButton("Next");
+        JButton nextButton = new JButton(getMessage("button.next"));
         //nextButton.setBackground(infoColor);
         nextButton.setMnemonic(KeyEvent.VK_ENTER); // ALT+Enter
         //nextButton.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -278,7 +264,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 bagInfoInputPane.verifyForms(baggerBag);
                 updateProfile();
                 if (bagInfoInputPane.hasFormErrors()) {
-                	infoFormMessagePane.setMessage(formErrorsMessage);
+                	infoFormMessagePane.setMessage(getMessage("error.form"));
                 } else {
                 	infoFormMessagePane.setMessage("");
                 }
@@ -289,7 +275,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             }
         });
     	// Create a panel for the form error messages and the update button
-        JButton updatePropButton = new JButton("Save Updates");
+        JButton updatePropButton = new JButton(getMessage("button.saveUpdates"));
         //updatePropButton.setBackground(infoColor);
         updatePropButton.setMnemonic('u');
         //updatePropButton.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -307,7 +293,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         JPanel infoLabelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         infoFormMessagePane = new BagTextPane("");
         if (bagInfoInputPane.hasFormErrors()) {
-        	infoFormMessagePane.setMessage(formErrorsMessage);
+        	infoFormMessagePane.setMessage(getMessage("error.form"));
         }
         Dimension labelDimension = bagInfoInputPane.getPreferredSize();
         int offset = updatePropButton.getWidth();
@@ -368,12 +354,12 @@ public class BagView extends AbstractView implements ApplicationListener {
         Border border = new EmptyBorder(5, 5, 5, 5);
 
         // Project control
-        JLabel projectLabel = new JLabel("Bag project: ");
+        JLabel projectLabel = new JLabel(getMessage("bag.label.project"));
         DefaultListModel listModel = new DefaultListModel();
         Object[] array = userProjects.toArray();
         for (int i=0; i < userProjects.size(); i++) listModel.addElement(((Project)array[i]).getName());
         JList projectList = new JList(listModel);
-        projectList.setName("Bag Project");
+        projectList.setName(getMessage("bag.label.projectList"));
         //projectList.setSelectedIndex(0);
         projectList.setVisibleRowCount(2);
         projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -382,7 +368,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             	JList jlist = (JList)e.getSource();
             	String selected = (String) jlist.getSelectedValue();
             	display("valueChanged: " + selected);
-            	if (selected.equalsIgnoreCase("eDeposit")) {
+            	if (selected.equalsIgnoreCase(getMessage("bag.project.edeposit"))) {
             		baggerBag.setIsCopyright(true);
             		baggerBag.getInfo().setIsCopyright(true);
             	} else {
@@ -393,7 +379,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             }
         });
     	String selected = (String) projectList.getSelectedValue();
-    	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase("eDeposit")) {
+    	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(getMessage("bag.project.edeposit"))) {
     		baggerBag.setIsCopyright(true);
     	} else {
     		baggerBag.setIsCopyright(false);
@@ -401,11 +387,11 @@ public class BagView extends AbstractView implements ApplicationListener {
         JScrollPane projectPane = new JScrollPane(projectList);
 
         // Checksum control
-        JLabel groupLabel = new JLabel("Checksum Type: ");        
-        JRadioButton md5Button = new JRadioButton("MD5");
+        JLabel groupLabel = new JLabel(getMessage("bag.label.checksumType"));
+        JRadioButton md5Button = new JRadioButton(getMessage("bag.checksumType.md5"));
         md5Button.setSelected(true);
         md5Button.setEnabled(true);
-        JRadioButton sha1Button = new JRadioButton("SHA1");
+        JRadioButton sha1Button = new JRadioButton(getMessage("bag.checksumType.sha1"));
         sha1Button.setSelected(false);
         sha1Button.setEnabled(false);
         ButtonGroup group = new ButtonGroup();
@@ -418,8 +404,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         groupPanel.setBorder(border);
 
         // Holey bag control
-        JLabel holeyLabel = new JLabel("Holey Bag?: ");
-        JCheckBox holeyCheckbox = new JCheckBox("Holey Bag");
+        JLabel holeyLabel = new JLabel(getMessage("bag.label.isHoley"));
+        JCheckBox holeyCheckbox = new JCheckBox(getMessage("bag.checkbox.isHoley"));
         holeyCheckbox.setBorder(border);
         holeyCheckbox.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 75893358194076314L;
@@ -442,8 +428,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         });
 
         // Bag is to be serialized control
-        JLabel serialLabel = new JLabel("Serialize Bag?: ");
-        JCheckBox serialCheckbox = new JCheckBox("Serial Bag");
+        JLabel serialLabel = new JLabel(getMessage("bag.label.isPackage"));
+        JCheckBox serialCheckbox = new JCheckBox(getMessage("bag.checkbox.isPackage"));
         serialCheckbox.setBorder(border);
         serialCheckbox.setSelected(true);
         serialCheckbox.addActionListener(new AbstractAction() {
@@ -528,15 +514,13 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
    		Authentication a = SecurityContextHolder.getContext().getAuthentication();
     	if (a != null) this.username = a.getName();
-    	else this.username = "user";
+    	else this.username = getMessage("user.name");
     	if (user == null) {
     		user = new Contact();
     		Organization org = new Organization();
     		user.setOrganization(org);    		
     	}
     	if (this.username != null && this.username.length() > 0) {
-        	//display("BagView.initializeBag getAuthenticationUser:: " + this.username);
-        	//display("BagView.initializeBag projects: " + bagger.getProjects());
         	Collection<Profile> profiles = bagger.findProfiles(this.username);
         	if (profiles == null) profiles = new ArrayList<Profile>();
         	userProfiles = profiles;
@@ -545,11 +529,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         		Project project = (Project) projectArray[p];
         		boolean found = false;
             	for (int i=0; i < profileArray.length; i++) {
-            		//display("BagView.initializeBag profile:\n" + profileArray[i].toString());
             		Profile profile = (Profile) profileArray[i];
             		if (project.getId() == profile.getProject().getId()) {
             			found = true;
-            			//display("BagView.initializeBag profile exists for project: " + project.getId());
                    		if (project.getId() == bagProject.getId()) {
                        		Organization org = profile.getPerson().getOrganization();
                        		BagInfo bagInfo = baggerBag.getInfo();
@@ -564,7 +546,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		}
             	}
             	if (!found) {
-            		log.info("profile does NOT exist: " + project.getId());
+            		log.error("BagView.initializeProfile - profile does NOT exist: " + project.getId());
             		userProfiles.add(createProfile(project));
             	}
             	if (userProjects == null || userProjects.isEmpty()) {
@@ -577,7 +559,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             	}
         	}
     	} else {
-    		username = "user";
+    		username = getMessage("user.name");
     		user = new Contact();
     		Organization org = new Organization();
     		user.setOrganization(org);
@@ -611,7 +593,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         for (int i=0; i < userProjects.size(); i++) {
         	Project project = (Project)project_array[i];
         	if (selected.equalsIgnoreCase(project.getName())) {
-        		log.info("bagProject: " + project.getId());
+        		log.debug("bagProject: " + project.getId());
         		baggerBag.setProject(project);
         		Object[] profiles = userProfiles.toArray();
         		for (int j=0; j < profiles.length; j++) {
@@ -648,7 +630,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         int mode;
     
         FileAction(JFrame frame, JFileChooser chooser, int mode) {
-            super("File Chooser...");
+            super(getMessage("file.chooser"));
             this.chooser = chooser;
             this.frame = frame;
             this.mode = mode;
@@ -662,7 +644,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 this.chooser.setDialogType(JFileChooser.SAVE_DIALOG);
             	break;
            	default:
-            	display("Not handled.");
+            	log.error("BagView.FileAction - mode not handled: " + mode);
             }
         }
     
@@ -673,7 +655,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         	} else if (mode == BAG_CREATE) {
             	option = chooser.showSaveDialog(frame);
         	} else {
-            	display("Unsupported mode: " + mode);
+            	log.error("BagView.FileAction unsupported mode: " + mode);
             	return;
         	}
 
@@ -716,7 +698,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 	}
                 	break;
                	default:
-                	display("The mode selected: " + mode + " is not supported.");
+                	log.error("BagView.FileAction - The mode selected: " + mode + " is not supported.");
                 }
             }
         }
@@ -728,17 +710,16 @@ public class BagView extends AbstractView implements ApplicationListener {
     	String messages = "";
         messages = bagInfoInputPane.updateForms(baggerBag);
     	bagRootPath = file;
-    	log.info("BagView.newBag location: " + file.getAbsolutePath() );
+    	display("BagView.newBag location: " + file.getAbsolutePath() );
     	try {
     		File rootDir = new File(file.getAbsolutePath(), baggerBag.getName());
     		baggerBag.setRootDir(rootDir);
         	messages += updateMessages(messages);
     	} catch (Exception e) {
-        	messages += "\n" + "Failed to create new bag! " + e.getMessage();
+        	messages += "\n" + getMessage("error.bag.create") + " " + e.getMessage();
     	}
     	this.bagCount++;
     	clearExistingBag(messages);
-        log.info("BagView.newBag.getName: " + baggerBag.getName());
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
@@ -746,6 +727,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	String messages = "";
 		baggerBag.openBag(file);
+		// TODO: if there is a '.' suffix, strip it from the name
 		baggerBag.setName(file.getName());
 		baggerBag.setRootDir(file);
 		baggerBag.getInfo().setBagName(file.getName());
@@ -753,14 +735,33 @@ public class BagView extends AbstractView implements ApplicationListener {
 
 		File rootSrc = new File(file, AbstractBagConstants.DATA_DIRECTORY);
 		bagTree.addParentNode(rootSrc);
-		File[] listFiles = rootSrc.listFiles();
-		if (listFiles != null) {
-			for (int i=0; i<listFiles.length; i++) {
-				File f = listFiles[i];
-		    	BaggerFileEntity bfeSrc = new BaggerFileEntity(rootSrc, f, baggerBag.getRootDir());
-		        bagTree.addTree(rootSrc, f, baggerBag.getRootDir());
-		        baggerBag.addRootSrc(bfeSrc);
-			}			
+		if (baggerBag.getRootPayload() == null) {
+			File[] listFiles = rootSrc.listFiles();
+			if (listFiles != null) {
+				for (int i=0; i<listFiles.length; i++) {
+					File f = listFiles[i];
+					try {
+				    	BaggerFileEntity bfeSrc = new BaggerFileEntity(rootSrc, f, baggerBag.getRootDir());
+				        bagTree.addTree(rootSrc, f, baggerBag.getRootDir());
+				        baggerBag.addRootSrc(bfeSrc);
+					} catch(Exception e) {
+						log.error("BagView.openExistingBag: " + e.getMessage());
+					}
+				}
+			}
+		} else {
+			Collection<gov.loc.repository.bagit.BagFile> payload = baggerBag.getRootPayload();
+            for (Iterator<BagFile> it=payload.iterator(); it.hasNext(); ) {
+            	BagFile bf = it.next();
+            	File f = new File(bf.getFilepath());
+				try {
+			    	BaggerFileEntity bfeSrc = new BaggerFileEntity(rootSrc, f, baggerBag.getRootDir());
+			        bagTree.addTree(rootSrc, f, baggerBag.getRootDir());
+			        baggerBag.addRootSrc(bfeSrc);
+				} catch(Exception e) {
+					log.error("BagView.openExistingBag: " + e.getMessage());
+				}
+            }
 		}
 
         baggerBag.setRootTree(bagTree.getRootTree());
@@ -772,7 +773,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         messages += updateMessages(messages);
         // TODO: need to figure out why validation field is not updating for valid input
         bagInfoInputPane.updateSelected();
-//        messages += updateProfile();
+        //messages += updateProfile();
         messages += "Files have been added to the bag from: " + file.getName();
         bagInfoInputPane.update();
         //bagInfoInputPane.updateSelected();
@@ -784,9 +785,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     	String messages = "";
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	File parentSrc = file.getParentFile().getAbsoluteFile();
-    	log.info("BagView.addBagData parent: " + parentSrc.getAbsolutePath());
-    	log.info("BagView.addBagData: " + file.getAbsolutePath());
-    	log.info("BagView.BagRootDir: " + baggerBag.getRootDir());
+    	display("BagView.addBagData parent: " + parentSrc.getAbsolutePath());
+    	display("BagView.addBagData: " + file.getAbsolutePath());
+    	display("BagView.BagRootDir: " + baggerBag.getRootDir());
 
     	try {
 //        	String fileName = FilenameHelper.normalizePathSeparators(file.getAbsolutePath());
@@ -804,7 +805,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTreePanel.refresh(bagTree);
     	baggerBag.generate();
 
-    	messages += "Files have been added to the bag from: " + file.getName();
+    	messages += getMessage("bag.message.filesAdded") + " " + file.getName();
     	bagDisplayPane.updateTabs(baggerBag, messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
@@ -827,8 +828,8 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private void createBag(File file) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-        display("BagView.SaveFileAction: " + file);
-        String messages = "Creating the bag...\n";
+    	display("BagView.SaveFileAction: " + file);
+        String messages = getMessage("bag.message.creating");
 
         messages = bagInfoInputPane.updateForms(baggerBag);
         messages += updateMessages(messages);
@@ -875,21 +876,21 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    };
 
 	    dialog.setCloseAction(CloseAction.DISPOSE);
-	    dialog.setTitle("Create bag confirmation.");
-	    dialog.setConfirmationMessage("This bag name already exists, continuing will overwrite the existing bag.  Would you like to continue?");
+	    dialog.setTitle(getMessage("bag.dialog.title.create"));
+	    dialog.setConfirmationMessage(getMessage("bag.dialog.message.create"));
 	    dialog.showDialog();
 	}
 
 	private String updateMessages(String messages) {
         if (!bagInfoInputPane.hasFormErrors() && (messages == null || messages.length() == 0)) {
-            messages = "Organization and Contact information has been updated.";
+            messages = getMessage("bag.message.info.update");
             infoFormMessagePane.setBackground(infoColor);
             infoFormMessagePane.setMessage("");
             messages += "\n";
         } else {
-            messages = "Organization and Contact information has form errors.";
+            messages = getMessage("bag.message.info.error");
             infoFormMessagePane.setBackground(errorColor);
-            infoFormMessagePane.setMessage(formErrorsMessage);
+            infoFormMessagePane.setMessage(getMessage("error.form"));
         	messages += "\n";
         }
         infoFormMessagePane.invalidate();
@@ -912,11 +913,11 @@ public class BagView extends AbstractView implements ApplicationListener {
     			profile.setUsername(username);
     			try {
     				//bagger.storeProfile(profile);
-    				message = "Profile for project: " + project.getName() + " has been saved.";
+    				message = getMessage("profile.message.saved") + " " + project.getName();
     				message += "\n";
     			} catch (Exception e) {
-    				message = "ERROR updating this profile: " + e.getMessage();
-    				display(message);
+    				message = getMessage("profile.message.error") + " " + e.getMessage();
+    				log.error(message);
     			}
     			profiles[i] = profile;
     		}
@@ -925,7 +926,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     public void onApplicationEvent(ApplicationEvent e) {
-    	display("BagView.onApplicationEvent");
         if (e instanceof LifecycleApplicationEvent) {
         	display("BagView.onApplicationEvent.LifecycleApplicationEvent");
             LifecycleApplicationEvent le = (LifecycleApplicationEvent)e;
