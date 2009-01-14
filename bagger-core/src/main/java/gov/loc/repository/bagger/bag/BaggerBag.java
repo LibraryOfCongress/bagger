@@ -1,6 +1,7 @@
 package gov.loc.repository.bagger.bag;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +54,7 @@ public class BaggerBag extends BagImpl {
 
 	private Date createDate;
 	private List<BaggerFileEntity> rootSrc;
+	private Collection<BagFile> rootPayload = null;
 	private File rootDir;
 	private List<BaggerFileEntity> rootTree;
 	private String name;
@@ -134,6 +136,8 @@ public class BaggerBag extends BagImpl {
         setRootDir(rootDir);
         try {
             gov.loc.repository.bagit.Bag bagitBag = BagFactory.createBag(rootDir, Version.V0_96);
+            rootPayload = bagitBag.getPayloadFiles();
+            log.debug("BaggerBag.openBag files: " + rootPayload.size());
 			bagitBag.complete();
 
     		BagItTxt bagItTxt = bagitBag.getBagItTxt();
@@ -284,6 +288,10 @@ public class BaggerBag extends BagImpl {
 	
 	public Project getProject() {
 		return this.project;
+	}
+
+	public Collection<BagFile> getRootPayload() {
+		return this.rootPayload;
 	}
 
 	// Returns the list of root sources for this bag.  A root source
