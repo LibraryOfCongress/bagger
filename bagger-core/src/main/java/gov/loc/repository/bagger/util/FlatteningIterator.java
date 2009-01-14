@@ -66,7 +66,7 @@ package gov.loc.repository.bagger.util;
         * Returns the next element in our iteration, throwing a NoSuchElementException
         * if none is found.
         */
-       public Object next() {
+       public Object next() throws NoSuchElementException {
            moveToNext();
 
            if (this.next == blank) throw new NoSuchElementException();
