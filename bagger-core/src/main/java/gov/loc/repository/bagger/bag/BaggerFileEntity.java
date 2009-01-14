@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 //import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.DataAccessException;
 
 /**
  * Bagger needs to know where the file came from so that it can be retrieved: rootSrc,
@@ -141,7 +142,7 @@ public class BaggerFileEntity {
 		return normalizedFile;
 	}
 	
-	public static String removeBasePath(String basePath, String filename) {
+	public static String removeBasePath(String basePath, String filename) throws RuntimeException {
 //		String filenameWithoutBasePath = FilenameHelper.removeBasePath(rootParent.getAbsolutePath(), rootSrc.getAbsolutePath());
 		if (filename == null) {
 			throw new RuntimeException("Cannot remove basePath from null");
