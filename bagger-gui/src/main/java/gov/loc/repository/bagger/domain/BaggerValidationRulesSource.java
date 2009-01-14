@@ -15,12 +15,17 @@ import org.springframework.rules.constraint.property.*;
 import org.springframework.util.Assert;
 
 public class BaggerValidationRulesSource extends DefaultRulesSource {
+	boolean isCopyright = false;
 	
     public BaggerValidationRulesSource() {
         super();
+    }
+    
+    public void init(boolean isCopyright) {
+    	this.isCopyright = isCopyright;
         addRules(createContactRules());
         addRules(createBagOrganizationRules());
-        addRules(createBagInfoRules());
+        addRules(createBagInfoRules());    	
     }
 
     private Rules createContactRules() {
@@ -50,7 +55,9 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
                 add("baggingDate", getDateConstraint());
                 add("externalIdentifier", required());
                 add("bagSize", required());
-//            	add("publisher", getIsCopyright());
+                if (isCopyright) {
+                	add("publisher", required());
+                }
 //                add("payloadOxum", required() );
 //              add("payloadOssum", required() );
             }
