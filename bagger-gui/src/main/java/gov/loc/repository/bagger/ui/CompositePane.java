@@ -107,9 +107,16 @@ public class CompositePane extends JTabbedPane {
     	bagInfoScrollPane = new JScrollPane();
         bagInfoPane = new BagInfoPane();
         bagInfoScrollPane.setViewportView(bagInfoPane);
-        this.addTab(parentView.getPropertyMessage("compositePane.tab.bagitinfo"), bagInfoScrollPane);
+        this.addTab(parentView.getPropertyMessage("compositePane.tab.baginfo"), bagInfoScrollPane);
         //bagInfoPane.setForeground(selectedColor);
         bagInfoScrollPane.setForeground(selectedColor);
+
+        bagItScrollPane = new JScrollPane();
+        bagItPane = new BagItPane();
+        bagItScrollPane.setViewportView(bagItPane);
+        this.addTab(parentView.getPropertyMessage("compositePane.tab.bagit"), bagItScrollPane);
+        //bagItPane.setForeground(selectedColor);
+        bagItScrollPane.setForeground(selectedColor);
 
     	fetchScrollPane = new JScrollPane();
         fetchPane = new FetchPane();
@@ -120,17 +127,12 @@ public class CompositePane extends JTabbedPane {
     	//fetchPane.setForeground(selectedColor);
     	fetchScrollPane.setForeground(selectedColor);
 
-        bagItScrollPane = new JScrollPane();
-        bagItPane = new BagItPane();
-        bagItScrollPane.setViewportView(bagItPane);
-        this.addTab(parentView.getPropertyMessage("compositePane.tab.bagit"), bagItScrollPane);
-        //bagItPane.setForeground(selectedColor);
-        bagItScrollPane.setForeground(selectedColor);
-
         dataScrollPane = new JScrollPane();
     	dataPane = new DataPane();
     	dataScrollPane.setViewportView(dataPane);
-    	this.addTab(parentView.getPropertyMessage("compositePane.tab.data"), dataScrollPane);
+    	if (!this.baggerBag.getIsHoley()) {
+        	this.addTab(parentView.getPropertyMessage("compositePane.tab.data"), dataScrollPane);
+    	}
     	//dataPane.setForeground(selectedColor);
     	dataScrollPane.setForeground(selectedColor);    	
     }
@@ -186,9 +188,16 @@ public class CompositePane extends JTabbedPane {
     	bagInfoScrollPane = new JScrollPane();
         bagInfoPane = new BagInfoPane(baggerBag.getInfo());
         bagInfoScrollPane.setViewportView(bagInfoPane);
-        this.addTab(parentView.getPropertyMessage("compositePane.tab.bagitinfo"), bagInfoScrollPane);
+        this.addTab(parentView.getPropertyMessage("compositePane.tab.baginfo"), bagInfoScrollPane);
         //bagInfoPane.setForeground(selectedColor);
         bagInfoScrollPane.setForeground(selectedColor);
+
+        bagItScrollPane = new JScrollPane();
+        bagItPane = new BagItPane(baggerBag.getBagIt());
+        bagItScrollPane.setViewportView(bagItPane);
+        this.addTab(parentView.getPropertyMessage("compositePane.tab.bagit"), bagItScrollPane);
+        //bagItPane.setForeground(selectedColor);
+        bagItScrollPane.setForeground(selectedColor);
 
     	fetchScrollPane = new JScrollPane();
         fetchPane = new FetchPane(baggerBag.getFetch());
@@ -199,17 +208,12 @@ public class CompositePane extends JTabbedPane {
         	fetchScrollPane.setForeground(selectedColor);
     	}
 
-        bagItScrollPane = new JScrollPane();
-        bagItPane = new BagItPane(baggerBag.getBagIt());
-        bagItScrollPane.setViewportView(bagItPane);
-        this.addTab(parentView.getPropertyMessage("compositePane.tab.bagit"), bagItScrollPane);
-        //bagItPane.setForeground(selectedColor);
-        bagItScrollPane.setForeground(selectedColor);
-
         dataScrollPane = new JScrollPane();
     	dataPane = new DataPane(baggerBag.getData());
     	dataScrollPane.setViewportView(dataPane);
-    	this.addTab(parentView.getPropertyMessage("compositePane.tab.data"), dataScrollPane);
+    	if (!this.baggerBag.getIsHoley()) {
+        	this.addTab(parentView.getPropertyMessage("compositePane.tab.data"), dataScrollPane);
+    	}
     	//dataPane.setForeground(selectedColor);
     	dataScrollPane.setForeground(selectedColor);
     }
@@ -234,16 +238,18 @@ public class CompositePane extends JTabbedPane {
     	manifestScrollPane.setForeground(selectedColor);
     	this.addTab(parentView.getPropertyMessage("compositePane.tab.tagmanifest"), tagManifestScrollPane);
     	tagManifestScrollPane.setForeground(selectedColor);
-        this.addTab(parentView.getPropertyMessage("compositePane.tab.bagitinfo"), bagInfoScrollPane);
+        this.addTab(parentView.getPropertyMessage("compositePane.tab.baginfo"), bagInfoScrollPane);
         bagInfoScrollPane.setForeground(selectedColor);
+        this.addTab(parentView.getPropertyMessage("compositePane.tab.bagit"), bagItScrollPane);
+        bagItScrollPane.setForeground(selectedColor);
     	if (this.baggerBag.getIsHoley()) {
             this.addTab(parentView.getPropertyMessage("compositePane.tab.fetch"), fetchScrollPane);    		
             fetchScrollPane.setForeground(selectedColor);
     	}
-        this.addTab(parentView.getPropertyMessage("compositePane.tab.bagit"), bagItScrollPane);
-        bagItScrollPane.setForeground(selectedColor);
-    	this.addTab(parentView.getPropertyMessage("compositePane.tab.data"), dataScrollPane);
-    	dataScrollPane.setForeground(selectedColor);
+    	if (!this.baggerBag.getIsHoley()) {
+        	this.addTab(parentView.getPropertyMessage("compositePane.tab.data"), dataScrollPane);
+        	dataScrollPane.setForeground(selectedColor);
+    	}
     	/* */
         consolePane.invalidate();
         consoleScrollPane.invalidate();
