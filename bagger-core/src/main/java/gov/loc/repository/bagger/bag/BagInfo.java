@@ -247,7 +247,8 @@ public class BagInfo extends BagInfoTxtImpl {
 		rules.put("Bagging-Date", "required,(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])");
 		rules.put("External-Identifier", "required");
 		rules.put("Bag-Size", "required");
-		rules.put("Payload-Ossum", "");
+//		rules.put("Payload-Ossum", "");
+		rules.put("Payload-Oxum", "");
 		rules.put("Bag-Group-Identifier", "");
 		rules.put("Bag-Count", "");
 		rules.put("Internal-Sender-Identifier", "");
