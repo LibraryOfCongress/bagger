@@ -18,7 +18,6 @@ package gov.loc.repository.bagger;
 import org.springframework.richclient.application.ApplicationLauncher;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.richclient.application.support.DefaultViewDescriptor;
 /**
  * Main driver that starts the Bagger spring rich client application.
  */
