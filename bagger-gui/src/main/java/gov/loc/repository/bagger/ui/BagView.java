@@ -37,10 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.ProgressMonitor;
-//import javax.swing.SwingWorker;
 
-//import org.springframework.richclient.progress.ProgressMonitor;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.springframework.richclient.application.Application;
@@ -54,7 +51,6 @@ import org.springframework.richclient.command.support.GlobalCommandIds;
 import org.springframework.richclient.dialog.CloseAction;
 import org.springframework.richclient.dialog.ConfirmationDialog;
 import org.springframework.richclient.progress.BusyIndicator;
-import org.springframework.rules.RulesSource;
 import org.springframework.util.Assert;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -81,7 +77,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 	private Contact user;
 	private String userHomeDir;
 
-	private ProgressMonitor progressMonitor;
     private BagTreePanel bagTreePanel;
     private CompositePane bagDisplayPane;
     private BagInfoInputPane bagInfoInputPane;
@@ -93,6 +88,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JButton saveButton;
     private JButton validateButton;
     private JButton updatePropButton;
+    private JList projectList;
+    private JCheckBox holeyCheckbox;
+    private JCheckBox serialCheckbox;
     private SaveExecutor saveExecutor = new SaveExecutor();
     private Color errorColor = new Color(255, 128, 128);
 	private Color infoColor = new Color(100, 100, 120);
@@ -109,20 +107,18 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     @Override
+    // This populates the default view descriptor declared as the startingPageId
+    // property in the richclient-application-context.xml file.
     protected JComponent createControl() {
     	ApplicationWindow window = Application.instance().getActiveWindow();
     	JFrame f = window.getControl();
     	f.setBackground(Color.red);
     	this.userHomeDir = System.getProperty("user.home");
         display("BagView.createControl - User Home Path: "+ userHomeDir);
-        display("BagView.createControl - message.properties getMessage: " + getMessage("bagName.description"));
 
     	if (baggerBag == null) baggerBag = new BaggerBag();
     	baggerBag.generate();
-    	// TODO: put this in baggerBag.generate
-    	String bagName = baggerBag.getInfo().getBagName();
-    	bagName += "" + this.bagCount;
-    	bagName = getMessage("bag.label.name");
+    	String bagName = getMessage("bag.label.name");
 		baggerBag.setName(bagName);
 		baggerBag.getInfo().setBagName(bagName);
 
@@ -369,7 +365,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         DefaultListModel listModel = new DefaultListModel();
         Object[] array = userProjects.toArray();
         for (int i=0; i < userProjects.size(); i++) listModel.addElement(((Project)array[i]).getName());
-        JList projectList = new JList(listModel);
+        projectList = new JList(listModel);
         projectList.setName(getMessage("bag.label.projectList"));
         //projectList.setSelectedIndex(0);
         projectList.setVisibleRowCount(2);
@@ -380,11 +376,9 @@ public class BagView extends AbstractView implements ApplicationListener {
             	String selected = (String) jlist.getSelectedValue();
             	display("BagView.projectList valueChanged: " + selected);
             	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(getMessage("bag.project.edeposit"))) {
-            		System.out.println("BagView.valueChanged true");
             		baggerBag.setIsCopyright(true);
             		baggerBag.getInfo().setIsCopyright(true);
             	} else {
-            		System.out.println("BagView.valueChanged false");
             		baggerBag.setIsCopyright(false);
             		baggerBag.getInfo().setIsCopyright(false);
             	}
@@ -419,7 +413,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         // Holey bag control
         JLabel holeyLabel = new JLabel(getMessage("bag.label.isHoley"));
-        JCheckBox holeyCheckbox = new JCheckBox(getMessage("bag.checkbox.isHoley"));
+        holeyCheckbox = new JCheckBox(getMessage("bag.checkbox.isHoley"));
         holeyCheckbox.setBorder(border);
         holeyCheckbox.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 75893358194076314L;
@@ -433,8 +427,8 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } else {
                 	baggerBag.setIsHoley(false);
                 }
-                String messages = bagInfoInputPane.updateForms(baggerBag);
-                messages += updateMessages(messages);
+                String messages = "";
+            	updateBaggerRules();
                 bagInfoInputPane.updateSelected();
                 messages += updateProfile();
                 bagDisplayPane.updateTabs(baggerBag, messages);
@@ -443,7 +437,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         // Bag is to be serialized control
         JLabel serialLabel = new JLabel(getMessage("bag.label.isPackage"));
-        JCheckBox serialCheckbox = new JCheckBox(getMessage("bag.checkbox.isPackage"));
+        serialCheckbox = new JCheckBox(getMessage("bag.checkbox.isPackage"));
         serialCheckbox.setBorder(border);
         serialCheckbox.setSelected(true);
         serialCheckbox.addActionListener(new AbstractAction() {
@@ -496,15 +490,24 @@ public class BagView extends AbstractView implements ApplicationListener {
         JPanel checkPanel = new JPanel(gridLayout);
         checkPanel.add(projectLabel);
         checkPanel.add(projectPane);
+        projectList.setEnabled(false);
         checkPanel.add(holeyLabel);
         checkPanel.add(holeyCheckbox);
+        holeyCheckbox.setEnabled(false);
         checkPanel.add(serialLabel);
         checkPanel.add(serialCheckbox);
+        serialCheckbox.setEnabled(false);
         checkPanel.add(groupLabel);
         checkPanel.add(groupPanel);
 //        checkPanel.add(filler);
 
         return checkPanel;
+    }
+    
+    private void enableBagSettings() {
+        projectList.setEnabled(true);
+        holeyCheckbox.setEnabled(true);
+        serialCheckbox.setEnabled(true);
     }
 /* */
     private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
@@ -637,7 +640,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     private String updateBaggerRules() {
-        baggerRules.init(baggerBag.getIsCopyright());    	
+        baggerRules.init(baggerBag.getIsCopyright(), baggerBag.getIsHoley());
         String messages = "";
         bagInfoInputPane.populateForms(baggerBag);
         messages = bagInfoInputPane.updateForms(baggerBag);
@@ -738,8 +741,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	try {
     		File rootDir = new File(file.getAbsolutePath(), baggerBag.getName());
     		baggerBag.setRootDir(rootDir);
-            //messages = bagInfoInputPane.updateForms(baggerBag);
-        	//messages += updateMessages(messages);
     	} catch (Exception e) {
         	messages += "\n" + getMessage("error.bag.create") + " " + e.getMessage();
     	}
@@ -754,7 +755,11 @@ public class BagView extends AbstractView implements ApplicationListener {
     private void openExistingBag(File file) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	String messages = "";
-		baggerBag.openBag(file);
+
+    	messages = updateBaggerRules();
+    	clearExistingBag(messages);
+
+    	baggerBag.openBag(file);
 		// TODO: if there is a '.' suffix, strip it from the name
 		baggerBag.setName(file.getName());
 		baggerBag.setRootDir(file);
@@ -778,7 +783,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 				}
 			}
 		} else {
-			Collection<gov.loc.repository.bagit.BagFile> payload = baggerBag.getRootPayload();
+			Collection<BagFile> payload = baggerBag.getRootPayload();
             for (Iterator<BagFile> it=payload.iterator(); it.hasNext(); ) {
             	BagFile bf = it.next();
             	File f = new File(bf.getFilepath());
@@ -797,8 +802,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	baggerBag.generate();
 
         //bagInfoInputPane.populateForms(baggerBag);
-    	messages = updateBaggerRules();
-//        messages = bagInfoInputPane.updateForms(baggerBag);
+        messages = bagInfoInputPane.updateForms(baggerBag);
 //        messages += updateMessages(messages);
         // TODO: need to figure out why validation field is not updating for valid input
         bagInfoInputPane.updateSelected();
@@ -886,6 +890,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 		baggerBag.getInfo().setBagName(bagName);
     	initializeProfile();
 
+    	enableBagSettings();
     	bagInfoInputPane.populateForms(baggerBag);
         bagInfoInputPane.updateSelected();
 //        messages += updateProfile();
