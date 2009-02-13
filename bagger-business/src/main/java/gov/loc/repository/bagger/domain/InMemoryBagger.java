@@ -134,7 +134,7 @@ public class InMemoryBagger extends JdbcBagger {
 		return message;		
 	}
 	
-	private void loadProfiles(File file) {
+	private String loadProfiles(File file) {
 		String message = null;
 
 		try
@@ -162,6 +162,7 @@ public class InMemoryBagger extends JdbcBagger {
 			message = "InMemoryBagger.readCommandList: " + e.getMessage();
 			e.printStackTrace();
 		}
+		return message;
 	}
 
 	private void showConfirmation() {
