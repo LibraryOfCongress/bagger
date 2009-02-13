@@ -32,10 +32,12 @@ public class BagInfoInputPane extends JTabbedPane {
     private OrganizationGeneralForm organizationGeneralForm = null;
     private OrganizationContactForm organizationContactForm = null;
     private OrganizationContactForm userContactForm = null;
+    private OrganizationFetchForm fetchForm = null;
 	private HierarchicalFormModel organizationFormModel = null;
     private HierarchicalFormModel contactFormModel = null;
     private HierarchicalFormModel userFormModel = null;
     private HierarchicalFormModel infoFormModel = null;
+    private HierarchicalFormModel fetchFormModel = null;
 
     private String username;
 	private Contact user;
@@ -74,6 +76,11 @@ public class BagInfoInputPane extends JTabbedPane {
                     	break;
                     case 3:
                     	if (organizationContactForm.hasErrors()) {
+                    		c = errorColor;
+                    	}
+                    	break;
+                    case 4:
+                    	if (fetchForm.hasErrors()) {
                     		c = errorColor;
                     	}
                     	break;
@@ -122,6 +129,7 @@ public class BagInfoInputPane extends JTabbedPane {
     
     // Define the information forms
     public void populateForms(BaggerBag baggerBag) {
+    	this.baggerBag = baggerBag;
     	BagInfo bagInfo = baggerBag.getInfo();
         BagOrganization bagOrganization = bagInfo.getBagOrganization();
         organizationFormModel = FormModelHelper.createCompoundFormModel(bagOrganization);
@@ -144,6 +152,12 @@ public class BagInfoInputPane extends JTabbedPane {
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
         bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null));
 
+        if (baggerBag.getIsHoley()) {
+        	Fetch fetch = baggerBag.getFetch();
+            fetchFormModel = FormModelHelper.createCompoundFormModel(fetch);
+            fetchForm = new OrganizationFetchForm(FormModelHelper.createChildPageFormModel(fetchFormModel, null));
+        }
+
         updateProfileForms();
     }
 
@@ -156,6 +170,9 @@ public class BagInfoInputPane extends JTabbedPane {
         this.addTab(parentView.getPropertyMessage("infoInputPane.tab.user"), userContactForm.getControl());
         this.addTab(parentView.getPropertyMessage("infoInputPane.tab.organization"), organizationGeneralForm.getControl());
         this.addTab(parentView.getPropertyMessage("infoInputPane.tab.contact"), organizationContactForm.getControl());
+        if (baggerBag.getIsHoley()) {
+            this.addTab(parentView.getPropertyMessage("infoInputPane.tab.fetch"), fetchForm.getControl());        	
+        }
 
     	if (bagInfoForm.hasErrors()) {
             bagInfoForm.getControl().setForeground(errorColor);
@@ -177,6 +194,13 @@ public class BagInfoInputPane extends JTabbedPane {
     	} else {
             organizationContactForm.getControl().setForeground(selectedColor);    		
     	}
+        if (baggerBag.getIsHoley()) {
+        	if (fetchForm.hasErrors()) {
+        		fetchForm.getControl().setForeground(errorColor);
+        	} else {
+        		fetchForm.getControl().setForeground(selectedColor);
+        	}
+        }
     }
 
     public String verifyForms(BaggerBag baggerBag) {
@@ -214,6 +238,14 @@ public class BagInfoInputPane extends JTabbedPane {
         }
         BagInfo newInfo = (BagInfo)bagInfoForm.getFormObject();
 
+        if (baggerBag.getIsHoley()) {
+        	if (!fetchForm.hasErrors()) {
+        		fetchForm.commit();            	
+        	}
+        	Fetch fetch = (Fetch)fetchForm.getFormObject();
+        	baggerBag.getFetch().setBaseURL(fetch.getBaseURL());
+        }
+        
         if (!organizationGeneralForm.hasErrors()) {
             organizationGeneralForm.commit();
         }
@@ -238,7 +270,7 @@ public class BagInfoInputPane extends JTabbedPane {
             baggerBag.setName(bagName);
         }
 
-        if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors()) {
+        if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors() || (baggerBag.getIsHoley() && fetchForm.hasErrors())) {
         	messages = parentView.getPropertyMessage("error.form") + "\n";
         }
         update();
@@ -264,14 +296,17 @@ public class BagInfoInputPane extends JTabbedPane {
     		this.setSelectedIndex(2);
     	} else if (organizationContactForm.hasErrors()) {
     		this.setSelectedIndex(3);
+    	} else if (baggerBag.getIsHoley() && fetchForm.hasErrors()) {
+    		this.setSelectedIndex(4);
     	} else if (userContactForm.hasErrors()) {
     		this.setSelectedIndex(1);
     	}
+
     	update();
     }
     
     public boolean hasFormErrors() {
-        if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors()) {
+        if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors() || (baggerBag.getIsHoley() && fetchForm.hasErrors())) {
         	return true;
         } else {
         	return false;
@@ -289,6 +324,9 @@ public class BagInfoInputPane extends JTabbedPane {
         userContactForm.getControl().invalidate();
         organizationGeneralForm.getControl().invalidate();
         organizationContactForm.getControl().invalidate();
+        if (baggerBag.getIsHoley()) {
+        	fetchForm.getControl().invalidate();
+        }
     	invalidate();
     	repaint();
     }
