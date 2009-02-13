@@ -3,29 +3,31 @@ package gov.loc.repository.bagger.domain;
 
 import java.util.Date;
 
-import gov.loc.repository.bagger.bag.BaggerBag;
 import gov.loc.repository.bagger.bag.BagInfo;
 import gov.loc.repository.bagger.bag.BagOrganization;
+import gov.loc.repository.bagger.bag.Fetch;
 import gov.loc.repository.bagger.Contact;
 
 import org.springframework.core.closure.Constraint;
 import org.springframework.rules.Rules;
 import org.springframework.rules.support.DefaultRulesSource;
 import org.springframework.rules.constraint.property.*;
-import org.springframework.util.Assert;
 
 public class BaggerValidationRulesSource extends DefaultRulesSource {
 	boolean isCopyright = false;
+	boolean isHoley = false;
 	
     public BaggerValidationRulesSource() {
         super();
     }
     
-    public void init(boolean isCopyright) {
+    public void init(boolean isCopyright, boolean isHoley) {
     	this.isCopyright = isCopyright;
+    	this.isHoley = isHoley;
         addRules(createContactRules());
         addRules(createBagOrganizationRules());
-        addRules(createBagInfoRules());    	
+        addRules(createBagInfoRules());
+        addRules(createFetchRules());
     }
 
     private Rules createContactRules() {
@@ -63,6 +65,17 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
             }
         };
     }
+
+    private Rules createFetchRules() {
+        return new Rules(Fetch.class) {
+            protected void initRules() {
+            	if (isHoley) {
+                    add("baseURL", required());            		
+            	}
+            }
+        };
+    }
+    
     private Constraint getNameValueConstraint() {
     	Constraint res;
     	res = all(new Constraint[] {required(), maxLength(50), regexp("[a-zA-Z ]*", "alphabetic")});
