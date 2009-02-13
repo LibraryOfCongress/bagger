@@ -31,10 +31,14 @@ import gov.loc.repository.bagit.impl.FetchTxtImpl;
  * @author Jon Steinbach
  */
 public class Fetch extends FetchTxtImpl {
+	private static final long serialVersionUID = 1L;
+
 	private static final Log log = LogFactory.getLog(Fetch.class);
 
 	List<FileEntity> uris;
-	String fetchContent = null;
+	private String baseURL;
+	private String userName;
+	private String userPassword;
 	private String name;
 	private String content;
 
@@ -45,7 +49,31 @@ public class Fetch extends FetchTxtImpl {
 	public Fetch(BaggerBag bag, BagFile sourceBagFile) {
 		super(bag, sourceBagFile);
 	}
-
+	
+	public void setBaseURL(String url) {
+		this.baseURL = url;
+	}
+	
+	public String getBaseURL() {
+		return this.baseURL;
+	}
+	
+	public void setUserName(String username) {
+		this.userName = username;
+	}
+	
+	public String getUserName() {
+		return this.userName;
+	}
+	
+	public void setUserPassword(String password) {
+		this.userPassword = password;
+	}
+	
+	public String getUserPassword() {
+		return this.userPassword;
+	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -64,13 +92,10 @@ public class Fetch extends FetchTxtImpl {
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		if (fetchContent == null) {
-			sb.append("<URI> ");
-			sb.append("<CHECKSUM> ");
-			sb.append("data/<FILENAME>");
-			sb.append('\n');			
+		if (content == null) {
+			sb.append('\n');
 		} else {
-			sb.append(fetchContent);
+			sb.append(content);
 		}
 
 		return sb.toString();
