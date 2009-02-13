@@ -170,16 +170,12 @@ class TreeDragSource implements DragSourceListener, DragGestureListener {
   }
 
   public void dropActionChanged(DragSourceDragEvent dsde) {
-    System.out.println("Action: " + dsde.getDropAction());
-    System.out.println("Target Action: " + dsde.getTargetActions());
-    System.out.println("User Action: " + dsde.getUserAction());
   }
 
   public void dragDropEnd(DragSourceDropEvent dsde) {
     /*
      * to support move or copy, we have to check which occurred:
      */
-    System.out.println("Drop Action: " + dsde.getDropAction());
     if (dsde.getDropSuccess()
         && (dsde.getDropAction() == DnDConstants.ACTION_MOVE)) {
       ((DefaultTreeModel) sourceTree.getModel())
