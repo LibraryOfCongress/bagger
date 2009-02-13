@@ -6,10 +6,6 @@ import org.springframework.richclient.util.GuiStandardUtils;
 import org.springframework.richclient.core.UIConstants;
 import org.acegisecurity.AccessDeniedException;
 import org.acegisecurity.BadCredentialsException;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Min;
-import org.hibernate.validator.Max;
-import org.hibernate.validator.ClassValidator;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -55,7 +51,7 @@ public class ExceptionHandlingView extends AbstractView {
         layoutBuilder.cell(accessDenied);
         layoutBuilder.row();
         layoutBuilder.relatedGapRow();
-
+/*
         JButton invalidPerson = new JButton(new AbstractAction("Validate a person with a null name and age 1981"){
             public void actionPerformed(ActionEvent e) {
                 validateInvalidPerson();
@@ -64,7 +60,7 @@ public class ExceptionHandlingView extends AbstractView {
         layoutBuilder.cell(invalidPerson);
         layoutBuilder.row();
         layoutBuilder.relatedGapRow();
-
+*/
         JButton nullPointer = new JButton(new AbstractAction("Cause a NumberFormatException"){
             public void actionPerformed(ActionEvent e) {
                 causeNumberFormatException();
@@ -94,7 +90,7 @@ public class ExceptionHandlingView extends AbstractView {
     private void denyAccess() {
         throw new AccessDeniedException("You don't have access to do this");
     }
-
+/*
     private void validateInvalidPerson() {
         ClassValidator validator = new ClassValidator(ValidPerson.class);
         ValidPerson invalidPerson = new ValidPerson();
@@ -126,7 +122,7 @@ public class ExceptionHandlingView extends AbstractView {
         }
 
     }
-
+*/
     private void causeNumberFormatException() {
         Integer.parseInt("eight");
     }
