@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>loc-repository</groupId>
-    <artifactId>bagger</artifactId>
+    <artifactId>bagger-maven</artifactId>
     <version>1.3</version>
   </parent>
 
@@ -18,71 +18,63 @@
   <dependencies>
     <!-- Internal -->
     <dependency>
-      <groupId>gov.loc.repository.bagit</groupId>
+      <groupId>loc-repository</groupId>
       <artifactId>bagit</artifactId>
-      <version>2.2</version>
     </dependency>
     <dependency>
-      <groupId>gov.loc.repository.bagger</groupId>
+      <groupId>loc-repository</groupId>
       <artifactId>bagger-common</artifactId>
-      <version>1.3</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
-      <groupId>gov.loc.repository.bagger</groupId>
+      <groupId>loc-repository</groupId>
       <artifactId>bagger-core</artifactId>
-      <version>1.3</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
-      <groupId>gov.loc.repository.bagger</groupId>
+      <groupId>loc-repository</groupId>
       <artifactId>bagger-business</artifactId>
-      <version>1.3</version>
+      <version>${pom.version}</version>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>com.ravnaandtines.ftp</groupId>
       <artifactId>bagger-ftpclient</artifactId>
       <version>1.0</version>
     </dependency>
-
+    -->
     <!-- Spring rich -->
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-resources</artifactId>
-      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-core</artifactId>
-      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-binding</artifactId>
-      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-form</artifactId>
-      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-support</artifactId>
-      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-jdk5</artifactId>
-      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-jdk6</artifactId>
-      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-sandbox</artifactId>
-      <version>1.0.0</version>
     </dependency>
 
     <!-- Lang -->
@@ -101,6 +93,7 @@
     </dependency>
 
     <!-- Logging -->
+    <!-- 
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
@@ -111,6 +104,7 @@
       <artifactId>commons-logging</artifactId>
       <version>1.1.1</version>
     </dependency>
+    -->
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -121,29 +115,24 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>2.5.1</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>2.5.1</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>2.5.1</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>2.5.1</version>
     </dependency>
 
     <!-- Security -->
     <dependency>
       <groupId>org.acegisecurity</groupId>
       <artifactId>acegi-security</artifactId>
-      <version>1.0.2</version>
     </dependency>
 
     <!-- Components -->
@@ -174,8 +163,9 @@
       <artifactId>nachocalendar</artifactId>
       <version>0.23</version>
     </dependency>
-
     <!-- Validation with Hibernate validator -->
+	<!-- 
+	 -->
     <dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
@@ -196,7 +186,6 @@
       <artifactId>hibernate-validator</artifactId>
       <version>3.0.0</version>
     </dependency>
-
     <!-- Utils -->
     <dependency>
       <groupId>it.cnr.imaa.essi.lablib.gui.checkboxtree</groupId>
