@@ -5,8 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +20,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -64,12 +61,10 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	private SimpleJdbcInsert insertOrganization;
 	private SimpleJdbcInsert insertContact;
 	private SimpleJdbcInsert insertProfile;
-	private SimpleJdbcInsert insertBag;
 	private SimpleJdbcInsert insertPersonProject;
 	private SimpleJdbcInsert insertUserContact;
 
 	private final List<Organization> orgs = new ArrayList<Organization>();
-	private final List<Project> projects = new ArrayList<Project>();
 
 	ArrayList<String> commandList = new ArrayList<String>();
 	String sqlCommand = "";
@@ -85,7 +80,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		this.insertProfile = new SimpleJdbcInsert(dataSource).withTableName("profile").usingGeneratedKeyColumns("id");
 		this.insertPersonProject = new SimpleJdbcInsert(dataSource).withTableName("person_projects").usingGeneratedKeyColumns("id");
 		this.insertUserContact = new SimpleJdbcInsert(dataSource).withTableName("user_contact").usingGeneratedKeyColumns("id");
-		this.insertBag = new SimpleJdbcInsert(dataSource).withTableName("bag").usingGeneratedKeyColumns("id");
 	}
 
 
