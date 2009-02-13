@@ -22,6 +22,5 @@ public class BaggerLogin extends LoginCommand
 {
 	public void doExecuteCommand() {
 		super.doExecuteCommand();
-		System.out.println("BaggerLogin.doExecuteCommand");
 	}
 }
