@@ -1,7 +1,6 @@
 package gov.loc.repository.bagger.bag;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +9,6 @@ import java.io.IOException;
 
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Project;
-import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.FileUtililties;
 
 import gov.loc.repository.bagit.v0_96.impl.BagImpl;
@@ -57,7 +55,7 @@ public class BaggerBag extends BagImpl {
 	private Collection<BagFile> rootPayload = null;
 	private File rootDir;
 	private List<BaggerFileEntity> rootTree;
-	private String name;
+	private String name = new String("bag_");
 	private long size;
 	private File file;
 
@@ -119,6 +117,20 @@ public class BaggerBag extends BagImpl {
     	tmset.add(tagManifest);
 //    	this.setBaggerTagManifests(tmset);
     	this.setBaggerTagManifests(tagManifestList);
+    	if (this.isHoley) {
+        	String baseURL = "http://foo.com/bag/";
+        	boolean includePayload = false;
+    		this.makeHoley(baseURL, includePayload);
+    		FetchTxt fetchTxt = this.getFetchTxt();
+    		String fetchData = new String();
+    		log.debug("BaggerBag.generate FetchTxt size: " + fetchTxt.size());
+    		for (int i=0; i < fetchTxt.size(); i++) {
+    			fetchData += fetchTxt.get(i).getUrl() + " " + fetchTxt.get(i).getSize() + " " + fetchTxt.get(i).getFilename();
+    			fetchData += "\n";
+    		}
+        	if (this.getFetchTxt() != null) fetch.setContent(fetchData);
+        	log.debug("BaggerBag.generate FETCH: " + this.getFetchTxt().toString());
+    	}
 /* */
 	}
 	
@@ -149,16 +161,11 @@ public class BaggerBag extends BagImpl {
     		BagOrganization bagOrganization = this.bagInfo.getBagOrganization();
     		Contact contact = bagOrganization.getContact();
     		contact.setContactName(bagInfoTxt.getContactName());
-    		System.out.println("contact name: " + bagInfoTxt.getContactName());
     		contact.setTelephone(bagInfoTxt.getContactPhone());
-    		System.out.println("contact phone: " + bagInfoTxt.getContactPhone());
     		contact.setEmail(bagInfoTxt.getContactEmail());
-    		System.out.println("contact email: " + bagInfoTxt.getContactEmail());
     		bagOrganization.setContact(contact);
     		bagOrganization.setOrgName(bagInfoTxt.getSourceOrganization());
-    		System.out.println("source org: " + bagInfoTxt.getSourceOrganization());
     		bagOrganization.setOrgAddress(bagInfoTxt.getOrganizationAddress());
-    		System.out.println("source address: " + bagInfoTxt.getOrganizationAddress());
     		this.bagInfo.setBagOrganization(bagOrganization);
     		this.bagInfo.setAwardeePhase("");
     		this.bagInfo.setPublisher("");
@@ -467,7 +474,9 @@ public class BaggerBag extends BagImpl {
 			if (isValidForms) {
 				messages += createBagDir(path);
 				messages += writeMetaFiles();
-				messages += copyDataToBag(rootDir);
+		    	if (!this.isHoley) {
+		    		messages += copyDataToBag(rootDir);
+		    	}
 				if (isValidForms) {
 					messages += validateAndBag();
 				}
@@ -525,7 +534,7 @@ public class BaggerBag extends BagImpl {
     	if (this.isHoley) {
 			display("Bag.write: isHoley - create and write fetch.txt in bag name directory");
 			messages += "Create and write fetch.txt in bag name directory.\n";
-    	    fetch.setName("fetch.txt");
+    	    fetch.setName(AbstractBagConstants.FETCH_TXT);
     	    fetch.writeData();
     	    fetch.write(rootDir);
     	}
