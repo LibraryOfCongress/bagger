@@ -23,12 +23,10 @@ public class BaggerLogout extends LogoutCommand
 	public void doExecuteCommand() {
 		super.doExecuteCommand();
 		Application.instance().getActiveWindow().getControl().invalidate();
-		System.out.println("BaggerLogout.doExecuteCommand");
 	}
 
 	public void onLogout(Authentication loggedOut) {
 		super.onLogout(loggedOut);
 		Application.instance().getActiveWindow().getControl().invalidate();
-		System.out.println("BaggerLogout.onLogout");
 	}
 }
