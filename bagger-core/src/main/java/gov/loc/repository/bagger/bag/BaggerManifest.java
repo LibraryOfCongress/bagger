@@ -12,7 +12,6 @@ import java.io.Writer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import gov.loc.repository.bagit.utilities.FilenameHelper;
 import gov.loc.repository.bagger.FileEntity;
 import gov.loc.repository.bagger.util.MD5Checksum;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
@@ -34,6 +33,8 @@ import gov.loc.repository.bagit.BagFile;
  * @author Jon Steinbach
  */
 public class BaggerManifest extends ManifestImpl {
+	private static final long serialVersionUID = 1L;
+
 	private static final Log log = LogFactory.getLog(BaggerManifest.class);
 
 	private String type;
