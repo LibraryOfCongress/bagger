@@ -118,7 +118,9 @@ public class BaggerBag extends BagImpl {
 //    	this.setBaggerTagManifests(tmset);
     	this.setBaggerTagManifests(tagManifestList);
     	if (this.isHoley) {
-        	String baseURL = "http://foo.com/bag/";
+    		System.out.println("BaggerBag.fetch: " + this.getFetch().getBaseURL());
+        	String baseURL = this.getFetch().getBaseURL();
+        	//if (baseURL == null) baseURL = "http://foo.com/bag/";
         	boolean includePayload = false;
     		this.makeHoley(baseURL, includePayload);
     		FetchTxt fetchTxt = this.getFetchTxt();
@@ -239,6 +241,7 @@ public class BaggerBag extends BagImpl {
         	if (fetchTxt != null && !fetchTxt.isEmpty()) {
         		this.setIsHoley(true);
         		this.fetch.setContent(fetchTxt.toString());
+        		this.fetch.setBaseURL(fetchTxt.getFilepath());
         	}
         } catch (Exception e) {
         	e.printStackTrace();
