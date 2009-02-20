@@ -5,7 +5,7 @@
   <parent>
     <groupId>loc-repository</groupId>
     <artifactId>bagger-maven</artifactId>
-    <version>1.3</version>
+    <version>1.4</version>
   </parent>
 
   <artifactId>bagger-gui</artifactId>
@@ -36,13 +36,6 @@
       <artifactId>bagger-business</artifactId>
       <version>${pom.version}</version>
     </dependency>
-    <!-- 
-    <dependency>
-      <groupId>com.ravnaandtines.ftp</groupId>
-      <artifactId>bagger-ftpclient</artifactId>
-      <version>1.0</version>
-    </dependency>
-    -->
     <!-- Spring rich -->
     <dependency>
       <groupId>org.springframework.richclient</groupId>
