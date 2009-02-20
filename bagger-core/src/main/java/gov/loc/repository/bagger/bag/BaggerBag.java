@@ -120,7 +120,7 @@ public class BaggerBag extends BagImpl {
     	if (this.isHoley) {
     		log.debug("BaggerBag.fetch: " + this.getFetch().getBaseURL());
         	String baseURL = this.getFetch().getBaseURL();
-        	//if (baseURL == null) baseURL = "http://foo.com/bag/";
+        	if (baseURL == null) baseURL = new String(); //baseURL = "http://foo.com/bag/";
         	boolean includePayload = false;
     		this.makeHoley(baseURL, includePayload);
     		FetchTxt fetchTxt = this.getFetchTxt();
@@ -637,6 +637,13 @@ public class BaggerBag extends BagImpl {
 			if (publisher == null || publisher.trim().length() == 0) {
 				this.isValidForms = false;
 				messages += "eDeposit project require a publisher.";
+			}
+		}
+		if (this.isHoley) {
+			String baseURL = this.getFetch().getBaseURL();
+			if (baseURL == null || baseURL.trim().length() == 0) {
+				this.isValidForms = false;
+				messages += "A holey bag requires a base URL.";
 			}
 		}
 		if (this.isValidForms) {
