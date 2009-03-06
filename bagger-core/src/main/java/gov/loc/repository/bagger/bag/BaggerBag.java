@@ -618,10 +618,11 @@ public class BaggerBag extends BagImpl {
 		if (this.isSerial) {
 			display("Bag.write: Clean up the files");
 			//display("Bag space: " + rootDir.getTotalSpace());
-			b = FileUtililties.deleteDir(rootDir);
-			if (!b) messages += reportError(messages, "Could not delete directory: " + rootDir);
-			else messages += "Cleaning up bag directory.";
-
+			if (!this.isHoley) {
+				b = FileUtililties.deleteDir(rootDir);
+				if (!b) messages += reportError(messages, "Could not delete directory: " + rootDir);
+				else messages += "Cleaning up bag directory.";				
+			}
 			rootDir.deleteOnExit();			
 		}
 		return messages;
@@ -659,7 +660,12 @@ public class BaggerBag extends BagImpl {
 		String messages = "";
 		try {
 			bagitBag = BagFactory.createBag(this.rootDir, Version.V0_96);
-			bagitBag.complete();
+			try {
+				bagitBag.complete();				
+			} catch (Exception ec) {
+				ec.printStackTrace();
+				reportError(messages, ec.getMessage());
+			}
 			display("Bag.write: verifier isComplete?");
 			SimpleResult result = bagitBag.isComplete();
 			if (result.messagesToString() != null) messages += result.messagesToString();
