@@ -916,6 +916,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 createBag(bagRootPath);
                 validateButton.setEnabled(true);
             	topButtonPanel.invalidate();
+            	tmpRootPath = null;
 	        }
 	    };
 
