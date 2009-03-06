@@ -70,6 +70,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private BaggerValidationRulesSource baggerRules;
     private int bagCount = 0;
     private File bagRootPath;
+    private File tmpRootPath;
     private BagTree bagTree;
     private Collection<Project> userProjects;
     private Collection<Profile> userProfiles;
@@ -659,9 +660,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     
         FileAction(JFrame frame, JFileChooser chooser, int mode) {
             super(getMessage("file.chooser"));
-            this.chooser = chooser;
+        	this.chooser = chooser;
             this.frame = frame;
             this.mode = mode;
+
             switch(mode) {
             case BAG_OPEN:
             case BAG_ADD_DATA:
@@ -681,6 +683,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         	if (mode == BAG_OPEN || mode == BAG_ADD_DATA || mode == BAG_NEW) {
             	option = chooser.showOpenDialog(frame);
         	} else if (mode == BAG_CREATE) {
+            	chooser.setSelectedFile(baggerBag.getRootDir());
+            	chooser.setCurrentDirectory(bagRootPath);
             	option = chooser.showSaveDialog(frame);
         	} else {
             	log.error("BagView.FileAction unsupported mode: " + mode);
@@ -718,8 +722,10 @@ public class BagView extends AbstractView implements ApplicationListener {
                 case BAG_CREATE:
     				File bagFile = new File(bagRootPath, baggerBag.getName());
                 	if (bagFile.exists()) {
+                		tmpRootPath = file;
                         showConfirmation();
                 	} else {
+                		bagRootPath = file;
                         createBag(file);
                         validateButton.setEnabled(true);
                     	topButtonPanel.invalidate();
@@ -735,18 +741,18 @@ public class BagView extends AbstractView implements ApplicationListener {
 	// TODO: create a new empty bag
     private void newBag(File file) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
+    	display("BagView.newBag location: " + file.getAbsolutePath() );
     	String messages = "";
     	bagRootPath = file;
-    	display("BagView.newBag location: " + file.getAbsolutePath() );
+    	this.bagCount++;
+    	messages = updateBaggerRules();
+    	clearExistingBag(messages);
     	try {
     		File rootDir = new File(file.getAbsolutePath(), baggerBag.getName());
     		baggerBag.setRootDir(rootDir);
     	} catch (Exception e) {
         	messages += "\n" + getMessage("error.bag.create") + " " + e.getMessage();
     	}
-    	this.bagCount++;
-    	messages = updateBaggerRules();
-    	clearExistingBag(messages);
         messages = bagInfoInputPane.updateForms(baggerBag);
     	messages += updateMessages(messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
@@ -869,6 +875,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagInfoInputPane.updateSelected();
     	// TODO Break this down into multiple steps so that each step can send bag progress message to the console.
         if (!bagInfoInputPane.hasFormErrors()) {
+        	if (file.getName().equalsIgnoreCase(baggerBag.getName())) {
+        		file = file.getParentFile();
+        	}
             messages = baggerBag.write(file);
         }
     	bagDisplayPane.updateTabs(baggerBag, messages);
@@ -903,6 +912,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	private void showConfirmation() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	        protected void onConfirm() {
+	        	bagRootPath = tmpRootPath;
                 createBag(bagRootPath);
                 validateButton.setEnabled(true);
             	topButtonPanel.invalidate();
