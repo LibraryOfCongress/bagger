@@ -180,7 +180,7 @@ public class CompositePane extends JTabbedPane {
         bagInfoScrollPane.setForeground(selectedColor);
 
         bagItScrollPane = new JScrollPane();
-        bagItPane = new BagTextPane(baggerBag.getBagIt().toString());
+        bagItPane = new BagTextPane(baggerBag.getBagItTxt().toString());
         bagItScrollPane.setViewportView(bagItPane);
         this.addTab(parentView.getPropertyMessage("compositePane.tab.bagit"), bagItScrollPane);
         bagItScrollPane.setForeground(selectedColor);
