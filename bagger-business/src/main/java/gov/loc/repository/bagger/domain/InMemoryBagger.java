@@ -88,19 +88,7 @@ public class InMemoryBagger extends JdbcBagger {
     
     private List<String> getCommandList() {
         // Data: Acegi Security
-    	commandList.add("INSERT INTO users VALUES ('lesliej', 'lesliej', true)");
-        commandList.add("INSERT INTO users VALUES ('aboyko', 'aboyko', false)");
-        commandList.add("INSERT INTO users VALUES ('justin', 'justin', true)");
-        commandList.add("INSERT INTO users VALUES ('liz', 'liz', true)");
-        commandList.add("INSERT INTO users VALUES ('jkunze', 'jkunze', true)");
-        commandList.add("INSERT INTO users VALUES ('tvoy', 'tvoy', true)");
         commandList.add("INSERT INTO users VALUES ('user', 'user', true)");
-        commandList.add("INSERT INTO authorities VALUES ('lesliej', 'ROLE_BAGGER_STAFF')");
-        commandList.add("INSERT INTO authorities VALUES ('aboyko', 'ROLE_BAGGER_USER')");
-        commandList.add("INSERT INTO authorities VALUES ('justin', 'ROLE_BAGGER_STAFF')");
-        commandList.add("INSERT INTO authorities VALUES ('liz', 'ROLE_BAGGER_STAFF')");
-        commandList.add("INSERT INTO authorities VALUES ('jkunze', 'ROLE_BAGGER_USER')");
-        commandList.add("INSERT INTO authorities VALUES ('tvoy', 'ROLE_BAGGER_STAFF')");
         commandList.add("INSERT INTO authorities VALUES ('user', 'ROLE_BAGGER_USER')");
 
         // "CREATE TABLE projects (id, name");
@@ -134,6 +122,23 @@ public class InMemoryBagger extends JdbcBagger {
 		return message;		
 	}
 	
+	private void showConfirmation() {
+	    ConfirmationDialog dialog = new ConfirmationDialog() {
+	        protected void onConfirm() {
+	        	try {
+		        	loadProfiles(baggerFile);	        		
+	        	} catch (Exception e) {
+	        		logger.error("InMemoryBagger.showConfirmation: " + e.getMessage());
+	        	}
+	        }
+	    };
+
+	    dialog.setCloseAction(CloseAction.DISPOSE);
+	    dialog.setTitle("Load profiles confirmation.");
+	    dialog.setConfirmationMessage("Saved profiles have been detected.  Would you like to load them?");
+	    dialog.showDialog();
+	}
+
 	private String loadProfiles(File file) {
 		String message = null;
 
@@ -147,6 +152,7 @@ public class InMemoryBagger extends JdbcBagger {
 				{
 					String line = reader.readLine();
 					if (line == null) break;
+					logger.debug("InMemoryBagger.loadProfiles: " + line);
 					this.commandList.add(line);
 				}
 			}
@@ -163,22 +169,5 @@ public class InMemoryBagger extends JdbcBagger {
 			e.printStackTrace();
 		}
 		return message;
-	}
-
-	private void showConfirmation() {
-	    ConfirmationDialog dialog = new ConfirmationDialog() {
-	        protected void onConfirm() {
-	        	try {
-		        	loadProfiles(baggerFile);	        		
-	        	} catch (Exception e) {
-	        		logger.error("InMemoryBagger.showConfirmation: " + e.getMessage());
-	        	}
-	        }
-	    };
-
-	    dialog.setCloseAction(CloseAction.DISPOSE);
-	    dialog.setTitle("Load profiles confirmation.");
-	    dialog.setConfirmationMessage("Saved profiles have been detected.  Would you like to load them?");
-	    dialog.showDialog();
 	}
 }
