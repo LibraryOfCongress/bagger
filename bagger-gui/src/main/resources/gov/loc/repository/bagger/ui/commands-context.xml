@@ -8,7 +8,7 @@
     <property name="sharedCommandIds">
       <list>
         <value>deleteCommand</value>
-        <value>saveAsCommand</value>
+        <value>saveCommand</value>
       </list>
     </property>
   </bean>
@@ -17,18 +17,7 @@
     <property name="members">
       <list>
         <ref bean="fileMenu" />
-<!--         <ref bean="editMenu" /> -->
-<!--         <ref bean="windowMenu" /> -->
         <ref bean="helpMenu" />
-      </list>
-    </property>
-  </bean>
-
-  <bean id="toolBar" class="org.springframework.richclient.command.CommandGroupFactoryBean">
-    <property name="members">
-      <list>
-        <ref bean="newMenu" />
-        <value>saveAsCommand</value>
       </list>
     </property>
   </bean>
@@ -37,7 +26,7 @@
     <property name="members">
       <list>
         <ref bean="newMenu" />
-        <value>saveAsCommand</value>
+        <value>saveCommand</value>
 <!--
         <value>separator</value>
         <ref bean="loginCommand" />
@@ -59,24 +48,6 @@
 
   <bean id="newProfileCommand" class="org.springframework.richclient.command.TargetableActionCommand">
     <property name="commandExecutor" ref="newProfileWizard" />
-  </bean>
-
-  <bean id="editMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
-    <property name="members">
-      <list>
-        <value>deleteCommand</value>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="windowMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
-    <property name="members">
-      <list>
-        <bean class="org.springframework.richclient.command.support.NewWindowCommand" />
-        <value>separator</value>
-        <bean class="org.springframework.richclient.command.support.ShowViewMenu" />
-      </list>
-    </property>
   </bean>
 
   <bean id="helpMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
