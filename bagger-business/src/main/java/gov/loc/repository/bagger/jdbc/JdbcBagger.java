@@ -419,7 +419,8 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		{
 			File file = new File(homeDir, name);
 			Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
-			for (int i=0; i < this.commandList.size(); i++) {
+			int listSize = this.commandList.size();
+			for (int i=0; i < listSize; i++) {
 				String s = this.commandList.get(i);
 				writer.write(s+'\n');
 			}
@@ -437,7 +438,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	 * Creates a {@link MapSqlParameterSource} based on data values from the
 	 * supplied {@link Profile} instance.
 	 */
-/* */
 	private MapSqlParameterSource createProfileParameterSource(Profile profile) {
 		return new MapSqlParameterSource()
 			.addValue("id", profile.getId())
@@ -446,5 +446,4 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			.addValue("contact_id", profile.getContactId())
 			.addValue("project_id", profile.getProjectId());
 	}
-/* */
 }
