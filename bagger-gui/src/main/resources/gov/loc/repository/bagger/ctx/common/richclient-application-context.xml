@@ -21,7 +21,6 @@
     <property name="startingPageId" value="bagView" />
     <property name="registerableExceptionHandler" ref="exceptionHandler" />
     <property name="menubarBeanName" value="menuBar" />
-<!--   <property name="toolbarBeanName" value="toolBar" /> -->
     <property name="windowCommandManagerBeanName" value="windowCommandManager" />
   </bean>
 
