@@ -148,6 +148,22 @@ public class DefaultBag {
 
 	public void setSize(long size) {
 		this.size = size;
+    	String bagSize = "";
+        long fsize = size;
+        bagSize += fsize + " ";
+        if (fsize > DefaultBag.GB) {
+        	fsize /= DefaultBag.GB;
+        	bagSize += "GB";
+        } else if (fsize > DefaultBag.MB) {
+        	fsize /= DefaultBag.MB;
+        	bagSize += "MB";
+        } else if (fsize > DefaultBag.KB) {
+        	fsize /= DefaultBag.KB;
+        	bagSize += "KB";
+        } else {
+        	bagSize += "Bytes";
+        }
+    	bagInfo.setBagSize(bagSize);
 	}
 
 	public long getSize() {
@@ -586,6 +602,7 @@ public class DefaultBag {
 				messages += writeBag();
 				// read bag
 				Bag bag = BagFactory.createBag(path);
+				bag.complete();
 				// is valid bag
 				if (isContinue) {
 					messages += validateBag(bag);
