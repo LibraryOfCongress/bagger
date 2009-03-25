@@ -1,1 +1,1 @@
-jarsigner -keystore bagger.ks -storepass bagger-rdc -keypass bagger-rdc -signedjar bagger.jar bagger-standalone-1.4.jar rdc
+jarsigner -keystore bagger.ks -storepass bagger-rdc -keypass bagger-rdc -signedjar signed\bagger.jar target\bagger-standalone-1.5.jar rdc
