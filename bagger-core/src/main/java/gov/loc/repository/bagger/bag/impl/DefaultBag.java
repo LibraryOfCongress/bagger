@@ -17,6 +17,7 @@ import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.BagInfoTxt;
+import gov.loc.repository.bagit.BagItTxt;
 import gov.loc.repository.bagit.BagWriter;
 import gov.loc.repository.bagit.FetchTxt;
 import gov.loc.repository.bagit.Manifest;
@@ -88,7 +89,19 @@ public class DefaultBag {
 		} else {
 			bilBag = BagFactory.createBag();
 		}
+		BagItTxt bagIt = bilBag.getBagItTxt();
+		if (bagIt == null) {
+			bagIt = bilBag.getBagPartFactory().createBagItTxt();
+			bilBag.setBagItTxt(bagIt);
+		}
 		bagInfo = new DefaultBagInfo(this);
+		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+		if (bagInfoTxt == null) {
+			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
+			bilBag.setBagInfoTxt(bagInfoTxt);
+		} else {
+	    	copyBagToForm();
+		}
 		bagStrategy = getBagInfoStrategy();
 	}
 
@@ -344,12 +357,12 @@ public class DefaultBag {
 			bag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
 			bag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
 			bag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
-		}
-		if (this.getIsEdeposit()) {
-			bag.getBagInfoTxt().put(DefaultBagInfo.EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
-		}
-		if (this.getIsNdnp()) {
-			bag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+			if (this.getIsEdeposit()) {
+				bag.getBagInfoTxt().put(DefaultBagInfo.EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
+			}
+			if (this.getIsNdnp()) {
+				bag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+			}
 		}
 	}
 
@@ -532,13 +545,58 @@ public class DefaultBag {
 	}
 			
 	public String write(boolean validFormFields, File path) {
+		boolean isContinue = true;
 		String messages = "";
-
 		reset();
+		this.rootDir = path;
 		try {
-			messages += validateBag(true, validFormFields);
+			// validate form
+			if (isContinue) {
+				messages += validateForms(validFormFields);
+				if (this.isValidForms()) {
+					isContinue = true;
+				} else {
+					isContinue = false;
+					reportError(messages, "Bagger form fields are missing valid values.\n");
+				}
+			}
+			// validate metadata
+			if (isContinue) {
+				messages += validateMetadata();
+				if (this.isValidMetadata()) {
+					isContinue = true;
+				} else {
+					isContinue = false;
+					reportError(messages, "Bag-info fields are not all present for the project selected.\n");
+				}
+			}
+			// is complete
+			if (isContinue) {
+				messages += completeBag();
+				if (this.isComplete()) {
+					isContinue = true;
+				} else {
+					isContinue = false;
+					reportError(messages, "Bag is not complete.\n");
+				}
+			}
+			// write bag
+			if (isContinue) {
+				//this.bilBag.complete();
+				messages += writeBag();
+				// read bag
+				Bag bag = BagFactory.createBag(path);
+				// is valid bag
+				if (isContinue) {
+					messages += validateBag(bag);
+					if (this.isValid()) {
+					} else {
+						reportError(messages, "Bag is not valid.\n");
+					}
+				}
+			}
 		} catch (Exception e) {
-			messages += "\n" + "An error occurred writing the bag:\n" + e.toString();
+			messages += "An error occurred writing the bag:\n" + e.toString() + "\n";
 			e.printStackTrace();
 			log.error(e.getMessage());
 		}
@@ -547,9 +605,7 @@ public class DefaultBag {
 
 	public String validateForms(boolean b) {
 		String messages = "";
-
 		display("validateForms: " + b);
-
 		this.isValidForms(b);
 		if (b) {
 			if (this.getIsHoley()) {
@@ -560,7 +616,7 @@ public class DefaultBag {
 					baseURL = filenameSizeUrl.getUrl();
 					if (baseURL == null || baseURL.trim().length() == 0) {
 						this.isValidForms(false);
-						messages += "A holey bag requires a base URL.";
+						messages += "A holey bag requires a base URL.\n";
 					}
 				}
 			}
@@ -568,58 +624,57 @@ public class DefaultBag {
 				String publisher = this.bagInfo.getPublisher();
 				if (publisher == null || publisher.trim().length() == 0) {
 					this.isValidForms(false);
-					messages += "An Edeposit bag requires a publisher.";
+					messages += "An Edeposit bag requires a publisher.\n";
 				}
 			}
 			if (this.isNdnp) {
 				String awardeePhase = this.bagInfo.getAwardeePhase();
 				if (awardeePhase == null || awardeePhase.trim().length() == 0) {
 					this.isValidForms(false);
-					messages += "An NDNP bag requires an awardee phase.";
+					messages += "An NDNP bag requires an awardee phase.\n";
 				}
 			}
 		}
-
 		display("validateForms isValidForms: " + this.isValidForms());
 		return messages;
 	}
 
-	public String validateBag(boolean isWrite, boolean isValidForms) {
+	public String completeBag() {
 		String messages = "";
-		
-		display("validateBag");
 		try {
 			SimpleResult result = this.bilBag.isComplete();
 			if (result.messagesToString() != null) messages += result.messagesToString();
 			this.isComplete(result.isSuccess());
-			if (this.isComplete()) {
-				result = this.bilBag.isValid();
-				if (result.messagesToString() != null) messages += result.messagesToString();
-				this.isValid(result.isSuccess());
-				if (this.isValid()) {
-					result = this.bilBag.additionalVerify(bagStrategy);
-					if (result.messagesToString() != null) messages += result.messagesToString();
-					this.isValidMetadata(result.isSuccess());
-					if (this.isValidMetadata()) {
-						messages += validateForms(isValidForms);
-						if (this.isValidForms()) {
-							if (isWrite) messages += writeBag();
-						} else {
-							reportError(messages, "Form fields are not all valid.");	
-						}
-					} else {
-						reportError(messages, "Bag-info fields are not all present for the project selected.");
-					}
-				} else {
-//					reportError(messages, "Bag is not valid.");
-				}
-			} else {
-//				reportError(messages, "Bag is not complete.");
-			}
-			messages += "\n";
 		} catch (Exception e) {
 			e.printStackTrace();
-			reportError(messages, "Failed to write bag: " + e.getMessage());
+			reportError(messages, "Failed to complete bag: " + e.getMessage() + "\n");
+		}
+		return messages;
+	}
+	
+	public String validateMetadata() {
+		String messages = "";
+		try {
+			SimpleResult result = this.bilBag.additionalVerify(bagStrategy);
+			if (result.messagesToString() != null) messages += result.messagesToString();
+			this.isValidMetadata(result.isSuccess());
+		} catch (Exception e) {
+			e.printStackTrace();
+			reportError(messages, "Failed to validate metadata: " + e.getMessage() + "\n");
+		}
+		return messages;
+	}
+
+	public String validateBag(Bag bag) {
+		String messages = "";
+		display("validateBag");
+		try {
+			SimpleResult result = bag.isValid();
+			if (result.messagesToString() != null) messages += result.messagesToString();
+			this.isValid(result.isSuccess());
+		} catch (Exception e) {
+			e.printStackTrace();
+			reportError(messages, "Failed to validate bag: " + e.getMessage() + "\n");
 		}
 		return messages;
 	}
@@ -628,42 +683,37 @@ public class DefaultBag {
 		String messages = "";
 		File bagFile = null;
 		BagWriter bw = null;
-
-		File bagDir = new File(rootDir, this.getName());
-
-		display("writeBag bag: " + bagDir);
 		try {
-			bw = new FileSystemBagWriter(bagDir, true);
-			this.bilBag.complete();
-			this.bilBag.write(bw);
-			this.setIsNewbag(false);
-			messages += "\nSuccessfully created bag: " + this.getInfo().getBagName();
-		} catch (Exception e) {
-			reportError(messages, "\nERROR creating bag: " + this.getInfo().getBagName() + "\n" + e.getMessage());
-		}
-
-		if (this.getIsSerial()) {
-			try {
-				//messages += "Creating serialized file.";
-				if (this.serialMode == ZIP_MODE) {
-					bagFile = new File(rootDir, this.getFile().getName() + ".zip");
-					bw = new ZipBagWriter(bagFile);
-				} else if (this.serialMode == TAR_MODE) {
-					bagFile = new File(rootDir, this.getFile().getName() + ".tar");
-					bw = new TarBagWriter(bagFile);
-				}
-
+			if (this.serialMode == NO_MODE) {
+				bagFile = new File(rootDir, this.getName());
+				bw = new FileSystemBagWriter(bagFile, true);				
+				if (this.isCleanup) { messages += cleanup(); }
+				messages += "Successfully created bag: " + this.getInfo().getBagName() + "\n";
+			} else if (this.serialMode == ZIP_MODE) {
 				this.isSerialized(true);
+				bagFile = new File(rootDir, this.getFile().getName() + ".zip");
+				bw = new ZipBagWriter(bagFile);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
-				messages += "\nSuccessfully created serialized file: " + zipName + " of size: " + zipSize + "(MB)";
+				messages += "Successfully created serialized file: " + zipName + " of size: " + zipSize + "(MB)\n";
 				if (zipSize > 100) {
-					messages += "\nWARNING: You may not be able to network transfer files > 100 MB!";
+					messages += "WARNING: You may not be able to network transfer files > 100 MB!\n";
 				}
-				if (this.isCleanup) { messages += cleanup(); }
-			} catch (Exception ex) {
-				reportError(messages, "\nERROR creating serialized bag:\n" + ex.getMessage());
+			} else if (this.serialMode == TAR_MODE) {
+				this.isSerialized(true);
+				bagFile = new File(rootDir, this.getFile().getName() + ".tar");
+				bw = new TarBagWriter(bagFile);
+				String zipName = bagFile.getName();
+				long zipSize = this.getSize() / MB;
+				messages += "Successfully created serialized file: " + zipName + " of size: " + zipSize + "(MB)\n";
+				if (zipSize > 100) {
+					messages += "WARNING: You may not be able to network transfer files > 100 MB!\n";
+				}
 			}
+			this.bilBag.write(bw);
+			this.setIsNewbag(false);
+		} catch (Exception e) {
+			reportError(messages, "ERROR creating bag: " + this.getInfo().getBagName() + "\n" + e.getMessage() + "\n");
 		}
 		return messages;
 	}
@@ -675,8 +725,8 @@ public class DefaultBag {
 			display("cleanup");
 			if (!this.getIsHoley()) {
 				b = FileUtililties.deleteDir(this.getRootDir());
-				if (!b) messages += reportError(messages, "Could not delete directory: " + this.getRootDir());
-				else messages += "Cleaning up bag directory.";
+				if (!b) messages += reportError(messages, "Could not delete directory: " + this.getRootDir() + "\n");
+				else messages += "Cleaning up bag directory.\n";
 			}
 			this.getRootDir().deleteOnExit();
 		}
