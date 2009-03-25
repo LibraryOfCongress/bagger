@@ -9,7 +9,6 @@ import java.text.MessageFormat;
 //import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.DataAccessException;
 
 /**
  * Bagger needs to know where the file came from so that it can be retrieved: rootSrc,
@@ -32,7 +31,6 @@ public class BaggerFileEntity {
 
 	private File rootParent;				// c:\\user\my documents\
 	private File rootSrc;					// c:\\user\my documents\datadir\dir1\file1
-	private File bagParent;					// c:\\user\my documents\bag\
 	private File bagSrc;					// c:\\user\my documents\bag\data\datadir\dir1\file
 	private String normalizedName;			// datadir\dir1\file1
 	private boolean isInBag = false;
@@ -48,20 +46,17 @@ public class BaggerFileEntity {
 	public BaggerFileEntity(File rootParent, File rootSrc, File bagParent) {
 		this.rootParent = rootParent;
 		this.rootSrc = rootSrc;
-		this.bagParent = bagParent;
     	File bagDataDir = new File(bagParent, AbstractBagConstants.DATA_DIRECTORY);
     	this.normalizedName = removeBasePath(rootParent.getAbsolutePath(), rootSrc.getAbsolutePath());
 		this.bagSrc = new File(bagDataDir, normalizedName);
 		if (this.rootSrc.getAbsolutePath().equalsIgnoreCase(this.bagSrc.getAbsolutePath())) {
 			isInBag = true;
 		}
-//		log.info("BaggerFileEntity.bagSrc: " + this.bagSrc.getAbsolutePath());		
 	}
 
 	public BaggerFileEntity(File rootParent, File rootSrc, File bagParent, File bagSrc) {
 		this.rootParent = rootParent;
 		this.rootSrc = rootSrc;
-		this.bagParent = bagParent;
 		this.bagSrc = bagSrc;
 		if (this.rootSrc.getAbsolutePath().equalsIgnoreCase(this.bagSrc.getAbsolutePath())) {
 			isInBag = true;
@@ -136,21 +131,13 @@ public class BaggerFileEntity {
 		this.isInBag = true;
 		return success;
 	}
-	
-	private String normalizeFile(String basePath, String filename) {
-		String normalizedFile = FilenameHelper.removeBasePath(basePath, filename);
-		return normalizedFile;
-	}
-	
+
 	public static String removeBasePath(String basePath, String filename) throws RuntimeException {
-//		String filenameWithoutBasePath = FilenameHelper.removeBasePath(rootParent.getAbsolutePath(), rootSrc.getAbsolutePath());
 		if (filename == null) {
 			throw new RuntimeException("Cannot remove basePath from null");
 		}		
 		String normBasePath = normalize(basePath);
 		String normFilename = normalize(filename);
-		//log.info("normBasePath: " + normBasePath + " [" + normBasePath.length() + "]");
-		//log.info("normFilename: " + normFilename);
 		String filenameWithoutBasePath = null;
 		if (basePath == null) {
 			filenameWithoutBasePath = normFilename;
@@ -176,7 +163,6 @@ public class BaggerFileEntity {
 
 	public static String normalize(String filename)
 	{
-//		return FilenameHelper.normalize(filename);
 		return FilenameHelper.normalizePathSeparators(filename);
 	}
 }

@@ -1,7 +1,5 @@
 package gov.loc.repository.bagger.bag;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -18,8 +16,8 @@ import gov.loc.repository.bagger.Contact;
  *
  * @author Jon Steinbach
  */
-public class BagOrganization {
-	private static final Log log = LogFactory.getLog(BagOrganization.class);
+public class BaggerOrganization {
+	private static final Log log = LogFactory.getLog(BaggerOrganization.class);
 
 	private String orgName = "";
 
@@ -28,6 +26,7 @@ public class BagOrganization {
 	private Contact contact = new Contact();
 
 	public String getOrgName() {
+		log.debug("BaggerOrganization");
 		return this.orgName;
 	}
 
