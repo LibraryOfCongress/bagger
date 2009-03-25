@@ -904,10 +904,17 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTreePanel.refresh(bagTree);
     	enableBagSettings(true);
 
-    	bagInfoInputPane.populateForms(bag);
-
+		bagDisplayPane.setBag(bag);
+    	bagDisplayPane.updateBagPaneTabs(messages);
     	// TODO: click validate button rather than automatically validate
     	//validateBag(messages);
+    	bag.setSize(bag.getDataSize());
+    	bagInfoInputPane.populateForms(bag);
+
+    	messages += bagInfoInputPane.updateForms();
+   		updateMessages(messages);
+   		bagInfoInputPane.updateSelected();
+        bagInfoInputPane.update();
 
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
