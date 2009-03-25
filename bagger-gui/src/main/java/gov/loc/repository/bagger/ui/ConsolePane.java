@@ -71,11 +71,12 @@ public class ConsolePane extends JPanel {
 
     protected JComponent createFormControl() {
     	this.setMaximumSize(maxDimension);
+    	int row = 0;
 
-        createValidMetaDataLine();
-        createCompleteLine();
-        createSerializedLine();
-        createValidLine();
+    	createValidMetaDataLine(row++);
+        createCompleteLine(row++);
+        createBaggedLine(row++);
+        createValidLine(row++);
         createConsoleArea();
 
         this.setBorder(emptyBorder);
@@ -84,12 +85,12 @@ public class ConsolePane extends JPanel {
     	return this;
     }
     
-    private void createValidMetaDataLine() {
+    private void createValidMetaDataLine(int row) {
     	JLabel validMetaLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isMetadata"));
     	font = validMetaLabel.getFont().deriveFont(Font.BOLD);
     	validMetaLabel.setFont(font);
     	validMetaLabel.setPreferredSize(formDimension);
-        buildConstraints(gbc, 0, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validMetaLabel, gbc);
         this.add(validMetaLabel);
     	JLabel validMetaResult = new JLabel("no");
@@ -100,17 +101,17 @@ public class ConsolePane extends JPanel {
     		else validMetaResult.setText("no");
     	}
     	validMetaResult.setPreferredSize(formDimension);
-        buildConstraints(gbc, 1, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validMetaResult, gbc);
         this.add(validMetaResult);    	
     }
     
-    private void createCompleteLine() {
+    private void createCompleteLine(int row) {
         JLabel completeLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isComplete"));
     	font = completeLabel.getFont().deriveFont(Font.BOLD);
     	completeLabel.setFont(font);
     	completeLabel.setPreferredSize(formDimension);
-        buildConstraints(gbc, 0, 0, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeLabel, gbc);
         this.add(completeLabel);
     	JLabel completeResult = new JLabel("no");
@@ -121,18 +122,18 @@ public class ConsolePane extends JPanel {
     		else completeResult.setText("no");
     	}
     	completeResult.setPreferredSize(formDimension);
-        buildConstraints(gbc, 1, 0, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeResult, gbc);
         this.add(completeResult);
     }
     
-    private void createSerializedLine() {
+    private void createBaggedLine(int row) {
         if (defaultBag == null || (defaultBag != null && defaultBag.getIsSerial())) {
         	JLabel serializedLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isBagged"));
         	font = serializedLabel.getFont().deriveFont(Font.BOLD);
         	serializedLabel.setFont(font);
         	serializedLabel.setPreferredSize(formDimension);
-            buildConstraints(gbc, 0, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+            buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
             layout.setConstraints(serializedLabel, gbc);
             this.add(serializedLabel);
         	JLabel serializedResult = new JLabel("no");
@@ -143,18 +144,18 @@ public class ConsolePane extends JPanel {
         		else serializedResult.setText("no");
         	}
         	serializedResult.setPreferredSize(formDimension);
-            buildConstraints(gbc, 1, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+            buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
             layout.setConstraints(serializedResult, gbc);
             this.add(serializedResult);
         }
     }
     
-    private void createValidLine() {
+    private void createValidLine(int row) {
     	JLabel validLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isValid"));
     	font = validLabel.getFont().deriveFont(Font.BOLD);
     	validLabel.setFont(font);
     	validLabel.setPreferredSize(formDimension);
-        buildConstraints(gbc, 0, 1, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validLabel, gbc);
         this.add(validLabel);
     	JLabel validResult = new JLabel("no");
@@ -165,7 +166,7 @@ public class ConsolePane extends JPanel {
     		else validResult.setText("no");
     	}
     	validResult.setPreferredSize(formDimension);
-        buildConstraints(gbc, 1, 1, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validResult, gbc);
         this.add(validResult);
     }
