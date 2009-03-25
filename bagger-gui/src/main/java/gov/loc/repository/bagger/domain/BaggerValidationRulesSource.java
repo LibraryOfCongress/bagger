@@ -1,33 +1,37 @@
 
 package gov.loc.repository.bagger.domain;
 
-import java.util.Date;
-
-import gov.loc.repository.bagger.bag.BagInfo;
-import gov.loc.repository.bagger.bag.BagOrganization;
-import gov.loc.repository.bagger.bag.Fetch;
+import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
+import gov.loc.repository.bagger.bag.BaggerOrganization;
+import gov.loc.repository.bagger.bag.BaggerFetch;
 import gov.loc.repository.bagger.Contact;
 
 import org.springframework.core.closure.Constraint;
 import org.springframework.rules.Rules;
 import org.springframework.rules.support.DefaultRulesSource;
-import org.springframework.rules.constraint.property.*;
 
 public class BaggerValidationRulesSource extends DefaultRulesSource {
 	boolean isCopyright = false;
+	boolean isNdnp = false;
 	boolean isHoley = false;
 	
     public BaggerValidationRulesSource() {
         super();
     }
     
-    public void init(boolean isCopyright, boolean isHoley) {
+    public void init(boolean isCopyright, boolean isNdnp, boolean isHoley) {
     	this.isCopyright = isCopyright;
+    	this.isNdnp = isNdnp;
     	this.isHoley = isHoley;
         addRules(createContactRules());
         addRules(createBagOrganizationRules());
         addRules(createBagInfoRules());
         addRules(createFetchRules());
+    }
+    
+    public void clear() {
+    	java.util.List<Rules> empty = new java.util.ArrayList<Rules>();
+    	setRules(empty);
     }
 
     private Rules createContactRules() {
@@ -41,7 +45,7 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
     }
 
     private Rules createBagOrganizationRules() {
-        return new Rules(BagOrganization.class) {
+        return new Rules(BaggerOrganization.class) {
             protected void initRules() {
                 add("orgName", getNameValueConstraint());
                 add("orgAddress", required());
@@ -50,7 +54,7 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
     }
 
     private Rules createBagInfoRules() {
-        return new Rules(BagInfo.class) {
+        return new Rules(DefaultBagInfo.class) {
             protected void initRules() {
                 add("bagName", required());
                 add("externalDescription", required());
@@ -60,14 +64,15 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
                 if (isCopyright) {
                 	add("publisher", required());
                 }
-//                add("payloadOxum", required() );
-//              add("payloadOssum", required() );
+                if (isNdnp) {
+                	add("awardeePhase", required());
+                }
             }
         };
     }
 
     private Rules createFetchRules() {
-        return new Rules(Fetch.class) {
+        return new Rules(BaggerFetch.class) {
             protected void initRules() {
             	if (isHoley) {
                     add("baseURL", required());            		
@@ -93,7 +98,7 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
     	res = all(new Constraint[] {required(), maxLength(10), regexp("(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])", "dateRule")});
     	return res;
     }
-
+/*
     private Constraint getIsCopyright() {
     	Constraint res;
     	// TODO: RequiredIfTrue does not work.  This class needs to be rewritten without Spring RC
@@ -101,18 +106,6 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
         res = isPublisherReq.getConstraint();
         return res;
     }
-/* */
-    private Rules createRules() {
-        return new Rules(BagOrganization.class) {
-            protected void initRules() {
-                add("orgName", required());
-                add("name", getNameValueConstraint());
-                add("birthDate", required());
-                add("birthDate", lt(new Date()));
-//              add(not(eqProperty("firstName", "lastName")));
-            }
-        };
-    }
-/* */
+ */
 }
 

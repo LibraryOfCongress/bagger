@@ -1,7 +1,6 @@
 
 package gov.loc.repository.bagger;
 
-import gov.loc.repository.bagger.bag.BaggerBag;
 import java.awt.Dimension;
 
 import org.apache.commons.logging.Log;
@@ -10,7 +9,7 @@ import org.springframework.richclient.application.ApplicationWindow;
 import org.springframework.richclient.application.config.ApplicationWindowConfigurer;
 import org.springframework.richclient.application.config.DefaultApplicationLifecycleAdvisor;
 import org.springframework.richclient.application.setup.SetupWizard;
-import org.springframework.richclient.command.ActionCommand;
+//import org.springframework.richclient.command.ActionCommand;
 
 /**
  * Custom application lifecycle implementation that configures the app at well defined points within
@@ -31,6 +30,7 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor
      */
     public void onPreStartup()
     {
+    	log.debug("BaggerLifeCycleAdvisor.onPreStartup");
     	if (useWizard) {
         	if (getApplication().getApplicationContext().containsBean("setupWizard"))
             {
@@ -57,7 +57,7 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor
      */
     public void onCommandsCreated(ApplicationWindow window)
     {
-        ActionCommand command = (ActionCommand) window.getCommandManager().getCommand("loginCommand", ActionCommand.class);
+        //ActionCommand command = (ActionCommand) window.getCommandManager().getCommand("loginCommand", ActionCommand.class);
         // TODO: implement login and logout if db is on remote server
         //command.execute();
     }

@@ -35,7 +35,8 @@ public class ExceptionHandlingView extends AbstractView {
         layoutBuilder.unrelatedGapRow();
 
         JButton badCredentials = new JButton(new AbstractAction("Login with bad credentials"){
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 1L;
+			public void actionPerformed(ActionEvent e) {
                 loginWithBadCredentials();
             }
         });
@@ -44,6 +45,7 @@ public class ExceptionHandlingView extends AbstractView {
         layoutBuilder.relatedGapRow();
 
         JButton accessDenied = new JButton(new AbstractAction("Do something you don't have access to"){
+			private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent e) {
                 denyAccess();
             }
@@ -62,6 +64,7 @@ public class ExceptionHandlingView extends AbstractView {
         layoutBuilder.relatedGapRow();
 */
         JButton nullPointer = new JButton(new AbstractAction("Cause a NumberFormatException"){
+			private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent e) {
                 causeNumberFormatException();
             }
@@ -71,6 +74,7 @@ public class ExceptionHandlingView extends AbstractView {
         layoutBuilder.relatedGapRow();
 
         JButton stackOverflow = new JButton(new AbstractAction("Cause a stack overflow error"){
+			private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent e) {
                 causeStackOverflow();
             }

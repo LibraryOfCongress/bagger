@@ -9,14 +9,14 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JCheckBox;
+//import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 
-import gov.loc.repository.bagger.bag.BaggerBag;
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
 
 public class ConsolePane extends JPanel {
 	private static final long serialVersionUID = -4290352509246639528L;
@@ -30,7 +30,7 @@ public class ConsolePane extends JPanel {
     private Color textBackground = new Color(240, 240, 240);
 
     private BagView parentView;
-    private BaggerBag baggerBag;
+    private DefaultBag baggerBag;
 
     public ConsolePane(BagView bagView) {
         super();
@@ -49,11 +49,11 @@ public class ConsolePane extends JPanel {
         createFormControl();
     }
 
-    public void setBag(BaggerBag baggerBag) {
+    public void setBag(DefaultBag baggerBag) {
     	this.baggerBag = baggerBag;
     }
     
-    public BaggerBag getBag() {
+    public DefaultBag getBag() {
     	return this.baggerBag;
     }
     
@@ -83,7 +83,7 @@ public class ConsolePane extends JPanel {
     	font = completeResult.getFont().deriveFont(Font.BOLD);
     	completeResult.setFont(font);
     	if (baggerBag != null) {
-    		if (baggerBag.getIsComplete()) completeResult.setText("yes");
+    		if (baggerBag.isComplete()) completeResult.setText("yes");
     		else completeResult.setText("no");
     	}
     	completeResult.setPreferredSize(formDimension);
@@ -103,7 +103,7 @@ public class ConsolePane extends JPanel {
     	font = validResult.getFont().deriveFont(Font.BOLD);
     	validResult.setFont(font);
     	if (baggerBag != null) {
-    		if (baggerBag.getIsValid()) validResult.setText("yes");
+    		if (baggerBag.isValid()) validResult.setText("yes");
     		else validResult.setText("no");
     	}
     	validResult.setPreferredSize(formDimension);
@@ -123,7 +123,7 @@ public class ConsolePane extends JPanel {
     	font = validMetaResult.getFont().deriveFont(Font.BOLD);
     	validMetaResult.setFont(font);
     	if (baggerBag != null) {
-    		if (baggerBag.getIsValidMetadata()) validMetaResult.setText("yes");
+    		if (baggerBag.isValidMetadata()) validMetaResult.setText("yes");
     		else validMetaResult.setText("no");
     	}
     	validMetaResult.setPreferredSize(formDimension);
@@ -144,7 +144,7 @@ public class ConsolePane extends JPanel {
         	font = serializedResult.getFont().deriveFont(Font.BOLD);
         	serializedResult.setFont(font);
         	if (baggerBag != null) {
-        		if (baggerBag.getIsSerialized()) serializedResult.setText("yes");
+        		if (baggerBag.isSerialized()) serializedResult.setText("yes");
         		else serializedResult.setText("no");
         	}
         	serializedResult.setPreferredSize(formDimension);

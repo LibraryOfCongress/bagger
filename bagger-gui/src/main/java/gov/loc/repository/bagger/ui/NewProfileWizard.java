@@ -4,7 +4,7 @@ package gov.loc.repository.bagger.ui;
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.bag.BagOrganization;
+import gov.loc.repository.bagger.bag.BaggerOrganization;
 
 import org.springframework.binding.form.HierarchicalFormModel;
 import org.springframework.richclient.application.event.LifecycleApplicationEvent;
@@ -34,7 +34,7 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
         addPage(new FormBackedWizardPage(userContactForm));
 
     	HierarchicalFormModel organizationFormModel;
-        organizationFormModel = FormModelHelper.createCompoundFormModel(new BagOrganization());
+        organizationFormModel = FormModelHelper.createCompoundFormModel(new BaggerOrganization());
         organizationGeneralForm = new OrganizationGeneralForm(FormModelHelper.createChildPageFormModel(organizationFormModel, null));
         addPage(new FormBackedWizardPage(organizationGeneralForm));
 
@@ -64,7 +64,7 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
         if (!organizationGeneralForm.hasErrors()) {
             organizationGeneralForm.commit();
         }
-        BagOrganization newOrganization = (BagOrganization)organizationGeneralForm.getFormObject();
+        BaggerOrganization newOrganization = (BaggerOrganization)organizationGeneralForm.getFormObject();
         Organization org = new Organization();
         org.setName(newOrganization.getOrgName());
         org.setAddress(newOrganization.getOrgAddress());

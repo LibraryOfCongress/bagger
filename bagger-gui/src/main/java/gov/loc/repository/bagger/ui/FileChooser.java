@@ -1,7 +1,5 @@
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.BaggerLifecycleAdvisor;
-
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -19,6 +17,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class FileChooser extends JFrame implements ActionListener {
+	private static final long serialVersionUID = 1L;
+
 	private static final Log log = LogFactory.getLog(FileChooser.class);
 
 	public FileChooser() {
@@ -61,14 +61,16 @@ public class FileChooser extends JFrame implements ActionListener {
 		  }
 	  } 
 	  else if (source == exitItem) {
-		  this.hide();
+		  //this.hide();
+		  this.dispatchEvent(evt);
 		  //System.exit(0);
 	  }
   }
 
   public static void main(String[] args) {
 	  Frame f = new FileChooser();
-	  f.show();
+	  f.toFront();
+//	  f.show();
   }
 
   private JMenuItem openItem;

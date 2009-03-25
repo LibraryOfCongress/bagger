@@ -1,7 +1,7 @@
 package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.bag.BaggerFileEntity;
-import gov.loc.repository.bagger.bag.BaggerManifest;
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.util.RecursiveFileListIterator;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
@@ -18,11 +18,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 public class BagTree extends CheckboxTree {
 	private static final long serialVersionUID = -5361474872106399068L;
-	private static final Log log = LogFactory.getLog(BaggerManifest.class);
+	private static final Log log = LogFactory.getLog(BagTree.class);
 	private static final int BAGTREE_WIDTH = 400; // 500 - 60 for Add button width
 	private static final int BAGTREE_HEIGHT = 160;
 	private static final int BAGTREE_ROW_MODIFIER = 22;
@@ -53,7 +54,54 @@ public class BagTree extends CheckboxTree {
 		requestFocus();
 		setScrollsOnExpand(true);		
 	}
+	
+	public void populateNodes(DefaultBag bag, File rootSrc) {
+		if (bag.getRootPayload() == null && rootSrc.listFiles() != null) {
+			File[] listFiles = rootSrc.listFiles();
+			if (listFiles != null) {
+				for (int i=0; i<listFiles.length; i++) {
+					File f = listFiles[i];
+					try {
+				        this.addTree(rootSrc, f, bag.getRootDir());
+					} catch(Exception e) {
+						try {
+					        this.addNode(f.getAbsolutePath());
+						} catch (Exception ex) {
+							log.error("BagView.openExistingBag: " + e.getMessage());						
+						}
+					}
+				}
+			}
+		} else {
+			List<String> payload = null;
+			if (bag.getRootPayload() == null)
+				payload = bag.getPayloadPaths();
+			else
+				payload = bag.getRootPayloadPaths();
+            for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
+            	String filePath = it.next();
+				try {
+			        this.addNode(filePath);
+				} catch(Exception e) {
+					log.error("BagView.openExistingBag: " + e.getMessage());
+					try {
+				        this.addNode(filePath);
+					} catch (Exception ex) {
+						log.error("BagView.openExistingBag: " + ex.getMessage());						
+					}
+				}
+            }
+		}		
+	}
 
+	public void addNode(String filePath) {
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(filePath);
+		log.info("buildNodes getNode: " + node);
+		srcNodes.add(node);
+		parentNode.add(node);
+		initialize();
+	}
+	
 	public void addNodes(File file) {
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 		rootNode = addNodes(null, null, file);
@@ -149,18 +197,17 @@ public class BagTree extends CheckboxTree {
     }
 
 	/** Add nodes from under "dir" into curTop. Highly recursive. */
-	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, DefaultMutableTreeNode displayTop, File dir) {
+	private DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, DefaultMutableTreeNode displayTop, File dir) {
 		String curPath = dir.getPath();
 		String displayPath = dir.getName();
 		DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(curPath);
 		DefaultMutableTreeNode displayDir = new DefaultMutableTreeNode(displayPath);
 		if (curTop != null) { // should only be null at root
-//			log.info("addNodes curTop: " + curPath);
 			curTop.add(curDir);
 			displayTop.add(displayDir);
 		}
 		Vector<String> ol = new Vector<String>();
-		//log.info("addNodes: " + dir.list());
+		log.info("addNodes: " + dir.list());
 		String[] tmp = dir.list();
 		if (tmp != null && tmp.length > 0) {
 			for (int i = 0; i < tmp.length; i++)
@@ -184,11 +231,11 @@ public class BagTree extends CheckboxTree {
 				files.addElement(thisObject);
 		}
 		// Pass two: for files.
-    	//log.info("createBagManagerTree: files.size: " + files.size());
+    	log.info("createBagManagerTree: files.size: " + files.size());
 		for (int fnum = 0; fnum < files.size(); fnum++) {
 			String elem = files.elementAt(fnum);
 			DefaultMutableTreeNode elemNode = new DefaultMutableTreeNode(elem);
-			//log.info("addNodes curDir: " + elem);
+			log.info("addNodes curDir: " + elem);
 			curDir.add(elemNode);
 			displayDir.add(elemNode);
 		}

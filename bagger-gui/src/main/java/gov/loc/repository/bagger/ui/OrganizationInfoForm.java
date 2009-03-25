@@ -12,10 +12,12 @@ public class OrganizationInfoForm extends AbstractForm {
     public static final String INFO_FORM_PAGE = "infoPage";
 
     private JComponent infoField;
-    private Dimension dimension = new Dimension(400, 400);
+    private Dimension dimension = new Dimension(400, 370);
+    private BagView bagView;
 
-    public OrganizationInfoForm(FormModel formModel) {
+    public OrganizationInfoForm(FormModel formModel, BagView bagView) {
         super(formModel, INFO_FORM_PAGE);
+        this.bagView = bagView;
     }
 
     protected JComponent createFormControl() {
@@ -31,7 +33,6 @@ public class OrganizationInfoForm extends AbstractForm {
         formBuilder.add("bagSize");
         formBuilder.row();
         formBuilder.add("payloadOxum");
-//        formBuilder.add("payloadOssum");
         formBuilder.row();
         formBuilder.add("bagGroupIdentifier");
         formBuilder.row();
@@ -40,10 +41,14 @@ public class OrganizationInfoForm extends AbstractForm {
         formBuilder.add("internalSenderIdentifier");
         formBuilder.row();
         formBuilder.add("internalSenderDescription");
-        formBuilder.row();
-        formBuilder.add("publisher");
-        formBuilder.row();
-        formBuilder.add("awardeePhase");
+        if (this.bagView.getBag().getIsEdeposit()) {
+        	formBuilder.row();
+        	formBuilder.add("publisher");
+        }
+        if (this.bagView.getBag().getIsNdnp()) {
+            formBuilder.row();
+            formBuilder.add("awardeePhase");        	
+        }
         infoField = formBuilder.getForm();
         infoField.setPreferredSize(dimension);
         return infoField;
