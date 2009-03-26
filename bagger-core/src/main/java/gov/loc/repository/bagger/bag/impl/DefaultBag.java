@@ -100,8 +100,7 @@ public class DefaultBag {
 			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
 			bilBag.setBagInfoTxt(bagInfoTxt);
 		}
-    	copyBagToForm();
-    	updateStrategy();
+    	//updateStrategy();
     }
 
 	public String getDataDirectory() {
@@ -277,9 +276,10 @@ public class DefaultBag {
 
 	public void copyBagToForm() {
 		BagInfoTxt bagInfoTxt = this.bilBag.getBagInfoTxt();
-		if (bagInfoTxt == null) return;
-		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
-		Contact contact = baggerOrganization.getContact();
+		if (bagInfoTxt == null) {return;}
+		// Replace the profile org and contact with info from existing bag
+		BaggerOrganization baggerOrganization = new BaggerOrganization(); //this.bagInfo.getBagOrganization();
+		Contact contact = new Contact(); //baggerOrganization.getContact();
 		if (bagInfoTxt.getContactName() != null && !bagInfoTxt.getContactName().isEmpty()) 
     		contact.setContactName(bagInfoTxt.getContactName());
 		else
@@ -705,6 +705,7 @@ public class DefaultBag {
 		}
 		try {
 			// read bag
+			log.info("DefaultBag.writeBag createBag" + bagFile);
 			Bag bag = BagFactory.createBag(bagFile);
 			// is valid bag
 			messages += validateBag(bag);
