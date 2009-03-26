@@ -121,7 +121,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
 	public void display(String s) {
 		//log.debug(s);
-		log.info(s);
+		//log.info(s);
 	}
 
 	public String getPropertyMessage(String property) {
@@ -815,7 +815,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 	bag.setIsNewbag(true);
                 	break;
                 case BAG_WRITE:
-    				File bagFile = new File(bagRootPath, bag.getName());
+    				File bagFile = new File(file, bag.getName());
                 	if (bagFile.exists()) {
                 		tmpRootPath = file;
                         confirmWriteBag();
