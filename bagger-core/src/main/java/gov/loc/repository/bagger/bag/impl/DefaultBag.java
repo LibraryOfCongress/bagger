@@ -99,9 +99,8 @@ public class DefaultBag {
 		if (bagInfoTxt == null) {
 			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
 			bilBag.setBagInfoTxt(bagInfoTxt);
-		} else {
-	    	copyBagToForm();
 		}
+    	copyBagToForm();
 		bagStrategy = getBagInfoStrategy();
 	}
 
@@ -345,13 +344,23 @@ public class DefaultBag {
 			this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
 		else
 			this.bagInfo.setInternalSenderDescription("");
-		if (this.getIsEdeposit()) {
-			// bagInfoTxt.getPublisher()
-			this.bagInfo.setPublisher("");
+		if (bagInfoTxt.containsKey(DefaultBagInfo.EDEPOSIT_PUBLISHER)) {
+			String publisher = bagInfoTxt.get(DefaultBagInfo.EDEPOSIT_PUBLISHER);
+			if (publisher != null && !publisher.isEmpty()) {
+				this.bagInfo.setPublisher(publisher);
+			} else {
+				this.bagInfo.setPublisher("");
+			}
+			this.setIsEdeposit(true);
 		}
-		if (this.getIsNdnp()) {
-			// bagInfoTxt.getAwardeePhase()
-			this.bagInfo.setAwardeePhase("");
+		if (bagInfoTxt.containsKey(DefaultBagInfo.NDNP_AWARDEE_PHASE)) {
+			String awardeePhase = bagInfoTxt.get(DefaultBagInfo.NDNP_AWARDEE_PHASE);
+			if (awardeePhase != null && !awardeePhase.isEmpty()) {
+				this.bagInfo.setAwardeePhase(awardeePhase);
+			} else {
+				this.bagInfo.setAwardeePhase("");
+			}
+			this.setIsNdnp(true);
 		}
 	}
 
