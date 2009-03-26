@@ -26,7 +26,6 @@ public class BaggerOrganization {
 	private Contact contact = new Contact();
 
 	public String getOrgName() {
-		log.debug("BaggerOrganization");
 		return this.orgName;
 	}
 
@@ -52,6 +51,7 @@ public class BaggerOrganization {
 
 	@Override
 	public String toString() {
+		log.info("BaggerOrganization.toString");
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.orgName);
 		sb.append('\n');
