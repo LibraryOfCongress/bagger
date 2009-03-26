@@ -888,14 +888,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 			log.error("BagView.openExistingBag DefaultBag: " + ex.getMessage());
         	messages +=  "Failed to create bag: " + ex.getMessage() + "\n";
 		}
-		try {
-	    	bag.setRootDir(file);
-	    	bag.copyBagToForm();			
-		} catch (Exception e) {
-			log.error("BagView.openExistingBag: " + e.getMessage());
-			messages += "Failed to complete bag: " + e.getMessage() + "\n";
-		}
-
+    	bag.setRootDir(file);
 		bagRootPath = file.getParentFile();
 		File rootSrc = new File(file, bag.getDataDirectory());
 		bagTree.addParentNode(rootSrc);
