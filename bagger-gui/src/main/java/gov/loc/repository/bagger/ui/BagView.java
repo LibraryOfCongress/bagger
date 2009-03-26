@@ -322,7 +322,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	// Create a panel for the form error messages and the update button
         updatePropButton = new JButton(getMessage("button.saveUpdates"));
         buttonColor = updatePropButton.getBackground();
-        updatePropButton.setMnemonic('u');
+        updatePropButton.setMnemonic(KeyEvent.VK_S);
         updatePropButton.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = -6833185707352381008L;
 			public void actionPerformed(ActionEvent e) {
@@ -679,7 +679,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         for (int i=0; i < userProjects.size(); i++) {
         	Project project = (Project)project_array[i];
         	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(project.getName())) {
-        		log.debug("bagProject: " + project.getId());
+        		display("bagProject: " + project.getId());
         		bag.setProject(project);
         		Object[] profiles = userProfiles.toArray();
         		for (int j=0; j < profiles.length; j++) {
@@ -715,6 +715,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         messages = bagInfoInputPane.updateForms();
         updateMessages(messages);
         bagInfoInputPane.update();
+        bag.updateStrategy();
         
         return messages;
     }
@@ -967,14 +968,14 @@ public class BagView extends AbstractView implements ApplicationListener {
     	display("BagView.SaveFileAction: " + file);
         String messages = getMessage("bag.message.creating");
 
-        messages = bagInfoInputPane.updateForms();
+        messages += bagInfoInputPane.updateForms();
         updateMessages(messages);
         bagInfoInputPane.updateSelected();
         if (!bagInfoInputPane.hasFormErrors()) {
         	if (file.getName().equalsIgnoreCase(bag.getName())) {
         		file = file.getParentFile();
         	}
-            messages = bag.write(!bagInfoInputPane.hasFormErrors(), file);
+            messages += bag.write(!bagInfoInputPane.hasFormErrors(), file);
         }
     	bagDisplayPane.setBag(bag);
     	bagDisplayPane.updateBagPaneTabs(messages);
@@ -1071,8 +1072,10 @@ public class BagView extends AbstractView implements ApplicationListener {
 	}
 
 	private void updateMessages(String messages) {
-		log.debug("BagView.updateMessages: " + messages);
-        if (!bagInfoInputPane.hasFormErrors() && (messages == null || messages.length() == 0)) {
+		boolean isMessage = true;
+		//isMessage = (messages == null || messages.length() == 0);
+		display("BagView.updateMessages: " + messages);
+        if (!bagInfoInputPane.hasFormErrors() && isMessage) {
             messages += getMessage("bag.message.info.update") + "\n";
             infoFormMessagePane.setBackground(infoColor);
             infoFormMessagePane.setMessage("");
