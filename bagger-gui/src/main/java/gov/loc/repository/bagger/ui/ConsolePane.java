@@ -128,7 +128,7 @@ public class ConsolePane extends JPanel {
     }
     
     private void createBaggedLine(int row) {
-        if (defaultBag == null || (defaultBag != null && defaultBag.getIsSerial())) {
+        if (defaultBag == null) {
         	JLabel serializedLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isBagged"));
         	font = serializedLabel.getFont().deriveFont(Font.BOLD);
         	serializedLabel.setFont(font);
