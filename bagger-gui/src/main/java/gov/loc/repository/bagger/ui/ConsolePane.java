@@ -128,26 +128,24 @@ public class ConsolePane extends JPanel {
     }
     
     private void createBaggedLine(int row) {
-        if (defaultBag == null) {
-        	JLabel serializedLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isBagged"));
-        	font = serializedLabel.getFont().deriveFont(Font.BOLD);
-        	serializedLabel.setFont(font);
-        	serializedLabel.setPreferredSize(formDimension);
-            buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-            layout.setConstraints(serializedLabel, gbc);
-            this.add(serializedLabel);
-        	JLabel serializedResult = new JLabel("no");
-        	font = serializedResult.getFont().deriveFont(Font.BOLD);
-        	serializedResult.setFont(font);
-        	if (defaultBag != null) {
-        		if (defaultBag.isSerialized()) serializedResult.setText("yes");
-        		else serializedResult.setText("no");
-        	}
-        	serializedResult.setPreferredSize(formDimension);
-            buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-            layout.setConstraints(serializedResult, gbc);
-            this.add(serializedResult);
-        }
+    	JLabel serializedLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isBagged"));
+    	font = serializedLabel.getFont().deriveFont(Font.BOLD);
+    	serializedLabel.setFont(font);
+    	serializedLabel.setPreferredSize(formDimension);
+    	buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    	layout.setConstraints(serializedLabel, gbc);
+    	this.add(serializedLabel);
+    	JLabel serializedResult = new JLabel("no");
+    	font = serializedResult.getFont().deriveFont(Font.BOLD);
+    	serializedResult.setFont(font);
+    	if (defaultBag != null) {
+    		if (defaultBag.isSerialized()) serializedResult.setText("yes");
+    		else serializedResult.setText("no");
+    	}
+    	serializedResult.setPreferredSize(formDimension);
+    	buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    	layout.setConstraints(serializedResult, gbc);
+    	this.add(serializedResult);
     }
     
     private void createValidLine(int row) {
