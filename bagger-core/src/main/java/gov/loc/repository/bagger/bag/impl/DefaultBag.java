@@ -101,8 +101,8 @@ public class DefaultBag {
 			bilBag.setBagInfoTxt(bagInfoTxt);
 		}
     	copyBagToForm();
-		bagStrategy = getBagInfoStrategy();
-	}
+    	updateStrategy();
+    }
 
 	public String getDataDirectory() {
 		return AbstractBagConstants.DATA_DIRECTORY;
@@ -114,12 +114,6 @@ public class DefaultBag {
 		this.isValidForms = false;
 		this.isValidMetadata = false;
 		this.isSerialized = false;
-	}
-
-	protected String reportError(String errors, String message) {
-		if (errors == null) errors = message;
-		else errors += "\n" + message;
-		return errors;
 	}
 
 	protected void display(String s) {
@@ -389,6 +383,8 @@ public class DefaultBag {
 				bag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
 			}
 		}
+		// TODO: complete bag when is has changed
+        bag.complete();
 	}
 
 	public void setInfo(DefaultBagInfo bagInfo) {
@@ -451,21 +447,6 @@ public class DefaultBag {
     	for (int i=0; i < manifests.size(); i++) {
     		Manifest manifest = manifests.get(i);
     		mcontent.append(manifest.toString());
-/*
-     		try {
-        		BagPartFactory factory = BagFactory.getBagPartFactory();
-        		ManifestReader reader = factory.createManifestReader(new ByteArrayInputStream(manifest.toString().getBytes("utf-8")), "utf-8");
-                for (Iterator<FilenameFixity> it=reader; it.hasNext(); ) {
-                	FilenameFixity ff = it.next();
-                	mcontent.append(ff.getFixityValue());
-                	mcontent.append(" ");
-                	mcontent.append(ff.getFilename());
-                	mcontent.append("\n");
-                }
-    		} catch (Exception e) {
-    			log.error("DefaultBag.getManifestContent: " + e.getMessage());
-    		}
-*/
     	}
     	return mcontent.toString();
 	}
@@ -476,21 +457,6 @@ public class DefaultBag {
     	for (int i=0; i < manifests.size(); i++) {
     		Manifest manifest = manifests.get(i);
     		tmcontent.append(manifest.toString());
-/*
-    		try {
-        		BagPartFactory factory = BagFactory.getBagPartFactory();
-        		ManifestReader reader = factory.createManifestReader(new ByteArrayInputStream(manifest.toString().getBytes("utf-8")), "utf-8");
-                for (Iterator<FilenameFixity> it=reader; it.hasNext(); ) {
-                	FilenameFixity ff = it.next();
-                	tmcontent.append(ff.getFixityValue());
-                	tmcontent.append(" ");
-                	tmcontent.append(ff.getFilename());
-                	tmcontent.append("\n");
-                }
-    		} catch (Exception e) {
-    			log.error("DefaultBag.getManifestContent: " + e.getMessage());
-    		}
-*/
     	}
     	return tmcontent.toString();
 	}
@@ -582,19 +548,21 @@ public class DefaultBag {
 					isContinue = true;
 				} else {
 					isContinue = false;
-					reportError(messages, "Bagger form fields are missing valid values.\n");
+					messages += "\nBagger form fields are missing valid values.\n";
 				}
+				display("DefaultBag.write isValidForms: " + messages);
 			}
 			// validate metadata
-			if (isContinue) {
+/*			if (isContinue) {
 				messages += validateMetadata();
 				if (this.isValidMetadata()) {
 					isContinue = true;
 				} else {
 					isContinue = false;
-					reportError(messages, "Bag-info fields are not all present for the project selected.\n");
+					messages += "\nBag-info fields are not all present for the project selected.\n";
 				}
-			}
+				display("DefaultBag.write isValidMetadata: " + messages);
+			} */
 			// is complete
 			if (isContinue) {
 				messages += completeBag();
@@ -602,8 +570,9 @@ public class DefaultBag {
 					isContinue = true;
 				} else {
 					isContinue = false;
-					reportError(messages, "Bag is not complete.\n");
+					messages += "\nBag is not complete.\n";
 				}
+				display("DefaultBag.write isComplete: " + messages);
 			}
 			// write bag
 			if (isContinue) {
@@ -613,12 +582,14 @@ public class DefaultBag {
 				File bagFile = new File(rootDir, this.getName());
 				Bag bag = BagFactory.createBag(bagFile);
 				bag.complete();
+				display("DefaultBag.write writeBag: " + messages);
 				// is valid bag
 				if (isContinue) {
 					messages += validateBag(bag);
+					display("DefaultBag.write isValid: " + messages);
 					if (this.isValid()) {
 					} else {
-						reportError(messages, "Bag is not valid.\n");
+						messages += "\nBag is not valid.\n";
 					}
 				}
 			}
@@ -632,7 +603,7 @@ public class DefaultBag {
 
 	public String validateForms(boolean b) {
 		String messages = "";
-		display("validateForms: " + b);
+
 		this.isValidForms(b);
 		if (b) {
 			if (this.getIsHoley()) {
@@ -662,7 +633,6 @@ public class DefaultBag {
 				}
 			}
 		}
-		display("validateForms isValidForms: " + this.isValidForms());
 		return messages;
 	}
 
@@ -673,8 +643,9 @@ public class DefaultBag {
 			if (result.messagesToString() != null) messages += result.messagesToString();
 			this.isComplete(result.isSuccess());
 		} catch (Exception e) {
+			this.isComplete(false);
 			e.printStackTrace();
-			reportError(messages, "Failed to complete bag: " + e.getMessage() + "\n");
+			messages += "Bag is not complete: " + e.getMessage() + "\n";
 		}
 		return messages;
 	}
@@ -686,8 +657,9 @@ public class DefaultBag {
 			if (result.messagesToString() != null) messages += result.messagesToString();
 			this.isValidMetadata(result.isSuccess());
 		} catch (Exception e) {
+			this.isValidMetadata(false);
 			e.printStackTrace();
-			reportError(messages, "Failed to validate metadata: " + e.getMessage() + "\n");
+			messages += "Bag-info fields are not correct: " + e.getMessage() + "\n";
 		}
 		return messages;
 	}
@@ -700,8 +672,9 @@ public class DefaultBag {
 			if (result.messagesToString() != null) messages += result.messagesToString();
 			this.isValid(result.isSuccess());
 		} catch (Exception e) {
+			this.isValid(false);
 			e.printStackTrace();
-			reportError(messages, "Failed to validate bag: " + e.getMessage() + "\n");
+			messages += "Bag is not valid: " + e.getMessage() + "\n";
 		}
 		return messages;
 	}
@@ -712,6 +685,7 @@ public class DefaultBag {
 		BagWriter bw = null;
 		try {
 			if (this.serialMode == NO_MODE) {
+				this.isSerialized(true);
 				bagFile = new File(rootDir, this.getName());
 				bw = new FileSystemBagWriter(bagFile, true);				
 				if (this.isCleanup) { messages += cleanup(); }
@@ -740,7 +714,7 @@ public class DefaultBag {
 			this.bilBag.write(bw);
 			this.setIsNewbag(false);
 		} catch (Exception e) {
-			reportError(messages, "ERROR creating bag: " + this.getInfo().getBagName() + "\n" + e.getMessage() + "\n");
+			messages += "ERROR creating bag: " + this.getInfo().getBagName() + "\n" + e.getMessage() + "\n";
 		}
 		return messages;
 	}
@@ -752,12 +726,16 @@ public class DefaultBag {
 			display("cleanup");
 			if (!this.getIsHoley()) {
 				b = FileUtililties.deleteDir(this.getRootDir());
-				if (!b) messages += reportError(messages, "Could not delete directory: " + this.getRootDir() + "\n");
+				if (!b) messages += "Could not delete directory: " + this.getRootDir() + "\n";
 				else messages += "Cleaning up bag directory.\n";
 			}
 			this.getRootDir().deleteOnExit();
 		}
 		return messages;
+	}
+	
+	public void updateStrategy() {
+		bagStrategy = getBagInfoStrategy();		
 	}
 
 	protected VerifyStrategy getBagInfoStrategy() {
