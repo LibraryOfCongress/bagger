@@ -282,7 +282,6 @@ public class BagInfoInputPane extends JTabbedPane {
         if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors() || (bag.getIsHoley() && fetchForm.hasErrors())) {
         	messages = parentView.getPropertyMessage("bag.message.info.error") + "\n";
         }
-        //update();
         
         return messages;
     }
