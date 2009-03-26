@@ -123,7 +123,7 @@ public class DefaultBag {
 	}
 
 	protected void display(String s) {
-		log.info(this.getClass().getName() + "." + s);
+		//log.info(this.getClass().getName() + "." + s);
 	}
 
 	public Bag getBag() {
@@ -610,7 +610,8 @@ public class DefaultBag {
 				//this.bilBag.complete();
 				messages += writeBag();
 				// read bag
-				Bag bag = BagFactory.createBag(path);
+				File bagFile = new File(rootDir, this.getName());
+				Bag bag = BagFactory.createBag(bagFile);
 				bag.complete();
 				// is valid bag
 				if (isContinue) {
