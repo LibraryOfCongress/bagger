@@ -553,6 +553,7 @@ public class DefaultBag {
 				display("DefaultBag.write isValidForms: " + messages);
 			}
 			// validate metadata
+			this.isValidMetadata(true);
 /*			if (isContinue) {
 				messages += validateMetadata();
 				if (this.isValidMetadata()) {
@@ -578,20 +579,6 @@ public class DefaultBag {
 			if (isContinue) {
 				//this.bilBag.complete();
 				messages += writeBag();
-				// read bag
-				File bagFile = new File(rootDir, this.getName());
-				Bag bag = BagFactory.createBag(bagFile);
-				bag.complete();
-				display("DefaultBag.write writeBag: " + messages);
-				// is valid bag
-				if (isContinue) {
-					messages += validateBag(bag);
-					display("DefaultBag.write isValid: " + messages);
-					if (this.isValid()) {
-					} else {
-						messages += "\nBag is not valid.\n";
-					}
-				}
 			}
 		} catch (Exception e) {
 			messages += "An error occurred writing the bag:\n" + e.toString() + "\n";
@@ -715,6 +702,26 @@ public class DefaultBag {
 			this.setIsNewbag(false);
 		} catch (Exception e) {
 			messages += "ERROR creating bag: " + this.getInfo().getBagName() + "\n" + e.getMessage() + "\n";
+		}
+		try {
+			// read bag
+			Bag bag = BagFactory.createBag(bagFile);
+			// is valid bag
+			messages += validateBag(bag);
+			display("DefaultBag.write isValid: " + messages);
+			if (this.isValid()) {
+				/* */
+				messages += validateMetadata();
+				if (this.isValidMetadata()) {
+				} else {
+					messages += "\nBag-info fields are not all present for the project selected.\n";
+				}
+				/* */
+			} else {
+				messages += "\nBag is not valid.\n";
+			}
+		} catch (Exception ex) {
+			messages += "ERROR validating bag: " + bagFile + "\n" + ex.getMessage() + "\n";
 		}
 		return messages;
 	}
