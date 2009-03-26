@@ -83,7 +83,7 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
     
     private Constraint getNameValueConstraint() {
     	Constraint res;
-    	res = all(new Constraint[] {required(), maxLength(50), regexp("[a-zA-Z ]*", "alphabetic")});
+    	res = all(new Constraint[] {required(), maxLength(50), regexp("[a-zA-Z\\. ]*", "alphabetic")});
     	return res;
     }
     
