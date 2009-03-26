@@ -303,12 +303,15 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } else {
                 	bagInfoInputPane.setSelectedIndex(0);
                 }
-                bagInfoInputPane.updateForms();
+                bagInfoInputPane.verifyForms();
+                bagInfoInputPane.update();
                 updateProfile();
                 if (bagInfoInputPane.hasFormErrors()) {
                 	infoFormMessagePane.setMessage(getMessage("error.form"));
+                    infoFormMessagePane.setBackground(errorColor);
                 } else {
                 	infoFormMessagePane.setMessage("");
+                    infoFormMessagePane.setBackground(infoColor);
                 }
                 bagInfoInputPane.invalidate();
                 java.awt.Component comp = bagInfoInputPane.getComponent(0);
