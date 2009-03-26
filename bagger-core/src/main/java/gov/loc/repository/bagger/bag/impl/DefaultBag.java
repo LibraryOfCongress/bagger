@@ -700,29 +700,33 @@ public class DefaultBag {
 			}
 			this.bilBag.write(bw);
 			this.setIsNewbag(false);
-		} catch (Exception e) {
-			messages += "ERROR creating bag: " + this.getInfo().getBagName() + "\n" + e.getMessage() + "\n";
-		}
-		try {
-			// read bag
-			log.info("DefaultBag.writeBag createBag" + bagFile);
-			Bag bag = BagFactory.createBag(bagFile);
-			// is valid bag
-			messages += validateBag(bag);
-			display("DefaultBag.write isValid: " + messages);
-			if (this.isValid()) {
-				/* */
-				messages += validateMetadata();
-				if (this.isValidMetadata()) {
+
+			try {
+				// read bag
+				log.info("DefaultBag.writeBag-createBag: " + bagFile);
+				Bag bag = BagFactory.createBag(bagFile);
+				// is valid bag
+				messages += validateBag(bag);
+				display("DefaultBag.write isValid: " + messages);
+				if (this.isValid()) {
+					/* */
+					messages += validateMetadata();
+					if (this.isValidMetadata()) {
+					} else {
+						messages += "\nBag-info fields are not all present for the project selected.\n";
+					}
+					/* */
 				} else {
-					messages += "\nBag-info fields are not all present for the project selected.\n";
+					messages += "\nBag is not valid.\n";
 				}
-				/* */
-			} else {
-				messages += "\nBag is not valid.\n";
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				messages += "ERROR validating bag: " + bagFile + "\n" + ex.getMessage() + "\n";
 			}
-		} catch (Exception ex) {
-			messages += "ERROR validating bag: " + bagFile + "\n" + ex.getMessage() + "\n";
+		} catch (Exception e) {
+			this.isSerialized(false);
+			e.printStackTrace();
+			messages += "ERROR creating bag: " + bagFile + "\n" + e.getMessage() + "\n";
 		}
 		return messages;
 	}
