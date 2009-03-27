@@ -668,18 +668,24 @@ public class DefaultBag {
 	
 	public String writeBag() {
 		String messages = "";
+		String bagName = "";
 		File bagFile = null;
 		BagWriter bw = null;
 		try {
 			if (this.serialMode == NO_MODE) {
 				this.isSerialized(true);
-				bagFile = new File(rootDir, this.getName());
+				bagName = this.getName();
+				bagFile = new File(rootDir, bagName);
 				bw = new FileSystemBagWriter(bagFile, true);				
 				if (this.isCleanup) { messages += cleanup(); }
 				messages += "Successfully created bag: " + this.getInfo().getBagName() + "\n";
 			} else if (this.serialMode == ZIP_MODE) {
 				this.isSerialized(true);
-				bagFile = new File(rootDir, this.getFile().getName() + ".zip");
+				bagName = this.getName() + ".zip";
+				bagFile = new File(rootDir, bagName);
+				System.out.println("DefaultBag.writeBag rootDir: " + rootDir);
+				System.out.println("DefaultBag.writeBag bagName: " + bagName);
+				System.out.println("DefaultBag.writeBag bagFile: " + bagFile);
 				bw = new ZipBagWriter(bagFile);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
@@ -689,7 +695,8 @@ public class DefaultBag {
 				}
 			} else if (this.serialMode == TAR_MODE) {
 				this.isSerialized(true);
-				bagFile = new File(rootDir, this.getFile().getName() + ".tar");
+				bagName = this.getName() + ".tar";
+				bagFile = new File(rootDir, bagName);
 				bw = new TarBagWriter(bagFile);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
