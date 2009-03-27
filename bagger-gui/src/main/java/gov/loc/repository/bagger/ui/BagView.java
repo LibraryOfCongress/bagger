@@ -491,7 +491,6 @@ public class BagView extends AbstractView implements ApplicationListener {
                 String messages = "";
             	updateBaggerRules();
                 bagInfoInputPane.updateSelected();
-                messages += updateProfile();
                 bagDisplayPane.updateBagPaneTabs(messages);
             }
         });
@@ -500,7 +499,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         // Checksum control
         JLabel serializeLabel = new JLabel(getMessage("bag.label.isPackage"));
         noneButton = new JRadioButton(getMessage("bag.serializeType.none"));
-        noneButton.setSelected(false);
+        noneButton.setSelected(true);
         noneButton.setEnabled(false);
         noneButton.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 1;
