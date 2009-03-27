@@ -66,7 +66,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 
 	private final List<Organization> orgs = new ArrayList<Organization>();
 
-	ArrayList<String> commandList = new ArrayList<String>();
+	protected ArrayList<String> commandList = new ArrayList<String>();
 	String sqlCommand = "";
 
 	@Autowired
@@ -87,7 +87,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	@Transactional(readOnly = true)
 	public void refreshCache() throws DataAccessException {
 		synchronized (this.orgs) {
-			this.logger.info("Refreshing vets cache");
+			logger.info("Refreshing vets cache");
 		}
 	}
 
@@ -363,7 +363,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			exception.printStackTrace();
 		}
 	}
-
+/* */
 	@Transactional
 	public String storeBaggerUpdates(Collection<Profile> profiles, String homeDir) throws DataAccessException {
 		String messages = null;
@@ -400,8 +400,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				profile.setProfilePersonId(user.getId());
 				profile.setProjectId(project.getId());
 				if (profile != null) this.storeProfile(profile);
-//				if (userPerson != null && project != null) this.storePersonProject(userPerson, project);
-//				if (profile != null & user != null) this.storeUserContact(profile.getUsername(), user);
 			}
 			messages = write(homeDir);
 		}
@@ -411,7 +409,8 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 		return messages;
 	}
-
+/* */
+/* */
 	private String write(String homeDir) {
 		String message = null;
 		String name = "bagger.sql";
@@ -419,9 +418,11 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		{
 			File file = new File(homeDir, name);
 			Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+			logger.debug("JdbcBagger.write file: " + file);
 			int listSize = this.commandList.size();
 			for (int i=0; i < listSize; i++) {
 				String s = this.commandList.get(i);
+				logger.debug(s);
 				writer.write(s+'\n');
 			}
 			writer.close();
@@ -433,7 +434,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 		return message;		
 	}
-	
+/* */	
 	/**
 	 * Creates a {@link MapSqlParameterSource} based on data values from the
 	 * supplied {@link Profile} instance.
