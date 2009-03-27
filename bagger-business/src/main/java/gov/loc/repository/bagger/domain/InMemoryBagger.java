@@ -30,8 +30,8 @@ public class InMemoryBagger extends JdbcBagger {
     private final Log logger = LogFactory.getLog(getClass());
 
     private DataSource dataSource;
-	private ArrayList<String> commandList = new ArrayList<String>();
 	private File baggerFile = null;
+	private ArrayList<String> defaultList = new ArrayList<String>();
 
     /**
      * Note: the SimpleJdbcOrganization uses autowiring, we could do the same here.
@@ -80,6 +80,10 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("alter table bag add constraint fk_bag_profile foreign key (profile_id) references profile(id)");
 
         getCommandList();
+        for (int i=0; i < defaultList.size(); i++) {
+        	String command = defaultList.get(i);
+        	template.execute(command);
+        }
         for (int i=0; i < commandList.size(); i++) {
         	String command = commandList.get(i);
         	template.execute(command);
@@ -88,19 +92,19 @@ public class InMemoryBagger extends JdbcBagger {
     
     private List<String> getCommandList() {
         // Data: Acegi Security
-        commandList.add("INSERT INTO users VALUES ('user', 'user', true)");
-        commandList.add("INSERT INTO authorities VALUES ('user', 'ROLE_BAGGER_USER')");
+        defaultList.add("INSERT INTO users VALUES ('user', 'user', true)");
+        defaultList.add("INSERT INTO authorities VALUES ('user', 'ROLE_BAGGER_USER')");
 
         // "CREATE TABLE projects (id, name");
-        commandList.add("INSERT INTO projects VALUES (1, 'eDeposit')");
-        commandList.add("INSERT INTO projects VALUES (2, 'ndiipp')");
-        commandList.add("INSERT INTO projects VALUES (3, 'ndnp')");
-        commandList.add("INSERT INTO projects VALUES (4, 'transfer')");
+        defaultList.add("INSERT INTO projects VALUES (1, 'eDeposit')");
+        defaultList.add("INSERT INTO projects VALUES (2, 'ndiipp')");
+        defaultList.add("INSERT INTO projects VALUES (3, 'ndnp')");
+        defaultList.add("INSERT INTO projects VALUES (4, 'transfer')");
 
     	String userHomeDir = System.getProperty("user.home");
     	readCommandList(userHomeDir);
         
-    	return commandList;
+    	return defaultList;
     }
     
 	private String readCommandList(String homeDir) {
@@ -148,11 +152,12 @@ public class InMemoryBagger extends JdbcBagger {
 			BufferedReader  reader = new BufferedReader(fr);
 			try
 			{
+				logger.debug("JdbcBagger.read file: " + file);
 				while(true)
 				{
 					String line = reader.readLine();
 					if (line == null) break;
-					logger.debug("InMemoryBagger.loadProfiles: " + line);
+					logger.debug(line);
 					this.commandList.add(line);
 				}
 			}
