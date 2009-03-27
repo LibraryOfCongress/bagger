@@ -104,7 +104,7 @@ public class DefaultBag {
     }
 
 	public String getDataDirectory() {
-		return AbstractBagConstants.DATA_DIRECTORY;
+		return bilBag.getBagConstants().getDataDirectory();
 	}
 	
 	protected void reset() {
@@ -464,7 +464,7 @@ public class DefaultBag {
 	public String getDataContent() {
 		totalSize = 0;
 		StringBuffer dcontent = new StringBuffer();
-		dcontent.append(AbstractBagConstants.DATA_DIRECTORY + "/");
+		dcontent.append(this.getDataDirectory() + "/");
 		dcontent.append('\n');
 		Collection<BagFile> files = this.bilBag.getPayloadFiles();
         for (Iterator<BagFile> it=files.iterator(); it.hasNext(); ) {
