@@ -105,8 +105,8 @@ public class BagTree extends CheckboxTree {
 	public void addNodes(File file) {
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 		rootNode = addNodes(null, null, file);
-		log.info("buildNodes rootNode parent: " + rootNode.getParent());
-		log.info("buildNodes getRoot: " + rootNode.getRoot());
+		//log.info("buildNodes rootNode parent: " + rootNode.getParent());
+		//log.info("buildNodes getRoot: " + rootNode.getRoot());
 		srcNodes.add(rootNode);
 		parentNode.add(rootNode);
 		initialize();
@@ -115,20 +115,20 @@ public class BagTree extends CheckboxTree {
 	public void addParentNode(File file) {
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 		rootNode = addNodes(null, null, file);
-		log.info("buildNodes rootNode parent: " + rootNode.getParent());
-		log.info("buildNodes getRoot: " + rootNode.getRoot());
+		//log.info("buildNodes rootNode parent: " + rootNode.getParent());
+		//log.info("buildNodes getRoot: " + rootNode.getRoot());
 		srcNodes.add(rootNode);
 		parentNode = rootNode;
 		initialize();
 	}
 
 	public void addTree(File parent, File file, File bagRoot) {
-        log.debug("BagTree.addTree: " + file.getAbsolutePath());
+        //log.debug("BagTree.addTree: " + file.getAbsolutePath());
         RecursiveFileListIterator fit = new RecursiveFileListIterator(file);
         if (fit != null) {
         	for (Iterator<File> it=fit; it.hasNext(); ) {
                 File f = it.next();
-                log.debug("BagTree.addRootTree: " + f.getAbsolutePath());
+                //log.debug("BagTree.addRootTree: " + f.getAbsolutePath());
                 BaggerFileEntity bfe = new BaggerFileEntity(parent, f, bagRoot);
                 rootTree.add(bfe);
             }
@@ -207,7 +207,7 @@ public class BagTree extends CheckboxTree {
 			displayTop.add(displayDir);
 		}
 		Vector<String> ol = new Vector<String>();
-		log.info("addNodes: " + dir.list());
+		//log.info("addNodes: " + dir.list());
 		String[] tmp = dir.list();
 		if (tmp != null && tmp.length > 0) {
 			for (int i = 0; i < tmp.length; i++)
@@ -231,11 +231,11 @@ public class BagTree extends CheckboxTree {
 				files.addElement(thisObject);
 		}
 		// Pass two: for files.
-    	log.info("createBagManagerTree: files.size: " + files.size());
+    	//log.info("createBagManagerTree: files.size: " + files.size());
 		for (int fnum = 0; fnum < files.size(); fnum++) {
 			String elem = files.elementAt(fnum);
 			DefaultMutableTreeNode elemNode = new DefaultMutableTreeNode(elem);
-			log.info("addNodes curDir: " + elem);
+			//log.info("addNodes curDir: " + elem);
 			curDir.add(elemNode);
 			displayDir.add(elemNode);
 		}
