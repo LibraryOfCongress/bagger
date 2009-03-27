@@ -130,7 +130,7 @@
 
     <!-- Components -->
     <dependency>
-      <groupId>org.aopalliance</groupId>
+      <groupId>aopalliance</groupId>
       <artifactId>aopalliance</artifactId>
       <scope>runtime</scope>
       <version>1.0</version>
@@ -167,21 +167,21 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
-      <version>3.3.0</version>
+      <version>3.3.0.ga</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
-      <version>3.3.0</version>
+      <version>3.3.0.ga</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.0.ga</version>
     </dependency>
     <!-- Utils -->
     <dependency>
-      <groupId>it.cnr.imaa.essi.lablib.gui.checkboxtree</groupId>
+      <groupId>it.cnr.imaa.essi</groupId>
       <artifactId>lablib-checkboxtree</artifactId>
       <version>2.2.2</version>
     </dependency>
