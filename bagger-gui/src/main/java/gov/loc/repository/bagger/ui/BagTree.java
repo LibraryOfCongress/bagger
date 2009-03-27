@@ -67,7 +67,7 @@ public class BagTree extends CheckboxTree {
 						try {
 					        this.addNode(f.getAbsolutePath());
 						} catch (Exception ex) {
-							log.error("BagView.openExistingBag: " + e.getMessage());						
+							log.error("BagTree.populateNodes: " + e.getMessage());						
 						}
 					}
 				}
@@ -83,11 +83,11 @@ public class BagTree extends CheckboxTree {
 				try {
 			        this.addNode(filePath);
 				} catch(Exception e) {
-					log.error("BagView.openExistingBag: " + e.getMessage());
+					log.error("BagTree.populateNodes: " + e.getMessage());
 					try {
 				        this.addNode(filePath);
 					} catch (Exception ex) {
-						log.error("BagView.openExistingBag: " + ex.getMessage());						
+						log.error("BagTree.populateNodes: " + ex.getMessage());						
 					}
 				}
             }
@@ -96,7 +96,7 @@ public class BagTree extends CheckboxTree {
 
 	public void addNode(String filePath) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(filePath);
-		log.info("buildNodes getNode: " + node);
+		//log.info("buildNodes getNode: " + node);
 		srcNodes.add(node);
 		parentNode.add(node);
 		initialize();
