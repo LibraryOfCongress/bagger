@@ -27,7 +27,6 @@ import gov.loc.repository.bagit.bagwriter.FileSystemBagWriter;
 import gov.loc.repository.bagit.bagwriter.ZipBagWriter;
 import gov.loc.repository.bagit.bagwriter.TarBagWriter;
 //import gov.loc.repository.bagit.bagwriter.TarBagWriter.Compression;
-import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.impl.BagItTxtImpl;
 import gov.loc.repository.bagit.utilities.SimpleResult;
 import gov.loc.repository.bagit.verify.RequiredBagInfoTxtFieldsStrategy;
@@ -99,6 +98,13 @@ public class DefaultBag {
 		if (bagInfoTxt == null) {
 			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
 			bilBag.setBagInfoTxt(bagInfoTxt);
+		}
+		if (bilBag.getFetchTxt() != null) {
+        	setIsHoley(true);
+    		String url = getBaseUrl(bilBag.getFetchTxt());
+        	BaggerFetch fetch = this.getFetch();
+        	fetch.setBaseURL(url);
+        	this.fetch = fetch;
 		}
     	//updateStrategy();
     }
@@ -422,6 +428,41 @@ public class DefaultBag {
 		return bicontent;
 	}
 
+	// TODO: Bagger currently only supports one base URL location per bag
+	public String getBaseUrl(FetchTxt fetchTxt) {
+		String httpToken = "http:\\/\\/";
+		String delimToken = "\\/";
+		String baseUrl = "";
+		if (fetchTxt != null) {
+			if (!fetchTxt.isEmpty()) {
+    			FilenameSizeUrl fsu = fetchTxt.get(0);
+    			if (fsu != null) {
+    				String url = fsu.getUrl();
+    				String[] list = url.split(httpToken);
+    				if (list != null && list.length > 1) {
+    					String urlSuffix = list[1];
+    					String[] hostUrl = urlSuffix.split(delimToken);
+    					if (hostUrl != null && hostUrl.length > 1) {
+            				baseUrl = "http://" + hostUrl[0];
+    					}
+    				}
+    			}
+			}
+		}
+		return baseUrl;
+	}
+
+	public void updateFetch() {
+		if (this.getIsHoley()) {
+			if (this.fetch != null && this.fetch.getBaseURL() != null) {
+				String baseUrl = this.fetch.getBaseURL();
+				this.bilBag.makeHoley(baseUrl, true);
+			}
+		} else {
+			this.bilBag.putFetchTxt(null);
+		}
+	}
+
 	public void setFetch(BaggerFetch fetch) {
 		this.fetch = fetch;
 	}
@@ -432,11 +473,16 @@ public class DefaultBag {
 	}
 	
 	public String getFetchContent() {
-		String fcontent = new String();
-		if (this.fetch != null) {
-			fcontent = this.fetch.toString();
-		}		
-		return fcontent;
+		StringBuffer fcontent = new StringBuffer();
+		FetchTxt fetchTxt = this.bilBag.getFetchTxt();
+		if (fetchTxt != null) {
+			for (int i=0; i < fetchTxt.size(); i++) {
+				FilenameSizeUrl fetch = fetchTxt.get(i);
+				String s = fetch.toString();
+				fcontent.append(s);
+			}
+		}
+		return fcontent.toString();
 	}
 	
 	public String getBagItContent() {
