@@ -170,8 +170,19 @@ public class DefaultBag {
 		return this.file;
 	}
 
+	// This directory contains either the bag directory or serialized bag file
 	public void setRootDir(File rootDir) {
-		this.rootDir = rootDir;
+		try {
+    		if (rootDir != null && rootDir.isFile()) {
+    			rootDir = rootDir.getParentFile();
+    			this.rootDir = rootDir;
+    		} else {
+        		this.rootDir = rootDir;
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+        	log.error("DefaultBag.setName create rootDir: " + e.getMessage());
+    	}
 	}
 
 	public File getRootDir() {
@@ -539,7 +550,6 @@ public class DefaultBag {
 		boolean isContinue = true;
 		String messages = "";
 		reset();
-		this.rootDir = path;
 		try {
 			// validate form
 			if (isContinue) {
@@ -675,17 +685,14 @@ public class DefaultBag {
 			if (this.serialMode == NO_MODE) {
 				this.isSerialized(true);
 				bagName = this.getName();
-				bagFile = new File(rootDir, bagName);
+				bagFile = new File(getRootDir(), bagName);
 				bw = new FileSystemBagWriter(bagFile, true);				
 				if (this.isCleanup) { messages += cleanup(); }
 				messages += "Successfully created bag: " + this.getInfo().getBagName() + "\n";
 			} else if (this.serialMode == ZIP_MODE) {
 				this.isSerialized(true);
 				bagName = this.getName() + ".zip";
-				bagFile = new File(rootDir, bagName);
-				System.out.println("DefaultBag.writeBag rootDir: " + rootDir);
-				System.out.println("DefaultBag.writeBag bagName: " + bagName);
-				System.out.println("DefaultBag.writeBag bagFile: " + bagFile);
+				bagFile = new File(getRootDir(), bagName);
 				bw = new ZipBagWriter(bagFile);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
@@ -696,7 +703,7 @@ public class DefaultBag {
 			} else if (this.serialMode == TAR_MODE) {
 				this.isSerialized(true);
 				bagName = this.getName() + ".tar";
-				bagFile = new File(rootDir, bagName);
+				bagFile = new File(getRootDir(), bagName);
 				bw = new TarBagWriter(bagFile);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
