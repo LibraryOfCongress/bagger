@@ -259,6 +259,7 @@ public class BagInfoInputPane extends JTabbedPane {
         	}
         	BaggerFetch fetch = (BaggerFetch)fetchForm.getFormObject();
         	bag.getFetch().setBaseURL(fetch.getBaseURL());
+            bag.updateFetch();
         }
         
         if (!organizationGeneralForm.hasErrors()) {
