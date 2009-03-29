@@ -33,6 +33,10 @@ import gov.loc.repository.bagit.verify.RequiredBagInfoTxtFieldsStrategy;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.richclient.application.Application;
+import org.springframework.richclient.dialog.CloseAction;
+import org.springframework.richclient.dialog.ConfirmationDialog;
+import org.springframework.richclient.progress.BusyIndicator;
 
 /**
  * @author Jon Steinbach
@@ -70,6 +74,7 @@ public class DefaultBag {
 	private long totalSize = 0;
 
 	protected Bag bilBag;
+	private Bag bagToValidate;
 
 	private Collection<BagFile> rootPayload = null;
 	private List<BaggerFileEntity> rootTree;
@@ -701,8 +706,8 @@ public class DefaultBag {
 			this.isValidMetadata(result.isSuccess());
 		} catch (Exception e) {
 			this.isValidMetadata(false);
-			e.printStackTrace();
 			messages += "Bag-info fields are not correct: " + e.getMessage() + "\n";
+			e.printStackTrace();
 		}
 		return messages;
 	}
@@ -710,10 +715,15 @@ public class DefaultBag {
 	public String validateBag(Bag bag) {
 		String messages = "";
 		display("validateBag");
+		bagToValidate = bag;
 		try {
-			SimpleResult result = bag.isValid();
-			if (result.messagesToString() != null) messages += result.messagesToString();
-			this.isValid(result.isSuccess());
+	    	if (this.getSize() > MAX_SIZE) {
+	    		confirmValidateBag();
+	    	} else {
+				SimpleResult result = bag.isValid();
+				if (result.messagesToString() != null) messages += result.messagesToString();
+				this.isValid(result.isSuccess());
+	    	}
 		} catch (Exception e) {
 			this.isValid(false);
 			e.printStackTrace();
@@ -765,17 +775,20 @@ public class DefaultBag {
 				// read bag
 				log.info("DefaultBag.writeBag-createBag: " + bagFile);
 				Bag bag = BagFactory.createBag(bagFile);
+
+				/* */
+				// is valid metadata
+				messages += validateMetadata();
+				display("DefaultBag.write isValidMetadata: " + messages);
+				if (this.isValidMetadata()) {
+				} else {
+					messages += "\nBag-info fields are not all present for the project selected.\n";
+				}
+				/* */
 				// is valid bag
 				messages += validateBag(bag);
 				display("DefaultBag.write isValid: " + messages);
 				if (this.isValid()) {
-					/* */
-					messages += validateMetadata();
-					if (this.isValidMetadata()) {
-					} else {
-						messages += "\nBag-info fields are not all present for the project selected.\n";
-					}
-					/* */
 				} else {
 					messages += "\nBag is not valid.\n";
 				}
@@ -831,4 +844,19 @@ public class DefaultBag {
 		return strategy;
 	}
 
+	private void confirmValidateBag() {
+	    ConfirmationDialog dialog = new ConfirmationDialog() {
+	        protected void onConfirm() {
+	        	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
+				SimpleResult result = bagToValidate.isValid();
+				isValid(result.isSuccess());
+		    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
+	        }
+	    };
+
+	    dialog.setCloseAction(CloseAction.DISPOSE);
+	    dialog.setTitle("Validate Bag");
+	    dialog.setConfirmationMessage("The contents of this bag are larger than 100 MB; this may cause performance problems.  Would you like to continue validation?");
+	    dialog.showDialog();
+	}
 }
