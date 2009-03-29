@@ -717,7 +717,7 @@ public class DefaultBag {
 		display("validateBag");
 		bagToValidate = bag;
 		try {
-	    	if (this.getSize() > MAX_SIZE) {
+	    	if (this.getDataSize() > MAX_SIZE) {
 	    		confirmValidateBag();
 	    	} else {
 				SimpleResult result = bag.isValid();
