@@ -919,6 +919,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     		messages += updateProject(getMessage("bag.project.edeposit"));
     	} else if (bag.getIsNdnp()) {
     		messages += updateProject(getMessage("bag.project.ndnp"));
+    	} else {
+    		messages += updateProject(getMessage("bag.project.transfer"));    		
     	}
     	bagRootPath = file.getParentFile();
     	bag.setRootDir(bagRootPath);
@@ -937,8 +939,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 		messages += bag.validateMetadata();
 		bag.isSerialized(true);
     	if (bag.getSize() > DefaultBag.MAX_SIZE) {
-    		messages += "Bag has not been validated due to it's size.  Perform validation manually using the Validate Bag button.";
-    	} else {
         	validateBag(messages);
     	}
     	if (bag.getInfo().getBagSize().isEmpty()) {
@@ -987,7 +987,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagDisplayPane.updateBagPaneTabs(messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
-        
+    
     private void validateBag(String messages) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	messages += bagInfoInputPane.updateForms();
