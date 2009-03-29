@@ -915,6 +915,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         	messages +=  "Failed to create bag: " + ex.getMessage() + "\n";
 		}
     	bag.copyBagToForm();
+    	if (bag.getInfo().getBagSize().isEmpty()) {
+        	bag.setSize(bag.getDataSize());
+    	}
     	if (bag.getIsEdeposit()) {
     		messages += updateProject(getMessage("bag.project.edeposit"));
     	} else if (bag.getIsNdnp()) {
@@ -931,23 +934,18 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTreePanel.refresh(bagTree);
     	enableBagSettings(true);
 
-		bagDisplayPane.setBag(bag);
-    	bagDisplayPane.updateBagPaneTabs(messages);
-
     	messages += bag.validateForms(!bagInfoInputPane.hasFormErrors());
 		messages += bag.completeBag();
 		messages += bag.validateMetadata();
 		bag.isSerialized(true);
-    	if (bag.getSize() > DefaultBag.MAX_SIZE) {
+    	if (bag.getDataSize() > DefaultBag.MAX_SIZE) {
         	validateBag(messages);
     	}
-    	if (bag.getInfo().getBagSize().isEmpty()) {
-        	bag.setSize(bag.getDataSize());
-    	}
+		bagDisplayPane.setBag(bag);
+    	bagDisplayPane.updateBagPaneTabs(messages);
     	bagInfoInputPane.populateForms(bag);
-
     	messages += bagInfoInputPane.updateForms();
-   		updateMessages(messages);
+    	updateMessages(messages);
    		bagInfoInputPane.updateSelected();
         bagInfoInputPane.update();
 
