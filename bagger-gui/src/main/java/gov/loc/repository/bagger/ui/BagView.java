@@ -476,6 +476,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         JLabel holeyLabel = new JLabel(getMessage("bag.label.isHoley"));
         holeyCheckbox = new JCheckBox(getMessage("bag.checkbox.isHoley"));
         holeyCheckbox.setBorder(border);
+        holeyCheckbox.setSelected(false);
         holeyCheckbox.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 75893358194076314L;
 			public void actionPerformed(ActionEvent e) {
@@ -914,7 +915,12 @@ public class BagView extends AbstractView implements ApplicationListener {
         	messages +=  "Failed to create bag: " + ex.getMessage() + "\n";
 		}
     	bag.copyBagToForm();
-		bagRootPath = file.getParentFile();
+    	if (bag.getIsEdeposit()) {
+    		messages += updateProject(getMessage("bag.project.edeposit"));
+    	} else if (bag.getIsNdnp()) {
+    		messages += updateProject(getMessage("bag.project.ndnp"));
+    	}
+    	bagRootPath = file.getParentFile();
     	bag.setRootDir(bagRootPath);
 		File rootSrc = new File(file, bag.getDataDirectory());
 		bagTree.addParentNode(rootSrc);
@@ -925,9 +931,19 @@ public class BagView extends AbstractView implements ApplicationListener {
 
 		bagDisplayPane.setBag(bag);
     	bagDisplayPane.updateBagPaneTabs(messages);
-    	// TODO: click validate button rather than automatically validate
-    	//validateBag(messages);
-    	bag.setSize(bag.getDataSize());
+
+    	messages += bag.validateForms(!bagInfoInputPane.hasFormErrors());
+		messages += bag.completeBag();
+		messages += bag.validateMetadata();
+		bag.isSerialized(true);
+    	if (bag.getSize() > DefaultBag.MAX_SIZE) {
+    		messages += "Bag has not been validated due to it's size.  Perform validation manually using the Validate Bag button.";
+    	} else {
+        	validateBag(messages);
+    	}
+    	if (bag.getInfo().getBagSize().isEmpty()) {
+        	bag.setSize(bag.getDataSize());
+    	}
     	bagInfoInputPane.populateForms(bag);
 
     	messages += bagInfoInputPane.updateForms();
@@ -1127,8 +1143,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     			profile.setPerson(user);
     			profile.setUsername(username);
     			try {
-    				//bagger.storeProfile(profile);
-    				message = getMessage("profile.message.saved") + " " + project.getName() + "\n";
+    				message = getMessage("profile.message.changed") + " " + project.getName() + "\n";
     			} catch (Exception e) {
     				message = getMessage("profile.message.error") + " " + e.getMessage() + "\n";
     				log.error(message);
@@ -1137,6 +1152,21 @@ public class BagView extends AbstractView implements ApplicationListener {
     		}
     	}
     	return message;
+    }
+    
+    public String updateProject(String project) {
+    	String messages = "";
+    	// TODO: for the project selected, update contact and org for that project
+   		Object[] projectArray = userProjects.toArray();
+   		for (int i=0; i < projectArray.length; i++) {
+   			Project bagProject = (Project) projectArray[i];
+   			if (project != null && project.matches(bagProject.getName())) {
+   				bag.setProject(bagProject);
+   			}
+   		}
+   		messages += updateProfile();
+		projectList.setSelectedValue(project, true);
+		return messages;
     }
     
     public void onApplicationEvent(ApplicationEvent e) {
@@ -1191,6 +1221,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     private class SaveExecutor extends AbstractActionCommandExecutor {
         public void execute() {
         	bagger.storeBaggerUpdates(userProfiles, userHomeDir);
+			String message = getMessage("profile.message.saved") + " " + bag.getProject().getName() + "\n";
+			display("SaveExecutor: " + message);
+            bagDisplayPane.updateBagPaneTabs(message);
         }
     }
 }
