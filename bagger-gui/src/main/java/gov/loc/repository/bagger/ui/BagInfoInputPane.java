@@ -68,25 +68,31 @@ public class BagInfoInputPane extends JTabbedPane {
                     case 0:
                     	if (bagInfoForm.hasErrors()) {
                     		c = errorColor;
-                    	}                    	break;
+                    		bagInfoForm.getControl().grabFocus();
+                    	}
+                    	break;
                     case 1:
                     	if (userContactForm.hasErrors()) {
                     		c = errorColor;
+                    		userContactForm.getControl().grabFocus();
                     	}
                     	break;
                     case 2:
                     	if (organizationGeneralForm.hasErrors()) {
                     		c = errorColor;
+                    		organizationGeneralForm.getControl().grabFocus();
                     	}
                     	break;
                     case 3:
                     	if (organizationContactForm.hasErrors()) {
                     		c = errorColor;
+                    		organizationContactForm.getControl().grabFocus();
                     	}
                     	break;
                     case 4:
-                    	if (fetchForm.hasErrors()) {
+                    	if (parentView.getBag().getIsHoley() && fetchForm.hasErrors()) {
                     		c = errorColor;
+                    		fetchForm.getControl().grabFocus();
                     	}
                     	break;
                     default:
@@ -249,7 +255,7 @@ public class BagInfoInputPane extends JTabbedPane {
         	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
         }
         if (!bagInfoForm.hasErrors()) {
-            bagInfoForm.commit();            	
+            bagInfoForm.commit();
         }
         DefaultBagInfo newInfo = (DefaultBagInfo)bagInfoForm.getFormObject();
 
@@ -278,8 +284,9 @@ public class BagInfoInputPane extends JTabbedPane {
 
         newOrganization.setContact(newContact);
         newInfo.setBagOrganization(newOrganization);
-        bag.setInfo(newInfo);
-
+        if (!bagInfoForm.hasErrors()) {
+        	bag.setInfo(newInfo);
+        }
         if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors() || (bag.getIsHoley() && fetchForm.hasErrors())) {
         	messages = parentView.getPropertyMessage("bag.message.info.error") + "\n";
         }
@@ -325,6 +332,14 @@ public class BagInfoInputPane extends JTabbedPane {
         }
     }
     
+    public boolean hasValidBagForms() {
+        if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || (bag.getIsHoley() && fetchForm.hasErrors())) {
+        	return true;
+        } else {
+        	return false;
+        }
+    }
+
     public void update() {
         java.awt.Component[] components = bagInfoForm.getControl().getComponents();
         for (int i=0; i<components.length; i++) {
