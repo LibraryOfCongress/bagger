@@ -508,7 +508,10 @@ public class DefaultBag {
     	List<Manifest> manifests = this.bilBag.getPayloadManifests();
     	for (int i=0; i < manifests.size(); i++) {
     		Manifest manifest = manifests.get(i);
+    		mcontent.append("\n");
+    		mcontent.append(manifest.getFilepath());
     		mcontent.append(manifest.toString());
+    		mcontent.append("\n");
     	}
     	return mcontent.toString();
 	}
@@ -518,7 +521,10 @@ public class DefaultBag {
     	List<Manifest> manifests = this.bilBag.getTagManifests();
     	for (int i=0; i < manifests.size(); i++) {
     		Manifest manifest = manifests.get(i);
+    		tmcontent.append("\n");
+    		tmcontent.append(manifest.getFilepath());
     		tmcontent.append(manifest.toString());
+    		tmcontent.append("\n");
     	}
     	return tmcontent.toString();
 	}
@@ -596,7 +602,7 @@ public class DefaultBag {
 	public List<BaggerFileEntity> getRootTree() {
 		return this.rootTree;
 	}
-			
+	
 	public String write(boolean validFormFields, File path) {
 		boolean isContinue = true;
 		String messages = "";
@@ -608,23 +614,11 @@ public class DefaultBag {
 				if (this.isValidForms()) {
 					isContinue = true;
 				} else {
-					isContinue = false;
+					if (this.getIsEdeposit()) isContinue = false;
 					messages += "\nBagger form fields are missing valid values.\n";
 				}
 				display("DefaultBag.write isValidForms: " + messages);
 			}
-			// validate metadata
-			this.isValidMetadata(true);
-/*			if (isContinue) {
-				messages += validateMetadata();
-				if (this.isValidMetadata()) {
-					isContinue = true;
-				} else {
-					isContinue = false;
-					messages += "\nBag-info fields are not all present for the project selected.\n";
-				}
-				display("DefaultBag.write isValidMetadata: " + messages);
-			} */
 			// is complete
 			if (isContinue) {
 				messages += completeBag();
@@ -701,6 +695,7 @@ public class DefaultBag {
 	public String validateMetadata() {
 		String messages = "";
 		try {
+			if (bagStrategy == null) updateStrategy();
 			SimpleResult result = this.bilBag.additionalVerify(bagStrategy);
 			if (result.messagesToString() != null) messages += result.messagesToString();
 			this.isValidMetadata(result.isSuccess());
