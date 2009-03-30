@@ -4,12 +4,12 @@
 <td valign="top">
 <b>Bagger Application</b><br>
 <p>
-Version: 1.5.2<br>
-Build id: 20090220
+Version: 1.5.3<br>
+Build id: 20090330
 <p>
-<b>Bag It Library 2.2</b><br>
+<b>Bag It Library 2.3</b><br>
 <p>
-Version: 2.2<br>
+Version: 2.3<br>
 <p>
 </td>
 </tr>
@@ -42,8 +42,8 @@ and more!
 <td valign="top">
 <b>Bagger Application</b><br>
 <p>
-Version: 1.5.2<br>
-Build id: 20090220
+Version: 1.5.3<br>
+Build id: 20090330
 <p>
 </td>
 </tr>
