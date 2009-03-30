@@ -87,7 +87,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	private String userHomeDir;
 
     private BagTreePanel bagTreePanel;
-    private CompositePane bagDisplayPane;
+    private CompositePane compositePane;
     private BagInfoInputPane bagInfoInputPane;
     private BagTextPane infoFormMessagePane;
     private JPanel bagButtonPanel;
@@ -241,7 +241,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagButtonPanel = createBagButtonPanel();
     	bagTree = new BagTree();
     	bagTreePanel = new BagTreePanel(bagTree);
-    	bagDisplayPane = new CompositePane(this);
+    	compositePane = new CompositePane(this);
 
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
@@ -253,12 +253,12 @@ public class BagView extends AbstractView implements ApplicationListener {
         layout.setConstraints(bagTreePanel, glbc);
 
         buildConstraints(glbc, 0, 1, 2, 1, 100, 70, GridBagConstraints.BOTH, GridBagConstraints.WEST);
-        layout.setConstraints(bagDisplayPane, glbc);
+        layout.setConstraints(compositePane, glbc);
 
         bagPanel = new JPanel(layout);
         bagPanel.add(bagButtonPanel);
     	bagPanel.add(bagTreePanel);
-        bagPanel.add(bagDisplayPane);
+        bagPanel.add(compositePane);
 
         return bagPanel;
     }
@@ -302,7 +302,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JScrollPane createInfoInputPane() {
     	JPanel bagSettingsPanel = createBagSettingsPanel();
     	bagInfoInputPane = new BagInfoInputPane(this, username, user);
-
+    	JScrollPane bagInfoScrollPane = new JScrollPane();
+    	bagInfoScrollPane.setViewportView(bagInfoInputPane);
+    	
     	// Create a panel for the form error messages and the update button
         JButton nextButton = new JButton(getMessage("button.next"));
         nextButton.setMnemonic(KeyEvent.VK_ENTER);
@@ -340,10 +342,11 @@ public class BagView extends AbstractView implements ApplicationListener {
 			private static final long serialVersionUID = -6833185707352381008L;
 			public void actionPerformed(ActionEvent e) {
                 String messages = bagInfoInputPane.updateForms();
-                updateMessages(messages);
+                updateBagInfoInputPaneMessages(messages);
                 bagInfoInputPane.updateSelected();
                 messages += updateProfile();
-                bagDisplayPane.updateBagPaneTabs(messages);
+                compositePane.setBag(bag);
+                compositePane.updateCompositePaneTabs(messages);
                 bag.copyFormToBag(bag.getBag());
             }
         });
@@ -382,7 +385,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         infoLayout.setConstraints(infoLabelPanel, gbc);
 
         buildConstraints(gbc, 0, 1, 3, 1, 50, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
-        infoLayout.setConstraints(bagInfoInputPane, gbc);
+        infoLayout.setConstraints(bagInfoScrollPane, gbc);
 
         buildConstraints(gbc, 0, 2, 1, 1, 80, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
         infoLayout.setConstraints(button, gbc);
@@ -398,15 +401,24 @@ public class BagView extends AbstractView implements ApplicationListener {
         
         JPanel infoPanel = new JPanel(infoLayout);
         Border emptyBorder = new EmptyBorder(5, 5, 5, 5);
+        int width = 0;
+        int height = 0;
         infoPanel.setBorder(emptyBorder);
         infoPanel.add(infoLabelPanel);
-        infoPanel.add(bagInfoInputPane);
+        height += (int) infoLabelPanel.getPreferredSize().getHeight();
+        infoPanel.add(bagInfoScrollPane);
+        width += (int) bagInfoScrollPane.getPreferredSize().getWidth();
+        height += (int) bagInfoScrollPane.getPreferredSize().getHeight();
         infoPanel.add(button);
         infoPanel.add(nextButton);
+        height += (int) updatePropButton.getPreferredSize().getHeight();
         infoPanel.add(updatePropButton);
         infoPanel.add(bagSettingsPanel);
+        height += (int) bagSettingsPanel.getPreferredSize().getHeight();
+        Dimension preferredSize = new Dimension(width, height);
         
     	JScrollPane infoScrollPane = new JScrollPane();
+    	infoScrollPane.setPreferredSize(preferredSize);
     	infoScrollPane.setViewportView(infoPanel);
     	return infoScrollPane;
     }
@@ -492,7 +504,8 @@ public class BagView extends AbstractView implements ApplicationListener {
                 String messages = "";
             	updateBaggerRules();
                 bagInfoInputPane.updateSelected();
-                bagDisplayPane.updateBagPaneTabs(messages);
+                compositePane.setBag(bag);
+                compositePane.updateCompositePaneTabs(messages);
             }
         });
 
@@ -739,7 +752,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         String messages = "";
         bagInfoInputPane.populateForms(bag);
         messages = bagInfoInputPane.updateForms();
-        updateMessages(messages);
+        updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.update();
         bag.updateStrategy();
         
@@ -892,10 +905,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     	bagInfoInputPane.populateForms(bag);
         messages = bagInfoInputPane.updateForms();
-        bagInfoInputPane.update();
-    	bagDisplayPane.setBag(bag);
-        bagDisplayPane.updateBagPaneTabs(messages);
-    	updateMessages(messages);
+        compositePane.setBag(bag);
+        compositePane.updateCompositePaneTabs(messages);
+        updateBagInfoInputPaneMessages(messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
@@ -934,16 +946,16 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTreePanel.refresh(bagTree);
     	enableBagSettings(true);
 
-    	messages += bag.validateForms(!bagInfoInputPane.hasFormErrors());
+    	messages += bag.validateForms(!bagInfoInputPane.hasValidBagForms());
 		messages += bag.completeBag();
 		messages += bag.validateMetadata();
 		bag.isSerialized(true);
         validateBag(messages);
-       	bagDisplayPane.setBag(bag);
-    	bagDisplayPane.updateBagPaneTabs(messages);
+        compositePane.setBag(bag);
+        compositePane.updateCompositePaneTabs(messages);
     	bagInfoInputPane.populateForms(bag);
     	messages += bagInfoInputPane.updateForms();
-    	updateMessages(messages);
+    	updateBagInfoInputPaneMessages(messages);
    		bagInfoInputPane.updateSelected();
         bagInfoInputPane.update();
 
@@ -975,23 +987,22 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         bag.setRootTree(bagTree.getRootTree());
     	bagTreePanel.refresh(bagTree);
-
     	bagInfoInputPane.populateForms(bag);
         bagInfoInputPane.update();
     	messages += getMessage("bag.message.filesAdded") + " " + file.getName() + "\n";
-    	bagDisplayPane.setBag(bag);
-    	bagDisplayPane.updateBagPaneTabs(messages);
+    	compositePane.setBag(bag);
+    	compositePane.updateCompositePaneTabs(messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
     private void validateBag(String messages) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	messages += bagInfoInputPane.updateForms();
-   		updateMessages(messages);
+    	updateBagInfoInputPaneMessages(messages);
     	bagInfoInputPane.updateSelected();
 		messages += bag.validateBag(this.bag.getBag());
-		bagDisplayPane.setBag(bag);
-    	bagDisplayPane.updateBagPaneTabs(messages);
+		compositePane.setBag(bag);
+		compositePane.updateCompositePaneTabs(messages);
         bagInfoInputPane.update();
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
@@ -1002,16 +1013,15 @@ public class BagView extends AbstractView implements ApplicationListener {
         this.bag.setRootDir(file);
 
         messages += bagInfoInputPane.updateForms();
-        updateMessages(messages);
+        updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.updateSelected();
-        if (!bagInfoInputPane.hasFormErrors()) {
-        	if (file != null && file.getName().equalsIgnoreCase(bag.getName())) {
-        		file = file.getParentFile();
-        	}
-            messages += bag.write(!bagInfoInputPane.hasFormErrors(), file);
+        if (file != null && file.getName().equalsIgnoreCase(bag.getName())) {
+        	file = file.getParentFile();
         }
-    	bagDisplayPane.setBag(bag);
-    	bagDisplayPane.updateBagPaneTabs(messages);
+        messages += bag.write(!bagInfoInputPane.hasValidBagForms(), file);
+        if (bag.isSerialized()) saveButton.setEnabled(false);
+        compositePane.setBag(bag);
+        compositePane.updateCompositePaneTabs(messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
@@ -1037,10 +1047,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     	enableBagSettings(false);
     	bagInfoInputPane.populateForms(bag);
         messages = bagInfoInputPane.updateForms();
-        updateMessages(messages);
+        updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.update();
-    	bagDisplayPane.setBag(bag);
-        bagDisplayPane.updateBagPaneTabs(messages);
+        compositePane.setBag(bag);
+        compositePane.updateCompositePaneTabs(messages);
         BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
@@ -1105,7 +1115,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    dialog.showDialog();
 	}
 
-	private void updateMessages(String messages) {
+	private void updateBagInfoInputPaneMessages(String messages) {
 		boolean isMessage = true;
 		//isMessage = (messages == null || messages.length() == 0);
 		display("BagView.updateMessages: " + messages);
@@ -1152,7 +1162,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     
     public String updateProject(String project) {
     	String messages = "";
-    	// TODO: for the project selected, update contact and org for that project
+
    		Object[] projectArray = userProjects.toArray();
    		for (int i=0; i < projectArray.length; i++) {
    			Project bagProject = (Project) projectArray[i];
@@ -1161,7 +1171,14 @@ public class BagView extends AbstractView implements ApplicationListener {
    			}
    		}
    		messages += updateProfile();
-		projectList.setSelectedValue(project, true);
+//		TODO: updateProject does not reference a bag with multiple manifests
+    	if (bag.getIsEdeposit()) {
+    		projectList.setSelectedValue(project, true);
+    		messages += updateProject(getMessage("bag.project.edeposit"));
+    	} else if (bag.getIsNdnp()) {
+    		projectList.setSelectedValue(project, true);
+    		messages += updateProject(getMessage("bag.project.ndnp"));
+    	}
 		return messages;
     }
     
@@ -1219,7 +1236,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         	bagger.storeBaggerUpdates(userProfiles, userHomeDir);
 			String message = getMessage("profile.message.saved") + " " + bag.getProject().getName() + "\n";
 			display("SaveExecutor: " + message);
-            bagDisplayPane.updateBagPaneTabs(message);
+			compositePane.setBag(bag);
+			compositePane.updateCompositePaneTabs(message);
         }
     }
 }
