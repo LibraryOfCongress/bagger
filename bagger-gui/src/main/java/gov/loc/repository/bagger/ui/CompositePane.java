@@ -171,7 +171,7 @@ public class CompositePane extends JTabbedPane {
     }
     
     // setBag must be called before updateTabs is called
-    public void updateBagPaneTabs(String messages) {
+    public void updateCompositePaneTabs(String messages) {
         messages += "\n";
         messages += parentView.getPropertyMessage("compositePane.message.files.total") + " " + bag.getDataNumber();
         messages += "\n";
