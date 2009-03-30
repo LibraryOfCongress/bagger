@@ -938,10 +938,8 @@ public class BagView extends AbstractView implements ApplicationListener {
 		messages += bag.completeBag();
 		messages += bag.validateMetadata();
 		bag.isSerialized(true);
-    	if (bag.getDataSize() > DefaultBag.MAX_SIZE) {
-        	validateBag(messages);
-    	}
-		bagDisplayPane.setBag(bag);
+        validateBag(messages);
+       	bagDisplayPane.setBag(bag);
     	bagDisplayPane.updateBagPaneTabs(messages);
     	bagInfoInputPane.populateForms(bag);
     	messages += bagInfoInputPane.updateForms();
