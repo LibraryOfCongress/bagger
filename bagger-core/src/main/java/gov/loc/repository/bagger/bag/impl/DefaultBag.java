@@ -50,6 +50,9 @@ public class DefaultBag {
 	public static final short NO_MODE = 0;
 	public static final short ZIP_MODE = 1;
 	public static final short TAR_MODE = 2; 
+	public static final String NO_LABEL = "none";
+	public static final String ZIP_LABEL = "zip";
+	public static final String TAR_LABEL = "tar";
 
 	// Bag option flags
 	private boolean isHoley = false;
@@ -756,11 +759,11 @@ public class DefaultBag {
 			    int i = s.lastIndexOf('.');
 			    if (i > 0 && i < s.length() - 1) {
 			    	String sub = s.substring(i + 1);
-			    	if (!sub.equalsIgnoreCase("zip")) {
-			    		bagName += ".zip";
+			    	if (!sub.equalsIgnoreCase(ZIP_LABEL)) {
+			    		bagName += "." + ZIP_LABEL;
 			    	}
 			    } else {
-		    		bagName += ".zip";
+		    		bagName += "." + ZIP_LABEL;
 			    }
 				bagFile = new File(parentDir, bagName);
 				bw = new ZipBagWriter(bagFile);
@@ -775,11 +778,11 @@ public class DefaultBag {
 				String s = bagName;
 			    int i = s.lastIndexOf('.');
 			    if (i > 0 && i < s.length() - 1) {
-				      if (!s.substring(i + 1).toLowerCase().equals("tar")) {
-							bagName += ".tar";
+				      if (!s.substring(i + 1).toLowerCase().equals(TAR_LABEL)) {
+							bagName += "." + TAR_LABEL;
 				      }
 			    } else {
-		    		bagName += ".tar";
+		    		bagName += "." + TAR_LABEL;
 			    }
 				bagFile = new File(parentDir, bagName);
 				bw = new TarBagWriter(bagFile);
