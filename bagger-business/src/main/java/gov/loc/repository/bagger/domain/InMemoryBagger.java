@@ -96,7 +96,7 @@ public class InMemoryBagger extends JdbcBagger {
         defaultList.add("INSERT INTO authorities VALUES ('user', 'ROLE_BAGGER_USER')");
 
         // "CREATE TABLE projects (id, name");
-        defaultList.add("INSERT INTO projects VALUES (1, 'transfer')");
+        defaultList.add("INSERT INTO projects VALUES (1, 'no project')");
         defaultList.add("INSERT INTO projects VALUES (2, 'eDeposit')");
         defaultList.add("INSERT INTO projects VALUES (3, 'ndiipp')");
         defaultList.add("INSERT INTO projects VALUES (4, 'ndnp')");
