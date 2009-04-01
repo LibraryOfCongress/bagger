@@ -18,6 +18,8 @@ public class OrganizationGeneralForm extends AbstractForm {
 
     protected JComponent createFormControl() {
         TableFormBuilder formBuilder = new TableFormBuilder(getBindingFactory());
+
+        formBuilder.row();
         this.orgField = formBuilder.add("orgName")[1];
         formBuilder.row();
         formBuilder.add("orgAddress");
