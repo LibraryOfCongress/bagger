@@ -754,6 +754,21 @@ public class BagView extends AbstractView implements ApplicationListener {
     	} else {
     		messages += updateProject(getMessage("bag.project.noproject"));    		
     	}
+		String s = file.getName();
+		noneButton.setSelected(true);
+	    int i = s.lastIndexOf('.');
+	    if (i > 0 && i < s.length() - 1) {
+		      if (!s.substring(i + 1).toLowerCase().equals(DefaultBag.TAR_LABEL)) {
+					tarButton.setSelected(true);
+                	bag.setSerialMode(DefaultBag.TAR_MODE);
+                	bag.setIsSerial(true);
+		      } else if (!s.substring(i + 1).toLowerCase().equals(DefaultBag.ZIP_LABEL)) {
+					zipButton.setSelected(true);
+                	bag.setSerialMode(DefaultBag.ZIP_MODE);
+                	bag.setIsSerial(true);
+		      }
+	    }
+
     	bagRootPath = file;
     	bag.setRootDir(bagRootPath);
 		File rootSrc = new File(file, bag.getDataDirectory());
@@ -920,20 +935,20 @@ public class BagView extends AbstractView implements ApplicationListener {
 			};
 			zipFilter = new FileFilter() {
 	            public boolean accept(File f) {
-		              return f.getName().toLowerCase().endsWith(".zip")
+		              return f.getName().toLowerCase().endsWith("."+DefaultBag.ZIP_LABEL)
 		                  || f.isDirectory();
 	            }
 	            public String getDescription() {
-	            	return "*.zip";
+	            	return "*."+DefaultBag.ZIP_LABEL;
 	            }
 		    };
 		    tarFilter = new FileFilter() {
 	            public boolean accept(File f) {
-	                return f.getName().toLowerCase().endsWith(".tar")
+	                return f.getName().toLowerCase().endsWith("."+DefaultBag.TAR_LABEL)
 	                    || f.isDirectory();
 	            }
 	            public String getDescription() {
-	            	return "*.tar";
+	            	return "*."+DefaultBag.TAR_LABEL;
 	            }
 	        };
 		}
@@ -952,11 +967,11 @@ public class BagView extends AbstractView implements ApplicationListener {
         	if (bag.getName() != null && !bag.getName().equalsIgnoreCase(getMessage("bag.label.noname"))) {
         		String selectedName = bag.getName();
         		if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
-        			selectedName += ".zip";
+        			selectedName += "."+DefaultBag.ZIP_LABEL;
         			fs.setFileFilter(zipFilter);
         		}
         		else if (bag.getSerialMode() == DefaultBag.TAR_MODE) {
-        			selectedName += ".tar";
+        			selectedName += "."+DefaultBag.TAR_LABEL;
         			fs.setFileFilter(tarFilter);
         		}
         		else {
