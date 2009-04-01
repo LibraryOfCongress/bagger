@@ -92,7 +92,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JButton addDataButton;
     private JButton saveButton;
     private JButton saveAsButton;
-    private JButton clearButton;
     private JButton validateButton;
     private JButton updatePropButton;
     private JList projectList;
@@ -217,14 +216,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	openButton.setBackground(bgColor);
     	openButton.setForeground(fgColor);
     	buttonPanel.add(openButton);
-
-    	clearButton = new JButton(getMessage("bag.button.clear"));
-    	clearButton.addActionListener(new ClearBagHandler());
-    	clearButton.setEnabled(false);
-    	clearButton.setOpaque(true);
-    	clearButton.setBackground(bgColor);
-    	clearButton.setForeground(fgColor);
-        buttonPanel.add(clearButton);
 
     	validateButton = new JButton(getMessage("bag.button.validate"));
         validateButton.addActionListener(new ValidateBagHandler());
@@ -499,9 +490,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         projectList.setEnabled(b);
         holeyCheckbox.setEnabled(b);
         serializeGroupPanel.setEnabled(b);
-        noneButton.setEnabled(b);
         zipButton.setEnabled(b);
         tarButton.setEnabled(b);
+        noneButton.setEnabled(b);
     }
 
     private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
@@ -680,7 +671,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 		private static final long serialVersionUID = 2922141723188929572L;
 		public void actionPerformed(ActionEvent e) {
 	    	addDataButton.setEnabled(true);
-	    	clearButton.setEnabled(true);
 	    	bagButtonPanel.invalidate();
 			newBag();
 	    	bag.setIsNewbag(true);
@@ -729,7 +719,6 @@ public class BagView extends AbstractView implements ApplicationListener {
                 addDataButton.setEnabled(true);
                 saveButton.setEnabled(true);
                 saveAsButton.setEnabled(true);
-                clearButton.setEnabled(true);
                 bagButtonPanel.invalidate();
                 validateButton.setEnabled(true);
                 topButtonPanel.invalidate();
@@ -1037,40 +1026,10 @@ public class BagView extends AbstractView implements ApplicationListener {
         compositePane.updateCompositePaneTabs(bag, messages);
         BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
-    
-    private class ClearBagHandler extends AbstractAction {
-		private static final long serialVersionUID = 2922141723188929572L;
-		public void actionPerformed(ActionEvent e) {
-			confirmClearBag();
-        }
-    }
-
-    private void confirmClearBag() {
-	    ConfirmationDialog dialog = new ConfirmationDialog() {
-	        protected void onConfirm() {
-	        	String messages = "";
-	        	bagInfoInputPane.enableForms(bag, false);
-                clearExistingBag(messages);
-
-            	addDataButton.setEnabled(false);
-            	saveButton.setEnabled(false);
-            	saveAsButton.setEnabled(false);
-            	clearButton.setEnabled(false);
-            	validateButton.setEnabled(false);
-            	bagButtonPanel.invalidate();
-            	topButtonPanel.invalidate();
-	        }
-	    };
-
-	    dialog.setCloseAction(CloseAction.DISPOSE);
-	    dialog.setTitle(getMessage("bag.dialog.title.clear"));
-	    dialog.setConfirmationMessage(getMessage("bag.dialog.message.clear"));
-	    dialog.showDialog();
-    }
 
     private void clearExistingBag(String messages) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-    	//messages = "";
+    	bagInfoInputPane.enableForms(bag, false);
     	newDefaultBag(null);
     	this.baggerRules.clear();
     	bagTree = new BagTree();
@@ -1078,12 +1037,20 @@ public class BagView extends AbstractView implements ApplicationListener {
         bag.setRootTree(bagTree.getRootTree());
     	bagTreePanel.refresh(bagTree);
     	enableBagSettings(false);
+        noneButton.setSelected(true);
     	bagInfoInputPane.populateForms(bag);
         messages = bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.update(bag);
         compositePane.setBag(bag);
         compositePane.updateCompositePaneTabs(bag, messages);
+
+    	addDataButton.setEnabled(false);
+    	saveButton.setEnabled(false);
+    	saveAsButton.setEnabled(false);
+    	validateButton.setEnabled(false);
+    	bagButtonPanel.invalidate();
+    	topButtonPanel.invalidate();
         BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
     
