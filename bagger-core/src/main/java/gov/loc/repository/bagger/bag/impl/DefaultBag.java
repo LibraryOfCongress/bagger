@@ -795,7 +795,7 @@ public class DefaultBag {
 
 			try {
 				// read bag
-				log.info("DefaultBag.writeBag-createBag: " + bagFile);
+				log.info("DefaultBag.writeBag BagFactory.createBag: " + bagFile);
 				Bag bag = BagFactory.createBag(bagFile);
 
 				/* */
