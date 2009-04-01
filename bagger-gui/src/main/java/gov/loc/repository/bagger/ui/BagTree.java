@@ -56,9 +56,11 @@ public class BagTree extends CheckboxTree {
 	}
 	
 	public void populateNodes(DefaultBag bag, File rootSrc) {
+		log.debug("BagTree.populateNodes" );
 		if (bag.getRootPayload() == null && rootSrc.listFiles() != null) {
 			File[] listFiles = rootSrc.listFiles();
 			if (listFiles != null) {
+				log.debug("BagTree.populateNodes listFiles: " + listFiles.length );
 				for (int i=0; i<listFiles.length; i++) {
 					File f = listFiles[i];
 					try {
@@ -73,24 +75,24 @@ public class BagTree extends CheckboxTree {
 				}
 			}
 		} else {
+			log.debug("BagTree.populateNodes listFiles NULL: " );
 			List<String> payload = null;
 			if (bag.getRootPayload() == null)
 				payload = bag.getPayloadPaths();
 			else
 				payload = bag.getRootPayloadPaths();
+			log.debug("BagTree.populateNodes payload: " + payload.size() );
             for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
             	String filePath = it.next();
 				try {
 			        this.addNode(filePath);
 				} catch(Exception e) {
 					log.error("BagTree.populateNodes: " + e.getMessage());
-					try {
-				        this.addNode(filePath);
-					} catch (Exception ex) {
-						log.error("BagTree.populateNodes: " + ex.getMessage());						
-					}
 				}
             }
+            int rows = BAGTREE_ROW_MODIFIER * payload.size();
+            setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+            invalidate();
 		}		
 	}
 
