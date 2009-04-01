@@ -101,7 +101,8 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	@Transactional(readOnly = true)
 	public Collection<Project> getProjects() throws DataAccessException {
 		return this.simpleJdbcTemplate.query(
-				"SELECT * FROM projects ORDER BY name",
+				"SELECT * FROM projects",
+//				"SELECT * FROM projects ORDER BY name",
 				ParameterizedBeanPropertyRowMapper.newInstance(Project.class));
 	}
 	
