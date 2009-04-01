@@ -32,7 +32,6 @@ public class BagInfoInputPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
 	private static final Log logger = LogFactory.getLog(BagInfoInputPane.class);
 	private BagView parentView;
-    private DefaultBag bag;
     private OrganizationInfoForm bagInfoForm = null;
     private OrganizationGeneralForm organizationGeneralForm = null;
     private OrganizationContactForm organizationContactForm = null;
@@ -52,10 +51,9 @@ public class BagInfoInputPane extends JTabbedPane {
 
     public BagInfoInputPane(BagView bagView, String username, Contact c ) {
     	this.parentView = bagView;
-    	this.bag = bagView.getBag();
     	this.user = c;
     	this.username = username;
-    	populateForms(bag);
+    	populateForms(bagView.getBag());
         setPreferredSize(bagInfoForm.getControl().getPreferredSize());
         ChangeListener changeListener = new ChangeListener() {
         	public void stateChanged(ChangeEvent changeEvent) {
@@ -138,19 +136,18 @@ public class BagInfoInputPane extends JTabbedPane {
     	return this.user;
     }
     
-    public void enableForms(boolean b) {
+    public void enableForms(DefaultBag bag, boolean b) {
     	bagInfoForm.setEnabled(b);
         organizationGeneralForm.setEnabled(b);
         organizationContactForm.setEnabled(b);
         userContactForm.setEnabled(b);
-        if (this.bag.getIsHoley()) {
+        if (bag.getIsHoley()) {
             fetchForm.setEnabled(b);
         }
     }
     
     // Define the information forms
     public void populateForms(DefaultBag bag) {
-    	this.bag = bag;
     	DefaultBagInfo bagInfo = bag.getInfo();
         BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
         organizationFormModel = FormModelHelper.createCompoundFormModel(baggerOrganization);
@@ -179,11 +176,11 @@ public class BagInfoInputPane extends JTabbedPane {
             fetchForm = new OrganizationFetchForm(FormModelHelper.createChildPageFormModel(fetchFormModel, null));
         }
 
-        updateProfileForms();
+        updateProfileForms(bag);
     }
 
     // Create a tabbed pane for the information forms and checkbox panel
-    public void updateProfileForms() {
+    public void updateProfileForms(DefaultBag bag) {
         this.removeAll();
         this.invalidate();
         this.setName("Profile");
@@ -224,7 +221,7 @@ public class BagInfoInputPane extends JTabbedPane {
         }
     }
 
-    public String verifyForms() {
+    public String verifyForms(DefaultBag bag) {
         String messages = "";
 
         if (!userContactForm.hasErrors()) {
@@ -294,17 +291,17 @@ public class BagInfoInputPane extends JTabbedPane {
         return messages;
     }
     
-    public String updateForms() {
+    public String updateForms(DefaultBag bag) {
         String messages = "";
 
-        messages = verifyForms();
-        updateProfileForms();
-        update();
+        messages = verifyForms(bag);
+        updateProfileForms(bag);
+        update(bag);
         
         return messages;
     }
     
-    public void updateSelected() {
+    public void updateSelected(DefaultBag bag) {
     	if (bagInfoForm.hasErrors()) {
     		this.setSelectedIndex(0);
     		bagInfoForm.getControl().grabFocus();
@@ -321,10 +318,10 @@ public class BagInfoInputPane extends JTabbedPane {
     		this.setSelectedIndex(1);
     		userContactForm.getControl().grabFocus();
     	}
-    	update();
+    	update(bag);
     }
     
-    public boolean hasFormErrors() {
+    public boolean hasFormErrors(DefaultBag bag) {
         if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || userContactForm.hasErrors() || (bag.getIsHoley() && fetchForm.hasErrors())) {
         	return true;
         } else {
@@ -332,7 +329,7 @@ public class BagInfoInputPane extends JTabbedPane {
         }
     }
     
-    public boolean hasValidBagForms() {
+    public boolean hasValidBagForms(DefaultBag bag) {
         if (organizationGeneralForm.hasErrors() || organizationContactForm.hasErrors() || bagInfoForm.hasErrors() || (bag.getIsHoley() && fetchForm.hasErrors())) {
         	return true;
         } else {
@@ -340,7 +337,7 @@ public class BagInfoInputPane extends JTabbedPane {
         }
     }
 
-    public void update() {
+    public void update(DefaultBag bag) {
         java.awt.Component[] components = bagInfoForm.getControl().getComponents();
         for (int i=0; i<components.length; i++) {
         	java.awt.Component c = components[i];
