@@ -31,7 +31,7 @@ public class CompositePane extends JTabbedPane {
     private JScrollPane manifestScrollPane;
     private BagTextPane tagManifestPane;
     private JScrollPane tagManifestScrollPane;
-	private Dimension preferredDimension = new Dimension(400, 400);
+	private Dimension preferredDimension = new Dimension(400, 380);
 	private Color selectedColor = Color.lightGray; //new Color(180, 180, 200);
 	private Color unselectedColor = Color.black; //new Color(180, 180, 160);
 
