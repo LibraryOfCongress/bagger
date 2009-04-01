@@ -710,6 +710,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 			JFileChooser fo = new JFileChooser(selectFile);
 		    fo.setDialogType(JFileChooser.OPEN_DIALOG);
 		    fo.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		    if (bagRootPath != null) fo.setCurrentDirectory(bagRootPath.getParentFile());
 			fo.setDialogTitle("Existing Bag Location");
         	int option = fo.showOpenDialog(frame);
 
@@ -758,11 +759,11 @@ public class BagView extends AbstractView implements ApplicationListener {
 		noneButton.setSelected(true);
 	    int i = s.lastIndexOf('.');
 	    if (i > 0 && i < s.length() - 1) {
-		      if (!s.substring(i + 1).toLowerCase().equals(DefaultBag.TAR_LABEL)) {
+		      if (s.substring(i + 1).toLowerCase().equals(DefaultBag.TAR_LABEL)) {
 					tarButton.setSelected(true);
                 	bag.setSerialMode(DefaultBag.TAR_MODE);
                 	bag.setIsSerial(true);
-		      } else if (!s.substring(i + 1).toLowerCase().equals(DefaultBag.ZIP_LABEL)) {
+		      } else if (s.substring(i + 1).toLowerCase().equals(DefaultBag.ZIP_LABEL)) {
 					zipButton.setSelected(true);
                 	bag.setSerialMode(DefaultBag.ZIP_MODE);
                 	bag.setIsSerial(true);
