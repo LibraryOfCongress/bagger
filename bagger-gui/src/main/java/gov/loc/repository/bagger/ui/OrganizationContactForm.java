@@ -18,6 +18,8 @@ public class OrganizationContactForm extends AbstractForm {
 
     protected JComponent createFormControl() {
         TableFormBuilder formBuilder = new TableFormBuilder(getBindingFactory());
+
+        formBuilder.row();
         this.contact = formBuilder.add("contactName")[1];
         formBuilder.row();
         formBuilder.add("telephone");
