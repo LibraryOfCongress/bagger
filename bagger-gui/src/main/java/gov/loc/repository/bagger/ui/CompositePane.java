@@ -171,25 +171,26 @@ public class CompositePane extends JTabbedPane {
     }
     
     // setBag must be called before updateTabs is called
-    public void updateCompositePaneTabs(String messages) {
-        messages += "\n";
-        messages += parentView.getPropertyMessage("compositePane.message.files.total") + " " + bag.getDataNumber();
-        messages += "\n";
-        long fsize = bag.getDataSize();
-        if (fsize > DefaultBag.GB) {
-        	fsize /= DefaultBag.GB;
-            messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.gb") + " " + fsize;
-        } else if (fsize > DefaultBag.MB) {
-        	fsize /= DefaultBag.MB;
-            messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.mb") + " " + fsize;
-        } else if (fsize > DefaultBag.KB) {
-        	fsize /= DefaultBag.KB;
-            messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.kb") + " " + fsize;
-        } else {
-            messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.tiny");
-        }
-
+    public void updateCompositePaneTabs(DefaultBag bag, String messages) {
         setBag(bag);
+    	if (bag.isSerialized()) {
+            messages += "\n";
+            messages += parentView.getPropertyMessage("compositePane.message.files.total") + " " + bag.getDataNumber();
+            messages += "\n";
+            long fsize = bag.getDataSize();
+            if (fsize > DefaultBag.GB) {
+            	fsize /= DefaultBag.GB;
+                messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.gb") + " " + fsize;
+            } else if (fsize > DefaultBag.MB) {
+            	fsize /= DefaultBag.MB;
+                messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.mb") + " " + fsize;
+            } else if (fsize > DefaultBag.KB) {
+            	fsize /= DefaultBag.KB;
+                messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.kb") + " " + fsize;
+            } else {
+                messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.tiny");
+            }
+    	}
     	if (this.getComponentCount() > 0) {
     		this.removeAll();
             this.invalidate();
