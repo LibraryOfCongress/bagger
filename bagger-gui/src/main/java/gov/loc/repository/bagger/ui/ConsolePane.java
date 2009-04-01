@@ -23,7 +23,7 @@ public class ConsolePane extends JPanel {
 
 	public static final String CONSOLE_PANE = "consolePane";
 	private Dimension maxDimension = new Dimension(400, 400);
-	private Dimension preferredDimension = new Dimension(400, 200);
+	private Dimension preferredDimension = new Dimension(400, 400);
     private GridBagLayout layout = new GridBagLayout();
     private GridBagConstraints gbc = new GridBagConstraints();
     private String messages = new String();
