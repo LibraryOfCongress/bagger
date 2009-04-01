@@ -717,13 +717,13 @@ public class BagView extends AbstractView implements ApplicationListener {
             if (option == JFileChooser.APPROVE_OPTION) {
                 File file = fo.getSelectedFile();
                 if (file == null) file = bagRootPath;
+                openExistingBag(file);
                 addDataButton.setEnabled(true);
                 saveButton.setEnabled(true);
                 saveAsButton.setEnabled(true);
                 bagButtonPanel.invalidate();
                 validateButton.setEnabled(true);
                 topButtonPanel.invalidate();
-                openExistingBag(file);
                 bag.setIsNewbag(false);
             }
 		}
