@@ -18,6 +18,8 @@ public class OrganizationFetchForm extends AbstractForm {
 
     protected JComponent createFormControl() {
         TableFormBuilder formBuilder = new TableFormBuilder(getBindingFactory());
+
+        formBuilder.row();
         this.baseURL = formBuilder.add("baseURL")[1];
         formBuilder.row();
         formBuilder.add("userName");
