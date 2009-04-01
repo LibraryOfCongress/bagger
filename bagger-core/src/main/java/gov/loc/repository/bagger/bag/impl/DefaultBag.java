@@ -380,33 +380,32 @@ public class DefaultBag {
 		}
 	}
 
-	public void copyFormToBag(Bag bag) {
+	public void copyFormToBag() {
 		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
 		Contact contact = baggerOrganization.getContact();
-		if (bag.getBagInfoTxt() != null) {
-			bag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getOrgName());
-			bag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrgAddress());
-			bag.getBagInfoTxt().setContactName(contact.getContactName());
-			bag.getBagInfoTxt().setContactPhone(contact.getTelephone());
-			bag.getBagInfoTxt().setContactEmail(contact.getEmail());
-			bag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
-			bag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
-			bag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
-			bag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
-			bag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
-			bag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
-			bag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
-			bag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
-			bag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
+		if (bilBag.getBagInfoTxt() != null) {
+			bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getOrgName());
+			bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrgAddress());
+			bilBag.getBagInfoTxt().setContactName(contact.getContactName());
+			bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
+			bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
+			bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
+			bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
+			bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
+			bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
+			bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
+			bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
+			bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
+			bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
+			bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
 			if (this.getIsEdeposit()) {
-				bag.getBagInfoTxt().put(DefaultBagInfo.EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
 			}
 			if (this.getIsNdnp()) {
-				bag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
 			}
 		}
-		// TODO: complete bag when is has changed
-        bag.complete();
+        //bag.complete();
 	}
 
 	public void setInfo(DefaultBagInfo bagInfo) {
@@ -417,8 +416,9 @@ public class DefaultBag {
             this.setName(bagName);
         }
 		this.bagInfo.copy(bagInfo);
-		this.bagInfo = bagInfo;
-		this.copyFormToBag(this.bilBag);
+		//this.bagInfo = bagInfo;
+		this.copyFormToBag();
+		//this.bilBag.complete();
 	}
 
 	public DefaultBagInfo getInfo() {
@@ -603,7 +603,7 @@ public class DefaultBag {
 		return this.rootTree;
 	}
 	
-	public String write(boolean validFormFields, File path) {
+	public String write(boolean validFormFields) throws Exception {
 		boolean isContinue = true;
 		String messages = "";
 		reset();
@@ -619,6 +619,11 @@ public class DefaultBag {
 				}
 				display("DefaultBag.write isValidForms: " + messages);
 			}
+		} catch (Exception e) {
+			messages += "An error occurred validating forms:\n" + e.toString() + "\n";
+			log.error(e.getMessage());
+		}
+		try {
 			// is complete
 			if (isContinue) {
 				messages += completeBag();
@@ -630,15 +635,17 @@ public class DefaultBag {
 				}
 				display("DefaultBag.write isComplete: " + messages);
 			}
-			// write bag
-			if (isContinue) {
-				//this.bilBag.complete();
-				messages += writeBag();
-			}
 		} catch (Exception e) {
-			messages += "An error occurred writing the bag:\n" + e.toString() + "\n";
-			e.printStackTrace();
+			messages += "An error occurred checking bag completeness:\n" + e.toString() + "\n";
 			log.error(e.getMessage());
+		}
+		if (isContinue) {
+			try {
+				messages += writeBag();					
+			} catch (Exception e) {
+				log.error("DefaultBag.write.writeBag: " + e);
+				throw new RuntimeException(e);
+			}
 		}
 		return messages;
 	}
@@ -727,23 +734,35 @@ public class DefaultBag {
 		return messages;
 	}
 	
-	public String writeBag() {
+	public String writeBag() throws Exception {
 		String messages = "";
 		String bagName = "";
 		File bagFile = null;
+		File parentDir = null;
 		BagWriter bw = null;
+		bagName = getRootDir().getName();
+		parentDir = getRootDir().getParentFile();
 		try {
+			this.setName(bagName);
 			if (this.serialMode == NO_MODE) {
 				this.isSerialized(true);
-				bagName = this.getName();
-				bagFile = new File(getRootDir(), bagName);
+				bagFile = new File(parentDir, this.getName());
 				bw = new FileSystemBagWriter(bagFile, true);				
 				if (this.isCleanup) { messages += cleanup(); }
 				messages += "Successfully created bag: " + this.getInfo().getBagName() + "\n";
 			} else if (this.serialMode == ZIP_MODE) {
 				this.isSerialized(true);
-				bagName = this.getName() + ".zip";
-				bagFile = new File(getRootDir(), bagName);
+				String s = bagName;
+			    int i = s.lastIndexOf('.');
+			    if (i > 0 && i < s.length() - 1) {
+			    	String sub = s.substring(i + 1);
+			    	if (!sub.equalsIgnoreCase("zip")) {
+			    		bagName += ".zip";
+			    	}
+			    } else {
+		    		bagName += ".zip";
+			    }
+				bagFile = new File(parentDir, bagName);
 				bw = new ZipBagWriter(bagFile);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
@@ -753,8 +772,16 @@ public class DefaultBag {
 				}
 			} else if (this.serialMode == TAR_MODE) {
 				this.isSerialized(true);
-				bagName = this.getName() + ".tar";
-				bagFile = new File(getRootDir(), bagName);
+				String s = bagName;
+			    int i = s.lastIndexOf('.');
+			    if (i > 0 && i < s.length() - 1) {
+				      if (!s.substring(i + 1).toLowerCase().equals("tar")) {
+							bagName += ".tar";
+				      }
+			    } else {
+		    		bagName += ".tar";
+			    }
+				bagFile = new File(parentDir, bagName);
 				bw = new TarBagWriter(bagFile);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
@@ -793,8 +820,8 @@ public class DefaultBag {
 			}
 		} catch (Exception e) {
 			this.isSerialized(false);
-			e.printStackTrace();
 			messages += "ERROR creating bag: " + bagFile + "\n" + e.getMessage() + "\n";
+			throw new RuntimeException(e);
 		}
 		return messages;
 	}
