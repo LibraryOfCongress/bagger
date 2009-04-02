@@ -184,11 +184,16 @@ public class BagInfoInputPane extends JTabbedPane {
         this.removeAll();
         this.invalidate();
         this.setName("Profile");
+        bagInfoForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.details.help"));
         this.addTab(parentView.getPropertyMessage("infoInputPane.tab.details"), bagInfoForm.getControl());
+        userContactForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.user.help"));
         this.addTab(parentView.getPropertyMessage("infoInputPane.tab.user"), userContactForm.getControl());
+        organizationGeneralForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.organization.help"));
         this.addTab(parentView.getPropertyMessage("infoInputPane.tab.organization"), organizationGeneralForm.getControl());
-        this.addTab(parentView.getPropertyMessage("infoInputPane.tab.contact"), organizationContactForm.getControl());
+        organizationContactForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.contact.help"));
+        this.addTab(parentView.getPropertyMessage("infoInputPane.tab.contact"), organizationContactForm.getControl()); 
         if (bag.getIsHoley()) {
+        	fetchForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.fetch.help"));
             this.addTab(parentView.getPropertyMessage("infoInputPane.tab.fetch"), fetchForm.getControl());        	
         }
 
