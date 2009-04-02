@@ -670,10 +670,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     private class CreateNewBagHandler extends AbstractAction {
 		private static final long serialVersionUID = 2922141723188929572L;
 		public void actionPerformed(ActionEvent e) {
-	    	addDataButton.setEnabled(true);
-	    	bagButtonPanel.invalidate();
 			newBag();
 	    	bag.setIsNewbag(true);
+	    	addDataButton.setEnabled(true);
+	    	bagButtonPanel.invalidate();
         }
     }
 
@@ -1080,7 +1080,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             compositePane.setBag(bag);
             compositePane.updateCompositePaneTabs(bag, messages);
             bag.copyFormToBag();
-//    		TODO: figure out why complete does not keep multiple manifests
+    		// TODO: figure out why complete does not keep multiple manifests
             bag.getBag().complete();
         }
     } 
