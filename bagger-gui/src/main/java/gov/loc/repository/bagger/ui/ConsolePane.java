@@ -5,31 +5,35 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-//import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 
 public class ConsolePane extends JPanel {
 	private static final long serialVersionUID = -4290352509246639528L;
+	private static final Log log = LogFactory.getLog(ConsolePane.class);
 
 	public static final String CONSOLE_PANE = "consolePane";
 	private Dimension maxDimension = new Dimension(400, 400);
+	private Dimension consoleDimension = new Dimension(300, 300);
 	private Dimension preferredDimension = new Dimension(400, 380);
     private GridBagLayout layout = new GridBagLayout();
     private GridBagConstraints gbc = new GridBagConstraints();
     private String messages = new String();
     private Color textBackground = new Color(240, 240, 240);
 	private Dimension formDimension = new Dimension(150, 25);
-	private Dimension consoleDimension = new Dimension(300, 200);
     private Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
     private Font font;
 
@@ -169,15 +173,31 @@ public class ConsolePane extends JPanel {
     }
     
     private void createConsoleArea() {
-        JTextArea serializedArea = new JTextArea(this.messages);
-    	if (defaultBag != null) serializedArea.append("");
+    	String text = "";
+    	if (this.messages != null) text = this.messages;
+    	//for (int i=0; i<500; i++) { text += "" + i + " "; }
+    	int consoleWidth = 300;
+        int consoleHeight = 400;
+        int textRows = 20;
+        int textRowWidth = 20;
+
+        JTextArea serializedArea = new JTextArea(text);
+        Font textFont = serializedArea.getFont();
+        FontMetrics fm = serializedArea.getFontMetrics(textFont);
+        int fontHeight = fm.getHeight();
+        int fontWidth = fm.charWidth('M');
+        textRowWidth = consoleWidth / fontWidth;
+        textRows = getRowCount(text, textRowWidth);
+        if (fontHeight > 0 && textRows > 0) consoleHeight = fontHeight * textRows;
+
     	serializedArea.setEditable(false);
     	serializedArea.setLineWrap(true);
-    	serializedArea.setRows(20);
+    	serializedArea.setRows(textRows);
     	serializedArea.setColumns(10);
     	serializedArea.setBackground(textBackground);
     	serializedArea.setWrapStyleWord(true);
     	serializedArea.setAutoscrolls(true);
+        consoleDimension = new Dimension(300, consoleHeight);
     	serializedArea.setPreferredSize(consoleDimension);
     	serializedArea.setBorder(BorderFactory.createLineBorder(Color.black));
         buildConstraints(gbc, 0, 4, 2, 4, 10, 10, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
@@ -199,5 +219,30 @@ public class ConsolePane extends JPanel {
 
     public boolean requestFocusInWindow() {
         return this.requestFocusInWindow();
+    }
+
+    private int getRowCount(String text, int rowWidth) {
+    	int rows = 0;
+    	java.io.StringReader reader = new java.io.StringReader(text);
+    	java.io.LineNumberReader ln = new java.io.LineNumberReader(reader);
+    	try {
+        	String line = ln.readLine();
+            while (line != null) {
+            	if (line.length() > rowWidth) {
+            		int length = line.length() / rowWidth;
+            		rows += length;
+            	}
+            	rows++;
+            	line = ln.readLine();
+            }
+        	if (line.length() > rowWidth) {
+        		int length = line.length() / rowWidth;
+        		rows += length;
+        	}
+    	} catch (Exception e) {
+    		log.error("ConsolePane.getRowCount: " + e.getMessage());
+    	}
+    	
+    	return rows;
     }
 }
