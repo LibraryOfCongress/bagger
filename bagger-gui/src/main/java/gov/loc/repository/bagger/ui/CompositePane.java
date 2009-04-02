@@ -35,11 +35,11 @@ public class CompositePane extends JTabbedPane {
 	private Color selectedColor = Color.lightGray; //new Color(180, 180, 200);
 	private Color unselectedColor = Color.black; //new Color(180, 180, 160);
 
-    public CompositePane(BagView bagView) {
+    public CompositePane(BagView bagView, String message) {
         super();
         this.parentView = bagView;
         this.bag = bagView.getBag();
-        populateBagPane("");
+        populateBagPane(message);
     }
 
     private void init() {
@@ -81,6 +81,7 @@ public class CompositePane extends JTabbedPane {
     	consolePane = new ConsolePane(parentView, messages);
     	consoleScrollPane.setViewportView(consolePane);
     	this.addTab(parentView.getPropertyMessage("compositePane.tab.console"), consoleScrollPane);
+    	consoleScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.console.help"));
     	consoleScrollPane.setForeground(unselectedColor);
 
     	String mcontent = bag.getManifestContent();
@@ -88,6 +89,7 @@ public class CompositePane extends JTabbedPane {
     	manifestPane = new BagTextPane(mcontent);
     	manifestScrollPane.setViewportView(manifestPane);
     	this.addTab(parentView.getPropertyMessage("compositePane.tab.manifest"), manifestScrollPane);
+    	manifestScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.manifest.help"));
     	manifestScrollPane.setForeground(selectedColor);
 
     	String tmcontent = bag.getTagManifestContent();
@@ -95,6 +97,7 @@ public class CompositePane extends JTabbedPane {
     	tagManifestPane = new BagTextPane(tmcontent);
     	tagManifestScrollPane.setViewportView(tagManifestPane);
     	this.addTab(parentView.getPropertyMessage("compositePane.tab.tagmanifest"), tagManifestScrollPane);
+    	tagManifestScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.tagmanifest.help"));
     	tagManifestScrollPane.setForeground(selectedColor);
 
         bagInfoScrollPane = new JScrollPane();
@@ -102,6 +105,7 @@ public class CompositePane extends JTabbedPane {
         bagInfoPane = new BagTextPane(bagInfoContent);
         bagInfoScrollPane.setViewportView(bagInfoPane);
         this.addTab(parentView.getPropertyMessage("compositePane.tab.baginfo"), bagInfoScrollPane);
+        bagInfoScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.baginfo.help"));
         bagInfoScrollPane.setForeground(selectedColor);
 
         bagItScrollPane = new JScrollPane();
@@ -109,6 +113,7 @@ public class CompositePane extends JTabbedPane {
         bagItPane = new BagTextPane(bagItContent);
         bagItScrollPane.setViewportView(bagItPane);
         this.addTab(parentView.getPropertyMessage("compositePane.tab.bagit"), bagItScrollPane);
+        bagItScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.bagit.help"));
         bagItScrollPane.setForeground(selectedColor);
 
     	fetchScrollPane = new JScrollPane();
@@ -118,6 +123,7 @@ public class CompositePane extends JTabbedPane {
     	if (this.bag.getIsHoley()) {
             this.addTab(parentView.getPropertyMessage("compositePane.tab.fetch"), fetchScrollPane);    		
     	}
+    	fetchScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.fetch.help"));
     	fetchScrollPane.setForeground(selectedColor);
 
     	dataScrollPane = new JScrollPane();
@@ -127,6 +133,7 @@ public class CompositePane extends JTabbedPane {
     	if (!this.bag.getIsHoley()) {
         	this.addTab(parentView.getPropertyMessage("compositePane.tab.data"), dataScrollPane);
     	}
+    	dataScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.data.help"));
     	dataScrollPane.setForeground(selectedColor);
 
         init();
@@ -146,23 +153,30 @@ public class CompositePane extends JTabbedPane {
     	consolePane = new ConsolePane(parentView, messages);
     	consoleScrollPane.setViewportView(consolePane);
     	this.addTab(parentView.getPropertyMessage("compositePane.tab.console"), consoleScrollPane);
+    	consoleScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.console.help"));
     	consoleScrollPane.setForeground(unselectedColor);
     	manifestScrollPane.setViewportView(manifestPane);
     	this.addTab(parentView.getPropertyMessage("compositePane.tab.manifest"), manifestScrollPane);
+    	manifestScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.manifest.help"));
     	manifestScrollPane.setForeground(selectedColor);
     	this.addTab(parentView.getPropertyMessage("compositePane.tab.tagmanifest"), tagManifestScrollPane);
+    	tagManifestScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.tagmanifest.help"));
     	tagManifestScrollPane.setForeground(selectedColor);
         this.addTab(parentView.getPropertyMessage("compositePane.tab.baginfo"), bagInfoScrollPane);
+    	bagInfoScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.baginfo.help"));
         bagInfoScrollPane.setForeground(selectedColor);
         this.addTab(parentView.getPropertyMessage("compositePane.tab.bagit"), bagItScrollPane);
+    	bagItScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.bagit.help"));
         bagItScrollPane.setForeground(selectedColor);
     	if (this.bag.getIsHoley()) {
             this.addTab(parentView.getPropertyMessage("compositePane.tab.fetch"), fetchScrollPane);    		
             fetchScrollPane.setForeground(selectedColor);
+        	fetchScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.fetch.help"));
     	}
     	if (!this.bag.getIsHoley()) {
         	this.addTab(parentView.getPropertyMessage("compositePane.tab.data"), dataScrollPane);
         	dataScrollPane.setForeground(selectedColor);
+        	dataScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.data.help"));
     	}
     	/* */
         consolePane.invalidate();
