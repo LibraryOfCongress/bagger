@@ -207,6 +207,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	createButton.setOpaque(true);
     	createButton.setBackground(bgColor);
     	createButton.setForeground(fgColor);
+    	createButton.setToolTipText(getMessage("bag.button.create.help"));
     	buttonPanel.add(createButton);
 
     	openButton = new JButton(getMessage("bag.button.open"));
@@ -215,6 +216,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	openButton.setOpaque(true);
     	openButton.setBackground(bgColor);
     	openButton.setForeground(fgColor);
+    	openButton.setToolTipText(getMessage("bag.button.open.help"));
     	buttonPanel.add(openButton);
 
     	validateButton = new JButton(getMessage("bag.button.validate"));
@@ -223,6 +225,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         validateButton.setOpaque(true);
     	validateButton.setBackground(bgColor);
     	validateButton.setForeground(fgColor);
+    	validateButton.setToolTipText(getMessage("bag.button.validate.help"));
         buttonPanel.add(validateButton);
         
         return buttonPanel;
@@ -232,7 +235,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagButtonPanel = createBagButtonPanel();
     	bagTree = new BagTree();
     	bagTreePanel = new BagTreePanel(bagTree);
-    	compositePane = new CompositePane(this);
+    	bagTreePanel.setToolTipText(this.getMessage("bagView.bagTree.help"));
+    	compositePane = new CompositePane(this, getInitialConsoleMsg());
+    	compositePane.setToolTipText(this.getMessage("compositePane.tab.help"));
 
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
@@ -260,16 +265,19 @@ public class BagView extends AbstractView implements ApplicationListener {
     	addDataButton = new JButton(getMessage("bag.button.add"));
     	addDataButton.addActionListener(new AddDataHandler());
     	addDataButton.setEnabled(false);
+    	addDataButton.setToolTipText(getMessage("bag.button.add.help"));
         buttonPanel.add(addDataButton, BorderLayout.NORTH);
 
         saveButton = new JButton(getMessage("bag.button.save"));
         saveButton.addActionListener(new SaveBagHandler());
         saveButton.setEnabled(false);
+        saveButton.setToolTipText(getMessage("bag.button.save.help"));
         buttonPanel.add(saveButton, BorderLayout.CENTER);
 
-    	saveAsButton = new JButton(getMessage("bag.button.saveAs"));
+    	saveAsButton = new JButton(getMessage("bag.button.saveas"));
     	saveAsButton.addActionListener(new SaveBagAsHandler());
         saveAsButton.setEnabled(false);
+        saveAsButton.setToolTipText(getMessage("bag.button.saveas.help"));
         buttonPanel.add(saveAsButton, BorderLayout.SOUTH);
         
         return buttonPanel;
@@ -278,18 +286,24 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JScrollPane createInfoInputPane() {
     	JPanel bagSettingsPanel = createBagSettingsPanel();
     	bagInfoInputPane = new BagInfoInputPane(this, username, user);
+    	bagInfoInputPane.setToolTipText(this.getMessage("bagView.bagInfoInputPane.help"));
     	JScrollPane bagInfoScrollPane = new JScrollPane();
     	bagInfoScrollPane.setViewportView(bagInfoInputPane);
+    	bagInfoScrollPane.setToolTipText(this.getMessage("bagView.bagInfoInputPane.help"));
     	
     	// Create a panel for the form error messages and the update button
         JButton nextButton = new JButton(getMessage("button.next"));
         nextButton.setMnemonic(KeyEvent.VK_ENTER);
         nextButton.addActionListener(new NextButtonHandler());
-    	// Create a panel for the form error messages and the update button
-        updatePropButton = new JButton(getMessage("button.saveUpdates"));
+        nextButton.setToolTipText(getMessage("button.next.help"));
+
+        // Create a panel for the form error messages and the update button
+        updatePropButton = new JButton(getMessage("button.saveupdates"));
         buttonColor = updatePropButton.getBackground();
         updatePropButton.setMnemonic(KeyEvent.VK_S);
         updatePropButton.addActionListener(new UpdateBagHandler());
+        updatePropButton.setToolTipText(getMessage("button.saveupdates.help"));
+        updatePropButton.setEnabled(false);
         
         JPanel infoLabelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         infoFormMessagePane = new BagTextPane("");
@@ -340,6 +354,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         infoLayout.setConstraints(bagSettingsPanel, gbc);
         
         JPanel infoPanel = new JPanel(infoLayout);
+        infoPanel.setToolTipText(this.getMessage("bagView.bagInfoInputPane.help"));
         Border emptyBorder = new EmptyBorder(5, 5, 5, 5);
         int width = 0;
         int height = 0;
@@ -358,6 +373,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         Dimension preferredSize = new Dimension(width, height);
         
     	JScrollPane infoScrollPane = new JScrollPane();
+    	infoScrollPane.setToolTipText(this.getMessage("bagView.bagInfoInputPane.help"));
     	infoScrollPane.setPreferredSize(preferredSize);
     	infoScrollPane.setViewportView(infoPanel);
     	return infoScrollPane;
@@ -368,15 +384,17 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         // Project control
         JLabel projectLabel = new JLabel(getMessage("bag.label.project"));
+        projectLabel.setToolTipText(getMessage("bag.projectlist.help"));
         DefaultListModel listModel = new DefaultListModel();
         Object[] array = userProjects.toArray();
         for (int i=0; i < userProjects.size(); i++) listModel.addElement(((Project)array[i]).getName());
         projectList = new JList(listModel);
-        projectList.setName(getMessage("bag.label.projectList"));
+        projectList.setName(getMessage("bag.label.projectlist"));
         projectList.setVisibleRowCount(2);
         projectList.setSelectedValue(getMessage("bag.project.noproject"), true);
         projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         projectList.addListSelectionListener(new ProjectListHandler());
+        projectList.setToolTipText(getMessage("bag.projectlist.help"));
     	String selected = (String) projectList.getSelectedValue();
     	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(getMessage("bag.project.edeposit"))) {
     		bag.setIsEdeposit(true);
@@ -391,11 +409,11 @@ public class BagView extends AbstractView implements ApplicationListener {
         JScrollPane projectPane = new JScrollPane(projectList);
 
         // Checksum control
-        JLabel checksumLabel = new JLabel(getMessage("bag.label.checksumType"));
-        JRadioButton md5Button = new JRadioButton(getMessage("bag.checksumType.md5"));
+        JLabel checksumLabel = new JLabel(getMessage("bag.label.checksumtype"));
+        JRadioButton md5Button = new JRadioButton(getMessage("bag.checksumtype.md5"));
         md5Button.setSelected(true);
         md5Button.setEnabled(true);
-        JRadioButton sha1Button = new JRadioButton(getMessage("bag.checksumType.sha1"));
+        JRadioButton sha1Button = new JRadioButton(getMessage("bag.checksumtype.sha1"));
         sha1Button.setSelected(false);
         sha1Button.setEnabled(false);
         ButtonGroup checksumGroup = new ButtonGroup();
@@ -408,29 +426,35 @@ public class BagView extends AbstractView implements ApplicationListener {
         checksumGroupPanel.setBorder(border);
 
         // Holey bag control
-        JLabel holeyLabel = new JLabel(getMessage("bag.label.isHoley"));
-        holeyCheckbox = new JCheckBox(getMessage("bag.checkbox.isHoley"));
+        JLabel holeyLabel = new JLabel(getMessage("bag.label.isholey"));
+        holeyLabel.setToolTipText(getMessage("bag.isholey.help"));
+        holeyCheckbox = new JCheckBox(getMessage("bag.checkbox.isholey"));
         holeyCheckbox.setBorder(border);
         holeyCheckbox.setSelected(false);
         holeyCheckbox.addActionListener(new HoleyBagHandler());
+        holeyCheckbox.setToolTipText(getMessage("bag.isholey.help"));
 
         // Bag is to be serialized control
-        JLabel serializeLabel = new JLabel(getMessage("bag.label.isPackage"));
-        noneButton = new JRadioButton(getMessage("bag.serializeType.none"));
+        JLabel serializeLabel = new JLabel(getMessage("bag.label.ispackage"));
+        serializeLabel.setToolTipText(getMessage("bag.serializetype.help"));
+        noneButton = new JRadioButton(getMessage("bag.serializetype.none"));
         noneButton.setSelected(true);
         noneButton.setEnabled(false);
         AbstractAction serializeListener = new SerializeBagHandler();
         noneButton.addActionListener(serializeListener);
+        noneButton.setToolTipText(getMessage("bag.serializetype.none.help"));
 
-        zipButton = new JRadioButton(getMessage("bag.serializeType.zip"));
+        zipButton = new JRadioButton(getMessage("bag.serializetype.zip"));
         zipButton.setSelected(false);
         zipButton.setEnabled(false);
         zipButton.addActionListener(serializeListener);
+        zipButton.setToolTipText(getMessage("bag.serializetype.zip.help"));
 
-        tarButton = new JRadioButton(getMessage("bag.serializeType.tar"));
+        tarButton = new JRadioButton(getMessage("bag.serializetype.tar"));
         tarButton.setSelected(false);
         tarButton.setEnabled(false);
         tarButton.addActionListener(serializeListener);
+        tarButton.setToolTipText(getMessage("bag.serializetype.tar.help"));
 
         ButtonGroup serializeGroup = new ButtonGroup();
         serializeGroup.add(noneButton);
@@ -443,6 +467,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         serializeGroupPanel.add(tarButton);
         serializeGroupPanel.setBorder(border);
         serializeGroupPanel.setEnabled(false);
+        serializeGroupPanel.setToolTipText(getMessage("bag.serializetype.help"));
 
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -673,6 +698,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 			newBag();
 	    	bag.setIsNewbag(true);
 	    	addDataButton.setEnabled(true);
+	    	updatePropButton.setEnabled(true);
 	    	bagButtonPanel.invalidate();
         }
     }
@@ -719,6 +745,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 if (file == null) file = bagRootPath;
                 openExistingBag(file);
                 addDataButton.setEnabled(true);
+                updatePropButton.setEnabled(true);
                 saveButton.setEnabled(true);
                 saveAsButton.setEnabled(true);
                 bagButtonPanel.invalidate();
@@ -856,7 +883,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTreePanel.refresh(bagTree);
     	bagInfoInputPane.populateForms(bag);
         bagInfoInputPane.update(bag);
-    	messages += getMessage("bag.message.filesAdded") + " " + file.getName() + "\n";
+    	messages += getMessage("bag.message.filesadded") + " " + file.getName() + "\n";
     	compositePane.setBag(bag);
     	compositePane.updateCompositePaneTabs(bag, messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
@@ -1062,6 +1089,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         compositePane.updateCompositePaneTabs(bag, messages);
 
     	addDataButton.setEnabled(false);
+        updatePropButton.setEnabled(false);
     	saveButton.setEnabled(false);
     	saveAsButton.setEnabled(false);
     	validateButton.setEnabled(false);
@@ -1246,6 +1274,28 @@ public class BagView extends AbstractView implements ApplicationListener {
             	// TODO: Add and insert the newly created profile
             }
         }
+    }
+
+    private String getInitialConsoleMsg() {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append(this.getMessage("consolepane.msg.help"));
+    	buffer.append("\n\n");
+    	buffer.append(this.getMessage("compositepane.message.ismetadata"));
+    	buffer.append("\n");
+    	buffer.append(this.getMessage("consolepane.ismetadata.help"));
+    	buffer.append("\n\n");
+    	buffer.append(this.getMessage("compositepane.message.iscomplete"));
+    	buffer.append("\n");
+    	buffer.append(this.getMessage("consolepane.iscomplete.help"));
+    	buffer.append("\n\n");
+    	buffer.append(this.getMessage("compositepane.message.isserialized"));
+    	buffer.append("\n");
+    	buffer.append(this.getMessage("consolepane.isserialized.help"));
+    	buffer.append("\n\n");
+    	buffer.append(this.getMessage("compositepane.message.isvalid"));
+    	buffer.append("\n");
+    	buffer.append(this.getMessage("consolepane.isvalid.help"));
+    	return buffer.toString();
     }
 
 }
