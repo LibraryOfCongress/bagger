@@ -720,10 +720,11 @@ public class BagView extends AbstractView implements ApplicationListener {
     	enableBagSettings(true);
 
     	bagInfoInputPane.populateForms(bag);
-        messages = bagInfoInputPane.updateForms(bag);
+        messages += bagInfoInputPane.updateForms(bag);
+        updateBagInfoInputPaneMessages(messages);
+        bagInfoInputPane.updateSelected(bag);
         compositePane.setBag(bag);
         compositePane.updateCompositePaneTabs(bag, messages);
-        updateBagInfoInputPaneMessages(messages);
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
 
@@ -815,13 +816,13 @@ public class BagView extends AbstractView implements ApplicationListener {
 		messages += bag.validateMetadata();
 		bag.isSerialized(true);
         validateBag(messages);
-        compositePane.setBag(bag);
-        compositePane.updateCompositePaneTabs(bag, messages);
+
     	bagInfoInputPane.populateForms(bag);
     	messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
    		bagInfoInputPane.updateSelected(bag);
-        bagInfoInputPane.update(bag);
+        compositePane.setBag(bag);
+        compositePane.updateCompositePaneTabs(bag, messages);
 
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
