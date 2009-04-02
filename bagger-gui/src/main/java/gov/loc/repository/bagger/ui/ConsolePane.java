@@ -40,14 +40,6 @@ public class ConsolePane extends JPanel {
     private BagView parentView;
     private DefaultBag defaultBag;
 
-    public ConsolePane(BagView bagView) {
-        super();
-        this.setLayout(layout);
-        this.parentView = bagView;
-        this.defaultBag = bagView.getBag();
-        createFormControl();
-    }
-    
     public ConsolePane(BagView bagView, String messages) {
         super();
         this.setLayout(layout);
@@ -90,6 +82,7 @@ public class ConsolePane extends JPanel {
     
     private void createValidMetaDataLine(int row) {
     	JLabel validMetaLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isMetadata"));
+    	validMetaLabel.setToolTipText(parentView.getPropertyMessage("consolepane.ismetadata.help"));
     	font = validMetaLabel.getFont().deriveFont(Font.BOLD);
     	validMetaLabel.setFont(font);
     	validMetaLabel.setPreferredSize(formDimension);
@@ -97,6 +90,7 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(validMetaLabel, gbc);
         this.add(validMetaLabel);
     	JLabel validMetaResult = new JLabel("no");
+    	validMetaResult.setToolTipText(parentView.getPropertyMessage("consolepane.ismetadata.help"));
     	font = validMetaResult.getFont().deriveFont(Font.BOLD);
     	validMetaResult.setFont(font);
     	if (defaultBag != null) {
@@ -111,6 +105,7 @@ public class ConsolePane extends JPanel {
     
     private void createCompleteLine(int row) {
         JLabel completeLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isComplete"));
+        completeLabel.setToolTipText(parentView.getPropertyMessage("consolepane.iscomplete.help"));
     	font = completeLabel.getFont().deriveFont(Font.BOLD);
     	completeLabel.setFont(font);
     	completeLabel.setPreferredSize(formDimension);
@@ -118,6 +113,7 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(completeLabel, gbc);
         this.add(completeLabel);
     	JLabel completeResult = new JLabel("no");
+    	completeResult.setToolTipText(parentView.getPropertyMessage("consolepane.iscomplete.help"));
     	font = completeResult.getFont().deriveFont(Font.BOLD);
     	completeResult.setFont(font);
     	if (defaultBag != null) {
@@ -132,6 +128,7 @@ public class ConsolePane extends JPanel {
     
     private void createBaggedLine(int row) {
     	JLabel serializedLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isBagged"));
+    	serializedLabel.setToolTipText(parentView.getPropertyMessage("consolepane.isbagged.help"));
     	font = serializedLabel.getFont().deriveFont(Font.BOLD);
     	serializedLabel.setFont(font);
     	serializedLabel.setPreferredSize(formDimension);
@@ -139,6 +136,7 @@ public class ConsolePane extends JPanel {
     	layout.setConstraints(serializedLabel, gbc);
     	this.add(serializedLabel);
     	JLabel serializedResult = new JLabel("no");
+    	serializedResult.setToolTipText(parentView.getPropertyMessage("consolepane.isbagged.help"));
     	font = serializedResult.getFont().deriveFont(Font.BOLD);
     	serializedResult.setFont(font);
     	if (defaultBag != null) {
@@ -153,6 +151,7 @@ public class ConsolePane extends JPanel {
     
     private void createValidLine(int row) {
     	JLabel validLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isValid"));
+    	validLabel.setToolTipText(parentView.getPropertyMessage("consolepane.isvalid.help"));
     	font = validLabel.getFont().deriveFont(Font.BOLD);
     	validLabel.setFont(font);
     	validLabel.setPreferredSize(formDimension);
@@ -160,6 +159,7 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(validLabel, gbc);
         this.add(validLabel);
     	JLabel validResult = new JLabel("no");
+    	validResult.setToolTipText(parentView.getPropertyMessage("consolepane.isvalid.help"));
     	font = validResult.getFont().deriveFont(Font.BOLD);
     	validResult.setFont(font);
     	if (defaultBag != null) {
@@ -175,29 +175,30 @@ public class ConsolePane extends JPanel {
     private void createConsoleArea() {
     	String text = "";
     	if (this.messages != null) text = this.messages;
-    	//for (int i=0; i<500; i++) { text += "" + i + " "; }
-    	int consoleWidth = 300;
+    	//for (int i=0; i<1500; i++) { text += "" + i%10 + ""; }
+    	int consoleWidth = 600;
         int consoleHeight = 400;
         int textRows = 20;
-        int textRowWidth = 20;
+        int textCols = 60;
 
         JTextArea serializedArea = new JTextArea(text);
+        serializedArea.setToolTipText(parentView.getPropertyMessage("consolepane.msg.help"));
         Font textFont = serializedArea.getFont();
         FontMetrics fm = serializedArea.getFontMetrics(textFont);
         int fontHeight = fm.getHeight();
         int fontWidth = fm.charWidth('M');
-        textRowWidth = consoleWidth / fontWidth;
-        textRows = getRowCount(text, textRowWidth);
+        textCols = consoleWidth / fontWidth;
+        textRows = getRowCount(text, textCols);
         if (fontHeight > 0 && textRows > 0) consoleHeight = fontHeight * textRows;
 
     	serializedArea.setEditable(false);
     	serializedArea.setLineWrap(true);
-    	serializedArea.setRows(textRows);
-    	serializedArea.setColumns(10);
+    	//serializedArea.setRows(textRows);
+    	//serializedArea.setColumns(textCols);
     	serializedArea.setBackground(textBackground);
     	serializedArea.setWrapStyleWord(true);
     	serializedArea.setAutoscrolls(true);
-        consoleDimension = new Dimension(300, consoleHeight);
+        consoleDimension = new Dimension(consoleWidth, consoleHeight);
     	serializedArea.setPreferredSize(consoleDimension);
     	serializedArea.setBorder(BorderFactory.createLineBorder(Color.black));
         buildConstraints(gbc, 0, 4, 2, 4, 10, 10, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
@@ -223,19 +224,20 @@ public class ConsolePane extends JPanel {
 
     private int getRowCount(String text, int rowWidth) {
     	int rows = 0;
-    	java.io.StringReader reader = new java.io.StringReader(text);
-    	java.io.LineNumberReader ln = new java.io.LineNumberReader(reader);
     	try {
+        	java.io.StringReader reader = new java.io.StringReader(text);
+        	java.io.LineNumberReader ln = new java.io.LineNumberReader(reader);
         	String line = ln.readLine();
             while (line != null) {
             	if (line.length() > rowWidth) {
             		int length = line.length() / rowWidth;
             		rows += length;
+            	} else {
+                	rows++;
             	}
-            	rows++;
             	line = ln.readLine();
             }
-        	if (line.length() > rowWidth) {
+        	if (line != null && line.length() > rowWidth) {
         		int length = line.length() / rowWidth;
         		rows += length;
         	}
