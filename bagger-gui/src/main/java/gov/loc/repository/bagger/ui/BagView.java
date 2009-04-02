@@ -717,7 +717,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	messages = updateBaggerRules();
     	initializeProfile();
     	bag.copyFormToBag();
-    	bag.getBag().complete();
     	enableBagSettings(true);
 
     	bagInfoInputPane.populateForms(bag);
@@ -845,7 +844,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                     addBagData(files);
                 } else {
                 	File file = fc.getSelectedFile();
-                	addBagData(file);
+                	addBagData(file, true);
                 }
                 saveAsButton.setEnabled(true);
                 bagButtonPanel.invalidate();
@@ -859,19 +858,19 @@ public class BagView extends AbstractView implements ApplicationListener {
     	if (files != null) {
         	for (int i=0; i < files.length; i++) {
         		log.info("BagView.addBagData[" + i + "] " + files[i].getName());
-        		addBagData(files[i]);
+        		if (i < files.length-1) addBagData(files[i], false);
+        		else addBagData(files[i], true);
         	}
     	}
     }
 
-    private void addBagData(File file) {
+    private void addBagData(File file, boolean lastFileFlag) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	String messages = "";
     	File parentSrc = file.getParentFile().getAbsoluteFile();
     	try {
         	bag.getBag().addPayload(file);
-//    		TODO: figure out why complete does not keep multiple manifests
-        	bag.getBag().complete();
+        	if (lastFileFlag) bag.getBag().complete();
         	bagTree.addNodes(file);
             bagTree.addTree(parentSrc, file, bag.getRootDir());
     	} catch (Exception e) {
@@ -1108,8 +1107,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             compositePane.setBag(bag);
             compositePane.updateCompositePaneTabs(bag, messages);
             bag.copyFormToBag();
-    		// TODO: figure out why complete does not keep multiple manifests
-            bag.getBag().complete();
         }
     } 
 
