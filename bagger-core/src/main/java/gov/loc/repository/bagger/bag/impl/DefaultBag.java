@@ -26,6 +26,7 @@ import gov.loc.repository.bagit.FetchTxt.FilenameSizeUrl;
 import gov.loc.repository.bagit.bagwriter.FileSystemBagWriter;
 import gov.loc.repository.bagit.bagwriter.ZipBagWriter;
 import gov.loc.repository.bagit.bagwriter.TarBagWriter;
+import gov.loc.repository.bagit.completion.DefaultCompletionStrategy;
 //import gov.loc.repository.bagit.bagwriter.TarBagWriter.Compression;
 import gov.loc.repository.bagit.impl.BagItTxtImpl;
 import gov.loc.repository.bagit.utilities.SimpleResult;
@@ -408,7 +409,10 @@ public class DefaultBag {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
 			}
 		}
-        //bag.complete();
+		DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
+		completionStrategy.setGenerateBagInfoTxt(true);
+		completionStrategy.setGenerateTagManifest(true);
+        bilBag.complete(completionStrategy);
 	}
 
 	public void setInfo(DefaultBagInfo bagInfo) {
@@ -421,7 +425,6 @@ public class DefaultBag {
 		this.bagInfo.copy(bagInfo);
 		//this.bagInfo = bagInfo;
 		this.copyFormToBag();
-		//this.bilBag.complete();
 	}
 
 	public DefaultBagInfo getInfo() {
