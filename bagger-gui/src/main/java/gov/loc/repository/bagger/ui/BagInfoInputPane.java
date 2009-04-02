@@ -307,6 +307,23 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public void updateSelected(DefaultBag bag) {
+    	if (organizationContactForm.hasErrors()) {
+    		this.setSelectedIndex(3);
+    		organizationContactForm.getControl().grabFocus();
+    	} else if (organizationGeneralForm.hasErrors()) {
+    		this.setSelectedIndex(2);
+    		organizationGeneralForm.getControl().grabFocus();
+    	} else if (bag.getIsHoley() && fetchForm.hasErrors()) {
+    		this.setSelectedIndex(4);
+    		fetchForm.getControl().grabFocus();
+    	} else if (bagInfoForm.hasErrors()) {
+    		this.setSelectedIndex(0);
+    		bagInfoForm.getControl().grabFocus();
+    	} else if (userContactForm.hasErrors()) {
+    		this.setSelectedIndex(1);
+    		userContactForm.getControl().grabFocus();
+    	}
+/*
     	if (bagInfoForm.hasErrors()) {
     		this.setSelectedIndex(0);
     		bagInfoForm.getControl().grabFocus();
@@ -323,6 +340,7 @@ public class BagInfoInputPane extends JTabbedPane {
     		this.setSelectedIndex(1);
     		userContactForm.getControl().grabFocus();
     	}
+ */
     	update(bag);
     }
     
