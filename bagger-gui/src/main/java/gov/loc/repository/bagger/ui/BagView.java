@@ -849,7 +849,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 }
                 saveAsButton.setEnabled(true);
                 bagButtonPanel.invalidate();
-            	validateButton.setEnabled(false);
+            	//validateButton.setEnabled(false);
             	topButtonPanel.invalidate();
             }
 		}
@@ -1074,6 +1074,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	bagInfoInputPane.enableForms(bag, false);
     	newDefaultBag(null);
+        projectList.setSelectedValue(getMessage("bag.project.noproject"), true);
     	this.baggerRules.clear();
     	bagTree = new BagTree();
     	bag.setIsNewbag(true);
@@ -1108,7 +1109,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             compositePane.setBag(bag);
             compositePane.updateCompositePaneTabs(bag, messages);
             bag.copyFormToBag();
-        }
+		}
     } 
 
 	private void updateBagInfoInputPaneMessages(String messages) {
