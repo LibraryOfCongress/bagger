@@ -468,6 +468,7 @@ public class DefaultBag {
 			if (this.fetch != null && this.fetch.getBaseURL() != null) {
 				String baseUrl = this.fetch.getBaseURL();
 				this.bilBag.makeHoley(baseUrl, true);
+				this.bilBag.complete();
 			}
 		} else {
 			this.bilBag.putFetchTxt(null);
@@ -621,13 +622,16 @@ public class DefaultBag {
 					isContinue = true;
 				} else {
 					if (this.getIsEdeposit()) isContinue = false;
+					if (this.getIsNdnp()) isContinue = false;
 					messages += "\nBagger form fields are missing valid values.\n";
+					log.error("DefaultBag.write.writeBag: ");
+					throw new RuntimeException("Bagger form fields are missing valid values.");
 				}
 				display("DefaultBag.write isValidForms: " + messages);
 			}
 		} catch (Exception e) {
 			messages += "An error occurred validating forms:\n" + e.toString() + "\n";
-			log.error(e.getMessage());
+			log.error("DefaultBag.write.writeBag: " + e);
 		}
 		try {
 			// is complete
@@ -636,7 +640,7 @@ public class DefaultBag {
 				if (this.isComplete()) {
 					isContinue = true;
 				} else {
-					isContinue = false;
+//					if (!this.getIsHoley()) isContinue = false;
 					messages += "\nBag is not complete.\n";
 				}
 				display("DefaultBag.write isComplete: " + messages);
