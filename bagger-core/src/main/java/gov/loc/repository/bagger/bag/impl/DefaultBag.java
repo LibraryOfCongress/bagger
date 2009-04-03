@@ -632,6 +632,7 @@ public class DefaultBag {
 		} catch (Exception e) {
 			messages += "An error occurred validating forms:\n" + e.toString() + "\n";
 			log.error("DefaultBag.write.writeBag: " + e);
+			if (isContinue == false) throw new RuntimeException("Bagger form fields are missing valid values.");
 		}
 		try {
 			// is complete
