@@ -75,24 +75,40 @@ public class BagTree extends CheckboxTree {
 				}
 			}
 		} else {
-			log.debug("BagTree.populateNodes listFiles NULL: " );
-			List<String> payload = null;
-			if (bag.getRootPayload() == null)
-				payload = bag.getPayloadPaths();
-			else
-				payload = bag.getRootPayloadPaths();
-			log.debug("BagTree.populateNodes payload: " + payload.size() );
-            for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
-            	String filePath = it.next();
-				try {
-			        this.addNode(filePath);
-				} catch(Exception e) {
-					log.error("BagTree.populateNodes: " + e.getMessage());
-				}
-            }
-            int rows = BAGTREE_ROW_MODIFIER * payload.size();
-            setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
-            invalidate();
+		    if (!bag.getIsHoley()) {
+				log.debug("BagTree.populateNodes listFiles NULL: " );
+				List<String> payload = null;
+				if (bag.getRootPayload() == null)
+					payload = bag.getPayloadPaths();
+				else
+					payload = bag.getRootPayloadPaths();
+				log.debug("BagTree.populateNodes payload: " + payload.size() );
+	            for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
+	            	String filePath = it.next();
+					try {
+				        this.addNode(filePath);
+					} catch(Exception e) {
+						log.error("BagTree.populateNodes: " + e.getMessage());
+					}
+	            }
+	            int rows = BAGTREE_ROW_MODIFIER * payload.size();
+	            setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+	            invalidate();		    	
+		    } else {
+				List<String> payload = null;
+				payload = bag.getFetchPayload();
+	            for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
+	            	String filePath = it.next();
+					try {
+				        this.addNode(filePath);
+					} catch(Exception e) {
+						log.error("BagTree.populateNodes fetch: " + e.getMessage());
+					}
+	            }
+	            int rows = BAGTREE_ROW_MODIFIER * payload.size();
+	            setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+	            invalidate();
+		    }
 		}		
 	}
 
