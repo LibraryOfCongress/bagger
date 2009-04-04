@@ -775,6 +775,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     	if (bag.getInfo().getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
     	}
+	    if (bag.getIsHoley()) {
+	        holeyCheckbox.setSelected(true);
+	    }
     	if (bag.getIsEdeposit()) {
     		messages += updateProject(getMessage("bag.project.edeposit"));
     	} else if (bag.getIsNdnp()) {
@@ -782,7 +785,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	} else {
     		messages += updateProject(getMessage("bag.project.noproject"));    		
     	}
-		String s = file.getName();
+
+    	String s = file.getName();
 		noneButton.setSelected(true);
 	    int i = s.lastIndexOf('.');
 	    if (i > 0 && i < s.length() - 1) {
