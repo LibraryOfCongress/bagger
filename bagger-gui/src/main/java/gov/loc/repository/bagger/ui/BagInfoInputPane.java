@@ -193,8 +193,10 @@ public class BagInfoInputPane extends JTabbedPane {
         organizationContactForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.contact.help"));
         this.addTab(parentView.getPropertyMessage("infoInputPane.tab.contact"), organizationContactForm.getControl()); 
         if (bag.getIsHoley()) {
-        	fetchForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.fetch.help"));
-            this.addTab(parentView.getPropertyMessage("infoInputPane.tab.fetch"), fetchForm.getControl());        	
+        	if (fetchForm != null) {
+            	fetchForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.fetch.help"));
+                this.addTab(parentView.getPropertyMessage("infoInputPane.tab.fetch"), fetchForm.getControl());        		
+        	}
         }
 
     	if (bagInfoForm.hasErrors()) {
@@ -218,10 +220,12 @@ public class BagInfoInputPane extends JTabbedPane {
             organizationContactForm.getControl().setForeground(selectedColor);    		
     	}
         if (bag.getIsHoley()) {
-        	if (fetchForm.hasErrors()) {
-        		fetchForm.getControl().setForeground(errorColor);
-        	} else {
-        		fetchForm.getControl().setForeground(selectedColor);
+        	if (fetchForm != null) {
+            	if (fetchForm.hasErrors()) {
+            		fetchForm.getControl().setForeground(errorColor);
+            	} else {
+            		fetchForm.getControl().setForeground(selectedColor);
+            	}
         	}
         }
     }
@@ -262,12 +266,14 @@ public class BagInfoInputPane extends JTabbedPane {
         DefaultBagInfo newInfo = (DefaultBagInfo)bagInfoForm.getFormObject();
 
         if (bag.getIsHoley()) {
-        	if (!fetchForm.hasErrors()) {
-        		fetchForm.commit();            	
+        	if (fetchForm != null) {
+            	if (!fetchForm.hasErrors()) {
+            		fetchForm.commit();            	
+            	}
+            	BaggerFetch fetch = (BaggerFetch)fetchForm.getFormObject();
+            	bag.getFetch().setBaseURL(fetch.getBaseURL());
+                bag.updateFetch();
         	}
-        	BaggerFetch fetch = (BaggerFetch)fetchForm.getFormObject();
-        	bag.getFetch().setBaseURL(fetch.getBaseURL());
-            bag.updateFetch();
         }
         
         if (!organizationGeneralForm.hasErrors()) {
@@ -313,7 +319,7 @@ public class BagInfoInputPane extends JTabbedPane {
     	} else if (organizationGeneralForm.hasErrors()) {
     		this.setSelectedIndex(2);
     		organizationGeneralForm.getControl().grabFocus();
-    	} else if (bag.getIsHoley() && fetchForm.hasErrors()) {
+    	} else if (bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors()) {
     		this.setSelectedIndex(4);
     		fetchForm.getControl().grabFocus();
     	} else if (bagInfoForm.hasErrors()) {
@@ -372,7 +378,7 @@ public class BagInfoInputPane extends JTabbedPane {
         organizationGeneralForm.getControl().invalidate();
         organizationContactForm.getControl().invalidate();
         if (bag.getIsHoley()) {
-        	fetchForm.getControl().invalidate();
+        	if (fetchForm != null) fetchForm.getControl().invalidate();
         }
     	invalidate();
     	repaint();
