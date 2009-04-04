@@ -3,6 +3,7 @@ package gov.loc.repository.bagger.bag.impl;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.ArrayList;
 import java.io.File;
 
@@ -109,11 +110,13 @@ public class DefaultBag {
 			bilBag.setBagInfoTxt(bagInfoTxt);
 		}
 		if (bilBag.getFetchTxt() != null) {
+			System.out.println("DefaultBag: " + bilBag.getFetchTxt().toString());
         	setIsHoley(true);
     		String url = getBaseUrl(bilBag.getFetchTxt());
         	BaggerFetch fetch = this.getFetch();
         	fetch.setBaseURL(url);
         	this.fetch = fetch;
+//			bilBag.makeHoley(url, true);
 		}
     	//updateStrategy();
     }
@@ -409,6 +412,14 @@ public class DefaultBag {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
 			}
 		}
+		if (this.isHoley) {
+			if (bilBag.getFetchTxt() == null) {
+				if (this.getFetch().getBaseURL() != null) {
+					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true);					
+					//this.bilBag.complete();				
+				}
+			}
+		}
 		DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
 		completionStrategy.setGenerateBagInfoTxt(true);
 		completionStrategy.setGenerateTagManifest(true);
@@ -467,8 +478,8 @@ public class DefaultBag {
 		if (this.getIsHoley()) {
 			if (this.fetch != null && this.fetch.getBaseURL() != null) {
 				String baseUrl = this.fetch.getBaseURL();
-				this.bilBag.makeHoley(baseUrl, true);
-				this.bilBag.complete();
+				//this.bilBag.makeHoley(baseUrl, true);
+				//this.bilBag.complete();
 			}
 		} else {
 			this.bilBag.putFetchTxt(null);
@@ -482,6 +493,21 @@ public class DefaultBag {
 	public BaggerFetch getFetch() {
 		if (this.fetch == null) this.fetch = new BaggerFetch();
 		return this.fetch;
+	}
+	
+	public List<String> getFetchPayload() {
+		List<String> list = new ArrayList<String>();
+		
+		FetchTxt fetchTxt = this.bilBag.getFetchTxt();
+		if (fetchTxt == null) return list;
+		if (fetchTxt != null) {
+			for (int i=0; i < fetchTxt.size(); i++) {
+				FilenameSizeUrl fetch = fetchTxt.get(i);
+				String s = fetch.toString();
+				list.add(s);
+			}
+		}
+		return list;
 	}
 	
 	public String getFetchContent() {
