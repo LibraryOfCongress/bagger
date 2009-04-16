@@ -3,7 +3,7 @@ package gov.loc.repository.bagger.bag.impl;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+//import java.util.ListIterator;
 import java.util.ArrayList;
 import java.io.File;
 
@@ -81,7 +81,7 @@ public class DefaultBag {
 	protected Bag bilBag;
 	private Bag bagToValidate;
 
-	private Collection<BagFile> rootPayload = null;
+//	private Collection<BagFile> rootPayload = null;
 	private List<BaggerFileEntity> rootTree;
 
 	protected DefaultBagInfo bagInfo = null;
@@ -110,7 +110,7 @@ public class DefaultBag {
 			bilBag.setBagInfoTxt(bagInfoTxt);
 		}
 		if (bilBag.getFetchTxt() != null) {
-			System.out.println("DefaultBag: " + bilBag.getFetchTxt().toString());
+//			log.debug("DefaultBag: " + bilBag.getFetchTxt().toString());
         	setIsHoley(true);
     		String url = getBaseUrl(bilBag.getFetchTxt());
         	BaggerFetch fetch = this.getFetch();
@@ -503,7 +503,8 @@ public class DefaultBag {
 		if (fetchTxt != null) {
 			for (int i=0; i < fetchTxt.size(); i++) {
 				FilenameSizeUrl fetch = fetchTxt.get(i);
-				String s = fetch.toString();
+				String s = fetch.getFilename();
+	    		//log.debug("DefaultBag.getFetchPayload: " + fetch.toString());
 				list.add(s);
 			}
 		}
@@ -600,10 +601,10 @@ public class DefaultBag {
 		return this.project;
 	}
 
-	public Collection<BagFile> getRootPayload() {
-		return this.rootPayload;
-	}
-	
+//	public Collection<BagFile> getRootPayload() {
+//		return this.rootPayload;
+//	}
+/*	
 	public List<String> getRootPayloadPaths() {
 		ArrayList<String> pathList = new ArrayList<String>();
 		Collection<BagFile> payload = this.getRootPayload();
@@ -613,7 +614,7 @@ public class DefaultBag {
         }
 		return pathList;
 	}
-	
+*/	
 	public List<String> getPayloadPaths() {
 		ArrayList<String> pathList = new ArrayList<String>();
 		Collection<BagFile> payload = this.bilBag.getPayloadFiles();
