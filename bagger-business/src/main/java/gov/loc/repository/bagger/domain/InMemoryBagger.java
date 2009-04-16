@@ -55,7 +55,7 @@ public class InMemoryBagger extends JdbcBagger {
 
         // Schema: Bagger
         template.execute("CREATE TABLE person (id INT NOT NULL IDENTITY PRIMARY KEY, first_name VARCHAR(30), middle_init VARCHAR(1), last_name VARCHAR(30))");
-        template.execute("CREATE TABLE projects (id INT NOT NULL IDENTITY PRIMARY KEY, name VARCHAR(80))");
+        template.execute("CREATE TABLE projects (id INT NOT NULL IDENTITY PRIMARY KEY, name VARCHAR(80), is_default boolean)");
         template.execute("CREATE TABLE organization (id INT NOT NULL IDENTITY PRIMARY KEY, name VARCHAR(80), address VARCHAR(256))");
 
         template.execute("CREATE TABLE contact (id INT NOT NULL IDENTITY PRIMARY KEY, person_id INT NOT NULL, organization_id INT NOT NULL, email VARCHAR(80), telephone VARCHAR(20))");
@@ -96,10 +96,10 @@ public class InMemoryBagger extends JdbcBagger {
         defaultList.add("INSERT INTO authorities VALUES ('user', 'ROLE_BAGGER_USER')");
 
         // "CREATE TABLE projects (id, name");
-        defaultList.add("INSERT INTO projects VALUES (1, 'no project')");
-        defaultList.add("INSERT INTO projects VALUES (2, 'eDeposit')");
-        defaultList.add("INSERT INTO projects VALUES (3, 'ndiipp')");
-        defaultList.add("INSERT INTO projects VALUES (4, 'ndnp')");
+        defaultList.add("INSERT INTO projects VALUES (1, 'no project', true)");
+        defaultList.add("INSERT INTO projects VALUES (2, 'eDeposit', false)");
+        defaultList.add("INSERT INTO projects VALUES (3, 'ndiipp', false)");
+        defaultList.add("INSERT INTO projects VALUES (4, 'ndnp', false)");
 
     	String userHomeDir = System.getProperty("user.home");
     	readCommandList(userHomeDir);
