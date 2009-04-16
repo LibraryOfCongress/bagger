@@ -33,9 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JComponent;
 import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -94,7 +92,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JButton saveAsButton;
     private JButton validateButton;
     private JButton updatePropButton;
-    private JList projectList;
+//    private JList projectList;
+    private JComboBox projectList;
     private JCheckBox defaultProject;
     private JCheckBox holeyCheckbox;
     private JPanel serializeGroupPanel;
@@ -386,17 +385,15 @@ public class BagView extends AbstractView implements ApplicationListener {
         // Project control
         JLabel projectLabel = new JLabel(getMessage("bag.label.project"));
         projectLabel.setToolTipText(getMessage("bag.projectlist.help"));
-        DefaultListModel listModel = new DefaultListModel();
+        ArrayList<String> listModel = new ArrayList<String>();
         Object[] array = userProjects.toArray();
-        for (int i=0; i < userProjects.size(); i++) listModel.addElement(((Project)array[i]).getName());
-        projectList = new JList(listModel);
+        for (int i=0; i < userProjects.size(); i++) listModel.add(((Project)array[i]).getName());
+        projectList = new JComboBox(listModel.toArray());
         projectList.setName(getMessage("bag.label.projectlist"));
-        projectList.setVisibleRowCount(2);
-        projectList.setSelectedValue(getMessage("bag.project.noproject"), true);
-        projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        projectList.addListSelectionListener(new ProjectListHandler());
+        projectList.setSelectedItem(getMessage("bag.project.noproject"));
+        projectList.addActionListener(new ProjectListHandler());
         projectList.setToolTipText(getMessage("bag.projectlist.help"));
-    	String selected = (String) projectList.getSelectedValue();
+    	String selected = (String) projectList.getSelectedItem();
     	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(getMessage("bag.project.edeposit"))) {
     		bag.setIsEdeposit(true);
     	} else {
@@ -637,10 +634,11 @@ public class BagView extends AbstractView implements ApplicationListener {
 		return profile;
     }
 
-    private class ProjectListHandler implements ListSelectionListener {
-    	public void valueChanged(ListSelectionEvent e) {
-        	JList jlist = (JList)e.getSource();
-        	String selected = (String) jlist.getSelectedValue();
+    private class ProjectListHandler extends AbstractAction {
+    	private static final long serialVersionUID = 1L;
+    	public void actionPerformed(ActionEvent e) {
+        	JComboBox jlist = (JComboBox)e.getSource();
+        	String selected = (String) jlist.getSelectedItem();
         	display("BagView.projectList valueChanged: " + selected);
         	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(getMessage("bag.project.edeposit"))) {
         		bag.setIsEdeposit(true);
@@ -1131,8 +1129,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     	bagInfoInputPane.enableForms(bag, false);
     	newDefaultBag(null);
-        projectList.setSelectedValue(getMessage("bag.project.noproject"), true);
-    	this.baggerRules.clear();
+        projectList.setSelectedItem(getMessage("bag.project.noproject"));
+        this.baggerRules.clear();
     	bagTree = new BagTree();
     	bag.setIsNewbag(true);
         bag.setRootTree(bagTree.getRootTree());
@@ -1214,21 +1212,21 @@ public class BagView extends AbstractView implements ApplicationListener {
     	return message;
     }
     
-    public String updateProject(String project) {
+    public String updateProject(String projectName) {
     	String messages = "";
 
    		Object[] projectArray = userProjects.toArray();
    		for (int i=0; i < projectArray.length; i++) {
    			Project bagProject = (Project) projectArray[i];
-   			if (project != null && project.matches(bagProject.getName())) {
+   			if (projectName != null && projectName.matches(bagProject.getName())) {
    				bag.setProject(bagProject);
    			}
    		}
    		messages += updateProfile();
     	if (bag.getIsEdeposit()) {
-    		projectList.setSelectedValue(project, true);
+    		projectList.setSelectedItem(projectName);
     	} else if (bag.getIsNdnp()) {
-    		projectList.setSelectedValue(project, true);
+    		projectList.setSelectedItem(projectName);
     	}
 		return messages;
     }
