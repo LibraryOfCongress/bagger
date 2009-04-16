@@ -95,6 +95,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JButton validateButton;
     private JButton updatePropButton;
     private JList projectList;
+    private JCheckBox defaultProject;
     private JCheckBox holeyCheckbox;
     private JPanel serializeGroupPanel;
     private JRadioButton noneButton;
@@ -408,6 +409,19 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
         JScrollPane projectPane = new JScrollPane(projectList);
 
+        // Default project bag control
+        JLabel defaultLabel = new JLabel(getMessage("bag.label.projectDefault"));
+        defaultLabel.setToolTipText(getMessage("bag.isdefault.help"));
+        defaultProject = new JCheckBox(getMessage("bag.checkbox.isdefault"));
+        defaultProject.setBorder(border);
+        Project project = bag.getProject();
+        if (project != null && project.getIsDefault())
+        	defaultProject.setSelected(true);
+        else
+        	defaultProject.setSelected(false);
+        defaultProject.addActionListener(new DefaultProjectHandler());
+        defaultProject.setToolTipText(getMessage("bag.isdefault.help"));
+
         // Checksum control
         JLabel checksumLabel = new JLabel(getMessage("bag.label.checksumtype"));
         JRadioButton md5Button = new JRadioButton(getMessage("bag.checksumtype.md5"));
@@ -472,30 +486,39 @@ public class BagView extends AbstractView implements ApplicationListener {
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         
-        buildConstraints(gbc, 0, 0, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        int row = 0;
+        buildConstraints(gbc, 0, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(projectLabel, gbc);
-        buildConstraints(gbc, 1, 0, 1, 1, 60, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, row, 1, 1, 60, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(projectPane, gbc);
-
-        buildConstraints(gbc, 0, 1, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        //row++;
+        //buildConstraints(gbc, 0, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        //gridLayout.setConstraints(defaultLabel, gbc);
+        buildConstraints(gbc, 2, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(defaultProject, gbc);
+        row++;
+        buildConstraints(gbc, 0, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(holeyLabel, gbc);
-        buildConstraints(gbc, 1, 1, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(holeyCheckbox, gbc);
-
-        buildConstraints(gbc, 0, 2, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        row++;
+        buildConstraints(gbc, 0, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(serializeLabel, gbc);
-        buildConstraints(gbc, 1, 2, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(serializeGroupPanel, gbc);
-
-        buildConstraints(gbc, 0, 3, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        row++;
+        buildConstraints(gbc, 0, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(checksumLabel, gbc);
-        buildConstraints(gbc, 1, 3, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        buildConstraints(gbc, 1, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(checksumGroupPanel, gbc);
         
         JPanel checkPanel = new JPanel(gridLayout);
         checkPanel.add(projectLabel);
         checkPanel.add(projectPane);
         projectList.setEnabled(false);
+        //checkPanel.add(defaultLabel);
+        checkPanel.add(defaultProject);
+        defaultProject.setEnabled(false);
         checkPanel.add(holeyLabel);
         checkPanel.add(holeyCheckbox);
         holeyCheckbox.setEnabled(false);
@@ -503,16 +526,13 @@ public class BagView extends AbstractView implements ApplicationListener {
         checkPanel.add(serializeGroupPanel);
         checkPanel.add(checksumLabel);
         checkPanel.add(checksumGroupPanel);
-//      JLabel filler = new JLabel("");
-//      buildConstraints(gbc, 0, 4, 2, 1, 1, 10, GridBagConstraints.BOTH, GridBagConstraints.WEST);
-//      gridLayout.setConstraints(filler, gbc);
-//      checkPanel.add(filler);
 
         return checkPanel;
     }
     
     private void enableBagSettings(boolean b) {
         projectList.setEnabled(b);
+        defaultProject.setEnabled(b);
         holeyCheckbox.setEnabled(b);
         serializeGroupPanel.setEnabled(b);
         zipButton.setEnabled(b);
@@ -536,8 +556,13 @@ public class BagView extends AbstractView implements ApplicationListener {
    		Object[] projectArray = userProjects.toArray();
     	Project bagProject = bag.getProject();
     	if (bagProject == null) {
-    		bagProject = (Project) projectArray[0];
-    		bag.setProject(bagProject);
+    		for (int i=0; i < projectArray.length; i++) {
+        		bagProject = (Project) projectArray[i];
+        		if (bagProject.getIsDefault()) {
+            		bag.setProject(bagProject);
+            		break;
+        		}
+    		}
     	}
    		Authentication a = SecurityContextHolder.getContext().getAuthentication();
     	if (a != null) this.username = a.getName();
@@ -632,6 +657,26 @@ public class BagView extends AbstractView implements ApplicationListener {
         }
     }
     
+    private class DefaultProjectHandler extends AbstractAction {
+    	private static final long serialVersionUID = 1L;
+    	public void actionPerformed(ActionEvent e) {
+    		JCheckBox cb = (JCheckBox)e.getSource();
+                
+    		// Determine status
+    		boolean isSelected = cb.isSelected();
+       		Object[] projectArray = userProjects.toArray();
+       		for (int i=0; i < projectArray.length; i++) {
+       			Project project = (Project) projectArray[i];
+       			project.setIsDefault(false);
+        	}
+
+       		Project bagProject = bag.getProject();
+       		if (isSelected) bagProject.setIsDefault(true);
+       		else bagProject.setIsDefault(false);
+   			bag.setProject(bagProject);
+    	}
+    }
+
     private void changeProject(String selected) {
         bagInfoInputPane.verifyForms(bag);
         updateProfile();
@@ -714,7 +759,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagName += "" + this.bagCount;
 		bag.setName(bagName);
 		bag.setRootDir(bagRootPath);
-    	messages = updateBaggerRules();
+		//if (bag.getIsEdeposit() || bag.getIsNdnp()) messages = updateBaggerRules();
+		messages = updateBaggerRules();
     	initializeProfile();
     	bag.copyFormToBag();
     	enableBagSettings(true);
@@ -761,7 +807,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	String messages = "";
     	bagInfoInputPane.enableForms(bag, true);
     	clearExistingBag(messages);
-    	messages = updateBaggerRules();
+//    	messages = updateBaggerRules();
     	messages = "";
 
 		try {
@@ -785,6 +831,13 @@ public class BagView extends AbstractView implements ApplicationListener {
     	} else {
     		messages += updateProject(getMessage("bag.project.noproject"));    		
     	}
+	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
+	    	defaultProject.setSelected(true);
+	    } else {
+	    	defaultProject.setSelected(false);
+	    }
+		//if (bag.getIsEdeposit() || bag.getIsNdnp()) messages = updateBaggerRules();
+		messages = updateBaggerRules();
 
     	String s = file.getName();
 		noneButton.setSelected(true);
