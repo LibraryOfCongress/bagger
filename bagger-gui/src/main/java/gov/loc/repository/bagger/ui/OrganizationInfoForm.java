@@ -3,7 +3,7 @@ package gov.loc.repository.bagger.ui;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
-import javax.swing.JTextArea;
+//import javax.swing.JTextArea;
 import java.awt.Dimension;
 
 import org.springframework.binding.form.FormModel;
