@@ -306,6 +306,30 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 	}
 
+	@Transactional
+	public void storeProject(Project project) throws DataAccessException {
+		try {
+			Project p = this.loadProject(project.getId());
+			project.setId(p.getId());
+			this.simpleJdbcTemplate.update(
+					"UPDATE projects SET project_id=:projectId, name=:name, is_default=:isDefault WHERE id=:id",
+					new BeanPropertySqlParameterSource(project));
+			sqlCommand = "UPDATE projects SET project_id=" + project.getId() + ", name=" + project.getName() + "', is_default='" + project.getIsDefault() + "' WHERE id=" + project.getId() + ";";
+			commandList.add(sqlCommand);
+		}
+		catch (Exception ex) {
+			try {
+				Number newKey = this.insertContact.executeAndReturnKey(new BeanPropertySqlParameterSource(project));
+				project.setId(newKey.intValue());
+				sqlCommand = "INSERT INTO projects VALUES (" + newKey.intValue() + ", '" + project.getName() + "', '" + project.getIsDefault() + "');";
+				commandList.add(sqlCommand);
+			}
+			catch (Exception exception) {
+				exception.printStackTrace();
+				throw new UnsupportedOperationException("Project update not supported");				
+			}
+		}
+	}
 
 	@Transactional
 	public void storeProfile(Profile profile) throws DataAccessException {
