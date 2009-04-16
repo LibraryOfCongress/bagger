@@ -20,6 +20,7 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
     }
     
     public void init(boolean isCopyright, boolean isNdnp, boolean isHoley) {
+    	clear();
     	this.isCopyright = isCopyright;
     	this.isNdnp = isNdnp;
     	this.isHoley = isHoley;
