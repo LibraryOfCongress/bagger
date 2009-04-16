@@ -163,13 +163,13 @@ public class DefaultBag {
         bagSize += fsize + " ";
         if (fsize > DefaultBag.GB) {
         	fsize /= DefaultBag.GB;
-        	bagSize += "GB";
+        	bagSize = "" + fsize + " GB";
         } else if (fsize > DefaultBag.MB) {
         	fsize /= DefaultBag.MB;
-        	bagSize += "MB";
+        	bagSize = "" + fsize + " MB";
         } else if (fsize > DefaultBag.KB) {
         	fsize /= DefaultBag.KB;
-        	bagSize += "KB";
+        	bagSize = "" + fsize + " KB";
         } else {
         	bagSize += "Bytes";
         }
