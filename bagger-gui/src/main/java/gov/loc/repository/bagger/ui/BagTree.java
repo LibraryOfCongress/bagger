@@ -57,7 +57,7 @@ public class BagTree extends CheckboxTree {
 	
 	public void populateNodes(DefaultBag bag, File rootSrc) {
 		log.debug("BagTree.populateNodes" );
-		if (bag.getRootPayload() == null && rootSrc.listFiles() != null) {
+		if (bag.getBag().getPayloadFiles() == null && rootSrc.listFiles() != null) {
 			File[] listFiles = rootSrc.listFiles();
 			if (listFiles != null) {
 				log.debug("BagTree.populateNodes listFiles: " + listFiles.length );
@@ -75,41 +75,28 @@ public class BagTree extends CheckboxTree {
 				}
 			}
 		} else {
+			log.debug("BagTree.populateNodes listFiles NULL:" );
+			List<String> payload = null;
 		    if (!bag.getIsHoley()) {
-				log.debug("BagTree.populateNodes listFiles NULL: " );
-				List<String> payload = null;
-				if (bag.getRootPayload() == null)
-					payload = bag.getPayloadPaths();
-				else
-					payload = bag.getRootPayloadPaths();
-				log.debug("BagTree.populateNodes payload: " + payload.size() );
-	            for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
-	            	String filePath = it.next();
-					try {
-				        this.addNode(filePath);
-					} catch(Exception e) {
-						log.error("BagTree.populateNodes: " + e.getMessage());
-					}
-	            }
-	            int rows = BAGTREE_ROW_MODIFIER * payload.size();
-	            setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
-	            invalidate();		    	
+				log.debug("BagTree.populateNodes getPayloadPaths:" );
+				payload = bag.getPayloadPaths();
 		    } else {
-				List<String> payload = null;
+				log.debug("BagTree.populateNodes getFetchPayload:" );
 				payload = bag.getFetchPayload();
-	            for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
-	            	String filePath = it.next();
-					try {
-				        this.addNode(filePath);
-					} catch(Exception e) {
-						log.error("BagTree.populateNodes fetch: " + e.getMessage());
-					}
-	            }
-	            int rows = BAGTREE_ROW_MODIFIER * payload.size();
-	            setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
-	            invalidate();
 		    }
-		}		
+			log.debug("BagTree.populateNodes payload: " + payload.size() );
+		    for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
+		    	String filePath = it.next();
+		    	try {
+		    		this.addNode(filePath);
+		    	} catch(Exception e) {
+		    		log.error("BagTree.populateNodes: " + e.getMessage());
+		    	}
+		    }
+		    int rows = BAGTREE_ROW_MODIFIER * payload.size();
+		    setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+		    invalidate();
+		}
 	}
 
 	public void addNode(String filePath) {
@@ -173,7 +160,10 @@ public class BagTree extends CheckboxTree {
         addTreeCheckingListener(new TreeCheckingListener() {
             public void valueChanged(TreeCheckingEvent e) {
             	TreePath epath = new TreePath(e.getLeadingPath().getLastPathComponent());
-                //log.info("BagTree Checked paths changed: user clicked on " + (e.getLeadingPath().getLastPathComponent()));
+                //log.info("BagTree.addTreeCheckingListener valueChanged: " + (e.getLeadingPath().getLastPathComponent()));
+            	if (!e.isChecked()) {
+            		//log.info("BagTree.addTreeCheckingListener remove: " + (e.getLeadingPath().getLastPathComponent()));
+            	}
                 scrollPathToVisible(epath);
                 makeVisible(epath);
             }
