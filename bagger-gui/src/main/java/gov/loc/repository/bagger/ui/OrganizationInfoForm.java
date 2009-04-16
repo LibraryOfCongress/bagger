@@ -52,7 +52,9 @@ public class OrganizationInfoForm extends AbstractForm {
         formBuilder.add("bagSize");
         formBuilder.row();
         rowCount++;
-        formBuilder.add("payloadOxum");
+        JComponent oxumField = formBuilder.add("payloadOxum")[1];
+        JTextField oxumTextField = (JTextField) oxumField;
+        oxumTextField.setEnabled(false);
         formBuilder.row();
         rowCount++;
         formBuilder.add("bagGroupIdentifier");
