@@ -48,7 +48,6 @@ import org.springframework.richclient.application.PageComponentContext;
 import org.springframework.richclient.application.event.LifecycleApplicationEvent;
 import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.command.support.AbstractActionCommandExecutor;
-import org.springframework.richclient.command.support.GlobalCommandIds;
 import org.springframework.richclient.dialog.CloseAction;
 import org.springframework.richclient.dialog.ConfirmationDialog;
 import org.springframework.richclient.dialog.MessageDialog;
@@ -111,7 +110,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private SaveExecutor saveExecutor = new SaveExecutor();
     private Color errorColor = new Color(255, 128, 128);
 	private Color infoColor = new Color(120, 120, 120);
-	private Color buttonColor = new Color(100, 100, 120);
+//	private Color buttonColor = new Color(100, 100, 120);
 
     public void setBagger(Bagger bagger) {
         Assert.notNull(bagger, "The bagger property is required");
@@ -307,7 +306,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         // Create a panel for the form error messages and the update button
         updatePropButton = new JButton(getMessage("button.saveupdates"));
-        buttonColor = updatePropButton.getBackground();
+//        buttonColor = updatePropButton.getBackground();
         updatePropButton.setMnemonic(KeyEvent.VK_S);
         updatePropButton.addActionListener(new UpdateBagHandler());
         updatePropButton.setToolTipText(getMessage("button.saveupdates.help"));
