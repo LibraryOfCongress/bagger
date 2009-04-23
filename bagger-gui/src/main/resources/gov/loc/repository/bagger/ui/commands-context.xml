@@ -7,8 +7,13 @@
     class="org.springframework.richclient.application.support.ApplicationWindowCommandManager">
     <property name="sharedCommandIds">
       <list>
-        <value>deleteCommand</value>
-        <value>saveCommand</value>
+        <value>startCommand</value>
+        <value>openCommand</value>
+        <value>validateCommand</value>
+        <value>addDataCommand</value>
+        <value>saveBagCommand</value>
+        <value>saveBagAsCommand</value>
+        <value>saveProfileCommand</value>
       </list>
     </property>
   </bean>
@@ -26,13 +31,13 @@
     <property name="members">
       <list>
         <ref bean="newMenu" />
-        <value>saveCommand</value>
-<!--
-        <value>separator</value>
-        <ref bean="loginCommand" />
-        <ref bean="logoutCommand" />
-        <value>separator</value>
- -->
+        <value>startCommand</value>
+        <value>openCommand</value>
+        <value>validateCommand</value>
+        <value>addDataCommand</value>
+        <value>saveBagCommand</value>
+        <value>saveBagAsCommand</value>
+        <value>saveProfileCommand</value>
         <bean class="gov.loc.repository.bagger.BaggerExit" />
       </list>
     </property>
@@ -53,14 +58,18 @@
   <bean id="helpMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
+<!-- 
         <ref bean="helpContentsCommand" />
         <value>separator</value>
+ -->
         <ref bean="aboutCommand" />
       </list>
     </property>
   </bean>
 
-  <bean id="helpContentsCommand" class="org.springframework.richclient.command.support.HelpContentsCommand" />
+  <bean id="helpContentsCommand" class="org.springframework.richclient.command.support.HelpContentsCommand">
+	<property name="helpSetPath" value="help/helpset.hs"/>
+  </bean>
 
   <bean id="aboutCommand" class="org.springframework.richclient.command.support.AboutCommand">
     <property name="aboutTextPath" value="gov/loc/repository/bagger/about.txt" />
