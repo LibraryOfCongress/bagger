@@ -5,12 +5,14 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 //import javax.swing.JTextArea;
 import java.awt.Dimension;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.form.AbstractForm;
 import org.springframework.richclient.form.builder.TableFormBuilder;
 
-public class OrganizationInfoForm extends AbstractForm {
+public class OrganizationInfoForm extends AbstractForm implements PropertyChangeListener {
     public static final String INFO_FORM_PAGE = "infoPage";
 
     private JComponent infoForm;
@@ -33,13 +35,17 @@ public class OrganizationInfoForm extends AbstractForm {
         int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight();
         formBuilder.row();
         rowCount++;
-//        formBuilder.add("externalDescription");
-/* */
+/* */ 
         JComponent extDesc = formBuilder.addTextArea("externalDescription")[1];
 		((javax.swing.JTextArea) extDesc).setColumns(1);
 		((javax.swing.JTextArea) extDesc).setRows(3);
 		((javax.swing.JTextArea) extDesc).setLineWrap(true);
-/* */
+/* */ 
+/*
+        JComponent extDesc = formBuilder.add("externalDescription")[1];
+        JTextField extDescTextField = (JTextField) extDesc;
+        extDescTextField.setPreferredSize(new Dimension(400, 3*fieldHeight));
+*/
         formBuilder.row();
         rowCount++;
         rowCount++;
@@ -91,6 +97,11 @@ public class OrganizationInfoForm extends AbstractForm {
         dimension = new Dimension(400, height);
         infoForm.setPreferredSize(dimension);
         return infoForm;
+    }
+
+    public void propertyChange(PropertyChangeEvent evt) {
+        //System.out.println("FF-pce: prop=" + evt.getPropertyName() + ", evt=" + evt);
+        if (bagView != null && !this.hasErrors()) bagView.updatePropButton.setEnabled(true);
     }
 
     public boolean requestFocusInWindow() {
