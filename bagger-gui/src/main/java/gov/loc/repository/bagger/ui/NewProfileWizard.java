@@ -1,7 +1,6 @@
 
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.Bagger;
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Profile;
@@ -15,7 +14,6 @@ import org.springframework.richclient.form.FormModelHelper;
 import org.springframework.richclient.wizard.AbstractWizard;
 import org.springframework.richclient.wizard.FormBackedWizardPage;
 import org.springframework.richclient.wizard.WizardDialog;
-import org.springframework.util.Assert;
 
 public class NewProfileWizard extends AbstractWizard implements ActionCommandExecutor {
     private WizardDialog wizardDialog;
