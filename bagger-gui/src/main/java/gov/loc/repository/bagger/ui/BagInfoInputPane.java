@@ -51,11 +51,11 @@ public class BagInfoInputPane extends JTabbedPane {
 	private Color selectedColor = new Color(100, 100, 120);
 	private Color unselectedColor = Color.black; //new Color(140, 140, 160);
 
-    public BagInfoInputPane(BagView bagView, String username, Contact c ) {
+    public BagInfoInputPane(BagView bagView, String username, Contact c, boolean b ) {
     	this.parentView = bagView;
     	this.projectContact = c;
     	this.username = username;
-    	populateForms(bagView.getBag());
+    	populateForms(bagView.getBag(), b);
         setPreferredSize(bagInfoForm.getControl().getPreferredSize());
         ChangeListener changeListener = new ChangeListener() {
         	public void stateChanged(ChangeEvent changeEvent) {
@@ -156,7 +156,7 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     // Define the information forms
-    public void populateForms(DefaultBag bag) {
+    public void populateForms(DefaultBag bag, boolean enabled) {
     	DefaultBagInfo bagInfo = bag.getInfo();
         BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
 
@@ -171,7 +171,7 @@ public class BagInfoInputPane extends JTabbedPane {
         }
 
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
-        bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), this.parentView);
+        bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), this.parentView, enabled);
         infoFormModel.addPropertyChangeListener(bagInfoForm);
 
         organizationFormModel = FormModelHelper.createCompoundFormModel(baggerOrganization);

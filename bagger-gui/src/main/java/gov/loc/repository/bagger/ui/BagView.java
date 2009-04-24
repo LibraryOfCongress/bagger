@@ -292,8 +292,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private JScrollPane createInfoInputPane() {
     	JPanel bagSettingsPanel = createBagSettingsPanel();
-    	bagInfoInputPane = new BagInfoInputPane(this, username, projectContact);
+    	bagInfoInputPane = new BagInfoInputPane(this, username, projectContact, false);
     	bagInfoInputPane.setToolTipText(this.getMessage("bagView.bagInfoInputPane.help"));
+    	bagInfoInputPane.setEnabled(false);
     	JScrollPane bagInfoScrollPane = new JScrollPane();
     	bagInfoScrollPane.setViewportView(bagInfoInputPane);
     	bagInfoScrollPane.setToolTipText(this.getMessage("bagView.bagInfoInputPane.help"));
@@ -566,6 +567,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     
     private void enableBagSettings(boolean b) {
         projectList.setEnabled(b);
+    	bagInfoInputPane.setEnabled(b);
         defaultProject.setEnabled(b);
         holeyCheckbox.setEnabled(b);
         serializeGroupPanel.setEnabled(b);
@@ -688,6 +690,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         	} else {
         		bag.setIsNdnp(false);
         	}
+            bagInfoInputPane.verifyForms(bag);
         	updateBaggerRules();
         	changeProject(selected);
         }
@@ -714,7 +717,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     private void changeProject(String selected) {
-        bagInfoInputPane.verifyForms(bag);
         updateProfile();
 
     	Object[] project_array = userProjects.toArray();
@@ -744,9 +746,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                    		bagInfo.setBagOrganization(bagOrg);
                    		bag.setInfo(bagInfo);
                    		projectContact = profile.getPerson();
-                   		// Save form values and copy them back after
-                   		// new forms are created.
-                   		bagInfoInputPane.populateForms(bag);
+                   		bagInfoInputPane.populateForms(bag, true);
                    		bagInfoInputPane.updateSelected(bag);
                    	}
         		}
@@ -757,7 +757,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private String updateBaggerRules() {
         baggerRules.init(bag.getIsEdeposit(), bag.getIsNdnp(), bag.getIsHoley());
         String messages = "";
-        bagInfoInputPane.populateForms(bag);
+        bagInfoInputPane.populateForms(bag, false);
         messages = bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.update(bag);
@@ -808,7 +808,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bag.copyFormToBag();
     	enableBagSettings(true);
 
-    	bagInfoInputPane.populateForms(bag);
+    	bagInfoInputPane.populateForms(bag, true);
         messages += bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.updateSelected(bag);
@@ -937,7 +937,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 		bag.isSerialized(true);
         validateBag(messages);
 
-    	bagInfoInputPane.populateForms(bag);
+    	bagInfoInputPane.populateForms(bag, true);
     	messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
    		bagInfoInputPane.updateSelected(bag);
@@ -1183,7 +1183,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         	writeBagErrorDialog("Error creating bag: " + file + "\n" + e.getMessage());
         }
         if (bag.isSerialized()) {
-            bagInfoInputPane.populateForms(bag);
+            bagInfoInputPane.populateForms(bag, true);
             bagInfoInputPane.updateSelected(bag);
             bagInfoInputPane.update(bag);
             saveButton.setEnabled(false);
@@ -1207,7 +1207,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTreePanel.refresh(bagTree);
     	enableBagSettings(false);
         noneButton.setSelected(true);
-    	bagInfoInputPane.populateForms(bag);
+    	bagInfoInputPane.populateForms(bag, false);
         messages = bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.update(bag);

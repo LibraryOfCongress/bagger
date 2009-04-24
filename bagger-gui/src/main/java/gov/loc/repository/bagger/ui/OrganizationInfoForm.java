@@ -18,10 +18,12 @@ public class OrganizationInfoForm extends AbstractForm implements PropertyChange
     private JComponent infoForm;
     private Dimension dimension = new Dimension(400, 370);
     private BagView bagView;
+    private boolean enabled;
 
-    public OrganizationInfoForm(FormModel formModel, BagView bagView) {
+    public OrganizationInfoForm(FormModel formModel, BagView bagView, boolean enabled) {
         super(formModel, INFO_FORM_PAGE);
         this.bagView = bagView;
+        this.enabled = enabled;
     }
 
     protected JComponent createFormControl() {
@@ -37,6 +39,7 @@ public class OrganizationInfoForm extends AbstractForm implements PropertyChange
         rowCount++;
 /* */ 
         JComponent extDesc = formBuilder.addTextArea("externalDescription")[1];
+        extDesc.setEnabled(enabled);
 		((javax.swing.JTextArea) extDesc).setColumns(1);
 		((javax.swing.JTextArea) extDesc).setRows(3);
 		((javax.swing.JTextArea) extDesc).setLineWrap(true);
@@ -49,13 +52,16 @@ public class OrganizationInfoForm extends AbstractForm implements PropertyChange
         formBuilder.row();
         rowCount++;
         rowCount++;
-        formBuilder.add("baggingDate");
+        JComponent baggingDate = formBuilder.add("baggingDate")[1];
+        baggingDate.setEnabled(enabled);
         formBuilder.row();
         rowCount++;
-        formBuilder.add("externalIdentifier");
+        JComponent externalIdentifier = formBuilder.add("externalIdentifier")[1];
+        externalIdentifier.setEnabled(enabled);
         formBuilder.row();
         rowCount++;
-        formBuilder.add("bagSize");
+        JComponent bagSize = formBuilder.add("bagSize")[1];
+        bagSize.setEnabled(enabled);
         formBuilder.row();
         rowCount++;
         JComponent oxumField = formBuilder.add("payloadOxum")[1];
@@ -63,18 +69,22 @@ public class OrganizationInfoForm extends AbstractForm implements PropertyChange
         oxumTextField.setEnabled(false);
         formBuilder.row();
         rowCount++;
-        formBuilder.add("bagGroupIdentifier");
+        JComponent bagGroupIdentifier = formBuilder.add("bagGroupIdentifier")[1];
+        bagGroupIdentifier.setEnabled(enabled);
         formBuilder.row();
         rowCount++;
-        formBuilder.add("bagCount");
+        JComponent bagCount = formBuilder.add("bagCount")[1];
+        bagCount.setEnabled(enabled);
         formBuilder.row();
         rowCount++;
-        formBuilder.add("internalSenderIdentifier");
+        JComponent internalSenderIdentifier = formBuilder.add("internalSenderIdentifier")[1];
+        internalSenderIdentifier.setEnabled(enabled);
         formBuilder.row();
         rowCount++;
 //        formBuilder.add("internalSenderDescription");
 /* */
         JComponent senderDesc = formBuilder.addTextArea("internalSenderDescription")[1];
+        senderDesc.setEnabled(enabled);
 		((javax.swing.JTextArea) senderDesc).setColumns(1);
 		((javax.swing.JTextArea) senderDesc).setRows(3);
 		((javax.swing.JTextArea) senderDesc).setLineWrap(true);
@@ -83,12 +93,14 @@ public class OrganizationInfoForm extends AbstractForm implements PropertyChange
         rowCount++;
         rowCount++;
         if (this.bagView.getBag().getIsEdeposit()) {
-        	formBuilder.add("publisher");
+            JComponent publisher = formBuilder.add("publisher")[1];
+            publisher.setEnabled(enabled);
         	formBuilder.row();
             rowCount++;
         }
         if (this.bagView.getBag().getIsNdnp()) {
-            formBuilder.add("awardeePhase");        	
+            JComponent awardeePhase = formBuilder.add("awardeePhase")[1];
+            awardeePhase.setEnabled(enabled);
             formBuilder.row();
             rowCount++;
         }
