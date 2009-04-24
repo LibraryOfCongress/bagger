@@ -1011,8 +1011,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
         bag.setRootTree(bagTree.getRootTree());
     	bagTreePanel.refresh(bagTree);
-//    	bagInfoInputPane.populateForms(bag);
-//        bagInfoInputPane.update(bag);
+        bagInfoInputPane.verifyForms(bag);
+    	bagInfoInputPane.populateForms(bag, true);
+        bagInfoInputPane.update(bag);
     	messages += getMessage("bag.message.filesadded") + " " + file.getName() + "\n";
     	compositePane.setBag(bag);
     	compositePane.updateCompositePaneTabs(bag, messages);
