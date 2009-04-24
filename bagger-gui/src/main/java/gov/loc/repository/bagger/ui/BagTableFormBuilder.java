@@ -2,8 +2,6 @@
 package gov.loc.repository.bagger.ui;
 
 import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 
 import org.springframework.richclient.application.ApplicationServicesLocator;
@@ -28,13 +26,7 @@ public class BagTableFormBuilder extends TableFormBuilder {
 		}
 		return componentFactory;
 	}
-/*
-	public JComponent[] add(String fieldName, boolean b) {
-//		JComponent component = getComponentFactory().createTextArea();
-    	JComponent component = getComponentFactory().createTextField();
-        return addBinding(createBinding(fieldName, component), "", getLabelAttributes());
-    }
-*/    
+
     public JComponent[] addTextArea(String fieldName) {
         return addTextArea(fieldName, "");
     }
