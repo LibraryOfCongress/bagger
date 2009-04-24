@@ -97,7 +97,6 @@ public class BagInfoInputPane extends JTabbedPane {
                     	break;
                     case SENDTOCONTACT_INDEX:
                     	if (sendToContactForm.hasErrors()) {
-                    		System.out.println("change sendToContactForm error");
                     		c = errorColor;
                     		sendToContactForm.getControl().grabFocus();
                     	} else {
