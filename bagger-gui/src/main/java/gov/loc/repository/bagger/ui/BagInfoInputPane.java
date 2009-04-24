@@ -33,6 +33,12 @@ import org.apache.commons.logging.LogFactory;
 public class BagInfoInputPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
 	private static final Log logger = LogFactory.getLog(BagInfoInputPane.class);
+	private static final int BAGINFO_INDEX = 0;
+	private static final int ORGCONTACT_INDEX = 1;
+	private static final int ORGANIZATION_INDEX = 2;
+	private static final int SENDTOCONTACT_INDEX = 3;
+	private static final int FORM_INDEX = 4;
+	
 	private BagView parentView;
     private OrganizationInfoForm bagInfoForm = null;
     private OrganizationGeneralForm organizationGeneralForm = null;
@@ -65,34 +71,45 @@ public class BagInfoInputPane extends JTabbedPane {
                 for (int i = 0; i < count; ++i) {
                     Color c = (i == selected) ? unselectedColor : selectedColor;
                     switch(i) {
-                    case 0:
+                    case BAGINFO_INDEX:
                     	if (bagInfoForm.hasErrors()) {
                     		c = errorColor;
                     		bagInfoForm.getControl().grabFocus();
+                    	} else {
+                    		c = unselectedColor;
                     	}
                     	break;
-                    case 1:
-                    	if (sendToContactForm.hasErrors()) {
-                    		c = errorColor;
-                    		sendToContactForm.getControl().grabFocus();
-                    	}
-                    	break;
-                    case 2:
-                    	if (organizationGeneralForm.hasErrors()) {
-                    		c = errorColor;
-                    		organizationGeneralForm.getControl().grabFocus();
-                    	}
-                    	break;
-                    case 3:
+                    case ORGCONTACT_INDEX:
                     	if (organizationContactForm.hasErrors()) {
                     		c = errorColor;
                     		organizationContactForm.getControl().grabFocus();
+                    	} else {
+                    		c = unselectedColor;
                     	}
                     	break;
-                    case 4:
+                    case ORGANIZATION_INDEX:
+                    	if (organizationGeneralForm.hasErrors()) {
+                    		c = errorColor;
+                    		organizationGeneralForm.getControl().grabFocus();
+                    	} else {
+                    		c = unselectedColor;
+                    	}
+                    	break;
+                    case SENDTOCONTACT_INDEX:
+                    	if (sendToContactForm.hasErrors()) {
+                    		System.out.println("change sendToContactForm error");
+                    		c = errorColor;
+                    		sendToContactForm.getControl().grabFocus();
+                    	} else {
+                    		c = unselectedColor;
+                    	}
+                    	break;
+                    case FORM_INDEX:
                     	if (parentView.getBag().getIsHoley() && fetchForm.hasErrors()) {
                     		c = errorColor;
                     		fetchForm.getControl().grabFocus();
+                    	} else {
+                    		c = unselectedColor;
                     	}
                     	break;
                     default:
@@ -111,7 +128,6 @@ public class BagInfoInputPane extends JTabbedPane {
         };
         bagInfoForm.addValidationListener(validationListener);
         
-/* */
         InputMap im = this.getInputMap();
         im.put(KeyStroke.getKeyStroke("F2"), "tabNext");
         ActionMap am = this.getActionMap();
@@ -130,7 +146,6 @@ public class BagInfoInputPane extends JTabbedPane {
         	}
         });
         this.setActionMap(am);
-/* */
     }
 
     public Dimension getPreferredSize() {
@@ -329,21 +344,21 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public void updateSelected(DefaultBag bag) {
-    	if (organizationContactForm.hasErrors()) {
-    		this.setSelectedIndex(3);
-    		organizationContactForm.getControl().grabFocus();
-    	} else if (organizationGeneralForm.hasErrors()) {
-    		this.setSelectedIndex(2);
-    		organizationGeneralForm.getControl().grabFocus();
-    	} else if (bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors()) {
-    		this.setSelectedIndex(4);
+    	if (bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors()) {
+    		this.setSelectedIndex(FORM_INDEX);
     		fetchForm.getControl().grabFocus();
-    	} else if (bagInfoForm.hasErrors()) {
-    		this.setSelectedIndex(0);
-    		bagInfoForm.getControl().grabFocus();
     	} else if (sendToContactForm.hasErrors()) {
-    		this.setSelectedIndex(1);
+    		this.setSelectedIndex(SENDTOCONTACT_INDEX);
     		sendToContactForm.getControl().grabFocus();
+    	} else if (organizationGeneralForm.hasErrors()) {
+    		this.setSelectedIndex(ORGANIZATION_INDEX);
+    		organizationGeneralForm.getControl().grabFocus();
+    	} else if (organizationContactForm.hasErrors()) {
+    		this.setSelectedIndex(ORGCONTACT_INDEX);
+    		organizationContactForm.getControl().grabFocus();
+    	} else if (bagInfoForm.hasErrors()) {
+    		this.setSelectedIndex(BAGINFO_INDEX);
+    		bagInfoForm.getControl().grabFocus();
     	}
     	update(bag);
     }
