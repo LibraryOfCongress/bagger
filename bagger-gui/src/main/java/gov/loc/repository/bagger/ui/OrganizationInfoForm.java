@@ -10,7 +10,7 @@ import java.beans.PropertyChangeEvent;
 
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.form.AbstractForm;
-import org.springframework.richclient.form.builder.TableFormBuilder;
+//import org.springframework.richclient.form.builder.TableFormBuilder;
 
 public class OrganizationInfoForm extends AbstractForm implements PropertyChangeListener {
     public static final String INFO_FORM_PAGE = "infoPage";
@@ -28,7 +28,7 @@ public class OrganizationInfoForm extends AbstractForm implements PropertyChange
 
     protected JComponent createFormControl() {
     	int rowCount = 0;
-        TableFormBuilder formBuilder = new TableFormBuilder(getBindingFactory());
+        BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory());
 
         formBuilder.row();
         JComponent nameField = formBuilder.add("bagName")[1];
@@ -85,9 +85,9 @@ public class OrganizationInfoForm extends AbstractForm implements PropertyChange
 /* */
         JComponent senderDesc = formBuilder.addTextArea("internalSenderDescription")[1];
         senderDesc.setEnabled(enabled);
-		((javax.swing.JTextArea) senderDesc).setColumns(1);
-		((javax.swing.JTextArea) senderDesc).setRows(3);
-		((javax.swing.JTextArea) senderDesc).setLineWrap(true);
+//		((javax.swing.JTextArea) senderDesc).setColumns(1);
+//		((javax.swing.JTextArea) senderDesc).setRows(3);
+//		((javax.swing.JTextArea) senderDesc).setLineWrap(true);
 /* */
         formBuilder.row();
         rowCount++;
