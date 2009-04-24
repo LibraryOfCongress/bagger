@@ -7,6 +7,7 @@ import javax.swing.JScrollPane;
 import org.springframework.richclient.application.ApplicationServicesLocator;
 import org.springframework.richclient.factory.ComponentFactory;
 import org.springframework.richclient.form.builder.TableFormBuilder;
+import org.springframework.richclient.form.binding.Binding;
 import org.springframework.richclient.form.binding.BindingFactory;
 import org.springframework.richclient.layout.TableLayoutBuilder;
 
@@ -39,7 +40,9 @@ public class BagTableFormBuilder extends TableFormBuilder {
         } else if (!labelAttributes.contains(TableLayoutBuilder.VALIGN)) {
             labelAttributes += " " + VALIGN_TOP;
         }
-        return addBinding(createBinding(fieldName, textArea), attributes, labelAttributes);
-//        return addBinding(createBinding(fieldName, textArea), new JScrollPane(textArea), attributes, labelAttributes);
+        Binding binding = createBinding(fieldName, textArea);
+        JComponent wrappedComponent = textArea;
+//        JComponent wrappedComponent = new JScrollPane(textArea)
+        return addBinding(binding, wrappedComponent, attributes, labelAttributes);
     }
 }
