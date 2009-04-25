@@ -33,7 +33,8 @@ public class BagTableFormBuilder extends TableFormBuilder {
     }
 
     public JComponent[] addTextArea(String fieldName, String attributes) {
-        JComponent textArea = createTextArea(fieldName);
+//        JComponent textArea = createTextArea(fieldName);
+    	JComponent textArea = new NoTabTextArea(5, 40);
         String labelAttributes = getLabelAttributes();
         if (labelAttributes == null) {
             labelAttributes = VALIGN_TOP;

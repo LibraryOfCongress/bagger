@@ -3,14 +3,13 @@ package gov.loc.repository.bagger.ui;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
-//import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.form.AbstractForm;
-//import org.springframework.richclient.form.builder.TableFormBuilder;
 
 public class OrganizationInfoForm extends AbstractForm implements PropertyChangeListener {
     public static final String INFO_FORM_PAGE = "infoPage";
@@ -37,18 +36,14 @@ public class OrganizationInfoForm extends AbstractForm implements PropertyChange
         int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight();
         formBuilder.row();
         rowCount++;
-/* */ 
         JComponent extDesc = formBuilder.addTextArea("externalDescription")[1];
         extDesc.setEnabled(enabled);
-		((javax.swing.JTextArea) extDesc).setColumns(1);
-		((javax.swing.JTextArea) extDesc).setRows(3);
-		((javax.swing.JTextArea) extDesc).setLineWrap(true);
 /* */ 
-/*
-        JComponent extDesc = formBuilder.add("externalDescription")[1];
-        JTextField extDescTextField = (JTextField) extDesc;
-        extDescTextField.setPreferredSize(new Dimension(400, 3*fieldHeight));
-*/
+		((NoTabTextArea) extDesc).setBorder(new EmptyBorder(1,1,1,1));
+		((NoTabTextArea) extDesc).setColumns(1);
+		((NoTabTextArea) extDesc).setRows(3);
+		((NoTabTextArea) extDesc).setLineWrap(true);
+/* */ 
         formBuilder.row();
         rowCount++;
         rowCount++;
@@ -81,13 +76,12 @@ public class OrganizationInfoForm extends AbstractForm implements PropertyChange
         internalSenderIdentifier.setEnabled(enabled);
         formBuilder.row();
         rowCount++;
-//        formBuilder.add("internalSenderDescription");
-/* */
         JComponent senderDesc = formBuilder.addTextArea("internalSenderDescription")[1];
         senderDesc.setEnabled(enabled);
-		((javax.swing.JTextArea) senderDesc).setColumns(1);
-		((javax.swing.JTextArea) senderDesc).setRows(3);
-		((javax.swing.JTextArea) senderDesc).setLineWrap(true);
+/* */
+		((NoTabTextArea) senderDesc).setColumns(1);
+		((NoTabTextArea) senderDesc).setRows(3);
+		((NoTabTextArea) senderDesc).setLineWrap(true);
 /* */
         formBuilder.row();
         rowCount++;
