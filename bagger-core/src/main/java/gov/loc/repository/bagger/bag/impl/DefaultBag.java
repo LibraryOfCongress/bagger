@@ -422,13 +422,13 @@ public class DefaultBag {
 		if (this.isHoley) {
 			if (bilBag.getFetchTxt() == null) {
 				if (this.getFetch().getBaseURL() != null) {
-					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true);					
+					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true);
 				}
 			}
 		}
 		DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
 		completionStrategy.setGenerateBagInfoTxt(false);
-		completionStrategy.setGenerateTagManifest(true);
+		completionStrategy.setGenerateTagManifest(false);
         bilBag.complete(completionStrategy);
 	}
 
