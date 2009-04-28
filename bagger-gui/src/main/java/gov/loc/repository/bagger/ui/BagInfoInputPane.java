@@ -358,6 +358,8 @@ public class BagInfoInputPane extends JTabbedPane {
     	} else if (bagInfoForm.hasErrors()) {
     		this.setSelectedIndex(BAGINFO_INDEX);
     		bagInfoForm.getControl().grabFocus();
+    	} else {
+    		bagInfoForm.getControl().grabFocus();    		
     	}
     	update(bag);
     }
