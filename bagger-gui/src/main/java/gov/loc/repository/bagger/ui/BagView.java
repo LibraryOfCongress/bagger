@@ -1232,18 +1232,44 @@ public class BagView extends AbstractView implements ApplicationListener {
     private class UpdateBagHandler extends AbstractAction {
 		private static final long serialVersionUID = -6833185707352381008L;
 		public void actionPerformed(ActionEvent e) {
-            String messages = bagInfoInputPane.updateForms(bag);
-            updateBagInfoInputPaneMessages(messages);
-            bagInfoInputPane.updateSelected(bag);
-            messages += updateProfile();
-            compositePane.setBag(bag);
-            compositePane.updateCompositePaneTabs(bag, messages);
-            bag.copyFormToBag();
-            updatePropButton.setEnabled(false);
+			updateBag();
 		}
     } 
+    
+    private void updateBag() {
+        String messages = bagInfoInputPane.updateForms(bag);
+        updateBagInfoInputPaneMessages(messages);
+        bagInfoInputPane.updateSelected(bag);
+        messages += updateProfile();
+        compositePane.setBag(bag);
+        compositePane.updateCompositePaneTabs(bag, messages);
+        bag.copyFormToBag();
+        updatePropButton.setEnabled(false);
+    }
 
-	private void updateBagInfoInputPaneMessages(String messages) {
+    public void updateBagInfo() {
+    	log.debug("BagView.updateBagInfo");
+    	String messages = bagInfoInputPane.verifyForms(bag);
+        updateBagInfoInputPaneMessages(messages);
+        compositePane.setBag(bag);
+        compositePane.updateCompositePaneTabs(bag, messages);
+        bag.updateBagInfo();
+        updatePropButton.setEnabled(false);
+    }
+
+    public void updateBagFetchTxt() {
+    	System.out.println("BagView.updateBagFetchTxt");
+        String messages = bagInfoInputPane.updateForms(bag);
+        updateBagInfoInputPaneMessages(messages);
+        bagInfoInputPane.updateSelected(bag);
+        messages += updateProfile();
+        compositePane.setBag(bag);
+        compositePane.updateCompositePaneTabs(bag, messages);
+        bag.updateFetchTxt();
+        updatePropButton.setEnabled(false);
+    }
+
+    private void updateBagInfoInputPaneMessages(String messages) {
 		boolean isMessage = true;
 		//isMessage = (messages == null || messages.length() == 0);
 		display("BagView.updateMessages: " + messages);
