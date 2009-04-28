@@ -43,6 +43,7 @@ public class BagTableFormBuilder extends TableFormBuilder {
         }
         Binding binding = createBinding(fieldName, textArea);
         JComponent wrappedComponent = textArea;
+        // TODO: using the JScrollPane component causes the validation 'x' to disappear
 //        JComponent wrappedComponent = new JScrollPane(textArea)
         return addBinding(binding, wrappedComponent, attributes, labelAttributes);
     }
