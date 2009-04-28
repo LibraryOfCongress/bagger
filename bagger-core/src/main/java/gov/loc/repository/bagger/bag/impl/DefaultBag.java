@@ -387,6 +387,51 @@ public class DefaultBag {
 		}
 	}
 
+	public void updateBagInfo() {
+		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
+		Contact contact = baggerOrganization.getContact();
+		if (bilBag.getBagInfoTxt() != null) {
+			bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getOrgName());
+			bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrgAddress());
+			bilBag.getBagInfoTxt().setContactName(contact.getContactName());
+			bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
+			bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
+			bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
+			bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
+			bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
+			bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
+			bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
+			bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
+			bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
+			bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
+			bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
+			if (this.getIsEdeposit()) {
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
+			}
+			if (this.getIsNdnp()) {
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+			}
+		}
+		DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
+		completionStrategy.setGenerateBagInfoTxt(true);
+		completionStrategy.setGenerateTagManifest(false);
+        bilBag.complete(completionStrategy);
+	}
+	
+	public void updateFetchTxt() {
+		if (this.isHoley) {
+			if (bilBag.getFetchTxt() == null) {
+				if (this.getFetch().getBaseURL() != null) {
+					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true);					
+				}
+			}
+		}
+		DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
+		completionStrategy.setGenerateBagInfoTxt(false);
+		completionStrategy.setGenerateTagManifest(true);
+        bilBag.complete(completionStrategy);
+	}
+
 	public void copyFormToBag() {
 		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
 		Contact contact = baggerOrganization.getContact();
