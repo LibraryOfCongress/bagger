@@ -36,4 +36,7 @@
     </property>
   </bean>
 
+  <bean id="bag" class="gov.loc.repository.bagger.bag.impl.DefaultBag">
+  </bean>
+
 </beans>
