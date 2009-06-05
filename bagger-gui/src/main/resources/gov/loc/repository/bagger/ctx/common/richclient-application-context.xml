@@ -19,6 +19,9 @@
     <property name="windowCommandBarDefinitions"
       value="gov/loc/repository/bagger/ui/commands-context.xml" />
     <property name="startingPageId" value="bagView" />
+<!-- 
+ 	<property name="statusBar" ref="statusBar" />
+ -->
     <property name="registerableExceptionHandler" ref="exceptionHandler" />
     <property name="menubarBeanName" value="menuBar" />
     <property name="windowCommandManagerBeanName" value="windowCommandManager" />
@@ -159,6 +162,17 @@
       <bean class="com.jgoodies.looks.plastic.theme.ExperienceBlue" />
     </property>
   </bean>
+<!-- 
+  <bean name="statusBar" class="org.springframework.richclient.application.statusbar.support.DefaultStatusBar" 
+		depends-on="lookAndFeelConfigurer">
+		<property name="cancelEnabled" value="true" />
+		<property name="statusBarItems">
+			<list>
+				<ref bean="resizeStatusBarItem" />
+			</list> 
+		</property> 
+  </bean>
+ -->
 
   <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
     <property name="basenames">
@@ -205,6 +219,7 @@
     <property name="viewProperties">
       <map>
         <entry key="bagger" value-ref="bagger" />
+        <entry key="bag" value-ref="bag" />
       </map>
     </property>
   </bean>

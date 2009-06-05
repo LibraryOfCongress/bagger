@@ -9,10 +9,16 @@
       <list>
         <value>startCommand</value>
         <value>openCommand</value>
+        <value>createDataCommand</value>
         <value>validateCommand</value>
+        <value>completeCommand</value>
         <value>addDataCommand</value>
+        <value>removeDataCommand</value>
         <value>saveBagCommand</value>
         <value>saveBagAsCommand</value>
+        <value>updateTreeCommand</value>
+        <value>addTagFileCommand</value>
+        <value>removeTagFileCommand</value>
         <value>saveProfileCommand</value>
       </list>
     </property>
@@ -33,10 +39,12 @@
         <ref bean="newMenu" />
         <value>startCommand</value>
         <value>openCommand</value>
+        <value>createDataCommand</value>
         <value>validateCommand</value>
         <value>addDataCommand</value>
         <value>saveBagCommand</value>
         <value>saveBagAsCommand</value>
+        <value>updateTreeCommand</value>
         <value>saveProfileCommand</value>
         <bean class="gov.loc.repository.bagger.BaggerExit" />
       </list>
@@ -54,7 +62,7 @@
   <bean id="newProfileCommand" class="org.springframework.richclient.command.TargetableActionCommand">
     <property name="commandExecutor" ref="newProfileWizard" />
   </bean>
-
+  
   <bean id="helpMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
