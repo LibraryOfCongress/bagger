@@ -27,10 +27,10 @@ public class OrganizationGeneralForm extends AbstractForm implements PropertyCha
         TableFormBuilder formBuilder = new TableFormBuilder(getBindingFactory());
 
         formBuilder.row();
-        this.orgField = formBuilder.add("orgName")[1];
+        this.orgField = formBuilder.add("sourceOrganization")[1];
         this.orgField.addFocusListener(this);
         formBuilder.row();
-        JComponent orgAddress = formBuilder.add("orgAddress")[1];
+        JComponent orgAddress = formBuilder.add("organizationAddress")[1];
         orgAddress.addFocusListener(this);
         this.orgField.requestFocus();
         return formBuilder.getForm();

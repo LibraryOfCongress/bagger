@@ -15,19 +15,17 @@ import org.springframework.richclient.wizard.AbstractWizard;
 import org.springframework.richclient.wizard.FormBackedWizardPage;
 import org.springframework.richclient.wizard.WizardDialog;
 
-public class NewProfileWizard extends AbstractWizard implements ActionCommandExecutor {
+public class NewFieldWizard extends AbstractWizard implements ActionCommandExecutor {
     private WizardDialog wizardDialog;
 
     private CompoundForm wizardForm;
-    private OrganizationContactForm userContactForm;    
-    private OrganizationGeneralForm organizationGeneralForm;
-    private OrganizationContactForm organizationContactForm;    
+    private OrganizationContactForm userContactForm;
     private BagView bagView = null;
 
-    public NewProfileWizard() {
-        super("newOrganizationWizard");
+    public NewFieldWizard() {
+        super("newFieldWizard");
     }
-    
+
     public void setBagView(BagView bagView) {
     	this.bagView = bagView;
     }
@@ -37,14 +35,6 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
         contactFormModel = FormModelHelper.createCompoundFormModel(new Contact());
         userContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(contactFormModel, null), bagView);
         addPage(new FormBackedWizardPage(userContactForm));
-
-    	HierarchicalFormModel organizationFormModel;
-        organizationFormModel = FormModelHelper.createCompoundFormModel(new BaggerOrganization());
-        organizationGeneralForm = new OrganizationGeneralForm(FormModelHelper.createChildPageFormModel(organizationFormModel, null), bagView);
-        addPage(new FormBackedWizardPage(organizationGeneralForm));
-
-        organizationContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(contactFormModel, null), bagView);
-        addPage(new FormBackedWizardPage(organizationContactForm));
     }
 
     public void execute() {
@@ -65,14 +55,8 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
 
     private Profile getNewProfile() {
     	Profile profile = new Profile();
-        if (!organizationGeneralForm.hasErrors()) {
-            organizationGeneralForm.commit();
-        }
-        BaggerOrganization newOrganization = (BaggerOrganization)organizationGeneralForm.getFormObject();
-        Organization org = new Organization();
-        org.setName(newOrganization.getSourceOrganization());
-        org.setAddress(newOrganization.getOrganizationAddress());
 
+        Organization org = new Organization();
         if (!userContactForm.hasErrors()) {
         	userContactForm.commit();
         }
@@ -80,11 +64,6 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
         newUser.setOrganization(org);
         profile.setPerson(newUser);
 
-        if (!organizationContactForm.hasErrors()) {
-        	organizationContactForm.commit();
-        }
-        Contact newContact = (Contact)organizationContactForm.getFormObject();
-        profile.setContact(newContact);
         return profile;
     }
 

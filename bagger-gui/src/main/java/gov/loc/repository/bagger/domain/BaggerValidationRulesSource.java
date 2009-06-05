@@ -13,16 +13,18 @@ import org.springframework.rules.support.DefaultRulesSource;
 public class BaggerValidationRulesSource extends DefaultRulesSource {
 	boolean isCopyright = false;
 	boolean isNdnp = false;
+	boolean isLcProject = false;
 	boolean isHoley = false;
 	
     public BaggerValidationRulesSource() {
         super();
     }
     
-    public void init(boolean isCopyright, boolean isNdnp, boolean isHoley) {
+    public void init(boolean isCopyright, boolean isNdnp, boolean isLcProject, boolean isHoley) {
     	clear();
     	this.isCopyright = isCopyright;
     	this.isNdnp = isNdnp;
+    	this.isLcProject = isLcProject;
     	this.isHoley = isHoley;
         if (isCopyright || isNdnp) addRules(createContactRules());
         if (isCopyright || isNdnp) addRules(createBagOrganizationRules());
@@ -67,6 +69,9 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
                 }
                 if (isNdnp) {
                 	add("awardeePhase", required());
+                }
+                if (isLcProject) {
+                	add("lcProject", required());
                 }
             }
         };

@@ -2,12 +2,17 @@ package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.handlers.BagTreeTransferHandler;
 import gov.loc.repository.bagger.util.RecursiveFileListIterator;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
 
+import javax.swing.DropMode;
+import javax.swing.JTextField;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 
 import org.apache.commons.logging.Log;
@@ -24,20 +29,32 @@ import java.util.Vector;
 public class BagTree extends CheckboxTree {
 	private static final long serialVersionUID = -5361474872106399068L;
 	private static final Log log = LogFactory.getLog(BagTree.class);
-	private static final int BAGTREE_WIDTH = 400; // 500 - 60 for Add button width
-	private static final int BAGTREE_HEIGHT = 160;
-	private static final int BAGTREE_ROW_MODIFIER = 22;
+	private int BAGTREE_WIDTH = 400; // 500 - 60 for Add button width
+	private int BAGTREE_HEIGHT = 160;
+	private int BAGTREE_ROW_MODIFIER = 22;
 
+	private BagView bagView;
 	private File bagDir;
 	private DefaultTreeModel bagTreeModel;
 	private TreePath rootPath;
+	private String basePath;
 	private DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(AbstractBagConstants.DATA_DIRECTORY);
 	private ArrayList<DefaultMutableTreeNode> srcNodes = new ArrayList<DefaultMutableTreeNode>();
 	private ArrayList<BaggerFileEntity> rootTree = new ArrayList<BaggerFileEntity>();
 	
-	public BagTree() {
+	public BagTree(BagView bagView, String path, boolean isPayload) {
 		super();
+		this.bagView = bagView;
+		basePath = path;
+		parentNode = new DefaultMutableTreeNode(basePath);
 		initialize();
+        JTextField nameTextField = new JTextField();
+        int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight() + 5;
+        BAGTREE_ROW_MODIFIER = fieldHeight;
+        this.setDragEnabled(true);
+        this.setDropMode(DropMode.ON_OR_INSERT);
+        this.setTransferHandler(new BagTreeTransferHandler(bagView, isPayload));
+        this.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 	}
 	
 	private void initialize() {
@@ -57,7 +74,7 @@ public class BagTree extends CheckboxTree {
 	
 	public void populateNodes(DefaultBag bag, File rootSrc) {
 		log.debug("BagTree.populateNodes" );
-		if (bag.getBag().getPayloadFiles() == null && rootSrc.listFiles() != null) {
+		if (bag.getBag().getPayload() != null && rootSrc.listFiles() != null) {
 			File[] listFiles = rootSrc.listFiles();
 			if (listFiles != null) {
 				log.debug("BagTree.populateNodes listFiles: " + listFiles.length );
@@ -84,17 +101,19 @@ public class BagTree extends CheckboxTree {
 				log.debug("BagTree.populateNodes getFetchPayload:" );
 				payload = bag.getFetchPayload();
 		    }
-			log.debug("BagTree.populateNodes payload: " + payload.size() );
+		    log.debug("BagTree.populateNodes payload: " + payload.size() );
 		    for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
 		    	String filePath = it.next();
 		    	try {
-		    		this.addNode(filePath);
+		    		String normalPath = BaggerFileEntity.removeBasePath(basePath, filePath);
+		    		this.addNode(normalPath);
 		    	} catch(Exception e) {
 		    		log.error("BagTree.populateNodes: " + e.getMessage());
 		    	}
 		    }
-		    int rows = BAGTREE_ROW_MODIFIER * payload.size();
-		    setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+		    log.debug("BagTree rows: " + payload.size());
+		    BAGTREE_HEIGHT = BAGTREE_ROW_MODIFIER * (payload.size() + 1);
+		    setPreferredSize(getTreeSize());
 		    invalidate();
 		}
 	}
@@ -160,7 +179,7 @@ public class BagTree extends CheckboxTree {
         addTreeCheckingListener(new TreeCheckingListener() {
             public void valueChanged(TreeCheckingEvent e) {
             	TreePath epath = new TreePath(e.getLeadingPath().getLastPathComponent());
-                //log.info("BagTree.addTreeCheckingListener valueChanged: " + (e.getLeadingPath().getLastPathComponent()));
+                //log.info("BagTree.addTreeCheckingListener valueChanged: " + e.getLeadingPath().getLastPathComponent());
             	if (!e.isChecked()) {
             		//log.info("BagTree.addTreeCheckingListener remove: " + (e.getLeadingPath().getLastPathComponent()));
             	}
@@ -168,6 +187,13 @@ public class BagTree extends CheckboxTree {
                 makeVisible(epath);
             }
         });	
+        addTreeSelectionListener(new TreeSelectionListener() {
+        	public void valueChanged(TreeSelectionEvent e) {
+        		DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+        		if (node == null) return;
+        		Object nodeInfo = node.getUserObject();
+        	}
+        });
         addTreeExpansionListener(new TreeExpansionListener() {
         	public void treeExpanded(TreeExpansionEvent e) {
                 int rows = BAGTREE_ROW_MODIFIER * getRowCount();
@@ -182,6 +208,19 @@ public class BagTree extends CheckboxTree {
                 invalidate();
         	}
         });
+	}
+	
+	public void updateTree(DefaultBag bag) {
+		TreePath[] selectedPaths = this.getSelectionPaths();
+		log.debug("BagTree.populateNodes" );
+		if (selectedPaths != null) {
+			log.debug("BagTree.updateTree selectedPaths: " + selectedPaths.length );
+			for (int i=0; i<selectedPaths.length; i++) {
+//				File f = listFiles[i];
+//				this.addTree(rootSrc, f, bag.getRootDir());
+				TreePath tp = selectedPaths[i];
+			}
+		}
 	}
 
 	public File getBagDir() {
@@ -243,7 +282,6 @@ public class BagTree extends CheckboxTree {
 		for (int fnum = 0; fnum < files.size(); fnum++) {
 			String elem = files.elementAt(fnum);
 			DefaultMutableTreeNode elemNode = new DefaultMutableTreeNode(elem);
-			//log.info("addNodes curDir: " + elem);
 			curDir.add(elemNode);
 			displayDir.add(elemNode);
 		}
