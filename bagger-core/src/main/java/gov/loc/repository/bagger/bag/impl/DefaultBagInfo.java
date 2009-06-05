@@ -1,14 +1,22 @@
 package gov.loc.repository.bagger.bag.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import gov.loc.repository.bagger.Contact;
+import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 
+import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
 
 /*
@@ -19,23 +27,44 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 
 	private static final Log log = LogFactory.getLog(DefaultBagInfo.class);
 	
-	public static final String EDEPOSIT_PUBLISHER = "Publisher";
-	public static final String NDNP_AWARDEE_PHASE = "Awardee Phase";
+	public static final String FIELD_NEW_COMPONENT = "New";
+	public static final String FIELD_EDEPOSIT_PUBLISHER = "Publisher";
+	public static final String FIELD_NDNP_AWARDEE_PHASE = "Awardee-Phase";
+	public static final String FIELD_LC_PROJECT = "LC-Project";
 
 	protected DefaultBag baggerBag;
 	private String bagName = new String();
 	private BaggerOrganization baggerOrganization = new BaggerOrganization();
-	
+	private List<BagInfoField> profileList;
+	private List<BagInfoField> fieldList;
+	public static final String[] profileStrings = {"Source-Organization", "Organization-Address", "Contact-Name", "Contact-Phone", "Contact-Email"};
+	public static final HashSet<String> profileSet = new HashSet<String>(Arrays.asList(profileStrings));
+	public static final String[] readOnlyStrings = {"Payload-Oxum", FIELD_LC_PROJECT};
+	public static final HashSet<String> readOnlySet = new HashSet<String>(Arrays.asList(readOnlyStrings));
+	public static final String[] textAreaStrings = {"External-Description", "Internal-Sender-Description"};
+	public static final HashSet<String> textAreaSet = new HashSet<String>(Arrays.asList(textAreaStrings));
+	public static final String[] requiredStrings = {"External-Description", "Bagging-Date", "External-Identifier", "Bag-Size", FIELD_EDEPOSIT_PUBLISHER, FIELD_NDNP_AWARDEE_PHASE, FIELD_LC_PROJECT};
+	public static final HashSet<String> requiredSet = new HashSet<String>(Arrays.asList(requiredStrings));
+
 	private String name;
 	private String content;
 	private String publisher = "";
 	private String awardeePhase = "";
+	private String lcProject = "";
 
 	public DefaultBagInfo(DefaultBag baggerBag) {
 		super(baggerBag.getBag().getBagConstants());
 		this.setBagName(baggerBag.getName());
 		this.baggerBag = baggerBag;
 		log.debug("DefaultBagInfo");
+	}
+	
+	public void setBag(DefaultBag baggerBag) {
+		this.baggerBag = baggerBag;
+	}
+	
+	public DefaultBag getBag() {
+		return this.baggerBag;
 	}
 
 	public void setBagName(String name) {
@@ -77,12 +106,20 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	public String getAwardeePhase() {
 		return this.awardeePhase;
 	}
+	
+	public void setLcProject(String project) {
+		if (project != null) this.lcProject = project;
+	}
+	
+	public String getLcProject() {
+		return this.lcProject;
+	}
 
 	public void setBagOrganization(BaggerOrganization baggerOrganization) {
-		this.setSourceOrganization(baggerOrganization.getOrgName());
-		this.setOrganizationAddress(baggerOrganization.getOrgAddress());
-		this.baggerOrganization.setOrgName(this.getSourceOrganization());
-		this.baggerOrganization.setOrgAddress(this.getOrganizationAddress());
+		this.setSourceOrganization(baggerOrganization.getSourceOrganization());
+		this.setOrganizationAddress(baggerOrganization.getOrganizationAddress());
+		this.baggerOrganization.setSourceOrganization(this.getSourceOrganization());
+		this.baggerOrganization.setOrganizationAddress(this.getOrganizationAddress());
 
 		Contact contact = baggerOrganization.getContact();
 		this.setContactName(contact.getContactName());
@@ -149,97 +186,235 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			else
 				this.setAwardeePhase("");			
 		}
+		if (!this.baggerBag.getIsNoProject()) {
+			if (bagInfo.getLcProject() != null && !bagInfo.getLcProject().isEmpty())
+				this.setLcProject(bagInfo.getLcProject());
+			else
+				this.setLcProject("");
+		}
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer content = new StringBuffer();
-		content.append(BagInfoTxtImpl.SOURCE_ORGANIZATION + ": ");
+		content.append(FIELD_SOURCE_ORGANIZATION + ": ");
 		if (this.getSourceOrganization() != null && !this.getSourceOrganization().isEmpty())
 			content.append(this.getSourceOrganization() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.ORGANIZATION_ADDRESS + ": ");
+		content.append(FIELD_ORGANIZATION_ADDRESS + ": ");
 		if (this.getOrganizationAddress() != null && !this.getOrganizationAddress().isEmpty())
 			content.append(this.getOrganizationAddress() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.CONTACT_NAME + ": ");
+		content.append(FIELD_CONTACT_NAME + ": ");
 		if (this.getContactName() != null && !this.getContactName().isEmpty())
 			content.append(this.getContactName() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.CONTACT_PHONE + ": ");
+		content.append(FIELD_CONTACT_PHONE + ": ");
 		if (this.getContactPhone() != null && !this.getContactPhone().isEmpty())
 			content.append(this.getContactPhone() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.CONTACT_EMAIL + ": ");
+		content.append(FIELD_CONTACT_EMAIL + ": ");
 		if (this.getContactEmail() != null && !this.getContactEmail().isEmpty())
 			content.append(this.getContactEmail() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.EXTERNAL_DESCRIPTION + ": ");
+		content.append(FIELD_EXTERNAL_DESCRIPTION + ": ");
 		if (this.getExternalDescription() != null && !this.getExternalDescription().isEmpty())
 			content.append(this.getExternalDescription() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.BAGGING_DATE + ": ");
+		content.append(FIELD_BAGGING_DATE + ": ");
 		if (this.getBaggingDate() != null && !this.getBaggingDate().isEmpty())
 			content.append(this.getBaggingDate() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.EXTERNAL_IDENTIFIER + ": ");
+		content.append(FIELD_EXTERNAL_IDENTIFIER + ": ");
 		if (this.getExternalIdentifier() != null && !this.getExternalIdentifier().isEmpty())
 			content.append(this.getExternalIdentifier() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.BAG_SIZE + ": ");
+		content.append(FIELD_BAG_SIZE + ": ");
 		if (this.getBagSize() != null && !this.getBagSize().isEmpty())
 			content.append(this.getBagSize() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.PAYLOAD_OXUM + ": ");
+		content.append(FIELD_PAYLOAD_OXUM + ": ");
 		if (this.getPayloadOxum() != null && !this.getPayloadOxum().isEmpty())
 			content.append(this.getPayloadOxum() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.BAG_GROUP_IDENTIFIER + ": ");
+		content.append(FIELD_BAG_GROUP_IDENTIFIER + ": ");
 		if (this.getBagGroupIdentifier() != null && !this.getBagGroupIdentifier().isEmpty())
 			content.append(this.getBagGroupIdentifier() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.BAG_COUNT + ": ");
+		content.append(FIELD_BAG_COUNT + ": ");
 		if (this.getBagCount() != null && !this.getBagCount().isEmpty())
 			content.append(this.getBagCount() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.INTERNAL_SENDER_IDENTIFIER + ": ");
+		content.append(FIELD_INTERNAL_SENDER_IDENTIFIER + ": ");
 		if (this.getInternalSenderIdentifier() != null && !this.getInternalSenderIdentifier().isEmpty())
 			content.append(this.getInternalSenderIdentifier() + "\n");
 		else
 			content.append("\n");
-		content.append(BagInfoTxtImpl.INTERNAL_SENDER_DESCRIPTION + ": ");
+		content.append(FIELD_INTERNAL_SENDER_DESCRIPTION + ": ");
 		if (this.getInternalSenderDescription() != null && !this.getInternalSenderDescription().isEmpty())
 			content.append(this.getInternalSenderDescription() + "\n");
 		else
 			content.append("\n");
 		if (this.baggerBag.getIsEdeposit()) {
-			content.append(EDEPOSIT_PUBLISHER + ": ");
+			content.append(FIELD_EDEPOSIT_PUBLISHER + ": ");
 			if (this.getPublisher() != null && !this.getPublisher().isEmpty())
 				content.append(this.getPublisher() + "\n");
 			else
 				content.append("\n");			
 		}
 		if (this.baggerBag.getIsNdnp()) {
-			content.append(NDNP_AWARDEE_PHASE + ": ");
+			content.append(FIELD_NDNP_AWARDEE_PHASE + ": ");
 			if (this.getAwardeePhase() != null && !this.getAwardeePhase().isEmpty())
 				content.append(this.getAwardeePhase() + "\n");
 			else
 				content.append("\n");			
 		}
+		if (!this.baggerBag.getIsNoProject()) {
+			content.append(FIELD_LC_PROJECT + ": ");
+			if (this.getLcProject() != null && !this.getLcProject().isEmpty())
+				content.append(this.getLcProject() + "\n");
+			else
+				content.append("\n");			
+		}
 		
 		return content.toString();
+	}
+
+	public List<BagInfoField> getFieldList() {
+		if (this.fieldList == null) this.fieldList = new ArrayList<BagInfoField>();
+		return this.fieldList;
+	}
+
+	public void setFieldList(List<BagInfoField> list) {
+		this.fieldList = list;
+	}
+	
+	public List<BagInfoField> getProfileList() {
+		return this.profileList;
+	}
+	
+	public void setProfileList(List<BagInfoField> list) {
+		this.profileList = list;
+	}
+
+	public void createExistingFieldList(boolean enabled) {
+		this.fieldList = new ArrayList<BagInfoField>();
+		this.profileList = new ArrayList<BagInfoField>();
+		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		Set<String> keys = bagInfoTxt.keySet();
+		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+			String label = (String) iter.next();
+			BagInfoField field = createField(label, enabled);
+			if (profileSet.contains(label)) {				
+				profileList.add(field);
+			} else {
+				fieldList.add(field);				
+			}
+		}
+
+		List<String> nls = bagInfoTxt.getNonstandardFields();
+		for (int i=0; i<nls.size(); i++) {
+			String label = nls.get(i);
+			BagInfoField field = createField(label, enabled);
+			fieldList.add(field);
+		}
+	}
+	
+	public void createStandardFieldList(boolean enabled) {
+		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
+
+		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		List<String> ls = bagInfoTxt.getStandardFields();
+		for (int i=0; i<ls.size(); i++) {
+			String label = ls.get(i);
+			if (!profileSet.contains(label)) {
+				BagInfoField field = createField(label, enabled);
+				list.add(field);
+			}
+		}
+
+		this.fieldList = list;
+	}
+	
+	public void createProfileFieldList(boolean enabled) {
+		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
+
+		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		List<String> ls = bagInfoTxt.getStandardFields();
+		for (int i=0; i<ls.size(); i++) {
+			String label = ls.get(i);
+			if (profileSet.contains(label)) {
+				BagInfoField field = createField(label, enabled);
+				list.add(field);				
+			}
+		}
+
+		this.profileList = list;
+	}
+	
+	public List<BagInfoField> createNonStandardFieldList(boolean enabled) {
+		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
+
+		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		List<String> nls = bagInfoTxt.getNonstandardFields();
+		for (int i=0; i<nls.size(); i++) {
+			String label = nls.get(i);
+			//log.info("createNonStandardFieldList non-stnd: " + getMethodFromLabel(label));
+		}
+
+        if (baggerBag.getIsEdeposit()) {
+    		BagInfoField publisher = createField("publisher", enabled);
+    		list.add(publisher);
+        }
+        if (baggerBag.getIsNdnp()) {
+    		BagInfoField awardeePhase = createField("awardeePhase", enabled);
+    		list.add(awardeePhase);
+        }
+        if (!baggerBag.getIsNoProject()) {
+    		BagInfoField lcProject = createField("lcProject", enabled);
+    		list.add(lcProject);
+        }
+		return list;
+	}
+
+	public void updateExistingFieldList(boolean enabled) {
+		this.fieldList = new ArrayList<BagInfoField>();
+
+		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		List<String>ls = bagInfoTxt.getStandardFields();
+		for (int i=0; i<ls.size(); i++) {
+			String label = ls.get(i);
+			if (!profileSet.contains(label)) {
+				BagInfoField field = createField(label, enabled);
+				fieldList.add(field);
+			}
+		}
+		// TODO: if project has changed, remove old project fields
+		// and add new project fields based on profile
+        if (baggerBag.getIsEdeposit()) {
+    		BagInfoField publisher = createField("publisher", enabled);
+    		fieldList.add(publisher);
+        }
+        if (baggerBag.getIsNdnp()) {
+    		BagInfoField awardeePhase = createField("awardeePhase", enabled);
+    		fieldList.add(awardeePhase);
+        }
+        if (!baggerBag.getIsNoProject()) {
+    		BagInfoField lcProject = createField("lcProject", enabled);
+    		fieldList.add(lcProject);
+        }
 	}
 
 	public static String getTodaysDate() {
@@ -249,5 +424,70 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		String baggingDate = formatter.format(todaysDate);
 		
 		return baggingDate;
+	}
+	
+	private BagInfoField createField(String label, boolean enabled) {
+		String name = getMethodFromLabel(label);
+
+		BagInfoField field = new BagInfoField();
+		if (textAreaSet.contains(label)) {
+			field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+		} else {
+			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+		}
+		field.setName(name);
+		field.setLabel(label);
+		if (readOnlySet.contains(label)) {
+			field.isEnabled(false);
+		} else {
+			field.isEnabled(enabled);					
+		}
+		field.isRequired(true);
+
+		return field;
+	}
+	
+	public static String getMethodFromLabel(String label) {
+		String delimeter = new String("-");
+		String methodName = new String();
+		
+		String[] list = label.split(delimeter);
+		if (list != null && list.length > 0) {
+			for (int i=0; i < list.length; i++) {
+				log.debug("[" + list[i] + "]");
+				String s = list[i];
+				if (i == 0) methodName = s.toLowerCase();
+				else methodName += list[i];
+			}
+			log.debug("\n");
+		}
+		return methodName;
+	}
+
+	// TODO: return standard fields and project specific fields
+	public List<String> getStandardFields() {
+		ArrayList<String> list = new ArrayList<String>();
+
+        list.add("");
+        list.add(FIELD_NEW_COMPONENT);
+		if (this.baggerBag.getIsEdeposit()) {
+	        list.add(FIELD_EDEPOSIT_PUBLISHER);
+		}
+		if (this.baggerBag.getIsNdnp()) {
+	        list.add(FIELD_NDNP_AWARDEE_PHASE);
+		}
+		if (!this.baggerBag.getIsNoProject()) {
+	        list.add(FIELD_LC_PROJECT);
+		}
+
+        BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		List<String> ls = bagInfoTxt.getStandardFields();
+		for (int i=0; i<ls.size(); i++) {
+			String label = ls.get(i);
+			if (!profileSet.contains(label)) {
+				list.add(label);
+			}
+		}
+		return list;
 	}
 }

@@ -19,26 +19,26 @@ import gov.loc.repository.bagger.Contact;
 public class BaggerOrganization {
 	private static final Log log = LogFactory.getLog(BaggerOrganization.class);
 
-	private String orgName = "";
+	private String sourceOrganization = "";
 
-	private String orgAddress = "";
+	private String organizationAddress = "";
 
 	private Contact contact = new Contact();
 
-	public String getOrgName() {
-		return this.orgName;
+	public String getSourceOrganization() {
+		return this.sourceOrganization;
 	}
 
-	public void setOrgName(String name) {
-		this.orgName = name;
+	public void setSourceOrganization(String name) {
+		this.sourceOrganization = name;
 	}
 
-	public String getOrgAddress() {
-		return this.orgAddress;
+	public String getOrganizationAddress() {
+		return this.organizationAddress;
 	}
 
-	public void setOrgAddress(String address) {
-		this.orgAddress = address;
+	public void setOrganizationAddress(String address) {
+		this.organizationAddress = address;
 	}
 
 	public Contact getContact() {
@@ -53,9 +53,9 @@ public class BaggerOrganization {
 	public String toString() {
 		log.info("BaggerOrganization.toString");
 		StringBuffer sb = new StringBuffer();
-		sb.append(this.orgName);
+		sb.append(this.sourceOrganization);
 		sb.append('\n');
-		sb.append(this.orgAddress);
+		sb.append(this.organizationAddress);
 		sb.append('\n');
 		sb.append(this.contact.getContactName());
 		sb.append('\n');

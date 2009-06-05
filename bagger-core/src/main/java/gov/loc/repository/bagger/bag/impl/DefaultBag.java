@@ -1,16 +1,17 @@
 package gov.loc.repository.bagger.bag.impl;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-//import java.util.ListIterator;
 import java.util.ArrayList;
+import java.util.Set;
 import java.io.File;
 
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Project;
+import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerFetch;
-import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.util.FileUtililties;
 
@@ -19,19 +20,25 @@ import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.BagItTxt;
-import gov.loc.repository.bagit.BagWriter;
+import gov.loc.repository.bagit.CancelIndicator;
 import gov.loc.repository.bagit.FetchTxt;
 import gov.loc.repository.bagit.Manifest;
-import gov.loc.repository.bagit.VerifyStrategy;
+import gov.loc.repository.bagit.ManifestHelper;
+import gov.loc.repository.bagit.ProgressListener;
+import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.FetchTxt.FilenameSizeUrl;
-import gov.loc.repository.bagit.bagwriter.FileSystemBagWriter;
-import gov.loc.repository.bagit.bagwriter.ZipBagWriter;
-import gov.loc.repository.bagit.bagwriter.TarBagWriter;
-import gov.loc.repository.bagit.completion.DefaultCompletionStrategy;
-//import gov.loc.repository.bagit.bagwriter.TarBagWriter.Compression;
+import gov.loc.repository.bagit.Manifest.Algorithm;
+import gov.loc.repository.bagit.writer.Writer;
+import gov.loc.repository.bagit.writer.impl.FileSystemWriter;
+import gov.loc.repository.bagit.writer.impl.TarWriter;
+import gov.loc.repository.bagit.writer.impl.ZipWriter;
+import gov.loc.repository.bagit.verify.Verifier;
+import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
+import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
 import gov.loc.repository.bagit.impl.BagItTxtImpl;
+import gov.loc.repository.bagit.transformer.Completer;
+import gov.loc.repository.bagit.transformer.impl.DefaultCompleter;
 import gov.loc.repository.bagit.utilities.SimpleResult;
-import gov.loc.repository.bagit.verify.RequiredBagInfoTxtFieldsStrategy;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,13 +66,19 @@ public class DefaultBag {
 	// Bag option flags
 	private boolean isHoley = false;
 	private boolean isSerial = true;
+	private boolean isNoProject = true;
 	private boolean isEdeposit = false;
 	private boolean isNdnp = false;
 	private boolean isCleanup = false;
 	private boolean isNewbag = true;
+	private boolean isBuildTagManifest = false;
+	private boolean isBuildPayloadManifest = false;
+	private String tagManifestAlgorithm;
+	private String payloadManifestAlgorithm;
 	private short serialMode = NO_MODE;
 
 	// Bag state flags
+	private boolean isValidateOnSave = false;
 	private boolean isComplete = false;
 	private boolean isValid = false;
 	private boolean isValidForms = false;
@@ -79,53 +92,71 @@ public class DefaultBag {
 	private long totalSize = 0;
 
 	protected Bag bilBag;
+	private ValidVerifierImpl validVerifier;
 	private Bag bagToValidate;
-
-//	private Collection<BagFile> rootPayload = null;
-	private List<BaggerFileEntity> rootTree;
-
 	protected DefaultBagInfo bagInfo = null;
-	protected VerifyStrategy bagStrategy;
+	protected Verifier bagStrategy;
 	protected BaggerFetch fetch;
 	private Project project;
+	private BagFactory bagFactory = new BagFactory();
+	private Completer completer;
+	private boolean includeTags = false;
+	private String version = null;
+
+	public DefaultBag () {
+        this.version = Version.V0_96.versionString;
+		init(null);
+	}
+	
+	public DefaultBag(String version) {
+		this.version = version;
+		init(null);
+	}
 
 	public DefaultBag(File rootDir) {
+		init(rootDir);
+    }
+	
+	private void init(File rootDir) {
 		reset();
-        if (rootTree == null) rootTree = new ArrayList<BaggerFileEntity>();
 		this.rootDir = rootDir;
 		if (rootDir != null) {
-			bilBag = BagFactory.createBag(this.rootDir);
+			bilBag = bagFactory.createBag(this.rootDir);
+		} else if (version != null) {
+			bilBag = bagFactory.createBag();
 		} else {
-			bilBag = BagFactory.createBag();
+			bilBag = bagFactory.createBag();
 		}
 		BagItTxt bagIt = bilBag.getBagItTxt();
 		if (bagIt == null) {
 			bagIt = bilBag.getBagPartFactory().createBagItTxt();
-			bilBag.setBagItTxt(bagIt);
+			//bilBag.setBagItTxt(bagIt);
+			bilBag.putBagFile(bagIt);
 		}
 		bagInfo = new DefaultBagInfo(this);
-		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+/*		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
 		if (bagInfoTxt == null) {
 			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
-			bilBag.setBagInfoTxt(bagInfoTxt);
-		}
+			bilBag.putBagFile(bagInfoTxt);
+		} */
 		if (bilBag.getFetchTxt() != null) {
-//			log.debug("DefaultBag: " + bilBag.getFetchTxt().toString());
         	setIsHoley(true);
     		String url = getBaseUrl(bilBag.getFetchTxt());
         	BaggerFetch fetch = this.getFetch();
         	fetch.setBaseURL(url);
         	this.fetch = fetch;
-//			bilBag.makeHoley(url, true);
 		}
-    	//updateStrategy();
-    }
+		this.payloadManifestAlgorithm = Manifest.Algorithm.MD5.bagItAlgorithm;
+		this.tagManifestAlgorithm = Manifest.Algorithm.MD5.bagItAlgorithm;
+		version = bilBag.getVersion().versionString;
+	}
 
 	public String getDataDirectory() {
 		return bilBag.getBagConstants().getDataDirectory();
 	}
 	
 	protected void reset() {
+		this.isValidateOnSave = false;
 		this.isComplete = false;
 		this.isValid = false;
 		this.isValidForms = false;
@@ -143,6 +174,14 @@ public class DefaultBag {
 	
 	public void setBag(Bag bag) {
 		this.bilBag = bag;
+	}
+
+	public void setVersion(String v) {
+		this.version = v;
+	}
+	
+	public String getVersion() {
+		return this.version;
 	}
 
 	public void setName(String name) {
@@ -231,6 +270,14 @@ public class DefaultBag {
 		return this.serialMode;
 	}
 
+	public void setIsNoProject(boolean b) {
+		this.isNoProject = b;
+	}
+	
+	public boolean getIsNoProject() {
+		return this.isNoProject;
+	}
+	
 	public void setIsEdeposit(boolean b) {
 		this.isEdeposit = b;
 	}
@@ -262,7 +309,47 @@ public class DefaultBag {
 	public boolean getIsNewbag() {
 		return this.isNewbag;
 	}
+	
+	public void setIsBuildTagManifest(boolean b) {
+		this.isBuildTagManifest = b;
+	}
+	
+	public boolean getisBuildTagManifest() {
+		return this.isBuildTagManifest;
+	}
 
+	public void setIsBuildPayloadManifest(boolean b) {
+		this.isBuildPayloadManifest = b;
+	}
+	
+	public boolean getIsBuildPayloadManifest() {
+		return this.isBuildPayloadManifest;
+	}
+
+	public void setTagManifestAlgorithm(String s) {
+		this.tagManifestAlgorithm = s;
+	}
+	
+	public String getTagManifestAlgorithm() {
+		return this.tagManifestAlgorithm;
+	}
+
+	public void setPayloadManifestAlgorithm(String s) {
+		this.payloadManifestAlgorithm = s;
+	}
+	
+	public String getPayloadManifestAlgorithm() {
+		return this.payloadManifestAlgorithm;
+	}
+	
+	public void isValidateOnSave(boolean b) {
+		this.isValidateOnSave = b;
+	}
+	
+	public boolean isValidateOnSave() {
+		return this.isValidateOnSave;
+	}
+	
 	public void isComplete(boolean b) {
 		this.isComplete = b;
 	}
@@ -304,6 +391,7 @@ public class DefaultBag {
 	}
 
 	public void copyBagToForm() {
+		copyBagToFields();
 		BagInfoTxt bagInfoTxt = this.bilBag.getBagInfoTxt();
 		if (bagInfoTxt == null) {return;}
 		// Replace the profile org and contact with info from existing bag
@@ -323,13 +411,13 @@ public class DefaultBag {
     		contact.setEmail("");
 		baggerOrganization.setContact(contact);
 		if (bagInfoTxt.getSourceOrganization() != null && !bagInfoTxt.getSourceOrganization().isEmpty()) 
-    		baggerOrganization.setOrgName(bagInfoTxt.getSourceOrganization());
+    		baggerOrganization.setSourceOrganization(bagInfoTxt.getSourceOrganization());
 		else
-    		baggerOrganization.setOrgName("");
+    		baggerOrganization.setSourceOrganization("");
 		if (bagInfoTxt.getOrganizationAddress() != null && !bagInfoTxt.getOrganizationAddress().isEmpty()) 
-    		baggerOrganization.setOrgAddress(bagInfoTxt.getOrganizationAddress());
+    		baggerOrganization.setOrganizationAddress(bagInfoTxt.getOrganizationAddress());
 		else
-    		baggerOrganization.setOrgAddress("");
+    		baggerOrganization.setOrganizationAddress("");
 		this.bagInfo.setBagOrganization(baggerOrganization);
 		if (bagInfoTxt.getExternalDescription() != null && !bagInfoTxt.getExternalDescription().isEmpty())
 			this.bagInfo.setExternalDescription(bagInfoTxt.getExternalDescription());
@@ -367,8 +455,8 @@ public class DefaultBag {
 			this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
 		else
 			this.bagInfo.setInternalSenderDescription("");
-		if (bagInfoTxt.containsKey(DefaultBagInfo.EDEPOSIT_PUBLISHER)) {
-			String publisher = bagInfoTxt.get(DefaultBagInfo.EDEPOSIT_PUBLISHER);
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
+			String publisher = bagInfoTxt.get(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
 			if (publisher != null && !publisher.isEmpty()) {
 				this.bagInfo.setPublisher(publisher);
 			} else {
@@ -376,8 +464,8 @@ public class DefaultBag {
 			}
 			this.setIsEdeposit(true);
 		}
-		if (bagInfoTxt.containsKey(DefaultBagInfo.NDNP_AWARDEE_PHASE)) {
-			String awardeePhase = bagInfoTxt.get(DefaultBagInfo.NDNP_AWARDEE_PHASE);
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
+			String awardeePhase = bagInfoTxt.get(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
 			if (awardeePhase != null && !awardeePhase.isEmpty()) {
 				this.bagInfo.setAwardeePhase(awardeePhase);
 			} else {
@@ -385,59 +473,155 @@ public class DefaultBag {
 			}
 			this.setIsNdnp(true);
 		}
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
+			String lcProject = bagInfoTxt.get(DefaultBagInfo.FIELD_LC_PROJECT);
+			if (lcProject != null && !lcProject.isEmpty()) {
+				this.bagInfo.setLcProject(lcProject);
+			} else {
+				this.bagInfo.setLcProject("");
+			}
+			this.setIsNoProject(false);
+		} else {
+			this.setIsNoProject(true);
+		}
+	}
+
+	public void copyBagToFields() {
+		BagInfoTxt bagInfoTxt = this.bilBag.getBagInfoTxt();
+		List<BagInfoField> fields = this.bagInfo.getFieldList();
+		for (int i=0; i < fields.size(); i++) {
+			BagInfoField field = fields.get(i);
+			String key = field.getLabel();
+			field.setValue(bagInfoTxt.get(key));
+			fields.set(i, field);
+		}
+		this.bagInfo.setFieldList(fields);
 	}
 
 	public void updateBagInfo() {
 		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
 		Contact contact = baggerOrganization.getContact();
 		if (bilBag.getBagInfoTxt() != null) {
-			bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getOrgName());
-			bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrgAddress());
-			bilBag.getBagInfoTxt().setContactName(contact.getContactName());
-			bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
-			bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
-			bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
-			bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
-			bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
-			bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
-			bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
-			bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
-			bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
-			bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
-			bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
+			if (!baggerOrganization.getSourceOrganization().isEmpty()) {
+				bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
+			}
+			if (!baggerOrganization.getOrganizationAddress().isEmpty()) {
+				bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrganizationAddress());
+			}
+			if (!contact.getContactName().isEmpty()) {
+				bilBag.getBagInfoTxt().setContactName(contact.getContactName());
+			}
+			if (!contact.getTelephone().isEmpty()) {
+				bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
+			}
+			if (!contact.getEmail().isEmpty()) {
+				bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
+			}
+			if (!bagInfo.getExternalDescription().isEmpty()) {
+				bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
+			}
+			if (!bagInfo.getBaggingDate().isEmpty()) {
+				bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
+			}
+			if (!bagInfo.getExternalIdentifier().isEmpty()) {
+				bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
+			}
+			if (!bagInfo.getBagSize().isEmpty()) {
+				bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
+			}
+			if (!bagInfo.getPayloadOxum().isEmpty()) {
+				bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
+			}
+			if (!bagInfo.getBagGroupIdentifier().isEmpty()) {
+				bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
+			}
+			if (!bagInfo.getBagCount().isEmpty()) {
+				bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
+			}
+			if (!bagInfo.getInternalSenderIdentifier().isEmpty()) {
+				bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
+			}
+			if (!bagInfo.getInternalSenderDescription().isEmpty()) {
+				bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
+			}
 			if (this.getIsEdeposit()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
 			}
 			if (this.getIsNdnp()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+			}
+			if (!this.getIsNoProject()) {
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
 			}
 		}
-		DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
-		completionStrategy.setGenerateBagInfoTxt(true);
-		completionStrategy.setGenerateTagManifest(false);
-        bilBag.complete(completionStrategy);
+		//DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
+		//completionStrategy.setGenerateBagInfoTxt(true);
+		//completionStrategy.setGenerateTagManifest(false);
+        //bilBag.complete(completionStrategy);
+        completer = new DefaultCompleter(bagFactory);
+        bilBag.makeComplete(completer);
+	}
+	
+	public void createBagInfo(HashMap<String,String> map) {
+/* */
+  		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+		if (bagInfoTxt == null) {
+			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
+			bilBag.putBagFile(bagInfoTxt);
+		} 
+		bilBag.getBagInfoTxt().clear();
+		log.debug("createBagInfo: " + bagInfoTxt.getFilepath());
+/* */
+		//log.info("DefaultBag.createBagInfo.bagInfoTxt: " + bagInfoTxt.toString());
+		Set<String> keys = map.keySet();
+		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+			String key = (String) iter.next();
+			String value = (String) map.get(key);
+			bagInfoTxt.put(key, value);
+			//bilBag.getBagInfoTxt().put(key, value);
+		}
+//        completer = new DefaultCompleter(bagFactory);
+//        bilBag.makeComplete(completer);		
+		bilBag.putBagFile(bagInfoTxt);
+  		bagInfoTxt = bilBag.getBagInfoTxt();
+		//log.info("DefaultBag.createBagInfo.bagInfoTxt: " + bagInfoTxt.toString());
 	}
 	
 	public void updateFetchTxt() {
 		if (this.isHoley) {
+//			if (bilBag.getFetchTxt() == null) {
+				if (this.getFetch().getBaseURL() != null) {
+					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
+				}
+//			}
+		}
+		//DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
+		//completionStrategy.setGenerateBagInfoTxt(false);
+		//completionStrategy.setGenerateTagManifest(false);
+        //bilBag.complete(completionStrategy);
+        //completer = new DefaultCompleter(bagFactory);
+        //bilBag.makeComplete(completer);
+		bilBag.makeComplete();
+	}
+	
+	public void copyFieldsToBag() {
+		if (this.isHoley) {
 			if (bilBag.getFetchTxt() == null) {
 				if (this.getFetch().getBaseURL() != null) {
-					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true);
+					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
 				}
 			}
 		}
-		DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
-		completionStrategy.setGenerateBagInfoTxt(false);
-		completionStrategy.setGenerateTagManifest(false);
-        bilBag.complete(completionStrategy);
+        completer = new DefaultCompleter(bagFactory);
+        bilBag.makeComplete(completer);
 	}
 
 	public void copyFormToBag() {
 		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
 		Contact contact = baggerOrganization.getContact();
 		if (bilBag.getBagInfoTxt() != null) {
-			bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getOrgName());
-			bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrgAddress());
+			bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
+			bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrganizationAddress());
 			bilBag.getBagInfoTxt().setContactName(contact.getContactName());
 			bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
 			bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
@@ -451,24 +635,31 @@ public class DefaultBag {
 			bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
 			bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
 			if (this.getIsEdeposit()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
 			}
 			if (this.getIsNdnp()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+			}
+			if (!this.getIsNoProject()) {
+				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
 			}
 		}
 		if (this.isHoley) {
 			if (bilBag.getFetchTxt() == null) {
 				if (this.getFetch().getBaseURL() != null) {
-					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true);					
-					//this.bilBag.complete();				
+					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
+					//this.bilBag.complete();
 				}
 			}
 		}
-		DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
-		completionStrategy.setGenerateBagInfoTxt(true);
-		completionStrategy.setGenerateTagManifest(true);
-        bilBag.complete(completionStrategy);
+		//DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
+		//completionStrategy.setGenerateBagInfoTxt(true);
+		//completionStrategy.setGenerateTagManifest(true);
+        //bilBag.complete(completionStrategy);
+/*
+		completer = new DefaultCompleter(bagFactory);
+        bilBag.makeComplete(completer);
+*/
 	}
 
 	public void setInfo(DefaultBagInfo bagInfo) {
@@ -522,12 +713,12 @@ public class DefaultBag {
 	public void updateFetch() {
 		if (this.getIsHoley()) {
 			if (this.fetch != null && this.fetch.getBaseURL() != null) {
-				String baseUrl = this.fetch.getBaseURL();
-				//this.bilBag.makeHoley(baseUrl, true);
+				//String baseUrl = this.fetch.getBaseURL();
+				//this.bilBag.makeHoley(baseUrl, true, includeTags);
 				//this.bilBag.complete();
 			}
 		} else {
-			this.bilBag.putFetchTxt(null);
+			//this.bilBag.putFetchTxt(null);
 		}
 	}
 
@@ -613,17 +804,19 @@ public class DefaultBag {
 		StringBuffer dcontent = new StringBuffer();
 		dcontent.append(this.getDataDirectory() + "/");
 		dcontent.append('\n');
-		Collection<BagFile> files = this.bilBag.getPayloadFiles();
-        for (Iterator<BagFile> it=files.iterator(); it.hasNext(); ) {
+		Collection<BagFile> files = this.bilBag.getPayload();
+		for (Iterator<BagFile> it=files.iterator(); it.hasNext(); ) {
         	try {
             	BagFile bf = it.next();
             	if (bf != null) {
                 	totalSize += bf.getSize();
-                	dcontent.append(bf.getFilepath());            		
+                	/*
+                	dcontent.append(bf.getFilepath());
+                	dcontent.append('\n');
+                	 */
             	}
-            	dcontent.append('\n');
         	} catch (Exception e) {
-        		log.error("DefaultBag.getDataContent: " + e.getMessage());
+//        		log.error("DefaultBag.getDataContent: " + e.getMessage());
         	}
         }
         this.setSize(totalSize);
@@ -635,7 +828,7 @@ public class DefaultBag {
 	}
 	
 	public int getDataNumber() {
-		return this.bilBag.getPayloadFiles().size();
+		return this.bilBag.getPayload().size();
 	}
 	
 	public void setProject(Project project) {
@@ -646,65 +839,87 @@ public class DefaultBag {
 		return this.project;
 	}
 
-//	public Collection<BagFile> getRootPayload() {
-//		return this.rootPayload;
-//	}
-/*	
-	public List<String> getRootPayloadPaths() {
-		ArrayList<String> pathList = new ArrayList<String>();
-		Collection<BagFile> payload = this.getRootPayload();
-        for (Iterator<BagFile> it=payload.iterator(); it.hasNext(); ) {
-        	BagFile bf = it.next();
-        	pathList.add(bf.getFilepath());
-        }
-		return pathList;
-	}
-*/	
 	public List<String> getPayloadPaths() {
 		ArrayList<String> pathList = new ArrayList<String>();
-		Collection<BagFile> payload = this.bilBag.getPayloadFiles();
+		Collection<BagFile> payload = this.bilBag.getPayload();
         for (Iterator<BagFile> it=payload.iterator(); it.hasNext(); ) {
         	BagFile bf = it.next();
         	pathList.add(bf.getFilepath());
         }
 		return pathList;		
 	}
-
-	// Sets the root tree for this bag.  The root tree is a list of all the files
-	// that are being display in the file tree selection window.
-	public void setRootTree(List<BaggerFileEntity> rootTree) {
-		this.rootTree = rootTree;
-	}
-
-	// Returns the root tree for this bag.  The root tree is a list of all the files
-	// that are being display in the file tree selection window.
-	public List<BaggerFileEntity> getRootTree() {
-		return this.rootTree;
+	
+	public String addTagFile(File f) {
+		String message = "";
+		if (f != null) {
+			try {
+				bilBag.addFileAsTag(f);
+				message = "Added tag manifest file: " + f.getName();
+			} catch (Exception e) {
+				message = "Error adding file: " + f + " due to: " + e.getMessage();
+			}
+		}
+		return message;
 	}
 	
-	public String write(boolean validFormFields) throws Exception {
+	public String removeTagFile(File f) {
+		String message = "";
+		if (f != null) {
+			try {
+				bilBag.removeBagFile(f.getName());
+				message = "Removed tag manifest file: " + f.getName();
+			} catch (Exception e) {
+				message = "Error removing file: " + f + " due to: " + e.getMessage();
+			}
+		}
+		return message;
+	}
+
+	public String old_write(boolean validFormFields) throws Exception {
 		boolean isContinue = true;
 		String messages = "";
 		reset();
 		try {
+			if (this.isBuildPayloadManifest) {
+				if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.MD5.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.MD5, bilBag.getBagConstants() ))); 
+				} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA1.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.SHA1, bilBag.getBagConstants() ))); 
+				} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA256.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.SHA256, bilBag.getBagConstants() ))); 
+				} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA512.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.SHA512, bilBag.getBagConstants() ))); 
+				}
+			}
+			if (this.isBuildTagManifest) {
+				if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.MD5.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.MD5, bilBag.getBagConstants() ))); 
+				} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA1.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.SHA1, bilBag.getBagConstants() ))); 
+				} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA256.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.SHA256, bilBag.getBagConstants() ))); 
+				} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA512.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.SHA512, bilBag.getBagConstants() ))); 
+				}
+			}
 			// validate form
 			if (isContinue) {
 				messages += validateForms(validFormFields);
 				if (this.isValidForms()) {
 					isContinue = true;
 				} else {
-					if (this.getIsEdeposit()) isContinue = false;
-					if (this.getIsNdnp()) isContinue = false;
+					//if (this.getIsEdeposit()) isContinue = false;
+					//if (this.getIsNdnp()) isContinue = false;
 					messages += "\nBagger form fields are missing valid values.\n";
 					log.error("DefaultBag.write.writeBag: ");
-					throw new RuntimeException("Bagger form fields are missing valid values.");
+//					throw new RuntimeException("Bagger form fields are missing valid values.");
 				}
 				display("DefaultBag.write isValidForms: " + messages);
 			}
 		} catch (Exception e) {
 			messages += "An error occurred validating forms:\n" + e.toString() + "\n";
 			log.error("DefaultBag.write.writeBag: " + e);
-			if (isContinue == false) throw new RuntimeException("Bagger form fields are missing valid values.");
+//			if (isContinue == false) throw new RuntimeException("Bagger form fields are missing valid values.");
 		}
 		try {
 			// is complete
@@ -724,11 +939,45 @@ public class DefaultBag {
 		}
 		if (isContinue) {
 			try {
-				messages += writeBag();					
+				//messages += writeBag();					
 			} catch (Exception e) {
 				log.error("DefaultBag.write.writeBag: " + e);
 				throw new RuntimeException(e);
 			}
+		}
+		return messages;
+	}
+
+	public String write(CancelIndicator cancel, ProgressListener progress) throws Exception {
+		String messages = "";
+		reset();
+		try {
+			if (this.isBuildPayloadManifest) {
+				if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.MD5.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.MD5, bilBag.getBagConstants() ))); 
+				} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA1.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.SHA1, bilBag.getBagConstants() ))); 
+				} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA256.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.SHA256, bilBag.getBagConstants() ))); 
+				} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA512.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.SHA512, bilBag.getBagConstants() ))); 
+				}
+			}
+			if (this.isBuildTagManifest) {
+				if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.MD5.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.MD5, bilBag.getBagConstants() ))); 
+				} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA1.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.SHA1, bilBag.getBagConstants() ))); 
+				} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA256.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.SHA256, bilBag.getBagConstants() ))); 
+				} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA512.bagItAlgorithm)) {
+					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.SHA512, bilBag.getBagConstants() ))); 
+				}
+			}
+			messages += writeBag(cancel, progress);
+		} catch (Exception e) {
+			log.error("DefaultBag.write.writeBag: " + e);
+			throw new RuntimeException(e);
 		}
 		return messages;
 	}
@@ -764,6 +1013,13 @@ public class DefaultBag {
 					messages += "An NDNP bag requires an awardee phase.\n";
 				}
 			}
+			if (!this.isNoProject) {
+				String lcProject = this.bagInfo.getLcProject();
+				if (lcProject == null || lcProject.trim().length() == 0) {
+					this.isValidForms(false);
+					messages += "An LC-Project requires a project name.\n";
+				}
+			}
 		}
 		return messages;
 	}
@@ -771,7 +1027,7 @@ public class DefaultBag {
 	public String completeBag() {
 		String messages = "";
 		try {
-			SimpleResult result = this.bilBag.isComplete();
+			SimpleResult result = this.bilBag.verifyComplete();
 			if (result.messagesToString() != null) messages += result.messagesToString();
 			this.isComplete(result.isSuccess());
 		} catch (Exception e) {
@@ -785,10 +1041,12 @@ public class DefaultBag {
 	public String validateMetadata() {
 		String messages = "";
 		try {
-			if (bagStrategy == null) updateStrategy();
-			SimpleResult result = this.bilBag.additionalVerify(bagStrategy);
-			if (result.messagesToString() != null) messages += result.messagesToString();
-			this.isValidMetadata(result.isSuccess());
+			if (!this.getIsNoProject()) {
+				if (bagStrategy == null) updateStrategy();
+				SimpleResult result = this.bilBag.verify(bagStrategy);
+				if (result.messagesToString() != null) messages += result.messagesToString();
+				this.isValidMetadata(result.isSuccess());
+			}
 		} catch (Exception e) {
 			this.isValidMetadata(false);
 			messages += "Bag-info fields are not correct: " + e.getMessage() + "\n";
@@ -797,18 +1055,25 @@ public class DefaultBag {
 		return messages;
 	}
 
-	public String validateBag(Bag bag) {
+	public String validateBag(ValidVerifierImpl validVerifier) {
 		String messages = "";
 		display("validateBag");
-		bagToValidate = bag;
+		bagToValidate = bilBag;
+		this.validVerifier = validVerifier;
 		try {
-	    	if (this.getDataSize() > MAX_SIZE) {
-	    		confirmValidateBag();
-	    	} else {
-				SimpleResult result = bag.isValid();
-				if (result.messagesToString() != null) messages += result.messagesToString();
-				this.isValid(result.isSuccess());
-	    	}
+	    	//if (this.getDataSize() > MAX_SIZE) {
+	    	//	confirmValidateBag();
+	    	//} else {
+				if (validVerifier == null) {
+					SimpleResult result = bilBag.verifyValid();
+					if (result.messagesToString() != null) messages += result.messagesToString();
+					this.isValid(result.isSuccess());
+				} else {
+					SimpleResult result = validVerifier.verify(bilBag);
+					if (result.messagesToString() != null) messages += result.messagesToString();
+					this.isValid(result.isSuccess());
+				}
+	    	//}
 		} catch (Exception e) {
 			this.isValid(false);
 			e.printStackTrace();
@@ -817,12 +1082,12 @@ public class DefaultBag {
 		return messages;
 	}
 	
-	public String writeBag() throws Exception {
+	public String writeBag(CancelIndicator cancel, ProgressListener progress) throws Exception {
 		String messages = "";
 		String bagName = "";
 		File bagFile = null;
 		File parentDir = null;
-		BagWriter bw = null;
+		Writer bw = null;
 		bagName = getRootDir().getName();
 		parentDir = getRootDir().getParentFile();
 		try {
@@ -830,7 +1095,7 @@ public class DefaultBag {
 			if (this.serialMode == NO_MODE) {
 				this.isSerialized(true);
 				bagFile = new File(parentDir, this.getName());
-				bw = new FileSystemBagWriter(bagFile, true);				
+				bw = new FileSystemWriter(bagFactory);
 				if (this.isCleanup) { messages += cleanup(); }
 				messages += "Successfully created bag: " + this.getInfo().getBagName() + "\n";
 			} else if (this.serialMode == ZIP_MODE) {
@@ -846,7 +1111,7 @@ public class DefaultBag {
 		    		bagName += "." + ZIP_LABEL;
 			    }
 				bagFile = new File(parentDir, bagName);
-				bw = new ZipBagWriter(bagFile);
+				bw = new ZipWriter(bagFactory);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
 				messages += "Successfully created serialized file: " + zipName + " of size: " + zipSize + "(MB)\n";
@@ -865,7 +1130,7 @@ public class DefaultBag {
 		    		bagName += "." + TAR_LABEL;
 			    }
 				bagFile = new File(parentDir, bagName);
-				bw = new TarBagWriter(bagFile);
+				bw = new TarWriter(bagFactory);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
 				messages += "Successfully created serialized file: " + zipName + " of size: " + zipSize + "(MB)\n";
@@ -873,15 +1138,13 @@ public class DefaultBag {
 					messages += "WARNING: You may not be able to network transfer files > 100 MB!\n";
 				}
 			}
-			this.bilBag.write(bw);
+			bw.addProgressListener(progress);
+			bw.setCancelIndicator(cancel);
+			Bag newBag = bw.write(bilBag, bagFile);
 			this.setIsNewbag(false);
+			if (newBag != null) this.bilBag = newBag;
 
 			try {
-				// read bag
-				log.info("DefaultBag.writeBag BagFactory.createBag: " + bagFile);
-				Bag bag = BagFactory.createBag(bagFile);
-
-				/* */
 				// is valid metadata
 				messages += validateMetadata();
 				display("DefaultBag.write isValidMetadata: " + messages);
@@ -891,12 +1154,16 @@ public class DefaultBag {
 				}
 				/* */
 				// is valid bag
-				messages += validateBag(bag);
-				display("DefaultBag.write isValid: " + messages);
-				if (this.isValid()) {
-				} else {
-					messages += "\nBag is not valid.\n";
+				if (this.isValidateOnSave) {
+					// TODO: create verifier
+					messages += validateBag(null);
+					display("DefaultBag.write isValid: " + messages);
+					if (this.isValid()) {
+					} else {
+						messages += "\nBag is not valid.\n";
+					}
 				}
+				// TODO: this replaces in memory bag with bag saved to disk
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				messages += "ERROR validating bag: " + bagFile + "\n" + ex.getMessage() + "\n";
@@ -928,23 +1195,24 @@ public class DefaultBag {
 		bagStrategy = getBagInfoStrategy();		
 	}
 
-	protected VerifyStrategy getBagInfoStrategy() {
+	protected Verifier getBagInfoStrategy() {
 		List<String> rulesList = new ArrayList<String>();
-		rulesList.add(DefaultBagInfo.SOURCE_ORGANIZATION);
-		rulesList.add(DefaultBagInfo.ORGANIZATION_ADDRESS);
-		rulesList.add(DefaultBagInfo.CONTACT_NAME);
-		rulesList.add(DefaultBagInfo.CONTACT_PHONE);
-		rulesList.add(DefaultBagInfo.CONTACT_EMAIL);
-		rulesList.add(DefaultBagInfo.EXTERNAL_DESCRIPTION);
-		rulesList.add(DefaultBagInfo.BAGGING_DATE);
-		rulesList.add(DefaultBagInfo.EXTERNAL_IDENTIFIER);
-		rulesList.add(DefaultBagInfo.BAG_SIZE);
-		if (this.getIsEdeposit()) rulesList.add(DefaultBagInfo.EDEPOSIT_PUBLISHER);
-		if (this.getIsNdnp()) rulesList.add(DefaultBagInfo.NDNP_AWARDEE_PHASE);
+		rulesList.add(DefaultBagInfo.FIELD_SOURCE_ORGANIZATION);
+		rulesList.add(DefaultBagInfo.FIELD_ORGANIZATION_ADDRESS);
+		rulesList.add(DefaultBagInfo.FIELD_CONTACT_NAME);
+		rulesList.add(DefaultBagInfo.FIELD_CONTACT_PHONE);
+		rulesList.add(DefaultBagInfo.FIELD_CONTACT_EMAIL);
+		rulesList.add(DefaultBagInfo.FIELD_EXTERNAL_DESCRIPTION);
+		rulesList.add(DefaultBagInfo.FIELD_BAGGING_DATE);
+		rulesList.add(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER);
+		rulesList.add(DefaultBagInfo.FIELD_BAG_SIZE);
+		if (this.getIsEdeposit()) rulesList.add(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
+		if (this.getIsNdnp()) rulesList.add(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
+		if (!this.getIsNoProject()) rulesList.add(DefaultBagInfo.FIELD_LC_PROJECT);
 		String[] rules = new String[rulesList.size()];
 		for (int i=0; i< rulesList.size(); i++) rules[i] = new String(rulesList.get(i));
 
-		VerifyStrategy strategy = new RequiredBagInfoTxtFieldsStrategy(rules);
+		Verifier strategy = new RequiredBagInfoTxtFieldsVerifier(rules);
 
 		return strategy;
 	}
@@ -953,8 +1221,13 @@ public class DefaultBag {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	        protected void onConfirm() {
 	        	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-				SimpleResult result = bagToValidate.isValid();
-				isValid(result.isSuccess());
+				if (validVerifier == null) {
+					SimpleResult result = bagToValidate.verifyValid();
+					isValid(result.isSuccess());
+				} else {
+					SimpleResult result = validVerifier.verify(bilBag);
+					isValid(result.isSuccess());
+				}
 		    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
 	        }
 	    };
