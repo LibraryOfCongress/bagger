@@ -782,7 +782,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     private void createDataBag(DefaultBag bag, File data) {
-    	statusBarBegin(createDataBagHandler, "Opening existing bag...", 1);
+    	statusBarBegin(createDataBagHandler, "Opening existing bag...", 10000);
 
     	newBag();
     	File bagDirectory = data.getParentFile();
@@ -976,7 +976,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         parentSrc = file.getParentFile().getAbsoluteFile();
         addBagDataFile = file;
         // TODO: handle an invalid file error
-    	statusBarBegin(addDataHandler, "Adding data...", 1);
+    	statusBarBegin(addDataHandler, "Adding data...", 10000);
 /*     	try {
         	bag.getBag().addFileToPayload(file);
     		// TODO: make complete after adding files
@@ -1077,7 +1077,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
     	bagInfoInputPane.updateSelected(bag);
-    	statusBarBegin(validateBagHandler, "Validating bag...", 1);
+    	statusBarBegin(validateBagHandler, "Validating bag...", 10000);
     	//String msg = bag.validateBag(validVerifier);
 
     	setBag(bag);
@@ -1104,7 +1104,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     public void completeBag(String messages) {
     	ActualTask actualTask = new ActualTask();
-    	statusBarBegin(actualTask, "Completing bag...", 1000);
+    	statusBarBegin(actualTask, "Completing bag...", 10000);
     	messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
     	bagInfoInputPane.updateSelected(bag);
@@ -1286,13 +1286,12 @@ public class BagView extends AbstractView implements ApplicationListener {
                     String messages = bag.write(task, task);
 
             		log.debug("ValidateBagHanlder.execute");
-                    task.current++;
+//                    task.current++;
+//            		System.out.println("current: " + task.current + ", length: " + task.lengthOfTask);
                     if (task.current >= task.lengthOfTask) {
                         task.done = true;
                         task.current = task.lengthOfTask;
                     }
-                    task.statMessage = "Completed " + task.current +
-                                  " out of " + task.lengthOfTask + ".";
                 } catch (InterruptedException e) {
         			bag.isSerialized(false);
         			showWarningErrorDialog("Error saving bag: " + bagRootPath + "\n" + e.getMessage());
@@ -1302,20 +1301,20 @@ public class BagView extends AbstractView implements ApplicationListener {
         			showWarningErrorDialog("Error saving bag: " + bagRootPath + "\n" + e.getMessage());
                 	e.printStackTrace();
                 }
-            	statusBarEnd();
-                // TODO: replace in memory bag with bag on disk
-            	boolean b = false;
-            	if (b) {
-                    File file = bag.getBag().getFile();
-                    openExistingBag(file);
-            	} else {
-                	bagInfoInputPane.populateForms(bag, true);
-                	String messages = bagInfoInputPane.updateForms(bag);
-                	updateBagInfoInputPaneMessages(messages);
-               		bagInfoInputPane.updateSelected(bag);
-                    compositePane.updateCompositePaneTabs(bag, messages);
-               		tagManifestPane.updateCompositePaneTabs(bag);
-            	}
+        	}
+        	statusBarEnd();
+            // TODO: replace in memory bag with bag on disk
+        	boolean b = false;
+        	if (b) {
+                File file = bag.getBag().getFile();
+                openExistingBag(file);
+        	} else {
+            	bagInfoInputPane.populateForms(bag, true);
+            	String messages = bagInfoInputPane.updateForms(bag);
+            	updateBagInfoInputPaneMessages(messages);
+           		bagInfoInputPane.updateSelected(bag);
+                compositePane.updateCompositePaneTabs(bag, messages);
+           		tagManifestPane.updateCompositePaneTabs(bag);
         	}
     	}
     }
@@ -1325,7 +1324,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bag.setRootDir(file);
         messages += bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
-        statusBarBegin(saveBagHandler, "Writing bag...", 1);
+        statusBarBegin(saveBagHandler, "Writing bag...", 10000);
 /*
         try {
             messages += bag.write(!bagInfoInputPane.hasValidBagForms(bag));
@@ -1568,7 +1567,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private void openExistingBag(File file) {
     	ActualTask actualTask = new ActualTask();
-    	statusBarBegin(actualTask, "Opening existing bag...", 1);
+    	statusBarBegin(actualTask, "Opening existing bag...", 10000);
     	String messages = "";
     	bagInfoInputPane.enableForms(bag, true);
     	clearExistingBag(messages);
@@ -1837,6 +1836,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 "", 0, task.getLengthOfTask());
         progressMonitor.setProgress(0);
         progressMonitor.setMillisToDecideToPopup(1 * ONE_SECOND);
+        task.setMonitor(progressMonitor);
 
         task.go();
         timer.start();

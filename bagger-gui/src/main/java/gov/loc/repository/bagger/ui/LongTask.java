@@ -2,6 +2,8 @@ package gov.loc.repository.bagger.ui;
 
 import java.text.MessageFormat;
 
+import javax.swing.ProgressMonitor;
+
 import gov.loc.repository.bagit.CancelIndicator;
 import gov.loc.repository.bagit.ProgressListener;
 
@@ -12,12 +14,17 @@ public class LongTask implements CancelIndicator, ProgressListener {
     public boolean canceled = false;
     public String statMessage;
     public Progress progress;
+    private ProgressMonitor progressMonitor;
 
     public LongTask() {
         //Compute length of task...
         //In a real program, this would figure out
         //the number of bytes to read or whatever.
     	lengthOfTask = 1000;
+    }
+    
+    public void setMonitor(ProgressMonitor monitor) {
+    	this.progressMonitor = monitor;
     }
 
     public void setProgress(Progress progress) {
@@ -88,6 +95,13 @@ public class LongTask implements CancelIndicator, ProgressListener {
 
 	@Override
 	public void reportProgress(String activity, String item, int count,	int total) {
-		System.out.println(MessageFormat.format("{0} {1} ({2} of {3})", activity, item, count, total));
+		current = count;
+		lengthOfTask = total;
+		String message = MessageFormat.format("{0} {1} ({2} of {3})", activity, item, count, total);
+		//System.out.println(message);
+		statMessage = message;
+		this.progressMonitor.setNote(message);
+		this.progressMonitor.setMaximum(total);
+//		statMessage = "Completed " + current + " out of " + lengthOfTask + ".";
 	}
 }
