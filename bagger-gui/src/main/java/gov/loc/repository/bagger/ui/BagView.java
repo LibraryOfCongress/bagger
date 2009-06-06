@@ -1303,7 +1303,20 @@ public class BagView extends AbstractView implements ApplicationListener {
                 	e.printStackTrace();
                 }
             	statusBarEnd();
-            }
+                // TODO: replace in memory bag with bag on disk
+            	boolean b = false;
+            	if (b) {
+                    File file = bag.getBag().getFile();
+                    openExistingBag(file);
+            	} else {
+                	bagInfoInputPane.populateForms(bag, true);
+                	String messages = bagInfoInputPane.updateForms(bag);
+                	updateBagInfoInputPaneMessages(messages);
+               		bagInfoInputPane.updateSelected(bag);
+                    compositePane.updateCompositePaneTabs(bag, messages);
+               		tagManifestPane.updateCompositePaneTabs(bag);
+            	}
+        	}
     	}
     }
 
@@ -1641,13 +1654,13 @@ public class BagView extends AbstractView implements ApplicationListener {
         }
         bagTagFileTreePanel.refresh(bagTagFileTree);
     	enableBagSettings(true);
-
+/*
     	messages += bag.validateForms(!bagInfoInputPane.hasValidBagForms(bag));
 		messages += bag.completeBag();
 		messages += bag.validateMetadata();
 		bag.isSerialized(true);
 		validateBag(messages);
-
+*/
 		bag.getInfo().setBag(bag);
     	bagInfoInputPane.populateForms(bag, true);
     	messages += bagInfoInputPane.updateForms(bag);
