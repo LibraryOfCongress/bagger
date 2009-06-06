@@ -12,8 +12,6 @@ import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
-//import gov.loc.repository.bagger.ui.handlers.*;
-//import gov.loc.repository.bagger.ui.handlers.AddDataHandler;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
@@ -748,7 +746,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 
                     // TODO: execute create data bag task
 
-                	statusBarEnd();
                     task.current++;
                     if (task.current >= task.lengthOfTask) {
                         task.done = true;
@@ -760,6 +757,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 	e.printStackTrace();
                 }
             }
+        	statusBarEnd();
     	}
     }
 
@@ -782,8 +780,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     private void createDataBag(DefaultBag bag, File data) {
-    	statusBarBegin(createDataBagHandler, "Opening existing bag...", 10000);
-
     	newBag();
     	File bagDirectory = data.getParentFile();
 		File bagFile = new File(bagDirectory, bag.getName());
@@ -881,10 +877,6 @@ public class BagView extends AbstractView implements ApplicationListener {
        	private static final long serialVersionUID = 1L;
     	private LongTask task;
 
-    	public AddDataHandler() {
-    		super();
-    	}
-    	
     	public void actionPerformed(ActionEvent e) {
     		addData();
        	}
@@ -896,14 +888,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     	public void execute() {
             //Fake a long task,
             //making a random amount of progress every second.
-        	display("execute");
-        	int i = 0;
         	while (!task.canceled && !task.done) {
                 try {
                     Thread.sleep(1000); //sleep for a second
-                    //i = task.current;
-                    //task.current++;
-                    //task.current += Math.random() * 100;
                     // TODO: add data task
                 	try {
                     	bag.getBag().addFileToPayload(addBagDataFile);
@@ -915,19 +902,17 @@ public class BagView extends AbstractView implements ApplicationListener {
                 		showWarningErrorDialog("Error trying to add file: " + addBagDataFile.getAbsolutePath() + "\n" + e.getMessage());
                 		log.error("BagView.addBagData: " + addBagDataFile.getAbsolutePath() + " error: " + e.getMessage());
                 	}
-
                     task.current++;
-                	statusBarEnd();
                     if (task.current >= task.lengthOfTask) {
                         task.done = true;
                         task.current = task.lengthOfTask;
                     }
-                    task.statMessage = "Completed " + task.current +
-                                  " out of " + task.lengthOfTask + ".";
+                    task.statMessage = "Completed " + task.current + " out of " + task.lengthOfTask + ".";
                 } catch (InterruptedException e) {
                 	e.printStackTrace();
                 }
             }
+        	statusBarEnd();
     	}
     }
 
@@ -976,7 +961,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         parentSrc = file.getParentFile().getAbsoluteFile();
         addBagDataFile = file;
         // TODO: handle an invalid file error
-    	statusBarBegin(addDataHandler, "Adding data...", 10000);
+    	statusBarBegin(addDataHandler, "Adding data...", 1);
 /*     	try {
         	bag.getBag().addFileToPayload(file);
     		// TODO: make complete after adding files
@@ -1041,24 +1026,21 @@ public class BagView extends AbstractView implements ApplicationListener {
         	while (!task.canceled && !task.done) {
                 try {
                     Thread.sleep(1000); //sleep for a second
-//                    task.current += Math.random() * 100;
-
                     /* */
             		CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
             		completeVerifier.setCancelIndicator(task);
-            		//completeVerifier.addProgressListener(new PrintingProgressListener());
+            		completeVerifier.addProgressListener(task);
             		
             		ParallelManifestChecksumVerifier manifestVerifier = new ParallelManifestChecksumVerifier();
             		manifestVerifier.setCancelIndicator(task);
-            		//manifestVerifier.addProgressListener(task);
+            		manifestVerifier.addProgressListener(task);
             		
             		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
             		validVerifier.setCancelIndicator(task);
-            		//validVerifier.addProgressListener(task);
+            		validVerifier.addProgressListener(task);
             		/* */
                     String messages = bag.validateBag(validVerifier);
-                    log.debug("ValidateBagHanlder.execute");
-                    task.current++;
+                    //task.current++;
                     if (task.current >= task.lengthOfTask) {
                         task.done = true;
                         task.current = task.lengthOfTask;
@@ -1068,8 +1050,8 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } catch (InterruptedException e) {
                 	e.printStackTrace();
                 }
-            	statusBarEnd();
             }
+        	statusBarEnd();
     	}
     }
 
@@ -1281,11 +1263,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         	while (!task.canceled && !task.done) {
                 try {
                     Thread.sleep(1000); //sleep for a second
-//                    task.current += Math.random() * 100;
 
                     String messages = bag.write(task, task);
-
-            		log.debug("ValidateBagHanlder.execute");
 //                    task.current++;
 //            		System.out.println("current: " + task.current + ", length: " + task.lengthOfTask);
                     if (task.current >= task.lengthOfTask) {
