@@ -38,7 +38,11 @@ public class UpdateBagHandler extends AbstractAction {
         bagView.compositePane.updateCompositePaneTabs(bag, messages);
         bagView.tagManifestPane.updateCompositePaneTabs(bag);
         bag.copyFieldsToBag();
-        //bag.copyFormToBag();
+        /*
+        bag.copyBagToForm();
+        bagView.bagInfoInputPane.populateForms(bag, true);
+        bagView.bagInfoInputPane.update(bag);
+        */
         bagView.setBag(bag);
         bagView.updatePropButton.setEnabled(false);
     }

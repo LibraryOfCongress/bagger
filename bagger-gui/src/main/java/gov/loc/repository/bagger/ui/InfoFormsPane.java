@@ -145,7 +145,7 @@ public class InfoFormsPane extends JScrollPane {
     public void updateInfoFormsPane(boolean enabled) {
     	bagView.bagInfoInputPane = new BagInfoInputPane(bagView, bagView.username, bagView.projectContact, enabled);
     	bagView.bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
-    	bagView.bagInfoInputPane.setEnabled(false);
+    	//bagView.bagInfoInputPane.setEnabled(false);
     	bagInfoScrollPane.setViewportView(bagView.bagInfoInputPane);
     	bagInfoScrollPane.setPreferredSize(bagView.bagInfoInputPane.getPreferredSize());
     	this.setPreferredSize(bagInfoScrollPane.getPreferredSize());

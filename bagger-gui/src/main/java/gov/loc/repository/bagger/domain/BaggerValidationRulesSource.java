@@ -26,10 +26,12 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
     	this.isNdnp = isNdnp;
     	this.isLcProject = isLcProject;
     	this.isHoley = isHoley;
-        if (isCopyright || isNdnp) addRules(createContactRules());
+/*
+    	if (isCopyright || isNdnp) addRules(createContactRules());
         if (isCopyright || isNdnp) addRules(createBagOrganizationRules());
         if (isCopyright || isNdnp) addRules(createBagInfoRules());
         if (isHoley) addRules(createFetchRules());
+*/
     }
     
     public void clear() {

@@ -23,6 +23,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
@@ -35,13 +37,12 @@ import org.springframework.richclient.form.AbstractForm;
 import org.springframework.richclient.form.binding.BindingFactory;
 import org.springframework.richclient.form.binding.BindingFactoryProvider;
 
-//public class OrganizationInfoForm extends AbstractForm implements PropertyChangeListener, FocusListener {
-public class OrganizationInfoForm extends JPanel implements PropertyChangeListener, FocusListener {
+public class OrganizationInfoForm extends JPanel implements PropertyChangeListener, FocusListener, KeyListener {
 	private static final long serialVersionUID = -3231249644435262577L;
 	private static final Log logger = LogFactory.getLog(OrganizationInfoForm.class);
 
 	public static final String INFO_FORM_PAGE = "infoPage";
-	private static final int MIN_ROWS = 8;
+	private static final int MIN_ROWS = 10;
 
 	private BindingFactory bindingFactory = null;
 	private FormModel formModel;
@@ -86,7 +87,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     }
 
     protected JComponent createFormControl() {
-    	int rowCount = 0;
+    	int rowCount = 1;
         BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory());
         JTextField nameTextField = new JTextField();
         int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight();
@@ -103,18 +104,22 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                     JComponent textarea = formBuilder.addTextArea(field.getName(), field.getLabel(), "")[index];
                     textarea.setEnabled(field.isEnabled());
             		textarea.addFocusListener(this);
+            		textarea.addKeyListener(this);
+            		textarea.addPropertyChangeListener(this);
             		((NoTabTextArea) textarea).setText(field.getValue());
             		((NoTabTextArea) textarea).setBorder(new EmptyBorder(1,1,1,1));
             		((NoTabTextArea) textarea).setColumns(1);
             		((NoTabTextArea) textarea).setRows(3);
             		((NoTabTextArea) textarea).setLineWrap(true);
             		if (i == 0) focusField = textarea;
-                    rowCount++;
+                    rowCount += 1;
                 	break;
                 case BagInfoField.TEXTFIELD_COMPONENT:
                     JComponent comp = formBuilder.add(field.getName(), field.getLabel(), "")[index];
                     comp.setEnabled(field.isEnabled());
                     comp.addFocusListener(this);
+                    comp.addKeyListener(this);
+                    comp.addPropertyChangeListener(this);
                     ((JTextField) comp).setText(field.getValue());
             		if (i == 0) focusField = comp;
                 	break;
@@ -133,9 +138,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-/*        if (bagView != null && !this.hasErrors()) {
-        	bagView.updatePropButton.setEnabled(true);
-        } */
+    	if (bagView != null) bagView.updatePropButton.setEnabled(true);
     }
 
     public boolean requestFocusInWindow() {
@@ -208,7 +211,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     		DefaultBagInfo bagInfo = bag.getInfo();
     		bagInfo.createStandardFieldList(true);
     		updateForm();
-            bagView.infoInputPane.updateInfoFormsPane(enabled);
+            bagView.infoInputPane.updateInfoFormsPane(true);
             bag.setInfo(bagInfo);
             bagView.setBag(bag);
        	}
@@ -243,7 +246,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             info.setFieldList(fieldList);
             defaultBag.setInfo(info);
             bagView.setBag(defaultBag);
-            bagView.infoInputPane.updateInfoFormsPane(enabled);
+            bagView.infoInputPane.updateInfoFormsPane(true);
        	}
     }
 
@@ -259,4 +262,15 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     	return field;
     }
 
+    public void keyTyped(KeyEvent event) {
+    	if (bagView != null) bagView.updatePropButton.setEnabled(true);
+    }
+
+    public void keyPressed(KeyEvent event) {
+    	if (bagView != null) bagView.updatePropButton.setEnabled(true);
+    }
+
+    public void keyReleased(KeyEvent event) {
+    	if (bagView != null) bagView.updatePropButton.setEnabled(true);
+    }
 }

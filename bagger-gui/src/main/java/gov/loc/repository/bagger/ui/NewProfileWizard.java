@@ -5,6 +5,7 @@ import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
+import gov.loc.repository.bagger.bag.BaggerProfile;
 
 import org.springframework.binding.form.HierarchicalFormModel;
 import org.springframework.richclient.application.event.LifecycleApplicationEvent;
@@ -19,9 +20,7 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
     private WizardDialog wizardDialog;
 
     private CompoundForm wizardForm;
-    private OrganizationContactForm userContactForm;    
-    private OrganizationGeneralForm organizationGeneralForm;
-    private OrganizationContactForm organizationContactForm;    
+    private OrganizationProfileForm profileForm;    
     private BagView bagView = null;
 
     public NewProfileWizard() {
@@ -33,18 +32,10 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
     }
 
     public void addPages() {
-        HierarchicalFormModel contactFormModel;
-        contactFormModel = FormModelHelper.createCompoundFormModel(new Contact());
-        userContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(contactFormModel, null), bagView);
-        addPage(new FormBackedWizardPage(userContactForm));
-
-    	HierarchicalFormModel organizationFormModel;
-        organizationFormModel = FormModelHelper.createCompoundFormModel(new BaggerOrganization());
-        organizationGeneralForm = new OrganizationGeneralForm(FormModelHelper.createChildPageFormModel(organizationFormModel, null), bagView);
-        addPage(new FormBackedWizardPage(organizationGeneralForm));
-
-        organizationContactForm = new OrganizationContactForm(FormModelHelper.createChildPageFormModel(contactFormModel, null), bagView);
-        addPage(new FormBackedWizardPage(organizationContactForm));
+        HierarchicalFormModel profileModel;
+        profileModel = FormModelHelper.createCompoundFormModel(new BaggerProfile());
+        profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileModel, null), bagView);
+        addPage(new FormBackedWizardPage(profileForm));
     }
 
     public void execute() {
@@ -65,26 +56,13 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
 
     private Profile getNewProfile() {
     	Profile profile = new Profile();
-        if (!organizationGeneralForm.hasErrors()) {
-            organizationGeneralForm.commit();
+        if (!profileForm.hasErrors()) {
+            profileForm.commit();
         }
-        BaggerOrganization newOrganization = (BaggerOrganization)organizationGeneralForm.getFormObject();
-        Organization org = new Organization();
-        org.setName(newOrganization.getSourceOrganization());
-        org.setAddress(newOrganization.getOrganizationAddress());
+        BaggerProfile baggerProfile = (BaggerProfile)profileForm.getFormObject();
+        profile.setContact(baggerProfile.getSourceContact());
+        profile.setPerson(baggerProfile.getToContact());
 
-        if (!userContactForm.hasErrors()) {
-        	userContactForm.commit();
-        }
-        Contact newUser = (Contact)userContactForm.getFormObject();
-        newUser.setOrganization(org);
-        profile.setPerson(newUser);
-
-        if (!organizationContactForm.hasErrors()) {
-        	organizationContactForm.commit();
-        }
-        Contact newContact = (Contact)organizationContactForm.getFormObject();
-        profile.setContact(newContact);
         return profile;
     }
 

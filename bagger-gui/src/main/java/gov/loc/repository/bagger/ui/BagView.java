@@ -10,6 +10,7 @@ import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
+import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 //import gov.loc.repository.bagger.ui.handlers.*;
 //import gov.loc.repository.bagger.ui.handlers.AddDataHandler;
@@ -93,6 +94,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public File addBagDataFile;
     public Collection<Project> userProjects;
     public Collection<Profile> userProfiles;
+    private BaggerProfile baggerProfile = new BaggerProfile();
     public String username;
     public String bagVersion = null;
     public Contact projectContact;
@@ -178,6 +180,14 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     public DefaultBag getBag() {
         return this.bag;
+    }
+    
+    public void setBaggerProfile(BaggerProfile profile) {
+    	this.baggerProfile = profile;
+    }
+    
+    public BaggerProfile getBaggerProfile() {
+    	return this.baggerProfile;
     }
     
 	public Dimension getMinimumSize() {
@@ -521,6 +531,8 @@ public class BagView extends AbstractView implements ApplicationListener {
                        		bagInfo.setBagOrganization(bagOrg);
                        		bag.setInfo(bagInfo);
                        		projectContact = profile.getPerson();
+                       		baggerProfile.setOrganization(bagOrg);
+                       		baggerProfile.setToContact(projectContact);
                    		}
             		}
             	}
@@ -1033,20 +1045,16 @@ public class BagView extends AbstractView implements ApplicationListener {
 
                     /* */
             		CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
-//            		completeVerifier.setCancelIndicator(new DummyCancelIndicator(5));
             		completeVerifier.setCancelIndicator(task);
-            		completeVerifier.addProgressListener(new PrintingProgressListener());
-            		//assertNull(bag.verify(completeVerifier));
+            		//completeVerifier.addProgressListener(new PrintingProgressListener());
             		
             		ParallelManifestChecksumVerifier manifestVerifier = new ParallelManifestChecksumVerifier();
             		manifestVerifier.setCancelIndicator(task);
-            		manifestVerifier.addProgressListener(task);
-            		//assertNull(manifestVerifier.verify(bag.getPayloadManifests(), bag));
+            		//manifestVerifier.addProgressListener(task);
             		
             		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
             		validVerifier.setCancelIndicator(task);
-            		validVerifier.addProgressListener(task);
-            		//assertNull(bag.verify(validVerifier));
+            		//validVerifier.addProgressListener(task);
             		/* */
                     String messages = bag.validateBag(validVerifier);
                     log.debug("ValidateBagHanlder.execute");
@@ -1375,17 +1383,18 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagButtonPanel.invalidate();
     	topButtonPanel.invalidate();
     }
-    
+/*    
     public void updateBagInfo() {
     	log.debug("updateBagInfo");
     	String messages = bagInfoInputPane.verifyForms(bag);
         updateBagInfoInputPaneMessages(messages);
         compositePane.updateCompositePaneTabs(bag, messages);
         tagManifestPane.updateCompositePaneTabs(bag);
-        bag.updateBagInfo();
-        //updatePropButton.setEnabled(false);
+        System.out.println("UpdateBagInfo: " + bag.getBag().getBagInfoTxt());
+        //bag.updateBagInfo();
+        updatePropButton.setEnabled(false);
     }
-
+*/
     public void updateBagFetchTxt() {
         String messages = bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
@@ -1568,9 +1577,10 @@ public class BagView extends AbstractView implements ApplicationListener {
 
 		bag.getInfo().createExistingFieldList(true);
     	bag.copyBagToForm();
+    	baggerProfile.setOrganization(bag.getInfo().getBagOrganization());
     	if (bag.getInfo().getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
-    	}
+    	} 
 	    if (bag.getIsHoley()) {
 	        holeyCheckbox.setSelected(true);
 	    }

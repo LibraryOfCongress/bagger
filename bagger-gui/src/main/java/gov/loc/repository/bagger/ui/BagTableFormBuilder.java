@@ -52,6 +52,14 @@ public class BagTableFormBuilder extends TableFormBuilder {
         return addBinding(fieldName, label, textArea, wrappedComponent, attributes, labelAttributes);
     }
 
+    public JComponent[] addLabel(String labelName) {
+    	JLabel label = new JLabel(labelName); 
+        TableLayoutBuilder layoutBuilder = getLayoutBuilder();
+        layoutBuilder.cell(label, "");
+        layoutBuilder.labelGapCol();
+        return new JComponent[] { label };
+    }
+
     public JComponent[] addBinding(String fieldName, String labelName, JComponent component, JComponent wrappedComponent, String attributes, String labelAttributes) {
 //        JComponent component = binding.getControl();
 //        JLabel label = createLabelFor(binding.getProperty(), component);
