@@ -316,20 +316,22 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		Set<String> keys = bagInfoTxt.keySet();
 		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
 			String label = (String) iter.next();
+			label = label.trim();
 			BagInfoField field = createField(label, enabled);
-			if (profileSet.contains(label)) {				
+			if (profileSet.contains(label)) {
 				profileList.add(field);
 			} else {
-				fieldList.add(field);				
+				fieldList.add(field);
 			}
 		}
-
+/*
 		List<String> nls = bagInfoTxt.getNonstandardFields();
 		for (int i=0; i<nls.size(); i++) {
 			String label = nls.get(i);
 			BagInfoField field = createField(label, enabled);
 			fieldList.add(field);
 		}
+*/
 	}
 	
 	public void createStandardFieldList(boolean enabled) {
@@ -339,6 +341,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		List<String> ls = bagInfoTxt.getStandardFields();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
+			label = label.trim();
 			if (!profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
 				list.add(field);
@@ -355,6 +358,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		List<String> ls = bagInfoTxt.getStandardFields();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
+			label = label.trim();
 			if (profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
 				list.add(field);				
@@ -396,6 +400,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		List<String>ls = bagInfoTxt.getStandardFields();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
+			label = label.trim();
 			if (!profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
 				fieldList.add(field);
@@ -429,6 +434,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	private BagInfoField createField(String label, boolean enabled) {
 		String name = getMethodFromLabel(label);
 
+		label = label.trim();
 		BagInfoField field = new BagInfoField();
 		if (textAreaSet.contains(label)) {
 			field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
@@ -451,6 +457,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		String delimeter = new String("-");
 		String methodName = new String();
 		
+		label = label.trim();
 		String[] list = label.split(delimeter);
 		if (list != null && list.length > 0) {
 			for (int i=0; i < list.length; i++) {
@@ -484,6 +491,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		List<String> ls = bagInfoTxt.getStandardFields();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
+			label = label.trim();
 			if (!profileSet.contains(label)) {
 				list.add(label);
 			}
