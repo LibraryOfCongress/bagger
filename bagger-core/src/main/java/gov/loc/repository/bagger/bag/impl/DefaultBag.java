@@ -37,7 +37,9 @@ import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
 import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
 import gov.loc.repository.bagit.impl.BagItTxtImpl;
 import gov.loc.repository.bagit.transformer.Completer;
+import gov.loc.repository.bagit.transformer.HolePuncher;
 import gov.loc.repository.bagit.transformer.impl.DefaultCompleter;
+import gov.loc.repository.bagit.transformer.impl.HolePuncherImpl;
 import gov.loc.repository.bagit.utilities.SimpleResult;
 
 import org.apache.commons.logging.Log;
@@ -92,6 +94,7 @@ public class DefaultBag {
 	private long totalSize = 0;
 
 	protected Bag bilBag;
+	protected HolePuncher puncher;
 	private ValidVerifierImpl validVerifier;
 	private Bag bagToValidate;
 	protected DefaultBagInfo bagInfo = null;
@@ -100,7 +103,7 @@ public class DefaultBag {
 	private Project project;
 	private BagFactory bagFactory = new BagFactory();
 	private Completer completer;
-	private boolean includeTags = false;
+	private boolean includeTags = true;
 	private String version = null;
 
 	public DefaultBag () {
@@ -134,7 +137,8 @@ public class DefaultBag {
 			bilBag.putBagFile(bagIt);
 		}
 		bagInfo = new DefaultBagInfo(this);
-/*		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+		puncher = new HolePuncherImpl(bagFactory);
+		/*		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
 		if (bagInfoTxt == null) {
 			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
 			bilBag.putBagFile(bagInfoTxt);
@@ -142,6 +146,7 @@ public class DefaultBag {
 		if (bilBag.getFetchTxt() != null) {
         	setIsHoley(true);
     		String url = getBaseUrl(bilBag.getFetchTxt());
+    		log.info("DefaultBag fetch URL: " + url);
         	BaggerFetch fetch = this.getFetch();
         	fetch.setBaseURL(url);
         	this.fetch = fetch;
@@ -639,34 +644,30 @@ public class DefaultBag {
 			this.setIsNoProject(true);
 		} 
 	}
-	
+/*	
 	public void updateFetchTxt() {
 		if (this.isHoley) {
 //			if (bilBag.getFetchTxt() == null) {
 				if (this.getFetch().getBaseURL() != null) {
-					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
+					bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
 				}
 //			}
 		}
-		//DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
-		//completionStrategy.setGenerateBagInfoTxt(false);
-		//completionStrategy.setGenerateTagManifest(false);
-        //bilBag.complete(completionStrategy);
-        //completer = new DefaultCompleter(bagFactory);
-        //bilBag.makeComplete(completer);
 		bilBag.makeComplete();
 	}
-	
+*/	
 	public void copyFieldsToBag() {
 		if (this.isHoley) {
-			if (bilBag.getFetchTxt() == null) {
+			//if (bilBag.getFetchTxt() == null) {
 				if (this.getFetch().getBaseURL() != null) {
-					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
+					if (this.getFetch() == null) {
+						bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
+					} else {
+						bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);						
+					}
 				}
-			}
-			// TODO: is this necessary for holey bags?
-	        //completer = new DefaultCompleter(bagFactory);
-	        //bilBag.makeComplete(completer);
+			//}
+	        this.bilBag.makeComplete();
 		}
 	}
 
@@ -699,21 +700,14 @@ public class DefaultBag {
 			}
 		}
 		if (this.isHoley) {
-			if (bilBag.getFetchTxt() == null) {
+			//if (bilBag.getFetchTxt() == null) {
 				if (this.getFetch().getBaseURL() != null) {
+					//bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
 					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
-					//this.bilBag.complete();
+					this.bilBag.makeComplete();
 				}
-			}
+			//}
 		}
-		//DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
-		//completionStrategy.setGenerateBagInfoTxt(true);
-		//completionStrategy.setGenerateTagManifest(true);
-        //bilBag.complete(completionStrategy);
-/*
-		completer = new DefaultCompleter(bagFactory);
-        bilBag.makeComplete(completer);
-*/
 	}
 
 	public void setInfo(DefaultBagInfo bagInfo) {
@@ -749,7 +743,7 @@ public class DefaultBag {
 			if (!fetchTxt.isEmpty()) {
     			FilenameSizeUrl fsu = fetchTxt.get(0);
     			if (fsu != null) {
-    				String url = fsu.getUrl();
+    				String url = fsu.getFilename(); //fsu.getUrl();
     				String[] list = url.split(httpToken);
     				if (list != null && list.length > 1) {
     					String urlSuffix = list[1];
@@ -763,19 +757,17 @@ public class DefaultBag {
 		}
 		return baseUrl;
 	}
-
+/*
 	public void updateFetch() {
 		if (this.getIsHoley()) {
 			if (this.fetch != null && this.fetch.getBaseURL() != null) {
-				//String baseUrl = this.fetch.getBaseURL();
-				//this.bilBag.makeHoley(baseUrl, true, includeTags);
-				//this.bilBag.complete();
+				String baseUrl = this.fetch.getBaseURL();
+				this.bilBag.makeHoley(baseUrl, true, includeTags);
+				this.bilBag.makeComplete();
 			}
-		} else {
-			//this.bilBag.putFetchTxt(null);
 		}
 	}
-
+*/
 	public void setFetch(BaggerFetch fetch) {
 		this.fetch = fetch;
 	}
@@ -800,7 +792,7 @@ public class DefaultBag {
 		}
 		return list;
 	}
-	
+/*	
 	public String getFetchContent() {
 		StringBuffer fcontent = new StringBuffer();
 		FetchTxt fetchTxt = this.bilBag.getFetchTxt();
@@ -852,7 +844,7 @@ public class DefaultBag {
     	}
     	return tmcontent.toString();
 	}
-	
+*/	
 	public String getDataContent() {
 		totalSize = 0;
 		StringBuffer dcontent = new StringBuffer();
@@ -864,13 +856,13 @@ public class DefaultBag {
             	BagFile bf = it.next();
             	if (bf != null) {
                 	totalSize += bf.getSize();
-                	/*
+                	/* */
                 	dcontent.append(bf.getFilepath());
                 	dcontent.append('\n');
-                	 */
+                	/* */
             	}
         	} catch (Exception e) {
-//        		log.error("DefaultBag.getDataContent: " + e.getMessage());
+        		log.error("DefaultBag.getDataContent: " + e.getMessage());
         	}
         }
         this.setSize(totalSize);
