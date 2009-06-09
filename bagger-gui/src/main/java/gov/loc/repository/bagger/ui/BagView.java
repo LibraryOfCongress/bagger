@@ -1040,6 +1040,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		validVerifier.addProgressListener(task);
             		/* */
                     String messages = bag.validateBag(validVerifier);
+            	    showWarningErrorDialog("Validation result: " + messages);
                     //task.current++;
                     if (task.current >= task.lengthOfTask) {
                         task.done = true;
@@ -1049,6 +1050,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                                   " out of " + task.lengthOfTask + ".";
                 } catch (InterruptedException e) {
                 	e.printStackTrace();
+            	    showWarningErrorDialog("Error trying validate bag: " + e.getMessage());
                 }
             }
         	statusBarEnd();
