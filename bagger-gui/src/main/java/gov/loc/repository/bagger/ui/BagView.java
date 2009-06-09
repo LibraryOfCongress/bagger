@@ -686,7 +686,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 		bag.setRootDir(bagRootPath);
 		messages = updateBaggerRules();
     	initializeProfile();
-    	bag.copyFormToBag();
 
         // TODO: populate tag file names into bagTagFileTree
         Bag b = bag.getBag();
@@ -700,7 +699,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         showTagButton.setEnabled(true);
     	enableBagSettings(true);
 		bag.getInfo().setBag(bag);
-		//bag.getInfo().createStandardFieldList(true);
     	bagInfoInputPane.populateForms(bag, true);
         messages += bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
@@ -898,18 +896,13 @@ public class BagView extends AbstractView implements ApplicationListener {
                 	try {
                     	bag.getBag().addFileToPayload(addBagDataFile);
                     	if (completeFlag) {
-                    		bag.getBag().putBagFile(bag.getBag().getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.MD5, bag.getBag().getBagConstants()))); 
-                    		log.info("BagView.addData: makeComplete");
-                    		bag.getBag().makeComplete();
-                    		//
-                            //bagTagFileTree = new BagTree(this, bag.getName(), false);
+                    		bag.completeMetaFiles();
                             Collection<BagFile> tags = bag.getBag().getTags();
                             for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
                             	BagFile bf = it.next();
                                 bagTagFileTree.addNode(bf.getFilepath());
                             }
                             bagTagFileTreePanel.refresh(bagTagFileTree);
-                            //
                     	}
                     	bagPayloadTree.addNodes(addBagDataFile);
                     	bagPayloadTree.addTree(parentSrc, addBagDataFile, bag.getRootDir());
@@ -979,18 +972,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         // TODO: handle an invalid file error
         bagTagFileTree = new BagTree(this, bag.getName(), false);
     	statusBarBegin(addDataHandler, "Adding data...", 1);
-/*     	try {
-        	bag.getBag().addFileToPayload(file);
-    		// TODO: make complete after adding files
-        	//if (lastFileFlag) bag.getBag().complete();
-        	bagPayloadTree.addNodes(file);
-        	bagPayloadTree.addTree(parentSrc, file, bag.getRootDir());
-    	} catch (Exception e) {
-           	writeBagErrorDialog("Error trying to add file: " + addBagDataFile.getAbsolutePath() + "\n" + e.getMessage());
-        	messages += "Failed to add file path: " + file.getName() + "\n";
-    		log.error("BagView.addBagData: " + file.getAbsolutePath() + " error: " + e.getMessage());
-    	}
- */
+    	// addDataHandler execute code was here
     	bagPayloadTreePanel.refresh(bagPayloadTree);
     	bagInfoInputPane.verifyForms(bag);
     	bagInfoInputPane.populateForms(bag, true);

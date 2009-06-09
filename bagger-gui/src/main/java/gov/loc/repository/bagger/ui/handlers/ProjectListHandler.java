@@ -8,9 +8,13 @@ import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
+import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagit.BagFile;
 
 import java.awt.event.ActionEvent;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -92,9 +96,17 @@ public class ProjectListHandler extends AbstractAction {
                    		bagView.setBag(bag);
                    		bagView.projectContact = profile.getPerson();
                 		bag.getInfo().setBag(bag);
-                		//bag.getInfo().updateExistingFieldList(enabled);
                    		bagView.bagInfoInputPane.populateForms(bag, true);
                    		bagView.bagInfoInputPane.updateSelected(bag);
+
+                   		bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
+                        Collection<BagFile> tags = bag.getBag().getTags();
+                        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
+                        	BagFile bf = it.next();
+                            bagView.bagTagFileTree.addNode(bf.getFilepath());
+                        }
+                        bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
+                   		bagView.tagManifestPane.updateCompositePaneTabs(bag);
                    	}
         		}
         	}

@@ -39,7 +39,9 @@ public class UpdateBagHandler extends AbstractAction {
         bagView.updateBagInfoInputPaneMessages(messages);
         bagView.bagInfoInputPane.updateSelected(bag);
         messages += bagView.updateProfile();
-        bag.copyFieldsToBag();
+		if (bag.getIsHoley()) {
+			bag.updateFetch();
+		}
         bagView.setBag(bag);
         bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
         Collection<BagFile> tags = bag.getBag().getTags();
