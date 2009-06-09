@@ -53,7 +53,6 @@ public class BagTreeTransferHandler extends TransferHandler {
 
     private void display(String s) {
     	String msg = "BagTreeTransferHandler." + s;
-    	//System.out.println(msg);
     	log.info(msg);
     }
 
