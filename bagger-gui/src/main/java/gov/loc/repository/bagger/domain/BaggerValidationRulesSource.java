@@ -30,8 +30,8 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
     	if (isCopyright || isNdnp) addRules(createContactRules());
         if (isCopyright || isNdnp) addRules(createBagOrganizationRules());
         if (isCopyright || isNdnp) addRules(createBagInfoRules());
-        if (isHoley) addRules(createFetchRules());
 */
+        if (isHoley) addRules(createFetchRules());
     }
     
     public void clear() {
