@@ -15,6 +15,7 @@ import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.Manifest;
+import gov.loc.repository.bagit.ManifestHelper;
 import gov.loc.repository.bagit.Manifest.Algorithm;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
@@ -897,8 +898,18 @@ public class BagView extends AbstractView implements ApplicationListener {
                 	try {
                     	bag.getBag().addFileToPayload(addBagDataFile);
                     	if (completeFlag) {
+                    		bag.getBag().putBagFile(bag.getBag().getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.MD5, bag.getBag().getBagConstants()))); 
                     		log.info("BagView.addData: makeComplete");
                     		bag.getBag().makeComplete();
+                    		//
+                            //bagTagFileTree = new BagTree(this, bag.getName(), false);
+                            Collection<BagFile> tags = bag.getBag().getTags();
+                            for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
+                            	BagFile bf = it.next();
+                                bagTagFileTree.addNode(bf.getFilepath());
+                            }
+                            bagTagFileTreePanel.refresh(bagTagFileTree);
+                            //
                     	}
                     	bagPayloadTree.addNodes(addBagDataFile);
                     	bagPayloadTree.addTree(parentSrc, addBagDataFile, bag.getRootDir());
@@ -966,6 +977,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         completeFlag = lastFileFlag;
         addBagDataFile = file;
         // TODO: handle an invalid file error
+        bagTagFileTree = new BagTree(this, bag.getName(), false);
     	statusBarBegin(addDataHandler, "Adding data...", 1);
 /*     	try {
         	bag.getBag().addFileToPayload(file);
@@ -980,15 +992,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
  */
     	bagPayloadTreePanel.refresh(bagPayloadTree);
-//
-        bagTagFileTree = new BagTree(this, bag.getName(), false);
-        Collection<BagFile> tags = bag.getBag().getTags();
-        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-        	BagFile bf = it.next();
-            bagTagFileTree.addNode(bf.getFilepath());
-        }
-        bagTagFileTreePanel.refresh(bagTagFileTree);
-//
     	bagInfoInputPane.verifyForms(bag);
     	bagInfoInputPane.populateForms(bag, true);
         bagInfoInputPane.update(bag);
