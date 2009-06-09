@@ -1389,18 +1389,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagButtonPanel.invalidate();
     	topButtonPanel.invalidate();
     }
-/*
+
     public void updateBagFetchTxt() {
-        String messages = bagInfoInputPane.updateForms(bag);
-        updateBagInfoInputPaneMessages(messages);
-        bagInfoInputPane.updateSelected(bag);
-        messages += updateProfile();
-        bag.updateFetchTxt();
-        compositePane.updateCompositePaneTabs(bag, messages);
-        tagManifestPane.updateCompositePaneTabs(bag);
-        //updatePropButton.setEnabled(false);
     }
-*/
+
     public void updateBagInfoInputPaneMessages(String messages) {
 		boolean isMessage = true;
 		display("updateMessages: " + messages);

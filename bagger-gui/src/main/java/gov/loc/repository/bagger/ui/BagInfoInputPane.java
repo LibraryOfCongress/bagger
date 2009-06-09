@@ -146,6 +146,7 @@ public class BagInfoInputPane extends JTabbedPane {
         	BaggerFetch fetch = bag.getFetch();
             fetchFormModel = FormModelHelper.createCompoundFormModel(fetch);
             fetchForm = new OrganizationFetchForm(FormModelHelper.createChildPageFormModel(fetchFormModel, null), this.parentView);
+            fetchFormModel.addPropertyChangeListener(fetchForm);
         }
 
         profileFormModel = FormModelHelper.createCompoundFormModel(baggerProfile);
