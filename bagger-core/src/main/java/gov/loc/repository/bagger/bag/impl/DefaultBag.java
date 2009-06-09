@@ -644,18 +644,7 @@ public class DefaultBag {
 			this.setIsNoProject(true);
 		} 
 	}
-/*	
-	public void updateFetchTxt() {
-		if (this.isHoley) {
-//			if (bilBag.getFetchTxt() == null) {
-				if (this.getFetch().getBaseURL() != null) {
-					bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
-				}
-//			}
-		}
-		bilBag.makeComplete();
-	}
-*/	
+
 	public void copyFieldsToBag() {
 		if (this.isHoley) {
 			//if (bilBag.getFetchTxt() == null) {
@@ -663,7 +652,7 @@ public class DefaultBag {
 					if (this.getFetch() == null) {
 						bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
 					} else {
-						bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);						
+						bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
 					}
 				}
 			//}
