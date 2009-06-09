@@ -35,7 +35,6 @@ import gov.loc.repository.bagit.writer.impl.ZipWriter;
 import gov.loc.repository.bagit.verify.Verifier;
 import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
 import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
-import gov.loc.repository.bagit.impl.BagItTxtImpl;
 import gov.loc.repository.bagit.transformer.Completer;
 import gov.loc.repository.bagit.transformer.HolePuncher;
 import gov.loc.repository.bagit.transformer.impl.DefaultCompleter;
@@ -102,8 +101,8 @@ public class DefaultBag {
 	protected BaggerFetch fetch;
 	private Project project;
 	private BagFactory bagFactory = new BagFactory();
-	private Completer completer;
-	private boolean includeTags = true;
+	private DefaultCompleter completer;
+	private boolean includeTags = false;
 	private String version = null;
 
 	public DefaultBag () {
@@ -572,12 +571,7 @@ public class DefaultBag {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
 			}
 		}
-		//DefaultCompletionStrategy completionStrategy = new DefaultCompletionStrategy();
-		//completionStrategy.setGenerateBagInfoTxt(true);
-		//completionStrategy.setGenerateTagManifest(false);
-        //bilBag.complete(completionStrategy);
-        completer = new DefaultCompleter(bagFactory);
-        bilBag.makeComplete(completer);
+        completeMetaFiles();
 	}
 	
 	public void createBagInfo(HashMap<String,String> map) {
@@ -600,8 +594,6 @@ public class DefaultBag {
 			copyMapToBag(key, value);
 		}
 		bilBag.putBagFile(bagInfoTxt);
-  		//bagInfoTxt = bilBag.getBagInfoTxt();
-		//bilBag.makeComplete();
 	}
 
 	private void copyMapToBag(String key, String value) {
@@ -645,23 +637,20 @@ public class DefaultBag {
 		} 
 	}
 
-	public void copyFieldsToBag() {
-		if (this.isHoley) {
-			//if (bilBag.getFetchTxt() == null) {
-				if (this.getFetch().getBaseURL() != null) {
-					if (this.getFetch() == null) {
-						bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
-					} else {
-						bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
-					}
-				}
-			//}
-	        this.bilBag.makeComplete();
-		}
+	public void completeMetaFiles() {
+		completer = new DefaultCompleter(this.bagFactory);
+		completer.setClearExistingTagManifests(false);
+		completer.setClearExistingPayloadManifests(false);
+		completer.setGenerateBagInfoTxt(true);
+		completer.setGenerateTagManifest(true);
+		bilBag = completer.complete(bilBag);
+		// TODO: how do you undo makeHoley, remove fetch.txt put back manifests
+    	log.info("DefaultBag.completeTagFiles: " + bilBag.getTags().size());
 	}
 
 	public void copyFormToBag() {
 		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
+//   		System.out.println("BagView.copyFormToBag: " + baggerOrganization);
 		Contact contact = baggerOrganization.getContact();
 		if (bilBag.getBagInfoTxt() != null) {
 			bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
@@ -688,15 +677,6 @@ public class DefaultBag {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
 			}
 		}
-		if (this.isHoley) {
-			//if (bilBag.getFetchTxt() == null) {
-				if (this.getFetch().getBaseURL() != null) {
-					//bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
-					this.bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
-					this.bilBag.makeComplete();
-				}
-			//}
-		}
 	}
 
 	public void setInfo(DefaultBagInfo bagInfo) {
@@ -707,7 +687,6 @@ public class DefaultBag {
             this.setName(bagName);
         }
 		this.bagInfo.copy(bagInfo);
-		//this.bagInfo = bagInfo;
 		this.copyFormToBag();
 	}
 
@@ -746,17 +725,28 @@ public class DefaultBag {
 		}
 		return baseUrl;
 	}
-/*
+
 	public void updateFetch() {
-		if (this.getIsHoley()) {
-			if (this.fetch != null && this.fetch.getBaseURL() != null) {
-				String baseUrl = this.fetch.getBaseURL();
-				this.bilBag.makeHoley(baseUrl, true, includeTags);
-				this.bilBag.makeComplete();
+		if (this.isHoley) {
+			if (this.getFetch().getBaseURL() != null) {
+//				if (this.getFetch() == null) {
+				// TODO: this is the only thing that generates a fetch.txt
+					System.out.println("puncher.makeHoley");
+					bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
+	/*				} else {
+					// TODO: does not work, generates fetchTxt that is NULL
+					System.out.println("makeHoley");
+					bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
+					FetchTxt fetchTxt = bilBag.getFetchTxt();
+					if (fetchTxt != null) bilBag.putBagFile(fetchTxt);
+					else System.out.println("FetchTxt: " + fetchTxt);
+				} */
 			}
+			// TODO: makeHoley removes all files but fetch.txt so need to regenerate them
+			completeMetaFiles();			
 		}
 	}
-*/
+
 	public void setFetch(BaggerFetch fetch) {
 		this.fetch = fetch;
 	}
@@ -781,59 +771,7 @@ public class DefaultBag {
 		}
 		return list;
 	}
-/*	
-	public String getFetchContent() {
-		StringBuffer fcontent = new StringBuffer();
-		FetchTxt fetchTxt = this.bilBag.getFetchTxt();
-		if (fetchTxt != null) {
-			for (int i=0; i < fetchTxt.size(); i++) {
-				FilenameSizeUrl fetch = fetchTxt.get(i);
-				String s = fetch.toString();
-				fcontent.append(s);
-			}
-		}
-		return fcontent.toString();
-	}
-	
-	public String getBagItContent() {
-		StringBuffer bcontent = new StringBuffer();
-        if (this.bilBag.getBagItTxt() != null) {
-    		bcontent.append(BagItTxtImpl.VERSION_KEY + ": ");
-    		bcontent.append(bilBag.getBagItTxt().getVersion() + "\n");
-    		bcontent.append(BagItTxtImpl.CHARACTER_ENCODING_KEY + ": ");
-    		bcontent.append(bilBag.getBagItTxt().getCharacterEncoding() + "\n");
-        } else {
-        	bcontent.append("getBagItTxt is NULL" + "\n");
-        }
-		return bcontent.toString();
-	}
-	
-	public String getManifestContent() {
-    	StringBuffer mcontent = new StringBuffer();
-    	List<Manifest> manifests = this.bilBag.getPayloadManifests();
-    	for (int i=0; i < manifests.size(); i++) {
-    		Manifest manifest = manifests.get(i);
-    		mcontent.append("\n");
-    		mcontent.append(manifest.getFilepath());
-    		mcontent.append(manifest.toString());
-    		mcontent.append("\n");
-    	}
-    	return mcontent.toString();
-	}
-	
-	public String getTagManifestContent() {
-    	StringBuffer tmcontent = new StringBuffer();
-    	List<Manifest> manifests = this.bilBag.getTagManifests();
-    	for (int i=0; i < manifests.size(); i++) {
-    		Manifest manifest = manifests.get(i);
-    		tmcontent.append("\n");
-    		tmcontent.append(manifest.getFilepath());
-    		tmcontent.append(manifest.toString());
-    		tmcontent.append("\n");
-    	}
-    	return tmcontent.toString();
-	}
-*/	
+
 	public String getDataContent() {
 		totalSize = 0;
 		StringBuffer dcontent = new StringBuffer();
@@ -908,79 +846,6 @@ public class DefaultBag {
 			}
 		}
 		return message;
-	}
-
-	public String old_write(boolean validFormFields) throws Exception {
-		boolean isContinue = true;
-		String messages = "";
-		reset();
-		try {
-			if (this.isBuildPayloadManifest) {
-				if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.MD5.bagItAlgorithm)) {
-					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.MD5, bilBag.getBagConstants() ))); 
-				} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA1.bagItAlgorithm)) {
-					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.SHA1, bilBag.getBagConstants() ))); 
-				} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA256.bagItAlgorithm)) {
-					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.SHA256, bilBag.getBagConstants() ))); 
-				} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA512.bagItAlgorithm)) {
-					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getPayloadManifestFilename(Algorithm.SHA512, bilBag.getBagConstants() ))); 
-				}
-			}
-			if (this.isBuildTagManifest) {
-				if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.MD5.bagItAlgorithm)) {
-					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.MD5, bilBag.getBagConstants() ))); 
-				} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA1.bagItAlgorithm)) {
-					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.SHA1, bilBag.getBagConstants() ))); 
-				} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA256.bagItAlgorithm)) {
-					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.SHA256, bilBag.getBagConstants() ))); 
-				} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA512.bagItAlgorithm)) {
-					bilBag.putBagFile(bilBag.getBagPartFactory().createManifest(ManifestHelper.getTagManifestFilename(Algorithm.SHA512, bilBag.getBagConstants() ))); 
-				}
-			}
-			// validate form
-			if (isContinue) {
-				messages += validateForms(validFormFields);
-				if (this.isValidForms()) {
-					isContinue = true;
-				} else {
-					//if (this.getIsEdeposit()) isContinue = false;
-					//if (this.getIsNdnp()) isContinue = false;
-					messages += "\nBagger form fields are missing valid values.\n";
-					log.error("DefaultBag.write.writeBag: ");
-//					throw new RuntimeException("Bagger form fields are missing valid values.");
-				}
-				display("DefaultBag.write isValidForms: " + messages);
-			}
-		} catch (Exception e) {
-			messages += "An error occurred validating forms:\n" + e.toString() + "\n";
-			log.error("DefaultBag.write.writeBag: " + e);
-//			if (isContinue == false) throw new RuntimeException("Bagger form fields are missing valid values.");
-		}
-		try {
-			// is complete
-			if (isContinue) {
-				messages += completeBag();
-				if (this.isComplete()) {
-					isContinue = true;
-				} else {
-//					if (!this.getIsHoley()) isContinue = false;
-					messages += "\nBag is not complete.\n";
-				}
-				display("DefaultBag.write isComplete: " + messages);
-			}
-		} catch (Exception e) {
-			messages += "An error occurred checking bag completeness:\n" + e.toString() + "\n";
-			log.error(e.getMessage());
-		}
-		if (isContinue) {
-			try {
-				//messages += writeBag();					
-			} catch (Exception e) {
-				log.error("DefaultBag.write.writeBag: " + e);
-				throw new RuntimeException(e);
-			}
-		}
-		return messages;
 	}
 
 	public String write(CancelIndicator cancel, ProgressListener progress) throws Exception {
