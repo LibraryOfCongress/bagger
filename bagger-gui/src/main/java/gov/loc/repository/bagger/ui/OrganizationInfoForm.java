@@ -142,7 +142,11 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     }
 
     public boolean requestFocusInWindow() {
-        return focusField.requestFocusInWindow();
+    	if (focusField != null) {
+    		return focusField.requestFocusInWindow();
+    	} else {
+    		return false;
+    	}
     }
 
     public void focusGained(FocusEvent evt) {

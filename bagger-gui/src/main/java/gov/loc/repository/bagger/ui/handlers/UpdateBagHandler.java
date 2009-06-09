@@ -2,9 +2,13 @@
 package gov.loc.repository.bagger.ui.handlers;
 
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagit.BagFile;
 
 import java.awt.event.ActionEvent;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 
@@ -35,10 +39,17 @@ public class UpdateBagHandler extends AbstractAction {
         bagView.updateBagInfoInputPaneMessages(messages);
         bagView.bagInfoInputPane.updateSelected(bag);
         messages += bagView.updateProfile();
-        bagView.compositePane.updateCompositePaneTabs(bag, messages);
-        bagView.tagManifestPane.updateCompositePaneTabs(bag);
         bag.copyFieldsToBag();
         bagView.setBag(bag);
+        bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
+        Collection<BagFile> tags = bag.getBag().getTags();
+        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
+        	BagFile bf = it.next();
+            bagView.bagTagFileTree.addNode(bf.getFilepath());
+        }
+        bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
+        bagView.compositePane.updateCompositePaneTabs(bag, messages);
+        bagView.tagManifestPane.updateCompositePaneTabs(bag);
         bagView.updatePropButton.setEnabled(false);
     }
 }

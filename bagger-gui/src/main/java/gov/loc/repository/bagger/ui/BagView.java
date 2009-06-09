@@ -14,6 +14,8 @@ import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
+import gov.loc.repository.bagit.Manifest;
+import gov.loc.repository.bagit.Manifest.Algorithm;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
@@ -97,6 +99,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public String bagVersion = null;
     public Contact projectContact;
 	private String userHomeDir;
+	private boolean completeFlag = true;
 
 	public BagTree bagPayloadTree;
 	public BagTreePanel bagPayloadTreePanel;
@@ -599,7 +602,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public String updateBaggerRules() {
         baggerRules.init(bag.getIsEdeposit(), bag.getIsNdnp(), !bag.getIsNoProject(), bag.getIsHoley());
         String messages = "";
-        bagInfoInputPane.populateForms(bag, false);
+        bagInfoInputPane.populateForms(bag, true);
         messages = bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.update(bag);
@@ -890,12 +893,13 @@ public class BagView extends AbstractView implements ApplicationListener {
             //making a random amount of progress every second.
         	while (!task.canceled && !task.done) {
                 try {
-                    Thread.sleep(1000); //sleep for a second
-                    // TODO: add data task
+                    Thread.sleep(500); //sleep for a while
                 	try {
                     	bag.getBag().addFileToPayload(addBagDataFile);
-                		// TODO: make complete after adding files
-                    	//if (lastFileFlag) bag.getBag().complete();
+                    	if (completeFlag) {
+                    		log.info("BagView.addData: makeComplete");
+                    		bag.getBag().makeComplete();
+                    	}
                     	bagPayloadTree.addNodes(addBagDataFile);
                     	bagPayloadTree.addTree(parentSrc, addBagDataFile, bag.getRootDir());
                 	} catch (Exception e) {
@@ -959,6 +963,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public void addBagData(File file, boolean lastFileFlag) {
     	String messages = "";
         parentSrc = file.getParentFile().getAbsoluteFile();
+        completeFlag = lastFileFlag;
         addBagDataFile = file;
         // TODO: handle an invalid file error
     	statusBarBegin(addDataHandler, "Adding data...", 1);
@@ -974,9 +979,17 @@ public class BagView extends AbstractView implements ApplicationListener {
     		log.error("BagView.addBagData: " + file.getAbsolutePath() + " error: " + e.getMessage());
     	}
  */
-        //bag.setRootTree(bagPayloadTree.getRootTree());
     	bagPayloadTreePanel.refresh(bagPayloadTree);
-        bagInfoInputPane.verifyForms(bag);
+//
+        bagTagFileTree = new BagTree(this, bag.getName(), false);
+        Collection<BagFile> tags = bag.getBag().getTags();
+        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
+        	BagFile bf = it.next();
+            bagTagFileTree.addNode(bf.getFilepath());
+        }
+        bagTagFileTreePanel.refresh(bagTagFileTree);
+//
+    	bagInfoInputPane.verifyForms(bag);
     	bagInfoInputPane.populateForms(bag, true);
         bagInfoInputPane.update(bag);
     	messages += getPropertyMessage("bag.message.filesadded") + " " + file.getName() + "\n";
@@ -1376,29 +1389,18 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagButtonPanel.invalidate();
     	topButtonPanel.invalidate();
     }
-/*    
-    public void updateBagInfo() {
-    	log.debug("updateBagInfo");
-    	String messages = bagInfoInputPane.verifyForms(bag);
-        updateBagInfoInputPaneMessages(messages);
-        compositePane.updateCompositePaneTabs(bag, messages);
-        tagManifestPane.updateCompositePaneTabs(bag);
-        System.out.println("UpdateBagInfo: " + bag.getBag().getBagInfoTxt());
-        //bag.updateBagInfo();
-        updatePropButton.setEnabled(false);
-    }
-*/
+/*
     public void updateBagFetchTxt() {
         String messages = bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.updateSelected(bag);
         messages += updateProfile();
+        bag.updateFetchTxt();
         compositePane.updateCompositePaneTabs(bag, messages);
         tagManifestPane.updateCompositePaneTabs(bag);
-        bag.updateFetchTxt();
         //updatePropButton.setEnabled(false);
     }
-
+*/
     public void updateBagInfoInputPaneMessages(String messages) {
 		boolean isMessage = true;
 		display("updateMessages: " + messages);
@@ -1548,7 +1550,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private void openExistingBag(File file) {
     	ActualTask actualTask = new ActualTask();
-    	statusBarBegin(actualTask, "Opening existing bag...", 10000);
+    	statusBarBegin(actualTask, "Opening existing bag...", 1);
     	String messages = "";
     	bagInfoInputPane.enableForms(bag, true);
     	clearExistingBag(messages);
