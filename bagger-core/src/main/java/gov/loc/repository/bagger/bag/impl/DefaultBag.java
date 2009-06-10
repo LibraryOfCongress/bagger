@@ -35,7 +35,6 @@ import gov.loc.repository.bagit.writer.impl.ZipWriter;
 import gov.loc.repository.bagit.verify.Verifier;
 import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
 import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
-import gov.loc.repository.bagit.transformer.Completer;
 import gov.loc.repository.bagit.transformer.HolePuncher;
 import gov.loc.repository.bagit.transformer.impl.DefaultCompleter;
 import gov.loc.repository.bagit.transformer.impl.HolePuncherImpl;
@@ -132,20 +131,14 @@ public class DefaultBag {
 		BagItTxt bagIt = bilBag.getBagItTxt();
 		if (bagIt == null) {
 			bagIt = bilBag.getBagPartFactory().createBagItTxt();
-			//bilBag.setBagItTxt(bagIt);
 			bilBag.putBagFile(bagIt);
 		}
 		bagInfo = new DefaultBagInfo(this);
 		puncher = new HolePuncherImpl(bagFactory);
-		/*		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
-		if (bagInfoTxt == null) {
-			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
-			bilBag.putBagFile(bagInfoTxt);
-		} */
 		if (bilBag.getFetchTxt() != null) {
         	setIsHoley(true);
     		String url = getBaseUrl(bilBag.getFetchTxt());
-    		log.info("DefaultBag fetch URL: " + url);
+    		display("DefaultBag fetch URL: " + url);
         	BaggerFetch fetch = this.getFetch();
         	fetch.setBaseURL(url);
         	this.fetch = fetch;
@@ -169,7 +162,8 @@ public class DefaultBag {
 	}
 
 	protected void display(String s) {
-		//log.info(this.getClass().getName() + "." + s);
+		System.out.println(this.getClass().getName() + ": " + s);
+		//log.info(this.getClass().getName() + ": " + s);
 	}
 
 	public Bag getBag() {
@@ -584,8 +578,7 @@ public class DefaultBag {
 			bilBag.putBagFile(bagInfoTxt);
 		} 
 		bilBag.getBagInfoTxt().clear();
-		log.debug("createBagInfo: " + bagInfoTxt.getFilepath());
-		//log.info("DefaultBag.createBagInfo.bagInfoTxt: " + bagInfoTxt.toString());
+		display("createBagInfo: " + bagInfoTxt.getFilepath());
 		Set<String> keys = map.keySet();
 		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
 			String key = (String) iter.next();
@@ -643,14 +636,16 @@ public class DefaultBag {
 		completer.setClearExistingPayloadManifests(false);
 		completer.setGenerateBagInfoTxt(true);
 		completer.setGenerateTagManifest(true);
+		// TODO: how do you undo makeHoley, remove fetch.txt put back manifests?
+		if (!this.isHoley && bilBag.getFetchTxt() != null) {
+			bilBag.removeBagFile(bilBag.getFetchTxt().getFilepath());
+		}
 		bilBag = completer.complete(bilBag);
-		// TODO: how do you undo makeHoley, remove fetch.txt put back manifests
-    	log.info("DefaultBag.completeTagFiles: " + bilBag.getTags().size());
+    	display("DefaultBag.completeTagFiles: " + bilBag.getTags().size());
 	}
 
 	public void copyFormToBag() {
 		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
-//   		System.out.println("BagView.copyFormToBag: " + baggerOrganization);
 		Contact contact = baggerOrganization.getContact();
 		if (bilBag.getBagInfoTxt() != null) {
 			bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
@@ -765,7 +760,7 @@ public class DefaultBag {
 			for (int i=0; i < fetchTxt.size(); i++) {
 				FilenameSizeUrl fetch = fetchTxt.get(i);
 				String s = fetch.getFilename();
-	    		//log.debug("DefaultBag.getFetchPayload: " + fetch.toString());
+	    		display("DefaultBag.getFetchPayload: " + fetch.toString());
 				list.add(s);
 			}
 		}
