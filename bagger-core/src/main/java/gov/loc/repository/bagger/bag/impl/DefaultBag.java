@@ -102,30 +102,36 @@ public class DefaultBag {
 	private BagFactory bagFactory = new BagFactory();
 	private DefaultCompleter completer;
 	private boolean includeTags = false;
-	private String version = null;
+	private String versionString = null;
 
 	public DefaultBag () {
-        this.version = Version.V0_96.versionString;
+        this.versionString = Version.V0_96.versionString;
 		init(null);
 	}
 	
 	public DefaultBag(String version) {
-		this.version = version;
+		this.versionString = version;
 		init(null);
 	}
 
-	public DefaultBag(File rootDir) {
+	public DefaultBag(File rootDir, String version) {
+		this.versionString = version;
 		init(rootDir);
     }
 	
 	private void init(File rootDir) {
 		reset();
 		this.rootDir = rootDir;
+		
+		log.debug("DefaultBag.init file: " + rootDir + ", version: " + versionString);
 		if (rootDir != null) {
 			bilBag = bagFactory.createBag(this.rootDir);
-		} else if (version != null) {
-			bilBag = bagFactory.createBag();
+			versionString = bilBag.getVersion().versionString;
+		} else if (versionString != null) {
+			Version version = Version.valueOfString(versionString);
+			bilBag = bagFactory.createBag(version);
 		} else {
+			System.out.println("DefaultBag.init ERROR version: " + versionString);
 			bilBag = bagFactory.createBag();
 		}
 		BagItTxt bagIt = bilBag.getBagItTxt();
@@ -147,7 +153,6 @@ public class DefaultBag {
 		}
 		this.payloadManifestAlgorithm = Manifest.Algorithm.MD5.bagItAlgorithm;
 		this.tagManifestAlgorithm = Manifest.Algorithm.MD5.bagItAlgorithm;
-		version = bilBag.getVersion().versionString;
 	}
 
 	public String getDataDirectory() {
@@ -177,11 +182,11 @@ public class DefaultBag {
 	}
 
 	public void setVersion(String v) {
-		this.version = v;
+		this.versionString = v;
 	}
 	
 	public String getVersion() {
-		return this.version;
+		return this.versionString;
 	}
 
 	public void setName(String name) {
@@ -634,6 +639,7 @@ public class DefaultBag {
 
 	public void completeMetaFiles() {
 		completer = new DefaultCompleter(this.bagFactory);
+/*
 		completer.setClearExistingTagManifests(false);
 		completer.setClearExistingPayloadManifests(false);
 		completer.setGenerateBagInfoTxt(true);
@@ -644,6 +650,7 @@ public class DefaultBag {
 		}
 		bilBag = completer.complete(bilBag);
     	display("DefaultBag.completeTagFiles: " + bilBag.getTags().size());
+*/
 	}
 
 	public void copyFormToBag() {
