@@ -29,10 +29,6 @@ public class VersionListHandler extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		Application app = Application.instance();
-		ApplicationPage page = app.getActiveWindow().getPage();
-		PageComponent component = page.getActiveComponent();
-		//if (component != null) this.bagView = (BagView) component;
 		this.bag = bagView.getBag();
 
     	JComboBox jlist = (JComboBox)e.getSource();

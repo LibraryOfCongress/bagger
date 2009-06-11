@@ -76,7 +76,6 @@ public class BagSettingsPanel extends JPanel {
         bagView.bagVersion = Version.V0_96.versionString;
         bagView.bagVersionList.addActionListener(new VersionListHandler(bagView));
         bagView.bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
-        JScrollPane bagVersionPane = new JScrollPane(bagView.bagVersionList);
 
         // Project control
         JLabel projectLabel = new JLabel(bagView.getPropertyMessage("bag.label.project"));
@@ -115,24 +114,6 @@ public class BagSettingsPanel extends JPanel {
         bagView.defaultProject.addActionListener(new DefaultProjectHandler(bagView));
         bagView.defaultProject.setToolTipText(bagView.getPropertyMessage("bag.isdefault.help"));
 
-        // Checksum control
-/*
-        JLabel checksumLabel = new JLabel(bagView.getPropertyMessage("bag.label.checksumtype"));
-        JRadioButton md5Button = new JRadioButton(bagView.getPropertyMessage("bag.checksumtype.md5"));
-        md5Button.setSelected(true);
-        md5Button.setEnabled(true);
-        JRadioButton sha1Button = new JRadioButton(bagView.getPropertyMessage("bag.checksumtype.sha1"));
-        sha1Button.setSelected(false);
-        sha1Button.setEnabled(false);
-        ButtonGroup checksumGroup = new ButtonGroup();
-        checksumGroup.add(md5Button);
-        checksumGroup.add(sha1Button);
-        JPanel checksumGroupPanel = new JPanel(new FlowLayout());
-        checksumGroupPanel.add(checksumLabel);
-        checksumGroupPanel.add(md5Button);
-        checksumGroupPanel.add(sha1Button);
-        checksumGroupPanel.setBorder(border);
-*/
         // Holey bag control
         JLabel holeyLabel = new JLabel(bagView.getPropertyMessage("bag.label.isholey"));
         holeyLabel.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
@@ -215,7 +196,7 @@ public class BagSettingsPanel extends JPanel {
         bagView.buildConstraints(gbc, 0, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(bagVersionLabel, gbc);
         bagView.buildConstraints(gbc, 1, row, 1, 1, 60, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagVersionPane, gbc);
+        gridLayout.setConstraints(bagView.bagVersionList, gbc);
         row++;
         bagView.buildConstraints(gbc, 0, row, 1, 1, 30, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(projectLabel, gbc);
@@ -244,8 +225,8 @@ public class BagSettingsPanel extends JPanel {
         this.add(bagNameLabel);
         this.add(bagView.bagNameField);
         this.add(bagVersionLabel);
-        this.add(bagVersionPane);
-        bagView.bagVersionList.setEnabled(true);
+        this.add(bagView.bagVersionList);
+        bagView.bagVersionList.setEnabled(false);
         this.add(projectLabel);
         this.add(projectPane);
         bagView.projectList.setEnabled(false);
