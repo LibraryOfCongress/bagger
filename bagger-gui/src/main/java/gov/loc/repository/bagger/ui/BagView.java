@@ -1293,7 +1293,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 //    	statusBarEnd();
     }
 
-    private void showWarningErrorDialog(String msg) {
+    public void showWarningErrorDialog(String msg) {
     	MessageDialog dialog = new MessageDialog(getPropertyMessage("bag.dialog.error"), msg);
 	    dialog.showDialog();
     }

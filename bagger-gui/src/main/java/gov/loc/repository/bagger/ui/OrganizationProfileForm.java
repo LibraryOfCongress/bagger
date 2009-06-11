@@ -104,8 +104,8 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
 
     public void focusLost(FocusEvent evt) {
     	if (bagView != null && !this.hasErrors() && this.isDirty()) {
-    		// TODO: Activate for Bagger 1.6
-    		//bagView.updateBagInfo();
+        	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
+        	//bagView.showWarningErrorDialog("Profile form was updated to prevent data loss.");
     	}
     }
 }

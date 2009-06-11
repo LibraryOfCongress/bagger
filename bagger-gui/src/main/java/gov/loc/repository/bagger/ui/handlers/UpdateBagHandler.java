@@ -31,10 +31,10 @@ public class UpdateBagHandler extends AbstractAction {
 
 	public void actionPerformed(ActionEvent e) {
 		this.bag = bagView.getBag();
-		updateBag();
+		updateBag(this.bag);
 	}
 
-    private void updateBag() {
+	public void updateBag(DefaultBag bag) {
         String messages = bagView.bagInfoInputPane.updateForms(bag);
         bagView.updateBagInfoInputPaneMessages(messages);
         bagView.bagInfoInputPane.updateSelected(bag);

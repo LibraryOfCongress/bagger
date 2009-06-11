@@ -339,6 +339,7 @@ public class BagInfoInputPane extends JTabbedPane {
         		JCheckBox cb = (JCheckBox) c;
         	}
         }
+        bagInfoForm.dirty = false;
         bag.createBagInfo(map);
         bag.copyFormToBag();
     }

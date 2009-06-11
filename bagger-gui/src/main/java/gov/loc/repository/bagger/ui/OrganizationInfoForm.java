@@ -55,6 +55,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     private JPanel buttonPanel;
     private JComponent  form;
 	protected Bag bag;
+	public boolean dirty = false;
 	private boolean enabled;
 	private NewFieldFrame newFieldFrame;
 	
@@ -139,6 +140,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 
     public void propertyChange(PropertyChangeEvent evt) {
     	if (bagView != null) bagView.updatePropButton.setEnabled(true);
+    	dirty = true;
     }
 
     public boolean requestFocusInWindow() {
@@ -153,6 +155,8 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     }
     
     public void focusLost(FocusEvent evt) {
+    	if (dirty) bagView.infoInputPane.updateBagHandler.updateBag(this.defaultBag);
+    	//bagView.showWarningErrorDialog("Bag-Info form was updated to prevent data loss.");
     }
 
 	public BindingFactory getBindingFactory() {

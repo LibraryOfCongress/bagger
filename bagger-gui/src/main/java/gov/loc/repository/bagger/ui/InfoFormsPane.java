@@ -30,6 +30,7 @@ public class InfoFormsPane extends JScrollPane {
     private BagView bagView;
     private DefaultBag bag;
     private JScrollPane bagInfoScrollPane;
+    public UpdateBagHandler updateBagHandler;
 
     public InfoFormsPane(BagView bagView) {
     	super();
@@ -54,20 +55,20 @@ public class InfoFormsPane extends JScrollPane {
     	bagInfoScrollPane.setViewportView(bagView.bagInfoInputPane);
     	//bagInfoScrollPane.setMinimumSize(bagView.bagInfoInputPane.getMinimumSize());
     	bagInfoScrollPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
-    	
+/*    	
     	// Create a panel for the form error messages and the update button
         JButton nextButton = new JButton(bagView.getPropertyMessage("button.next"));
         nextButton.setMnemonic(KeyEvent.VK_ENTER);
         nextButton.addActionListener(new NextButtonHandler(bagView));
         nextButton.setToolTipText(bagView.getPropertyMessage("button.next.help"));
-
+*/
         // Create a panel for the form error messages and the update button
         bagView.updatePropButton = new JButton(bagView.getPropertyMessage("button.saveupdates"));
         bagView.updatePropButton.setMnemonic(KeyEvent.VK_S);
-        bagView.updatePropButton.addActionListener(new UpdateBagHandler(bagView));
+        updateBagHandler = new UpdateBagHandler(bagView);
+        bagView.updatePropButton.addActionListener(updateBagHandler);
         bagView.updatePropButton.setToolTipText(bagView.getPropertyMessage("button.saveupdates.help"));
-        bagView.updatePropButton.setEnabled(true);
-//        bagView.updatePropButton.setEnabled(false);
+        bagView.updatePropButton.setEnabled(false);
         
         JPanel infoLabelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         bagView.infoFormMessagePane = new BagTextPane("");
@@ -108,10 +109,10 @@ public class InfoFormsPane extends JScrollPane {
 
         bagView.buildConstraints(gbc, 0, 2, 1, 1, 80, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
         infoLayout.setConstraints(button, gbc);
-
+/*
         bagView.buildConstraints(gbc, 1, 2, 1, 1, 10, 0, GridBagConstraints.NONE, GridBagConstraints.EAST);
         infoLayout.setConstraints(nextButton, gbc);
-
+*/
         bagView.buildConstraints(gbc, 2, 2, 1, 1, 10, 0, GridBagConstraints.NONE, GridBagConstraints.EAST);
         infoLayout.setConstraints(bagView.updatePropButton, gbc);
         
@@ -130,7 +131,7 @@ public class InfoFormsPane extends JScrollPane {
         width += (int) bagInfoScrollPane.getPreferredSize().getWidth();
         height += (int) bagInfoScrollPane.getPreferredSize().getHeight();
         infoPanel.add(button);
-        infoPanel.add(nextButton);
+//        infoPanel.add(nextButton);
         height += (int) bagView.updatePropButton.getPreferredSize().getHeight();
         infoPanel.add(bagView.updatePropButton);
         infoPanel.add(bagSettingsPanel);
