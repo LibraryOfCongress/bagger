@@ -59,9 +59,13 @@ public class DefaultBag {
 	public static final short NO_MODE = 0;
 	public static final short ZIP_MODE = 1;
 	public static final short TAR_MODE = 2; 
+	public static final short TAR_GZ_MODE = 3; 
+	public static final short TAR_BZ2_MODE = 4; 
 	public static final String NO_LABEL = "none";
 	public static final String ZIP_LABEL = "zip";
 	public static final String TAR_LABEL = "tar";
+	public static final String TAR_GZ_LABEL = "tar gz";
+	public static final String TAR_BZ2_LABEL = "tar bz2";
 
 	// Bag option flags
 	private boolean isHoley = false;
@@ -71,8 +75,8 @@ public class DefaultBag {
 	private boolean isNdnp = false;
 	private boolean isCleanup = false;
 	private boolean isNewbag = true;
-	private boolean isBuildTagManifest = false;
-	private boolean isBuildPayloadManifest = false;
+	private boolean isBuildTagManifest = true;
+	private boolean isBuildPayloadManifest = true;
 	private String tagManifestAlgorithm;
 	private String payloadManifestAlgorithm;
 	private short serialMode = NO_MODE;
@@ -131,7 +135,6 @@ public class DefaultBag {
 			Version version = Version.valueOfString(versionString);
 			bilBag = bagFactory.createBag(version);
 		} else {
-			System.out.println("DefaultBag.init ERROR version: " + versionString);
 			bilBag = bagFactory.createBag();
 		}
 		BagItTxt bagIt = bilBag.getBagItTxt();
