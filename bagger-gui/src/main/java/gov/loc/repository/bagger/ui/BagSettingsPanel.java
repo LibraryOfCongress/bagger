@@ -58,6 +58,7 @@ public class BagSettingsPanel extends JPanel {
         Dimension labelDim = bagNameLabel.getPreferredSize();
         bagView.bagNameField = new JTextField(" " + bag.getName() + " ");
         bagView.bagNameField.setEditable(false);
+        bagView.bagNameField.setEnabled(false);
         Dimension fieldDim = bagView.bagInfoInputPane.getPreferredSize();
         Dimension maxFieldDim = new Dimension(fieldDim.width/2, labelDim.height+10);
         bagView.bagNameField.setMaximumSize(maxFieldDim);

@@ -1684,6 +1684,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public void onApplicationEvent(ApplicationEvent e) {
+    	System.out.println("BagView.onApplicationEvent: " + e);
         if (e instanceof LifecycleApplicationEvent) {
         	//display("onApplicationEvent");
             LifecycleApplicationEvent le = (LifecycleApplicationEvent)e;

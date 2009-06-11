@@ -164,7 +164,7 @@ public class BagInfoInputPane extends JTabbedPane {
         bagInfoForm.setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.details.help"));
         addTab(parentView.getPropertyMessage("infoInputPane.tab.details"), bagInfoForm);
         profileForm.getControl().setToolTipText("Profile Form");
-        addTab("Profile Form", profileForm.getControl());
+        addTab(parentView.getPropertyMessage("infoInputPane.tab.profile"), profileForm.getControl());
         if (bag.getIsHoley()) {
         	if (fetchForm != null) {
             	fetchForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.fetch.help"));

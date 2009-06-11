@@ -18,8 +18,10 @@ import javax.swing.border.EmptyBorder;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -116,7 +118,8 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                     rowCount += 1;
                 	break;
                 case BagInfoField.TEXTFIELD_COMPONENT:
-                    JComponent comp = formBuilder.add(field.getName(), field.getLabel(), "")[index];
+                	String attributes = "colSpan="+GridBagConstraints.HORIZONTAL;
+                    JComponent comp = formBuilder.add(field.getName(), field.getLabel(), attributes)[index];
                     comp.setEnabled(field.isEnabled());
                     comp.addFocusListener(this);
                     comp.addKeyListener(this);
@@ -229,10 +232,11 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
        	private static final long serialVersionUID = 1L;
 
     	public void actionPerformed(ActionEvent e) {
+    		Component selected = (Component) e.getSource();
     		String key = "";
-            java.awt.Component[] components = form.getComponents();
+            Component[] components = form.getComponents();
             for (int i=0; i<components.length; i++) {
-            	java.awt.Component c;
+            	Component c;
             	c = components[i];
             	if (c instanceof JLabel) {
                 	JLabel label = (JLabel) c;
@@ -248,6 +252,9 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             			BagInfoField field = getField(key);
             			if (field != null) fieldList.remove(field);
             		}
+            	} else if (c == selected) {
+        			BagInfoField field = getField(key);
+        			if (field != null) fieldList.remove(field);            		
             	}
             }
             DefaultBagInfo info = defaultBag.getInfo();
