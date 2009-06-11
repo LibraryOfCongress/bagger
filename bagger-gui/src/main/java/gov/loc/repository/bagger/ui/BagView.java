@@ -1045,7 +1045,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
     	bagInfoInputPane.updateSelected(bag);
-    	statusBarBegin(validateBagHandler, "Validating bag...", 10000);
+    	statusBarBegin(validateBagHandler, "Validating bag...", 1);
     	//String msg = bag.validateBag(validVerifier);
 
     	setBag(bag);
@@ -1072,7 +1072,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     public void completeBag(String messages) {
     	ActualTask actualTask = new ActualTask();
-    	statusBarBegin(actualTask, "Completing bag...", 10000);
+    	statusBarBegin(actualTask, "Completing bag...", 1);
     	messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
     	bagInfoInputPane.updateSelected(bag);
@@ -1271,7 +1271,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bag.setRootDir(file);
         messages += bagInfoInputPane.updateForms(bag);
         updateBagInfoInputPaneMessages(messages);
-        statusBarBegin(saveBagHandler, "Writing bag...", 10000);
+        statusBarBegin(saveBagHandler, "Writing bag...", 1);
 /*
         try {
             messages += bag.write(!bagInfoInputPane.hasValidBagForms(bag));
@@ -1567,13 +1567,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         }
         bagTagFileTreePanel.refresh(bagTagFileTree);
     	enableBagSettings(true);
-/*
-    	messages += bag.validateForms(!bagInfoInputPane.hasValidBagForms(bag));
-		messages += bag.completeBag();
-		messages += bag.validateMetadata();
 		bag.isSerialized(true);
-		validateBag(messages);
-*/
 		bag.getInfo().setBag(bag);
     	bagInfoInputPane.populateForms(bag, true);
     	messages += bagInfoInputPane.updateForms(bag);
