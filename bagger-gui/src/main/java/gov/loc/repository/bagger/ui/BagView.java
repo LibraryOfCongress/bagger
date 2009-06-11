@@ -1539,6 +1539,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    	newDefaultBag(null);
 			log.error("openExistingBag DefaultBag: " + ex.getMessage());
         	messages +=  "Failed to create bag: " + ex.getMessage() + "\n";
+    	    showWarningErrorDialog("Error trying to open file: " + file + "\n" + ex.getMessage());
 		}
         bagVersion = bag.getVersion();
         bagVersionList.setSelectedItem(bagVersion);
@@ -1547,10 +1548,11 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagNameField.setCaretPosition(fileName.length());
         bagNameField.invalidate();
 
+        bag.getInfo().setBag(bag);
 		bag.getInfo().createExistingFieldList(true);
     	bag.copyBagToForm();
     	baggerProfile.setOrganization(bag.getInfo().getBagOrganization());
-    	if (bag.getInfo().getBagSize().isEmpty()) {
+    	if (bag.getInfo().getBagSize() != null && bag.getInfo().getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
     	} 
 	    if (bag.getIsHoley()) {
@@ -1598,13 +1600,14 @@ public class BagView extends AbstractView implements ApplicationListener {
 		bagPayloadTree.populateNodes(bag, rootSrc);
         bagPayloadTreePanel.refresh(bagPayloadTree);
         Bag b = bag.getBag();
+        /*
         Collection<BagFile> payload = b.getPayload();
-        log.debug("Payload size: " + payload.size());
+        System.out.println("Payload size: " + payload.size());
         for (Iterator<BagFile> it=payload.iterator(); it.hasNext(); ) {
         	BagFile bf = it.next();
         	log.debug("" + bf.getFilepath());
         }
-
+		*/
         bagTagFileTree = new BagTree(this, bag.getName(), false);
         Collection<BagFile> tags = b.getTags();
         for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
