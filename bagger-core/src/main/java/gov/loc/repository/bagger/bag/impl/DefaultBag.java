@@ -134,6 +134,8 @@ public class DefaultBag {
 			bilBag.putBagFile(bagIt);
 		}
 		bagInfo = new DefaultBagInfo(this);
+		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+		log.info("BagInfoTxt: " + bagInfoTxt);
 		puncher = new HolePuncherImpl(bagFactory);
 		if (bilBag.getFetchTxt() != null) {
         	setIsHoley(true);
@@ -162,7 +164,7 @@ public class DefaultBag {
 	}
 
 	protected void display(String s) {
-		System.out.println(this.getClass().getName() + ": " + s);
+		//System.out.println(this.getClass().getName() + ": " + s);
 		//log.info(this.getClass().getName() + ": " + s);
 	}
 

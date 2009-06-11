@@ -313,25 +313,26 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		this.fieldList = new ArrayList<BagInfoField>();
 		this.profileList = new ArrayList<BagInfoField>();
 		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
-		Set<String> keys = bagInfoTxt.keySet();
-		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-			String label = (String) iter.next();
-			label = label.trim();
-			BagInfoField field = createField(label, enabled);
-			if (profileSet.contains(label)) {
-				profileList.add(field);
-			} else {
-				fieldList.add(field);
+		if (bagInfoTxt != null) {
+			Set<String> keys = bagInfoTxt.keySet();
+			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+				String label = (String) iter.next();
+				label = label.trim();
+				BagInfoField field = createField(label, enabled);
+				if (profileSet.contains(label)) {
+					profileList.add(field);
+				} else {
+					fieldList.add(field);
+				}
 			}
 		}
-/*
-		List<String> nls = bagInfoTxt.getNonstandardFields();
-		for (int i=0; i<nls.size(); i++) {
-			String label = nls.get(i);
-			BagInfoField field = createField(label, enabled);
-			fieldList.add(field);
+		/*
+		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+		if (bagInfoTxt == null) {
+			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
+			bilBag.setBagInfoTxt(bagInfoTxt);
 		}
-*/
+		 */
 	}
 	
 	public void createStandardFieldList(boolean enabled) {
