@@ -171,15 +171,29 @@ public class BagSettingsPanel extends JPanel {
             }
         };
 
+        bagView.tarGzButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.targz"));
+        bagView.tarGzButton.setEnabled(false);
+        bagView.tarGzButton.addActionListener(serializeBagHandler);
+        bagView.tarGzButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.targz.help"));
+        
+        bagView.tarBz2Button = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.tarbz2"));
+        bagView.tarBz2Button.setEnabled(false);
+        bagView.tarBz2Button.addActionListener(serializeBagHandler);
+        bagView.tarBz2Button.setToolTipText(bagView.getPropertyMessage("bag.serializetype.tarbz2.help"));
+        
         ButtonGroup serializeGroup = new ButtonGroup();
         serializeGroup.add(bagView.noneButton);
         serializeGroup.add(bagView.zipButton);
         serializeGroup.add(bagView.tarButton);
+        serializeGroup.add(bagView.tarGzButton);
+        serializeGroup.add(bagView.tarBz2Button);
         bagView.serializeGroupPanel = new JPanel(new FlowLayout());
         bagView.serializeGroupPanel.add(bagView.serializeLabel);
         bagView.serializeGroupPanel.add(bagView.noneButton);
         bagView.serializeGroupPanel.add(bagView.zipButton);
         bagView.serializeGroupPanel.add(bagView.tarButton);
+        bagView.serializeGroupPanel.add(bagView.tarGzButton);
+        bagView.serializeGroupPanel.add(bagView.tarBz2Button);
         bagView.serializeGroupPanel.setBorder(border);
         bagView.serializeGroupPanel.setEnabled(false);
         bagView.serializeGroupPanel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
@@ -214,13 +228,7 @@ public class BagSettingsPanel extends JPanel {
         gridLayout.setConstraints(bagView.serializeLabel, gbc);
         bagView.buildConstraints(gbc, 1, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(bagView.serializeGroupPanel, gbc);
-/*
-        row++;
-        bagView.buildConstraints(gbc, 0, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(checksumLabel, gbc);
-        bagView.buildConstraints(gbc, 1, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(checksumGroupPanel, gbc);
- */
+
         this.setLayout(gridLayout);
         this.add(bagNameLabel);
         this.add(bagView.bagNameField);

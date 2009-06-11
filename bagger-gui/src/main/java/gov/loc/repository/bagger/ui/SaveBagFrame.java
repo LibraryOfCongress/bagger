@@ -67,6 +67,9 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	JRadioButton noneButton;
 	JRadioButton zipButton;
 	JRadioButton tarButton;
+	JRadioButton tarGzButton;
+	JRadioButton tarBz2Button;
+	
 	JCheckBox isTagCheckbox;
 	JCheckBox isVerifyCheckbox;
 	JCheckBox isPayloadCheckbox;
@@ -130,14 +133,28 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         tarButton.setEnabled(true);
         tarButton.addActionListener(serializeListener);
         tarButton.setToolTipText(getMessage("bag.serializetype.tar.help"));
+        
+        tarGzButton = new JRadioButton(getMessage("bag.serializetype.targz"));
+        tarGzButton.setEnabled(true);
+        tarGzButton.addActionListener(serializeListener);
+        tarGzButton.setToolTipText(getMessage("bag.serializetype.targz.help"));
+        
+        tarBz2Button = new JRadioButton(getMessage("bag.serializetype.tarbz2"));
+        tarBz2Button.setEnabled(true);
+        tarBz2Button.addActionListener(serializeListener);
+        tarBz2Button.setToolTipText(getMessage("bag.serializetype.tarbz2.help"));
 
-    	short mode = bag.getSerialMode();
+        short mode = bag.getSerialMode();
     	if (mode == DefaultBag.NO_MODE) {
     		this.noneButton.setEnabled(true);
     	} else if (mode == DefaultBag.ZIP_MODE) {
     		this.zipButton.setEnabled(true);
     	} else if (mode == DefaultBag.TAR_MODE) {
     		this.tarButton.setEnabled(true);
+    	} else if (mode == DefaultBag.TAR_GZ_MODE) {
+    		this.tarGzButton.setEnabled(true);
+    	} else if (mode == DefaultBag.TAR_BZ2_MODE) {
+    		this.tarBz2Button.setEnabled(true);
     	} else {
     		this.noneButton.setEnabled(true);
     	}
@@ -147,31 +164,31 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         serializeGroup.add(noneButton);
         serializeGroup.add(zipButton);
         serializeGroup.add(tarButton);
+        serializeGroup.add(tarGzButton);
+        serializeGroup.add(tarBz2Button);
         serializeGroupPanel = new JPanel(new FlowLayout());
         serializeGroupPanel.add(serializeLabel);
         serializeGroupPanel.add(noneButton);
         serializeGroupPanel.add(zipButton);
         serializeGroupPanel.add(tarButton);
+        serializeGroupPanel.add(tarGzButton);
+        serializeGroupPanel.add(tarBz2Button);
         serializeGroupPanel.setBorder(border);
         serializeGroupPanel.setEnabled(true);
         serializeGroupPanel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
-        //serializeGroupPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
 
     	// TODO: Add tag manifest generate checkbox
         JLabel tagLabel = new JLabel(getMessage("bag.label.istag"));
         tagLabel.setToolTipText(getMessage("bag.label.istag.help"));
-//        tagLabel.setVerticalAlignment(JLabel.CENTER);
         isTagCheckbox = new JCheckBox();
         isTagCheckbox.setBorder(border);
         isTagCheckbox.setSelected(bag.getisBuildTagManifest());
         isTagCheckbox.addActionListener(new TagManifestHandler());
         isTagCheckbox.setToolTipText(getMessage("bag.checkbox.istag.help"));
-        //isTagCheckbox.setAlignmentY(JCheckBox.CENTER_ALIGNMENT);
 
         // TODO: Add tag manifest algorithm selection
         JLabel tagAlgorithmLabel = new JLabel(getMessage("bag.label.tagalgorithm"));
         tagAlgorithmLabel.setToolTipText(getMessage("bag.label.tagalgorithm.help"));
-//        tagAlgorithmLabel.setVerticalAlignment(JLabel.CENTER);
         ArrayList<String> listModel = new ArrayList<String>();
 		for(Algorithm algorithm : Algorithm.values()) {
 			listModel.add(algorithm.bagItAlgorithm);
@@ -181,41 +198,34 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         tagAlgorithmList.setSelectedItem(bag.getTagManifestAlgorithm());
         tagAlgorithmList.addActionListener(new TagAlgorithmListHandler());
         tagAlgorithmList.setToolTipText(getMessage("bag.tagalgorithmlist.help"));
-        //tagAlgorithmList.setAlignmentY(JComboBox.CENTER_ALIGNMENT);
     	
     	// TODO: Add payload manifest generate checkbox
         JLabel payloadLabel = new JLabel(getMessage("bag.label.ispayload"));
         payloadLabel.setToolTipText(getMessage("bag.ispayload.help"));
-//        payloadLabel.setVerticalAlignment(JLabel.CENTER);
         isPayloadCheckbox = new JCheckBox();
         isPayloadCheckbox.setBorder(border);
         isPayloadCheckbox.setSelected(bag.getIsBuildPayloadManifest());
         isPayloadCheckbox.addActionListener(new PayloadManifestHandler());
         isPayloadCheckbox.setToolTipText(getMessage("bag.ispayload.help"));
-        //isPayloadCheckbox.setAlignmentY(JCheckBox.CENTER_ALIGNMENT);
 
         // TODO: Add payload manifest algorithm selection
         JLabel payAlgorithmLabel = new JLabel(bagView.getPropertyMessage("bag.label.payalgorithm"));
         payAlgorithmLabel.setToolTipText(getMessage("bag.payalgorithm.help"));
-//        payAlgorithmLabel.setVerticalAlignment(JLabel.CENTER);
         payAlgorithmList = new JComboBox(listModel.toArray());
         payAlgorithmList.setName(getMessage("bag.payalgorithmlist"));
         payAlgorithmList.setSelectedItem(bag.getPayloadManifestAlgorithm());
         payAlgorithmList.addActionListener(new PayAlgorithmListHandler());
         payAlgorithmList.setToolTipText(getMessage("bag.payalgorithmlist.help"));
-        //payAlgorithmList.setAlignmentY(JComboBox.CENTER_ALIGNMENT);
 
     	// TODO: Add verify after write label
         JLabel verifyLabel = new JLabel(getMessage("bag.isverify"));
         verifyLabel.setToolTipText(getMessage("bag.isverify.help"));
-//        verifyLabel.setVerticalAlignment(JLabel.CENTER);
     	// TODO: Add verify checkbox
         isVerifyCheckbox = new JCheckBox();
         isVerifyCheckbox.setBorder(border);
         isVerifyCheckbox.setSelected(bag.getisBuildTagManifest());
         isVerifyCheckbox.addActionListener(new VerifyHandler());
         isVerifyCheckbox.setToolTipText(getMessage("bag.isverify.help"));
-        //isVerifyCheckbox.setAlignmentY(JCheckBox.CENTER_ALIGNMENT);
 
     	okButton = new JButton("Save");
     	okButton.addActionListener(new OkSaveBagHandler());
@@ -304,6 +314,12 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     	} else if (mode == DefaultBag.TAR_MODE) {
     		tarButton.setEnabled(true);
     		tarButton.setSelected(true);
+    	} else if (mode == DefaultBag.TAR_GZ_MODE) {
+    		tarGzButton.setEnabled(true);
+    		tarGzButton.setSelected(true);
+    	} else if (mode == DefaultBag.TAR_BZ2_MODE) {
+    		tarBz2Button.setEnabled(true);
+    		tarBz2Button.setSelected(true);
     	} else {
     		noneButton.setEnabled(true);
     		noneButton.setSelected(true);
@@ -331,6 +347,12 @@ public class SaveBagFrame extends JFrame implements ActionListener {
             	} else if (cb == tarButton) {
             		bagView.getBag().setIsSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.TAR_MODE);
+            	} else if (cb == tarGzButton) {
+            		bagView.getBag().setIsSerial(true);
+            		bagView.getBag().setSerialMode(DefaultBag.TAR_GZ_MODE);
+            	} else if (cb == tarBz2Button) {
+            		bagView.getBag().setIsSerial(true);
+            		bagView.getBag().setSerialMode(DefaultBag.TAR_BZ2_MODE);
             	} else {
             		bagView.getBag().setIsSerial(false);
             		bagView.getBag().setSerialMode(DefaultBag.NO_MODE);
@@ -359,7 +381,9 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	    			selectedName += "."+DefaultBag.ZIP_LABEL;
 	    			fs.setFileFilter(bagView.zipFilter);
 	    		}
-	    		else if (bag.getSerialMode() == DefaultBag.TAR_MODE) {
+	    		else if (bag.getSerialMode() == DefaultBag.TAR_MODE ||
+	    				bag.getSerialMode() == DefaultBag.TAR_GZ_MODE ||
+	    				bag.getSerialMode() == DefaultBag.TAR_BZ2_MODE) {
 	    			selectedName += "."+DefaultBag.TAR_LABEL;
 	    			fs.setFileFilter(bagView.tarFilter);
 	    		}

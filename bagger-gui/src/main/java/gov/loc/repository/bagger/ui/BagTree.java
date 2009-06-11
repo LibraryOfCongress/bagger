@@ -4,6 +4,7 @@ import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.handlers.BagTreeTransferHandler;
 import gov.loc.repository.bagger.util.RecursiveFileListIterator;
+import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
 
@@ -21,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +42,6 @@ public class BagTree extends CheckboxTree {
 	private String basePath;
 	private DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(AbstractBagConstants.DATA_DIRECTORY);
 	private ArrayList<DefaultMutableTreeNode> srcNodes = new ArrayList<DefaultMutableTreeNode>();
-	private ArrayList<BaggerFileEntity> rootTree = new ArrayList<BaggerFileEntity>();
 	
 	public BagTree(BagView bagView, String path, boolean isPayload) {
 		super();
@@ -61,7 +62,7 @@ public class BagTree extends CheckboxTree {
 		setModel(new DefaultTreeModel(parentNode));
         rootPath = new TreePath(parentNode.getPath());
 
-		setCheckingPath(rootPath);
+		//setCheckingPath(rootPath);
         setAnchorSelectionPath(rootPath);
         makeVisible(rootPath);
         getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE);
@@ -72,25 +73,10 @@ public class BagTree extends CheckboxTree {
 		setScrollsOnExpand(true);		
 	}
 	
-	public void populateNodes(DefaultBag bag, File rootSrc) {
+	public void populateNodes(DefaultBag bag, File rootSrc, boolean isParent) {
 		log.debug("BagTree.populateNodes" );
 		if (bag.getBag().getPayload() != null && rootSrc.listFiles() != null) {
-			File[] listFiles = rootSrc.listFiles();
-			if (listFiles != null) {
-				log.debug("BagTree.populateNodes listFiles: " + listFiles.length );
-				for (int i=0; i<listFiles.length; i++) {
-					File f = listFiles[i];
-					try {
-				        this.addTree(rootSrc, f, bag.getRootDir());
-					} catch(Exception e) {
-						try {
-					        this.addNode(f.getAbsolutePath());
-						} catch (Exception ex) {
-							log.error("BagTree.populateNodes: " + e.getMessage());						
-						}
-					}
-				}
-			}
+			addNodes(rootSrc, isParent);
 		} else {
 			log.debug("BagTree.populateNodes listFiles NULL:" );
 			List<String> payload = null;
@@ -106,9 +92,13 @@ public class BagTree extends CheckboxTree {
 		    	String filePath = it.next();
 		    	try {
 		    		String normalPath = BaggerFileEntity.removeBasePath(basePath, filePath);
-		    		this.addNode(normalPath);
+		    		if (!nodeAlreadyExists(normalPath)) {
+		    			this.addNode(normalPath);
+		    		}
 		    	} catch(Exception e) {
-		    		this.addNode(filePath);
+		    		if (!nodeAlreadyExists(filePath)) {
+			    		this.addNode(filePath);
+		    		}
 		    		log.error("BagTree.populateNodes: " + e.getMessage());
 		    	}
 		    }
@@ -119,6 +109,41 @@ public class BagTree extends CheckboxTree {
 		}
 	}
 
+	public boolean addNodes(File file, boolean isParent) {
+		if (!nodeAlreadyExists(file.getName())) {
+			DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+			rootNode = createNodeTree(null, null, file);
+			//log.info("buildNodes rootNode parent: " + rootNode.getParent());
+			//log.info("buildNodes getRoot: " + rootNode.getRoot());
+			srcNodes.add(rootNode);
+			if (isParent) 
+				parentNode = rootNode;
+			else
+				parentNode.add(rootNode);
+			initialize();
+		} else {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean nodeAlreadyExists(String path) {
+		boolean b = false;
+		DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(path);
+		String node = aNode.toString();
+		b = parentNode.isNodeChild(aNode);
+		if (b) return b;
+		for (int i=0; i < parentNode.getChildCount(); i++) {
+			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
+			String child = childNode.toString();
+			if (child.equalsIgnoreCase(node)) {
+				b = true;
+				break;
+			}
+		}
+		return b;
+	}
+
 	public void addNode(String filePath) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(filePath);
 		//log.info("buildNodes getNode: " + node);
@@ -127,39 +152,57 @@ public class BagTree extends CheckboxTree {
 		initialize();
 	}
 	
-	public void addNodes(File file) {
-		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-		rootNode = addNodes(null, null, file);
-		//log.info("buildNodes rootNode parent: " + rootNode.getParent());
-		//log.info("buildNodes getRoot: " + rootNode.getRoot());
-		srcNodes.add(rootNode);
-		parentNode.add(rootNode);
-		initialize();
+	/** Add nodes from under "dir" into curTop. Highly recursive. */
+	private DefaultMutableTreeNode createNodeTree(DefaultMutableTreeNode curTop, DefaultMutableTreeNode displayTop, File dir) {
+		String curPath = dir.getPath();
+		String displayPath = dir.getName();
+		DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(curPath);
+		DefaultMutableTreeNode displayDir = new DefaultMutableTreeNode(displayPath);
+		if (curTop != null) { // should only be null at root
+			curTop.add(curDir);
+			displayTop.add(displayDir);
+		}
+		Vector<String> ol = new Vector<String>();
+		//display("addNodes: " + dir.list());
+		String[] tmp = dir.list();
+		if (tmp != null && tmp.length > 0) {
+			for (int i = 0; i < tmp.length; i++)
+				ol.addElement(tmp[i]);
+		}
+
+		Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
+		File f;
+		Vector<String> files = new Vector<String>();
+		// Make two passes, one for Dirs and one for Files. This is #1.
+		for (int i = 0; i < ol.size(); i++) {
+			String thisObject = (String) ol.elementAt(i);
+			String newPath;
+			if (curPath.equals("."))
+				newPath = thisObject;
+			else
+				newPath = curPath + File.separator + thisObject;
+			if ((f = new File(newPath)).isDirectory())
+				createNodeTree(curDir, displayDir, f);
+			else
+				files.addElement(thisObject);
+		}
+		// Pass two: for files.
+    	//display("createBagManagerTree: files.size: " + files.size());
+		for (int fnum = 0; fnum < files.size(); fnum++) {
+			String elem = files.elementAt(fnum);
+			DefaultMutableTreeNode elemNode = new DefaultMutableTreeNode(elem);
+			curDir.add(elemNode);
+			displayDir.add(elemNode);
+		}
+
+		//return curDir;
+		return displayDir;
 	}
 
-	public void addParentNode(File file) {
-		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-		rootNode = addNodes(null, null, file);
-		//log.info("buildNodes rootNode parent: " + rootNode.getParent());
-		//log.info("buildNodes getRoot: " + rootNode.getRoot());
-		srcNodes.add(rootNode);
-		parentNode = rootNode;
-		initialize();
+	private void display(String msg) {
+		log.info("BagTree: " + msg);
 	}
-
-	public void addTree(File parent, File file, File bagRoot) {
-        //log.debug("BagTree.addTree: " + file.getAbsolutePath());
-        RecursiveFileListIterator fit = new RecursiveFileListIterator(file);
-        if (fit != null) {
-        	for (Iterator<File> it=fit; it.hasNext(); ) {
-                File f = it.next();
-                //log.debug("BagTree.addRootTree: " + f.getAbsolutePath());
-                BaggerFileEntity bfe = new BaggerFileEntity(parent, f, bagRoot);
-                rootTree.add(bfe);
-            }
-        }
-	}
-
+	
 	public void setParentNode(DefaultMutableTreeNode parent) {
 		this.parentNode = parent;
 	}
@@ -167,15 +210,27 @@ public class BagTree extends CheckboxTree {
 	public DefaultMutableTreeNode getParentNode() {
 		return this.parentNode;
 	}
-	
-	public void setRootTree(ArrayList<BaggerFileEntity> rootTree) {
-		this.rootTree = rootTree;
+
+	public File getBagDir() {
+		return this.bagDir;
 	}
 	
-	public ArrayList<BaggerFileEntity> getRootTree() {
-		return this.rootTree;
+	public void setBagDir(File file) {
+		this.bagDir = file;
 	}
 	
+	public DefaultTreeModel getBagTreeModel() {
+		return this.bagTreeModel;
+	}
+	
+	public void setBagTreeModel(DefaultTreeModel model) {
+		this.bagTreeModel = model;
+	}
+
+    public Dimension getTreeSize() {
+    	return new Dimension(BAGTREE_WIDTH, BAGTREE_HEIGHT);
+    }
+
 	private void initListeners() {
         addTreeCheckingListener(new TreeCheckingListener() {
             public void valueChanged(TreeCheckingEvent e) {
@@ -211,83 +266,4 @@ public class BagTree extends CheckboxTree {
         });
 	}
 	
-	public void updateTree(DefaultBag bag) {
-		TreePath[] selectedPaths = this.getSelectionPaths();
-		log.debug("BagTree.populateNodes" );
-		if (selectedPaths != null) {
-			log.debug("BagTree.updateTree selectedPaths: " + selectedPaths.length );
-			for (int i=0; i<selectedPaths.length; i++) {
-//				File f = listFiles[i];
-//				this.addTree(rootSrc, f, bag.getRootDir());
-				TreePath tp = selectedPaths[i];
-			}
-		}
-	}
-
-	public File getBagDir() {
-		return this.bagDir;
-	}
-	
-	public void setBagDir(File file) {
-		this.bagDir = file;
-	}
-	
-	public DefaultTreeModel getBagTreeModel() {
-		return this.bagTreeModel;
-	}
-	
-	public void setBagTreeModel(DefaultTreeModel model) {
-		this.bagTreeModel = model;
-	}
-
-    public Dimension getTreeSize() {
-    	return new Dimension(BAGTREE_WIDTH, BAGTREE_HEIGHT);
-    }
-
-	/** Add nodes from under "dir" into curTop. Highly recursive. */
-	private DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, DefaultMutableTreeNode displayTop, File dir) {
-		String curPath = dir.getPath();
-		String displayPath = dir.getName();
-		DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(curPath);
-		DefaultMutableTreeNode displayDir = new DefaultMutableTreeNode(displayPath);
-		if (curTop != null) { // should only be null at root
-			curTop.add(curDir);
-			displayTop.add(displayDir);
-		}
-		Vector<String> ol = new Vector<String>();
-		//log.info("addNodes: " + dir.list());
-		String[] tmp = dir.list();
-		if (tmp != null && tmp.length > 0) {
-			for (int i = 0; i < tmp.length; i++)
-				ol.addElement(tmp[i]);
-		}
-
-		Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
-		File f;
-		Vector<String> files = new Vector<String>();
-		// Make two passes, one for Dirs and one for Files. This is #1.
-		for (int i = 0; i < ol.size(); i++) {
-			String thisObject = (String) ol.elementAt(i);
-			String newPath;
-			if (curPath.equals("."))
-				newPath = thisObject;
-			else
-				newPath = curPath + File.separator + thisObject;
-			if ((f = new File(newPath)).isDirectory())
-				addNodes(curDir, displayDir, f);
-			else
-				files.addElement(thisObject);
-		}
-		// Pass two: for files.
-    	//log.info("createBagManagerTree: files.size: " + files.size());
-		for (int fnum = 0; fnum < files.size(); fnum++) {
-			String elem = files.elementAt(fnum);
-			DefaultMutableTreeNode elemNode = new DefaultMutableTreeNode(elem);
-			curDir.add(elemNode);
-			displayDir.add(elemNode);
-		}
-
-		//return curDir;
-		return displayDir;
-	}
 }
