@@ -204,19 +204,14 @@ public class BagSettingsPanel extends JPanel {
         
         this.setLayout(gridLayout);
         int row = 0;
-        int wx1 = 40;
-        int wx2 = 60;
-        int wx3 = 1;
-        JLabel spacer = new JLabel("");
+        int wx1 = 1;
+        int wx2 = 90;
         bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(bagNameLabel, gbc);
         this.add(bagNameLabel);
-        bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         gridLayout.setConstraints(bagView.bagNameField, gbc);
         this.add(bagView.bagNameField);
-        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(spacer, gbc);
-        this.add(spacer);
         row++;
         bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(bagVersionLabel, gbc);
@@ -225,9 +220,6 @@ public class BagSettingsPanel extends JPanel {
         gridLayout.setConstraints(bagView.bagVersionList, gbc);
         this.add(bagView.bagVersionList);
         bagView.bagVersionList.setEnabled(false);
-        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(spacer, gbc);
-        this.add(spacer);
         row++;
         bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(projectLabel, gbc);
@@ -236,7 +228,6 @@ public class BagSettingsPanel extends JPanel {
         gridLayout.setConstraints(bagView.projectList, gbc);
         this.add(bagView.projectList);
         bagView.projectList.setEnabled(false);
-        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
 //        gridLayout.setConstraints(bagView.defaultProject, gbc);
 //        this.add(bagView.defaultProject);
         bagView.defaultProject.setEnabled(false);
@@ -248,9 +239,6 @@ public class BagSettingsPanel extends JPanel {
         gridLayout.setConstraints(bagView.holeyCheckbox, gbc);
         this.add(bagView.holeyCheckbox);
         bagView.holeyCheckbox.setEnabled(false);
-        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(spacer, gbc);
-        this.add(spacer);
         row++;
         bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(bagView.serializeLabel, gbc);
@@ -258,8 +246,5 @@ public class BagSettingsPanel extends JPanel {
         bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(bagView.serializeGroupPanel, gbc);
         this.add(bagView.serializeGroupPanel);
-        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(spacer, gbc);
-        this.add(spacer);
     }
 }

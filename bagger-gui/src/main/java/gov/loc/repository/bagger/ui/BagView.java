@@ -370,27 +370,27 @@ public class BagView extends AbstractView implements ApplicationListener {
     	
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
-
-        buildConstraints(glbc, 0, 0, 1, 1, 5, 10, GridBagConstraints.NONE, GridBagConstraints.NORTH);
-        layout.setConstraints(bagButtonPanel, glbc);
-
-        buildConstraints(glbc, 1, 0, 1, 1, 35, 40, GridBagConstraints.BOTH, GridBagConstraints.WEST);
-        layout.setConstraints(bagPayloadTreePanel, glbc);
-
-        buildConstraints(glbc, 0, 1, 1, 1, 5, 10, GridBagConstraints.NONE, GridBagConstraints.NORTH);
-        layout.setConstraints(bagTagButtonPanel, glbc);
-
-        buildConstraints(glbc, 1, 1, 1, 1, 35, 20, GridBagConstraints.BOTH, GridBagConstraints.WEST);
-        layout.setConstraints(bagTagFileTreePanel, glbc);
-        
-        buildConstraints(glbc, 0, 2, 2, 1, 40, 40, GridBagConstraints.BOTH, GridBagConstraints.WEST);
-        layout.setConstraints(compositePane, glbc);
-
+        int row = 0;
+        int colspan = 1;
         bagPanel = new JPanel(layout);
+
+        buildConstraints(glbc, 0, row, colspan, 1, 1, 10, GridBagConstraints.NONE, GridBagConstraints.NORTH);
+        layout.setConstraints(bagButtonPanel, glbc);
         bagPanel.add(bagButtonPanel);
+        buildConstraints(glbc, 1, row, colspan, 1, 90, 40, GridBagConstraints.BOTH, GridBagConstraints.EAST);
+        layout.setConstraints(bagPayloadTreePanel, glbc);
     	bagPanel.add(bagPayloadTreePanel);
+        row++;
+        buildConstraints(glbc, 0, row, colspan, 1, 1, 10, GridBagConstraints.NONE, GridBagConstraints.NORTH);
+        layout.setConstraints(bagTagButtonPanel, glbc);
     	bagPanel.add(bagTagButtonPanel);
+        buildConstraints(glbc, 1, row, colspan, 1, 90, 20, GridBagConstraints.BOTH, GridBagConstraints.EAST);
+        layout.setConstraints(bagTagFileTreePanel, glbc);
     	bagPanel.add(bagTagFileTreePanel);
+        row++;
+        colspan = 2;
+        buildConstraints(glbc, 0, row, colspan, 1, 1, 20, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        layout.setConstraints(compositePane, glbc);
         bagPanel.add(compositePane);
 
         return bagPanel;
@@ -446,22 +446,14 @@ public class BagView extends AbstractView implements ApplicationListener {
     	addTagFileButton.addActionListener(new AddTagFileHandler());
     	addTagFileButton.setEnabled(false);
     	addTagFileButton.setToolTipText(getPropertyMessage("bag.tagbutton.add.help"));
-    	panel.add(addTagFileButton, BorderLayout.NORTH);
+    	buttonPanel.add(addTagFileButton, BorderLayout.CENTER);
     	
     	removeTagFileButton = new JButton(getPropertyMessage("bag.tagbutton.remove"));
     	removeTagFileButton.addActionListener(new RemoveTagFileHandler());
     	removeTagFileButton.setEnabled(false);
     	removeTagFileButton.setToolTipText(getPropertyMessage("bag.tagbutton.remove.help"));
-    	panel.add(removeTagFileButton, BorderLayout.SOUTH);
+    	buttonPanel.add(removeTagFileButton, BorderLayout.SOUTH);
 
-    	buttonPanel.add(panel, BorderLayout.CENTER);
-/*
-    	updateTagTreeButton = new JButton(getPropertyMessage("bag.tagbutton.update"));
-    	updateTagTreeButton.addActionListener(new UpdateTagTreeHandler());
-    	updateTagTreeButton.setEnabled(false);
-    	updateTagTreeButton.setToolTipText(getPropertyMessage("bag.tagbutton.update.help"));
-        buttonPanel.add(updateTagTreeButton, BorderLayout.SOUTH);
-*/
         return buttonPanel;
     }
 
