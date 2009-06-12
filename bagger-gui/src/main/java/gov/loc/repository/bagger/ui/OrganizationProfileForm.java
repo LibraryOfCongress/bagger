@@ -36,6 +36,18 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
 
         formBuilder.row();
         rowCount++;
+        JComponent orgLabel = formBuilder.addLabel("Send from Organization")[0];
+        formBuilder.row();
+        rowCount++;
+        this.field = formBuilder.add("sourceOrganization")[1];
+        this.field.addFocusListener(this);
+        formBuilder.row();
+        rowCount++;
+        JComponent orgAddress = formBuilder.add("organizationAddress")[1];
+        orgAddress.addFocusListener(this);
+
+        formBuilder.row();
+        rowCount++;
         JComponent contactLabel = formBuilder.addLabel("Send from Contact")[0];
         formBuilder.row();
         rowCount++;
@@ -49,18 +61,6 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
         rowCount++;
         this.field = formBuilder.add("srcContactEmail")[1];
         this.field.addFocusListener(this);
-
-        formBuilder.row();
-        rowCount++;
-        JComponent orgLabel = formBuilder.addLabel("Send from Organization")[0];
-        formBuilder.row();
-        rowCount++;
-        this.field = formBuilder.add("sourceOrganization")[1];
-        this.field.addFocusListener(this);
-        formBuilder.row();
-        rowCount++;
-        JComponent orgAddress = formBuilder.add("organizationAddress")[1];
-        orgAddress.addFocusListener(this);
 
         formBuilder.row();
         rowCount++;

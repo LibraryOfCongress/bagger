@@ -25,6 +25,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -65,6 +67,7 @@ import org.springframework.richclient.command.support.AbstractActionCommandExecu
 import org.springframework.richclient.dialog.CloseAction;
 import org.springframework.richclient.dialog.ConfirmationDialog;
 import org.springframework.richclient.dialog.MessageDialog;
+import org.springframework.richclient.image.ImageSource;
 import org.springframework.richclient.progress.BusyIndicator;
 import org.springframework.util.Assert;
 import org.springframework.context.ApplicationEvent;
@@ -201,6 +204,13 @@ public class BagView extends AbstractView implements ApplicationListener {
 	public void display(String s) {
 		//log.debug(s);
 		log.info(s);
+	}
+
+	public ImageIcon getPropertyImage(String name) {
+		ImageSource source = this.getImageSource();
+        Image image = source.getImage(name);
+        ImageIcon imageIcon = new ImageIcon(image);
+        return imageIcon;
 	}
 
 	public String getPropertyMessage(String property) {

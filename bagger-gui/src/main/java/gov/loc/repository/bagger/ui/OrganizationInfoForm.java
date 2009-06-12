@@ -7,6 +7,7 @@ import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 import gov.loc.repository.bagit.Bag;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -102,9 +103,18 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             	BagInfoField field = fieldList.get(i);
                 formBuilder.row();
                 rowCount++;
+                ImageIcon imageIcon = bagView.getPropertyImage("bag.delete.image");
+            	JButton removeButton = new JButton(imageIcon);
+            	Dimension dimension = removeButton.getPreferredSize();
+            	dimension.width = imageIcon.getIconWidth();
+            	removeButton.setMaximumSize(dimension);
+            	removeButton.setOpaque(false);
+            	removeButton.setBorderPainted(false);
+            	removeButton.setContentAreaFilled(false);
+            	removeButton.addActionListener(new RemoveFieldHandler());
                 switch (field.getComponentType()) {
                 case BagInfoField.TEXTAREA_COMPONENT:
-                    JComponent textarea = formBuilder.addTextArea(field.getName(), field.getLabel(), "")[index];
+                    JComponent textarea = formBuilder.addTextArea(field.getName(), field.getLabel(), removeButton, "")[index];
                     textarea.setEnabled(field.isEnabled());
             		textarea.addFocusListener(this);
             		textarea.addKeyListener(this);
@@ -118,8 +128,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                     rowCount += 1;
                 	break;
                 case BagInfoField.TEXTFIELD_COMPONENT:
-                	String attributes = "colSpan="+GridBagConstraints.HORIZONTAL;
-                    JComponent comp = formBuilder.add(field.getName(), field.getLabel(), attributes)[index];
+                    JComponent comp = formBuilder.add(field.getName(), field.getLabel(), removeButton, "")[index];
                     comp.setEnabled(field.isEnabled());
                     comp.addFocusListener(this);
                     comp.addKeyListener(this);
@@ -186,14 +195,14 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     	addDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.defaults.add.help"));
     	addDefaultsButton.setEnabled(enabled);
     	buttonPanel.add(addDefaultsButton);
-
+/*
     	JButton removeButton = new JButton(bagView.getPropertyMessage("bag.button.field.remove"));
     	removeButton.addActionListener(new RemoveFieldHandler());
     	removeButton.setOpaque(true);
     	removeButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.remove.help"));
     	removeButton.setEnabled(enabled);
     	buttonPanel.add(removeButton);
-
+*/
     	return buttonPanel;
     }
     

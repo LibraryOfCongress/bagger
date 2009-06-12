@@ -100,7 +100,7 @@ public class BagSettingsPanel extends JPanel {
     	} else {
     		bag.setIsNdnp(false);
     	}
-        JScrollPane projectPane = new JScrollPane(bagView.projectList);
+        //JScrollPane projectPane = new JScrollPane(bagView.projectList);
 
         // Default project bag control
         JLabel defaultLabel = new JLabel(bagView.getPropertyMessage("bag.label.projectDefault"));
@@ -202,51 +202,64 @@ public class BagSettingsPanel extends JPanel {
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         
-        int row = 0;
-        bagView.buildConstraints(gbc, 0, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagNameLabel, gbc);
-        bagView.buildConstraints(gbc, 1, row, 1, 1, 60, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagView.bagNameField, gbc);
-        row++;
-        bagView.buildConstraints(gbc, 0, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagVersionLabel, gbc);
-        bagView.buildConstraints(gbc, 1, row, 1, 1, 60, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagView.bagVersionList, gbc);
-        row++;
-        bagView.buildConstraints(gbc, 0, row, 1, 1, 30, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(projectLabel, gbc);
-        bagView.buildConstraints(gbc, 1, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(projectPane, gbc);
-        bagView.buildConstraints(gbc, 2, row, 1, 1, 30, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagView.defaultProject, gbc);
-        row++;
-        bagView.buildConstraints(gbc, 0, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(holeyLabel, gbc);
-        bagView.buildConstraints(gbc, 1, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagView.holeyCheckbox, gbc);
-        row++;
-        bagView.buildConstraints(gbc, 0, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagView.serializeLabel, gbc);
-        bagView.buildConstraints(gbc, 1, row, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagView.serializeGroupPanel, gbc);
-
         this.setLayout(gridLayout);
+        int row = 0;
+        int wx1 = 40;
+        int wx2 = 60;
+        int wx3 = 1;
+        JLabel spacer = new JLabel("");
+        bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagNameLabel, gbc);
         this.add(bagNameLabel);
+        bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagView.bagNameField, gbc);
         this.add(bagView.bagNameField);
+        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(spacer, gbc);
+        this.add(spacer);
+        row++;
+        bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagVersionLabel, gbc);
         this.add(bagVersionLabel);
+        bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagView.bagVersionList, gbc);
         this.add(bagView.bagVersionList);
         bagView.bagVersionList.setEnabled(false);
+        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(spacer, gbc);
+        this.add(spacer);
+        row++;
+        bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(projectLabel, gbc);
         this.add(projectLabel);
-        this.add(projectPane);
+        bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagView.projectList, gbc);
+        this.add(bagView.projectList);
         bagView.projectList.setEnabled(false);
-        this.add(bagView.defaultProject);
+        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+//        gridLayout.setConstraints(bagView.defaultProject, gbc);
+//        this.add(bagView.defaultProject);
         bagView.defaultProject.setEnabled(false);
+        row++;
+        bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(holeyLabel, gbc);
         this.add(holeyLabel);
+        bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagView.holeyCheckbox, gbc);
         this.add(bagView.holeyCheckbox);
         bagView.holeyCheckbox.setEnabled(false);
+        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(spacer, gbc);
+        this.add(spacer);
+        row++;
+        bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagView.serializeLabel, gbc);
         this.add(bagView.serializeLabel);
+        bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagView.serializeGroupPanel, gbc);
         this.add(bagView.serializeGroupPanel);
-//        this.add(checksumLabel);
-//        this.add(checksumGroupPanel);    	
+        bagView.buildConstraints(gbc, 2, row, 1, 1, wx3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(spacer, gbc);
+        this.add(spacer);
     }
 }

@@ -1,6 +1,8 @@
 
 package gov.loc.repository.bagger.ui;
 
+import java.awt.GridBagConstraints;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -30,13 +32,13 @@ public class BagTableFormBuilder extends TableFormBuilder {
 		return componentFactory;
 	}
 
-    public JComponent[] add(String fieldName, String label, String attributes) {
+    public JComponent[] add(String fieldName, String label, JComponent checkbox, String attributes) {
     	JComponent textField = new JTextField();
         //Binding binding = createBinding(fieldName, textField);
-        return addBinding(fieldName, label, textField, textField, attributes, getLabelAttributes());
+        return addBinding(fieldName, label, textField, textField, checkbox, attributes, getLabelAttributes());
     }
 
-    public JComponent[] addTextArea(String fieldName, String label, String attributes) {
+    public JComponent[] addTextArea(String fieldName, String label, JComponent checkbox, String attributes) {
 //        JComponent textArea = createTextArea(fieldName);
     	JComponent textArea = new NoTabTextArea(5, 40);
         String labelAttributes = getLabelAttributes();
@@ -49,7 +51,7 @@ public class BagTableFormBuilder extends TableFormBuilder {
         JComponent wrappedComponent = textArea;
         // TODO: using the JScrollPane component causes the validation 'x' to disappear
 //        JComponent wrappedComponent = new JScrollPane(textArea)
-        return addBinding(fieldName, label, textArea, wrappedComponent, attributes, labelAttributes);
+        return addBinding(fieldName, label, textArea, wrappedComponent, checkbox, attributes, labelAttributes);
     }
 
     public JComponent[] addLabel(String labelName) {
@@ -60,10 +62,7 @@ public class BagTableFormBuilder extends TableFormBuilder {
         return new JComponent[] { label };
     }
 
-    public JComponent[] addBinding(String fieldName, String labelName, JComponent component, JComponent wrappedComponent, String attributes, String labelAttributes) {
-//        JComponent component = binding.getControl();
-//        JLabel label = createLabelFor(binding.getProperty(), component);
-    	JCheckBox checkbox = new JCheckBox();
+    public JComponent[] addBinding(String fieldName, String labelName, JComponent component, JComponent wrappedComponent, JComponent checkbox, String attributes, String labelAttributes) {
     	checkbox.setFocusable(false);
     	JLabel label = new JLabel(labelName); //createLabelFor(fieldName, component);
         if (wrappedComponent == null) {
@@ -73,11 +72,12 @@ public class BagTableFormBuilder extends TableFormBuilder {
         if (!layoutBuilder.hasGapToLeft()) {
             layoutBuilder.gapCol();
         }
-        layoutBuilder.cell(label, labelAttributes);
+        layoutBuilder.cell(label, "colSpec=left:pref:noGrow");
+        //layoutBuilder.labelGapCol();
+        layoutBuilder.cell(component, "colSpec=fill:pref:grow");
         layoutBuilder.labelGapCol();
-        layoutBuilder.cell(wrappedComponent, attributes);
+        layoutBuilder.cell(checkbox, "colSpec=left:pref:noGrow");
         layoutBuilder.labelGapCol();
-        layoutBuilder.cell(checkbox, attributes);
         return new JComponent[] { label, component, checkbox };
 //        return new JComponent[] { label, component, wrappedComponent };
     }
