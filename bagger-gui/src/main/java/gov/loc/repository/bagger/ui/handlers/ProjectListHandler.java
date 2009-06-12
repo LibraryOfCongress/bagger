@@ -5,6 +5,7 @@ import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
+import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
@@ -15,6 +16,7 @@ import gov.loc.repository.bagit.BagFile;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -59,6 +61,7 @@ public class ProjectListHandler extends AbstractAction {
     		bag.setIsNdnp(false);
     	}
     	bagView.setBag(bag);
+    	bagView.bagInfoInputPane.updateProject(bag);
         bagView.bagInfoInputPane.verifyForms(bag);
     	bagView.updateBaggerRules();
     	changeProject(selected);

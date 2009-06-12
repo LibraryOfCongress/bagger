@@ -286,8 +286,6 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     		if (!exists) {
     			currentList.add(field);
     			setVisible(false);
-    			// TODO: add field to baginfo
-        		//bagInfo.createStandardFieldList(true);
     			bagInfo.setFieldList(currentList);
                 bag.setInfo(bagInfo);
                 bagView.setBag(bag);

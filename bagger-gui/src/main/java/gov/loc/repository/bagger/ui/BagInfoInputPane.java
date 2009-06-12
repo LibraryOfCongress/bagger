@@ -26,6 +26,7 @@ import org.springframework.richclient.form.FormModelHelper;
 
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Person;
+import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
@@ -212,6 +213,12 @@ public class BagInfoInputPane extends JTabbedPane {
             int count = sourceTabbedPane.getTabCount();
             int selected = sourceTabbedPane.getSelectedIndex();
     	}
+    }
+    
+    public void updateProject(DefaultBag bag) {
+    	// TODO: add project field to bag-info form
+    	Project project = bag.getProject();
+    	List<BagInfoField> fieldList = bag.getInfo().getFieldList();
     }
 
     private void createBagInfo(DefaultBag bag) {
