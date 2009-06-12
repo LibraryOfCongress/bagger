@@ -61,6 +61,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	JPanel savePanel;
 	JPanel serializeGroupPanel;
 	JTextField bagNameField;
+	JLabel urlLabel;
+	JTextField urlField;
 	JButton saveAsButton;
 	JButton okButton;
 	JButton cancelButton;
@@ -69,7 +71,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	JRadioButton tarButton;
 	JRadioButton tarGzButton;
 	JRadioButton tarBz2Button;
-	
+
+	JCheckBox holeyCheckbox;
 	JCheckBox isTagCheckbox;
 	JCheckBox isVerifyCheckbox;
 	JCheckBox isPayloadCheckbox;
@@ -96,27 +99,41 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     }
 
     private JPanel createComponents() {
-    	// TODO: Add bag name field
-    	String fileName = "";
-    	if (bag != null) fileName = bag.getName();
-    	bagNameField = new JTextField(fileName);
-        bagNameField.setCaretPosition(fileName.length());
-        bagNameField.setEditable(false);
-        //JScrollPane bagNamePane = new JScrollPane(bagNameField);
-        //bagNamePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        //bagNameField.setAlignmentX(JTextField.CENTER_ALIGNMENT);
+        Border border = new EmptyBorder(5, 5, 5, 5);
+
+        // TODO: Add bag name field
     	// TODO: Add save name file selection button
     	saveAsButton = new JButton(getMessage("bag.button.browse"));
     	saveAsButton.addActionListener(new SaveBagAsHandler());
         saveAsButton.setEnabled(true);
         saveAsButton.setToolTipText(getMessage("bag.button.browse.help"));
-        //saveAsButton.setAlignmentY(JButton.CENTER_ALIGNMENT);
-        	
-    	// TODO: Add format label
+    	String fileName = "";
+    	if (bag != null) fileName = bag.getName();
+    	bagNameField = new JTextField(fileName);
+        bagNameField.setCaretPosition(fileName.length());
+        bagNameField.setEditable(false);
+        bagNameField.setEnabled(false);
+
+        // Holey bag control
+        JLabel holeyLabel = new JLabel(bagView.getPropertyMessage("bag.label.isholey"));
+        holeyLabel.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
+        holeyCheckbox = new JCheckBox(bagView.getPropertyMessage("bag.checkbox.isholey"));
+        holeyCheckbox.setBorder(border);
+        holeyCheckbox.setSelected(false);
+        holeyCheckbox.addActionListener(new HoleyBagHandler());
+        holeyCheckbox.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
+
+        urlLabel = new JLabel(bagView.getPropertyMessage("baseURL.label"));
+        urlLabel.setToolTipText(bagView.getPropertyMessage("baseURL.description"));
+        urlLabel.setEnabled(false);
+    	urlField = new JTextField("");
+        urlField.setEnabled(false);
+        
+        // TODO: Add format label
     	JLabel serializeLabel;
         serializeLabel = new JLabel(getMessage("bag.label.ispackage"));
         serializeLabel.setToolTipText(getMessage("bag.serializetype.help"));
-//        serializeLabel.setVerticalAlignment(JLabel.CENTER);
+
     	// TODO: Add format selection panel
         noneButton = new JRadioButton(getMessage("bag.serializetype.none"));
         noneButton.setEnabled(true);
@@ -159,7 +176,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     		this.noneButton.setEnabled(true);
     	}
         
-        Border border = new EmptyBorder(5, 5, 5, 5);
         ButtonGroup serializeGroup = new ButtonGroup();
         serializeGroup.add(noneButton);
         serializeGroup.add(zipButton);
@@ -223,7 +239,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     	// TODO: Add verify checkbox
         isVerifyCheckbox = new JCheckBox();
         isVerifyCheckbox.setBorder(border);
-        isVerifyCheckbox.setSelected(bag.getisBuildTagManifest());
+        isVerifyCheckbox.setSelected(bag.isValidateOnSave());
         isVerifyCheckbox.addActionListener(new VerifyHandler());
         isVerifyCheckbox.setToolTipText(getMessage("bag.isverify.help"));
 
@@ -237,67 +253,80 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
-
-        int row = 0;
-        buildConstraints(glbc, 0, row, 1, 1, 60, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
-        layout.setConstraints(bagNameField, glbc);
-        buildConstraints(glbc, 1, row, 1, 1, 40, 50, GridBagConstraints.NONE, GridBagConstraints.CENTER); 
-        layout.setConstraints(saveAsButton, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(serializeLabel, glbc);
-        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
-        layout.setConstraints(serializeGroupPanel, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(tagLabel, glbc);
-        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
-        layout.setConstraints(isTagCheckbox, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(tagAlgorithmLabel, glbc);
-        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
-        layout.setConstraints(tagAlgorithmList, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(payloadLabel, glbc);
-        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
-        layout.setConstraints(isPayloadCheckbox, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(payAlgorithmLabel, glbc);
-        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
-        layout.setConstraints(payAlgorithmList, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(verifyLabel, glbc);
-        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
-        layout.setConstraints(isVerifyCheckbox, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(cancelButton, glbc);
-        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.NONE, GridBagConstraints.CENTER); 
-        layout.setConstraints(okButton, glbc);
-        
         JPanel panel = new JPanel(layout);
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panel.add(bagNameField);
-        panel.add(saveAsButton);
-    	panel.add(serializeLabel);
-    	panel.add(serializeGroupPanel);
-    	panel.add(tagLabel);
-    	panel.add(isTagCheckbox);
-    	panel.add(tagAlgorithmLabel);
-    	panel.add(tagAlgorithmList);
-    	panel.add(payloadLabel);
-    	panel.add(isPayloadCheckbox);
-    	panel.add(payAlgorithmLabel);
-    	panel.add(payAlgorithmList);
-    	panel.add(verifyLabel);
-    	panel.add(isVerifyCheckbox);
-    	panel.add(cancelButton);
-    	panel.add(okButton);
 
+        int row = 0;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(saveAsButton, glbc);
+        panel.add(saveAsButton);
+        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
+        layout.setConstraints(bagNameField, glbc);
+        panel.add(bagNameField);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(holeyLabel, glbc);
+        panel.add(holeyLabel);
+        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(holeyCheckbox, glbc);
+        panel.add(holeyCheckbox);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(urlLabel, glbc);
+        panel.add(urlLabel);
+        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
+        layout.setConstraints(urlField, glbc);
+        panel.add(urlField);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(serializeLabel, glbc);
+    	panel.add(serializeLabel);
+        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
+        layout.setConstraints(serializeGroupPanel, glbc);
+    	panel.add(serializeGroupPanel);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(tagLabel, glbc);
+    	panel.add(tagLabel);
+        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
+        layout.setConstraints(isTagCheckbox, glbc);
+    	panel.add(isTagCheckbox);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(tagAlgorithmLabel, glbc);
+    	panel.add(tagAlgorithmLabel);
+        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
+        layout.setConstraints(tagAlgorithmList, glbc);
+    	panel.add(tagAlgorithmList);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(payloadLabel, glbc);
+    	panel.add(payloadLabel);
+        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
+        layout.setConstraints(isPayloadCheckbox, glbc);
+    	panel.add(isPayloadCheckbox);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(payAlgorithmLabel, glbc);
+    	panel.add(payAlgorithmLabel);
+        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
+        layout.setConstraints(payAlgorithmList, glbc);
+    	panel.add(payAlgorithmList);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(verifyLabel, glbc);
+    	panel.add(verifyLabel);
+        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
+        layout.setConstraints(isVerifyCheckbox, glbc);
+    	panel.add(isVerifyCheckbox);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(cancelButton, glbc);
+    	panel.add(cancelButton);
+        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.NONE, GridBagConstraints.CENTER); 
+        layout.setConstraints(okButton, glbc);
+    	panel.add(okButton);
+        
     	return panel;
     }
     
@@ -411,6 +440,22 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			if (bagNameField.getText().isEmpty() || bagNameField.getText().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
+    			bagView.showWarningErrorDialog("The bag must have a file name.");
+    			return;
+			}
+			if (bag.getIsHoley()) {
+				if (urlField.getText().isEmpty()) {
+        			bagView.showWarningErrorDialog("A holey bag must have a URL value.");
+        			return;
+				} else {
+					//if (bagView.getBag().getFetch() == null)
+					bagView.getBag().getFetch().setBaseURL(urlField.getText().trim());
+				}
+				bagView.holeyCheckbox.setSelected(true);
+			} else {
+				bagView.holeyCheckbox.setSelected(false);
+			}
 			setVisible(false);
             bagView.getBag().setName(bagFileName);
             bagView.bagNameField.setText(bagFileName);
@@ -489,6 +534,26 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     			bagView.getBag().isValidateOnSave(false);
     		}
     	}
+    }
+    
+    private class HoleyBagHandler extends AbstractAction {
+       	private static final long serialVersionUID = 1L;
+
+    	public void actionPerformed(ActionEvent e) {
+    		JCheckBox cb = (JCheckBox)e.getSource();
+
+    		// Determine status
+    		boolean isSelected = cb.isSelected();
+    		if (isSelected) {
+    			bag.setIsHoley(true);
+    			urlLabel.setEnabled(true);
+    			urlField.setEnabled(true);
+    		} else {
+    			bag.setIsHoley(false);
+    			urlLabel.setEnabled(false);
+    			urlField.setEnabled(false);
+    		}
+       	}
     }
     
     private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {

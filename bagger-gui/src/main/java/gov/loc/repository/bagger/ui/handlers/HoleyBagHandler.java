@@ -38,17 +38,19 @@ public class HoleyBagHandler extends AbstractAction {
 		} else {
 			bag.setIsHoley(false);
 		}
+/*
 		String messages = "";
 		bagView.updateBaggerRules();
-		//
+		
         bagView.bagInfoInputPane.populateForms(bag, true);
         messages = bagView.bagInfoInputPane.updateForms(bag);
         bagView.updateBagInfoInputPaneMessages(messages);
         bagView.bagInfoInputPane.update(bag);
-        //
+        
 		bagView.bagInfoInputPane.updateSelected(bag);
 		bagView.compositePane.updateCompositePaneTabs(bag, messages);
 		bagView.tagManifestPane.updateCompositePaneTabs(bag);
 		bagView.setBag(bag);
+*/
    	}
 }

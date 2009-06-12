@@ -3,20 +3,16 @@ package gov.loc.repository.bagger.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.net.URLEncoder;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -25,21 +21,16 @@ import java.awt.event.ActionEvent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.springframework.binding.validation.ValidationListener;
-import org.springframework.binding.validation.ValidationResults;
 import org.springframework.binding.form.HierarchicalFormModel;
 import org.springframework.richclient.form.FormModelHelper;
 
 import gov.loc.repository.bagger.Contact;
-//import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
-import gov.loc.repository.bagger.bag.BaggerFetch;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
-import gov.loc.repository.bagit.BagFile;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,25 +38,17 @@ import org.apache.commons.logging.LogFactory;
 public class BagInfoInputPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
 	private static final Log logger = LogFactory.getLog(BagInfoInputPane.class);
-	private static final int BAGINFO_INDEX = 0;
-	private static final int PROFILE_INDEX = 1;
-	private static final int FORM_INDEX = 2;
 	
 	private BagView parentView;
 	private DefaultBag defaultBag;
 	private BaggerProfile baggerProfile;
     private OrganizationInfoForm bagInfoForm = null;
     private OrganizationProfileForm profileForm = null;
-    private OrganizationFetchForm fetchForm = null;
     private HierarchicalFormModel infoFormModel = null;
     private HierarchicalFormModel profileFormModel = null;
-    private HierarchicalFormModel fetchFormModel = null;
 
     private String username;
 	private Contact projectContact;
-	private Color errorColor = new Color(200, 100, 100);
-	private Color selectedColor = new Color(100, 100, 120);
-	private Color unselectedColor = Color.black; //new Color(140, 140, 160);
     private Dimension dimension = new Dimension(400, 370);
 
     public BagInfoInputPane(BagView bagView, String username, Contact c, boolean b ) {
@@ -113,9 +96,6 @@ public class BagInfoInputPane extends JTabbedPane {
     public void enableForms(DefaultBag bag, boolean b) {
     	profileForm.setEnabled(b);
     	bagInfoForm.setEnabled(b);
-        if (bag.getIsHoley()) {
-            fetchForm.setEnabled(b);
-        }
     }
     
     // Define the information forms
@@ -142,13 +122,6 @@ public class BagInfoInputPane extends JTabbedPane {
         List<BagInfoField> fieldList = bagInfo.getFieldList();
         bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), parentView, fieldList, enabled);
         
-        if (bag.getIsHoley()) {
-        	BaggerFetch fetch = bag.getFetch();
-            fetchFormModel = FormModelHelper.createCompoundFormModel(fetch);
-            fetchForm = new OrganizationFetchForm(FormModelHelper.createChildPageFormModel(fetchFormModel, null), this.parentView);
-            fetchFormModel.addPropertyChangeListener(fetchForm);
-        }
-
         profileFormModel = FormModelHelper.createCompoundFormModel(baggerProfile);
         profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), this.parentView);
         profileFormModel.addPropertyChangeListener(profileForm);
@@ -165,21 +138,6 @@ public class BagInfoInputPane extends JTabbedPane {
         addTab(parentView.getPropertyMessage("infoInputPane.tab.details"), bagInfoForm);
         profileForm.getControl().setToolTipText("Profile Form");
         addTab(parentView.getPropertyMessage("infoInputPane.tab.profile"), profileForm.getControl());
-        if (bag.getIsHoley()) {
-        	if (fetchForm != null) {
-            	fetchForm.getControl().setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.fetch.help"));
-                addTab(parentView.getPropertyMessage("infoInputPane.tab.fetch"), fetchForm.getControl());        		
-        	}
-        }
-        if (bag.getIsHoley()) {
-        	if (fetchForm != null) {
-            	if (fetchForm.hasErrors()) {
-            		fetchForm.getControl().setForeground(errorColor);
-            	} else {
-            		fetchForm.getControl().setForeground(selectedColor);
-            	}
-        	}
-        }
     }
 
     public String verifyForms(DefaultBag bag) {
@@ -209,27 +167,10 @@ public class BagInfoInputPane extends JTabbedPane {
         	orgContact.setPerson(contactPerson);
         } catch (Exception e) {
         	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
-        }
-        if (bag.getIsHoley()) {
-        	if (fetchForm != null) {
-            	if (!fetchForm.hasErrors()) {
-            		fetchForm.commit();            	
-            	}
-            	BaggerFetch fetch = (BaggerFetch)fetchForm.getFormObject();
-            	if (fetch != null) {
-                	bag.getFetch().setBaseURL(fetch.getBaseURL());
-                    //bag.updateFetch();
-            	}
-        	}
-        }
-        
+        }        
         bag.getInfo().setBagOrganization(baggerProfile.getOrganization());
         createBagInfo(bag);
 
-        if ((bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors())) {
-        	messages = parentView.getPropertyMessage("bag.message.info.error") + "\n";
-        } 
-        
         return messages;
     }
     
@@ -244,31 +185,14 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public void updateSelected(DefaultBag bag) {
-    	if (bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors()) {
-    		this.setSelectedIndex(FORM_INDEX);
-    		fetchForm.getControl().grabFocus();
-    	} else { 
-    		bagInfoForm.grabFocus();
-    	}
+    	bagInfoForm.grabFocus();
     	update(bag);
     }
     
     public boolean hasFormErrors(DefaultBag bag) {
-        if ((bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors())) {
-        	return true;
-        } else {
-        	return false;
-        }
+    	return false;
     }
     
-    public boolean hasValidBagForms(DefaultBag bag) {
-        if ((bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors())) {
-        	return true;
-        } else {
-        	return false;
-        }
-    }
-
     public void update(DefaultBag bag) {
         java.awt.Component[] components = bagInfoForm.getComponents();
         for (int i=0; i<components.length; i++) {
@@ -278,9 +202,6 @@ public class BagInfoInputPane extends JTabbedPane {
         }
         bagInfoForm.invalidate();
         profileForm.getControl().invalidate();
-        if (bag.getIsHoley()) {
-        	if (fetchForm != null) fetchForm.getControl().invalidate();
-        }
     	invalidate();
     	repaint();
     }
@@ -290,22 +211,6 @@ public class BagInfoInputPane extends JTabbedPane {
     		JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
             int count = sourceTabbedPane.getTabCount();
             int selected = sourceTabbedPane.getSelectedIndex();
-            for (int i = 0; i < count; ++i) {
-                Color c = (i == selected) ? unselectedColor : selectedColor;
-                switch(i) {
-                case FORM_INDEX:
-                	if (parentView.getBag().getIsHoley() && fetchForm != null && fetchForm.hasErrors()) {
-                		c = errorColor;
-                		fetchForm.getControl().grabFocus();
-                	} else {
-                		c = unselectedColor;
-                	}
-                	break;
-                default:
-                }
-                sourceTabbedPane.setBackgroundAt(i, c);
-                sourceTabbedPane.setForegroundAt(i, c);
-            }
     	}
     }
 

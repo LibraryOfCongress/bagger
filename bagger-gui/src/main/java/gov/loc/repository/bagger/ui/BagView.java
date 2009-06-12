@@ -465,7 +465,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         projectList.setEnabled(b);
     	bagInfoInputPane.setEnabled(b);
         defaultProject.setEnabled(b);
-        holeyCheckbox.setEnabled(b);
+        holeyCheckbox.setEnabled(false);
         bagNameField.setEnabled(false);
         serializeGroupPanel.setEnabled(false);
         zipButton.setEnabled(false);
@@ -705,14 +705,14 @@ public class BagView extends AbstractView implements ApplicationListener {
         showTagButton.setEnabled(true);
     	enableBagSettings(true);
 		bag.getInfo().setBag(bag);
-    	bagInfoInputPane.populateForms(bag, true);
-        messages += bagInfoInputPane.updateForms(bag);
-        updateBagInfoInputPaneMessages(messages);
+		bagInfoInputPane.populateForms(bag, true);
+        //messages += bagInfoInputPane.updateForms(bag);
+        //updateBagInfoInputPaneMessages(messages);
         bagInfoInputPane.updateSelected(bag);
         compositePane.updateCompositePaneTabs(bag, messages);
-        tagManifestPane.updateCompositePaneTabs(bag);
+        //tagManifestPane.updateCompositePaneTabs(bag);
 
-    	bag.setIsNewbag(true);
+		bag.setIsNewbag(true);
     	addDataButton.setEnabled(true);
     	addDataExecutor.setEnabled(true);
     	//updatePropButton.setEnabled(false);
@@ -929,9 +929,9 @@ public class BagView extends AbstractView implements ApplicationListener {
             //bagInfoInputPane.update(bag);
         	compositePane.setBag(bag);
         	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
-        	tagManifestPane.updateCompositePaneTabs(bag);
+        	//tagManifestPane.updateCompositePaneTabs(bag);
 
-            saveAsButton.setEnabled(true);
+    		saveAsButton.setEnabled(true);
             saveBagAsExecutor.setEnabled(true);
             removeDataButton.setEnabled(true);
             bagButtonPanel.invalidate();
@@ -980,7 +980,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             //bagInfoInputPane.update(bag);
         	compositePane.setBag(bag);
         	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
-        	tagManifestPane.updateCompositePaneTabs(bag);
+        	//tagManifestPane.updateCompositePaneTabs(bag);
 
             saveAsButton.setEnabled(true);
             saveBagAsExecutor.setEnabled(true);
@@ -1052,7 +1052,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     	setBag(bag);
     	compositePane.updateCompositePaneTabs(bag, messages);
-    	tagManifestPane.updateCompositePaneTabs(bag);
+    	//tagManifestPane.updateCompositePaneTabs(bag);
     	bagInfoInputPane.update(bag);
     	statusBarEnd();
     }
@@ -1080,7 +1080,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagInfoInputPane.updateSelected(bag);
 		messages += bag.completeBag();
 		compositePane.updateCompositePaneTabs(bag, messages);
-		tagManifestPane.updateCompositePaneTabs(bag);
+		//tagManifestPane.updateCompositePaneTabs(bag);
         bagInfoInputPane.update(bag);
     	statusBarEnd();
     }
@@ -1154,12 +1154,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         	} else {
         		bagRootPath = file;
         		saveBag(bagRootPath);
-        		if (bag.isSerialized()) saveButton.setEnabled(true);
-        		validateButton.setEnabled(true);
-        		validateExecutor.setEnabled(true);
-        		completeButton.setEnabled(true);
-        		completeExecutor.setEnabled(true);
-        		topButtonPanel.invalidate();
         	}
     	}
         String fileName = bagFile.getAbsolutePath();
@@ -1214,6 +1208,15 @@ public class BagView extends AbstractView implements ApplicationListener {
 	public class SaveBagExecutor extends AbstractActionCommandExecutor {
         public void execute() {
         	saveBag(bagRootPath);
+            if (bag.isSerialized()) {
+                bagInfoInputPane.populateForms(bag, true);
+                bagInfoInputPane.updateSelected(bag);
+                bagInfoInputPane.update(bag);
+                saveButton.setEnabled(false);
+                saveBagExecutor.setEnabled(false);
+            }
+            updateManifestPane();
+            compositePane.updateCompositePaneTabs(bag, "");
         }
     }
 
@@ -1235,8 +1238,27 @@ public class BagView extends AbstractView implements ApplicationListener {
                     Thread.sleep(1000); //sleep for a second
 
                     String messages = bag.write(task, task);
-//                    task.current++;
-//            		System.out.println("current: " + task.current + ", length: " + task.lengthOfTask);
+                    //
+            		if (bag.isSerialized()) saveButton.setEnabled(true);
+            		validateButton.setEnabled(true);
+            		validateExecutor.setEnabled(true);
+            		completeButton.setEnabled(true);
+            		completeExecutor.setEnabled(true);
+            		topButtonPanel.invalidate();
+                    if (bag.isSerialized()) {
+                        bagInfoInputPane.populateForms(bag, true);
+                        bagInfoInputPane.updateSelected(bag);
+                        bagInfoInputPane.update(bag);
+                        saveButton.setEnabled(false);
+                        saveBagExecutor.setEnabled(false);
+                    }
+                    compositePane.updateCompositePaneTabs(bag, "");
+                    updateManifestPane();
+            		//
+            		if (bag.isValidateOnSave()) {
+            			validateBag("");
+            		}
+            		//
                     if (task.current >= task.lengthOfTask) {
                         task.done = true;
                         task.current = task.lengthOfTask;
@@ -1253,26 +1275,14 @@ public class BagView extends AbstractView implements ApplicationListener {
         	}
         	statusBarEnd();
             // TODO: replace in memory bag with bag on disk
-        	boolean b = false;
-        	if (b) {
-                File file = bag.getBag().getFile();
-                openExistingBag(file);
-        	} else {
-            	bagInfoInputPane.populateForms(bag, true);
-            	String messages = bagInfoInputPane.updateForms(bag);
-            	updateBagInfoInputPaneMessages(messages);
-           		bagInfoInputPane.updateSelected(bag);
-                compositePane.updateCompositePaneTabs(bag, messages);
-           		tagManifestPane.updateCompositePaneTabs(bag);
-        	}
     	}
     }
 
     public void saveBag(File file) {
         String messages = ""; //getMessage("bag.message.creating");
         bag.setRootDir(file);
-        messages += bagInfoInputPane.updateForms(bag);
-        updateBagInfoInputPaneMessages(messages);
+        //messages += bagInfoInputPane.updateForms(bag);
+        //updateBagInfoInputPaneMessages(messages);
         statusBarBegin(saveBagHandler, "Writing bag...", 1);
 /*
         try {
@@ -1283,15 +1293,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 			showWarningErrorDialog("Error creating bag: " + file + "\n" + e.getMessage());
         }
  */
-        if (bag.isSerialized()) {
-            bagInfoInputPane.populateForms(bag, true);
-            bagInfoInputPane.updateSelected(bag);
-            bagInfoInputPane.update(bag);
-            saveButton.setEnabled(false);
-            saveBagExecutor.setEnabled(false);
-        }
-        compositePane.updateCompositePaneTabs(bag, messages);
-        tagManifestPane.updateCompositePaneTabs(bag);
 //    	statusBarEnd();
     }
 
@@ -1402,7 +1403,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 		String message = getPropertyMessage("profile.message.saved") + " " + bag.getProject().getName() + "\n";
 		display("SaveProfileExecutor: " + message);
 		compositePane.updateCompositePaneTabs(bag, message);
-		tagManifestPane.updateCompositePaneTabs(bag);
+		//tagManifestPane.updateCompositePaneTabs(bag);
     }
 
     /**
@@ -1561,13 +1562,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
 		bagPayloadTree.populateNodes(bag, rootSrc, true);
         bagPayloadTreePanel.refresh(bagPayloadTree);
-        bagTagFileTree = new BagTree(this, bag.getName(), false);
-        Collection<BagFile> tags = bag.getBag().getTags();
-        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-        	BagFile bf = it.next();
-            bagTagFileTree.addNode(bf.getFilepath());
-        }
-        bagTagFileTreePanel.refresh(bagTagFileTree);
+        updateManifestPane();
     	enableBagSettings(true);
 		bag.isSerialized(true);
 		bag.getInfo().setBag(bag);
@@ -1576,11 +1571,20 @@ public class BagView extends AbstractView implements ApplicationListener {
     	updateBagInfoInputPaneMessages(messages);
    		bagInfoInputPane.updateSelected(bag);
         compositePane.updateCompositePaneTabs(bag, messages);
-   		tagManifestPane.updateCompositePaneTabs(bag);
 
     	statusBarEnd();
     }
 
+    public void updateManifestPane() {
+        bagTagFileTree = new BagTree(this, bag.getName(), false);
+        Collection<BagFile> tags = bag.getBag().getTags();
+        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
+        	BagFile bf = it.next();
+            bagTagFileTree.addNode(bf.getFilepath());
+        }
+        bagTagFileTreePanel.refresh(bagTagFileTree);
+    }
+    
     private class ShowTagFilesHandler extends AbstractAction {
        	private static final long serialVersionUID = 1L;
 
@@ -1686,7 +1690,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public void onApplicationEvent(ApplicationEvent e) {
-    	System.out.println("BagView.onApplicationEvent: " + e);
+    	log.info("BagView.onApplicationEvent: " + e);
         if (e instanceof LifecycleApplicationEvent) {
         	//display("onApplicationEvent");
             LifecycleApplicationEvent le = (LifecycleApplicationEvent)e;

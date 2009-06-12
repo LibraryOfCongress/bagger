@@ -17,7 +17,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.commons.logging.Log;
@@ -100,7 +99,6 @@ public class BagSettingsPanel extends JPanel {
     	} else {
     		bag.setIsNdnp(false);
     	}
-        //JScrollPane projectPane = new JScrollPane(bagView.projectList);
 
         // Default project bag control
         JLabel defaultLabel = new JLabel(bagView.getPropertyMessage("bag.label.projectDefault"));
@@ -121,6 +119,7 @@ public class BagSettingsPanel extends JPanel {
         bagView.holeyCheckbox = new JCheckBox(bagView.getPropertyMessage("bag.checkbox.isholey"));
         bagView.holeyCheckbox.setBorder(border);
         bagView.holeyCheckbox.setSelected(false);
+        bagView.holeyCheckbox.setEnabled(false);
         bagView.holeyCheckbox.addActionListener(new HoleyBagHandler(bagView));
         bagView.holeyCheckbox.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
 

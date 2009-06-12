@@ -98,7 +98,7 @@ public class ProjectListHandler extends AbstractAction {
                 		bag.getInfo().setBag(bag);
                    		//bagView.bagInfoInputPane.populateForms(bag, true);
                    		//bagView.bagInfoInputPane.updateSelected(bag);
-                   		bag.completeMetaFiles();
+                   		//bag.completeMetaFiles();
                    		bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
                         Collection<BagFile> tags = bag.getBag().getTags();
                         for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
