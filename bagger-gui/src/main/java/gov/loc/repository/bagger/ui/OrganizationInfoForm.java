@@ -167,8 +167,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     }
     
     public void focusLost(FocusEvent evt) {
-    	if (dirty) bagView.infoInputPane.updateBagHandler.updateBag(this.defaultBag);
-    	//bagView.showWarningErrorDialog("Bag-Info form was updated to prevent data loss.");
+    	//if (dirty) bagView.infoInputPane.updateBagHandler.updateBag(this.defaultBag);
     }
 
 	public BindingFactory getBindingFactory() {
@@ -195,14 +194,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     	addDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.defaults.add.help"));
     	addDefaultsButton.setEnabled(enabled);
     	buttonPanel.add(addDefaultsButton);
-/*
-    	JButton removeButton = new JButton(bagView.getPropertyMessage("bag.button.field.remove"));
-    	removeButton.addActionListener(new RemoveFieldHandler());
-    	removeButton.setOpaque(true);
-    	removeButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.remove.help"));
-    	removeButton.setEnabled(enabled);
-    	buttonPanel.add(removeButton);
-*/
+
     	return buttonPanel;
     }
     
@@ -210,6 +202,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
        	private static final long serialVersionUID = 1L;
 
     	public void actionPerformed(ActionEvent e) {
+//        	if (dirty) bagView.infoInputPane.updateBagHandler.updateBag(defaultBag);
 	        newFieldFrame = new NewFieldFrame(bagView, bagView.getPropertyMessage("bag.frame.addfield"));
 	        newFieldFrame.setVisible(true);
        	}

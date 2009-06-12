@@ -53,8 +53,7 @@ public class OrganizationFetchForm extends AbstractForm implements PropertyChang
     
     public void focusLost(FocusEvent evt) {
     	if (bagView != null && !this.hasErrors() && this.isDirty()) {
-        	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
-        	//bagView.showWarningErrorDialog("Fetch form was updated to prevent data loss.");
+        	//bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
     	}
     }
 }

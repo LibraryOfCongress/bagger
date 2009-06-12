@@ -226,7 +226,7 @@ public class BagInfoInputPane extends JTabbedPane {
         bag.getInfo().setBagOrganization(baggerProfile.getOrganization());
         createBagInfo(bag);
 
-        if ((bag.getIsHoley() && fetchForm.hasErrors())) {
+        if ((bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors())) {
         	messages = parentView.getPropertyMessage("bag.message.info.error") + "\n";
         } 
         
@@ -254,7 +254,7 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public boolean hasFormErrors(DefaultBag bag) {
-        if ((bag.getIsHoley() && fetchForm.hasErrors())) {
+        if ((bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors())) {
         	return true;
         } else {
         	return false;
@@ -262,7 +262,7 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public boolean hasValidBagForms(DefaultBag bag) {
-        if ((bag.getIsHoley() && fetchForm.hasErrors())) {
+        if ((bag.getIsHoley() && fetchForm != null && fetchForm.hasErrors())) {
         	return true;
         } else {
         	return false;
@@ -294,7 +294,7 @@ public class BagInfoInputPane extends JTabbedPane {
                 Color c = (i == selected) ? unselectedColor : selectedColor;
                 switch(i) {
                 case FORM_INDEX:
-                	if (parentView.getBag().getIsHoley() && fetchForm.hasErrors()) {
+                	if (parentView.getBag().getIsHoley() && fetchForm != null && fetchForm.hasErrors()) {
                 		c = errorColor;
                 		fetchForm.getControl().grabFocus();
                 	} else {

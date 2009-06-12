@@ -598,10 +598,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     public String updateBaggerRules() {
         baggerRules.init(bag.getIsEdeposit(), bag.getIsNdnp(), !bag.getIsNoProject(), bag.getIsHoley());
         String messages = "";
-        bagInfoInputPane.populateForms(bag, true);
-        messages = bagInfoInputPane.updateForms(bag);
-        updateBagInfoInputPaneMessages(messages);
-        bagInfoInputPane.update(bag);
+        //bagInfoInputPane.populateForms(bag, true);
+        //messages = bagInfoInputPane.updateForms(bag);
+        //updateBagInfoInputPaneMessages(messages);
+        //bagInfoInputPane.update(bag);
         bag.updateStrategy();
         
         return messages;
@@ -924,9 +924,9 @@ public class BagView extends AbstractView implements ApplicationListener {
             	addBagData(file, true);
             }
         	bagPayloadTreePanel.refresh(bagPayloadTree);
-        	bagInfoInputPane.verifyForms(bag);
-        	bagInfoInputPane.populateForms(bag, true);
-            bagInfoInputPane.update(bag);
+        	//bagInfoInputPane.verifyForms(bag);
+        	//bagInfoInputPane.populateForms(bag, true);
+            //bagInfoInputPane.update(bag);
         	compositePane.setBag(bag);
         	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
         	tagManifestPane.updateCompositePaneTabs(bag);
@@ -975,9 +975,9 @@ public class BagView extends AbstractView implements ApplicationListener {
             	}
         	}
         	bagPayloadTreePanel.refresh(bagPayloadTree);
-        	bagInfoInputPane.verifyForms(bag);
-        	bagInfoInputPane.populateForms(bag, true);
-            bagInfoInputPane.update(bag);
+        	//bagInfoInputPane.verifyForms(bag);
+        	//bagInfoInputPane.populateForms(bag, true);
+            //bagInfoInputPane.update(bag);
         	compositePane.setBag(bag);
         	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
         	tagManifestPane.updateCompositePaneTabs(bag);
