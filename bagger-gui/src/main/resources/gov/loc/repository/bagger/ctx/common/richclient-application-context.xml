@@ -8,20 +8,15 @@
     <constructor-arg index="1" ref="baggerLifecycleAdvisor" />
   </bean>
 
-  <bean id="applicationDescriptor"
-    class="org.springframework.richclient.application.support.DefaultApplicationDescriptor">
+  <bean id="applicationDescriptor" class="org.springframework.richclient.application.support.DefaultApplicationDescriptor"> 
     <property name="version" value="1.6" />
     <property name="buildId" value="BagIt 3.0" />
   </bean>
 
-  <bean id="baggerLifecycleAdvisor"
-    class="gov.loc.repository.bagger.BaggerLifecycleAdvisor">
+  <bean id="baggerLifecycleAdvisor" class="gov.loc.repository.bagger.BaggerLifecycleAdvisor"> 
     <property name="windowCommandBarDefinitions"
       value="gov/loc/repository/bagger/ui/commands-context.xml" />
     <property name="startingPageId" value="bagView" />
-<!-- 
- 	<property name="statusBar" ref="statusBar" />
- -->
     <property name="registerableExceptionHandler" ref="exceptionHandler" />
     <property name="menubarBeanName" value="menuBar" />
     <property name="windowCommandManagerBeanName" value="windowCommandManager" />
