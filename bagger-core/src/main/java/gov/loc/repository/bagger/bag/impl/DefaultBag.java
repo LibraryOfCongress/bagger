@@ -144,7 +144,7 @@ public class DefaultBag {
 		}
 		bagInfo = new DefaultBagInfo(this);
 		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
-		log.info("BagInfoTxt: " + bagInfoTxt);
+		System.out.println("DefaultBag.BagInfoTxt: " + bagInfoTxt);
 		puncher = new HolePuncherImpl(bagFactory);
 		if (bilBag.getFetchTxt() != null) {
         	setIsHoley(true);
@@ -404,8 +404,8 @@ public class DefaultBag {
 		if (bagInfoTxt == null) {
 			return;
 		}
-		BaggerOrganization baggerOrganization = new BaggerOrganization(); //this.bagInfo.getBagOrganization();
-		Contact contact = new Contact(); //baggerOrganization.getContact();
+		BaggerOrganization baggerOrganization = new BaggerOrganization();
+		Contact contact = new Contact();
 		if (bagInfoTxt.getContactName() != null && !bagInfoTxt.getContactName().isEmpty()) 
     		contact.setContactName(bagInfoTxt.getContactName());
 		else
@@ -575,7 +575,6 @@ public class DefaultBag {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
 			}
 		}
-        completeMetaFiles();
 	}
 	
 	public void createBagInfo(HashMap<String,String> map) {
@@ -640,7 +639,7 @@ public class DefaultBag {
 		} 
 	}
 
-	public void completeMetaFiles() {
+	public void _completeMetaFiles() {
 		completer = new DefaultCompleter(this.bagFactory);
 /*
 		completer.setClearExistingTagManifests(false);
@@ -731,27 +730,6 @@ public class DefaultBag {
 			}
 		}
 		return baseUrl;
-	}
-
-	public void updateFetch() {
-		if (this.isHoley) {
-			if (this.getFetch().getBaseURL() != null) {
-//				if (this.getFetch() == null) {
-				// TODO: this is the only thing that generates a fetch.txt
-					System.out.println("puncher.makeHoley");
-					bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
-	/*				} else {
-					// TODO: does not work, generates fetchTxt that is NULL
-					System.out.println("makeHoley");
-					bilBag.makeHoley(this.getFetch().getBaseURL(), true, includeTags);
-					FetchTxt fetchTxt = bilBag.getFetchTxt();
-					if (fetchTxt != null) bilBag.putBagFile(fetchTxt);
-					else System.out.println("FetchTxt: " + fetchTxt);
-				} */
-			}
-			// TODO: makeHoley removes all files but fetch.txt so need to regenerate them
-			completeMetaFiles();			
-		}
 	}
 
 	public void setFetch(BaggerFetch fetch) {
@@ -858,6 +836,11 @@ public class DefaultBag {
 	public String write(CancelIndicator cancel, ProgressListener progress) throws Exception {
 		String messages = "";
 		reset();
+		if (this.isHoley) {
+			if (this.getFetch().getBaseURL() != null) {
+				bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, includeTags);
+			}
+		}
 		try {
 			if (this.isBuildPayloadManifest) {
 				if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.MD5.bagItAlgorithm)) {
@@ -1047,10 +1030,12 @@ public class DefaultBag {
 			}
 			bw.addProgressListener(progress);
 			bw.setCancelIndicator(cancel);
+    		System.out.println("WriteBag.BagInfoTxt: " + bilBag.getBagInfoTxt());
 			Bag newBag = bw.write(bilBag, bagFile);
-			this.setIsNewbag(false);
+    		System.out.println("NewBag.BagInfoTxt: " + newBag.getBagInfoTxt());
+    		System.out.println("NewBag.TagManifest: " + newBag.getTagManifests().size());
 			if (newBag != null) this.bilBag = newBag;
-
+			this.setIsNewbag(false);
 			try {
 				// is valid metadata
 				messages += validateMetadata();
@@ -1059,18 +1044,6 @@ public class DefaultBag {
 				} else {
 					messages += "\nBag-info fields are not all present for the project selected.\n";
 				}
-				/* */
-				// is valid bag
-				if (this.isValidateOnSave) {
-					// TODO: create verifier
-					messages += validateBag(null);
-					display("DefaultBag.write isValid: " + messages);
-					if (this.isValid()) {
-					} else {
-						messages += "\nBag is not valid.\n";
-					}
-				}
-				// TODO: this replaces in memory bag with bag saved to disk
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				messages += "ERROR validating bag: " + bagFile + "\n" + ex.getMessage() + "\n";
