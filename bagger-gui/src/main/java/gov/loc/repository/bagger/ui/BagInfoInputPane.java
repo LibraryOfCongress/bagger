@@ -227,6 +227,8 @@ public class BagInfoInputPane extends JTabbedPane {
 				field.setLabel(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
 				field.setName(field.getLabel().toLowerCase());
 				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+				field.isEnabled(true);
+				field.isRequired(true);
 				currentMap.put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, field);
 			}
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
@@ -238,6 +240,8 @@ public class BagInfoInputPane extends JTabbedPane {
 				field.setLabel(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
 				field.setName(field.getLabel().toLowerCase());
 				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+				field.isEnabled(true);
+				field.isRequired(true);
 				currentMap.put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, field);
 			}
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
@@ -257,6 +261,8 @@ public class BagInfoInputPane extends JTabbedPane {
 				field.setLabel(DefaultBagInfo.FIELD_LC_PROJECT);
 				field.setName(field.getLabel().toLowerCase());
 				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+				field.isEnabled(true);
+				field.isRequired(true);
 				currentMap.put(DefaultBagInfo.FIELD_LC_PROJECT, field);
 			}
 		} else {
