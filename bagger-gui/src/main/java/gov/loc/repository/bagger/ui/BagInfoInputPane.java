@@ -120,8 +120,7 @@ public class BagInfoInputPane extends JTabbedPane {
         }
 
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
-        List<BagInfoField> fieldList = bagInfo.getFieldList();
-        bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), parentView, fieldList, enabled);
+        bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), parentView, bagInfo.getFieldMap(), enabled);
         
         profileFormModel = FormModelHelper.createCompoundFormModel(baggerProfile);
         profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), this.parentView);
@@ -215,10 +214,59 @@ public class BagInfoInputPane extends JTabbedPane {
     	}
     }
     
-    public void updateProject(DefaultBag bag) {
+    public void updateProject(BagView bagView) {
     	// TODO: add project field to bag-info form
+    	this.bagInfoForm.setBagView(bagView);
+    	DefaultBag bag = bagView.getBag();
     	Project project = bag.getProject();
-    	List<BagInfoField> fieldList = bag.getInfo().getFieldList();
+    	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
+		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
+		if (bag.getIsEdeposit()) {
+			if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
+				BagInfoField field = new BagInfoField();
+				field.setLabel(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
+				field.setName(field.getLabel().toLowerCase());
+				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+				currentMap.put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, field);
+			}
+			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
+				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
+			}
+		} else if (bag.getIsNdnp()) {
+			if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
+				BagInfoField field = new BagInfoField();
+				field.setLabel(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
+				field.setName(field.getLabel().toLowerCase());
+				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+				currentMap.put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, field);
+			}
+			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
+				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
+			}
+		} else {
+			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
+				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
+			}
+			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
+				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
+			}
+		}
+		if (!bag.getIsNoProject()) {
+			if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
+				BagInfoField field = new BagInfoField();
+				field.setLabel(DefaultBagInfo.FIELD_LC_PROJECT);
+				field.setName(field.getLabel().toLowerCase());
+				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+				currentMap.put(DefaultBagInfo.FIELD_LC_PROJECT, field);
+			}
+		} else {
+			if (currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
+				currentMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
+			}
+		}
+		bag.getInfo().setFieldMap(currentMap);
+        bagView.setBag(bag);
+        bagView.infoInputPane.updateInfoFormsPane(true);
     }
 
     private void createBagInfo(DefaultBag bag) {

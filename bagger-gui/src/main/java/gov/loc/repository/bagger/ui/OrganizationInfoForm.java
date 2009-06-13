@@ -30,7 +30,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,7 +57,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     private Dimension dimension = new Dimension(400, 370);
     private BagView bagView;
     private DefaultBag defaultBag;
-    private List<BagInfoField> fieldList;
+    private HashMap<String, BagInfoField> fieldMap;
     private JPanel buttonPanel;
     private JComponent  form;
 	protected Bag bag;
@@ -62,13 +65,13 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 	private boolean enabled;
 	private NewFieldFrame newFieldFrame;
 	
-    public OrganizationInfoForm(FormModel formModel, BagView bagView, List<BagInfoField> list, boolean enabled) {
+    public OrganizationInfoForm(FormModel formModel, BagView bagView, HashMap<String, BagInfoField> map, boolean enabled) {
 //        super(formModel, INFO_FORM_PAGE);
     	this.formModel = formModel;
         this.bagView = bagView;
         this.defaultBag = bagView.getBag();
         this.bag = this.defaultBag.getBag();
-		this.fieldList = list;
+		this.fieldMap = map;
 		this.enabled = enabled;
 		
 		this.setLayout(new BorderLayout());
@@ -81,13 +84,17 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     public JComponent getForm() {
     	return this.form;
     }
+    
+    public void setBagView(BagView bagView) {
+    	this.bagView = bagView;
+    }
 
-    public void setFieldList(List<BagInfoField> list) {
-    	this.fieldList = list;
+    public void setFieldMap(HashMap<String, BagInfoField> map) {
+    	this.fieldMap = map;
     }
     
-    public List<BagInfoField> getFieldList() {
-    	return this.fieldList;
+    public HashMap<String, BagInfoField> getFieldMap() {
+    	return this.fieldMap;
     }
 
     protected JComponent createFormControl() {
@@ -96,11 +103,14 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
         JTextField nameTextField = new JTextField();
         int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight();
         int index = 1;
+        int count = 0;
 
         formBuilder.row();
-        if (fieldList != null && !fieldList.isEmpty()) {
-            for (int i=0; i < fieldList.size(); i++) {
-            	BagInfoField field = fieldList.get(i);
+        if (fieldMap != null && !fieldMap.isEmpty()) {
+			Set<String> keys = fieldMap.keySet();
+			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
+            	BagInfoField field = fieldMap.get(key);
                 formBuilder.row();
                 rowCount++;
                 ImageIcon imageIcon = bagView.getPropertyImage("bag.delete.image");
@@ -124,7 +134,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             		((NoTabTextArea) textarea).setColumns(1);
             		((NoTabTextArea) textarea).setRows(3);
             		((NoTabTextArea) textarea).setLineWrap(true);
-            		if (i == 0) focusField = textarea;
+            		if (count == 0) focusField = textarea;
                     rowCount += 1;
                 	break;
                 case BagInfoField.TEXTFIELD_COMPONENT:
@@ -134,10 +144,11 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                     comp.addKeyListener(this);
                     comp.addPropertyChangeListener(this);
                     ((JTextField) comp).setText(field.getValue());
-            		if (i == 0) focusField = comp;
+            		if (count == 0) focusField = comp;
                 	break;
                 default:
                 }
+                count++;
             }
             focusField.requestFocus();
         }
@@ -222,7 +233,8 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     	public void actionPerformed(ActionEvent e) {
     		DefaultBag bag = bagView.getBag();
     		DefaultBagInfo bagInfo = bag.getInfo();
-    		bagInfo.createStandardFieldList(true);
+    		bagInfo.setBag(bag);
+    		bagInfo.createStandardFieldMap(true);
     		updateForm();
             bagView.infoInputPane.updateInfoFormsPane(true);
             bag.setInfo(bagInfo);
@@ -252,15 +264,15 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             		JCheckBox cb = (JCheckBox) c;
             		if (cb.isSelected()) {
             			BagInfoField field = getField(key);
-            			if (field != null) fieldList.remove(field);
+            			if (field != null) fieldMap.remove(key);
             		}
             	} else if (c == selected) {
         			BagInfoField field = getField(key);
-        			if (field != null) fieldList.remove(field);            		
+        			if (field != null) fieldMap.remove(key);
             	}
             }
             DefaultBagInfo info = defaultBag.getInfo();
-            info.setFieldList(fieldList);
+            info.setFieldMap(fieldMap);
             defaultBag.setInfo(info);
             bagView.setBag(defaultBag);
             bagView.infoInputPane.updateInfoFormsPane(true);
@@ -269,13 +281,14 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 
     private BagInfoField getField(String key) {
     	BagInfoField field = null;
-    	List<BagInfoField> list = fieldList;
-    	for (int i=0; i < list.size(); i++) {
-    		BagInfoField b = list.get(i);
-    		if (b.getLabel().equalsIgnoreCase(key)) {
-    			return b;
-    		}
-    	}
+		Set<String> keys = fieldMap.keySet();
+		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+			String keySet = (String) iter.next();
+			if (keySet.equalsIgnoreCase(key)) {
+				field = fieldMap.get(key);
+				return field;
+			}
+		}
     	return field;
     }
 

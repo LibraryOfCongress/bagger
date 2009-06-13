@@ -28,7 +28,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -90,44 +93,36 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         List<String> listModel = bagView.getBag().getInfo().getStandardFields();
         JLabel fieldListLabel = new JLabel(bagView.getPropertyMessage("baginfo.field.fieldlist"));
         fieldListLabel.setToolTipText(getMessage("baginfo.field.fieldlist.help"));
-//        fieldListLabel.setVerticalAlignment(JLabel.CENTER);
         fieldList = new JComboBox(listModel.toArray());
         fieldList.setName(getMessage("baginfo.field.fieldlist"));
         fieldList.setSelectedItem("");
         fieldList.addActionListener(new FieldListHandler());
         fieldList.setToolTipText(getMessage("baginfo.field.fieldlist.help"));
-        //fieldList.setAlignmentY(JComboBox.CENTER_ALIGNMENT);
 
         JLabel fieldNameLabel = new JLabel(bagView.getPropertyMessage("baginfo.field.name"));
         fieldNameLabel.setToolTipText(getMessage("baginfo.field.name.help"));
-//        fieldNameLabel.setVerticalAlignment(JLabel.CENTER);
         fieldName = new JTextField();
         fieldName.addActionListener(new FieldNameHandler());
         fieldName.setToolTipText(getMessage("baginfo.field.name.help"));
-        //fieldName.setAlignmentY(JLabel.CENTER_ALIGNMENT);
 
         ArrayList<String> typeModel = new ArrayList<String>();
         typeModel.add("TEXTFIELD");
         typeModel.add("TEXTAREA");
         JLabel typeListLabel = new JLabel(bagView.getPropertyMessage("baginfo.field.typelist"));
         typeListLabel.setToolTipText(getMessage("baginfo.field.typelist.help"));
-//        typeListLabel.setVerticalAlignment(JLabel.CENTER);
         typeList = new JComboBox(typeModel.toArray());
         typeList.setName(getMessage("baginfo.field.typelist"));
         typeList.setSelectedItem("TEXTFIELD");
         typeList.addActionListener(new TypeListHandler());
         typeList.setToolTipText(getMessage("baginfo.field.typelist.help"));
-        //typeList.setAlignmentY(JComboBox.CENTER_ALIGNMENT);
         
         JLabel requiredLabel = new JLabel(getMessage("baginfo.field.isrequired"));
         requiredLabel.setToolTipText(getMessage("baginfo.field.isrequired.help"));
-//        requiredLabel.setVerticalAlignment(JLabel.CENTER);
         isRequiredCheckbox = new JCheckBox("");
         isRequiredCheckbox.setBorder(new EmptyBorder(5,5,5,5));
         isRequiredCheckbox.setSelected(true);
         isRequiredCheckbox.addActionListener(new FieldRequiredHandler());
         isRequiredCheckbox.setToolTipText(getMessage("baginfo.field.isrequired.help"));
-        //isRequiredCheckbox.setAlignmentY(JCheckBox.CENTER_ALIGNMENT);
 
     	okButton = new JButton("Add");
     	okButton.addActionListener(new OkAddFieldHandler());
@@ -274,22 +269,17 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     		field.setName(name.toLowerCase());
     		field.setLabel(name);
 
-    		List<BagInfoField> currentList = bagInfo.getFieldList();
-    		boolean exists = false;
-    		for (int i=0; i < currentList.size(); i++) {
-    			BagInfoField bif = currentList.get(i);
-    			if (bif.getLabel().equalsIgnoreCase(field.getLabel())) {
-    				exists = true;
-    				break;
-    			}
-    		}
-    		if (!exists) {
-    			currentList.add(field);
+    		HashMap<String, BagInfoField> currentMap = bagInfo.getFieldMap();
+    		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
+    		if (currentMap.isEmpty() || !currentMap.containsKey(field.getLabel())) {
+    			currentMap.put(field.getLabel(), field);
     			setVisible(false);
-    			bagInfo.setFieldList(currentList);
+    			bagInfo.setFieldMap(currentMap);
                 bag.setInfo(bagInfo);
                 bagView.setBag(bag);
                 bagView.infoInputPane.updateInfoFormsPane(enabled);
+    		} else {
+    			bagView.showWarningErrorDialog("Field: " + field.getLabel() + " already exists!");
     		}
         }
     }

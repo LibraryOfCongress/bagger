@@ -177,8 +177,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     public void setBag(DefaultBag baggerBag) {
-        Assert.notNull(baggerBag, "The bag property is required");
         this.bag = baggerBag;
+        this.bag.getInfo().setBag(baggerBag);
     }
 
     public DefaultBag getBag() {
@@ -1025,7 +1025,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		completeExecutor.setEnabled(true);
             		topButtonPanel.invalidate();
                     if (bag.isSerialized()) {
-                		bag.getInfo().createExistingFieldList(true);
+                		bag.getInfo().createExistingFieldMap(true);
                     	bag.copyBagToForm();
                         bagInfoInputPane.populateForms(bag, true);
                         bagInfoInputPane.update(bag);
@@ -1071,7 +1071,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     public void clearExistingBag(String messages) {
     	bagInfoInputPane.enableForms(bag, false);
     	newDefaultBag(null);
-    	bag.getInfo().setFieldList(null);
+    	bag.getInfo().setFieldMap(null);
+    	bag.getInfo().setProfileMap(null);
         holeyCheckbox.setSelected(false);
         this.baggerRules.clear();
     	bag.setIsNewbag(true);
@@ -1419,7 +1420,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagNameField.invalidate();
 
         bag.getInfo().setBag(bag);
-		bag.getInfo().createExistingFieldList(true);
+		bag.getInfo().createExistingFieldMap(true);
     	bag.copyBagToForm();
     	baggerProfile.setOrganization(bag.getInfo().getBagOrganization());
     	if (bag.getInfo().getBagSize() != null && bag.getInfo().getBagSize().isEmpty()) {

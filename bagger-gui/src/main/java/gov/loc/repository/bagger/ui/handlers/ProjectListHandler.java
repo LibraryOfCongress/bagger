@@ -53,16 +53,17 @@ public class ProjectListHandler extends AbstractAction {
     	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.ndnp"))) {
     		bag.setIsNdnp(true);
       		bag.setIsNoProject(false);
+    	} else {
+    		bag.setIsNdnp(false);
     	}
     	if (selected == null || selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.noproject"))) {
       		bag.setIsNoProject(true);
     	} else {
     		bag.getInfo().setLcProject(selected);
-    		bag.setIsNdnp(false);
+    		bag.setIsNoProject(false);
     	}
     	bagView.setBag(bag);
-    	bagView.bagInfoInputPane.updateProject(bag);
-        bagView.bagInfoInputPane.verifyForms(bag);
+    	bagView.bagInfoInputPane.updateProject(bagView);
     	bagView.updateBaggerRules();
     	changeProject(selected);
 	}
