@@ -834,7 +834,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		validVerifier.addProgressListener(task);
             		/* */
                     String messages = bag.validateBag(validVerifier);
-            	    showWarningErrorDialog("Validation result: " + messages);
+            	    if (!messages.isEmpty()) showWarningErrorDialog("Validation result: " + messages);
                 	setBag(bag);
                 	compositePane.updateCompositePaneTabs(bag, messages);
                     if (task.current >= task.lengthOfTask) {
@@ -854,9 +854,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     private void validateBag(String messages) {
-    	messages += bagInfoInputPane.updateForms(bag);
-    	updateBagInfoInputPaneMessages(messages);
-    	bagInfoInputPane.updateSelected(bag);
+    	//messages += bagInfoInputPane.updateForms(bag);
+    	//updateBagInfoInputPaneMessages(messages);
+    	//bagInfoInputPane.updateSelected(bag);
     	statusBarBegin(validateBagHandler, "Validating bag...", 1L);
     }
 
@@ -876,9 +876,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public void completeBag(String messages) {
-    	messages += bagInfoInputPane.updateForms(bag);
+    	//messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
-    	bagInfoInputPane.updateSelected(bag);
+    	//bagInfoInputPane.updateSelected(bag);
 		messages += bag.completeBag();
 		compositePane.updateCompositePaneTabs(bag, messages);
         bagInfoInputPane.update(bag);
@@ -1256,7 +1256,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	enableBagSettings(true);
 		bag.getInfo().setBag(bag);
 		bagInfoInputPane.populateForms(bag, true);
-        bagInfoInputPane.updateSelected(bag);
+        //bagInfoInputPane.updateSelected(bag);
         compositePane.updateCompositePaneTabs(bag, messages);
 
 		bag.setIsNewbag(true);
@@ -1472,11 +1472,13 @@ public class BagView extends AbstractView implements ApplicationListener {
     	enableBagSettings(true);
 		bag.isSerialized(true);
 		bag.getInfo().setBag(bag);
+		System.out.println("OpenExistingBag2 isValid: " + bag.getBag().verifyValid());
     	bagInfoInputPane.populateForms(bag, true);
-    	messages += bagInfoInputPane.updateForms(bag);
+    	//messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
-   		bagInfoInputPane.updateSelected(bag);
+   		//bagInfoInputPane.updateSelected(bag);
         compositePane.updateCompositePaneTabs(bag, messages);
+		System.out.println("OpenExistingBag3 isValid: " + bag.getBag().verifyValid());
 
     	statusBarEnd();
     }

@@ -35,9 +35,10 @@ public class UpdateBagHandler extends AbstractAction {
 	}
 
 	public void updateBag(DefaultBag bag) {
-        String messages = bagView.bagInfoInputPane.updateForms(bag);
+        String messages = "";
+		messages = bagView.bagInfoInputPane.updateForms(bag);
         bagView.updateBagInfoInputPaneMessages(messages);
-        bagView.bagInfoInputPane.updateSelected(bag);
+        //bagView.bagInfoInputPane.updateSelected(bag);
         messages += bagView.updateProfile();
 
         bagView.setBag(bag);

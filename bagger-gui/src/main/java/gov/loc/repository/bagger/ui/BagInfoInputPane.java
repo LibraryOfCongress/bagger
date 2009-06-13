@@ -185,7 +185,7 @@ public class BagInfoInputPane extends JTabbedPane {
         return messages;
     }
     
-    public void updateSelected(DefaultBag bag) {
+    public void _updateSelected(DefaultBag bag) {
     	bagInfoForm.grabFocus();
     	update(bag);
     }
