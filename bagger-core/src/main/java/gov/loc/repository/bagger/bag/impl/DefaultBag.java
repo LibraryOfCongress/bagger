@@ -20,10 +20,8 @@ import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.BagItTxt;
-import gov.loc.repository.bagit.CancelIndicator;
 import gov.loc.repository.bagit.FetchTxt;
 import gov.loc.repository.bagit.Manifest;
-import gov.loc.repository.bagit.ManifestHelper;
 import gov.loc.repository.bagit.ProgressListener;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.FetchTxt.FilenameSizeUrl;
@@ -132,19 +130,20 @@ public class DefaultBag {
 		if (rootDir != null) {
 			bilBag = bagFactory.createBag(this.rootDir);
 			versionString = bilBag.getVersion().versionString;
+			System.out.println("DefaultBag isValid: " + bilBag.verifyValid());
 		} else if (versionString != null) {
 			Version version = Version.valueOfString(versionString);
 			bilBag = bagFactory.createBag(version);
 		} else {
 			bilBag = bagFactory.createBag();
 		}
+		bagInfo = new DefaultBagInfo(this);
+		//initializeBagInfo();
 		BagItTxt bagIt = bilBag.getBagItTxt();
 		if (bagIt == null) {
 			bagIt = bilBag.getBagPartFactory().createBagItTxt();
 			bilBag.putBagFile(bagIt);
 		}
-		bagInfo = new DefaultBagInfo(this);
-		initializeBagInfo();
 		puncher = new HolePuncherImpl(bagFactory);
 		if (bilBag.getFetchTxt() != null) {
         	setIsHoley(true);
@@ -829,7 +828,7 @@ public class DefaultBag {
 		return message;
 	}
 
-	public String write(CancelIndicator cancel, ProgressListener progress) throws Exception {
+	public String write(ProgressListener progress) throws Exception {
 		String messages = "";
 		reset();
 		if (this.isHoley) {
@@ -841,7 +840,7 @@ public class DefaultBag {
 		}
 		generateManifestFiles();
 		try {
-			messages += writeBag(cancel, progress);
+			messages += writeBag(progress);
 		} catch (Exception e) {
 			log.error("DefaultBag.write.writeBag: " + e);
 			throw new RuntimeException(e);
@@ -949,7 +948,7 @@ public class DefaultBag {
 		return messages;
 	}
 	
-	public String writeBag(CancelIndicator cancel, ProgressListener progress) throws Exception {
+	public String writeBag(ProgressListener progress) throws Exception {
 		String messages = "";
 		String bagName = "";
 		File bagFile = null;
@@ -1006,7 +1005,6 @@ public class DefaultBag {
 				}
 			}
 			bw.addProgressListener(progress);
-			bw.setCancelIndicator(cancel);
 			Bag newBag = bw.write(bilBag, bagFile);
 			if (newBag != null) bilBag = newBag;
 			this.setIsNewbag(false);
