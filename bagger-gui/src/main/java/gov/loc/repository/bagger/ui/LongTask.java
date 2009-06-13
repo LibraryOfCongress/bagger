@@ -4,12 +4,11 @@ import java.text.MessageFormat;
 
 import javax.swing.ProgressMonitor;
 
-import gov.loc.repository.bagit.CancelIndicator;
 import gov.loc.repository.bagit.ProgressListener;
 
-public class LongTask implements CancelIndicator, ProgressListener {
-    public int lengthOfTask;
-    public int current = 0;
+public class LongTask implements ProgressListener {
+    public Long lengthOfTask;
+    public Long current = 0L;
     public boolean done = false;
     public boolean canceled = false;
     public String statMessage;
@@ -20,7 +19,7 @@ public class LongTask implements CancelIndicator, ProgressListener {
         //Compute length of task...
         //In a real program, this would figure out
         //the number of bytes to read or whatever.
-    	lengthOfTask = 1000;
+    	lengthOfTask = 1L;
     }
     
     public void setMonitor(ProgressMonitor monitor) {
@@ -37,7 +36,7 @@ public class LongTask implements CancelIndicator, ProgressListener {
     public void go() {
     	final SwingWorker worker = new SwingWorker(this) {
             public Object construct() {
-                current = 0;
+                current = 0L;
                 done = false;
                 canceled = false;
                 statMessage = null;
@@ -52,19 +51,19 @@ public class LongTask implements CancelIndicator, ProgressListener {
      * Called from ProgressBarDemo to find out how much work needs
      * to be done.
      */
-    public int getLengthOfTask() {
+    public Long getLengthOfTask() {
         return lengthOfTask;
     }
 
 
-    public void setLengthOfTask(int lengthOfTask) {
+    public void setLengthOfTask(Long lengthOfTask) {
         this.lengthOfTask = lengthOfTask;
     }
 
     /**
      * Called from ProgressBarDemo to find out how much has been done.
      */
-    public int getCurrent() {
+    public Long getCurrent() {
         return current;
     }
 
@@ -87,21 +86,19 @@ public class LongTask implements CancelIndicator, ProgressListener {
     public String getMessage() {
         return statMessage;
     }
-
+/*
 	@Override
 	public boolean performCancel() {
 		return canceled;
 	}
-
+*/
 	@Override
-	public void reportProgress(String activity, String item, int count,	int total) {
+	public void reportProgress(String activity, Object item, Long count, Long total) {
 		current = count;
 		lengthOfTask = total;
 		String message = MessageFormat.format("{0} {1} ({2} of {3})", activity, item, count, total);
-		//System.out.println(message);
 		statMessage = message;
 		this.progressMonitor.setNote(message);
-		this.progressMonitor.setMaximum(total);
-//		statMessage = "Completed " + current + " out of " + lengthOfTask + ".";
+		this.progressMonitor.setMaximum(total.intValue());
 	}
 }

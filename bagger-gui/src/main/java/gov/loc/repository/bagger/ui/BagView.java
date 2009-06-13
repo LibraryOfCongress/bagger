@@ -825,22 +825,18 @@ public class BagView extends AbstractView implements ApplicationListener {
                     Thread.sleep(1000); //sleep for a second
                     /* */
             		CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
-            		completeVerifier.setCancelIndicator(task);
             		completeVerifier.addProgressListener(task);
             		
             		ParallelManifestChecksumVerifier manifestVerifier = new ParallelManifestChecksumVerifier();
-            		manifestVerifier.setCancelIndicator(task);
             		manifestVerifier.addProgressListener(task);
             		
             		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
-            		validVerifier.setCancelIndicator(task);
             		validVerifier.addProgressListener(task);
             		/* */
                     String messages = bag.validateBag(validVerifier);
             	    showWarningErrorDialog("Validation result: " + messages);
                 	setBag(bag);
                 	compositePane.updateCompositePaneTabs(bag, messages);
-                	statusBarEnd();
                     if (task.current >= task.lengthOfTask) {
                         task.done = true;
                         task.current = task.lengthOfTask;
@@ -849,10 +845,11 @@ public class BagView extends AbstractView implements ApplicationListener {
                                   " out of " + task.lengthOfTask + ".";
                 } catch (InterruptedException e) {
                 	e.printStackTrace();
+                	task.current = task.lengthOfTask;
             	    showWarningErrorDialog("Error trying validate bag: " + e.getMessage());
-                	statusBarEnd();
                 }
             }
+        	statusBarEnd();
     	}
     }
 
@@ -860,7 +857,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
     	bagInfoInputPane.updateSelected(bag);
-    	statusBarBegin(validateBagHandler, "Validating bag...", 1);
+    	statusBarBegin(validateBagHandler, "Validating bag...", 1L);
     }
 
     public class CompleteExecutor extends AbstractActionCommandExecutor {
@@ -879,8 +876,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public void completeBag(String messages) {
-    	ActualTask actualTask = new ActualTask();
-    	statusBarBegin(actualTask, "Completing bag...", 1);
     	messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
     	bagInfoInputPane.updateSelected(bag);
@@ -1021,7 +1016,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 try {
                     Thread.sleep(1000); //sleep for a second
 
-                    String messages = bag.write(task, task);
+                    String messages = bag.write(task);
                     //
             		if (bag.isSerialized()) saveButton.setEnabled(true);
             		validateButton.setEnabled(true);
@@ -1065,7 +1060,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public void saveBag(File file) {
         String messages = ""; //getMessage("bag.message.creating");
         bag.setRootDir(file);
-        statusBarBegin(saveBagHandler, "Writing bag...", 1);
+        statusBarBegin(saveBagHandler, "Writing bag...", 1L);
     }
 
     public void showWarningErrorDialog(String msg) {
@@ -1170,7 +1165,7 @@ public class BagView extends AbstractView implements ApplicationListener {
      */
     class TimerListener implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
-            progressMonitor.setProgress(task.getCurrent());
+            progressMonitor.setProgress(task.getCurrent().intValue());
             String s = task.getMessage();
             if (s != null) {
                 progressMonitor.setNote(s);
@@ -1298,24 +1293,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
 
     	public void execute() {
-        	while (!task.canceled && !task.done) {
-                try {
-                    Thread.sleep(1000); //sleep for a second
-                    task.current += Math.random() * 100; //make some progress
-
-                    // TODO: execute create data bag task
-
-                    task.current++;
-                    if (task.current >= task.lengthOfTask) {
-                        task.done = true;
-                        task.current = task.lengthOfTask;
-                    }
-                    task.statMessage = "Completed " + task.current +
-                                  " out of " + task.lengthOfTask + ".";
-                } catch (InterruptedException e) {
-                	e.printStackTrace();
-                }
-            }
         	statusBarEnd();
     	}
     }
@@ -1421,8 +1398,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     private void openExistingBag(File file) {
-    	ActualTask actualTask = new ActualTask();
-    	statusBarBegin(actualTask, "Opening existing bag...", 1);
     	String messages = "";
     	bagInfoInputPane.enableForms(bag, true);
     	clearExistingBag(messages);
@@ -1431,10 +1406,10 @@ public class BagView extends AbstractView implements ApplicationListener {
 		try {
 	    	newDefaultBag(file);
 		} catch (Exception ex) {
-	    	newDefaultBag(null);
 			log.error("openExistingBag DefaultBag: " + ex.getMessage());
         	messages +=  "Failed to create bag: " + ex.getMessage() + "\n";
     	    showWarningErrorDialog("Error trying to open file: " + file + "\n" + ex.getMessage());
+    	    return;
 		}
         bagVersion = bag.getVersion();
         bagVersionList.setSelectedItem(bagVersion);
@@ -1655,7 +1630,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	return buffer.toString();
     }
 
-    public void statusBarBegin(Progress progress, String message, int size) {
+    public void statusBarBegin(Progress progress, String message, Long size) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
         task = new LongTask();
         task.setLengthOfTask(size);
@@ -1666,8 +1641,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         timer = new Timer(ONE_SECOND, new TimerListener());
 
         progressMonitor = new ProgressMonitor(this.getControl(),
-                "Running a Long Task",
-                "", 0, task.getLengthOfTask());
+                "Running a Long Task", "", 0, task.getLengthOfTask().intValue());
         progressMonitor.setProgress(0);
         progressMonitor.setMillisToDecideToPopup(1 * ONE_SECOND);
         task.setMonitor(progressMonitor);
