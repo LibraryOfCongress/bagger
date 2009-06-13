@@ -934,10 +934,12 @@ public class DefaultBag {
 					SimpleResult result = bilBag.verifyValid();
 					if (result.messagesToString() != null) messages += result.messagesToString();
 					this.isValid(result.isSuccess());
+					if (this.isValid) this.isComplete(this.isValid);
 				} else {
 					SimpleResult result = validVerifier.verify(bilBag);
 					if (result.messagesToString() != null) messages += result.messagesToString();
 					this.isValid(result.isSuccess());
+					if (this.isValid) this.isComplete(this.isValid);
 				}
 	    	//}
 		} catch (Exception e) {
