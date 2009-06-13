@@ -138,7 +138,7 @@ public class DefaultBag {
 			bilBag = bagFactory.createBag();
 		}
 		bagInfo = new DefaultBagInfo(this);
-		//initializeBagInfo();
+		initializeBagInfo();
 		BagItTxt bagIt = bilBag.getBagItTxt();
 		if (bagIt == null) {
 			bagIt = bilBag.getBagPartFactory().createBagItTxt();
@@ -399,14 +399,17 @@ public class DefaultBag {
 
 	private void initializeBagInfo() {
 		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
-		if (bagInfoTxt == null) bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
-		Set<String> keys = bagInfoTxt.keySet();
-		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-			String key = (String) iter.next();
-			bagInfoTxt.remove(key);
+		if (bagInfoTxt == null) {
+			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
+			/* */
+			Set<String> keys = bagInfoTxt.keySet();
+			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
+				bagInfoTxt.remove(key);
+			}
+			/* */
+			bilBag.putBagFile(bagInfoTxt);
 		}
-		System.out.println("DefaultBag.initializeBagInfo: " + bagInfoTxt);
-		bilBag.putBagFile(bagInfoTxt);
 	}
 	
 	public void copyBagToForm() {

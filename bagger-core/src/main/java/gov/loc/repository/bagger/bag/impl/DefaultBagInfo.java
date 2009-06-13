@@ -339,6 +339,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
 
 		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
 		List<String> ls = bagInfoTxt.getStandardFields();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
@@ -356,6 +357,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
 
 		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
 		List<String> ls = bagInfoTxt.getStandardFields();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
@@ -373,6 +375,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
 
 		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
 		List<String> nls = bagInfoTxt.getNonstandardFields();
 		for (int i=0; i<nls.size(); i++) {
 			String label = nls.get(i);
@@ -489,6 +492,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		}
 
         BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
+		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
 		List<String> ls = bagInfoTxt.getStandardFields();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
