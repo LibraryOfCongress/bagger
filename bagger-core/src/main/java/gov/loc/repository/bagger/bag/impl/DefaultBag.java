@@ -513,24 +513,28 @@ public class DefaultBag {
 
 	public void copyBagToFields() {
 		BagInfoTxt bagInfoTxt = this.bilBag.getBagInfoTxt();
-		List<BagInfoField> fields = this.bagInfo.getFieldList();
-		for (int i=0; i < fields.size(); i++) {
-			BagInfoField field = fields.get(i);
+		HashMap<String, BagInfoField> fieldMap = bagInfo.getFieldMap();
+		Set<String> keys = fieldMap.keySet();
+		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+			String label = (String) iter.next();
+			BagInfoField field = fieldMap.get(label);
 			String key = field.getLabel();
 			String value = bagInfoTxt.get(key);
 			field.setValue(value);
-			fields.set(i, field);
+			fieldMap.put(label, field);
 		}
-		List<BagInfoField> profiles = this.bagInfo.getProfileList();
-		for (int i=0; i < profiles.size(); i++) {
-			BagInfoField field = profiles.get(i);
+		HashMap<String, BagInfoField> profileMap = bagInfo.getProfileMap();
+		Set<String> pkeys = profileMap.keySet();
+		for (Iterator<String> iter = pkeys.iterator(); iter.hasNext();) {
+			String label = (String) iter.next();
+			BagInfoField field = profileMap.get(label);
 			String key = field.getLabel();
 			String value = bagInfoTxt.get(key);
 			field.setValue(value);
-			profiles.set(i, field);
+			profileMap.put(label, field);
 		}
-		this.bagInfo.setFieldList(fields);
-		this.bagInfo.setProfileList(profiles);
+		this.bagInfo.setFieldMap(fieldMap);
+		this.bagInfo.setProfileMap(profileMap);
 	}
 
 	public void updateBagInfo() {
@@ -592,9 +596,9 @@ public class DefaultBag {
 	}
 	
 	public void createBagInfo(HashMap<String,String> map) {
-		this.setIsNoProject(false);
-		this.setIsEdeposit(false);
-		this.setIsNdnp(false);
+//		this.setIsNoProject(false);
+//		this.setIsEdeposit(false);
+//		this.setIsNdnp(false);
   		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
 		if (bagInfoTxt == null) {
 			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();

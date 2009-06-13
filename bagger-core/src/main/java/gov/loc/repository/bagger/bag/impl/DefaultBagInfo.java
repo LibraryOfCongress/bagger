@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -35,8 +36,8 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	protected DefaultBag baggerBag;
 	private String bagName = new String();
 	private BaggerOrganization baggerOrganization = new BaggerOrganization();
-	private List<BagInfoField> profileList;
-	private List<BagInfoField> fieldList;
+	private HashMap<String, BagInfoField> profileMap = new HashMap<String, BagInfoField>();
+	private HashMap<String, BagInfoField> fieldMap = new HashMap<String, BagInfoField>();
 	public static final String[] profileStrings = {"Source-Organization", "Organization-Address", "Contact-Name", "Contact-Phone", "Contact-Email"};
 	public static final HashSet<String> profileSet = new HashSet<String>(Arrays.asList(profileStrings));
 	public static final String[] readOnlyStrings = {"Payload-Oxum", FIELD_LC_PROJECT};
@@ -292,26 +293,25 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		return content.toString();
 	}
 
-	public List<BagInfoField> getFieldList() {
-		if (this.fieldList == null) this.fieldList = new ArrayList<BagInfoField>();
-		return this.fieldList;
+	public HashMap<String, BagInfoField> getFieldMap() {
+		return this.fieldMap;
 	}
 
-	public void setFieldList(List<BagInfoField> list) {
-		this.fieldList = list;
+	public void setFieldMap(HashMap<String, BagInfoField> map) {
+		this.fieldMap = map;
 	}
 	
-	public List<BagInfoField> getProfileList() {
-		return this.profileList;
+	public HashMap<String, BagInfoField> getProfileMap() {
+		return this.profileMap;
 	}
 	
-	public void setProfileList(List<BagInfoField> list) {
-		this.profileList = list;
+	public void setProfileMap(HashMap<String, BagInfoField> map) {
+		this.profileMap = map;
 	}
 
-	public void createExistingFieldList(boolean enabled) {
-		this.fieldList = new ArrayList<BagInfoField>();
-		this.profileList = new ArrayList<BagInfoField>();
+	public void createExistingFieldMap(boolean enabled) {
+		this.fieldMap = new HashMap<String, BagInfoField>();
+		this.profileMap = new HashMap<String, BagInfoField>();
 		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
 		if (bagInfoTxt != null) {
 			Set<String> keys = bagInfoTxt.keySet();
@@ -320,24 +320,16 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 				label = label.trim();
 				BagInfoField field = createField(label, enabled);
 				if (profileSet.contains(label)) {
-					profileList.add(field);
+					if (profileMap.isEmpty() || !profileMap.containsKey(label)) profileMap.put(label, field);
 				} else {
-					fieldList.add(field);
+					if (fieldMap.isEmpty() || !fieldMap.containsKey(label)) fieldMap.put(label, field);
 				}
 			}
 		}
-		/*
-		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
-		if (bagInfoTxt == null) {
-			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
-			bilBag.setBagInfoTxt(bagInfoTxt);
-		}
-		 */
 	}
 	
-	public void createStandardFieldList(boolean enabled) {
-		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
-
+	public void createStandardFieldMap(boolean enabled) {
+		if (this.fieldMap == null) this.fieldMap = new HashMap<String, BagInfoField>();
 		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
 		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
 		List<String> ls = bagInfoTxt.getStandardFields();
@@ -346,16 +338,12 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			label = label.trim();
 			if (!profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
-				list.add(field);
+				if (fieldMap.isEmpty() || !fieldMap.containsKey(label)) fieldMap.put(label, field);
 			}
 		}
-
-		this.fieldList = list;
 	}
 	
 	public void createProfileFieldList(boolean enabled) {
-		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
-
 		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
 		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
 		List<String> ls = bagInfoTxt.getStandardFields();
@@ -364,11 +352,9 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			label = label.trim();
 			if (profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
-				list.add(field);				
+				if (profileMap.isEmpty() || !this.profileMap.containsKey(label)) this.profileMap.put(label, field);
 			}
 		}
-
-		this.profileList = list;
 	}
 	
 	public List<BagInfoField> createNonStandardFieldList(boolean enabled) {
@@ -398,8 +384,6 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	}
 
 	public void updateExistingFieldList(boolean enabled) {
-		this.fieldList = new ArrayList<BagInfoField>();
-
 		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
 		List<String>ls = bagInfoTxt.getStandardFields();
 		for (int i=0; i<ls.size(); i++) {
@@ -407,22 +391,22 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			label = label.trim();
 			if (!profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
-				fieldList.add(field);
+				if (fieldMap.isEmpty() || !fieldMap.containsKey(label)) fieldMap.put(label, field);
 			}
 		}
 		// TODO: if project has changed, remove old project fields
 		// and add new project fields based on profile
         if (baggerBag.getIsEdeposit()) {
     		BagInfoField publisher = createField("publisher", enabled);
-    		fieldList.add(publisher);
+    		fieldMap.put("publisher", publisher);
         }
         if (baggerBag.getIsNdnp()) {
     		BagInfoField awardeePhase = createField("awardeePhase", enabled);
-    		fieldList.add(awardeePhase);
+    		fieldMap.put("awardeePhase", awardeePhase);
         }
         if (!baggerBag.getIsNoProject()) {
     		BagInfoField lcProject = createField("lcProject", enabled);
-    		fieldList.add(lcProject);
+    		fieldMap.put("lcProject", lcProject);
         }
 	}
 
@@ -483,8 +467,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
         list.add(FIELD_NEW_COMPONENT);
 		if (this.baggerBag.getIsEdeposit()) {
 	        list.add(FIELD_EDEPOSIT_PUBLISHER);
-		}
-		if (this.baggerBag.getIsNdnp()) {
+		} else if (this.baggerBag.getIsNdnp()) {
 	        list.add(FIELD_NDNP_AWARDEE_PHASE);
 		}
 		if (!this.baggerBag.getIsNoProject()) {
