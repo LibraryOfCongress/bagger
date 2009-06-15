@@ -99,6 +99,7 @@ public class CompositePane extends JTabbedPane {
     
     // setBag must be called before updateTabs is called
     public void updateCompositePaneTabs(DefaultBag bag, String messages) {
+    	if (messages == null) messages = "";
         setBag(bag);
     	if (bag.isSerialized()) {
             messages += "\n";

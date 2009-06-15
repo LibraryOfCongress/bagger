@@ -263,6 +263,7 @@ public class BagInfoInputPane extends JTabbedPane {
 				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
 				field.isEnabled(true);
 				field.isRequired(true);
+				field.setValue(bagView.getBag().getProject().getName());
 				currentMap.put(DefaultBagInfo.FIELD_LC_PROJECT, field);
 			}
 		} else {
@@ -298,7 +299,6 @@ public class BagInfoInputPane extends JTabbedPane {
             	value = ta.getText();
         	}
         	map.put(key, value);
-        	//System.out.println("createBagInfo key: " + key + ", value: " + value);
         	i++;
         	c = components[i];
         	if (c instanceof JCheckBox) {

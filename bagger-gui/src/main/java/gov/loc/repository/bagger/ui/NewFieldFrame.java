@@ -268,6 +268,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     		String name = fieldName.getText();
     		field.setName(name.toLowerCase());
     		field.setLabel(name);
+    		prepopulate(field);
 
     		HashMap<String, BagInfoField> currentMap = bagInfo.getFieldMap();
     		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
@@ -282,6 +283,19 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     			bagView.showWarningErrorDialog("Field: " + field.getLabel() + " already exists!");
     		}
         }
+    }
+    
+    private void prepopulate(BagInfoField field) {
+    	String label = field.getLabel();
+    	
+    	if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
+    		field.setValue(bagView.getBag().getProject().getName());
+    		field.isEnabled(false);
+    	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_BAGGING_DATE)) {
+    		field.setValue(DefaultBagInfo.getTodaysDate());
+    	} else if (DefaultBagInfo.readOnlySet.contains(label)) {
+    		field.isEnabled(false);
+    	}
     }
 
     private class CancelAddFieldHandler extends AbstractAction {

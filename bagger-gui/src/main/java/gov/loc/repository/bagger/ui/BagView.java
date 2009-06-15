@@ -803,7 +803,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     public class ValidateExecutor extends AbstractActionCommandExecutor {
         public void execute() {
-        	validateBag("");
+        	validateBag();
         }
     }
 
@@ -812,7 +812,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	private LongTask task;
 
     	public void actionPerformed(ActionEvent e) {
-    		validateBag("");
+    		validateBag();
     	}
 
     	public void setTask(LongTask task) {
@@ -834,7 +834,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		validVerifier.addProgressListener(task);
             		/* */
                     String messages = bag.validateBag(validVerifier);
-            	    if (!messages.isEmpty()) showWarningErrorDialog("Validation result: " + messages);
+            	    if (messages != null && !messages.isEmpty()) showWarningErrorDialog("Validation result: " + messages);
                 	setBag(bag);
                 	compositePane.updateCompositePaneTabs(bag, messages);
                     if (task.current >= task.lengthOfTask) {
@@ -853,16 +853,13 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
     }
 
-    private void validateBag(String messages) {
-    	//messages += bagInfoInputPane.updateForms(bag);
-    	//updateBagInfoInputPaneMessages(messages);
-    	//bagInfoInputPane.updateSelected(bag);
+    private void validateBag() {
     	statusBarBegin(validateBagHandler, "Validating bag...", 1L);
     }
 
     public class CompleteExecutor extends AbstractActionCommandExecutor {
         public void execute() {
-        	completeBag("");
+        	completeBag();
         }
     }
 
@@ -870,17 +867,16 @@ public class BagView extends AbstractView implements ApplicationListener {
        	private static final long serialVersionUID = 1L;
 
     	public void actionPerformed(ActionEvent e) {
-     		completeBag("");
+     		completeBag();
     	}
 
     }
 
-    public void completeBag(String messages) {
-    	//messages += bagInfoInputPane.updateForms(bag);
-    	updateBagInfoInputPaneMessages(messages);
-    	//bagInfoInputPane.updateSelected(bag);
-		messages += bag.completeBag();
-		compositePane.updateCompositePaneTabs(bag, messages);
+    public void completeBag() {
+		String messages = bag.completeBag();
+		if (messages != null) {
+			compositePane.updateCompositePaneTabs(bag, messages);
+		}
         bagInfoInputPane.update(bag);
     	statusBarEnd();
     }
@@ -1016,6 +1012,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 try {
                     Thread.sleep(1000); //sleep for a second
 
+            		System.out.println("BagView.saveBag fieldMap: " + bag.getInfo().getFieldMap());
                     String messages = bag.write(task);
                     //
             		if (bag.isSerialized()) saveButton.setEnabled(true);
@@ -1032,13 +1029,13 @@ public class BagView extends AbstractView implements ApplicationListener {
                         saveButton.setEnabled(false);
                         saveBagExecutor.setEnabled(false);
                     }
-                    compositePane.updateCompositePaneTabs(bag, "");
+                    compositePane.updateCompositePaneTabs(bag, messages);
                     updateManifestPane();
-            		//
+
+                    if (messages != null && !messages.isEmpty()) showWarningErrorDialog("Warning saving bag:\n" + messages);
             		if (bag.isValidateOnSave()) {
-            			validateBag("");
+            			validateBag();
             		}
-            		//
                     if (task.current >= task.lengthOfTask) {
                         task.done = true;
                         task.current = task.lengthOfTask;
@@ -1058,7 +1055,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public void saveBag(File file) {
-        String messages = ""; //getMessage("bag.message.creating");
         bag.setRootDir(file);
         statusBarBegin(saveBagHandler, "Writing bag...", 1L);
     }
