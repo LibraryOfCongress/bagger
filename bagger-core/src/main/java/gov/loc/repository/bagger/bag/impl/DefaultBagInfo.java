@@ -38,13 +38,13 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	private BaggerOrganization baggerOrganization = new BaggerOrganization();
 	private HashMap<String, BagInfoField> profileMap = new HashMap<String, BagInfoField>();
 	private HashMap<String, BagInfoField> fieldMap = new HashMap<String, BagInfoField>();
-	public static final String[] profileStrings = {"Source-Organization", "Organization-Address", "Contact-Name", "Contact-Phone", "Contact-Email"};
+	public static final String[] profileStrings = {FIELD_SOURCE_ORGANIZATION, FIELD_ORGANIZATION_ADDRESS, FIELD_CONTACT_NAME, FIELD_CONTACT_PHONE, FIELD_CONTACT_EMAIL};
 	public static final HashSet<String> profileSet = new HashSet<String>(Arrays.asList(profileStrings));
-	public static final String[] readOnlyStrings = {"Payload-Oxum", FIELD_LC_PROJECT};
+	public static final String[] readOnlyStrings = {FIELD_PAYLOAD_OXUM, FIELD_LC_PROJECT};
 	public static final HashSet<String> readOnlySet = new HashSet<String>(Arrays.asList(readOnlyStrings));
-	public static final String[] textAreaStrings = {"External-Description", "Internal-Sender-Description"};
+	public static final String[] textAreaStrings = {FIELD_EXTERNAL_DESCRIPTION, FIELD_INTERNAL_SENDER_DESCRIPTION};
 	public static final HashSet<String> textAreaSet = new HashSet<String>(Arrays.asList(textAreaStrings));
-	public static final String[] requiredStrings = {"External-Description", "Bagging-Date", "External-Identifier", "Bag-Size", FIELD_EDEPOSIT_PUBLISHER, FIELD_NDNP_AWARDEE_PHASE, FIELD_LC_PROJECT};
+	public static final String[] requiredStrings = {FIELD_EXTERNAL_DESCRIPTION, FIELD_BAGGING_DATE, FIELD_EXTERNAL_IDENTIFIER, FIELD_BAG_SIZE, FIELD_EDEPOSIT_PUBLISHER, FIELD_NDNP_AWARDEE_PHASE, FIELD_LC_PROJECT};
 	public static final HashSet<String> requiredSet = new HashSet<String>(Arrays.asList(requiredStrings));
 
 	private String name;
@@ -338,7 +338,17 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			label = label.trim();
 			if (!profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
-				if (fieldMap.isEmpty() || !fieldMap.containsKey(label)) fieldMap.put(label, field);
+				if (fieldMap.isEmpty() || !fieldMap.containsKey(label)) {
+					fieldMap.put(label, field);
+				}
+		    	if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
+		    		field.setValue(baggerBag.getProject().getName());
+		    		field.isEnabled(false);
+		    	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_BAGGING_DATE)) {
+		    		field.setValue(DefaultBagInfo.getTodaysDate());
+		    	} else if (DefaultBagInfo.readOnlySet.contains(label)) {
+		    		field.isEnabled(false);
+		    	}
 			}
 		}
 	}
