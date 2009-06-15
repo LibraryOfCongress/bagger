@@ -62,10 +62,10 @@ public class ProjectListHandler extends AbstractAction {
     		bag.getInfo().setLcProject(selected);
     		bag.setIsNoProject(false);
     	}
-    	bagView.setBag(bag);
     	bagView.updateBaggerRules();
     	changeProject(selected);
     	bagView.bagInfoInputPane.updateProject(bagView);
+    	bagView.setBag(bag);
 	}
 
     private void changeProject(String selected) {

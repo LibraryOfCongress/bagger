@@ -184,11 +184,6 @@ public class BagInfoInputPane extends JTabbedPane {
         return messages;
     }
     
-    public void _updateSelected(DefaultBag bag) {
-    	bagInfoForm.grabFocus();
-    	update(bag);
-    }
-    
     public boolean hasFormErrors(DefaultBag bag) {
     	return false;
     }
@@ -222,7 +217,7 @@ public class BagInfoInputPane extends JTabbedPane {
     	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
 		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
 		if (bag.getIsEdeposit()) {
-			if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
+			//if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
 				BagInfoField field = new BagInfoField();
 				field.setLabel(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
 				field.setName(field.getLabel().toLowerCase());
@@ -230,12 +225,12 @@ public class BagInfoInputPane extends JTabbedPane {
 				field.isEnabled(true);
 				field.isRequired(true);
 				currentMap.put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, field);
-			}
+			//}
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
 				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
 			}
 		} else if (bag.getIsNdnp()) {
-			if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
+			//if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
 				BagInfoField field = new BagInfoField();
 				field.setLabel(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
 				field.setName(field.getLabel().toLowerCase());
@@ -243,7 +238,7 @@ public class BagInfoInputPane extends JTabbedPane {
 				field.isEnabled(true);
 				field.isRequired(true);
 				currentMap.put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, field);
-			}
+			//}
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
 				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
 			}
@@ -256,16 +251,16 @@ public class BagInfoInputPane extends JTabbedPane {
 			}
 		}
 		if (!bag.getIsNoProject()) {
-			if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
+			//if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
 				BagInfoField field = new BagInfoField();
 				field.setLabel(DefaultBagInfo.FIELD_LC_PROJECT);
 				field.setName(field.getLabel().toLowerCase());
 				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-				field.isEnabled(true);
+				field.isEnabled(false);
 				field.isRequired(true);
 				field.setValue(bagView.getBag().getProject().getName());
 				currentMap.put(DefaultBagInfo.FIELD_LC_PROJECT, field);
-			}
+			//}
 		} else {
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
 				currentMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);

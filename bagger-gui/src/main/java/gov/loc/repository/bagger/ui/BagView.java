@@ -1011,8 +1011,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         	while (!task.canceled && !task.done) {
                 try {
                     Thread.sleep(1000); //sleep for a second
-
-            		System.out.println("BagView.saveBag fieldMap: " + bag.getInfo().getFieldMap());
+                    //
                     String messages = bag.write(task);
                     //
             		if (bag.isSerialized()) saveButton.setEnabled(true);
@@ -1469,13 +1468,11 @@ public class BagView extends AbstractView implements ApplicationListener {
     	enableBagSettings(true);
 		bag.isSerialized(true);
 		bag.getInfo().setBag(bag);
-		System.out.println("OpenExistingBag2 isValid: " + bag.getBag().verifyValid());
     	bagInfoInputPane.populateForms(bag, true);
     	//messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
    		//bagInfoInputPane.updateSelected(bag);
         compositePane.updateCompositePaneTabs(bag, messages);
-		System.out.println("OpenExistingBag3 isValid: " + bag.getBag().verifyValid());
 
     	statusBarEnd();
     }

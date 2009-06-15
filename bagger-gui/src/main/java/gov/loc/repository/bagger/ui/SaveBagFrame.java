@@ -81,11 +81,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
 	public SaveBagFrame(BagView bagView, String title) {
         super(title);
-		Application app = Application.instance();
-		ApplicationPage page = app.getActiveWindow().getPage();
-		PageComponent component = page.getActiveComponent();
-		if (component != null) this.bagView = (BagView) component;
-		else this.bagView = bagView;
+		this.bagView = bagView;
 		if (bagView != null) {
 			bag = bagView.getBag();
 	        getContentPane().removeAll();

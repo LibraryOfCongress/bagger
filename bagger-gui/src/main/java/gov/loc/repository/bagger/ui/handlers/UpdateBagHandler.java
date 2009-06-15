@@ -28,6 +28,10 @@ public class UpdateBagHandler extends AbstractAction {
 		super();
 		this.bagView = bagView;
 	}
+	
+	public void setBagView(BagView bagView) {
+		this.bagView = bagView;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		this.bag = bagView.getBag();
