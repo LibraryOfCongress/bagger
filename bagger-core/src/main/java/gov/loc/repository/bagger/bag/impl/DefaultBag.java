@@ -121,11 +121,16 @@ public class DefaultBag {
 		init(rootDir);
     }
 	
+	protected void display(String s) {
+		//System.out.println(this.getClass().getName() + ": " + s);
+		log.info(this.getClass().getName() + ": " + s);
+	}
+
 	private void init(File rootDir) {
 		reset();
 		this.rootDir = rootDir;
 		
-		log.debug("DefaultBag.init file: " + rootDir + ", version: " + versionString);
+		display("DefaultBag.init file: " + rootDir + ", version: " + versionString);
 		if (rootDir != null) {
 			bilBag = bagFactory.createBag(this.rootDir);
 			versionString = bilBag.getVersion().versionString;
@@ -166,11 +171,6 @@ public class DefaultBag {
 		this.isValidForms = false;
 		this.isValidMetadata = false;
 		this.isSerialized = false;
-	}
-
-	protected void display(String s) {
-		//System.out.println(this.getClass().getName() + ": " + s);
-		log.info(this.getClass().getName() + ": " + s);
 	}
 
 	public Bag getBag() {
@@ -584,26 +584,22 @@ public class DefaultBag {
 			}
 		}
 	}
-	
+
 	public void createBagInfo(HashMap<String,String> map) {
-//		this.setIsNoProject(false);
-//		this.setIsEdeposit(false);
-//		this.setIsNdnp(false);
-  		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
-		if (bagInfoTxt == null) {
-			bagInfoTxt = bilBag.getBagPartFactory().createBagInfoTxt();
-			bilBag.putBagFile(bagInfoTxt);
-		} 
+		initializeBagInfo();
+		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
 		bilBag.getBagInfoTxt().clear();
-		display("createBagInfo: " + bagInfoTxt.getFilepath());
 		Set<String> keys = map.keySet();
 		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
 			String key = (String) iter.next();
 			String value = (String) map.get(key);
-			bagInfoTxt.put(key, value);
-			copyMapToBag(key, value);
+			if (!value.isEmpty()) {
+				bagInfoTxt.put(key, value);
+				copyMapToBag(key, value);
+			}
 		}
 		bilBag.putBagFile(bagInfoTxt);
+		display("DefaultBag.createBagInfo bagInfo:" + this.bilBag.getBagInfoTxt());
 	}
 
 	private void copyMapToBag(String key, String value) {
@@ -651,30 +647,62 @@ public class DefaultBag {
 		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
 		Contact contact = baggerOrganization.getContact();
 		if (bilBag.getBagInfoTxt() != null) {
-			bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
-			bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrganizationAddress());
-			bilBag.getBagInfoTxt().setContactName(contact.getContactName());
-			bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
-			bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
-			bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
-			bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
-			bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
-			bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
-			bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
-			bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
-			bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
-			bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
-			bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
-			if (this.getIsEdeposit()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
+			if (!baggerOrganization.getSourceOrganization().trim().isEmpty()) {
+				bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
 			}
-			if (this.getIsNdnp()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+			if (!baggerOrganization.getOrganizationAddress().trim().isEmpty()) {
+				bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrganizationAddress());
 			}
-			if (!this.getIsNoProject()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
+			if (!contact.getContactName().trim().isEmpty()) {
+				bilBag.getBagInfoTxt().setContactName(contact.getContactName());
+			}
+			if (!contact.getTelephone().trim().isEmpty()) {
+				bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
+			}
+			if (!contact.getEmail().trim().isEmpty()) {
+				bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
+			}
+			boolean useFieldMap = false;
+			if (useFieldMap) {
+				if (!bagInfo.getExternalDescription().isEmpty()) {
+					bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
+				}
+				if (!bagInfo.getBaggingDate().isEmpty()) {
+					bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
+				}
+				if (!bagInfo.getExternalIdentifier().isEmpty()) {
+					bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
+				}
+				if (!bagInfo.getBagSize().isEmpty()) {
+					bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
+				}
+				if (!bagInfo.getPayloadOxum().isEmpty()) {
+					bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
+				}
+				if (!bagInfo.getBagGroupIdentifier().isEmpty()) {
+					bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
+				}
+				if (!bagInfo.getBagCount().isEmpty()) {
+					bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
+				}
+				if (!bagInfo.getInternalSenderIdentifier().isEmpty()) {
+					bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
+				}
+				if (!bagInfo.getInternalSenderDescription().isEmpty()) {
+					bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
+				}
+				if (this.getIsEdeposit() && !bagInfo.getPublisher().isEmpty()) {
+					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
+				}
+				if (this.getIsNdnp() && !bagInfo.getAwardeePhase().isEmpty()) {
+					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+				}
+				if (!this.getIsNoProject() && !bagInfo.getLcProject().isEmpty()) {
+					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
+				}
 			}
 		}
+		display("DefaultBag.copyFormToBag bagInfo:" + this.bilBag.getBagInfoTxt());
 	}
 
 	public void setInfo(DefaultBagInfo bagInfo) {
@@ -881,7 +909,6 @@ public class DefaultBag {
 
 	public String validateBag(ValidVerifierImpl validVerifier) {
 		String messages = null;
-		display("validateBag");
 		bagToValidate = bilBag;
 		this.validVerifier = validVerifier;
 		try {
@@ -971,6 +998,7 @@ public class DefaultBag {
 			if (newBag != null) bilBag = newBag;
 			this.setIsNewbag(false);
 /* */
+			display("DefaultBag.writeBag bagInfo:" + this.bilBag.getBagInfoTxt());
 			try {
 				String msgs = validateMetadata();
 				if (msgs != null) {
