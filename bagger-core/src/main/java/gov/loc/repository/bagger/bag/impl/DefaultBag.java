@@ -857,9 +857,16 @@ public class DefaultBag {
 		reset();
 		if (this.isHoley) {
 			if (this.getFetch().getBaseURL() != null) {
+				BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+				List<Manifest> bagManifests = bilBag.getPayloadManifests();
 				includeTags = true;
 				includePayloadDirectoryInUrl = true;
 				bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), includePayloadDirectoryInUrl, includeTags);
+				// TODO: makeHoley deletes baginfo and manifests so put back
+				bilBag.putBagFile(bagInfoTxt);
+				for (int i=0; i<bagManifests.size(); i++) {
+					bilBag.putBagFile(bagManifests.get(i));
+				}
 			}
 		}
 		generateManifestFiles();
