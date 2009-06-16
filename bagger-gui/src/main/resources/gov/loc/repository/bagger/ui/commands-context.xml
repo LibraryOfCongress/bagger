@@ -72,11 +72,11 @@
       </list>
     </property>
   </bean>
-
+<!--
   <bean id="helpContentsCommand" class="org.springframework.richclient.command.support.HelpContentsCommand">
 	<property name="helpSetPath" value="help/helpset.hs"/>
   </bean>
-
+  -->
   <bean id="aboutCommand" class="org.springframework.richclient.command.support.AboutCommand">
     <property name="aboutTextPath" value="gov/loc/repository/bagger/about.txt" />
   </bean>
