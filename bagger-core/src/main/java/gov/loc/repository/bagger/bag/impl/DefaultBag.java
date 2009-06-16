@@ -122,8 +122,8 @@ public class DefaultBag {
     }
 	
 	protected void display(String s) {
-		//System.out.println(this.getClass().getName() + ": " + s);
-		log.info(this.getClass().getName() + ": " + s);
+		System.out.println(this.getClass().getName() + ": " + s);
+		//log.info(this.getClass().getName() + ": " + s);
 	}
 
 	private void init(File rootDir) {
@@ -858,15 +858,11 @@ public class DefaultBag {
 		if (this.isHoley) {
 			if (this.getFetch().getBaseURL() != null) {
 				BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
-				List<Manifest> bagManifests = bilBag.getPayloadManifests();
 				includeTags = true;
 				includePayloadDirectoryInUrl = true;
 				bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), includePayloadDirectoryInUrl, includeTags);
-				// TODO: makeHoley deletes baginfo and manifests so put back
+				// TODO: makeHoley deletes baginfo so put back
 				bilBag.putBagFile(bagInfoTxt);
-				for (int i=0; i<bagManifests.size(); i++) {
-					bilBag.putBagFile(bagManifests.get(i));
-				}
 			}
 		}
 		generateManifestFiles();
