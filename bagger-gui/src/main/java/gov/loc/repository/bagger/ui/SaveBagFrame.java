@@ -544,6 +544,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     			bag.setIsHoley(true);
     			urlLabel.setEnabled(true);
     			urlField.setEnabled(true);
+    			urlField.requestFocus();
     		} else {
     			bag.setIsHoley(false);
     			urlLabel.setEnabled(false);
