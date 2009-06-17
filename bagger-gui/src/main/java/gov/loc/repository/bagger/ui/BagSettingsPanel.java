@@ -55,9 +55,8 @@ public class BagSettingsPanel extends JPanel {
 
         JLabel bagNameLabel = new JLabel(bagView.getPropertyMessage("bag.label.name"));
         Dimension labelDim = bagNameLabel.getPreferredSize();
-        bagView.bagNameField = new JTextField(" " + bag.getName() + " ");
-        bagView.bagNameField.setEditable(false);
-        bagView.bagNameField.setEnabled(false);
+        bagView.bagNameField = new JLabel(" " + bag.getName() + " ");
+        bagView.bagNameField.setEnabled(true);
         Dimension fieldDim = bagView.bagInfoInputPane.getPreferredSize();
         Dimension maxFieldDim = new Dimension(fieldDim.width/2, labelDim.height+10);
         bagView.bagNameField.setMaximumSize(maxFieldDim);
@@ -70,10 +69,11 @@ public class BagSettingsPanel extends JPanel {
         for (int i=0; i < vals.length; i++) {
         	versionModel.add(vals[i].versionString);
         }
+        bagView.bagVersionValue = new JLabel(Version.V0_96.versionString);
         bagView.bagVersionList = new JComboBox(versionModel.toArray());
         bagView.bagVersionList.setName(bagView.getPropertyMessage("bag.label.versionlist"));
         bagView.bagVersionList.setSelectedItem(Version.V0_96.versionString);
-        bagView.bagVersion = Version.V0_96.versionString;
+        bagView.bagVersionValue.setText(Version.V0_96.versionString);
         bagView.bagVersionList.addActionListener(new VersionListHandler(bagView));
         bagView.bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
 
@@ -116,6 +116,7 @@ public class BagSettingsPanel extends JPanel {
         // Holey bag control
         JLabel holeyLabel = new JLabel(bagView.getPropertyMessage("bag.label.isholey"));
         holeyLabel.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
+        bagView.holeyValue = new JLabel("false");
         bagView.holeyCheckbox = new JCheckBox(bagView.getPropertyMessage("bag.checkbox.isholey"));
         bagView.holeyCheckbox.setBorder(border);
         bagView.holeyCheckbox.setSelected(false);
@@ -126,6 +127,7 @@ public class BagSettingsPanel extends JPanel {
         // Bag is to be serialized control
         bagView.serializeLabel = new JLabel(bagView.getPropertyMessage("bag.label.ispackage"));
         bagView.serializeLabel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
+        bagView.serializeValue = new JLabel("none");
         bagView.noneButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.none"));
         bagView.noneButton.setSelected(true);
         bagView.noneButton.setEnabled(false);
@@ -213,14 +215,6 @@ public class BagSettingsPanel extends JPanel {
         this.add(bagView.bagNameField);
         row++;
         bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagVersionLabel, gbc);
-        this.add(bagVersionLabel);
-        bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagView.bagVersionList, gbc);
-        this.add(bagView.bagVersionList);
-        bagView.bagVersionList.setEnabled(false);
-        row++;
-        bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(projectLabel, gbc);
         this.add(projectLabel);
         bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -232,18 +226,26 @@ public class BagSettingsPanel extends JPanel {
         bagView.defaultProject.setEnabled(false);
         row++;
         bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagVersionLabel, gbc);
+        this.add(bagVersionLabel);
+        bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        gridLayout.setConstraints(bagView.bagVersionValue, gbc);
+        this.add(bagView.bagVersionValue);
+        bagView.bagVersionList.setEnabled(false);
+        row++;
+        bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(holeyLabel, gbc);
         this.add(holeyLabel);
         bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagView.holeyCheckbox, gbc);
-        this.add(bagView.holeyCheckbox);
+        gridLayout.setConstraints(bagView.holeyValue, gbc);
+        this.add(bagView.holeyValue);
         bagView.holeyCheckbox.setEnabled(false);
         row++;
         bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
         gridLayout.setConstraints(bagView.serializeLabel, gbc);
         this.add(bagView.serializeLabel);
         bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        gridLayout.setConstraints(bagView.serializeGroupPanel, gbc);
-        this.add(bagView.serializeGroupPanel);
+        gridLayout.setConstraints(bagView.serializeValue, gbc);
+        this.add(bagView.serializeValue);
     }
 }

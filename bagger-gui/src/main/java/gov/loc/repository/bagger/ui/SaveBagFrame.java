@@ -333,21 +333,27 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     	if (mode == DefaultBag.NO_MODE) {
     		noneButton.setEnabled(true);
     		noneButton.setSelected(true);
+    		bagView.serializeValue.setText(DefaultBag.NO_LABEL);
     	} else if (mode == DefaultBag.ZIP_MODE) {
     		zipButton.setEnabled(true);
     		zipButton.setSelected(true);
+    		bagView.serializeValue.setText(DefaultBag.ZIP_LABEL);
     	} else if (mode == DefaultBag.TAR_MODE) {
     		tarButton.setEnabled(true);
     		tarButton.setSelected(true);
+    		bagView.serializeValue.setText(DefaultBag.TAR_LABEL);
     	} else if (mode == DefaultBag.TAR_GZ_MODE) {
     		tarGzButton.setEnabled(true);
     		tarGzButton.setSelected(true);
+    		bagView.serializeValue.setText(DefaultBag.TAR_GZ_LABEL);
     	} else if (mode == DefaultBag.TAR_BZ2_MODE) {
     		tarBz2Button.setEnabled(true);
     		tarBz2Button.setSelected(true);
+    		bagView.serializeValue.setText(DefaultBag.TAR_BZ2_LABEL);
     	} else {
     		noneButton.setEnabled(true);
     		noneButton.setSelected(true);
+    		bagView.serializeValue.setText(DefaultBag.NO_LABEL);
     	}
     	savePanel.invalidate();
     }
@@ -366,21 +372,27 @@ public class SaveBagFrame extends JFrame implements ActionListener {
             	if (cb == noneButton) {
                 	bagView.getBag().isSerial(false);
                 	bagView.getBag().setSerialMode(DefaultBag.NO_MODE);
+            		bagView.serializeValue.setText(DefaultBag.NO_LABEL);
             	} else if (cb == zipButton) {
             		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.ZIP_MODE);
+            		bagView.serializeValue.setText(DefaultBag.ZIP_LABEL);
             	} else if (cb == tarButton) {
             		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.TAR_MODE);
+            		bagView.serializeValue.setText(DefaultBag.TAR_LABEL);
             	} else if (cb == tarGzButton) {
             		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.TAR_GZ_MODE);
+            		bagView.serializeValue.setText(DefaultBag.TAR_GZ_LABEL);
             	} else if (cb == tarBz2Button) {
             		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.TAR_BZ2_MODE);
+            		bagView.serializeValue.setText(DefaultBag.TAR_BZ2_LABEL);
             	} else {
             		bagView.getBag().isSerial(false);
             		bagView.getBag().setSerialMode(DefaultBag.NO_MODE);
+            		bagView.serializeValue.setText(DefaultBag.NO_LABEL);
             	}
             }
         }
@@ -425,6 +437,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	            File file = fs.getSelectedFile();
 	            bagFile = file;
 	            bagFileName = bagFile.getAbsolutePath();
+	            bagView.bagNameField.setText(bagFile.getName());
 	            bagNameField.setText(bagFileName);
 	            bagNameField.setCaretPosition(bagFileName.length());
 	            bagNameField.invalidate();
@@ -449,13 +462,13 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 					bagView.getBag().getFetch().setBaseURL(urlField.getText().trim());
 				}
 				bagView.holeyCheckbox.setSelected(true);
+				bagView.holeyValue.setText("true");
 			} else {
 				bagView.holeyCheckbox.setSelected(false);
+				bagView.holeyValue.setText("false");
 			}
 			setVisible(false);
             bagView.getBag().setName(bagFileName);
-            bagView.bagNameField.setText(bagFileName);
-            bagView.bagNameField.setCaretPosition(bagFileName.length());
             bagView.bagNameField.invalidate();
 			bagView.save(bagFile);
         }
@@ -542,11 +555,13 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     		boolean isSelected = cb.isSelected();
     		if (isSelected) {
     			bag.isHoley(true);
+    			bagView.serializeValue.setText("true");
     			urlLabel.setEnabled(true);
     			urlField.setEnabled(true);
     			urlField.requestFocus();
     		} else {
     			bag.isHoley(false);
+    			bagView.serializeValue.setText("false");
     			urlLabel.setEnabled(false);
     			urlField.setEnabled(false);
     		}

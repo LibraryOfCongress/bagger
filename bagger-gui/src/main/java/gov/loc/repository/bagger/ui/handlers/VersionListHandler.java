@@ -32,7 +32,8 @@ public class VersionListHandler extends AbstractAction {
 		this.bag = bagView.getBag();
 
     	JComboBox jlist = (JComboBox)e.getSource();
-    	bagView.bagVersion = (String) jlist.getSelectedItem();
-    	bag.setVersion(bagView.bagVersion);
+    	String value = (String) jlist.getSelectedItem();
+    	bagView.bagVersionValue.setText(value);
+    	bag.setVersion(value);
 	}
 }

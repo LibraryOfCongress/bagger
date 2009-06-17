@@ -14,6 +14,7 @@ import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
+import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
@@ -99,10 +100,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     public Collection<Profile> userProfiles;
     private BaggerProfile baggerProfile = new BaggerProfile();
     public String username;
-    public String bagVersion = null;
     public Contact projectContact;
 	private String userHomeDir;
-	//private boolean completeFlag = true;
 
 	public BagTree bagPayloadTree;
 	public BagTreePanel bagPayloadTreePanel;
@@ -133,13 +132,16 @@ public class BagView extends AbstractView implements ApplicationListener {
     public JButton updatePropButton;
     public SaveBagFrame saveBagFrame;
     public NewBagFrame newBagFrame;
-    public JTextField bagNameField;
+    public JLabel bagNameField;
     public JComboBox bagVersionList;
+    public JLabel bagVersionValue = new JLabel(Version.V0_96.versionString);
     public JComboBox projectList;
     public JCheckBox defaultProject;
     public JCheckBox holeyCheckbox;
+    public JLabel holeyValue;
     public JLabel serializeLabel;
     public JPanel serializeGroupPanel;
+    public JLabel serializeValue;
     public JRadioButton noneButton;
     public JRadioButton zipButton;
     public JRadioButton tarButton;
@@ -468,11 +470,14 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagInfoInputPane.setEnabled(b);
         defaultProject.setEnabled(b);
         holeyCheckbox.setEnabled(false);
-        bagNameField.setEnabled(false);
+        holeyValue.setText("false");
         serializeGroupPanel.setEnabled(false);
         zipButton.setEnabled(false);
         tarButton.setEnabled(false);
+        tarGzButton.setEnabled(false);
+        tarBz2Button.setEnabled(false);
         noneButton.setEnabled(false);
+        serializeValue.setText("none");
     }
 
     public void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
@@ -682,7 +687,12 @@ public class BagView extends AbstractView implements ApplicationListener {
         		if (fileName != null && !fileName.isEmpty()) {
             		try {
             			b.removeBagFile(fileName);
-                	    model.removeNodeFromParent((MutableTreeNode)node);
+            			if (node instanceof MutableTreeNode) {
+            				model.removeNodeFromParent((MutableTreeNode)node);
+            			} else {
+            				DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(node);
+            				model.removeNodeFromParent((MutableTreeNode)aNode);
+            			}
             		} catch (Exception e) {
             			try {
                 			b.removePayloadDirectory(fileName);
@@ -964,9 +974,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         		saveBag(bagRootPath);
         	}
     	}
-        String fileName = bagFile.getAbsolutePath();
+        String fileName = bagFile.getName(); //bagFile.getAbsolutePath();
         bagNameField.setText(fileName);
-        bagNameField.setCaretPosition(fileName.length());
+        //bagNameField.setCaretPosition(fileName.length());
     }
 
     private void confirmWriteBag() {
@@ -1081,6 +1091,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bag.getInfo().setFieldMap(null);
     	bag.getInfo().setProfileMap(null);
         holeyCheckbox.setSelected(false);
+        holeyValue.setText("false");
         this.baggerRules.clear();
     	bag.isNewbag(true);
     	bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
@@ -1198,14 +1209,14 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     public void newDefaultBag(File f) {
     	String bagName = "";
-    	bag = new DefaultBag(f, bagVersion);
+    	bag = new DefaultBag(f, bagVersionValue.getText());
     	if (f == null) {
         	bagName = getPropertyMessage("bag.label.noname");
     	} else {
 	    	bagName = f.getName();
 	        String fileName = f.getAbsolutePath();
-	        bagNameField.setText(fileName);
-	        bagNameField.setCaretPosition(fileName.length());
+	        bagNameField.setText(bagName);
+	        //bagNameField.setCaretPosition(fileName.length());
     	}
 		bag.setName(bagName);
     }
@@ -1241,12 +1252,13 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     	bagInfoInputPane.enableForms(bag, true);
     	clearExistingBag(messages);
-        bagVersionList.setSelectedItem(bagVersion);
+        bagVersionList.setSelectedItem(bagVersionValue.getText());
+        bagVersionValue.setText(bagVersionValue.getText());
 
     	String bagName = getPropertyMessage("bag.label.noname");
 		bag.setName(bagName);
         bagNameField.setText(bagName);
-        bagNameField.setCaretPosition(bagName.length());
+        //bagNameField.setCaretPosition(bagName.length());
 		bag.setRootDir(bagRootPath);
 		messages = updateBaggerRules();
     	initializeProfile();
@@ -1329,9 +1341,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 		File bagFile = new File(bagDirectory, bag.getName());
 		bagRootPath = bagDirectory;
 		bag.setRootDir(bagRootPath);
-        String fileName = bagFile.getAbsolutePath();
+        String fileName = bagFile.getName(); //bagFile.getAbsolutePath();
         bagNameField.setText(fileName);
-        bagNameField.setCaretPosition(fileName.length());
+        //bagNameField.setCaretPosition(fileName.length());
 
         File[] files = data.listFiles();
         if (files != null) {
@@ -1419,11 +1431,11 @@ public class BagView extends AbstractView implements ApplicationListener {
     	    //showWarningErrorDialog("Warning - file not opened", "Error trying to open file: " + file + "\n" + ex.getMessage());
     	    return;
 		}
-        bagVersion = bag.getVersion();
-        bagVersionList.setSelectedItem(bagVersion);
-        String fileName = file.getAbsolutePath();
+        bagVersionValue.setText(bag.getVersion());
+        bagVersionList.setSelectedItem(bagVersionValue.getText());
+        String fileName = file.getName(); //file.getAbsolutePath();
         bagNameField.setText(fileName);
-        bagNameField.setCaretPosition(fileName.length());
+        //bagNameField.setCaretPosition(fileName.length());
         bagNameField.invalidate();
 
         bag.getInfo().setBag(bag);
@@ -1435,6 +1447,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	} 
 	    if (bag.isHoley()) {
 	        holeyCheckbox.setSelected(true);
+	        holeyValue.setText("true");
 	    }
 	    if (!bag.getInfo().getLcProject().isEmpty()){
     		messages += updateProject(bag.getInfo().getLcProject());
