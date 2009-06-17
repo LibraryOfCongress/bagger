@@ -325,7 +325,27 @@ public class BagView extends AbstractView implements ApplicationListener {
     	createSkeletonButton.setToolTipText(getPropertyMessage("bag.button.createskeleton.help"));
     	buttonPanel.add(createSkeletonButton);
 
-    	validateButton = new JButton(getPropertyMessage("bag.button.validate"));
+        saveButton = new JButton(getPropertyMessage("bag.button.save"));
+        saveBagHandler = new SaveBagHandler();
+        saveButton.addActionListener(saveBagHandler);
+        saveButton.setEnabled(false);
+        saveButton.setOpaque(true);
+        saveButton.setBackground(bgColor);
+        saveButton.setForeground(fgColor);
+        saveButton.setToolTipText(getPropertyMessage("bag.button.save.help"));
+        buttonPanel.add(saveButton);
+
+    	saveAsButton = new JButton(getPropertyMessage("bag.button.saveas"));
+    	saveAsButton.addActionListener(new SaveBagAsHandler(this));
+        saveAsButton.setEnabled(false);
+        saveAsButton.setOpaque(true);
+        saveAsButton.setBackground(bgColor);
+        saveAsButton.setForeground(fgColor);
+        saveAsButton.setToolTipText(getPropertyMessage("bag.button.saveas.help"));
+        saveBagFrame = new SaveBagFrame(this, getPropertyMessage("bag.frame.save"));
+        buttonPanel.add(saveAsButton);
+
+        validateButton = new JButton(getPropertyMessage("bag.button.validate"));
     	validateBagHandler = new ValidateBagHandler();
         validateButton.addActionListener(validateBagHandler);
         validateButton.setEnabled(false);
@@ -415,8 +435,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	removeDataButton.addActionListener(new RemoveDataHandler());
     	removeDataButton.setEnabled(false);
     	removeDataButton.setToolTipText(getPropertyMessage("bag.button.remove.help"));
-    	savePanel.add(removeDataButton, BorderLayout.NORTH);
-    	
+    	buttonPanel.add(removeDataButton, BorderLayout.CENTER);
+/*    	
         saveButton = new JButton(getPropertyMessage("bag.button.save"));
         saveBagHandler = new SaveBagHandler();
         saveButton.addActionListener(saveBagHandler);
@@ -432,7 +452,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         savePanel.add(saveAsButton, BorderLayout.SOUTH);
 
         buttonPanel.add(savePanel, BorderLayout.CENTER);
-        
+*/        
         return buttonPanel;
     }
     
