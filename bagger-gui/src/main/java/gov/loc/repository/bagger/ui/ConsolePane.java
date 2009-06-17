@@ -89,7 +89,7 @@ public class ConsolePane extends JPanel {
         buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validMetaLabel, gbc);
         this.add(validMetaLabel);
-    	JLabel validMetaResult = new JLabel("unchecked");
+    	JLabel validMetaResult = new JLabel(parentView.getPropertyMessage("bag.label.unchecked"));
     	validMetaResult.setToolTipText(parentView.getPropertyMessage("consolepane.ismetadata.help"));
     	font = validMetaResult.getFont().deriveFont(Font.BOLD);
     	validMetaResult.setFont(font);
@@ -97,7 +97,7 @@ public class ConsolePane extends JPanel {
     		if (defaultBag.isValidMetadata()) validMetaResult.setText("yes");
     		else validMetaResult.setText("no");
     	} else {
-    		validMetaResult.setText("unchecked");
+    		validMetaResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
     	}
     	validMetaResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -114,7 +114,7 @@ public class ConsolePane extends JPanel {
         buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeLabel, gbc);
         this.add(completeLabel);
-    	JLabel completeResult = new JLabel("unchecked");
+    	JLabel completeResult = new JLabel(parentView.getPropertyMessage("bag.label.unchecked"));
     	completeResult.setToolTipText(parentView.getPropertyMessage("consolepane.iscomplete.help"));
     	font = completeResult.getFont().deriveFont(Font.BOLD);
     	completeResult.setFont(font);
@@ -122,7 +122,7 @@ public class ConsolePane extends JPanel {
     		if (defaultBag.isComplete()) completeResult.setText("yes");
     		else completeResult.setText("no");
     	} else {
-    		completeResult.setText("unchecked");
+    		completeResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
     	}
     	completeResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -139,13 +139,15 @@ public class ConsolePane extends JPanel {
     	buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	layout.setConstraints(serializedLabel, gbc);
     	this.add(serializedLabel);
-    	JLabel serializedResult = new JLabel("unchecked");
+    	JLabel serializedResult = new JLabel(parentView.getPropertyMessage("bag.label.unchecked"));
     	serializedResult.setToolTipText(parentView.getPropertyMessage("consolepane.isbagged.help"));
     	font = serializedResult.getFont().deriveFont(Font.BOLD);
     	serializedResult.setFont(font);
     	if (defaultBag != null) {
     		if (defaultBag.isSerialized()) serializedResult.setText("yes");
     		else serializedResult.setText("no");
+    	} else {
+    		serializedResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
     	}
     	serializedResult.setPreferredSize(formDimension);
     	buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -162,7 +164,7 @@ public class ConsolePane extends JPanel {
         buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validLabel, gbc);
         this.add(validLabel);
-    	JLabel validResult = new JLabel("unchecked");
+    	JLabel validResult = new JLabel(parentView.getPropertyMessage("bag.label.unchecked"));
     	validResult.setToolTipText(parentView.getPropertyMessage("consolepane.isvalid.help"));
     	font = validResult.getFont().deriveFont(Font.BOLD);
     	validResult.setFont(font);
@@ -170,7 +172,7 @@ public class ConsolePane extends JPanel {
     		if (defaultBag.isValid()) validResult.setText("yes");
     		else validResult.setText("no");
     	} else {
-    		validResult.setText("unchecked");
+    		validResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
     	}
     	validResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
