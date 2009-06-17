@@ -124,8 +124,8 @@ public class DefaultBag {
     }
 	
 	protected void display(String s) {
-		System.out.println(this.getClass().getName() + ": " + s);
-		//log.info(this.getClass().getName() + ": " + s);
+		//System.out.println(this.getClass().getName() + ": " + s);
+		log.info(this.getClass().getName() + ": " + s);
 	}
 
 	private void init(File rootDir) {
@@ -439,68 +439,68 @@ public class DefaultBag {
 		}
 		BaggerOrganization baggerOrganization = new BaggerOrganization();
 		Contact contact = new Contact();
-		if (bagInfoTxt.getContactName() != null && !bagInfoTxt.getContactName().isEmpty()) 
+		if (bagInfoTxt.getContactName() != null && !bagInfoTxt.getContactName().trim().isEmpty()) 
     		contact.setContactName(bagInfoTxt.getContactName());
 		else
-    		contact.setContactName("");		
-		if (bagInfoTxt.getContactPhone() != null && !bagInfoTxt.getContactPhone().isEmpty()) 
+    		contact.setContactName("");
+		if (bagInfoTxt.getContactPhone() != null && !bagInfoTxt.getContactPhone().trim().isEmpty()) 
     		contact.setTelephone(bagInfoTxt.getContactPhone());
 		else
     		contact.setTelephone("");
-		if (bagInfoTxt.getContactEmail() != null && !bagInfoTxt.getContactEmail().isEmpty()) 
+		if (bagInfoTxt.getContactEmail() != null && !bagInfoTxt.getContactEmail().trim().isEmpty()) 
     		contact.setEmail(bagInfoTxt.getContactEmail());
 		else
     		contact.setEmail("");
 		baggerOrganization.setContact(contact);
-		if (bagInfoTxt.getSourceOrganization() != null && !bagInfoTxt.getSourceOrganization().isEmpty()) 
+		if (bagInfoTxt.getSourceOrganization() != null && !bagInfoTxt.getSourceOrganization().trim().isEmpty()) 
     		baggerOrganization.setSourceOrganization(bagInfoTxt.getSourceOrganization());
 		else
     		baggerOrganization.setSourceOrganization("");
-		if (bagInfoTxt.getOrganizationAddress() != null && !bagInfoTxt.getOrganizationAddress().isEmpty()) 
+		if (bagInfoTxt.getOrganizationAddress() != null && !bagInfoTxt.getOrganizationAddress().trim().isEmpty()) 
     		baggerOrganization.setOrganizationAddress(bagInfoTxt.getOrganizationAddress());
 		else
     		baggerOrganization.setOrganizationAddress("");
 		this.bagInfo.setBagOrganization(baggerOrganization);
 		/* */
-		if (bagInfoTxt.getExternalDescription() != null && !bagInfoTxt.getExternalDescription().isEmpty())
+		if (bagInfoTxt.getExternalDescription() != null && !bagInfoTxt.getExternalDescription().trim().isEmpty())
 			this.bagInfo.setExternalDescription(bagInfoTxt.getExternalDescription());
 		else
 			this.bagInfo.setExternalDescription("");
-		if (bagInfoTxt.getBaggingDate() != null && !bagInfoTxt.getBaggingDate().isEmpty())
+		if (bagInfoTxt.getBaggingDate() != null && !bagInfoTxt.getBaggingDate().trim().isEmpty())
 			this.bagInfo.setBaggingDate(bagInfoTxt.getBaggingDate());
 		else
 			this.bagInfo.setBaggingDate(DefaultBagInfo.getTodaysDate());
-		if (bagInfoTxt.getExternalIdentifier() != null && !bagInfoTxt.getExternalIdentifier().isEmpty())
+		if (bagInfoTxt.getExternalIdentifier() != null && !bagInfoTxt.getExternalIdentifier().trim().isEmpty())
 			this.bagInfo.setExternalIdentifier(bagInfoTxt.getExternalIdentifier());
 		else
 			this.bagInfo.setExternalIdentifier("");
-		if (bagInfoTxt.getBagSize() != null && !bagInfoTxt.getBagSize().isEmpty())
+		if (bagInfoTxt.getBagSize() != null && !bagInfoTxt.getBagSize().trim().isEmpty())
 			this.bagInfo.setBagSize(bagInfoTxt.getBagSize());
 		else
 			this.bagInfo.setBagSize("");
-		if (bagInfoTxt.getPayloadOxum() != null && !bagInfoTxt.getPayloadOxum().isEmpty())
+		if (bagInfoTxt.getPayloadOxum() != null && !bagInfoTxt.getPayloadOxum().trim().isEmpty())
 			this.bagInfo.setPayloadOxum(bagInfoTxt.getPayloadOxum());
 		else
 			this.bagInfo.setPayloadOxum("");
-		if (bagInfoTxt.getBagGroupIdentifier() != null && !bagInfoTxt.getBagGroupIdentifier().isEmpty())
+		if (bagInfoTxt.getBagGroupIdentifier() != null && !bagInfoTxt.getBagGroupIdentifier().trim().isEmpty())
 			this.bagInfo.setBagGroupIdentifier(bagInfoTxt.getBagGroupIdentifier());
 		else
 			this.bagInfo.setBagGroupIdentifier("");
-		if (bagInfoTxt.getBagCount() != null && !bagInfoTxt.getBagCount().isEmpty())
+		if (bagInfoTxt.getBagCount() != null && !bagInfoTxt.getBagCount().trim().isEmpty())
 			this.bagInfo.setBagCount(bagInfoTxt.getBagCount());
 		else
 			this.bagInfo.setBagCount("");
-		if (bagInfoTxt.getInternalSenderIdentifier() != null && !bagInfoTxt.getInternalSenderIdentifier().equalsIgnoreCase("null"))
+		if (bagInfoTxt.getInternalSenderIdentifier() != null && !bagInfoTxt.getInternalSenderIdentifier().trim().isEmpty())
 			this.bagInfo.setInternalSenderIdentifier(bagInfoTxt.getInternalSenderIdentifier());
 		else
 			this.bagInfo.setInternalSenderIdentifier("");
-		if (bagInfoTxt.getInternalSenderDescription() != null && !bagInfoTxt.getInternalSenderDescription().equalsIgnoreCase("null"))
+		if (bagInfoTxt.getInternalSenderDescription() != null && !bagInfoTxt.getInternalSenderDescription().trim().isEmpty())
 			this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
 		else
 			this.bagInfo.setInternalSenderDescription("");
 		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
 			String publisher = bagInfoTxt.get(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
-			if (publisher != null && !publisher.isEmpty()) {
+			if (publisher != null && !publisher.trim().isEmpty()) {
 				this.bagInfo.setPublisher(publisher);
 			} else {
 				this.bagInfo.setPublisher("");
@@ -509,7 +509,7 @@ public class DefaultBag {
 		}
 		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
 			String awardeePhase = bagInfoTxt.get(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
-			if (awardeePhase != null && !awardeePhase.isEmpty()) {
+			if (awardeePhase != null && !awardeePhase.trim().isEmpty()) {
 				this.bagInfo.setAwardeePhase(awardeePhase);
 			} else {
 				this.bagInfo.setAwardeePhase("");
@@ -518,7 +518,7 @@ public class DefaultBag {
 		}
 		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
 			String lcProject = bagInfoTxt.get(DefaultBagInfo.FIELD_LC_PROJECT);
-			if (lcProject != null && !lcProject.isEmpty()) {
+			if (lcProject != null && !lcProject.trim().isEmpty()) {
 				this.bagInfo.setLcProject(lcProject);
 			} else {
 				this.bagInfo.setLcProject("");
@@ -560,55 +560,55 @@ public class DefaultBag {
 		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
 		Contact contact = baggerOrganization.getContact();
 		if (bilBag.getBagInfoTxt() != null) {
-			if (!baggerOrganization.getSourceOrganization().isEmpty()) {
+			if (!baggerOrganization.getSourceOrganization().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
 			}
-			if (!baggerOrganization.getOrganizationAddress().isEmpty()) {
+			if (!baggerOrganization.getOrganizationAddress().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrganizationAddress());
 			}
-			if (!contact.getContactName().isEmpty()) {
+			if (!contact.getContactName().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setContactName(contact.getContactName());
 			}
-			if (!contact.getTelephone().isEmpty()) {
+			if (!contact.getTelephone().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
 			}
-			if (!contact.getEmail().isEmpty()) {
+			if (!contact.getEmail().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
 			}
-			if (!bagInfo.getExternalDescription().isEmpty()) {
+			if (!bagInfo.getExternalDescription().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
 			}
-			if (!bagInfo.getBaggingDate().isEmpty()) {
+			if (!bagInfo.getBaggingDate().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
 			}
-			if (!bagInfo.getExternalIdentifier().isEmpty()) {
+			if (!bagInfo.getExternalIdentifier().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
 			}
-			if (!bagInfo.getBagSize().isEmpty()) {
+			if (!bagInfo.getBagSize().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
 			}
-			if (!bagInfo.getPayloadOxum().isEmpty()) {
+			if (!bagInfo.getPayloadOxum().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
 			}
-			if (!bagInfo.getBagGroupIdentifier().isEmpty()) {
+			if (!bagInfo.getBagGroupIdentifier().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
 			}
-			if (!bagInfo.getBagCount().isEmpty()) {
+			if (!bagInfo.getBagCount().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
 			}
-			if (!bagInfo.getInternalSenderIdentifier().isEmpty()) {
+			if (!bagInfo.getInternalSenderIdentifier().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
 			}
-			if (!bagInfo.getInternalSenderDescription().isEmpty()) {
+			if (!bagInfo.getInternalSenderDescription().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
 			}
-			if (this.isEdeposit()) {
+			if (this.isEdeposit() && !bagInfo.getPublisher().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
 			}
-			if (this.isNdnp()) {
+			if (this.isNdnp() && !bagInfo.getAwardeePhase().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
 			}
-			if (!this.isNoProject()) {
+			if (!this.isNoProject() && !bagInfo.getLcProject().trim().isEmpty()) {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
 			}
 		}
@@ -622,7 +622,7 @@ public class DefaultBag {
 		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
 			String key = (String) iter.next();
 			String value = (String) map.get(key);
-			if (!value.isEmpty()) {
+			if (!value.trim().isEmpty()) {
 				bagInfoTxt.put(key, value);
 				copyMapToBag(key, value);
 			}
@@ -693,40 +693,40 @@ public class DefaultBag {
 			}
 			boolean useFieldMap = false;
 			if (useFieldMap) {
-				if (!bagInfo.getExternalDescription().isEmpty()) {
+				if (!bagInfo.getExternalDescription().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
 				}
-				if (!bagInfo.getBaggingDate().isEmpty()) {
+				if (!bagInfo.getBaggingDate().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
 				}
-				if (!bagInfo.getExternalIdentifier().isEmpty()) {
+				if (!bagInfo.getExternalIdentifier().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
 				}
-				if (!bagInfo.getBagSize().isEmpty()) {
+				if (!bagInfo.getBagSize().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
 				}
-				if (!bagInfo.getPayloadOxum().isEmpty()) {
+				if (!bagInfo.getPayloadOxum().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
 				}
-				if (!bagInfo.getBagGroupIdentifier().isEmpty()) {
+				if (!bagInfo.getBagGroupIdentifier().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
 				}
-				if (!bagInfo.getBagCount().isEmpty()) {
+				if (!bagInfo.getBagCount().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
 				}
-				if (!bagInfo.getInternalSenderIdentifier().isEmpty()) {
+				if (!bagInfo.getInternalSenderIdentifier().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
 				}
-				if (!bagInfo.getInternalSenderDescription().isEmpty()) {
+				if (!bagInfo.getInternalSenderDescription().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
 				}
-				if (this.isEdeposit() && !bagInfo.getPublisher().isEmpty()) {
+				if (this.isEdeposit() && !bagInfo.getPublisher().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
 				}
-				if (this.isNdnp() && !bagInfo.getAwardeePhase().isEmpty()) {
+				if (this.isNdnp() && !bagInfo.getAwardeePhase().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
 				}
-				if (!this.isNoProject() && !bagInfo.getLcProject().isEmpty()) {
+				if (!this.isNoProject() && !bagInfo.getLcProject().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
 				}
 			}
