@@ -30,6 +30,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -684,7 +685,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                     	    model.removeNodeFromParent((MutableTreeNode)node);
             			} catch (Exception ex) {
                 			message = "Error trying to remove: " + fileName + "\n";
-                			showWarningErrorDialog(message + ex.getMessage());
+                			showWarningErrorDialog("Error - file not removed", message + ex.getMessage());
             			}
             		}
         		}
@@ -771,11 +772,11 @@ public class BagView extends AbstractView implements ApplicationListener {
         	bag.getBag().addFileToPayload(file);
         	boolean alreadyExists = bagPayloadTree.addNodes(file, false);
         	if (alreadyExists) {
-        	    showWarningErrorDialog("File: " + file.getName() + "\n" + "already exists in bag.");
+        	    showWarningErrorDialog("Warning - file already exists", "File: " + file.getName() + "\n" + "already exists in bag.");
         	}
         } catch (Exception e) {
         	log.error("BagView.addBagData: " + e);
-    	    showWarningErrorDialog("Error adding bag file: " + file + "\ndue to:\n" + e.getMessage());
+    	    showWarningErrorDialog("Error - file not added", "Error adding bag file: " + file + "\ndue to:\n" + e.getMessage());
         }
     	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
     }
@@ -834,7 +835,8 @@ public class BagView extends AbstractView implements ApplicationListener {
             		validVerifier.addProgressListener(task);
             		/* */
                     String messages = bag.validateBag(validVerifier);
-            	    if (messages != null && !messages.isEmpty()) showWarningErrorDialog("Validation result: " + messages);
+            	    if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);
+            	    else showWarningErrorDialog("Validation Dialog", "Validaiton successful.");
                 	setBag(bag);
                 	compositePane.updateCompositePaneTabs(bag, messages);
                     if (task.current >= task.lengthOfTask) {
@@ -846,7 +848,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } catch (InterruptedException e) {
                 	e.printStackTrace();
                 	task.current = task.lengthOfTask;
-            	    showWarningErrorDialog("Error trying validate bag: " + e.getMessage());
+            	    showWarningErrorDialog("Warning - validation interrupted", "Error trying validate bag: " + e.getMessage());
                 }
             }
         	statusBarEnd();
@@ -1031,7 +1033,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                     compositePane.updateCompositePaneTabs(bag, messages);
                     updateManifestPane();
 
-                    if (messages != null && !messages.isEmpty()) showWarningErrorDialog("Warning saving bag:\n" + messages);
+                    if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
             		if (bag.isValidateOnSave()) {
             			validateBag();
             		}
@@ -1041,11 +1043,11 @@ public class BagView extends AbstractView implements ApplicationListener {
                     }
                 } catch (InterruptedException e) {
         			bag.isSerialized(false);
-        			showWarningErrorDialog("Error saving bag: " + bagRootPath + "\n" + e.getMessage());
+        			showWarningErrorDialog("Warning - save interrupted", "Problem saving bag: " + bagRootPath + "\n" + e.getMessage());
                 	e.printStackTrace();
                 } catch (Exception e) {
         			bag.isSerialized(false);
-        			showWarningErrorDialog("Error saving bag: " + bagRootPath + "\n" + e.getMessage());
+        			showWarningErrorDialog("Error - bag not saved", "Error saving bag: " + bagRootPath + "\n" + e.getMessage());
                 	e.printStackTrace();
                 }
         	}
@@ -1058,8 +1060,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         statusBarBegin(saveBagHandler, "Writing bag...", 1L);
     }
 
-    public void showWarningErrorDialog(String msg) {
-    	MessageDialog dialog = new MessageDialog(getPropertyMessage("bag.dialog.error"), msg);
+    public void showWarningErrorDialog(String title, String msg) {
+    	MessageDialog dialog = new MessageDialog(title, msg);
 	    dialog.showDialog();
     }
 
@@ -1404,7 +1406,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 		} catch (Exception ex) {
 			log.error("openExistingBag DefaultBag: " + ex.getMessage());
         	messages +=  "Failed to create bag: " + ex.getMessage() + "\n";
-    	    showWarningErrorDialog("Error trying to open file: " + file + "\n" + ex.getMessage());
+    	    //showWarningErrorDialog("Warning - file not opened", "Error trying to open file: " + file + "\n" + ex.getMessage());
     	    return;
 		}
         bagVersion = bag.getVersion();
@@ -1557,7 +1559,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             	    model.removeNodeFromParent((MutableTreeNode)node);
     			} catch (Exception e) {
             	    message += "Error trying to remove file: " + node + "\n";
-            	    showWarningErrorDialog("Error trying to remove file: " + node + "\n" + e.getMessage());
+            	    showWarningErrorDialog("Error - file not removed", "Error trying to remove file: " + node + "\n" + e.getMessage());
     			}
         	}
         	bagTagFileTree.removeSelectionPaths(paths);
@@ -1608,6 +1610,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     	StringBuffer buffer = new StringBuffer();
     	buffer.append(getPropertyMessage("consolepane.msg.help"));
     	buffer.append("\n\n");
+    	buffer.append(getPropertyMessage("compositePane.message.isSerialized"));
+    	buffer.append("\n");
+    	buffer.append(getPropertyMessage("consolepane.isserialized.help"));
+    	buffer.append("\n\n");
     	buffer.append(getPropertyMessage("compositePane.message.isMetadata"));
     	buffer.append("\n");
     	buffer.append(getPropertyMessage("consolepane.ismetadata.help"));
@@ -1616,13 +1622,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buffer.append("\n");
     	buffer.append(getPropertyMessage("consolepane.iscomplete.help"));
     	buffer.append("\n\n");
-    	buffer.append(getPropertyMessage("compositePane.message.isSerialized"));
-    	buffer.append("\n");
-    	buffer.append(getPropertyMessage("consolepane.isserialized.help"));
-    	buffer.append("\n\n");
     	buffer.append(getPropertyMessage("compositePane.message.isValid"));
     	buffer.append("\n");
     	buffer.append(getPropertyMessage("consolepane.isvalid.help"));
+    	buffer.append("\n\n");
     	return buffer.toString();
     }
 
