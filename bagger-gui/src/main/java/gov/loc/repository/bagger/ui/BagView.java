@@ -51,6 +51,7 @@ import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.Timer;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -570,7 +571,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     	for (int i=0; i < profiles.length; i++) {
     		Profile profile = (Profile) profiles[i];
     		if (profile.getProject().getId() == project.getId()) {
+    			BaggerOrganization org = bag.getInfo().getBagOrganization();
     			Contact orgContact = bag.getInfo().getBagOrganization().getContact();
+    			orgContact.getOrganization().setName(org.getSourceOrganization());
+    			orgContact.getOrganization().setAddress(org.getOrganizationAddress());
     			profile.setContact(orgContact);
     			profile.setContactId(orgContact.getId());
     			profile.setProject(project);
@@ -682,7 +686,12 @@ public class BagView extends AbstractView implements ApplicationListener {
             		} catch (Exception e) {
             			try {
                 			b.removePayloadDirectory(fileName);
-                    	    model.removeNodeFromParent((MutableTreeNode)node);
+                			if (node instanceof MutableTreeNode) {
+                				model.removeNodeFromParent((MutableTreeNode)node);
+                			} else {
+                				DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(node);
+                				model.removeNodeFromParent((MutableTreeNode)aNode);
+                			}
             			} catch (Exception ex) {
                 			message = "Error trying to remove: " + fileName + "\n";
                 			showWarningErrorDialog("Error - file not removed", message + ex.getMessage());
@@ -1559,8 +1568,16 @@ public class BagView extends AbstractView implements ApplicationListener {
         		TreePath path = paths[i];
         		Object node = path.getLastPathComponent();
     			try {
-            		if (node != null) b.removeBagFile((String)node);
-            	    model.removeNodeFromParent((MutableTreeNode)node);
+            		if (node != null) {
+                		if (node instanceof MutableTreeNode) {
+                    		b.removeBagFile(node.toString());
+            				model.removeNodeFromParent((MutableTreeNode)node);
+            			} else {
+                    		b.removeBagFile((String)node);
+            				DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(node);
+            				model.removeNodeFromParent((MutableTreeNode)aNode);
+            			}
+            		}
     			} catch (Exception e) {
             	    message += "Error trying to remove file: " + node + "\n";
             	    showWarningErrorDialog("Error - file not removed", "Error trying to remove file: " + node + "\n" + e.getMessage());
