@@ -45,22 +45,22 @@ public class ProjectListHandler extends AbstractAction {
     	String selected = (String) jlist.getSelectedItem();
     	log.info("BagView.projectList valueChanged: " + selected);
     	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.edeposit"))) {
-    		bag.setIsEdeposit(true);
-      		bag.setIsNoProject(false);
+    		bag.isEdeposit(true);
+      		bag.isNoProject(false);
     	} else {
-    		bag.setIsEdeposit(false);
+    		bag.isEdeposit(false);
     	}
     	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.ndnp"))) {
-    		bag.setIsNdnp(true);
-      		bag.setIsNoProject(false);
+    		bag.isNdnp(true);
+      		bag.isNoProject(false);
     	} else {
-    		bag.setIsNdnp(false);
+    		bag.isNdnp(false);
     	}
     	if (selected == null || selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.noproject"))) {
-      		bag.setIsNoProject(true);
+      		bag.isNoProject(true);
     	} else {
     		bag.getInfo().setLcProject(selected);
-    		bag.setIsNoProject(false);
+    		bag.isNoProject(false);
     	}
     	bagView.updateBaggerRules();
     	changeProject(selected);

@@ -280,7 +280,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
                 bagView.setBag(bag);
                 bagView.infoInputPane.updateInfoFormsPane(enabled);
     		} else {
-    			bagView.showWarningErrorDialog("Field: " + field.getLabel() + " already exists!");
+    			bagView.showWarningErrorDialog("New Field Dialog", "Field: " + field.getLabel() + " already exists!");
     		}
         }
     }

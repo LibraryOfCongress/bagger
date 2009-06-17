@@ -194,7 +194,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         tagLabel.setToolTipText(getMessage("bag.label.istag.help"));
         isTagCheckbox = new JCheckBox();
         isTagCheckbox.setBorder(border);
-        isTagCheckbox.setSelected(bag.getisBuildTagManifest());
+        isTagCheckbox.setSelected(bag.isBuildTagManifest());
         isTagCheckbox.addActionListener(new TagManifestHandler());
         isTagCheckbox.setToolTipText(getMessage("bag.checkbox.istag.help"));
 
@@ -216,7 +216,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         payloadLabel.setToolTipText(getMessage("bag.ispayload.help"));
         isPayloadCheckbox = new JCheckBox();
         isPayloadCheckbox.setBorder(border);
-        isPayloadCheckbox.setSelected(bag.getIsBuildPayloadManifest());
+        isPayloadCheckbox.setSelected(bag.isBuildPayloadManifest());
         isPayloadCheckbox.addActionListener(new PayloadManifestHandler());
         isPayloadCheckbox.setToolTipText(getMessage("bag.ispayload.help"));
 
@@ -364,22 +364,22 @@ public class SaveBagFrame extends JFrame implements ActionListener {
             boolean isSel = cb.isSelected();
             if (isSel) {
             	if (cb == noneButton) {
-                	bagView.getBag().setIsSerial(false);
+                	bagView.getBag().isSerial(false);
                 	bagView.getBag().setSerialMode(DefaultBag.NO_MODE);
             	} else if (cb == zipButton) {
-            		bagView.getBag().setIsSerial(true);
+            		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.ZIP_MODE);
             	} else if (cb == tarButton) {
-            		bagView.getBag().setIsSerial(true);
+            		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.TAR_MODE);
             	} else if (cb == tarGzButton) {
-            		bagView.getBag().setIsSerial(true);
+            		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.TAR_GZ_MODE);
             	} else if (cb == tarBz2Button) {
-            		bagView.getBag().setIsSerial(true);
+            		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.TAR_BZ2_MODE);
             	} else {
-            		bagView.getBag().setIsSerial(false);
+            		bagView.getBag().isSerial(false);
             		bagView.getBag().setSerialMode(DefaultBag.NO_MODE);
             	}
             }
@@ -436,13 +436,13 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
-			if (bagNameField.getText().isEmpty() || bagNameField.getText().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
-    			bagView.showWarningErrorDialog("The bag must have a file name.");
+			if (bagNameField.getText().trim().isEmpty() || bagNameField.getText().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
+    			bagView.showWarningErrorDialog("Error - bag not saved", "The bag must have a file name.");
     			return;
 			}
-			if (bag.getIsHoley()) {
-				if (urlField.getText().isEmpty()) {
-        			bagView.showWarningErrorDialog("A holey bag must have a URL value.");
+			if (bag.isHoley()) {
+				if (urlField.getText().trim().isEmpty()) {
+        			bagView.showWarningErrorDialog("Error - bag not saved", "A holey bag must have a URL value.");
         			return;
 				} else {
 					//if (bagView.getBag().getFetch() == null)
@@ -477,9 +477,9 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     		// Determine status
     		boolean isSelected = cb.isSelected();
     		if (isSelected) {
-    			bagView.getBag().setIsBuildTagManifest(true);
+    			bagView.getBag().isBuildTagManifest(true);
     		} else {
-    			bagView.getBag().setIsBuildTagManifest(false);
+    			bagView.getBag().isBuildTagManifest(false);
     		}
     	}
     }
@@ -501,9 +501,9 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     		// Determine status
     		boolean isSelected = cb.isSelected();
     		if (isSelected) {
-    			bagView.getBag().setIsBuildPayloadManifest(true);
+    			bagView.getBag().isBuildPayloadManifest(true);
     		} else {
-    			bagView.getBag().setIsBuildPayloadManifest(false);
+    			bagView.getBag().isBuildPayloadManifest(false);
     		}
     	}
     }
@@ -541,12 +541,12 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     		// Determine status
     		boolean isSelected = cb.isSelected();
     		if (isSelected) {
-    			bag.setIsHoley(true);
+    			bag.isHoley(true);
     			urlLabel.setEnabled(true);
     			urlField.setEnabled(true);
     			urlField.requestFocus();
     		} else {
-    			bag.setIsHoley(false);
+    			bag.isHoley(false);
     			urlLabel.setEnabled(false);
     			urlField.setEnabled(false);
     		}

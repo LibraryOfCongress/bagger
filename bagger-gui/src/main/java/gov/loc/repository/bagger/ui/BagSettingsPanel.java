@@ -90,14 +90,14 @@ public class BagSettingsPanel extends JPanel {
         bagView.projectList.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
     	String selected = (String) bagView.projectList.getSelectedItem();
     	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.edeposit"))) {
-    		bag.setIsEdeposit(true);
+    		bag.isEdeposit(true);
     	} else {
-    		bag.setIsEdeposit(false);
+    		bag.isEdeposit(false);
     	}
     	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.ndnp"))) {
-    		bag.setIsNdnp(true);
+    		bag.isNdnp(true);
     	} else {
-    		bag.setIsNdnp(false);
+    		bag.isNdnp(false);
     	}
 
         // Default project bag control

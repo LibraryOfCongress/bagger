@@ -105,7 +105,7 @@ public class TagManifestPane extends JTabbedPane {
     	dataScrollPane.setViewportView(dataPane);
     	dataScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.data.help"));
     	dataScrollPane.setForeground(selectedColor);
-    	if (!this.defaultBag.getIsHoley()) {
+    	if (!this.defaultBag.isHoley()) {
         	addTab(parentView.getPropertyMessage("compositePane.tab.data"), dataScrollPane);
     	}
         init();

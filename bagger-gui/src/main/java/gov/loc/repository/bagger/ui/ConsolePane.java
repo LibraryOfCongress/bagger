@@ -89,13 +89,15 @@ public class ConsolePane extends JPanel {
         buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validMetaLabel, gbc);
         this.add(validMetaLabel);
-    	JLabel validMetaResult = new JLabel("no");
+    	JLabel validMetaResult = new JLabel("unchecked");
     	validMetaResult.setToolTipText(parentView.getPropertyMessage("consolepane.ismetadata.help"));
     	font = validMetaResult.getFont().deriveFont(Font.BOLD);
     	validMetaResult.setFont(font);
-    	if (defaultBag != null) {
+    	if (defaultBag.isMetadataChecked()) {
     		if (defaultBag.isValidMetadata()) validMetaResult.setText("yes");
     		else validMetaResult.setText("no");
+    	} else {
+    		validMetaResult.setText("unchecked");
     	}
     	validMetaResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -112,13 +114,15 @@ public class ConsolePane extends JPanel {
         buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeLabel, gbc);
         this.add(completeLabel);
-    	JLabel completeResult = new JLabel("no");
+    	JLabel completeResult = new JLabel("unchecked");
     	completeResult.setToolTipText(parentView.getPropertyMessage("consolepane.iscomplete.help"));
     	font = completeResult.getFont().deriveFont(Font.BOLD);
     	completeResult.setFont(font);
-    	if (defaultBag != null) {
+    	if (defaultBag.isCompleteChecked()) {
     		if (defaultBag.isComplete()) completeResult.setText("yes");
     		else completeResult.setText("no");
+    	} else {
+    		completeResult.setText("unchecked");
     	}
     	completeResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -135,7 +139,7 @@ public class ConsolePane extends JPanel {
     	buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	layout.setConstraints(serializedLabel, gbc);
     	this.add(serializedLabel);
-    	JLabel serializedResult = new JLabel("no");
+    	JLabel serializedResult = new JLabel("unchecked");
     	serializedResult.setToolTipText(parentView.getPropertyMessage("consolepane.isbagged.help"));
     	font = serializedResult.getFont().deriveFont(Font.BOLD);
     	serializedResult.setFont(font);
@@ -158,13 +162,15 @@ public class ConsolePane extends JPanel {
         buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validLabel, gbc);
         this.add(validLabel);
-    	JLabel validResult = new JLabel("no");
+    	JLabel validResult = new JLabel("unchecked");
     	validResult.setToolTipText(parentView.getPropertyMessage("consolepane.isvalid.help"));
     	font = validResult.getFont().deriveFont(Font.BOLD);
     	validResult.setFont(font);
-    	if (defaultBag != null) {
+    	if (defaultBag.isValidChecked()) {
     		if (defaultBag.isValid()) validResult.setText("yes");
     		else validResult.setText("no");
+    	} else {
+    		validResult.setText("unchecked");
     	}
     	validResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);

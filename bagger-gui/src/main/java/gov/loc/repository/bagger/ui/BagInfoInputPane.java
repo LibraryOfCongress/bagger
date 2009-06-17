@@ -216,7 +216,7 @@ public class BagInfoInputPane extends JTabbedPane {
     	Project project = bag.getProject();
     	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
 		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
-		if (bag.getIsEdeposit()) {
+		if (bag.isEdeposit()) {
 			//if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
 				BagInfoField field = new BagInfoField();
 				field.setLabel(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
@@ -229,7 +229,7 @@ public class BagInfoInputPane extends JTabbedPane {
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
 				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
 			}
-		} else if (bag.getIsNdnp()) {
+		} else if (bag.isNdnp()) {
 			//if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
 				BagInfoField field = new BagInfoField();
 				field.setLabel(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
@@ -250,7 +250,7 @@ public class BagInfoInputPane extends JTabbedPane {
 				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
 			}
 		}
-		if (!bag.getIsNoProject()) {
+		if (!bag.isNoProject()) {
 			//if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
 				BagInfoField field = new BagInfoField();
 				field.setLabel(DefaultBagInfo.FIELD_LC_PROJECT);

@@ -34,9 +34,9 @@ public class HoleyBagHandler extends AbstractAction {
 		// Determine status
 		boolean isSelected = cb.isSelected();
 		if (isSelected) {
-			bag.setIsHoley(true);
+			bag.isHoley(true);
 		} else {
-			bag.setIsHoley(false);
+			bag.isHoley(false);
 		}
 /*
 		String messages = "";

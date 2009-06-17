@@ -597,7 +597,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public String updateBaggerRules() {
-        baggerRules.init(bag.getIsEdeposit(), bag.getIsNdnp(), !bag.getIsNoProject(), bag.getIsHoley());
+        baggerRules.init(bag.isEdeposit(), bag.isNdnp(), !bag.isNoProject(), bag.isHoley());
         String messages = "";
         bag.updateStrategy();
         
@@ -876,9 +876,10 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     public void completeBag() {
 		String messages = bag.completeBag();
-		if (messages != null) {
-			compositePane.updateCompositePaneTabs(bag, messages);
-		}
+		if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - incomplete", "Is complete result: " + messages);
+		else showWarningErrorDialog("Is Complete Dialog", "Bag is complete.");
+		setBag(bag);
+    	compositePane.updateCompositePaneTabs(bag, messages);
         bagInfoInputPane.update(bag);
     	statusBarEnd();
     }
@@ -1072,7 +1073,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bag.getInfo().setProfileMap(null);
         holeyCheckbox.setSelected(false);
         this.baggerRules.clear();
-    	bag.setIsNewbag(true);
+    	bag.isNewbag(true);
     	bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
     	bagPayloadTreePanel.refresh(bagPayloadTree);
     	bagTagFileTree = new BagTree(this, getPropertyMessage("bag.label.noname"), false);
@@ -1257,7 +1258,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         //bagInfoInputPane.updateSelected(bag);
         compositePane.updateCompositePaneTabs(bag, messages);
 
-		bag.setIsNewbag(true);
+		bag.isNewbag(true);
     	addDataButton.setEnabled(true);
     	addDataExecutor.setEnabled(true);
     	addTagFileButton.setEnabled(true);
@@ -1391,7 +1392,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             completeButton.setEnabled(true);
             validateExecutor.setEnabled(true);
             topButtonPanel.invalidate();
-            bag.setIsNewbag(false);
+            bag.isNewbag(false);
         }
     }
 
@@ -1423,15 +1424,15 @@ public class BagView extends AbstractView implements ApplicationListener {
     	if (bag.getInfo().getBagSize() != null && bag.getInfo().getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
     	} 
-	    if (bag.getIsHoley()) {
+	    if (bag.isHoley()) {
 	        holeyCheckbox.setSelected(true);
 	    }
 	    if (!bag.getInfo().getLcProject().isEmpty()){
     		messages += updateProject(bag.getInfo().getLcProject());
-    		bag.setIsNoProject(false);
+    		bag.isNoProject(false);
     	} else {
     		messages += updateProject(getPropertyMessage("bag.project.noproject"));
-    		bag.setIsNoProject(true);
+    		bag.isNoProject(true);
     	}
 	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
 	    	defaultProject.setSelected(true);
@@ -1447,11 +1448,11 @@ public class BagView extends AbstractView implements ApplicationListener {
 		      if (s.substring(i + 1).toLowerCase().equals(DefaultBag.TAR_LABEL)) {
 		    	  tarButton.setSelected(true);
 		    	  bag.setSerialMode(DefaultBag.TAR_MODE);
-		    	  bag.setIsSerial(true);
+		    	  bag.isSerial(true);
 		      } else if (s.substring(i + 1).toLowerCase().equals(DefaultBag.ZIP_LABEL)) {
 		    	  zipButton.setSelected(true);
 		    	  bag.setSerialMode(DefaultBag.ZIP_MODE);
-		    	  bag.setIsSerial(true);
+		    	  bag.isSerial(true);
 		      }
 	    }
 
@@ -1469,11 +1470,14 @@ public class BagView extends AbstractView implements ApplicationListener {
         updateManifestPane();
     	enableBagSettings(true);
 		bag.isSerialized(true);
+		String msgs = bag.validateMetadata();
+		if (msgs != null) {
+			if (messages != null) messages += msgs;
+			else messages = msgs;
+		}
 		bag.getInfo().setBag(bag);
     	bagInfoInputPane.populateForms(bag, true);
-    	//messages += bagInfoInputPane.updateForms(bag);
     	updateBagInfoInputPaneMessages(messages);
-   		//bagInfoInputPane.updateSelected(bag);
         compositePane.updateCompositePaneTabs(bag, messages);
 
     	statusBarEnd();
@@ -1579,15 +1583,15 @@ public class BagView extends AbstractView implements ApplicationListener {
    		}
    		messages += updateProfile();
     	if (projectName.equalsIgnoreCase(getPropertyMessage("bag.project.noproject"))) {
-    		bag.setIsNoProject(true);
-    	} else if (bag.getIsEdeposit()) {
+    		bag.isNoProject(true);
+    	} else if (bag.isEdeposit()) {
     		projectList.setSelectedItem(projectName);
-    		bag.setIsNoProject(false);
-    	} else if (bag.getIsNdnp()) {
+    		bag.isNoProject(false);
+    	} else if (bag.isNdnp()) {
     		projectList.setSelectedItem(projectName);
-    		bag.setIsNoProject(false);
+    		bag.isNoProject(false);
     	} else {
-      		bag.setIsNoProject(false);
+      		bag.isNoProject(false);
     	}
     	setBag(bag);
 		return messages;

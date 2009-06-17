@@ -80,7 +80,7 @@ public class BagTree extends CheckboxTree {
 		} else {
 			log.debug("BagTree.populateNodes listFiles NULL:" );
 			List<String> payload = null;
-		    if (!bag.getIsHoley()) {
+		    if (!bag.isHoley()) {
 				log.debug("BagTree.populateNodes getPayloadPaths:" );
 				payload = bag.getPayloadPaths();
 		    } else {
