@@ -175,19 +175,19 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			this.setInternalSenderDescription(bagInfo.getInternalSenderDescription());
 		else
 			this.setInternalSenderDescription("");
-		if (this.baggerBag.getIsEdeposit()) {
+		if (this.baggerBag.isEdeposit()) {
 			if (bagInfo.getPublisher() != null && !bagInfo.getPublisher().isEmpty())
 				this.setPublisher(bagInfo.getPublisher());
 			else
 				this.setPublisher("");			
 		}
-		if (this.baggerBag.getIsNdnp()) {
+		if (this.baggerBag.isNdnp()) {
 			if (bagInfo.getAwardeePhase() != null && !bagInfo.getAwardeePhase().isEmpty())
 				this.setAwardeePhase(bagInfo.getAwardeePhase());
 			else
 				this.setAwardeePhase("");			
 		}
-		if (!this.baggerBag.getIsNoProject()) {
+		if (!this.baggerBag.isNoProject()) {
 			if (bagInfo.getLcProject() != null && !bagInfo.getLcProject().isEmpty())
 				this.setLcProject(bagInfo.getLcProject());
 			else
@@ -268,21 +268,21 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			content.append(this.getInternalSenderDescription() + "\n");
 		else
 			content.append("\n");
-		if (this.baggerBag.getIsEdeposit()) {
+		if (this.baggerBag.isEdeposit()) {
 			content.append(FIELD_EDEPOSIT_PUBLISHER + ": ");
 			if (this.getPublisher() != null && !this.getPublisher().isEmpty())
 				content.append(this.getPublisher() + "\n");
 			else
 				content.append("\n");			
 		}
-		if (this.baggerBag.getIsNdnp()) {
+		if (this.baggerBag.isNdnp()) {
 			content.append(FIELD_NDNP_AWARDEE_PHASE + ": ");
 			if (this.getAwardeePhase() != null && !this.getAwardeePhase().isEmpty())
 				content.append(this.getAwardeePhase() + "\n");
 			else
 				content.append("\n");			
 		}
-		if (!this.baggerBag.getIsNoProject()) {
+		if (!this.baggerBag.isNoProject()) {
 			content.append(FIELD_LC_PROJECT + ": ");
 			if (this.getLcProject() != null && !this.getLcProject().isEmpty())
 				content.append(this.getLcProject() + "\n");
@@ -378,15 +378,15 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			//log.info("createNonStandardFieldList non-stnd: " + getMethodFromLabel(label));
 		}
 
-        if (baggerBag.getIsEdeposit()) {
+        if (baggerBag.isEdeposit()) {
     		BagInfoField publisher = createField("publisher", enabled);
     		list.add(publisher);
         }
-        if (baggerBag.getIsNdnp()) {
+        if (baggerBag.isNdnp()) {
     		BagInfoField awardeePhase = createField("awardeePhase", enabled);
     		list.add(awardeePhase);
         }
-        if (!baggerBag.getIsNoProject()) {
+        if (!baggerBag.isNoProject()) {
     		BagInfoField lcProject = createField("lcProject", enabled);
     		list.add(lcProject);
         }
@@ -406,15 +406,15 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		}
 		// TODO: if project has changed, remove old project fields
 		// and add new project fields based on profile
-        if (baggerBag.getIsEdeposit()) {
+        if (baggerBag.isEdeposit()) {
     		BagInfoField publisher = createField("publisher", enabled);
     		fieldMap.put("publisher", publisher);
         }
-        if (baggerBag.getIsNdnp()) {
+        if (baggerBag.isNdnp()) {
     		BagInfoField awardeePhase = createField("awardeePhase", enabled);
     		fieldMap.put("awardeePhase", awardeePhase);
         }
-        if (!baggerBag.getIsNoProject()) {
+        if (!baggerBag.isNoProject()) {
     		BagInfoField lcProject = createField("lcProject", enabled);
     		fieldMap.put("lcProject", lcProject);
         }
@@ -475,12 +475,12 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 
         list.add("");
         list.add(FIELD_NEW_COMPONENT);
-		if (this.baggerBag.getIsEdeposit()) {
+		if (this.baggerBag.isEdeposit()) {
 	        list.add(FIELD_EDEPOSIT_PUBLISHER);
-		} else if (this.baggerBag.getIsNdnp()) {
+		} else if (this.baggerBag.isNdnp()) {
 	        list.add(FIELD_NDNP_AWARDEE_PHASE);
 		}
-		if (!this.baggerBag.getIsNoProject()) {
+		if (!this.baggerBag.isNoProject()) {
 	        list.add(FIELD_LC_PROJECT);
 		}
 

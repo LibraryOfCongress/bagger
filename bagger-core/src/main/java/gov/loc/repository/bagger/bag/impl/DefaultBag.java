@@ -13,7 +13,6 @@ import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerFetch;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
-import gov.loc.repository.bagger.util.FileUtililties;
 
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFactory;
@@ -81,11 +80,14 @@ public class DefaultBag {
 	// Bag state flags
 	private boolean isValidateOnSave = false;
 	private boolean isComplete = false;
+	private boolean isCompleteChecked = false;
 	private boolean isValid = false;
+	private boolean isValidChecked = false;
 	private boolean isValidForms = false;
 	private boolean isValidMetadata = false;
+	private boolean isMetadataChecked = false;
 	private boolean isSerialized = false;
-	
+
 	private File rootDir = null;
 	private String name = new String("bag_");
 	private long size;
@@ -149,7 +151,7 @@ public class DefaultBag {
 		}
 		puncher = new HolePuncherImpl(bagFactory);
 		if (bilBag.getFetchTxt() != null) {
-        	setIsHoley(true);
+        	isHoley(true);
     		String url = getBaseUrl(bilBag.getFetchTxt());
     		display("DefaultBag fetch URL: " + url);
         	BaggerFetch fetch = this.getFetch();
@@ -167,9 +169,12 @@ public class DefaultBag {
 	protected void reset() {
 		this.isValidateOnSave = false;
 		this.isComplete = false;
+		this.isCompleteChecked = false;
 		this.isValid = false;
+		this.isValidChecked = false;
 		this.isValidForms = false;
 		this.isValidMetadata = false;
+		this.isMetadataChecked = false;
 		this.isSerialized = false;
 	}
 
@@ -251,19 +256,19 @@ public class DefaultBag {
 		return this.rootDir;
 	}
 
-	public void setIsHoley(boolean b) {
+	public void isHoley(boolean b) {
 		this.isHoley = b;
 	}
 
-	public boolean getIsHoley() {
+	public boolean isHoley() {
 		return this.isHoley;
 	}
 
-	public void setIsSerial(boolean b) {
+	public void isSerial(boolean b) {
 		this.isSerial = b;
 	}
 
-	public boolean getIsSerial() {
+	public boolean isSerial() {
 		return this.isSerial;
 	}
 	
@@ -275,51 +280,51 @@ public class DefaultBag {
 		return this.serialMode;
 	}
 
-	public void setIsNoProject(boolean b) {
+	public void isNoProject(boolean b) {
 		this.isNoProject = b;
 	}
 	
-	public boolean getIsNoProject() {
+	public boolean isNoProject() {
 		return this.isNoProject;
 	}
 	
-	public void setIsEdeposit(boolean b) {
+	public void isEdeposit(boolean b) {
 		this.isEdeposit = b;
 	}
 
-	public boolean getIsEdeposit() {
+	public boolean isEdeposit() {
 		return this.isEdeposit;
 	}
 
-	public void setIsNdnp(boolean b) {
+	public void isNdnp(boolean b) {
 		this.isNdnp = b;
 	}
 
-	public boolean getIsNdnp() {
+	public boolean isNdnp() {
 		return this.isNdnp;
 	}
 	
-	public void setIsNewbag(boolean b) {
+	public void isNewbag(boolean b) {
 		this.isNewbag = b;
 	}
 	
-	public boolean getIsNewbag() {
+	public boolean isNewbag() {
 		return this.isNewbag;
 	}
 	
-	public void setIsBuildTagManifest(boolean b) {
+	public void isBuildTagManifest(boolean b) {
 		this.isBuildTagManifest = b;
 	}
 	
-	public boolean getisBuildTagManifest() {
+	public boolean isBuildTagManifest() {
 		return this.isBuildTagManifest;
 	}
 
-	public void setIsBuildPayloadManifest(boolean b) {
+	public void isBuildPayloadManifest(boolean b) {
 		this.isBuildPayloadManifest = b;
 	}
 	
-	public boolean getIsBuildPayloadManifest() {
+	public boolean isBuildPayloadManifest() {
 		return this.isBuildPayloadManifest;
 	}
 
@@ -337,6 +342,30 @@ public class DefaultBag {
 	
 	public String getPayloadManifestAlgorithm() {
 		return this.payloadManifestAlgorithm;
+	}
+
+	public void isCompleteChecked(boolean b) {
+		this.isCompleteChecked = b;
+	}
+	
+	public boolean isCompleteChecked() {
+		return this.isCompleteChecked;
+	}
+	
+	public void isValidChecked(boolean b) {
+		this.isValidChecked = b;
+	}
+	
+	public boolean isValidChecked() {
+		return this.isValidChecked;
+	}
+	
+	public void isMetadataChecked(boolean b) {
+		this.isMetadataChecked = b;
+	}
+	
+	public boolean isMetadataChecked() {
+		return this.isMetadataChecked;
 	}
 	
 	public void isValidateOnSave(boolean b) {
@@ -476,7 +505,7 @@ public class DefaultBag {
 			} else {
 				this.bagInfo.setPublisher("");
 			}
-			this.setIsEdeposit(true);
+			this.isEdeposit(true);
 		}
 		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
 			String awardeePhase = bagInfoTxt.get(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
@@ -485,7 +514,7 @@ public class DefaultBag {
 			} else {
 				this.bagInfo.setAwardeePhase("");
 			}
-			this.setIsNdnp(true);
+			this.isNdnp(true);
 		}
 		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
 			String lcProject = bagInfoTxt.get(DefaultBagInfo.FIELD_LC_PROJECT);
@@ -494,9 +523,9 @@ public class DefaultBag {
 			} else {
 				this.bagInfo.setLcProject("");
 			}
-			this.setIsNoProject(false);
+			this.isNoProject(false);
 		} else {
-			this.setIsNoProject(true);
+			this.isNoProject(true);
 		}
 /* */
 	}
@@ -573,13 +602,13 @@ public class DefaultBag {
 			if (!bagInfo.getInternalSenderDescription().isEmpty()) {
 				bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
 			}
-			if (this.getIsEdeposit()) {
+			if (this.isEdeposit()) {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
 			}
-			if (this.getIsNdnp()) {
+			if (this.isNdnp()) {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
 			}
-			if (!this.getIsNoProject()) {
+			if (!this.isNoProject()) {
 				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
 			}
 		}
@@ -633,13 +662,13 @@ public class DefaultBag {
 			bagInfo.setInternalSenderDescription(value);
 		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
 			bagInfo.setPublisher(value);
-			this.setIsEdeposit(true);
+			this.isEdeposit(true);
 		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
 			bagInfo.setAwardeePhase(value);
-			this.setIsNdnp(true);
+			this.isNdnp(true);
 		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
 			bagInfo.setLcProject(value);
-			this.setIsNoProject(true);
+			this.isNoProject(true);
 		} 
 	}
 
@@ -691,13 +720,13 @@ public class DefaultBag {
 				if (!bagInfo.getInternalSenderDescription().isEmpty()) {
 					bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
 				}
-				if (this.getIsEdeposit() && !bagInfo.getPublisher().isEmpty()) {
+				if (this.isEdeposit() && !bagInfo.getPublisher().isEmpty()) {
 					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
 				}
-				if (this.getIsNdnp() && !bagInfo.getAwardeePhase().isEmpty()) {
+				if (this.isNdnp() && !bagInfo.getAwardeePhase().isEmpty()) {
 					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
 				}
-				if (!this.getIsNoProject() && !bagInfo.getLcProject().isEmpty()) {
+				if (!this.isNoProject() && !bagInfo.getLcProject().isEmpty()) {
 					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
 				}
 			}
@@ -879,10 +908,11 @@ public class DefaultBag {
 		String messages = null;
 		try {
 			SimpleResult result = this.bilBag.verifyComplete();
-			if (result.messagesToString() != null) {
+			if (result.messagesToString() != null && !result.messagesToString().trim().isEmpty()) {
 				messages = "Bag is not complete.\n";
 				messages += result.messagesToString();
 			}
+			this.isCompleteChecked(true);
 			this.isComplete(result.isSuccess());
 		} catch (Exception e) {
 			this.isComplete(false);
@@ -902,6 +932,7 @@ public class DefaultBag {
 				messages += result.messagesToString();
 			}
 			this.isValidMetadata(result.isSuccess());
+			this.isMetadataChecked = true;
 		} catch (Exception e) {
 			this.isValidMetadata(false);
 			messages = "Bag-info fields are not correct: " + e.getMessage() + "\n";
@@ -920,7 +951,7 @@ public class DefaultBag {
 	    	//} else {
 				if (validVerifier == null) {
 					SimpleResult result = bilBag.verifyValid();
-					if (result.messagesToString() != null) {
+					if (result.messagesToString() != null && !result.messagesToString().trim().isEmpty()) {
 						messages = "Bag is not valid:\n";
 						messages += result.messagesToString();
 					}
@@ -928,13 +959,15 @@ public class DefaultBag {
 					if (this.isValid) this.isComplete(this.isValid);
 				} else {
 					SimpleResult result = validVerifier.verify(bilBag);
-					if (result.messagesToString() != null) {
+					if (result.messagesToString() != null && !result.messagesToString().trim().isEmpty()) {
 						messages = "Bag is not valid:\n";
 						messages += result.messagesToString();
 					}
 					this.isValid(result.isSuccess());
 					if (this.isValid) this.isComplete(this.isValid);
 				}
+				this.isCompleteChecked = true;
+				this.isValidChecked = true;
 	    	//}
 		} catch (Exception e) {
 			this.isValid(false);
@@ -999,9 +1032,13 @@ public class DefaultBag {
 			bw.addProgressListener(progress);
 			Bag newBag = bw.write(bilBag, bagFile);
 			if (newBag != null) bilBag = newBag;
-			this.setIsNewbag(false);
+			this.isNewbag(false);
 /* */
 			display("DefaultBag.writeBag bagInfo:" + this.bilBag.getBagInfoTxt());
+			for (int i=0; i < bilBag.getPayloadManifests().size(); i++) {
+				display("DefaultBag.writeBag manfiests: " + bilBag.getPayloadManifests().get(i));
+			}
+/* */
 			try {
 				String msgs = validateMetadata();
 				if (msgs != null) {
