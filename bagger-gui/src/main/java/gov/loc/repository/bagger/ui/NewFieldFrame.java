@@ -18,20 +18,18 @@ package gov.loc.repository.bagger.ui;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
-import gov.loc.repository.bagit.Manifest.Algorithm;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -42,9 +40,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
@@ -56,9 +52,11 @@ import org.springframework.richclient.application.PageComponent;
 public class NewFieldFrame extends JFrame implements ActionListener {
 	private static final Log log = LogFactory.getLog(NewFieldFrame.class);
 	private static final long serialVersionUID = 1L;
+	private static final String TEXTFIELD = "Brief Text";
+	private static final String TEXTAREA = "Extended Text";
 	BagView bagView;
 	DefaultBag bag = null;
-	private Dimension preferredDimension = new Dimension(400, 200);
+	private Dimension preferredDimension = new Dimension(550, 200);
 	BagInfoField field;
 	JPanel addPanel;
 	JButton okButton;
@@ -67,6 +65,9 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     JTextField fieldName;
     JComboBox typeList;
 	JCheckBox isRequiredCheckbox;
+	JRadioButton stndFieldButton;
+	JRadioButton newFieldButton;
+	JPanel fieldGroupPanel;
 
 	public NewFieldFrame(BagView bagView, String title) {
         super(title);
@@ -90,39 +91,47 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     }
 
     private JPanel createComponents() {
-        List<String> listModel = bagView.getBag().getInfo().getStandardFields();
-        JLabel fieldListLabel = new JLabel(bagView.getPropertyMessage("baginfo.field.fieldlist"));
-        fieldListLabel.setToolTipText(getMessage("baginfo.field.fieldlist.help"));
+    	FieldListHandler fieldListHandler = new FieldListHandler();
+    	List<String> listModel = bagView.getBag().getInfo().getStandardBagFields();
         fieldList = new JComboBox(listModel.toArray());
         fieldList.setName(getMessage("baginfo.field.fieldlist"));
         fieldList.setSelectedItem("");
-        fieldList.addActionListener(new FieldListHandler());
+        fieldList.addActionListener(fieldListHandler);
         fieldList.setToolTipText(getMessage("baginfo.field.fieldlist.help"));
 
-        JLabel fieldNameLabel = new JLabel(bagView.getPropertyMessage("baginfo.field.name"));
-        fieldNameLabel.setToolTipText(getMessage("baginfo.field.name.help"));
-        fieldName = new JTextField();
+        fieldName = new JTextField(10);
+        fieldName.setPreferredSize(fieldList.getPreferredSize());
         fieldName.addActionListener(new FieldNameHandler());
         fieldName.setToolTipText(getMessage("baginfo.field.name.help"));
+        fieldName.setEnabled(false);
+
+    	FieldButtonHandler fieldButtonHandler = new FieldButtonHandler();
+        ButtonGroup fieldGroup = new ButtonGroup();
+    	stndFieldButton = new JRadioButton("Standard");
+    	stndFieldButton.setSelected(true);
+    	fieldList.setEnabled(true);
+    	fieldGroup.add(stndFieldButton);
+    	stndFieldButton.addActionListener(fieldButtonHandler);
+    	newFieldButton = new JRadioButton("New");
+    	newFieldButton.setSelected(false);
+    	newFieldButton.addActionListener(fieldButtonHandler);
+    	fieldGroup.add(newFieldButton);
+        fieldGroupPanel = new JPanel(new FlowLayout());
+        fieldGroupPanel.add(stndFieldButton);
+        fieldGroupPanel.add(fieldList);
+        fieldGroupPanel.add(newFieldButton);
+        fieldGroupPanel.add(fieldName);
 
         ArrayList<String> typeModel = new ArrayList<String>();
-        typeModel.add("TEXTFIELD");
-        typeModel.add("TEXTAREA");
+        typeModel.add(TEXTFIELD);
+        typeModel.add(TEXTAREA);
         JLabel typeListLabel = new JLabel(bagView.getPropertyMessage("baginfo.field.typelist"));
         typeListLabel.setToolTipText(getMessage("baginfo.field.typelist.help"));
         typeList = new JComboBox(typeModel.toArray());
         typeList.setName(getMessage("baginfo.field.typelist"));
-        typeList.setSelectedItem("TEXTFIELD");
+        typeList.setSelectedItem(TEXTFIELD);
         typeList.addActionListener(new TypeListHandler());
         typeList.setToolTipText(getMessage("baginfo.field.typelist.help"));
-        
-        JLabel requiredLabel = new JLabel(getMessage("baginfo.field.isrequired"));
-        requiredLabel.setToolTipText(getMessage("baginfo.field.isrequired.help"));
-        isRequiredCheckbox = new JCheckBox("");
-        isRequiredCheckbox.setBorder(new EmptyBorder(5,5,5,5));
-        isRequiredCheckbox.setSelected(true);
-        isRequiredCheckbox.addActionListener(new FieldRequiredHandler());
-        isRequiredCheckbox.setToolTipText(getMessage("baginfo.field.isrequired.help"));
 
     	okButton = new JButton("Add");
     	okButton.addActionListener(new OkAddFieldHandler());
@@ -136,25 +145,13 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         GridBagConstraints glbc = new GridBagConstraints();
 
         int row = 0;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(fieldListLabel, glbc);
-        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
-        layout.setConstraints(fieldList, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(fieldNameLabel, glbc);
-        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
-        layout.setConstraints(fieldName, glbc);
+        buildConstraints(glbc, 0, row, 3, 1, 100, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        layout.setConstraints(fieldGroupPanel, glbc);
         row++;
         buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(typeListLabel, glbc);
         buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
         layout.setConstraints(typeList, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(requiredLabel, glbc);
-        buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
-        layout.setConstraints(isRequiredCheckbox, glbc);
         row++;
         buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(cancelButton, glbc);
@@ -163,14 +160,9 @@ public class NewFieldFrame extends JFrame implements ActionListener {
 
         JPanel panel = new JPanel(layout);
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-    	panel.add(fieldListLabel);
-    	panel.add(fieldList);
-    	panel.add(fieldNameLabel);
-    	panel.add(fieldName);
+        panel.add(fieldGroupPanel);
     	panel.add(typeListLabel);
     	panel.add(typeList);
-    	panel.add(requiredLabel);
-    	panel.add(isRequiredCheckbox);
     	panel.add(cancelButton);
     	panel.add(okButton);
 
@@ -207,14 +199,36 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     	}
     }
 
+    private class FieldButtonHandler extends AbstractAction {
+    	private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			JRadioButton cb = (JRadioButton)e.getSource();
+            boolean isSel = cb.isSelected();
+        	if (cb == stndFieldButton) {
+                if (isSel) {
+            		fieldList.setEnabled(true);
+            		fieldName.setEnabled(false);
+            		fieldList.requestFocus();
+                }
+        	} else {
+                if (isSel) {
+            		fieldList.setEnabled(false);
+            		fieldName.setEnabled(true);
+            		fieldName.requestFocus();
+                }
+        	}
+		}
+    }
+
     private class FieldListHandler extends AbstractAction {
     	private static final long serialVersionUID = 75893358194076314L;
     	public void actionPerformed(ActionEvent e) {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String fieldLabel = (String) jlist.getSelectedItem();
         	// TODO: if not new, populate with stnd values
-        	if (fieldLabel.equalsIgnoreCase(DefaultBagInfo.FIELD_NEW_COMPONENT)) {
-                typeList.setSelectedItem("TEXTFIELD");
+//        	if (fieldLabel.equalsIgnoreCase(DefaultBagInfo.FIELD_NEW_COMPONENT)) {
+        	if (newFieldButton.isSelected()) {
+                typeList.setSelectedItem(TEXTFIELD);
     			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
                 isRequiredCheckbox.setSelected(true);
     			field.isRequired(true);
@@ -224,10 +238,10 @@ public class NewFieldFrame extends JFrame implements ActionListener {
                 field.setLabel("");
         	} else {
         		if (DefaultBagInfo.textAreaSet.contains(fieldLabel)) {
-                    typeList.setSelectedItem("TEXTAREA");
+                    typeList.setSelectedItem(TEXTAREA);
         			field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
         		} else {
-                    typeList.setSelectedItem("TEXTFIELD");
+                    typeList.setSelectedItem(TEXTAREA);
         			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
         		}
         		if (DefaultBagInfo.requiredSet.contains(fieldLabel)) {
@@ -251,7 +265,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     	public void actionPerformed(ActionEvent e) {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String type = (String) jlist.getSelectedItem();
-        	if (type.equalsIgnoreCase("TEXTAREA")) {
+        	if (type.equalsIgnoreCase(TEXTAREA)) {
         		field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
         	} else {
         		field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
