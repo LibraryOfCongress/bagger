@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -86,8 +87,11 @@ public class TagManifestPane extends JTabbedPane {
     	log.info("TagManifestPane.populateBagPane getTags: " + list.size());
         for (Iterator<BagFile> it=list.iterator(); it.hasNext(); ) {
         	BagFile bf = it.next();
-        	log.info("BagFile: " + bf.getFilepath() + "::" + bf.toString());
-    		BagTextPane manifestPane = new BagTextPane(bf.toString());
+        	String content = "";
+        	if (bf.getFilepath().contains("manifest")) content = bf.toString();
+        	else content = tokenFormat(bf.toString());
+        	log.debug("BagFile: " + bf.getFilepath() + "::" + content);
+    		BagTextPane manifestPane = new BagTextPane(content);
     		manifestPaneList.add(manifestPane);
     		JScrollPane manifestScrollPane = new JScrollPane();
         	manifestScrollPane.setViewportView(manifestPane);
@@ -120,5 +124,17 @@ public class TagManifestPane extends JTabbedPane {
     	}
         populateBagPane();
         this.invalidate();
+    }
+    
+    private String tokenFormat(String content) {
+    	StringBuffer buffer = new StringBuffer();
+    	
+		StringTokenizer st = new StringTokenizer(content, ",", false);
+		while (st.hasMoreTokens()) {
+			  String s=st.nextToken();
+			  buffer.append(s);
+			  buffer.append('\n');
+		}
+    	return buffer.toString();
     }
 }
