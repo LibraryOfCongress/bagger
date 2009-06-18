@@ -101,13 +101,14 @@ public class InMemoryBagger extends JdbcBagger {
         defaultList.add("INSERT INTO projects VALUES (3, 'ndiipp', false)");
         defaultList.add("INSERT INTO projects VALUES (4, 'ndnp', false)");
 
-    	String userHomeDir = System.getProperty("user.home");
-    	readCommandList(userHomeDir);
+    	boolean loadOnStartup = false;
+    	if (loadOnStartup) readCommandList();
         
     	return defaultList;
     }
     
-	private String readCommandList(String homeDir) {
+	private String readCommandList() {
+    	String homeDir = System.getProperty("user.home");
 		String message = null;
 		String name = "bagger.sql";
 		try

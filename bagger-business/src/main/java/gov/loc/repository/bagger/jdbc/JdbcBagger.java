@@ -1,8 +1,11 @@
 package gov.loc.repository.bagger.jdbc;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -34,6 +38,9 @@ import gov.loc.repository.bagger.PersonProjects;
 import gov.loc.repository.bagger.UserContact;
 import gov.loc.repository.bagger.Organization;
 
+import org.springframework.richclient.dialog.CloseAction;
+import org.springframework.richclient.dialog.ConfirmationDialog;
+import org.springframework.richclient.dialog.MessageDialog;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +62,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private SimpleJdbcTemplate simpleJdbcTemplate;
+    private JdbcTemplate template;
 
 	private SimpleJdbcInsert insertPerson;
 	private SimpleJdbcInsert insertProject;
@@ -67,11 +75,13 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	private final List<Organization> orgs = new ArrayList<Organization>();
 
 	protected ArrayList<String> commandList = new ArrayList<String>();
-	String sqlCommand = "";
+	private File baggerFile = null;
+	private String sqlCommand = "";
 
 	@Autowired
 	public void init(DataSource dataSource) {
 		this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        this.template = new JdbcTemplate(dataSource);
 
 		this.insertPerson = new SimpleJdbcInsert(dataSource).withTableName("person").usingGeneratedKeyColumns("id");
 		this.insertProject = new SimpleJdbcInsert(dataSource).withTableName("projects").usingGeneratedKeyColumns("id");
@@ -89,6 +99,93 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		synchronized (this.orgs) {
 			logger.info("Refreshing vets cache");
 		}
+	}
+
+	@Transactional
+	public String loadProfiles() throws DataAccessException {
+		String messages = readCommandList();
+        for (int i=0; i < commandList.size(); i++) {
+        	String command = commandList.get(i);
+        	try {
+            	template.execute(command);
+        	} catch (Exception e) {
+        		logger.error("JdbcBagger.loadProfiles: " + e);
+        	}
+        }
+		return messages;
+	}
+
+	private String readCommandList() {
+    	String homeDir = System.getProperty("user.home");
+		String message = null;
+		String name = "bagger.sql";
+		try
+		{
+			File file = new File(homeDir, name);
+			if (file.exists()) {
+				baggerFile = file;
+				showConfirmation();
+			} else {
+		    	MessageDialog dialog = new MessageDialog("Load Profile Dialog", "No saved profiles have been found.");
+			    dialog.showDialog();
+			}
+		}
+		catch(Exception e)
+		{
+			message = "InMemoryBagger.readCommandList: " + e.getMessage();
+			e.printStackTrace();
+		}
+		return message;		
+	}
+	
+	private void showConfirmation() {
+	    ConfirmationDialog dialog = new ConfirmationDialog() {
+	        protected void onConfirm() {
+	        	try {
+	        		loadProfiles(baggerFile);
+	        	} catch (Exception e) {
+	        		logger.error("InMemoryBagger.showConfirmation: " + e.getMessage());
+	        	}
+	        }
+	    };
+
+	    dialog.setCloseAction(CloseAction.DISPOSE);
+	    dialog.setTitle("Load Profile Dialog");
+	    dialog.setConfirmationMessage("Saved profiles have been detected.  Would you like to load them?");
+	    dialog.showDialog();
+	}
+
+	private String loadProfiles(File file) {
+		String message = null;
+
+		try
+		{
+			InputStreamReader fr = new InputStreamReader(new FileInputStream(file), "UTF-8");
+			BufferedReader  reader = new BufferedReader(fr);
+			try
+			{
+				logger.debug("JdbcBagger.read file: " + file);
+				while(true)
+				{
+					String line = reader.readLine();
+					if (line == null) break;
+					logger.debug(line);
+					this.commandList.add(line);
+				}
+			}
+			catch(Exception ex)
+			{
+				message = "InMemoryBagger.readCommandList: " + ex.getMessage();
+				ex.printStackTrace();
+				throw new RuntimeException(ex);
+			}				
+		}
+		catch(IOException e)
+		{
+			message = "InMemoryBagger.readCommandList: " + e.getMessage();
+			e.printStackTrace();
+		}
+		return message;
 	}
 
 	@Transactional(readOnly = true)
@@ -397,12 +494,13 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			for (int i=0; i < profileList.length; i++) {
 				Profile profile = (Profile) profileList[i];
 				Contact contact = profile.getContact();
-				Person person = contact.getPerson();
 				Organization org = contact.getOrganization();
+				Person person = contact.getPerson();
+
 				Contact user = profile.getPerson();
 				Person userPerson = user.getPerson();
-				Project project = profile.getProject();
 				Organization userOrg = user.getOrganization();
+				Project project = profile.getProject();
 				
 				// TODO: Check if profile, contact, organization, etc. info exists
 				// if it exists create the update sql string and save it.

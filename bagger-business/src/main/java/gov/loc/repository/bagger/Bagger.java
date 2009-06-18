@@ -12,6 +12,8 @@ public interface Bagger {
 
 	Collection<Organization> getOrganizations() throws DataAccessException;
 
+	String loadProfiles() throws DataAccessException;
+	
 	Collection<Project> getProjects() throws DataAccessException;
 
 	Collection<Organization> findOrganizations(String name) throws DataAccessException;
