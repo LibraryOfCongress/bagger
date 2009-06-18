@@ -433,14 +433,14 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTagFileTreePanel.setEnabled(false);
     	bagTagFileTreePanel.setToolTipText(getPropertyMessage("bagTree.help"));
 
-    	compositePane = new CompositePane(this, getInitialConsoleMsg());
-    	compositePane.setToolTipText(getPropertyMessage("compositePane.tab.help"));    	
-
     	tagManifestPane = new TagManifestPane(this);
     	tagManifestPane.setToolTipText(getPropertyMessage("compositePane.tab.help"));
 		tagFilesFrame = new TagFilesFrame(getActiveWindow().getControl(), getPropertyMessage("tagFrame.title"));
 		tagFilesFrame.addComponents(tagManifestPane);
     	
+    	compositePane = new CompositePane(this, getInitialConsoleMsg());
+    	compositePane.setToolTipText(getPropertyMessage("compositePane.tab.help"));
+
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
         int row = 0;
@@ -461,7 +461,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         layout.setConstraints(bagTagFileTreePanel, glbc);
     	bagPanel.add(bagTagFileTreePanel);
         row++;
-        colspan = 2;
+        colspan = 3;
         buildConstraints(glbc, 0, row, colspan, 1, 1, 20, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         layout.setConstraints(compositePane, glbc);
         bagPanel.add(compositePane);

@@ -180,7 +180,8 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
 
     public void focusLost(FocusEvent evt) {
     	if (bagView != null && !this.hasErrors() && this.isDirty()) {
-        	//bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
+        	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
+    		bagView.bagInfoInputPane.setSelectedIndex(1);
     	}
     }
 }

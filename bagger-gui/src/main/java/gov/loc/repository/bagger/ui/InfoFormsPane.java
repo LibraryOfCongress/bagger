@@ -100,9 +100,9 @@ public class InfoFormsPane extends JScrollPane {
 //        row++;
 //        bagView.buildConstraints(gbc, 0, row, 1, 1, 80, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
 //        infoLayout.setConstraints(button, gbc);
-        bagView.buildConstraints(gbc, 0, row, 1, 1, 10, 0, GridBagConstraints.NONE, GridBagConstraints.EAST);
-        infoLayout.setConstraints(bagView.updatePropButton, gbc);
-        row++;
+//        bagView.buildConstraints(gbc, 0, row, 1, 1, 10, 0, GridBagConstraints.NONE, GridBagConstraints.EAST);
+//        infoLayout.setConstraints(bagView.updatePropButton, gbc);
+//        row++;
         bagView.buildConstraints(gbc, 0, row, 3, 1, 20, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         infoLayout.setConstraints(bagInfoScrollPane, gbc);
            
@@ -120,7 +120,7 @@ public class InfoFormsPane extends JScrollPane {
         //infoPanel.add(button);
 
         height += (int) bagView.updatePropButton.getPreferredSize().getHeight();
-        infoPanel.add(bagView.updatePropButton);
+        //infoPanel.add(bagView.updatePropButton);
         infoPanel.add(bagSettingsPanel);
         height += (int) bagSettingsPanel.getPreferredSize().getHeight();
         Dimension preferredSize = new Dimension(width, height);

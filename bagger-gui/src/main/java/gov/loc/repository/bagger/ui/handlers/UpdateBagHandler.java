@@ -42,19 +42,9 @@ public class UpdateBagHandler extends AbstractAction {
         String messages = "";
 		messages = bagView.bagInfoInputPane.updateForms(bag);
         bagView.updateBagInfoInputPaneMessages(messages);
-        //bagView.bagInfoInputPane.updateSelected(bag);
         messages += bagView.updateProfile();
-
-        bagView.setBag(bag);
-        bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
-        Collection<BagFile> tags = bag.getBag().getTags();
-        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-        	BagFile bf = it.next();
-            bagView.bagTagFileTree.addNode(bf.getFilepath());
-        }
-        bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
-        bagView.compositePane.updateCompositePaneTabs(bag, messages);
-        bagView.tagManifestPane.updateCompositePaneTabs(bag);
+//        bagView.compositePane.updateCompositePaneTabs(bag, messages);
+//        bagView.tagManifestPane.updateCompositePaneTabs(bag);
         bagView.updatePropButton.setEnabled(false);
-    }
+	}
 }
