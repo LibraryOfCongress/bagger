@@ -1,5 +1,6 @@
 package gov.loc.repository.bagger.bag.impl;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,8 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	public static final String FIELD_NDNP_AWARDEE_PHASE = "Awardee-Phase";
 	public static final String FIELD_LC_PROJECT = "LC-Project";
 
-	protected DefaultBag baggerBag;
+	protected DefaultBag baggerBag = null;
+	public BagInfoTxt standardBagInfo = null;
 	private String bagName = new String();
 	private BaggerOrganization baggerOrganization = new BaggerOrganization();
 	private HashMap<String, BagInfoField> profileMap = new HashMap<String, BagInfoField>();
@@ -55,6 +57,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 
 	public DefaultBagInfo(DefaultBag baggerBag) {
 		super(baggerBag.getBag().getBagConstants());
+		standardBagInfo = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
 		this.setBagName(baggerBag.getName());
 		this.baggerBag = baggerBag;
 		log.debug("DefaultBagInfo");
@@ -318,11 +321,12 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
 				String label = (String) iter.next();
 				label = label.trim();
+				if (label.isEmpty()) continue;
 				BagInfoField field = createField(label, enabled);
 				if (profileSet.contains(label)) {
-					if (profileMap.isEmpty() || !profileMap.containsKey(label)) profileMap.put(label, field);
+					profileMap.put(label, field);
 				} else {
-					if (fieldMap.isEmpty() || !fieldMap.containsKey(label)) fieldMap.put(label, field);
+					fieldMap.put(label, field);
 				}
 			}
 		}
@@ -330,17 +334,16 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	
 	public void createStandardFieldMap(boolean enabled) {
 		if (this.fieldMap == null) this.fieldMap = new HashMap<String, BagInfoField>();
-		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
-		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
-		List<String> ls = bagInfoTxt.getStandardFields();
+		log.debug("createStandardFieldMap: " + enabled);
+		List<String> ls = getStandardBagFields();
+		log.info("createStandardFieldMap: " + ls.size() + "::" + ls);
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
 			label = label.trim();
+			if (label.isEmpty()) continue;
+			log.debug("StandardFields: " + label);
 			if (!profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
-				if (fieldMap.isEmpty() || !fieldMap.containsKey(label)) {
-					fieldMap.put(label, field);
-				}
 		    	if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
 		    		field.setValue(baggerBag.getProject().getName());
 		    		field.isEnabled(false);
@@ -349,20 +352,20 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		    	} else if (DefaultBagInfo.readOnlySet.contains(label)) {
 		    		field.isEnabled(false);
 		    	}
+		    	fieldMap.put(label, field);
 			}
 		}
 	}
 	
 	public void createProfileFieldList(boolean enabled) {
-		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
-		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
-		List<String> ls = bagInfoTxt.getStandardFields();
+		List<String> ls = getStandardBagFields();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
 			label = label.trim();
+			if (label.isEmpty()) continue;
 			if (profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
-				if (profileMap.isEmpty() || !this.profileMap.containsKey(label)) this.profileMap.put(label, field);
+				profileMap.put(label, field);
 			}
 		}
 	}
@@ -370,16 +373,14 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	public List<BagInfoField> createNonStandardFieldList(boolean enabled) {
 		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
 
-		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
-		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
-		List<String> nls = bagInfoTxt.getNonstandardFields();
+		List<String> nls = standardBagInfo.getNonstandardFields();
 		for (int i=0; i<nls.size(); i++) {
 			String label = nls.get(i);
-			//log.info("createNonStandardFieldList non-stnd: " + getMethodFromLabel(label));
+			log.debug("createNonStandardFieldList non-stnd: " + getMethodFromLabel(label));
 		}
 
         if (baggerBag.isEdeposit()) {
-    		BagInfoField publisher = createField("publisher", enabled);
+    		BagInfoField publisher = createField(getMethodFromLabel(FIELD_EDEPOSIT_PUBLISHER), enabled);
     		list.add(publisher);
         }
         if (baggerBag.isNdnp()) {
@@ -395,13 +396,14 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 
 	public void updateExistingFieldList(boolean enabled) {
 		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
-		List<String>ls = bagInfoTxt.getStandardFields();
+		List<String>ls = getStandardBagFields();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
 			label = label.trim();
-			if (!profileSet.contains(label)) {
+			if (label.isEmpty()) continue;
+			if (!profileSet.contains(label) && !label.isEmpty()) {
 				BagInfoField field = createField(label, enabled);
-				if (fieldMap.isEmpty() || !fieldMap.containsKey(label)) fieldMap.put(label, field);
+				fieldMap.put(label, field);
 			}
 		}
 		// TODO: if project has changed, remove old project fields
@@ -470,11 +472,10 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	}
 
 	// TODO: return standard fields and project specific fields
-	public List<String> getStandardFields() {
+	public List<String> getStandardBagFields() {
 		ArrayList<String> list = new ArrayList<String>();
 
         list.add("");
-        list.add(FIELD_NEW_COMPONENT);
 		if (this.baggerBag.isEdeposit()) {
 	        list.add(FIELD_EDEPOSIT_PUBLISHER);
 		} else if (this.baggerBag.isNdnp()) {
@@ -484,16 +485,40 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	        list.add(FIELD_LC_PROJECT);
 		}
 
-        BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
-		if (bagInfoTxt == null) bagInfoTxt = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
-		List<String> ls = bagInfoTxt.getStandardFields();
+		List<String> ls = getFieldList();
 		for (int i=0; i<ls.size(); i++) {
 			String label = ls.get(i);
 			label = label.trim();
+			if (label.isEmpty()) continue;
 			if (!profileSet.contains(label)) {
 				list.add(label);
+				log.info("getStandardBagFields["+i+"] " + label);
 			}
 		}
+		log.info("getStandardBagFields: " + list.size() + "::" + list);
 		return list;
+	}
+
+	private List<String> getFieldList() {
+		List<String> standardFields = new ArrayList<String>();
+		Field[] fields = BagInfoTxtImpl.class.getFields();
+
+		log.info("getFieldList: " + fields.length);
+		try {
+			for(Field field : fields) {
+				log.info("getField: " + field.getName());
+				if (field.getName().startsWith("FIELD_")) {
+//				if (field.getName().startsWith("FIELD_") && this.containsKey(field.get(this))) {
+					String fieldName = (String)field.get(this);
+					log.info("add: " + fieldName);
+					standardFields.add(fieldName);
+				}
+			}
+		} catch (Exception e) {
+			log.error("getFieldList: " + e);
+		}
+
+		log.info("DefaultBagInfo.getStandardBagFields: " + standardFields.size());
+		return standardFields;
 	}
 }
