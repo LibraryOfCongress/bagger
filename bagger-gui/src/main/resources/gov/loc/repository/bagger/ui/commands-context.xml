@@ -18,8 +18,10 @@
         <value>saveBagAsCommand</value>
          <value>addTagFileCommand</value>
         <value>removeTagFileCommand</value>
-        <value>saveProfileCommand</value>
-      </list>
+<!-- 
+         <value>saveProfileCommand</value>
+ -->
+       </list>
     </property>
   </bean>
 
@@ -43,7 +45,9 @@
         <value>addDataCommand</value>
         <value>saveBagCommand</value>
         <value>saveBagAsCommand</value>
+<!-- 
         <value>saveProfileCommand</value>
+ -->
         <bean class="gov.loc.repository.bagger.BaggerExit" />
       </list>
     </property>
