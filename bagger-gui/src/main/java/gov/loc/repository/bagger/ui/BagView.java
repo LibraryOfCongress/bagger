@@ -245,6 +245,55 @@ public class BagView extends AbstractView implements ApplicationListener {
     	return this.userProfiles;
     }
     
+    public String saveProfiles() {
+    	infoInputPane.updateBagHandler.updateBag(bag);
+    	String message = this.storeProfile();
+		compositePane.updateCompositePaneTabs(bag, message);
+    	return message;
+    }
+    
+    public String loadProfiles() {
+    	String message = bagger.loadProfiles();
+    	this.username = getPropertyMessage("user.name");
+    	this.initializeProfile();
+   		bagInfoInputPane.populateForms(bag, true);
+        bagInfoInputPane.update(bag);
+		compositePane.updateCompositePaneTabs(bag, message);
+    	return message;
+    }
+
+    public String clearProfiles() {
+    	String message = "";
+    	ArrayList<Profile> newProfiles = new ArrayList<Profile>();
+    	Object[] profiles = userProfiles.toArray();
+    	for (int j=0; j < profiles.length; j++) {
+    		Profile profile = (Profile) profiles[j];
+    		Contact person = new Contact();
+    		person.setOrganization(new Organization());
+    		profile.setPerson(person);
+    		Contact contact = new Contact();
+    		contact.setOrganization(new Organization());
+    		profile.setContact(contact);
+    		newProfiles.add(profile);
+    		if (j == 0) {
+    			DefaultBagInfo bagInfo = bag.getInfo();
+    	   		BaggerOrganization bagOrg = new BaggerOrganization();
+    	   		bagOrg.setContact(contact);
+    	   		bagInfo.setBagOrganization(bagOrg);
+    	   		bag.setInfo(bagInfo);
+    	   		projectContact = profile.getPerson();
+    	   		baggerProfile.setOrganization(bagOrg);
+    	   		baggerProfile.setSourceCountact(profile.getContact());
+    	   		baggerProfile.setToContact(projectContact);
+    		}
+    	}
+    	userProfiles = newProfiles;
+   		bagInfoInputPane.populateForms(bag, true);
+   		bagInfoInputPane.update(bag);
+		compositePane.updateCompositePaneTabs(bag, message);
+    	return message;
+    }
+
     @Override
     // This populates the default view descriptor declared as the startingPageId
     // property in the richclient-application-context.xml file.
@@ -430,29 +479,12 @@ public class BagView extends AbstractView implements ApplicationListener {
     	addDataButton.setToolTipText(getPropertyMessage("bag.button.add.help"));
         buttonPanel.add(addDataButton, BorderLayout.NORTH);
 
-    	JPanel savePanel = new JPanel(new BorderLayout(5, 5));
     	removeDataButton = new JButton(getPropertyMessage("bag.button.remove"));
     	removeDataButton.addActionListener(new RemoveDataHandler());
     	removeDataButton.setEnabled(false);
     	removeDataButton.setToolTipText(getPropertyMessage("bag.button.remove.help"));
     	buttonPanel.add(removeDataButton, BorderLayout.CENTER);
-/*    	
-        saveButton = new JButton(getPropertyMessage("bag.button.save"));
-        saveBagHandler = new SaveBagHandler();
-        saveButton.addActionListener(saveBagHandler);
-        saveButton.setEnabled(false);
-        saveButton.setToolTipText(getPropertyMessage("bag.button.save.help"));
-        savePanel.add(saveButton, BorderLayout.CENTER);
 
-    	saveAsButton = new JButton(getPropertyMessage("bag.button.saveas"));
-    	saveAsButton.addActionListener(new SaveBagAsHandler(this));
-        saveAsButton.setEnabled(false);
-        saveAsButton.setToolTipText(getPropertyMessage("bag.button.saveas.help"));
-        saveBagFrame = new SaveBagFrame(this, getPropertyMessage("bag.frame.save"));
-        savePanel.add(saveAsButton, BorderLayout.SOUTH);
-
-        buttonPanel.add(savePanel, BorderLayout.CENTER);
-*/        
         return buttonPanel;
     }
     
@@ -465,7 +497,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	showTagButton.setToolTipText(getPropertyMessage("bag.tagbutton.show.help"));
     	buttonPanel.add(showTagButton, BorderLayout.NORTH);
 
-    	JPanel panel = new JPanel(new BorderLayout(5, 5));
     	addTagFileButton = new JButton(getPropertyMessage("bag.tagbutton.add"));
     	addTagFileButton.addActionListener(new AddTagFileHandler());
     	addTagFileButton.setEnabled(false);
@@ -542,21 +573,24 @@ public class BagView extends AbstractView implements ApplicationListener {
         		boolean found = false;
             	for (int i=0; i < profileArray.length; i++) {
             		Profile profile = (Profile) profileArray[i];
+            		log.debug("loadProfiles profile: " + profile);
             		if (project.getId() == profile.getProject().getId()) {
             			found = true;
+            			log.debug("projectId: " + project.getId() + ", bagId: " + bagProject.getId());
                    		if (project.getId() == bagProject.getId()) {
                    			// TODO: user is org contact
-                       		Organization org = profile.getPerson().getOrganization();
                        		DefaultBagInfo bagInfo = bag.getInfo();
                        		BaggerOrganization bagOrg = bagInfo.getBagOrganization();
                        		bagOrg.setContact(profile.getContact());
-                       		bagOrg.setSourceOrganization(org.getName());
-                       		bagOrg.setOrganizationAddress(org.getAddress());
+                       		Organization contactOrg = profile.getContact().getOrganization();
+                       		bagOrg.setSourceOrganization(contactOrg.getName());
+                       		bagOrg.setOrganizationAddress(contactOrg.getAddress());
                        		bagInfo.setBagOrganization(bagOrg);
                        		bag.setInfo(bagInfo);
                        		projectContact = profile.getPerson();
                        		baggerProfile.setOrganization(bagOrg);
                        		baggerProfile.setToContact(projectContact);
+                       		log.debug("InitProfiles: " + bagOrg);
                    		}
             		}
             	}
@@ -597,6 +631,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     		Profile profile = (Profile) profiles[i];
     		if (profile.getProject().getId() == project.getId()) {
     			BaggerOrganization org = bag.getInfo().getBagOrganization();
+    			log.debug("updateProfile: " + org);
     			Contact orgContact = bag.getInfo().getBagOrganization().getContact();
     			orgContact.getOrganization().setName(org.getSourceOrganization());
     			orgContact.getOrganization().setAddress(org.getOrganizationAddress());
@@ -1187,15 +1222,16 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private class SaveProfileExecutor extends AbstractActionCommandExecutor {
         public void execute() {
-        	saveProfile();
+        	storeProfile();
         }    	
     }
 
-    private void saveProfile() {
+    public String storeProfile() {
     	bagger.storeBaggerUpdates(userProfiles, userHomeDir);
 		String message = getPropertyMessage("profile.message.saved") + " " + bag.getProject().getName() + "\n";
 		display("SaveProfileExecutor: " + message);
 		compositePane.updateCompositePaneTabs(bag, message);
+		return message;
     }
 
     /**

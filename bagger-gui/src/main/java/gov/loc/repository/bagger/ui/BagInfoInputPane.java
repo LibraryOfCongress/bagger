@@ -1,11 +1,9 @@
 
 package gov.loc.repository.bagger.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -48,14 +46,10 @@ public class BagInfoInputPane extends JTabbedPane {
     private HierarchicalFormModel infoFormModel = null;
     private HierarchicalFormModel profileFormModel = null;
 
-    private String username;
-	private Contact projectContact;
     private Dimension dimension = new Dimension(400, 370);
 
     public BagInfoInputPane(BagView bagView, String username, Contact c, boolean b ) {
     	this.parentView = bagView;
-    	this.projectContact = c;
-    	this.username = username;
     	this.defaultBag = bagView.getBag();
     	populateForms(defaultBag, b);
     	setMinimumSize(dimension);
@@ -86,14 +80,6 @@ public class BagInfoInputPane extends JTabbedPane {
     	return bagInfoForm.getPreferredSize();
     }
     
-    public void setProjectContact(Contact projectContact) {
-    	this.projectContact = projectContact;
-    }
-    
-    public Contact getProjectContact() {
-    	return this.projectContact;
-    }
-    
     public void enableForms(DefaultBag bag, boolean b) {
     	profileForm.setEnabled(b);
     	bagInfoForm.setEnabled(b);
@@ -106,7 +92,7 @@ public class BagInfoInputPane extends JTabbedPane {
         BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
         BaggerProfile profile = parentView.getBaggerProfile();
         profile.setOrganization(baggerOrganization);
-        profile.setToContact(this.projectContact);
+        profile.setToContact(parentView.projectContact);
         baggerProfile = profile;
 
         Contact orgContact = bagInfo.getBagOrganization().getContact();
@@ -114,7 +100,7 @@ public class BagInfoInputPane extends JTabbedPane {
         	orgContact = new Contact();
         }
 
-        Contact projectContact = this.projectContact;
+        Contact projectContact = parentView.projectContact;
         if (projectContact == null) {
         	projectContact = new Contact();
         }
@@ -147,18 +133,18 @@ public class BagInfoInputPane extends JTabbedPane {
         	profileForm.commit();
         }
         BaggerProfile baggerProfile = (BaggerProfile) profileForm.getFormObject();
-        projectContact = baggerProfile.getToContact();
-        if (username == null || username.length() == 0) {
+        BaggerOrganization baggerOrg = baggerProfile.getOrganization();
+        //Person userPerson = baggerProfile.getToContact().getPerson();
+/*        if (parentView.username == null || parentView.username.length() == 0) {
     		try {
-            	username = URLEncoder.encode(projectContact.getContactName(), "utf-8");
+            	parentView.username = URLEncoder.encode(baggerProfile.getToContactName(), "utf-8");
     		}
     		catch(Exception ex) {
-    			logger.equals("ERROR BagInfoInputPane.verifyForms username: " + projectContact.getContactName() + " exception: " + ex );
+    			logger.equals("ERROR BagInfoInputPane.verifyForms username: " + baggerProfile.getToContactName() + " exception: " + ex );
     		}
-        }
-        Person userPerson = projectContact.getPerson();
-        userPerson.parse(projectContact.getContactName());
-        projectContact.setPerson(userPerson);
+        } */
+        //userPerson.parse(baggerProfile.getToContact().getContactName());
+        //baggerProfile.getToContact().setPerson(userPerson);
 
         Contact orgContact = baggerProfile.getSourceContact();
         try {
@@ -168,7 +154,7 @@ public class BagInfoInputPane extends JTabbedPane {
         } catch (Exception e) {
         	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
         }        
-        bag.getInfo().setBagOrganization(baggerProfile.getOrganization());
+        bag.getInfo().setBagOrganization(baggerOrg);
         createBagInfo(bag);
 
         return messages;

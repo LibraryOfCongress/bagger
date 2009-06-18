@@ -84,8 +84,6 @@ public class ProjectListHandler extends AbstractAction {
                			// TODO: user is org contact
         				Contact person = profile.getPerson();
         				if (person == null) person = new Contact();
-                   		Organization org = person.getOrganization();
-                   		if (org == null) org = new Organization();
                    		DefaultBagInfo bagInfo = bag.getInfo();
                    		BaggerOrganization bagOrg = bagInfo.getBagOrganization();
                    		Contact contact = profile.getContact();
@@ -93,6 +91,8 @@ public class ProjectListHandler extends AbstractAction {
                    			contact = new Contact();
                    		}
                    		bagOrg.setContact(contact);
+                   		Organization org = contact.getOrganization();
+                   		if (org == null) org = new Organization();
                    		bagOrg.setSourceOrganization(org.getName());
                    		bagOrg.setOrganizationAddress(org.getAddress());
                    		bagInfo.setBagOrganization(bagOrg);
