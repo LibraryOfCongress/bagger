@@ -4,23 +4,18 @@ package gov.loc.repository.bagger.ui;
 import java.awt.Dimension;
 import java.awt.Color;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 
-public class CompositePane extends JTabbedPane {
+public class CompositePane extends JScrollPane {
 	private static final long serialVersionUID = 1L;
 	public static final String COMPOSITE_PANE = "compositePane";
     private String messages = new String();
     private BagView parentView;
     private DefaultBag bag;
-    private JScrollPane consoleScrollPane;
     private ConsolePane consolePane;
-	private Dimension preferredDimension = new Dimension(400, 380);
-	private Color selectedColor = Color.lightGray; //new Color(180, 180, 200);
+	private Dimension preferredDimension = new Dimension(600, 380);
 	private Color unselectedColor = Color.black; //new Color(180, 180, 160);
 
     public CompositePane(BagView bagView, String message) {
@@ -28,23 +23,6 @@ public class CompositePane extends JTabbedPane {
         this.parentView = bagView;
         this.bag = bagView.getBag();
         populateBagPane(message);
-    }
-
-    private void init() {
-    	this.setPreferredSize(preferredDimension);
-        ChangeListener changeListener = new ChangeListener() {
-        	public void stateChanged(ChangeEvent changeEvent) {
-        		JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
-                int count = sourceTabbedPane.getTabCount();
-                int selected = sourceTabbedPane.getSelectedIndex();
-                for (int i = 0; i < count; ++i) {
-                    Color c = (i == selected) ? unselectedColor : selectedColor;
-                    sourceTabbedPane.setBackgroundAt(i, c);
-                    sourceTabbedPane.setForegroundAt(i, c);
-                }
-        	}
-        };
-        this.addChangeListener(changeListener);
     }
 
     public void setBag(DefaultBag bag) {
@@ -65,14 +43,12 @@ public class CompositePane extends JTabbedPane {
 
     public void populateBagPane(String messages) {
     	if (messages == null) messages = "";
-    	consoleScrollPane = new JScrollPane();
     	consolePane = new ConsolePane(parentView, messages);
-    	consoleScrollPane.setViewportView(consolePane);
-    	this.addTab(parentView.getPropertyMessage("compositePane.tab.console"), consoleScrollPane);
-    	consoleScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.console.help"));
-    	consoleScrollPane.setForeground(unselectedColor);
+    	this.setViewportView(consolePane);
+    	this.setToolTipText(parentView.getPropertyMessage("compositePane.tab.console.help"));
+    	this.setForeground(unselectedColor);
 
-        init();
+    	this.setPreferredSize(preferredDimension);
     }
 
     // setBag must be called before updateTabs is called
@@ -82,18 +58,14 @@ public class CompositePane extends JTabbedPane {
     		this.removeAll();
             this.invalidate();
             consolePane.invalidate();
-            consoleScrollPane.invalidate();
     	}
         /* */
-    	consoleScrollPane = new JScrollPane();
     	consolePane = new ConsolePane(parentView, messages);
-    	consoleScrollPane.setViewportView(consolePane);
-    	this.addTab(parentView.getPropertyMessage("compositePane.tab.console"), consoleScrollPane);
-    	consoleScrollPane.setToolTipText(parentView.getPropertyMessage("compositePane.tab.console.help"));
-    	consoleScrollPane.setForeground(unselectedColor);
+    	this.setViewportView(consolePane);
+    	this.setToolTipText(parentView.getPropertyMessage("compositePane.tab.console.help"));
+    	this.setForeground(unselectedColor);
     	/* */
         consolePane.invalidate();
-        consoleScrollPane.invalidate();
         this.invalidate();
     }
     
@@ -123,11 +95,9 @@ public class CompositePane extends JTabbedPane {
     		this.removeAll();
             this.invalidate();
             consolePane.invalidate();
-            consoleScrollPane.invalidate();
     	}
         populateBagPane(messages);
         consolePane.invalidate();
-        consoleScrollPane.invalidate();
         this.invalidate();
     }
 }
