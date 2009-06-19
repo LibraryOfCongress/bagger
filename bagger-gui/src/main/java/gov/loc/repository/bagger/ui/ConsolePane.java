@@ -40,11 +40,11 @@ public class ConsolePane extends JPanel {
     private BagView parentView;
     private DefaultBag defaultBag;
 
-    public ConsolePane(BagView bagView, String messages) {
+    public ConsolePane(BagView bagView, DefaultBag defaultBag, String messages) {
         super();
         this.setLayout(layout);
         this.parentView = bagView;
-        this.defaultBag = bagView.getBag();
+        this.defaultBag = defaultBag;
         this.messages = messages;
         createFormControl();
     }
@@ -65,7 +65,7 @@ public class ConsolePane extends JPanel {
     	return this.messages;
     }
 
-    protected JComponent createFormControl() {
+    public JComponent createFormControl() {
     	this.setMaximumSize(maxDimension);
     	int row = 0;
         createBaggedLine(row++);

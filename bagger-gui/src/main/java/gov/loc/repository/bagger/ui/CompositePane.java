@@ -14,7 +14,7 @@ public class CompositePane extends JScrollPane {
     private String messages = new String();
     private BagView parentView;
     private DefaultBag bag;
-    private ConsolePane consolePane;
+    private ConsolePane consolePane = null;
 	private Dimension preferredDimension = new Dimension(600, 380);
 	private Color unselectedColor = Color.black; //new Color(180, 180, 160);
 
@@ -22,7 +22,7 @@ public class CompositePane extends JScrollPane {
         super();
         this.parentView = bagView;
         this.bag = bagView.getBag();
-        populateBagPane(message);
+        populateBagPane(bag, message);
     }
 
     public void setBag(DefaultBag bag) {
@@ -33,42 +33,16 @@ public class CompositePane extends JScrollPane {
     	return this.bag;
     }
 
-    public void setMessages(String messages) {
-    	this.messages = messages;
-    }
-
-    public String getMessages() {
-    	return this.messages;
-    }
-
-    public void populateBagPane(String messages) {
+    public void populateBagPane(DefaultBag bag, String messages) {
     	if (messages == null) messages = "";
-    	consolePane = new ConsolePane(parentView, messages);
+		consolePane = new ConsolePane(parentView, bag, messages);
     	this.setViewportView(consolePane);
     	this.setToolTipText(parentView.getPropertyMessage("compositePane.tab.console.help"));
     	this.setForeground(unselectedColor);
-
     	this.setPreferredSize(preferredDimension);
+        consolePane.invalidate();
     }
 
-    // setBag must be called before updateTabs is called
-    public void updateMessages(String messages) {
-    	setBag(bag);
-    	if (this.getComponentCount() > 0) {
-    		this.removeAll();
-            this.invalidate();
-            consolePane.invalidate();
-    	}
-        /* */
-    	consolePane = new ConsolePane(parentView, messages);
-    	this.setViewportView(consolePane);
-    	this.setToolTipText(parentView.getPropertyMessage("compositePane.tab.console.help"));
-    	this.setForeground(unselectedColor);
-    	/* */
-        consolePane.invalidate();
-        this.invalidate();
-    }
-    
     // setBag must be called before updateTabs is called
     public void updateCompositePaneTabs(DefaultBag bag, String messages) {
     	if (messages == null) messages = "";
@@ -91,13 +65,7 @@ public class CompositePane extends JScrollPane {
                 messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.tiny");
             }
     	}
-    	if (this.getComponentCount() > 0) {
-    		this.removeAll();
-            this.invalidate();
-            consolePane.invalidate();
-    	}
-        populateBagPane(messages);
-        consolePane.invalidate();
+    	populateBagPane(bag, messages);
         this.invalidate();
     }
 }

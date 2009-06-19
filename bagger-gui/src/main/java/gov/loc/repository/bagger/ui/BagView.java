@@ -908,9 +908,15 @@ public class BagView extends AbstractView implements ApplicationListener {
             		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
             		validVerifier.addProgressListener(task);
             		/* */
-                    String messages = bag.validateBag(validVerifier);
-            	    if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);
-            	    else showWarningErrorDialog("Validation Dialog", "Validaiton successful.");
+                    String messages = bag.validateBag(validVerifier, new CancelTriggeringBagDecorator(bag.getBag(), 10, validVerifier));
+            	    if (messages != null && !messages.trim().isEmpty()) {
+            	    	showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);
+            	    	task.current = task.lengthOfTask;
+            	    }
+            	    else {
+            	    	showWarningErrorDialog("Validation Dialog", "Validaiton successful.");
+            	    	task.current = task.lengthOfTask;
+            	    }
                 	setBag(bag);
                 	compositePane.updateCompositePaneTabs(bag, messages);
                     if (task.current >= task.lengthOfTask) {
