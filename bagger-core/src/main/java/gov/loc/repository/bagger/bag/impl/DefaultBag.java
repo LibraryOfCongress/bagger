@@ -30,6 +30,8 @@ import gov.loc.repository.bagit.writer.impl.FileSystemWriter;
 import gov.loc.repository.bagit.writer.impl.TarWriter;
 import gov.loc.repository.bagit.writer.impl.ZipWriter;
 import gov.loc.repository.bagit.verify.Verifier;
+import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
+import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
 import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
 import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
 import gov.loc.repository.bagit.transformer.HolePuncher;
@@ -941,38 +943,33 @@ public class DefaultBag {
 		return messages;
 	}
 
-	public String validateBag(ValidVerifierImpl validVerifier) {
+//	public String validateBag(ValidVerifierImpl validVerifier, Bag bag) {
+	public String validateBag(ValidVerifierImpl validVerifier, Bag bag) {
 		String messages = null;
-		bagToValidate = bilBag;
+		if (bag == null)
+			bagToValidate = bilBag;
+		else
+			bagToValidate = bag;
 		this.validVerifier = validVerifier;
 		try {
 	    	//if (this.getDataSize() > MAX_SIZE) {
 	    	//	confirmValidateBag();
 	    	//} else {
-				if (validVerifier == null) {
-					SimpleResult result = bilBag.verifyValid();
-					if (result.messagesToString() != null && !result.messagesToString().trim().isEmpty()) {
-						messages = "Bag is not valid:\n";
-						messages += result.messagesToString();
-					}
-					this.isValid(result.isSuccess());
-					if (this.isValid) this.isComplete(this.isValid);
-				} else {
-					SimpleResult result = validVerifier.verify(bilBag);
-					if (result.messagesToString() != null && !result.messagesToString().trim().isEmpty()) {
-						messages = "Bag is not valid:\n";
-						messages += result.messagesToString();
-					}
-					this.isValid(result.isSuccess());
-					if (this.isValid) this.isComplete(this.isValid);
-				}
-				this.isCompleteChecked = true;
-				this.isValidChecked = true;
+			SimpleResult result = validVerifier.verify(bilBag);
+			if (!result.isSuccess()) {
+				messages = "Bag is not valid:\n";
+				messages += result.messagesToString();
+			}
+			this.isValid(result.isSuccess());
+			if (this.isValid) this.isComplete(this.isValid);
+			this.isCompleteChecked = true;
+			this.isValidChecked = true;
+	    	System.out.println("ConsolePane validchecked:" + this.isValidChecked() + ", valid: " + this.isValid());
 	    	//}
 		} catch (Exception e) {
 			this.isValid(false);
 			e.printStackTrace();
-			messages = "Bag is not valid: " + e.getMessage() + "\n";
+			messages = "Error - Invalid result returned from verifier:\n" + e.getMessage() + "\n";
 		}
 		return messages;
 	}
