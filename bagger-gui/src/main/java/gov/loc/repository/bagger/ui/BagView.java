@@ -13,7 +13,9 @@ import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
+import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.BagFile;
+import gov.loc.repository.bagit.PreBag;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
@@ -151,13 +153,13 @@ public class BagView extends AbstractView implements ApplicationListener {
     public FileFilter zipFilter;
     public FileFilter tarFilter;
 
-    private CreateSkeletonBagHandler createSkeletonBagHandler;
+    private CreateBagInPlaceHandler createBagInPlaceHandler;
     private ValidateBagHandler validateBagHandler;
     private AddDataHandler addDataHandler;
     private SaveBagHandler saveBagHandler;
 	public StartExecutor startExecutor = new StartExecutor();
     public OpenExecutor openExecutor = new OpenExecutor();
-    public CreateSkeletonExecutor createSkeletonExecutor = new CreateSkeletonExecutor();
+    public CreateBagInPlaceExecutor createBagInPlaceExecutor = new CreateBagInPlaceExecutor();
     public AddDataExecutor addDataExecutor = new AddDataExecutor();
     public RemoveDataExecutor removeDataExecutor = new RemoveDataExecutor();
     public SaveBagExecutor saveBagExecutor = new SaveBagExecutor();
@@ -365,8 +367,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buttonPanel.add(openButton);
 
     	createSkeletonButton = new JButton(getPropertyMessage("bag.button.createskeleton"));
-    	createSkeletonBagHandler = new CreateSkeletonBagHandler();
-    	createSkeletonButton.addActionListener(createSkeletonBagHandler);
+    	createBagInPlaceHandler = new CreateBagInPlaceHandler();
+    	createSkeletonButton.addActionListener(createBagInPlaceHandler);
     	createSkeletonButton.setEnabled(true);
     	createSkeletonButton.setOpaque(true);
     	createSkeletonButton.setBackground(bgColor);
@@ -908,7 +910,8 @@ public class BagView extends AbstractView implements ApplicationListener {
             		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
             		validVerifier.addProgressListener(task);
             		/* */
-                    String messages = bag.validateBag(validVerifier, new CancelTriggeringBagDecorator(bag.getBag(), 10, validVerifier));
+            		Bag validateBag = new CancelTriggeringBagDecorator(bag.getBag(), 10, validVerifier);
+                    String messages = bag.validateBag(validVerifier, validateBag);
             	    if (messages != null && !messages.trim().isEmpty()) {
             	    	showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);
             	    	task.current = task.lengthOfTask;
@@ -1199,7 +1202,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private void updateCommands() {
     	startExecutor.setEnabled(true);
     	openExecutor.setEnabled(true);
-    	createSkeletonExecutor.setEnabled(true);
+    	createBagInPlaceExecutor.setEnabled(true);
         validateExecutor.setEnabled(false);
         completeExecutor.setEnabled(false);
         addDataExecutor.setEnabled(false);
@@ -1214,7 +1217,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     protected void registerLocalCommandExecutors(PageComponentContext context) {
     	context.register("startCommand", startExecutor);
     	context.register("openCommand", openExecutor);
-    	context.register("createSkeletonCommand", createSkeletonExecutor);
+    	context.register("createBagInPlaceCommand", createBagInPlaceExecutor);
     	context.register("validateCommand", validateExecutor);
     	context.register("completeCommand", completeExecutor);
     	context.register("addDataCommand", addDataExecutor);
@@ -1349,13 +1352,13 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagButtonPanel.invalidate();
     }
 
-    private class CreateSkeletonExecutor extends AbstractActionCommandExecutor {
+    private class CreateBagInPlaceExecutor extends AbstractActionCommandExecutor {
         public void execute() {
-        	createSkeletonBag();
-        }    	
+        	createBagInPlace();
+        }
     }
 
-    private class CreateSkeletonBagHandler extends AbstractAction implements Progress {
+    private class CreateBagInPlaceHandler extends AbstractAction implements Progress {
        	private static final long serialVersionUID = 1L;
     	private LongTask task;
     	BagView bagView;
@@ -1363,7 +1366,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     	public void actionPerformed(ActionEvent e) {
     		this.bag = getBag();
-    		createSkeletonBag();
+    		createBagInPlace();
     	}
 
     	public void setBagView(BagView bagView) {
@@ -1379,7 +1382,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
     }
 
-    public void createSkeletonBag() {
+    public void createBagInPlace() {
         File selectFile = new File(File.separator+".");
         JFrame frame = new JFrame();
 		JFileChooser fo = new JFileChooser(selectFile);
@@ -1388,39 +1391,57 @@ public class BagView extends AbstractView implements ApplicationListener {
 		fo.setFileFilter(noFilter);
 	    fo.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	    if (bagRootPath != null) fo.setCurrentDirectory(bagRootPath.getParentFile());
-		fo.setDialogTitle("Existing Bag Location");
+		fo.setDialogTitle("Existing Data Location");
     	int option = fo.showOpenDialog(frame);
 
         if (option == JFileChooser.APPROVE_OPTION) {
             File data = fo.getSelectedFile();
-            createSkeletonBag(bag, data);
+            createPreBag(data);
         }
     }
 
-    private void createSkeletonBag(DefaultBag bag, File data) {
-    	newBag();
-    	File bagDirectory = data.getParentFile();
-		File bagFile = new File(bagDirectory, bag.getName());
-		bagRootPath = bagDirectory;
-		bag.setRootDir(bagRootPath);
-        String fileName = bagFile.getName(); //bagFile.getAbsolutePath();
-        bagNameField.setText(fileName);
-        //bagNameField.setCaretPosition(fileName.length());
-
-        File[] files = data.listFiles();
-        if (files != null) {
-        	for (int i=0; i < files.length; i++) {
-        		log.info("addBagData[" + i + "] " + files[i].getName());
-        		if (i < files.length-1) addBagData(files[i], false);
-        		else addBagData(files[i], true);
-        	}
-        }
-
+    private void createPreBag(File data) {
+    	String messages = "";
+    	//newBag();
+    	bag.createPreBag(data);
+        bag.getInfo().setBag(bag);
+    	bag.getBag().addFileToPayload(data);
+    	boolean alreadyExists = bagPayloadTree.addNodes(data, false);
+    	bagPayloadTreePanel.refresh(bagPayloadTree);
+    	compositePane.setBag(bag);
+    	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
+        updateManifestPane();
+    	enableBagSettings(true);
+		bag.isSerialized(true);
+		String msgs = bag.validateMetadata();
+		if (msgs != null) {
+			if (messages != null) messages += msgs;
+			else messages = msgs;
+		}
+		bag.getInfo().setBag(bag);
+    	bagInfoInputPane.populateForms(bag, true);
+    	updateBagInfoInputPaneMessages(messages);
+        compositePane.updateCompositePaneTabs(bag, messages);
+/* */
+        addDataButton.setEnabled(true);
+        addDataExecutor.setEnabled(true);
+        updatePropButton.setEnabled(false);
+        saveButton.setEnabled(true);
+        saveBagExecutor.setEnabled(true);
         saveAsButton.setEnabled(true);
-        saveBagAsExecutor.setEnabled(true);
+        removeDataExecutor.setEnabled(true);
         removeDataButton.setEnabled(true);
+        addTagFileButton.setEnabled(true);
+        removeTagFileButton.setEnabled(true);
+        showTagButton.setEnabled(true);
+        saveBagAsExecutor.setEnabled(true);
+        bagButtonPanel.invalidate();
+        validateButton.setEnabled(true);
+        completeButton.setEnabled(true);
+        validateExecutor.setEnabled(true);
         bagButtonPanel.invalidate();
         topButtonPanel.invalidate();
+        bag.isNewbag(true);
 
         statusBarEnd();
     }
