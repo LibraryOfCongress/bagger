@@ -9,7 +9,7 @@
       <list>
         <value>startCommand</value>
         <value>openCommand</value>
-        <value>createSkeletonCommand</value>
+        <value>createBagInPlaceCommand</value>
         <value>validateCommand</value>
         <value>completeCommand</value>
         <value>addDataCommand</value>
@@ -40,7 +40,7 @@
         <ref bean="newMenu" />
         <value>startCommand</value>
         <value>openCommand</value>
-        <value>createSkeletonCommand</value>
+        <value>createBagInPlaceCommand</value>
         <value>validateCommand</value>
         <value>addDataCommand</value>
         <value>saveBagCommand</value>
