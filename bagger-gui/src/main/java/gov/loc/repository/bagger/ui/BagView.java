@@ -1426,15 +1426,15 @@ public class BagView extends AbstractView implements ApplicationListener {
         addDataButton.setEnabled(true);
         addDataExecutor.setEnabled(true);
         updatePropButton.setEnabled(false);
-        saveButton.setEnabled(true);
-        saveBagExecutor.setEnabled(true);
+        saveButton.setEnabled(false);
+        saveBagExecutor.setEnabled(false);
         saveAsButton.setEnabled(true);
+        saveBagAsExecutor.setEnabled(true);
         removeDataExecutor.setEnabled(true);
         removeDataButton.setEnabled(true);
         addTagFileButton.setEnabled(true);
         removeTagFileButton.setEnabled(true);
         showTagButton.setEnabled(true);
-        saveBagAsExecutor.setEnabled(true);
         bagButtonPanel.invalidate();
         validateButton.setEnabled(true);
         completeButton.setEnabled(true);
