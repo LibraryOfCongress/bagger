@@ -21,6 +21,7 @@ import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.BagItTxt;
 import gov.loc.repository.bagit.FetchTxt;
 import gov.loc.repository.bagit.Manifest;
+import gov.loc.repository.bagit.PreBag;
 import gov.loc.repository.bagit.ProgressListener;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.FetchTxt.FilenameSizeUrl;
@@ -162,6 +163,12 @@ public class DefaultBag {
 		}
 		this.payloadManifestAlgorithm = Manifest.Algorithm.MD5.bagItAlgorithm;
 		this.tagManifestAlgorithm = Manifest.Algorithm.MD5.bagItAlgorithm;
+	}
+	
+	public void createPreBag(File data) {
+		PreBag preBag = bagFactory.createPreBag(data);
+		Bag bag = preBag.makeBagInPlace(BagFactory.LATEST, false);
+		bilBag = bag;
 	}
 
 	public String getDataDirectory() {
@@ -943,19 +950,18 @@ public class DefaultBag {
 		return messages;
 	}
 
-//	public String validateBag(ValidVerifierImpl validVerifier, Bag bag) {
 	public String validateBag(ValidVerifierImpl validVerifier, Bag bag) {
 		String messages = null;
 		if (bag == null)
 			bagToValidate = bilBag;
 		else
-			bagToValidate = bag;
+			bagToValidate = bilBag; //bag;
 		this.validVerifier = validVerifier;
 		try {
 	    	//if (this.getDataSize() > MAX_SIZE) {
 	    	//	confirmValidateBag();
 	    	//} else {
-			SimpleResult result = validVerifier.verify(bilBag);
+			SimpleResult result = validVerifier.verify(bagToValidate);
 			if (!result.isSuccess()) {
 				messages = "Bag is not valid:\n";
 				messages += result.messagesToString();
@@ -969,7 +975,7 @@ public class DefaultBag {
 		} catch (Exception e) {
 			this.isValid(false);
 			e.printStackTrace();
-			messages = "Error - Invalid result returned from verifier:\n" + e.getMessage() + "\n";
+			messages = "Error - Invalid result returned from verifier: " + e.getMessage() + "\n";
 		}
 		return messages;
 	}
