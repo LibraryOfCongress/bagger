@@ -113,6 +113,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	public TagFilesFrame tagFilesFrame;
 	public TagManifestPane tagManifestPane;
 	public BagInfoInputPane bagInfoInputPane;
+	public JPanel bagSettingsPanel;
 	public InfoFormsPane infoInputPane;
 	public BagTextPane infoFormMessagePane;
 	public JPanel bagButtonPanel;
@@ -396,6 +397,15 @@ public class BagView extends AbstractView implements ApplicationListener {
         saveBagFrame = new SaveBagFrame(this, getPropertyMessage("bag.frame.save"));
         buttonPanel.add(saveAsButton);
 
+        completeButton = new JButton(getPropertyMessage("bag.button.complete"));
+        completeButton.addActionListener(new CompleteBagHandler());
+        completeButton.setEnabled(false);
+        completeButton.setOpaque(true);
+        completeButton.setBackground(bgColor);
+        completeButton.setForeground(fgColor);
+        completeButton.setToolTipText(getPropertyMessage("bag.button.complete.help"));
+        buttonPanel.add(completeButton);
+        
         validateButton = new JButton(getPropertyMessage("bag.button.validate"));
     	validateBagHandler = new ValidateBagHandler();
         validateButton.addActionListener(validateBagHandler);
@@ -405,15 +415,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	validateButton.setForeground(fgColor);
     	validateButton.setToolTipText(getPropertyMessage("bag.button.validate.help"));
         buttonPanel.add(validateButton);
-        
-        completeButton = new JButton(getPropertyMessage("bag.button.complete"));
-        completeButton.addActionListener(new CompleteBagHandler());
-        completeButton.setEnabled(false);
-        completeButton.setOpaque(true);
-        completeButton.setBackground(bgColor);
-        completeButton.setForeground(fgColor);
-        completeButton.setToolTipText(getPropertyMessage("bag.button.complete.help"));
-        buttonPanel.add(completeButton);
         
         return buttonPanel;
     }
@@ -1526,11 +1527,40 @@ public class BagView extends AbstractView implements ApplicationListener {
 		}
         bagVersionValue.setText(bag.getVersion());
         bagVersionList.setSelectedItem(bagVersionValue.getText());
-        String fileName = file.getName(); //file.getAbsolutePath();
+        String fileName = file.getAbsolutePath();
         bagNameField.setText(fileName);
         //bagNameField.setCaretPosition(fileName.length());
         bagNameField.invalidate();
 
+        /* */
+    	String s = file.getName();
+		noneButton.setSelected(true);
+	    int i = s.lastIndexOf('.');
+	    if (i > 0 && i < s.length() - 1) {
+	    	String sub = s.substring(i + 1).toLowerCase();
+	    	if (sub.contains("gz")) {
+	    		serializeValue.setText(DefaultBag.TAR_GZ_LABEL);
+	    		tarGzButton.setSelected(true);
+	    		bag.setSerialMode(DefaultBag.TAR_GZ_MODE);
+	    		bag.isSerial(true);
+	    	} else if (sub.contains("bz2")) {
+	    		serializeValue.setText(DefaultBag.TAR_BZ2_LABEL);
+	    		tarBz2Button.setSelected(true);
+	    		bag.setSerialMode(DefaultBag.TAR_BZ2_MODE);
+	    		bag.isSerial(true);
+	    	} else if (sub.contains(DefaultBag.TAR_LABEL)) {
+	    		serializeValue.setText(DefaultBag.TAR_LABEL);
+	    		tarButton.setSelected(true);
+	    		bag.setSerialMode(DefaultBag.TAR_MODE);
+	    		bag.isSerial(true);
+	    	} else if (sub.contains(DefaultBag.ZIP_LABEL)) {
+	    		serializeValue.setText(DefaultBag.ZIP_LABEL);
+	    		zipButton.setSelected(true);
+	    		bag.setSerialMode(DefaultBag.ZIP_MODE);
+	    		bag.isSerial(true);
+	    	}
+	    }
+/* */
         bag.getInfo().setBag(bag);
 		bag.getInfo().createExistingFieldMap(true);
     	bag.copyBagToForm();
@@ -1555,22 +1585,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    	defaultProject.setSelected(false);
 	    }
 		messages = updateBaggerRules();
-
-    	String s = file.getName();
-		noneButton.setSelected(true);
-	    int i = s.lastIndexOf('.');
-	    if (i > 0 && i < s.length() - 1) {
-		      if (s.substring(i + 1).toLowerCase().equals(DefaultBag.TAR_LABEL)) {
-		    	  tarButton.setSelected(true);
-		    	  bag.setSerialMode(DefaultBag.TAR_MODE);
-		    	  bag.isSerial(true);
-		      } else if (s.substring(i + 1).toLowerCase().equals(DefaultBag.ZIP_LABEL)) {
-		    	  zipButton.setSelected(true);
-		    	  bag.setSerialMode(DefaultBag.ZIP_MODE);
-		    	  bag.isSerial(true);
-		      }
-	    }
-
     	bagRootPath = file;
     	bag.setRootDir(bagRootPath);
 		File rootSrc = new File(file, bag.getDataDirectory());
