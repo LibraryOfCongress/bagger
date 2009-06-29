@@ -45,6 +45,8 @@ public class InfoFormsPane extends JScrollPane {
     private DefaultBag bag;
     private JScrollPane bagInfoScrollPane;
     public UpdateBagHandler updateBagHandler;
+    public JPanel infoPanel;
+    public SerializeBagHandler serializeBagHandler;
 
     public InfoFormsPane(BagView bagView) {
     	super();
@@ -80,8 +82,8 @@ public class InfoFormsPane extends JScrollPane {
         row++;
         bagView.buildConstraints(gbc, 0, row, 3, 1, 20, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         infoLayout.setConstraints(bagInfoScrollPane, gbc);
-           
-        JPanel infoPanel = new JPanel(new BorderLayout(5, 5));
+        
+        infoPanel = new JPanel(new BorderLayout(5, 5));
         infoPanel.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
         Border emptyBorder = new EmptyBorder(5, 5, 5, 5);
         infoPanel.setBorder(emptyBorder);
@@ -168,11 +170,11 @@ public class InfoFormsPane extends JScrollPane {
     	// Bag is to be serialized control
     	bagView.serializeLabel = new JLabel(bagView.getPropertyMessage("bag.label.ispackage"));
     	bagView.serializeLabel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
-    	bagView.serializeValue = new JLabel("none");
+    	bagView.serializeValue = new JLabel(DefaultBag.NO_LABEL);
     	bagView.noneButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.none"));
     	bagView.noneButton.setSelected(true);
     	bagView.noneButton.setEnabled(false);
-    	SerializeBagHandler serializeBagHandler = new SerializeBagHandler(bagView);
+    	serializeBagHandler = new SerializeBagHandler(bagView);
     	bagView.noneButton.addActionListener(serializeBagHandler);
     	bagView.noneButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.none.help"));
     	bagView.noFilter = new FileFilter() {

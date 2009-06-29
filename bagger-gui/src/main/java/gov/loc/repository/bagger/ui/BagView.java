@@ -533,7 +533,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         tarGzButton.setEnabled(false);
         tarBz2Button.setEnabled(false);
         noneButton.setEnabled(false);
-        serializeValue.setText("none");
     }
 
     public void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
@@ -1512,14 +1511,12 @@ public class BagView extends AbstractView implements ApplicationListener {
 		}
         bagVersionValue.setText(bag.getVersion());
         bagVersionList.setSelectedItem(bagVersionValue.getText());
-        String fileName = file.getAbsolutePath();
+        String fileName = file.getName(); // file.getAbsolutePath();
         bagNameField.setText(fileName);
-        //bagNameField.setCaretPosition(fileName.length());
         bagNameField.invalidate();
 
         /* */
     	String s = file.getName();
-		noneButton.setSelected(true);
 	    int i = s.lastIndexOf('.');
 	    if (i > 0 && i < s.length() - 1) {
 	    	String sub = s.substring(i + 1).toLowerCase();
@@ -1543,9 +1540,20 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    		zipButton.setSelected(true);
 	    		bag.setSerialMode(DefaultBag.ZIP_MODE);
 	    		bag.isSerial(true);
+	    	} else {
+	    		serializeValue.setText(DefaultBag.NO_LABEL);
+	    		noneButton.setSelected(true);
+	    		bag.setSerialMode(DefaultBag.NO_MODE);
+	    		bag.isSerial(false);
 	    	}
+	    } else {
+    		serializeValue.setText(DefaultBag.NO_LABEL);
+    		noneButton.setSelected(true);
+    		bag.setSerialMode(DefaultBag.NO_MODE);
+    		bag.isSerial(false);
 	    }
-/* */
+	    serializeValue.invalidate();
+	    /* */
         bag.getInfo().setBag(bag);
 		bag.getInfo().createExistingFieldMap(true);
     	bag.copyBagToForm();
