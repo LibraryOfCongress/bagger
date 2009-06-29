@@ -53,6 +53,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -97,7 +98,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     public File bagRootPath;
     public File tmpRootPath;
     public File parentSrc;
-    //public File addBagDataFile;
     public Collection<Project> userProjects;
     public Collection<Profile> userProfiles;
     private BaggerProfile baggerProfile = new BaggerProfile();
@@ -115,7 +115,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 	public BagInfoInputPane bagInfoInputPane;
 	public JPanel bagSettingsPanel;
 	public InfoFormsPane infoInputPane;
-	public BagTextPane infoFormMessagePane;
 	public JPanel bagButtonPanel;
 	public JPanel bagTagButtonPanel;
 	public JPanel bagPanel;
@@ -420,6 +419,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     private JPanel createBagPanel() {
+    	EmptyBorder border = new EmptyBorder(2, 1, 5, 1);
     	bagButtonPanel = createBagButtonPanel();
 
     	bagTagButtonPanel = createBagTagButtonPanel();
@@ -428,12 +428,14 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagPayloadTree.setEnabled(false);
     	bagPayloadTreePanel = new BagTreePanel(bagPayloadTree);
     	bagPayloadTreePanel.setEnabled(false);
+    	bagPayloadTreePanel.setBorder(border);
     	bagPayloadTreePanel.setToolTipText(getPropertyMessage("bagTree.help"));
 
     	bagTagFileTree = new BagTree(this, getPropertyMessage("bag.label.noname"), false);
     	bagTagFileTree.setEnabled(false);
     	bagTagFileTreePanel = new BagTreePanel(bagTagFileTree);
     	bagTagFileTreePanel.setEnabled(false);
+    	bagTagFileTreePanel.setBorder(border);
     	bagTagFileTreePanel.setToolTipText(getPropertyMessage("bagTree.help"));
 
     	tagManifestPane = new TagManifestPane(this);
@@ -1186,22 +1188,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	topButtonPanel.invalidate();
     }
 
-    public void updateBagInfoInputPaneMessages(String messages) {
-		boolean isMessage = true;
-		display("updateMessages: " + messages);
-        if (!bagInfoInputPane.hasFormErrors(bag) && isMessage) {
-            messages += getPropertyMessage("bag.message.info.update") + "\n";
-            infoFormMessagePane.setBackground(infoColor);
-            infoFormMessagePane.setMessage("");
-            updatePropButton.setEnabled(true);
-        } else {
-            infoFormMessagePane.setBackground(errorColor);
-            infoFormMessagePane.setMessage(getPropertyMessage("error.form"));
-        }
-        updatePropButton.invalidate();
-        infoFormMessagePane.invalidate();
-    }
-
     private void updateCommands() {
     	startExecutor.setEnabled(true);
     	openExecutor.setEnabled(true);
@@ -1431,7 +1417,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         }
         bagTagFileTreePanel.refresh(bagTagFileTree);
     	bagInfoInputPane.populateForms(bag, true);
-    	updateBagInfoInputPaneMessages(messages);
         compositePane.updateCompositePaneTabs(bag, messages);
 /* */
         addDataButton.setEnabled(true);
@@ -1606,7 +1591,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 		}
 		bag.getInfo().setBag(bag);
     	bagInfoInputPane.populateForms(bag, true);
-    	updateBagInfoInputPaneMessages(messages);
         compositePane.updateCompositePaneTabs(bag, messages);
 
     	statusBarEnd();
