@@ -48,7 +48,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 	private static final Log logger = LogFactory.getLog(OrganizationInfoForm.class);
 
 	public static final String INFO_FORM_PAGE = "infoPage";
-	private static final int MIN_ROWS = 10;
+	private static final int MIN_ROWS = 13;
 
 	private BindingFactory bindingFactory = null;
 	private FormModel formModel;
@@ -101,7 +101,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     	int rowCount = 1;
         BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory());
         JTextField nameTextField = new JTextField();
-        int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight();
+        int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight() - 1;
         int index = 1;
         int count = 0;
 
