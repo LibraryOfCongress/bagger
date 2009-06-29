@@ -910,7 +910,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
             		validVerifier.addProgressListener(task);
             		/* */
-            		Bag validateBag = new CancelTriggeringBagDecorator(bag.getBag(), 10, validVerifier);
+            		Bag validateBag = new CancelTriggeringBagDecorator(bag.getBag(), 1, validVerifier);
                     String messages = bag.validateBag(validVerifier, validateBag);
             	    if (messages != null && !messages.trim().isEmpty()) {
             	    	showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);
@@ -1126,10 +1126,12 @@ public class BagView extends AbstractView implements ApplicationListener {
                         task.current = task.lengthOfTask;
                     }
                 } catch (InterruptedException e) {
+                	task.done = true;
         			bag.isSerialized(false);
         			showWarningErrorDialog("Warning - save interrupted", "Problem saving bag: " + bagRootPath + "\n" + e.getMessage());
                 	e.printStackTrace();
                 } catch (Exception e) {
+                	task.done = true;
         			bag.isSerialized(false);
         			showWarningErrorDialog("Error - bag not saved", "Error saving bag: " + bagRootPath + "\n" + e.getMessage());
                 	e.printStackTrace();
@@ -1402,7 +1404,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private void createPreBag(File data) {
     	String messages = "";
-    	//newBag();
+    	clearExistingBag(messages);
     	bag.createPreBag(data);
         bag.getInfo().setBag(bag);
     	bag.getBag().addFileToPayload(data);
@@ -1419,6 +1421,14 @@ public class BagView extends AbstractView implements ApplicationListener {
 			else messages = msgs;
 		}
 		bag.getInfo().setBag(bag);
+        Bag b = bag.getBag();
+    	bagTagFileTree = new BagTree(this, bag.getName(), false);
+        Collection<BagFile> tags = b.getTags();
+        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
+        	BagFile bf = it.next();
+            bagTagFileTree.addNode(bf.getFilepath());
+        }
+        bagTagFileTreePanel.refresh(bagTagFileTree);
     	bagInfoInputPane.populateForms(bag, true);
     	updateBagInfoInputPaneMessages(messages);
         compositePane.updateCompositePaneTabs(bag, messages);
