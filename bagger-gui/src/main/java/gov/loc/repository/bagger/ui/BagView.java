@@ -1706,6 +1706,7 @@ public class BagView extends AbstractView implements ApplicationListener {
    		}
    		messages += updateProfile();
     	if (projectName.equalsIgnoreCase(getPropertyMessage("bag.project.noproject"))) {
+    		projectList.setSelectedItem(projectName);
     		bag.isNoProject(true);
     	} else if (bag.isEdeposit()) {
     		projectList.setSelectedItem(projectName);
