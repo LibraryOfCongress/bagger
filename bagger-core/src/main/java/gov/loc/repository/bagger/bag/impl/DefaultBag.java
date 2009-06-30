@@ -885,17 +885,29 @@ public class DefaultBag {
 	public String write(ProgressListener progress) throws Exception {
 		String messages = null;
 		reset();
+		generateManifestFiles();
 		if (this.isHoley) {
 			if (this.getFetch().getBaseURL() != null) {
 				BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+				List<Manifest> manifests = bilBag.getPayloadManifests();
+				List<Manifest> tags = bilBag.getTagManifests();
 				includeTags = true;
 				includePayloadDirectoryInUrl = true;
 				bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), includePayloadDirectoryInUrl, includeTags);
 				// TODO: makeHoley deletes baginfo so put back
 				bilBag.putBagFile(bagInfoTxt);
+				if (manifests != null) {
+					for (int i=0; i<manifests.size(); i++) {
+						bilBag.putBagFile(manifests.get(i));
+					}
+				}
+				if (tags != null) {
+					for (int i=0; i<tags.size(); i++) {
+						bilBag.putBagFile(tags.get(i));
+					}
+				}
 			}
 		}
-		generateManifestFiles();
 		try {
 			messages = writeBag(progress);
 		} catch (Exception e) {
@@ -1063,7 +1075,7 @@ public class DefaultBag {
 			Bag newBag = bw.write(bilBag, bagFile);
 			if (newBag != null) bilBag = newBag;
 			this.isNewbag(false);
-/* */
+/* */ 
 			display("DefaultBag.writeBag bagInfo:" + this.bilBag.getBagInfoTxt());
 			for (int i=0; i < bilBag.getPayloadManifests().size(); i++) {
 				display("DefaultBag.writeBag manfiests: " + bilBag.getPayloadManifests().get(i));
@@ -1128,9 +1140,11 @@ public class DefaultBag {
 				completer.setPayloadManifestAlgorithm(Algorithm.SHA256);
 			} else if (this.payloadManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA512.bagItAlgorithm)) {
 				completer.setPayloadManifestAlgorithm(Algorithm.SHA512);
+			} else {
+				completer.setPayloadManifestAlgorithm(Algorithm.MD5);
 			}
 			if (this.isHoley) {
-				completer.setClearExistingPayloadManifests(false);
+				completer.setClearExistingPayloadManifests(true);
 			} else {
 				completer.setClearExistingPayloadManifests(true);
 			}
@@ -1146,6 +1160,8 @@ public class DefaultBag {
 				completer.setTagManifestAlgorithm(Algorithm.SHA256);
 			} else if (this.tagManifestAlgorithm.equalsIgnoreCase(Manifest.Algorithm.SHA512.bagItAlgorithm)) {
 				completer.setTagManifestAlgorithm(Algorithm.SHA512);
+			} else {
+				completer.setTagManifestAlgorithm(Algorithm.MD5);
 			}
 		}
 		if (bilBag.getBagInfoTxt() != null) completer.setGenerateBagInfoTxt(true);
