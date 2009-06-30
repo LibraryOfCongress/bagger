@@ -28,6 +28,8 @@ import gov.loc.repository.bagit.FetchTxt.FilenameSizeUrl;
 import gov.loc.repository.bagit.Manifest.Algorithm;
 import gov.loc.repository.bagit.writer.Writer;
 import gov.loc.repository.bagit.writer.impl.FileSystemWriter;
+import gov.loc.repository.bagit.writer.impl.TarBz2Writer;
+import gov.loc.repository.bagit.writer.impl.TarGzWriter;
 import gov.loc.repository.bagit.writer.impl.TarWriter;
 import gov.loc.repository.bagit.writer.impl.ZipWriter;
 import gov.loc.repository.bagit.verify.Verifier;
@@ -970,7 +972,6 @@ public class DefaultBag {
 			if (this.isValid) this.isComplete(this.isValid);
 			this.isCompleteChecked = true;
 			this.isValidChecked = true;
-	    	System.out.println("ConsolePane validchecked:" + this.isValidChecked() + ", valid: " + this.isValid());
 	    	//}
 		} catch (Exception e) {
 			this.isValid(false);
@@ -1026,6 +1027,42 @@ public class DefaultBag {
 			    }
 				bagFile = new File(parentDir, bagName);
 				bw = new TarWriter(bagFactory);
+				String zipName = bagFile.getName();
+				long zipSize = this.getSize() / MB;
+				if (zipSize > 100) {
+					messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
+				}
+			} else if (this.serialMode == TAR_GZ_MODE) {
+				this.isSerialized(true);
+				String s = bagName;
+			    int i = s.lastIndexOf('.');
+			    if (i > 0 && i < s.length() - 1) {
+				      if (!s.substring(i + 1).toLowerCase().equals(TAR_GZ_LABEL)) {
+							bagName += "." + TAR_GZ_LABEL;
+				      }
+			    } else {
+		    		bagName += "." + TAR_GZ_LABEL;
+			    }
+				bagFile = new File(parentDir, bagName);
+				bw = new TarGzWriter(bagFactory);
+				String zipName = bagFile.getName();
+				long zipSize = this.getSize() / MB;
+				if (zipSize > 100) {
+					messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
+				}
+			} else if (this.serialMode == TAR_BZ2_MODE) {
+				this.isSerialized(true);
+				String s = bagName;
+			    int i = s.lastIndexOf('.');
+			    if (i > 0 && i < s.length() - 1) {
+				      if (!s.substring(i + 1).toLowerCase().equals(TAR_BZ2_LABEL)) {
+							bagName += "." + TAR_BZ2_LABEL;
+				      }
+			    } else {
+		    		bagName += "." + TAR_BZ2_LABEL;
+			    }
+				bagFile = new File(parentDir, bagName);
+				bw = new TarBz2Writer(bagFactory);
 				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
 				if (zipSize > 100) {
