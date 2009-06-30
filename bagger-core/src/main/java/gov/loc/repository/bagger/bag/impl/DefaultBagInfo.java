@@ -448,7 +448,11 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		} else {
 			field.isEnabled(enabled);					
 		}
-		field.isRequired(true);
+		if (!baggerBag.isNoProject() && requiredSet.contains(label)) {
+			field.isRequired(true);
+		} else {
+			field.isRequired(false);
+		}
 
 		return field;
 	}
