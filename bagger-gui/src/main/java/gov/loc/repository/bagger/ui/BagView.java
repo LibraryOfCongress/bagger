@@ -1572,6 +1572,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	        holeyCheckbox.setSelected(true);
 	        holeyValue.setText("true");
 	    }
+    	bag.copyBagToForm();
 	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
 	    	defaultProject.setSelected(true);
 	    } else {
