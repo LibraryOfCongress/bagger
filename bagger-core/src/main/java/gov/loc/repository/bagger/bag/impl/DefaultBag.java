@@ -250,17 +250,7 @@ public class DefaultBag {
 
 	// This directory contains either the bag directory or serialized bag file
 	public void setRootDir(File rootDir) {
-		try {
-    		if (rootDir != null && rootDir.isFile()) {
-    			rootDir = rootDir.getParentFile();
-    			this.rootDir = rootDir;
-    		} else {
-        		this.rootDir = rootDir;
-    		}
-    	} catch (Exception e) {
-    		e.printStackTrace();
-        	log.error("DefaultBag.setName create rootDir: " + e.getMessage());
-    	}
+		this.rootDir = rootDir;
 	}
 
 	public File getRootDir() {
