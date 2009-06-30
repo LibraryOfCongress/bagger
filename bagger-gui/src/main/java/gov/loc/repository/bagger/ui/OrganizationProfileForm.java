@@ -14,6 +14,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -49,7 +50,8 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
 
     protected JComponent createFormFields() {
         JComponent fieldForm;
-        BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory());
+        ImageIcon requiredIcon = bagView.getPropertyImage("bag.required.image");
+        BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory(), requiredIcon);
         JTextField nameTextField = new JTextField();
         int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight();
         int rowCount = 0;

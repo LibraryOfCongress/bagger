@@ -1555,8 +1555,16 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    serializeValue.invalidate();
 	    /* */
         bag.getInfo().setBag(bag);
-		bag.getInfo().createExistingFieldMap(true);
     	bag.copyBagToForm();
+	    if (!bag.getInfo().getLcProject().isEmpty()){
+    		messages += updateProject(bag.getInfo().getLcProject());
+    		bag.isNoProject(false);
+    	} else {
+    		messages += updateProject(getPropertyMessage("bag.project.noproject"));
+    		bag.isNoProject(true);
+    	}
+		System.out.println("OpenExisting isNoProject: "+ bag.isNoProject());
+		bag.getInfo().createExistingFieldMap(true);
     	baggerProfile.setOrganization(bag.getInfo().getBagOrganization());
     	if (bag.getInfo().getBagSize() != null && bag.getInfo().getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
@@ -1565,13 +1573,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 	        holeyCheckbox.setSelected(true);
 	        holeyValue.setText("true");
 	    }
-	    if (!bag.getInfo().getLcProject().isEmpty()){
-    		messages += updateProject(bag.getInfo().getLcProject());
-    		bag.isNoProject(false);
-    	} else {
-    		messages += updateProject(getPropertyMessage("bag.project.noproject"));
-    		bag.isNoProject(true);
-    	}
 	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
 	    	defaultProject.setSelected(true);
 	    } else {

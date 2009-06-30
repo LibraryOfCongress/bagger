@@ -271,6 +271,9 @@ public class BagInfoInputPane extends JTabbedPane {
             	key = label.getText();
         	}
         	i++;
+        	// Is required component
+        	c = components[i];
+        	i++;
         	c = components[i];
         	if (c instanceof JTextField) {
         		JTextField tf = (JTextField) c;

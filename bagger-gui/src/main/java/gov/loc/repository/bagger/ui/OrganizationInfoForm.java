@@ -99,10 +99,11 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 
     protected JComponent createFormControl() {
     	int rowCount = 1;
-        BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory());
+        ImageIcon requiredIcon = bagView.getPropertyImage("bag.required.image");
+        BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory(), requiredIcon);
         JTextField nameTextField = new JTextField();
         int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight() - 1;
-        int index = 1;
+        int index = 2;
         int count = 0;
 
         formBuilder.row();
@@ -124,7 +125,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             	removeButton.addActionListener(new RemoveFieldHandler());
                 switch (field.getComponentType()) {
                 case BagInfoField.TEXTAREA_COMPONENT:
-                    JComponent textarea = formBuilder.addTextArea(field.getName(), field.getLabel(), removeButton, "")[index];
+                    JComponent textarea = formBuilder.addTextArea(field.getName(), field.isRequired(), field.getLabel(), removeButton, "")[index];
                     textarea.setEnabled(field.isEnabled());
             		textarea.addFocusListener(this);
             		textarea.addKeyListener(this);
@@ -138,7 +139,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                     rowCount += 1;
                 	break;
                 case BagInfoField.TEXTFIELD_COMPONENT:
-                    JComponent comp = formBuilder.add(field.getName(), field.getLabel(), removeButton, "")[index];
+                    JComponent comp = formBuilder.add(field.getName(), field.isRequired(), field.getLabel(), removeButton, "")[index];
                     comp.setEnabled(field.isEnabled());
                     comp.addFocusListener(this);
                     comp.addKeyListener(this);
