@@ -1563,7 +1563,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     		messages += updateProject(getPropertyMessage("bag.project.noproject"));
     		bag.isNoProject(true);
     	}
-		System.out.println("OpenExisting isNoProject: "+ bag.isNoProject());
 		bag.getInfo().createExistingFieldMap(true);
     	baggerProfile.setOrganization(bag.getInfo().getBagOrganization());
     	if (bag.getInfo().getBagSize() != null && bag.getInfo().getBagSize().isEmpty()) {
