@@ -919,7 +919,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             	    	task.current = task.lengthOfTask;
             	    }
             	    else {
-            	    	showWarningErrorDialog("Validation Dialog", "Validaiton successful.");
+            	    	showWarningErrorDialog("Validation Dialog", "Validation successful.");
             	    	task.current = task.lengthOfTask;
             	    }
                 	setBag(bag);
