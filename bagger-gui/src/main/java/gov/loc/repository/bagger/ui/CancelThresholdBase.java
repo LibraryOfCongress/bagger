@@ -23,5 +23,4 @@ public class CancelThresholdBase
 			this.processToCancel.cancel();
 		}
 	}
-
 }

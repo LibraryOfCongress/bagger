@@ -18,6 +18,7 @@ import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.PreBag;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
+import gov.loc.repository.bagit.utilities.SimpleResult;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
 import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
@@ -912,7 +913,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
             		validVerifier.addProgressListener(task);
             		/* */
-            		Bag validateBag = new CancelTriggeringBagDecorator(bag.getBag(), 1, validVerifier);
+            		Bag validateBag = new CancelTriggeringBagDecorator(bag.getBag(), 100000, validVerifier);
                     String messages = bag.validateBag(validVerifier, validateBag);
             	    if (messages != null && !messages.trim().isEmpty()) {
             	    	showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);

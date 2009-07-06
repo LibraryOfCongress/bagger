@@ -13,6 +13,9 @@ import gov.loc.repository.bagit.BagVisitor;
 import gov.loc.repository.bagit.Cancellable;
 import gov.loc.repository.bagit.FetchTxt;
 import gov.loc.repository.bagit.Manifest;
+import gov.loc.repository.bagit.Bag.BagConstants;
+import gov.loc.repository.bagit.Bag.BagPartFactory;
+import gov.loc.repository.bagit.Bag.Format;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.Manifest.Algorithm;
 import gov.loc.repository.bagit.transformer.Completer;
@@ -32,13 +35,13 @@ import gov.loc.repository.bagit.writer.Writer;
 public class CancelTriggeringBagDecorator extends CancelThresholdBase implements Bag
 {
 	private Bag realBag;
-
+	
 	public CancelTriggeringBagDecorator(Bag bag, int threshold, Cancellable processToCancel)
 	{
 		super(threshold, processToCancel);
 		this.realBag = bag;
 	}
-
+	
 	public void accept(BagVisitor visitor)
 	{
 		this.increment();

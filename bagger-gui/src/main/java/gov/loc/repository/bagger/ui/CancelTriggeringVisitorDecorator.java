@@ -8,7 +8,7 @@ import gov.loc.repository.bagit.Cancellable;
 public class CancelTriggeringVisitorDecorator extends CancelThresholdBase implements BagVisitor
 {
 	private BagVisitor realVisitor;
-
+	
 	public CancelTriggeringVisitorDecorator(BagVisitor realVisitor, int threshold, Cancellable processToCancel)
 	{
 		super(threshold, processToCancel);
