@@ -370,58 +370,6 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		}
 	}
 	
-	public List<BagInfoField> createNonStandardFieldList(boolean enabled) {
-		ArrayList<BagInfoField> list = new ArrayList<BagInfoField>();
-
-		List<String> nls = standardBagInfo.getNonstandardFields();
-		for (int i=0; i<nls.size(); i++) {
-			String label = nls.get(i);
-			log.debug("createNonStandardFieldList non-stnd: " + getMethodFromLabel(label));
-		}
-
-        if (baggerBag.isEdeposit()) {
-    		BagInfoField publisher = createField(getMethodFromLabel(FIELD_EDEPOSIT_PUBLISHER), enabled);
-    		list.add(publisher);
-        }
-        if (baggerBag.isNdnp()) {
-    		BagInfoField awardeePhase = createField("awardeePhase", enabled);
-    		list.add(awardeePhase);
-        }
-        if (!baggerBag.isNoProject()) {
-    		BagInfoField lcProject = createField("lcProject", enabled);
-    		list.add(lcProject);
-        }
-		return list;
-	}
-
-	public void updateExistingFieldList(boolean enabled) {
-		BagInfoTxt bagInfoTxt = baggerBag.getBag().getBagInfoTxt();
-		List<String>ls = getStandardBagFields();
-		for (int i=0; i<ls.size(); i++) {
-			String label = ls.get(i);
-			label = label.trim();
-			if (label.isEmpty()) continue;
-			if (!profileSet.contains(label) && !label.isEmpty()) {
-				BagInfoField field = createField(label, enabled);
-				fieldMap.put(label, field);
-			}
-		}
-		// TODO: if project has changed, remove old project fields
-		// and add new project fields based on profile
-        if (baggerBag.isEdeposit()) {
-    		BagInfoField publisher = createField("publisher", enabled);
-    		fieldMap.put("publisher", publisher);
-        }
-        if (baggerBag.isNdnp()) {
-    		BagInfoField awardeePhase = createField("awardeePhase", enabled);
-    		fieldMap.put("awardeePhase", awardeePhase);
-        }
-        if (!baggerBag.isNoProject()) {
-    		BagInfoField lcProject = createField("lcProject", enabled);
-    		fieldMap.put("lcProject", lcProject);
-        }
-	}
-
 	public static String getTodaysDate() {
 		String pattern = "yyyy-MM-dd";
 		SimpleDateFormat formatter = new SimpleDateFormat(pattern);
