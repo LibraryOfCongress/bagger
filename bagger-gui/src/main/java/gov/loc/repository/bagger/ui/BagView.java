@@ -13,12 +13,10 @@ import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
-import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.BagFile;
-import gov.loc.repository.bagit.PreBag;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
-import gov.loc.repository.bagit.utilities.SimpleResult;
+import gov.loc.repository.bagit.utilities.LongRunningOperationBase;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
 import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
@@ -34,7 +32,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -51,7 +48,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
@@ -91,6 +87,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JTextArea taskOutput;
     private Timer timer;
     private LongTask task;
+    private LongRunningOperationBase longRunningProcess = null;
 
 	private Bagger bagger;
     private DefaultBag bag;
@@ -912,8 +909,9 @@ public class BagView extends AbstractView implements ApplicationListener {
             		
             		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
             		validVerifier.addProgressListener(task);
+            		longRunningProcess = validVerifier;
             		/* */
-            		Bag validateBag = new CancelTriggeringBagDecorator(bag.getBag(), 100000, validVerifier);
+            		Bag validateBag = bag.getBag();
                     String messages = bag.validateBag(validVerifier, validateBag);
             	    if (messages != null && !messages.trim().isEmpty()) {
             	    	showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);
@@ -1251,6 +1249,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 task.stop();
                 Toolkit.getDefaultToolkit().beep();
                 timer.stop();
+                if (longRunningProcess != null) longRunningProcess.cancel();
                 if (task.isDone()) {
                     taskOutput.append("Task completed.\n");
                 } else {
