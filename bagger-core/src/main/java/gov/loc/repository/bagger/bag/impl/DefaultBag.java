@@ -978,7 +978,11 @@ public class DefaultBag {
 		} catch (Exception e) {
 			this.isValid(false);
 			e.printStackTrace();
-			messages = "Error - Invalid result returned from verifier: " + e.getMessage() + "\n";
+			if (validVerifier.isCancelled()) {
+				messages = "Validation check cancelled.";
+			} else {
+				messages = "Error - Invalid result returned from verifier: " + e.getMessage() + "\n";
+			}
 		}
 		return messages;
 	}
