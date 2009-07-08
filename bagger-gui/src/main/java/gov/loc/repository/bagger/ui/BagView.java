@@ -14,12 +14,19 @@ import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
+import gov.loc.repository.bagit.Cancellable;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.utilities.LongRunningOperationBase;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
 import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
+import gov.loc.repository.bagit.writer.Writer;
+import gov.loc.repository.bagit.writer.impl.FileSystemWriter;
+import gov.loc.repository.bagit.writer.impl.TarBz2Writer;
+import gov.loc.repository.bagit.writer.impl.TarGzWriter;
+import gov.loc.repository.bagit.writer.impl.TarWriter;
+import gov.loc.repository.bagit.writer.impl.ZipWriter;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -87,7 +94,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     private JTextArea taskOutput;
     private Timer timer;
     private LongTask task;
-    private LongRunningOperationBase longRunningProcess = null;
+    private Cancellable longRunningProcess = null;
+    private Writer bagWriter = null;
 
 	private Bagger bagger;
     private DefaultBag bag;
@@ -913,8 +921,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		validVerifier.addProgressListener(task);
             		longRunningProcess = validVerifier;
             		/* */
-            		Bag validateBag = bag.getBag();
-                    String messages = bag.validateBag(validVerifier, validateBag);
+                    String messages = bag.validateBag(validVerifier);
             	    if (messages != null && !messages.trim().isEmpty()) {
             	    	showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);
             	    	task.current = task.lengthOfTask;
@@ -1134,9 +1141,22 @@ public class BagView extends AbstractView implements ApplicationListener {
         	while (!task.canceled && !task.done) {
                 try {
                     Thread.sleep(1000); //sleep for a second
-                    //
-                    String messages = bag.write(task);
-                    //
+                    /* */
+                    short mode = bag.getSerialMode();
+                    if (mode == DefaultBag.NO_MODE) {
+                    	bagWriter = new FileSystemWriter(bag.getBagFactory());
+                    } else if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
+                    	bagWriter = new ZipWriter(bag.getBagFactory());
+                    } else if (mode == DefaultBag.TAR_MODE) {
+                    	bagWriter = new TarWriter(bag.getBagFactory());
+                    } else if (mode == DefaultBag.TAR_GZ_MODE) {
+                    	bagWriter = new TarGzWriter(bag.getBagFactory());
+                    } else if (mode == DefaultBag.TAR_BZ2_MODE) {
+                    	bagWriter = new TarBz2Writer(bag.getBagFactory());
+					}
+        			bagWriter.addProgressListener(task);
+            		longRunningProcess = bagWriter;
+                    String messages = bag.write(bagWriter);
             		if (bag.isSerialized()) saveButton.setEnabled(true);
             		validateButton.setEnabled(true);
             		validateExecutor.setEnabled(true);
@@ -1165,12 +1185,20 @@ public class BagView extends AbstractView implements ApplicationListener {
                 } catch (InterruptedException e) {
                 	task.done = true;
         			bag.isSerialized(false);
-        			showWarningErrorDialog("Warning - save interrupted", "Problem saving bag: " + bagRootPath + "\n" + e.getMessage());
+        			if (longRunningProcess.isCancelled()) {
+            			showWarningErrorDialog("Save cancelled", "Save cancelled.");
+        			} else {
+            			showWarningErrorDialog("Warning - save interrupted", "Problem saving bag: " + bagRootPath + "\n" + e.getMessage());
+        			}
                 	e.printStackTrace();
                 } catch (Exception e) {
                 	task.done = true;
         			bag.isSerialized(false);
-        			showWarningErrorDialog("Error - bag not saved", "Error saving bag: " + bagRootPath + "\n" + e.getMessage());
+        			if (longRunningProcess.isCancelled()) {
+            			showWarningErrorDialog("Save cancelled", "Save cancelled.");
+        			} else {
+            			showWarningErrorDialog("Error - bag not saved", "Error saving bag: " + bagRootPath + "\n" + e.getMessage());
+        			}
                 	e.printStackTrace();
                 }
         	}
