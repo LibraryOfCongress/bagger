@@ -917,24 +917,28 @@ public class DefaultBag {
 		return messages;
 	}
 
-	public String completeBag() {
+	public String completeBag(CompleteVerifierImpl completeVerifier, Bag bag) {
 		String messages = null;
 		try {
-			SimpleResult result = this.bilBag.verifyComplete();
-			if (result.messagesToString() != null && !result.messagesToString().trim().isEmpty()) {
-				messages = "Bag is not complete.\n";
+			SimpleResult result = completeVerifier.verify(bag);
+			if (!result.isSuccess()) {
+				messages = "Bag is not complete:\n";
 				messages += result.messagesToString();
 			}
-			this.isCompleteChecked(true);
 			this.isComplete(result.isSuccess());
+			this.isCompleteChecked = true;
 		} catch (Exception e) {
 			this.isComplete(false);
 			e.printStackTrace();
-			messages = "Bag is not complete: " + e.getMessage() + "\n";
+			if (completeVerifier.isCancelled()) {
+				messages = "Completeness check cancelled.";
+			} else {
+				messages = "Error - Invalid result returned from verifier: " + e.getMessage() + "\n";
+			}
 		}
 		return messages;
 	}
-	
+
 	public String validateMetadata() {
 		String messages = null;
 		try {
