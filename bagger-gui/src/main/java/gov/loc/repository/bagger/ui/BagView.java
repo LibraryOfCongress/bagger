@@ -153,6 +153,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private CreateBagInPlaceHandler createBagInPlaceHandler;
     private ValidateBagHandler validateBagHandler;
+    private CompleteBagHandler completeBagHandler;
     private AddDataHandler addDataHandler;
     private SaveBagHandler saveBagHandler;
 	public StartExecutor startExecutor = new StartExecutor();
@@ -395,7 +396,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         buttonPanel.add(saveAsButton);
 
         completeButton = new JButton(getPropertyMessage("bag.button.complete"));
-        completeButton.addActionListener(new CompleteBagHandler());
+    	completeBagHandler = new CompleteBagHandler();
+        completeButton.addActionListener(completeBagHandler);
         completeButton.setEnabled(false);
         completeButton.setOpaque(true);
         completeButton.setBackground(bgColor);
@@ -949,23 +951,57 @@ public class BagView extends AbstractView implements ApplicationListener {
         }
     }
 
-    private class CompleteBagHandler extends AbstractAction {
+    private class CompleteBagHandler extends AbstractAction implements Progress {
        	private static final long serialVersionUID = 1L;
+    	private LongTask task;
 
     	public void actionPerformed(ActionEvent e) {
      		completeBag();
     	}
 
+    	public void setTask(LongTask task) {
+    		this.task = task;
+    	}
+
+    	public void execute() {
+        	while (!task.canceled && !task.done) {
+                try {
+                    Thread.sleep(1000); //sleep for a second
+                    /* */
+                    CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
+                    completeVerifier.addProgressListener(task);
+            		longRunningProcess = completeVerifier;
+            		/*             		 */
+            		Bag completeBag = bag.getBag();
+                    String messages = bag.completeBag(completeVerifier, completeBag);
+            	    if (messages != null && !messages.trim().isEmpty()) {
+            	    	showWarningErrorDialog("Warning - incomplete", "Is complete result: " + messages);
+            	    	task.current = task.lengthOfTask;
+            	    }
+            	    else {
+            	    	showWarningErrorDialog("Is Complete Dialog", "Bag is complete.");
+            	    	task.current = task.lengthOfTask;
+            	    }
+                	setBag(bag);
+                	compositePane.updateCompositePaneTabs(bag, messages);
+                    if (task.current >= task.lengthOfTask) {
+                        task.done = true;
+                        task.current = task.lengthOfTask;
+                    }
+                    task.statMessage = "Completed " + task.current +
+                                  " out of " + task.lengthOfTask + ".";
+                } catch (InterruptedException e) {
+                	e.printStackTrace();
+                	task.current = task.lengthOfTask;
+            	    showWarningErrorDialog("Warning - complete check interrupted", "Error checking bag completeness: " + e.getMessage());
+                }
+            }
+        	statusBarEnd();
+    	}
     }
 
     public void completeBag() {
-		String messages = bag.completeBag();
-		if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - incomplete", "Is complete result: " + messages);
-		else showWarningErrorDialog("Is Complete Dialog", "Bag is complete.");
-		setBag(bag);
-    	compositePane.updateCompositePaneTabs(bag, messages);
-        bagInfoInputPane.update(bag);
-    	statusBarEnd();
+    	statusBarBegin(completeBagHandler, "Checking if complete...", 1L);
     }
 
     public class SaveBagAsExecutor extends AbstractActionCommandExecutor {
