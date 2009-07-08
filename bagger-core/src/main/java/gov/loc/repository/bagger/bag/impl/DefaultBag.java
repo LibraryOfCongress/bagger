@@ -172,6 +172,10 @@ public class DefaultBag {
 		Bag bag = preBag.makeBagInPlace(BagFactory.LATEST, false);
 		bilBag = bag;
 	}
+	
+	public BagFactory getBagFactory() {
+		return this.bagFactory;
+	}
 
 	public String getDataDirectory() {
 		return bilBag.getBagConstants().getDataDirectory();
@@ -557,64 +561,6 @@ public class DefaultBag {
 		this.bagInfo.setProfileMap(profileMap);
 	}
 
-	public void updateBagInfo() {
-		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
-		Contact contact = baggerOrganization.getContact();
-		if (bilBag.getBagInfoTxt() != null) {
-			if (!baggerOrganization.getSourceOrganization().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
-			}
-			if (!baggerOrganization.getOrganizationAddress().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrganizationAddress());
-			}
-			if (!contact.getContactName().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setContactName(contact.getContactName());
-			}
-			if (!contact.getTelephone().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
-			}
-			if (!contact.getEmail().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
-			}
-			if (!bagInfo.getExternalDescription().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
-			}
-			if (!bagInfo.getBaggingDate().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
-			}
-			if (!bagInfo.getExternalIdentifier().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
-			}
-			if (!bagInfo.getBagSize().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
-			}
-			if (!bagInfo.getPayloadOxum().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
-			}
-			if (!bagInfo.getBagGroupIdentifier().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
-			}
-			if (!bagInfo.getBagCount().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
-			}
-			if (!bagInfo.getInternalSenderIdentifier().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
-			}
-			if (!bagInfo.getInternalSenderDescription().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
-			}
-			if (this.isEdeposit() && !bagInfo.getPublisher().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
-			}
-			if (this.isNdnp() && !bagInfo.getAwardeePhase().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
-			}
-			if (!this.isNoProject() && !bagInfo.getLcProject().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
-			}
-		}
-	}
-
 	public void createBagInfo(HashMap<String,String> map) {
 		initializeBagInfo();
 		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
@@ -882,7 +828,7 @@ public class DefaultBag {
 		return message;
 	}
 
-	public String write(ProgressListener progress) throws Exception {
+	public String write(Writer bw) throws Exception {
 		String messages = null;
 		reset();
 		generateManifestFiles();
@@ -909,7 +855,7 @@ public class DefaultBag {
 			}
 		}
 		try {
-			messages = writeBag(progress);
+			messages = writeBag(bw);
 		} catch (Exception e) {
 			log.error("DefaultBag.write.writeBag: " + e);
 			throw new RuntimeException(e);
@@ -958,12 +904,9 @@ public class DefaultBag {
 		return messages;
 	}
 
-	public String validateBag(ValidVerifierImpl validVerifier, Bag bag) {
+	public String validateBag(ValidVerifierImpl validVerifier) {
 		String messages = null;
-		if (bag == null)
-			bagToValidate = bilBag;
-		else
-			bagToValidate = bilBag; //bag;
+		bagToValidate = bilBag;
 		this.validVerifier = validVerifier;
 		try {
 	    	//if (this.getDataSize() > MAX_SIZE) {
@@ -991,12 +934,11 @@ public class DefaultBag {
 		return messages;
 	}
 	
-	public String writeBag(ProgressListener progress) throws Exception {
+	public String writeBag(Writer bw) throws Exception {
 		String messages = null;
 		String bagName = "";
 		File bagFile = null;
 		File parentDir = null;
-		Writer bw = null;
 		bagName = getRootDir().getName();
 		parentDir = getRootDir().getParentFile();
 		try {
@@ -1004,7 +946,6 @@ public class DefaultBag {
 			if (this.serialMode == NO_MODE) {
 				this.isSerialized(true);
 				bagFile = new File(parentDir, this.getName());
-				bw = new FileSystemWriter(bagFactory);
 			} else if (this.serialMode == ZIP_MODE) {
 				this.isSerialized(true);
 				String s = bagName;
@@ -1018,8 +959,6 @@ public class DefaultBag {
 		    		bagName += "." + ZIP_LABEL;
 			    }
 				bagFile = new File(parentDir, bagName);
-				bw = new ZipWriter(bagFactory);
-				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
 				if (zipSize > 100) {
 					messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
@@ -1036,8 +975,6 @@ public class DefaultBag {
 		    		bagName += "." + TAR_LABEL;
 			    }
 				bagFile = new File(parentDir, bagName);
-				bw = new TarWriter(bagFactory);
-				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
 				if (zipSize > 100) {
 					messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
@@ -1054,8 +991,6 @@ public class DefaultBag {
 		    		bagName += "." + TAR_GZ_LABEL;
 			    }
 				bagFile = new File(parentDir, bagName);
-				bw = new TarGzWriter(bagFactory);
-				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
 				if (zipSize > 100) {
 					messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
@@ -1072,23 +1007,14 @@ public class DefaultBag {
 		    		bagName += "." + TAR_BZ2_LABEL;
 			    }
 				bagFile = new File(parentDir, bagName);
-				bw = new TarBz2Writer(bagFactory);
-				String zipName = bagFile.getName();
 				long zipSize = this.getSize() / MB;
 				if (zipSize > 100) {
 					messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
 				}
 			}
-			bw.addProgressListener(progress);
 			Bag newBag = bw.write(bilBag, bagFile);
 			if (newBag != null) bilBag = newBag;
 			this.isNewbag(false);
-/* */ 
-			display("DefaultBag.writeBag bagInfo:" + this.bilBag.getBagInfoTxt());
-			for (int i=0; i < bilBag.getPayloadManifests().size(); i++) {
-				display("DefaultBag.writeBag manfiests: " + bilBag.getPayloadManifests().get(i));
-			}
-/* */
 			try {
 				String msgs = validateMetadata();
 				if (msgs != null) {
@@ -1101,7 +1027,6 @@ public class DefaultBag {
 				if (messages != null) messages += msgs;
 				else messages = msgs;
 			}
-/* */
 		} catch (Exception e) {
 			this.isSerialized(false);
 			String msgs = "ERROR creating bag: " + bagFile + "\n" + e.getMessage() + "\n";
