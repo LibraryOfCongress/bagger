@@ -37,7 +37,9 @@
   <bean id="fileMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
+<!-- 
         <ref bean="newMenu" />
+ -->
         <value>startCommand</value>
         <value>openCommand</value>
         <value>createBagInPlaceCommand</value>
