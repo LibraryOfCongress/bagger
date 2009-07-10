@@ -253,24 +253,27 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             Component[] components = form.getComponents();
             for (int i=0; i<components.length; i++) {
             	Component c;
+            	// See BagTableFormBuilder.addBinding for component info
+            	// Field label
             	c = components[i];
             	if (c instanceof JLabel) {
                 	JLabel label = (JLabel) c;
                 	key = label.getText();
             	}
             	i++;
+            	// Required button
             	c = components[i];
             	i++;
+            	// Input text field
             	c = components[i];
-            	if (c instanceof JCheckBox) {
-            		JCheckBox cb = (JCheckBox) c;
-            		if (cb.isSelected()) {
+            	i++;
+            	// Remove button
+            	c = components[i];
+            	if (c instanceof JButton) {
+            		if (c == selected) {
             			BagInfoField field = getField(key);
             			if (field != null) fieldMap.remove(key);
             		}
-            	} else if (c == selected) {
-        			BagInfoField field = getField(key);
-        			if (field != null) fieldMap.remove(key);
             	}
             }
             DefaultBagInfo info = defaultBag.getInfo();

@@ -66,8 +66,8 @@ public class BagTableFormBuilder extends TableFormBuilder {
         return new JComponent[] { label };
     }
 
-    public JComponent[] addBinding(String fieldName, boolean isRequired, String labelName, JComponent component, JComponent wrappedComponent, JComponent checkbox, String attributes, String labelAttributes) {
-    	checkbox.setFocusable(false);
+    public JComponent[] addBinding(String fieldName, boolean isRequired, String labelName, JComponent component, JComponent wrappedComponent, JComponent removeButton, String attributes, String labelAttributes) {
+    	removeButton.setFocusable(false);
     	JLabel label = new JLabel(labelName); //createLabelFor(fieldName, component);
         if (wrappedComponent == null) {
             wrappedComponent = component;
@@ -86,16 +86,18 @@ public class BagTableFormBuilder extends TableFormBuilder {
         	b.setBorderPainted(false);
         	reqComp = b;
         } else {
-        	reqComp = new JLabel();
+        	JButton b = new JButton("");
+        	b.setOpaque(false);
+        	b.setBorderPainted(false);
+        	reqComp = b;
         }
 /* */
         reqComp.setFocusable(false);
     	layoutBuilder.cell(reqComp, "colSpec=left:pref:noGrow");
-        //layoutBuilder.labelGapCol();
         layoutBuilder.cell(component, "colSpec=fill:pref:grow");
         layoutBuilder.labelGapCol();
-        layoutBuilder.cell(checkbox, "colSpec=left:pref:noGrow");
+        layoutBuilder.cell(removeButton, "colSpec=left:pref:noGrow");
         layoutBuilder.labelGapCol();
-        return new JComponent[] { label, reqComp, component, checkbox };
+        return new JComponent[] { label, reqComp, component, removeButton };
     }
 }
