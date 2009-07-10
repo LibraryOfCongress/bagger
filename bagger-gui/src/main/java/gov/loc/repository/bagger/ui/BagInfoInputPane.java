@@ -134,17 +134,17 @@ public class BagInfoInputPane extends JTabbedPane {
         }
         BaggerProfile baggerProfile = (BaggerProfile) profileForm.getFormObject();
         BaggerOrganization baggerOrg = baggerProfile.getOrganization();
-        //Person userPerson = baggerProfile.getToContact().getPerson();
-/*        if (parentView.username == null || parentView.username.length() == 0) {
+        Person userPerson = baggerProfile.getToContact().getPerson();
+        if (parentView.username == null || parentView.username.length() == 0) {
     		try {
             	parentView.username = URLEncoder.encode(baggerProfile.getToContactName(), "utf-8");
     		}
     		catch(Exception ex) {
     			logger.equals("ERROR BagInfoInputPane.verifyForms username: " + baggerProfile.getToContactName() + " exception: " + ex );
     		}
-        } */
-        //userPerson.parse(baggerProfile.getToContact().getContactName());
-        //baggerProfile.getToContact().setPerson(userPerson);
+        }
+        userPerson.parse(baggerProfile.getToContact().getContactName());
+        baggerProfile.getToContact().setPerson(userPerson);
 
         Contact orgContact = baggerProfile.getSourceContact();
         try {
