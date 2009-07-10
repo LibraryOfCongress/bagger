@@ -1122,7 +1122,12 @@ public class BagView extends AbstractView implements ApplicationListener {
 
 	public class SaveBagExecutor extends AbstractActionCommandExecutor {
         public void execute() {
-        	saveBag(bagRootPath);
+        	if (bagRootPath.exists()) {
+        		tmpRootPath = bagRootPath;
+                confirmWriteBag();
+        	} else {
+        		saveBag(bagRootPath);
+        	}
         }
     }
 
@@ -1131,7 +1136,12 @@ public class BagView extends AbstractView implements ApplicationListener {
        	private LongTask task;
 
        	public void actionPerformed(ActionEvent e) {
-    		saveBag(bagRootPath);
+        	if (bagRootPath.exists()) {
+        		tmpRootPath = bagRootPath;
+                confirmWriteBag();
+        	} else {
+        		saveBag(bagRootPath);
+        	}
        	}
 
     	public void setTask(LongTask task) {
@@ -1436,23 +1446,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public void createBagInPlace() {
-    	/*
-    	File selectFile = new File(File.separator+".");
-        JFrame frame = new JFrame();
-		JFileChooser fo = new JFileChooser(selectFile);
-		fo.setDialogType(JFileChooser.OPEN_DIALOG);
-    	fo.addChoosableFileFilter(noFilter);
-		fo.setFileFilter(noFilter);
-	    fo.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	    if (bagRootPath != null) fo.setCurrentDirectory(bagRootPath.getParentFile());
-		fo.setDialogTitle("Existing Data Location");
-    	int option = fo.showOpenDialog(frame);
-
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File data = fo.getSelectedFile();
-            createPreBag(data);
-        }
-        */
         newBagInPlaceFrame = new NewBagInPlaceFrame(this, getPropertyMessage("bag.frame.newbaginplace"));
         newBagInPlaceFrame.setBag(bag);
         newBagInPlaceFrame.setVisible(true);
