@@ -115,14 +115,19 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         holeyLabel.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
         holeyCheckbox = new JCheckBox(bagView.getPropertyMessage("bag.checkbox.isholey"));
         holeyCheckbox.setBorder(border);
-        holeyCheckbox.setSelected(false);
+        holeyCheckbox.setSelected(bag.isHoley());
         holeyCheckbox.addActionListener(new HoleyBagHandler());
         holeyCheckbox.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
 
         urlLabel = new JLabel(bagView.getPropertyMessage("baseURL.label"));
         urlLabel.setToolTipText(bagView.getPropertyMessage("baseURL.description"));
-        urlLabel.setEnabled(false);
+        urlLabel.setEnabled(bag.isHoley());
     	urlField = new JTextField("");
+    	try {
+    		urlField.setText(bag.getFetch().getBaseURL());
+    	} catch (Exception e) {
+    		log.error("fetch baseURL: " + e.getMessage());
+    	}
         urlField.setEnabled(false);
         
         // TODO: Add format label
@@ -458,7 +463,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         			bagView.showWarningErrorDialog("Error - bag not saved", "A holey bag must have a URL value.");
         			return;
 				} else {
-					//if (bagView.getBag().getFetch() == null)
 					bagView.getBag().getFetch().setBaseURL(urlField.getText().trim());
 				}
 				bagView.holeyCheckbox.setSelected(true);

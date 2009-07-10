@@ -140,6 +140,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public JButton updatePropButton;
     public SaveBagFrame saveBagFrame;
     public NewBagFrame newBagFrame;
+    public NewBagInPlaceFrame newBagInPlaceFrame;
     public JLabel bagNameField;
     public JComboBox bagVersionList;
     public JLabel bagVersionValue = new JLabel(Version.V0_96.versionString);
@@ -1435,7 +1436,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public void createBagInPlace() {
-        File selectFile = new File(File.separator+".");
+    	/*
+    	File selectFile = new File(File.separator+".");
         JFrame frame = new JFrame();
 		JFileChooser fo = new JFileChooser(selectFile);
 		fo.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -1450,16 +1452,28 @@ public class BagView extends AbstractView implements ApplicationListener {
             File data = fo.getSelectedFile();
             createPreBag(data);
         }
+        */
+        newBagInPlaceFrame = new NewBagInPlaceFrame(this, getPropertyMessage("bag.frame.newbaginplace"));
+        newBagInPlaceFrame.setBag(bag);
+        newBagInPlaceFrame.setVisible(true);
     }
 
-    private void createPreBag(File data) {
+    public void createPreBag(File data) {
     	String messages = "";
     	clearExistingBag(messages);
-    	bag.createPreBag(data);
+    	bag.createPreBag(data, this.bagVersionValue.getText());
         bag.getInfo().setBag(bag);
     	bag.getBag().addFileToPayload(data);
     	boolean alreadyExists = bagPayloadTree.addNodes(data, false);
     	bagPayloadTreePanel.refresh(bagPayloadTree);
+    	/* */
+    	File bagDir = data.getParentFile();
+    	String bagFileName = "bag_" + data.getName();
+        bag.setName(bagFileName);
+        bagNameField.invalidate();
+        File bagFile = new File(bagDir, bagFileName);
+		save(bagFile);
+    	/* */
     	compositePane.setBag(bag);
     	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
         updateManifestPane();

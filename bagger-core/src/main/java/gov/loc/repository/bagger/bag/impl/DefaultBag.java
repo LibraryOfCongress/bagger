@@ -155,22 +155,30 @@ public class DefaultBag {
 			bilBag.putBagFile(bagIt);
 		}
 		puncher = new HolePuncherImpl(bagFactory);
-		if (bilBag.getFetchTxt() != null) {
-        	isHoley(true);
+		FetchTxt fetchTxt = bilBag.getFetchTxt();
+		if (fetchTxt != null && !fetchTxt.isEmpty()) {
     		String url = getBaseUrl(bilBag.getFetchTxt());
     		display("DefaultBag fetch URL: " + url);
-        	BaggerFetch fetch = this.getFetch();
-        	fetch.setBaseURL(url);
-        	this.fetch = fetch;
+    		if (!url.isEmpty()) {
+            	isHoley(true);
+            	BaggerFetch fetch = this.getFetch();
+            	fetch.setBaseURL(url);
+            	this.fetch = fetch;
+    		}
 		}
 		this.payloadManifestAlgorithm = Manifest.Algorithm.MD5.bagItAlgorithm;
 		this.tagManifestAlgorithm = Manifest.Algorithm.MD5.bagItAlgorithm;
 	}
 	
-	public void createPreBag(File data) {
+	public void createPreBag(File data, String version) {
 		PreBag preBag = bagFactory.createPreBag(data);
-		Bag bag = preBag.makeBagInPlace(BagFactory.LATEST, false);
-		bilBag = bag;
+		if (version == null) {
+			Bag bag = preBag.makeBagInPlace(BagFactory.LATEST, false);
+			bilBag = bag;
+		} else {
+			Bag bag = preBag.makeBagInPlace(Version.valueOfString(version), false);
+			bilBag = bag;
+		}
 	}
 	
 	public BagFactory getBagFactory() {
