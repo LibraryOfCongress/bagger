@@ -1168,19 +1168,18 @@ public class BagView extends AbstractView implements ApplicationListener {
         			bagWriter.addProgressListener(task);
             		longRunningProcess = bagWriter;
                     String messages = bag.write(bagWriter);
-            		if (bag.isSerialized()) saveButton.setEnabled(true);
-            		validateButton.setEnabled(true);
-            		validateExecutor.setEnabled(true);
-            		completeButton.setEnabled(true);
-            		completeExecutor.setEnabled(true);
-            		topButtonPanel.invalidate();
                     if (bag.isSerialized()) {
                 		bag.getInfo().createExistingFieldMap(true);
                     	bag.copyBagToForm();
                         bagInfoInputPane.populateForms(bag, true);
                         bagInfoInputPane.update(bag);
-                        saveButton.setEnabled(false);
-                        saveBagExecutor.setEnabled(false);
+                        saveButton.setEnabled(true);
+                        saveBagExecutor.setEnabled(true);
+                		validateButton.setEnabled(true);
+                		validateExecutor.setEnabled(true);
+                		completeButton.setEnabled(true);
+                		completeExecutor.setEnabled(true);
+                		topButtonPanel.invalidate();
                     }
                     compositePane.updateCompositePaneTabs(bag, messages);
                     updateManifestPane();
