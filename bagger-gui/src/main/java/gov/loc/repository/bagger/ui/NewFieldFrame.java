@@ -24,7 +24,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -226,11 +225,9 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String fieldLabel = (String) jlist.getSelectedItem();
         	// TODO: if not new, populate with stnd values
-//        	if (fieldLabel.equalsIgnoreCase(DefaultBagInfo.FIELD_NEW_COMPONENT)) {
         	if (newFieldButton.isSelected()) {
                 typeList.setSelectedItem(TEXTFIELD);
     			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-                isRequiredCheckbox.setSelected(true);
     			field.isRequired(true);
                 fieldName.setText("");
                 fieldName.setEnabled(true);
@@ -245,10 +242,8 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
         		}
         		if (DefaultBagInfo.requiredSet.contains(fieldLabel)) {
-                    isRequiredCheckbox.setSelected(true);
         			field.isRequired(true);
         		} else {
-                    isRequiredCheckbox.setSelected(false);
         			field.isRequired(false);
         		}
         		field.setName(fieldLabel.toLowerCase());
