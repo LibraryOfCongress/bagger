@@ -157,13 +157,15 @@ public class DefaultBag {
 		puncher = new HolePuncherImpl(bagFactory);
 		FetchTxt fetchTxt = bilBag.getFetchTxt();
 		if (fetchTxt != null && !fetchTxt.isEmpty()) {
-    		String url = getBaseUrl(bilBag.getFetchTxt());
+    		String url = getBaseUrl(fetchTxt);
     		display("DefaultBag fetch URL: " + url);
-    		if (!url.isEmpty()) {
+    		if (url != null && !url.isEmpty()) {
             	isHoley(true);
             	BaggerFetch fetch = this.getFetch();
             	fetch.setBaseURL(url);
             	this.fetch = fetch;
+    		} else {
+    			isHoley(false);
     		}
 		}
 		this.payloadManifestAlgorithm = Manifest.Algorithm.MD5.bagItAlgorithm;
