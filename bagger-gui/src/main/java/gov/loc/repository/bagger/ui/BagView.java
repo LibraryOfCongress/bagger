@@ -256,9 +256,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     public String saveProfiles() {
-    	infoInputPane.updateBagHandler.updateBag(bag);
-    	String message = this.storeProfile();
-		compositePane.updateCompositePaneTabs(bag, message);
+    	String message = storeProfile();
     	return message;
     }
     
@@ -1297,11 +1295,16 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public String storeProfile() {
-    	bagger.storeBaggerUpdates(userProfiles, userHomeDir);
-		String message = getPropertyMessage("profile.message.saved") + " " + bag.getProject().getName() + "\n";
-		display("SaveProfileExecutor: " + message);
-		compositePane.updateCompositePaneTabs(bag, message);
-		return message;
+    	try {
+    		bagger.storeBaggerUpdates(userProfiles, userHomeDir);
+    		String message = getPropertyMessage("profile.message.saved") + " " + bag.getProject().getName() + "\n";
+    		compositePane.updateCompositePaneTabs(bag, message);
+    	    showWarningErrorDialog("Project Defaults Stored", message);
+    		return message;
+    	} catch (Exception e) {
+    	    showWarningErrorDialog("Error Dialog", "Error trying to store project defaults:\n" + e.getMessage());
+    		return null;
+    	}
     }
 
     /**
