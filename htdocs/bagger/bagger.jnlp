@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-###############################################################################
-#
-# @(#)draw.jnlp	1.6 02/09/11
-#
-# JNLP File for Draw Demo Application
-#
-###############################################################################
- -->
-
-
-<jnlp spec="0.2 1.0" codebase="https://beryllium.rdc.lctl.gov/svn/transfer/bagger/trunk/htdocs/bagger/" href="bagger.jnlp">
+<jnlp spec="1.0+" codebase="http://cerium.rdc.lctl.gov/bagger/" href="bagger.jnlp?format=raw">
    <information> 
       <title>Bagger App</title> 
       <vendor>Library of Congress</vendor>
-      <homepage href="http://localhost/bagger/index.html"/>
+      <homepage href="index.html"/>
       <description>An application to package files using BagIt standard.</description>
       <description kind="short">Bagger Description</description>
       <icon href="images/bagger-splash.jpg"/>
@@ -25,9 +14,8 @@
       <all-permissions/>
    </security>
    <resources>
-      <j2se version="1.3+" href="http://java.sun.com/products/autodl/j2se"/>
-      <j2se version="1.3+"/>
-      <jar href="bagger.jar" main="true" download="eager"/>
+      <j2se version="1.6+"/>
+      <jar href="http://cerium.rdc.lctl.gov/bagger/bagger.jar?format=raw"/>
    </resources>
    <application-desc main-class="gov.loc.repository.bagger.BaggerStandalone"/>
 </jnlp> 
