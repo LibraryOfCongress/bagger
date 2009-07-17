@@ -1068,6 +1068,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     public void save(File file) {
         if (file == null) file = bagRootPath;
+        bag.setName(file.getName());
 		File bagFile = new File(file, bag.getName());
     	if (bagFile.exists()) {
     		tmpRootPath = file;
@@ -1083,17 +1084,26 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
         String fileName = bagFile.getName(); //bagFile.getAbsolutePath();
         bagNameField.setText(fileName);
+        this.getControl().invalidate();
         //bagNameField.setCaretPosition(fileName.length());
     }
 
     private void confirmWriteBag() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
+	    	boolean isCancel = true;
 	        protected void onConfirm() {
 	        	if (bag.getSize() > DefaultBag.MAX_SIZE) {
 	        		confirmAcceptBagSize();
 	        	} else {
 		        	bagRootPath = tmpRootPath;
 		        	saveBag(bagRootPath);
+	        	}
+	        }
+	        protected void onCancel() {
+        		super.onCancel();
+	        	if (isCancel) {
+	        		cancelWriteBag();
+	        		isCancel = false;
 	        	}
 	        }
 	    };
@@ -1104,7 +1114,11 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    dialog.showDialog();
 	}
 
-	private void confirmAcceptBagSize() {
+    private void cancelWriteBag() {
+    	saveBagAs();
+    }
+
+    private void confirmAcceptBagSize() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	        protected void onConfirm() {
 	        	bagRootPath = tmpRootPath;
