@@ -1181,10 +1181,21 @@ public class BagView extends AbstractView implements ApplicationListener {
             		longRunningProcess = bagWriter;
                     String messages = bag.write(bagWriter);
                     if (bag.isSerialized()) {
-                		bag.getInfo().createExistingFieldMap(true);
+                    	// Open the newly created bag, e.g. if zip file is
+                    	// saved as a filesystem it will display correctly
+        				File bagFile = bag.getBagFileName();
+        				openExistingBag(bagFile);
+        				// If openExistingBag is not used then do this
+                    	/*
+                    	bag.getInfo().createExistingFieldMap(true);
                     	bag.copyBagToForm();
                         bagInfoInputPane.populateForms(bag, true);
                         bagInfoInputPane.update(bag);
+                    	compositePane.updateCompositePaneTabs(bag, messages);
+                    	updateManifestPane();
+                         */
+        		    	saveAsButton.setEnabled(true);
+        		    	saveBagAsExecutor.setEnabled(true);
                         saveButton.setEnabled(true);
                         saveBagExecutor.setEnabled(true);
                 		validateButton.setEnabled(true);
@@ -1192,9 +1203,10 @@ public class BagView extends AbstractView implements ApplicationListener {
                 		completeButton.setEnabled(true);
                 		completeExecutor.setEnabled(true);
                 		topButtonPanel.invalidate();
+                    } else {
+                        compositePane.updateCompositePaneTabs(bag, messages);
+                        updateManifestPane();
                     }
-                    compositePane.updateCompositePaneTabs(bag, messages);
-                    updateManifestPane();
 
                     if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
             		if (bag.isValidateOnSave()) {
