@@ -25,9 +25,9 @@ a#skip {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	height: 5.0em;
-	background-color: #333;
-	border-top: 0.05em solid #c00;
+	height: 7.0em;
+	background-color: #112;
+	border-top: 0.05em solid #000;
 }
 /***************** tonav ********/
 #header ul {
@@ -164,7 +164,7 @@ a:active {color: #369}
 	/*position: relative;
 	top: -10px;*/
 	margin: 0 0 0 0;
-	background: #5D86AC;
+	/*background: #5D86AC;*/
 }
 #navlist li {
 	padding: 0px 1px 0 2px;
@@ -200,7 +200,7 @@ a:active {color: #369}
 	padding: 0 0.5em 0 0.5em;
 	margin: 2em 0 2.5em 0;
 	height: 2.7em;
-	color: #bfcedd;
+	/* color: #bfcedd; */
 	vertical-align: top;
 	text-decoration: none;
 	font-weight: bold;
@@ -219,6 +219,7 @@ a:active {color: #369}
 	text-decoration: none;
 	font-weight: bold;
 }
+
 /*****************definition list and unordered list ****************/
 dl{
 	margin-bottom: 1em;
