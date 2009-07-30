@@ -14,7 +14,7 @@
       <all-permissions/>
    </security>
    <resources>
-      <j2se version="1.6+"/>
+      <j2se version="1.6+" initial-heap-size="512m" />
       <jar href="http://cerium.rdc.lctl.gov/bagger/bagger.jar?format=raw"/>
    </resources>
    <application-desc main-class="gov.loc.repository.bagger.BaggerStandalone"/>
