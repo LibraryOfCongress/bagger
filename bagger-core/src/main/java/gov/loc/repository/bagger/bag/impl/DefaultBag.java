@@ -112,6 +112,7 @@ public class DefaultBag {
 	private boolean includeTags = false;
 	private boolean includePayloadDirectoryInUrl = false;
 	private String versionString = null;
+	private File bagFileName = null;
 
 	public DefaultBag () {
         this.versionString = Version.V0_96.versionString;
@@ -185,6 +186,14 @@ public class DefaultBag {
 	
 	public BagFactory getBagFactory() {
 		return this.bagFactory;
+	}
+	
+	public File getBagFileName() {
+		return bagFileName;
+	}
+	
+	public void setBagFileName(File fname) {
+		this.bagFileName = fname;
 	}
 
 	public String getDataDirectory() {
@@ -1022,6 +1031,7 @@ public class DefaultBag {
 					messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
 				}
 			}
+			setBagFileName(bagFile);
 			Bag newBag = bw.write(bilBag, bagFile);
 			if (newBag != null) bilBag = newBag;
 			this.isNewbag(false);
