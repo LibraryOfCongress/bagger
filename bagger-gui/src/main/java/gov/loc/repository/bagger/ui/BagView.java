@@ -110,6 +110,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public String username;
     public Contact projectContact;
 	private String userHomeDir;
+	public boolean validateOnSave = false;
 
 	public BagTree bagPayloadTree;
 	public BagTreePanel bagPayloadTreePanel;
@@ -447,7 +448,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     	tagManifestPane = new TagManifestPane(this);
     	tagManifestPane.setToolTipText(getPropertyMessage("compositePane.tab.help"));
-		tagFilesFrame = new TagFilesFrame(getActiveWindow().getControl(), getPropertyMessage("tagFrame.title"));
+		tagFilesFrame = new TagFilesFrame(getActiveWindow().getControl(), getPropertyMessage("bagView.tagFrame.title"));
 		tagFilesFrame.addComponents(tagManifestPane);
     	
     	compositePane = new CompositePane(this, getInitialConsoleMsg());
@@ -1180,7 +1181,19 @@ public class BagView extends AbstractView implements ApplicationListener {
         			bagWriter.addProgressListener(task);
             		longRunningProcess = bagWriter;
                     String messages = bag.write(bagWriter);
+
+                    if (task.current >= task.lengthOfTask) {
+                        task.done = true;
+                        task.current = task.lengthOfTask;
+                    }
                     if (bag.isSerialized()) {
+                        if (progressMonitor.isCanceled() || task.isDone()) {
+                            progressMonitor.close();
+                        }
+                        bag.isValidateOnSave(validateOnSave);
+                		if (bag.isValidateOnSave()) {
+                			validateBag();
+                		}
                     	// Open the newly created bag, e.g. if zip file is
                     	// saved as a filesystem it will display correctly
         				File bagFile = bag.getBagFileName();
@@ -1194,28 +1207,29 @@ public class BagView extends AbstractView implements ApplicationListener {
                     	compositePane.updateCompositePaneTabs(bag, messages);
                     	updateManifestPane();
                          */
-        		    	saveAsButton.setEnabled(true);
-        		    	saveBagAsExecutor.setEnabled(true);
-                        saveButton.setEnabled(true);
-                        saveBagExecutor.setEnabled(true);
-                		validateButton.setEnabled(true);
-                		validateExecutor.setEnabled(true);
-                		completeButton.setEnabled(true);
-                		completeExecutor.setEnabled(true);
-                		topButtonPanel.invalidate();
+        	            addDataButton.setEnabled(true);
+        	            addDataExecutor.setEnabled(true);
+        	            updatePropButton.setEnabled(false);
+        	            saveButton.setEnabled(true);
+        	            saveBagExecutor.setEnabled(true);
+        	            saveAsButton.setEnabled(true);
+        	            removeDataExecutor.setEnabled(true);
+        	            removeDataButton.setEnabled(true);
+        	            addTagFileButton.setEnabled(true);
+        	            removeTagFileButton.setEnabled(true);
+        	            showTagButton.setEnabled(true);
+        	            saveBagAsExecutor.setEnabled(true);
+        	            bagButtonPanel.invalidate();
+        	            validateButton.setEnabled(true);
+        	            completeButton.setEnabled(true);
+        	            validateExecutor.setEnabled(true);
+        	            topButtonPanel.invalidate();
+        	            bag.isNewbag(false);
                     } else {
                         compositePane.updateCompositePaneTabs(bag, messages);
                         updateManifestPane();
                     }
-
                     if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
-            		if (bag.isValidateOnSave()) {
-            			validateBag();
-            		}
-                    if (task.current >= task.lengthOfTask) {
-                        task.done = true;
-                        task.current = task.lengthOfTask;
-                    }
                 } catch (InterruptedException e) {
                 	task.done = true;
         			bag.isSerialized(false);
@@ -1482,7 +1496,12 @@ public class BagView extends AbstractView implements ApplicationListener {
     public void createPreBag(File data) {
     	String messages = "";
     	clearExistingBag(messages);
-    	bag.createPreBag(data, this.bagVersionValue.getText());
+    	try {
+    		bag.createPreBag(data, this.bagVersionValue.getText());
+    	} catch (Exception e) {
+    	    showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
+    		return;
+    	}
         bag.getInfo().setBag(bag);
     	bag.getBag().addFileToPayload(data);
     	boolean alreadyExists = bagPayloadTree.addNodes(data, false);
