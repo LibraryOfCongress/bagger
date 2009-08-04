@@ -15,6 +15,9 @@
  */
 package gov.loc.repository.bagger;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import org.springframework.richclient.application.ApplicationLauncher;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,6 +43,7 @@ public class BaggerStandalone {
             		businessLayerContextPath, securityContextPath });
         } catch (RuntimeException e) {
             LogFactory.getLog(BaggerStandalone.class).error("RuntimeException during startup", e);
+            JOptionPane.showMessageDialog(new JFrame(), "An error occured loading schema resources.\n" + " You may have no network connection.\n", "Bagger startup error!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
