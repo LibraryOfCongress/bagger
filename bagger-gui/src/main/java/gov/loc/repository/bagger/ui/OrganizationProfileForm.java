@@ -1,9 +1,6 @@
 
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
