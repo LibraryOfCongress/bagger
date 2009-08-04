@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<title>Bagger Application - Repository Development Center (Library of Congress)</title>
+		<link rel="stylesheet" type="text/css" media="print" href="../css/deposit_print.css" />
+		<link rel="stylesheet" type="text/css" href="../css/deposit.css" />
+	</head>
+<body>
+<div id="container"><a id="skip" href="#skip_menu">skip navigation</a>
+  <div id="header">
+    <ul>
+      <li id="logo"><a href="../index.html"><img src="../images/bagger_logo.jpg" alt="" /></a></li>
+      <li id="welcome"></li>
+      <li id="contact"><img src="../images/mail.gif" alt="" /><a href="mailto:lesliej@loc.gov">Contact</a></li>
+    </ul>
+  </div>
+
+  <div id="page_head"><h1><a href="index.html">Bagger User Guide</a>: Payload and Tag Files</h1></div>
+  <div id="navlist">
+    <a name="payload"></a>
+      <div id="page_head"><h2>Adding/deleting payload files</h2></div>
+      <div id="content">
+	<ul>Add basic flow:<br/>
+	   <li>1. User provides files/directories to add to bag's payload. (User provides files/directories using a File/Directory picker or drag-and-drop.)<br/></li>
+	   <li>2. Application adds new files/directories to bag's payload.<br/></li>
+	   <li>3. Application adds new files/directories to display of bag's payload.<br/></li>
+	</ul>
+	</div>
+
+<p>
+<img src="images/bagger_addata_payload.jpg" alt="Add data payload" />
+</p>
+<p>
+<img src="images/bagger_addata_dragndrop.jpg" alt="Add data by drag and drop" />
+</p>
+
+	<div id="content">
+	<ul>Delete basic flow:<br/>
+	   <li>1. User selects files/directories from the display of bag's payload and request that they be deleted. (User selects files/directories from payload display and select Delete or drags-and-drops outside application.)<br/></li>
+	   <li>2. Application deletes files/directories from bag's payload.<br/></li>
+	   <li>3. Application removes files/directories from display of bag's payload.<br/></li>
+	</ul>
+	</div>
+
+<p>
+<img src="images/bagger_remove_payload.jpg" alt="Remove payload data" />
+</p>
+<p>
+<img src="images/bagger_payload_removed.jpg" alt="Payload data removed" />
+</p>
+
+	<div id="content">
+	<p>
+	Select the Add Data button to select the first directory of files to include in the bag.
+	A file and directory chooser dialog is displayed that allows the user to select multiple files and/or directories to be included in the bag.  Go to the directory containing the files you would like to include in the bag.  Then select the Open button to include them.
+	</p>
+	<p>
+	The window next to the Add Data button now displays the hierarchical tree of files as they will be created within the bag data directory.  Notice that now the ‘Save Bag As’ button is enabled.  Now that the bag has had data content added it can be saved.  The only thing left to do is make sure that all the required fields needed by the bag-info.txt file are entered if the project requires them.  However, the BagIt specification does not require the bag-info.txt file so a bag can be saved even if these fields are incomplete.
+	</p>
+	</div>
+
+    <a name="tag"></a>
+      <div id="page_head"><h2>Adding/deleting tag files</h2></div>
+      <div id="content">
+	<ul>Add basic flow:<br/>
+	   <li>1. User provides file(s) to add as tags. (User provides files using a File/Directory picker or drag-and-drop.)<br/></li>
+	   <li>2. Application adds new file(s) to bag as tags.<br/></li>
+	   <li>3. Application adds new file(s) to display of bag's tags.<br/></li>
+	</ul>
+	</div>
+<p>
+<img src="images/bagger_addata_tag.jpg" alt="Add tag file" />
+</p>
+
+	<div id="content">
+	<ul>Delete basic flow:<br/>
+	   <li>1. User selects file(s) from the display of bag's tags and request that they be deleted. (User selects files/directories from payload display and select Delete or drags-and-drops outside application.)<br/></li>
+	   <li>2. Application deletes file(s) from bag's tags.<br/></li>
+	   <li>3. Application removes file(s) from display of bag's tag.<br/></li>
+	</ul>
+	<p>
+	<ul>Note:<br/>
+	    <li>* Any tag file may be deleted.<br/></li>
+	</ul>
+	</p>
+	</div>
+
+<p>
+<img src="images/bagger_remove_tag.jpg" alt="Remove tag file" />
+</p>
+<p>
+<img src="images/bagger_tag_removed.jpg" alt="Tag file removed" />
+</p>
+  </div>
+
+  <div id="footer">
+    <ul id="footlist">
+      <li><a href="http://www.loc.gov/index.html">Library of Congress</a>&nbsp;|</li>
+      <li><a href="https://beryllium.rdc.lctl.gov/rdc/wiki/Main_Page">About Repository Development Center</a></li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

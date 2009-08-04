@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<title>Bagger Application - Repository Development Center (Library of Congress)</title>
+		<link rel="stylesheet" type="text/css" media="print" href="../css/deposit_print.css" />
+		<link rel="stylesheet" type="text/css" href="../css/deposit.css" />
+	</head>
+<body>
+<div id="container"><a id="skip" href="#skip_menu">skip navigation</a>
+  <div id="header">
+    <ul>
+      <li id="logo"><a href="../index.html"><img src="../images/bagger_logo.jpg" alt="" /></a></li>
+      <li id="welcome"></li>
+      <li id="contact"><img src="../images/mail.gif" alt="" /><a href="mailto:lesliej@loc.gov">Contact</a></li>
+    </ul>
+  </div>
+
+  <div id="page_head"><h1><a href="index.html">Bagger User Guide</a>: Saving Bags</h1></div>
+  <div id="navlist">
+    <a name="bagtodisk"></a>
+      <div id="page_head"><h2>Saving a bag to disk</h2></div>
+      <div id="content">
+	<ul>Basic flow:<br/>
+	   <li>1. User selects to save bag.<br/></li>
+	   <li>2. User provides save options. Save options include:</li>
+	     <ul>
+	          <li>* File/directory (User provides file/directory using a File/Directory picker).<br/></li>
+	          <li>* Format (unserialized, zip, tar, etc.)<br/></li>
+	          <li>* Whether to generate/regenerate a tag manifest and if so, the algorithm.<br/></li>
+	          <li>* Whether to generate/regenerate a payload manifest and if so, the algorithm.<br/></li>
+	          <li>* Whether to verify a bag after writing.</li>
+	     </ul>
+	   <li>3. If the selected destination for the bag already exists, user confirms that files will be overwritten.<br/></li>
+	   <li>4. Application completes the bag.<br/></li>
+	   <li>5. Application writes the bag and replaces the current bag with the bag returned by saving. (The bag returned by saving references the new bag on disk.)<br/></li>
+	   <li>6. Application verifies the bag, if selected by user.<br/></li>
+	   <li>7. Application updates the displayed information for the saved bag.<br/></li>
+	</ul>
+	</div>
+
+<p>
+<img src="images/bagger_savebagas_dialog.jpg" alt="Save bag dialog" />
+</p>
+<p>
+<img src="images/bagger_savebagas_browse.jpg" alt="Save bag browse for location" />
+</p>
+<p>
+<img src="images/bagger_savebagas_filename.jpg" alt="Save bag file name is chosen" />
+</p>
+<p>
+<img src="images/bagger_savebagas_browse.jpg" alt="Save bag browse for location" />
+</p>
+<p>
+<img src="images/bagger_savebagas_same.jpg" alt="Save bag browse for same location" />
+</p>
+<p>
+<img src="images/bagger_savebagas_warning.jpg" alt="Save bag warning about to overwrite existing bag" />
+</p>
+<p>
+<img src="images/bagger_savebagas_verify.jpg" alt="Save bag and verify after saving" />
+</p>
+<p>
+<img src="images/bagger_savebagas_zip.jpg" alt="Save bag in zip format" />
+</p>
+<p>
+<img src="images/bagger_savebagas_zip_saved.jpg" alt="Save bag in zip format completed" />
+</p>
+
+	<div id="content">
+	<p>
+	Now the user need only select the ‘Save Bag As’ button to choose the location and name for the new bag.
+	</p>
+	<p>
+	Notice that the ‘Validate Bag’ and ‘Save Bag’ buttons are now enabled.  A user may choose to open a previously created bag and then choose the ‘Validate Bag’ button to see whether it is a valid and verified bag.  This example will be discussed later.
+	</p>
+	<p>
+	Since the bag already exists the user can overwrite the existing bag using the ‘Save Bag’ button.  The user may also decide to create a serialized version of the same bag by selecting the ‘Serialized Bag Type’ option.  To demonstrate both of these options, the user selects the ‘zip’ button under ‘Serialized Bag Type?’ and then selects the ‘Save Bag’ button.  A serialized bag file is created in the same location as the directory bag_1 previously created and it has the same name but with a ‘zip’ suffix, e.g. bag_1.zip.  The ‘Save Bag’ button is now disabled until a change to the bag is made.
+	</p>
+	</div>
+
+    <a name="holeybag"></a>
+      <div id="page_head"><h2>Saving as a holey bag</h2></div>
+      <div id="content">
+	<ul>Basic flow:<br/>
+	   <li>1. User selects to save as a holey bag.<br/></li>
+	   <li>2. User provides save options. Save options include:</li>
+	     <ul>
+	          <li>* File/directory (User provides file/directory using a File/Directory picker).<br/></li>
+	          <li>* Base URL.<br/></li>
+	          <li>* Format (unserialized, zip, tar, etc.)<br/></li>
+	          <li>* Whether to generate/regenerate a tag manifest and if so, the algorithm.<br/></li>
+	          <li>* Whether to generate/regenerate a payload manifest and if so, the algorithm.</li>
+		 </ul>
+	   <li>3. If the selected destination for the bag already exists, user confirms that files will be overwritten.<br/></li>
+	   <li>4. Application completes the bag.<br/></li>
+	   <li>5. Application makes the bag holey. (Making the bag copy holey will return a new bag that is holey.)<br/></li>
+	   <li>6. Application writes the holey bag.<br/></li>
+	   <li>7. Application updates the displayed information for the original bag.<br/></li>
+	</ul>
+	</div>
+
+<p>
+<img src="images/bagger_savebagas_holey.jpg" alt="Save bag as a holey bag" />
+</p>
+
+	<div id="content">
+	<p>
+	Enter a URL address into the Base URL field and select the ‘Update Bag’ button.<br/>
+	This URL is used to update the fetch.txt file.  Now select the fetch.txt tab on the left-hand side of the Bagger Application.  The file now includes a list of the files and the URL address from which the file can be obtained according to the BagIt specification for holey bags.
+	</p>
+	<p>
+	This results in a new holey bag.  Notice that a holey bag fails the test for ‘Is bag complete?’  The bag will not be complete until the files are fetched and the bag is made whole.
+	</p>
+	</div>
+
+<p>
+<img src="images/bagger_savebagas_holey_saved.jpg" alt="Save bag as a holey bag completed" />
+</p>
+
+  </div>
+
+  <div id="footer">
+    <ul id="footlist">
+      <li><a href="http://www.loc.gov/index.html">Library of Congress</a>&nbsp;|</li>
+      <li><a href="https://beryllium.rdc.lctl.gov/rdc/wiki/Main_Page">About Repository Development Center</a></li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
