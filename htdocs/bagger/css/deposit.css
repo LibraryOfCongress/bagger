@@ -172,7 +172,7 @@ a:active {color: #369}
 	margin: 0;
 	list-style: none;
 	background: transparent;
-	color: #bfcedd;
+	/* color: #bfcedd; */
 	/*background: transparent url(/bagger/images/nav_left.gif) 0 -1.9em no-repeat;*/
 	position: relative;
 	font: normal 0.9em/1em Verdana, Arial, Helvetica, sans-serif;
