@@ -172,7 +172,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public AddDataExecutor addDataExecutor = new AddDataExecutor();
     public RemoveDataExecutor removeDataExecutor = new RemoveDataExecutor();
     public SaveBagExecutor saveBagExecutor = new SaveBagExecutor();
-    public SaveBagAsExecutor saveBagAsExecutor = new SaveBagAsExecutor();
+    public SaveBagAsExecutor saveBagAsExecutor = new SaveBagAsExecutor(this);
     public ValidateExecutor validateExecutor = new ValidateExecutor();
     public CompleteExecutor completeExecutor = new CompleteExecutor();
     public AddTagFileExecutor addTagFileExecutor = new AddTagFileExecutor();
@@ -1012,8 +1012,17 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public class SaveBagAsExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	saveBagAs();
+	   	BagView bagView;
+
+	   	public SaveBagAsExecutor(BagView bagView) {
+	   		this.bagView = bagView;
+	   	}
+
+	   	public void execute() {
+//        	saveBagAs();
+	        saveBagFrame = new SaveBagFrame(bagView, getPropertyMessage("bag.frame.save"));
+	        saveBagFrame.setBag(bag);
+			saveBagFrame.setVisible(true);
         }
     }
 
