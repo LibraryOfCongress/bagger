@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.io.File;
 
 import gov.loc.repository.bagger.Contact;
@@ -953,13 +954,20 @@ public class DefaultBag {
 		return messages;
 	}
 	
+	private String fileStripSuffix(String filename) {
+		StringTokenizer st = new StringTokenizer(filename, ".");
+		String name = st.nextToken();
+		return name;
+	}
+	
 	public String writeBag(Writer bw) throws Exception {
 		String messages = null;
 		String bagName = "";
 		File bagFile = null;
 		File parentDir = null;
-		bagName = getRootDir().getName();
+		bagName = fileStripSuffix(getRootDir().getName());
 		parentDir = getRootDir().getParentFile();
+		System.out.println("writeBag parentDir: " + parentDir + ", bagName: " + bagName );
 		try {
 			this.setName(bagName);
 			if (this.serialMode == NO_MODE) {
