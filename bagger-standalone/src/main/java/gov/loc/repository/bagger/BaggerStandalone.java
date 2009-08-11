@@ -44,6 +44,7 @@ public class BaggerStandalone {
         } catch (RuntimeException e) {
             LogFactory.getLog(BaggerStandalone.class).error("RuntimeException during startup", e);
             JOptionPane.showMessageDialog(new JFrame(), "An error occured loading schema resources.\n" + " You may have no network connection.\n", "Bagger startup error!", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
     }
 
