@@ -4,6 +4,7 @@ package gov.loc.repository.bagger.ui;
 import gov.loc.repository.bagger.Bagger;
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
+import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
@@ -265,7 +266,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	String message = bagger.loadProfiles();
     	this.username = getPropertyMessage("user.name");
     	this.initializeProfile();
-   		bagInfoInputPane.populateForms(bag, true);
+    	bagInfoInputPane.populateForms(bag, true);
         bagInfoInputPane.update(bag);
 		compositePane.updateCompositePaneTabs(bag, message);
     	return message;
@@ -639,6 +640,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	Project project = bag.getProject();
     	if (project == null) return message;
     	Object[] profiles = this.userProfiles.toArray();
+    	Collection<Profile> profileList = new ArrayList<Profile>();
     	for (int i=0; i < profiles.length; i++) {
     		Profile profile = (Profile) profiles[i];
     		if (profile.getProject().getId() == project.getId()) {
@@ -656,7 +658,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     			message = getPropertyMessage("profile.message.changed") + " " + project.getName() + "\n";
     			profiles[i] = profile;
     		}
+    		profileList.add(profile);
     	}
+    	userProfiles = profileList;
     	return message;
     }
 
@@ -1352,7 +1356,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private class SaveProfileExecutor extends AbstractActionCommandExecutor {
         public void execute() {
         	storeProfile();
-        }    	
+        }
     }
 
     public String storeProfile() {

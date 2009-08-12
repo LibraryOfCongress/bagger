@@ -141,6 +141,7 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
        	private static final long serialVersionUID = 1L;
 
     	public void actionPerformed(ActionEvent e) {
+        	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
     		bagView.saveProfiles();
     		bagView.bagInfoInputPane.setSelectedIndex(1);
        	}

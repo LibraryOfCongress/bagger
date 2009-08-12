@@ -132,28 +132,32 @@ public class BagInfoInputPane extends JTabbedPane {
         if (!profileForm.hasErrors()) {
         	profileForm.commit();
         }
-        BaggerProfile baggerProfile = (BaggerProfile) profileForm.getFormObject();
-        BaggerOrganization baggerOrg = baggerProfile.getOrganization();
-        Person userPerson = baggerProfile.getToContact().getPerson();
+        BaggerProfile profile = (BaggerProfile) profileForm.getFormObject();
+        BaggerOrganization baggerOrg = profile.getOrganization();
+        Person userPerson = profile.getToContact().getPerson();
+/*
         if (parentView.username == null || parentView.username.length() == 0) {
     		try {
-            	parentView.username = URLEncoder.encode(baggerProfile.getToContactName(), "utf-8");
+            	parentView.username = URLEncoder.encode(profile.getToContactName(), "utf-8");
     		}
     		catch(Exception ex) {
-    			logger.equals("ERROR BagInfoInputPane.verifyForms username: " + baggerProfile.getToContactName() + " exception: " + ex );
+    			logger.equals("ERROR BagInfoInputPane.verifyForms username: " + profile.getToContactName() + " exception: " + ex );
     		}
         }
-        userPerson.parse(baggerProfile.getToContact().getContactName());
-        baggerProfile.getToContact().setPerson(userPerson);
+*/
+        userPerson.parse(profile.getToContact().getContactName());
+        profile.getToContact().setPerson(userPerson);
 
-        Contact orgContact = baggerProfile.getSourceContact();
+        Contact orgContact = profile.getSourceContact();
         try {
         	Person contactPerson = orgContact.getPerson();
         	contactPerson.parse(orgContact.getContactName());
         	orgContact.setPerson(contactPerson);
         } catch (Exception e) {
         	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
-        }        
+        }
+        parentView.projectContact = profile.getToContact();
+        baggerProfile = profile;
         bag.getInfo().setBagOrganization(baggerOrg);
         createBagInfo(bag);
 
