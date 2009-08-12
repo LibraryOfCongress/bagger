@@ -967,7 +967,7 @@ public class DefaultBag {
 		File parentDir = null;
 		bagName = fileStripSuffix(getRootDir().getName());
 		parentDir = getRootDir().getParentFile();
-		System.out.println("writeBag parentDir: " + parentDir + ", bagName: " + bagName );
+		log.debug("DefaultBag.writeBag parentDir: " + parentDir + ", bagName: " + bagName );
 		try {
 			this.setName(bagName);
 			if (this.serialMode == NO_MODE) {
