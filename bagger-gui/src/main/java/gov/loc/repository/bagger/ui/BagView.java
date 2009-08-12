@@ -702,6 +702,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 	            }
 	            bagTagFileTreePanel.refresh(bagTagFileTree);
     		}
+    		bag.isCompleteChecked(false);
+            bag.isValidChecked(false);
+            compositePane.updateCompositePaneTabs(bag, "Tag files changed.");
     	}
     }
 
@@ -776,6 +779,9 @@ public class BagView extends AbstractView implements ApplicationListener {
             		}
         		}
         	}
+    		bag.isCompleteChecked(false);
+            bag.isValidChecked(false);
+            compositePane.updateCompositePaneTabs(bag, "Payload data removed.");
         	bagPayloadTree.removeSelectionPaths(paths);
         	bagPayloadTreePanel.refresh(bagPayloadTree);
 
@@ -829,6 +835,8 @@ public class BagView extends AbstractView implements ApplicationListener {
             	display("addBagDataFile");
             	addBagData(file, true);
             }
+    		bag.isCompleteChecked(false);
+            bag.isValidChecked(false);
         	bagPayloadTreePanel.refresh(bagPayloadTree);
         	compositePane.setBag(bag);
         	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
@@ -877,6 +885,8 @@ public class BagView extends AbstractView implements ApplicationListener {
             	}
         	}
         	bagPayloadTreePanel.refresh(bagPayloadTree);
+    		bag.isCompleteChecked(false);
+            bag.isValidChecked(false);
         	compositePane.setBag(bag);
         	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
 
@@ -1205,7 +1215,9 @@ public class BagView extends AbstractView implements ApplicationListener {
                 		}
                     	// Open the newly created bag, e.g. if zip file is
                     	// saved as a filesystem it will display correctly
+                    	statusBarEnd();
         				File bagFile = bag.getBagFileName();
+        				log.info("BagView.openExistingBag: " + bagFile);
         				openExistingBag(bagFile);
         				// If openExistingBag is not used then do this
                     	/*
@@ -1785,6 +1797,9 @@ public class BagView extends AbstractView implements ApplicationListener {
             	BagFile bf = it.next();
                 bagTagFileTree.addNode(bf.getFilepath());
             }
+    		bag.isCompleteChecked(false);
+            bag.isValidChecked(false);
+            compositePane.updateCompositePaneTabs(bag, "Tag file added.");
             bagTagFileTreePanel.refresh(bagTagFileTree);
         }
     }
@@ -1823,6 +1838,9 @@ public class BagView extends AbstractView implements ApplicationListener {
             	    showWarningErrorDialog("Error - file not removed", "Error trying to remove file: " + node + "\n" + e.getMessage());
     			}
         	}
+    		bag.isCompleteChecked(false);
+            bag.isValidChecked(false);
+            compositePane.updateCompositePaneTabs(bag, "Tag file removed.");
         	bagTagFileTree.removeSelectionPaths(paths);
         	bagTagFileTreePanel.refresh(bagTagFileTree);
     	}
