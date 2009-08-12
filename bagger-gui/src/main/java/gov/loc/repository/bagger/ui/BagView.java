@@ -1895,14 +1895,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	StringBuffer buffer = new StringBuffer();
     	buffer.append(getPropertyMessage("consolepane.msg.help"));
     	buffer.append("\n\n");
-    	buffer.append(getPropertyMessage("compositePane.message.isSerialized"));
-    	buffer.append("\n");
-    	buffer.append(getPropertyMessage("consolepane.isserialized.help"));
-    	buffer.append("\n\n");
-    	buffer.append(getPropertyMessage("compositePane.message.isMetadata"));
-    	buffer.append("\n");
-    	buffer.append(getPropertyMessage("consolepane.ismetadata.help"));
-    	buffer.append("\n\n");
     	buffer.append(getPropertyMessage("compositePane.message.isComplete"));
     	buffer.append("\n");
     	buffer.append(getPropertyMessage("consolepane.iscomplete.help"));
@@ -1911,6 +1903,14 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buffer.append("\n");
     	buffer.append(getPropertyMessage("consolepane.isvalid.help"));
     	buffer.append("\n\n");
+    	buffer.append(getPropertyMessage("compositePane.message.isMetadata"));
+    	buffer.append("\n");
+    	buffer.append(getPropertyMessage("consolepane.ismetadata.help"));
+    	buffer.append("\n\n");
+//    	buffer.append(getPropertyMessage("compositePane.message.isSerialized"));
+//    	buffer.append("\n");
+//   	buffer.append(getPropertyMessage("consolepane.isserialized.help"));
+//    	buffer.append("\n\n");
     	return buffer.toString();
     }
 

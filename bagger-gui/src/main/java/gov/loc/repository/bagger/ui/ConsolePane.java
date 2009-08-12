@@ -68,10 +68,10 @@ public class ConsolePane extends JPanel {
     public JComponent createFormControl() {
     	this.setMaximumSize(maxDimension);
     	int row = 0;
-        createBaggedLine(row++);
-    	createValidMetaDataLine(row++);
+//        createBaggedLine(row++);
         createCompleteLine(row++);
         createValidLine(row++);
+    	createValidMetaDataLine(row++);
         createConsoleArea();
 
         this.setBorder(emptyBorder);
