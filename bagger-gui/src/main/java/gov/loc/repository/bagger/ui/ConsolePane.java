@@ -99,6 +99,13 @@ public class ConsolePane extends JPanel {
     	} else {
     		validMetaResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
     	}
+    	if (defaultBag.isNoProject()) {
+    		validMetaLabel.setEnabled(false);
+    		validMetaResult.setEnabled(false);
+    	} else {
+    		validMetaLabel.setEnabled(true);
+    		validMetaResult.setEnabled(true);
+    	}
     	validMetaResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(validMetaResult, gbc);

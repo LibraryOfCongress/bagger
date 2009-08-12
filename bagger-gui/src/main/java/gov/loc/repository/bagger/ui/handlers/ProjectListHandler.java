@@ -65,6 +65,7 @@ public class ProjectListHandler extends AbstractAction {
     	bagView.updateBaggerRules();
     	changeProject(selected);
     	bagView.bagInfoInputPane.updateProject(bagView);
+        bagView.compositePane.updateCompositePaneTabs(bag, "Project changed.");
     	bagView.setBag(bag);
 	}
 
