@@ -1209,6 +1209,8 @@ public class BagView extends AbstractView implements ApplicationListener {
                         task.done = true;
                         task.current = task.lengthOfTask;
                     }
+                    if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
+                    else showWarningErrorDialog("Bag saved", "Bag saved successfully.\n" );
                     if (bag.isSerialized()) {
                         if (progressMonitor.isCanceled() || task.isDone()) {
                             progressMonitor.close();
@@ -1254,7 +1256,6 @@ public class BagView extends AbstractView implements ApplicationListener {
                         compositePane.updateCompositePaneTabs(bag, messages);
                         updateManifestPane();
                     }
-                    if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
                 } catch (InterruptedException e) {
                 	task.done = true;
         			bag.isSerialized(false);
