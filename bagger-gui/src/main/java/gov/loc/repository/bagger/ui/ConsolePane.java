@@ -99,7 +99,7 @@ public class ConsolePane extends JPanel {
     	} else {
     		validMetaResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
     	}
-    	if (defaultBag.isNoProject()) {
+    	if (defaultBag.isNoProject() || defaultBag.isClear()) {
     		validMetaLabel.setEnabled(false);
     		validMetaResult.setEnabled(false);
     	} else {
@@ -131,6 +131,13 @@ public class ConsolePane extends JPanel {
     	} else {
     		completeResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
     	}
+    	if (defaultBag.isClear()) {
+    		completeLabel.setEnabled(false);
+    		completeResult.setEnabled(false);
+    	} else {
+    		completeLabel.setEnabled(true);
+    		completeResult.setEnabled(true);
+    	}
     	completeResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(completeResult, gbc);
@@ -156,6 +163,13 @@ public class ConsolePane extends JPanel {
     	} else {
     		serializedResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
     	}
+    	if (defaultBag.isClear()) {
+    		serializedLabel.setEnabled(false);
+    		serializedResult.setEnabled(false);
+    	} else {
+    		serializedLabel.setEnabled(true);
+    		serializedResult.setEnabled(true);
+    	}
     	serializedResult.setPreferredSize(formDimension);
     	buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	layout.setConstraints(serializedResult, gbc);
@@ -180,6 +194,13 @@ public class ConsolePane extends JPanel {
     		else validResult.setText("no");
     	} else {
     		validResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
+    	}
+    	if (defaultBag.isClear()) {
+    		validLabel.setEnabled(false);
+    		validResult.setEnabled(false);
+    	} else {
+    		validLabel.setEnabled(true);
+    		validResult.setEnabled(true);
     	}
     	validResult.setPreferredSize(formDimension);
         buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
