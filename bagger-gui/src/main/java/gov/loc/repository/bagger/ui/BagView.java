@@ -56,6 +56,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
@@ -143,7 +144,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public SaveBagFrame saveBagFrame;
     public NewBagFrame newBagFrame;
     public NewBagInPlaceFrame newBagInPlaceFrame;
-    public JLabel bagNameField;
+    public JTextField bagNameField;
     public JComboBox bagVersionList;
     public JLabel bagVersionValue = new JLabel(Version.V0_96.versionString);
     public JComboBox projectList;
@@ -1109,7 +1110,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         String fileName = bagFile.getName(); //bagFile.getAbsolutePath();
         bagNameField.setText(fileName);
         this.getControl().invalidate();
-        //bagNameField.setCaretPosition(fileName.length());
+        bagNameField.setCaretPosition(fileName.length()-1);
+        bagNameField.setEnabled(true);
     }
 
     private void confirmWriteBag() {
@@ -1411,8 +1413,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     	} else {
 	    	bagName = f.getName();
 	        String fileName = f.getAbsolutePath();
-	        bagNameField.setText(bagName);
-	        //bagNameField.setCaretPosition(fileName.length());
+	        bagNameField.setText(fileName);
+	        bagNameField.setCaretPosition(fileName.length()-1);
+	        bagNameField.setEnabled(true);
     	}
 		bag.setName(bagName);
     }
@@ -1454,7 +1457,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	String bagName = getPropertyMessage("bag.label.noname");
 		bag.setName(bagName);
         bagNameField.setText(bagName);
-        //bagNameField.setCaretPosition(bagName.length());
+        bagNameField.setCaretPosition(bagName.length()-1);
+        bagNameField.setEnabled(false);
 		bag.setRootDir(bagRootPath);
 		messages = updateBaggerRules();
     	initializeProfile();
@@ -1655,8 +1659,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 		}
         bagVersionValue.setText(bag.getVersion());
         bagVersionList.setSelectedItem(bagVersionValue.getText());
-        String fileName = file.getName(); // file.getAbsolutePath();
-        bagNameField.setText(fileName);
+        String fileName = file.getName();
+        bagNameField.setText(file.getAbsolutePath());
+        bagNameField.setEnabled(true);
         bagNameField.invalidate();
 
         /* */

@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
@@ -98,8 +99,10 @@ public class InfoFormsPane extends JScrollPane {
 
     	JLabel bagNameLabel = new JLabel(bagView.getPropertyMessage("bag.label.name"));
     	Dimension labelDim = bagNameLabel.getPreferredSize();
-    	bagView.bagNameField = new JLabel(" " + bag.getName() + " ");
-    	bagView.bagNameField.setEnabled(true);
+    	bagView.bagNameField = new JTextField(" " + bag.getName() + " ");
+    	bagView.bagNameField.setEditable(false);
+    	bagView.bagNameField.setEnabled(false);
+        bagView.bagNameField.setCaretPosition(bag.getName().length()-1);
     	Dimension fieldDim = bagView.bagInfoInputPane.getPreferredSize();
     	Dimension maxFieldDim = new Dimension(fieldDim.width/2, labelDim.height+10);
     	bagView.bagNameField.setMaximumSize(maxFieldDim);
