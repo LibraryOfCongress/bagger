@@ -12,6 +12,7 @@
         <value>createBagInPlaceCommand</value>
         <value>validateCommand</value>
         <value>completeCommand</value>
+        <value>clearCommand</value>
         <value>addDataCommand</value>
         <value>removeDataCommand</value>
         <value>saveBagCommand</value>
@@ -44,6 +45,8 @@
         <value>openCommand</value>
         <value>createBagInPlaceCommand</value>
         <value>validateCommand</value>
+        <value>completeCommand</value>
+        <value>clearCommand</value>
         <value>addDataCommand</value>
         <value>saveBagCommand</value>
         <value>saveBagAsCommand</value>
