@@ -93,6 +93,7 @@ public class DefaultBag {
 	private boolean isValidMetadata = false;
 	private boolean isMetadataChecked = false;
 	private boolean isSerialized = false;
+	private boolean isClear = false;
 
 	private File rootDir = null;
 	private String name = new String("bag_");
@@ -279,6 +280,14 @@ public class DefaultBag {
 
 	public File getRootDir() {
 		return this.rootDir;
+	}
+
+	public void isClear(boolean b) {
+		this.isClear = b;
+	}
+
+	public boolean isClear() {
+		return this.isClear;
 	}
 
 	public void isHoley(boolean b) {
