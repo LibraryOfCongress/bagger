@@ -567,27 +567,31 @@ public class DefaultBag {
 	public void copyBagToFields() {
 		BagInfoTxt bagInfoTxt = this.bilBag.getBagInfoTxt();
 		HashMap<String, BagInfoField> fieldMap = bagInfo.getFieldMap();
-		Set<String> keys = fieldMap.keySet();
-		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-			String label = (String) iter.next();
-			BagInfoField field = fieldMap.get(label);
-			String key = field.getLabel();
-			String value = bagInfoTxt.get(key);
-			field.setValue(value);
-			fieldMap.put(label, field);
+		if (fieldMap != null) {
+			Set<String> keys = fieldMap.keySet();
+			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+				String label = (String) iter.next();
+				BagInfoField field = fieldMap.get(label);
+				String key = field.getLabel();
+				String value = bagInfoTxt.get(key);
+				field.setValue(value);
+				fieldMap.put(label, field);
+			}
+			this.bagInfo.setFieldMap(fieldMap);
 		}
 		HashMap<String, BagInfoField> profileMap = bagInfo.getProfileMap();
-		Set<String> pkeys = profileMap.keySet();
-		for (Iterator<String> iter = pkeys.iterator(); iter.hasNext();) {
-			String label = (String) iter.next();
-			BagInfoField field = profileMap.get(label);
-			String key = field.getLabel();
-			String value = bagInfoTxt.get(key);
-			field.setValue(value);
-			profileMap.put(label, field);
+		if (profileMap != null) {
+			Set<String> pkeys = profileMap.keySet();
+			for (Iterator<String> iter = pkeys.iterator(); iter.hasNext();) {
+				String label = (String) iter.next();
+				BagInfoField field = profileMap.get(label);
+				String key = field.getLabel();
+				String value = bagInfoTxt.get(key);
+				field.setValue(value);
+				profileMap.put(label, field);
+			}
+			this.bagInfo.setProfileMap(profileMap);
 		}
-		this.bagInfo.setFieldMap(fieldMap);
-		this.bagInfo.setProfileMap(profileMap);
 	}
 
 	public void createBagInfo(HashMap<String,String> map) {
