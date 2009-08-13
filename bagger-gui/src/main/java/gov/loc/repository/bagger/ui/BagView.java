@@ -331,6 +331,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	topButtonPanel = createTopButtonPanel();
     	topButtonPanel.setBackground(bgColor);
     	infoInputPane = new InfoFormsPane(this);
+    	enableSettings(false);
         JPanel bagPanel = createBagPanel();
 
     	GridBagLayout layout = new GridBagLayout();
@@ -1124,7 +1125,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagNameField.setText(fileName);
         this.getControl().invalidate();
         bagNameField.setCaretPosition(fileName.length()-1);
-        bagNameField.setEnabled(true);
+        enableSettings(true);
     }
 
     private void confirmWriteBag() {
@@ -1357,9 +1358,17 @@ public class BagView extends AbstractView implements ApplicationListener {
     	topButtonPanel.invalidate();
 
         bagNameField.setText(bag.getName());
-        bagNameField.setEnabled(false);
+        enableSettings(false);
 		bagInfoInputPane.populateForms(bag, false);
         compositePane.updateCompositePaneTabs(bag, messages);
+    }
+    
+    private void enableSettings(boolean b) {
+        bagNameField.setEnabled(b);
+        bagVersionValue.setEnabled(b);
+        projectList.setEnabled(b);
+        holeyValue.setEnabled(b);
+        serializeValue.setEnabled(b);
     }
 
     private void updateCommands() {
@@ -1454,7 +1463,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	        String fileName = f.getAbsolutePath();
 	        bagNameField.setText(fileName);
 	        bagNameField.setCaretPosition(fileName.length()-1);
-	        bagNameField.setEnabled(true);
+	        enableSettings(true);
     	}
 		bag.setName(bagName);
     }
@@ -1497,7 +1506,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 		bag.setName(bagName);
         bagNameField.setText(bagName);
         bagNameField.setCaretPosition(bagName.length()-1);
-        bagNameField.setEnabled(false);
+        enableSettings(false);
 		bag.setRootDir(bagRootPath);
 		messages = updateBaggerRules();
     	initializeProfile();
@@ -1705,7 +1714,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagVersionList.setSelectedItem(bagVersionValue.getText());
         String fileName = file.getName();
         bagNameField.setText(file.getAbsolutePath());
-        bagNameField.setEnabled(true);
+        enableSettings(true);
         bagNameField.invalidate();
 
         /* */
