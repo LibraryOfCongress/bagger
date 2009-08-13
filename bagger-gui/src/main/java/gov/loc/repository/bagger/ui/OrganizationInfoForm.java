@@ -237,9 +237,11 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     		DefaultBagInfo bagInfo = bag.getInfo();
     		bagInfo.setBag(bag);
     		bagInfo.createStandardFieldMap(true);
+    		bagInfo.createProfileFieldList(true);
     		updateForm();
             bagView.infoInputPane.updateInfoFormsPane(true);
             bag.setInfo(bagInfo);
+            bag.copyBagToForm();
             bagView.setBag(bag);
        	}
     }
