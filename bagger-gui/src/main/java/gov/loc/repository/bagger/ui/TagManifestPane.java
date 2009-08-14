@@ -123,6 +123,13 @@ public class TagManifestPane extends JTabbedPane {
             this.invalidate();
     	}
         populateBagPane();
+        int count = this.getTabCount();
+        int selected = this.getSelectedIndex();
+        for (int i = 0; i < count; ++i) {
+            Color c = (i == selected) ? unselectedColor : selectedColor;
+            this.setBackgroundAt(i, c);
+            this.setForegroundAt(i, c);
+        }
         this.invalidate();
     }
     
