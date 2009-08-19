@@ -38,6 +38,7 @@ import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
 import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
 import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
+import gov.loc.repository.bagit.impl.StringBagFile;
 import gov.loc.repository.bagit.transformer.HolePuncher;
 import gov.loc.repository.bagit.transformer.impl.DefaultCompleter;
 import gov.loc.repository.bagit.transformer.impl.HolePuncherImpl;
@@ -562,6 +563,66 @@ public class DefaultBag {
 			this.isNoProject(true);
 		}
 /* */
+	}
+	
+	public void parseBagInfoDefaults(String defaults) {
+    	log.debug("DefaultBag.parseBagInfoDefaults: " + defaults);
+    	ArrayList<String> tokens = new ArrayList<String>();
+		StringTokenizer st = new StringTokenizer(defaults, "=");
+		while (st.hasMoreTokens()) {
+			  String s=st.nextToken();
+			  tokens.add(s);
+		}
+		HashMap<String, BagInfoField> currentMap = bagInfo.getFieldMap();
+		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
+		if (tokens != null && !tokens.isEmpty()) {
+			String fieldKey = "";
+			String fieldValue = "";
+			for (int i=0; i<tokens.size(); i++) {
+				String bagInfoLine = tokens.get(i);
+				if (i == 0) {
+					fieldKey = bagInfoLine.substring(1);
+				} else if (i == tokens.size()-1) {
+					fieldValue = bagInfoLine.substring(0, bagInfoLine.length()-1);
+					BagInfoField field = new BagInfoField();
+		    		field.isEnabled(true);
+		    		field.setName(fieldKey.trim());
+		    		field.setLabel(fieldKey.trim());
+		    		field.setValue(fieldValue.trim());
+		    		if (bagInfo.textAreaSet.contains(field.getLabel()) ||
+		    				field.getValue().length() > BagInfoField.MAX_VALUE) {
+		    			field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+		    		}
+		    		log.debug("currentMap.addfield: " + field.getLabel() + "=" + field.getValue());
+		    		if (currentMap.isEmpty() || !currentMap.containsKey(field.getLabel())) {
+		    			if (!bagInfo.profileSet.contains(field.getLabel())) {
+			    			currentMap.put(field.getLabel(), field);
+		    			}
+		    		}
+				} else {
+					int pos = bagInfoLine.lastIndexOf(", ");
+					fieldValue = bagInfoLine.substring(0, pos);
+					BagInfoField field = new BagInfoField();
+		    		field.isEnabled(true);
+		    		field.setName(fieldKey.trim());
+		    		field.setLabel(fieldKey.trim());
+		    		field.setValue(fieldValue.trim());
+		    		if (bagInfo.textAreaSet.contains(field.getLabel()) ||
+		    				field.getValue().length() > BagInfoField.MAX_VALUE) {
+		    			field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+		    		}
+		    		log.debug("currentMap.addfield: " + field.getLabel() + "=" + field.getValue());
+		    		if (currentMap.isEmpty() || !currentMap.containsKey(field.getLabel())) {
+		    			if (!bagInfo.profileSet.contains(field.getLabel())) {
+			    			currentMap.put(field.getLabel(), field);
+		    			}
+		    		}
+		    		fieldKey = bagInfoLine.substring(pos+1);
+				}
+			}
+			bagInfo.setFieldMap(currentMap);
+            this.setInfo(bagInfo);
+		}
 	}
 
 	public void copyBagToFields() {

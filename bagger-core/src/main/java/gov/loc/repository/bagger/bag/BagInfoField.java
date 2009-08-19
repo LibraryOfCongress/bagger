@@ -9,6 +9,7 @@ public class BagInfoField {
 	private static final Log logger = LogFactory.getLog(BagInfoField.class);
 	public static final int TEXTFIELD_COMPONENT = 1;
 	public static final int TEXTAREA_COMPONENT = 2;
+	public static final int MAX_VALUE = 32;
 
 	private String name = "";
 	private String label = "";
