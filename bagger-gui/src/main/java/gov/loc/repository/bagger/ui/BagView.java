@@ -4,6 +4,7 @@ package gov.loc.repository.bagger.ui;
 import gov.loc.repository.bagger.Bagger;
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
+import gov.loc.repository.bagger.ProjectBagInfo;
 //import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
@@ -15,9 +16,11 @@ import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
+import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.Cancellable;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
+import gov.loc.repository.bagit.impl.StringBagFile;
 //import gov.loc.repository.bagit.utilities.LongRunningOperationBase;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
@@ -109,6 +112,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public Collection<Project> userProjects;
     public Collection<Profile> userProfiles;
     private BaggerProfile baggerProfile = new BaggerProfile();
+    private ProjectBagInfo projectBagInfo = new ProjectBagInfo();
     public String username;
     public Contact projectContact;
 	private String userHomeDir;
@@ -213,7 +217,15 @@ public class BagView extends AbstractView implements ApplicationListener {
     	return this.baggerProfile;
     }
     
-	public Dimension getMinimumSize() {
+    public void setProjectBagInfo(ProjectBagInfo projBagInfo) {
+    	this.projectBagInfo = projBagInfo;
+    }
+    
+    public ProjectBagInfo getProjectBagInfo() {
+    	return this.projectBagInfo;
+    }
+
+    public Dimension getMinimumSize() {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
@@ -267,13 +279,22 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
     
     public String loadProfiles() {
-    	String message = bagger.loadProfiles();
-    	this.username = getPropertyMessage("user.name");
-    	this.initializeProfile();
-    	bagInfoInputPane.populateForms(bag, true);
-        bagInfoInputPane.update(bag);
-		compositePane.updateCompositePaneTabs(bag, message);
-    	return message;
+    	try {
+        	String message = bagger.loadProfiles();
+        	this.username = getPropertyMessage("user.name");
+        	Project project = bag.getProject();
+        	this.projectBagInfo = bagger.loadProjectBagInfo(project.getId());
+        	bag.parseBagInfoDefaults(projectBagInfo.getDefaults());
+
+        	this.initializeProfile();
+        	bagInfoInputPane.populateForms(bag, true);
+            bagInfoInputPane.update(bag);
+    		compositePane.updateCompositePaneTabs(bag, message);
+        	return message;
+    	} catch (Exception e) {
+    	    showWarningErrorDialog("Error Dialog", "Error trying to load project defaults:\n" + e.getMessage());
+    		return null;
+    	}
     }
 
     public String clearProfiles() {
@@ -1411,7 +1432,16 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     public String storeProfile() {
     	try {
-    		bagger.storeBaggerUpdates(userProfiles, userHomeDir);
+        	Project bagProject = bag.getProject();
+        	if (bagProject == null) bagProject = new Project();
+    		projectBagInfo.setProjectId(bagProject.getId());
+    		projectBagInfo.setDefaults(bag.getBag().getBagInfoTxt().toString());
+    		String messages = bagger.storeBaggerUpdates(userProfiles, projectBagInfo, userHomeDir);
+    		if (messages != null) {
+        	    showWarningErrorDialog("Error Dialog", "Error trying to store project defaults:\n" + messages);
+        	    return null;
+    		}
+
     		String message = getPropertyMessage("profile.message.saved") + " " + bag.getProject().getName() + "\n";
     		compositePane.updateCompositePaneTabs(bag, message);
     	    showWarningErrorDialog("Project Defaults Stored", message);
