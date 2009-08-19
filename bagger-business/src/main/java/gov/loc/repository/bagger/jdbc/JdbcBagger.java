@@ -35,6 +35,7 @@ import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.PersonProjects;
+import gov.loc.repository.bagger.ProjectBagInfo;
 import gov.loc.repository.bagger.UserContact;
 import gov.loc.repository.bagger.Organization;
 
@@ -69,6 +70,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	private SimpleJdbcInsert insertOrganization;
 	private SimpleJdbcInsert insertContact;
 	private SimpleJdbcInsert insertProfile;
+	private SimpleJdbcInsert insertProjectBagInfo;
 	private SimpleJdbcInsert insertPersonProject;
 	private SimpleJdbcInsert insertUserContact;
 
@@ -88,6 +90,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		this.insertOrganization = new SimpleJdbcInsert(dataSource).withTableName("organization").usingGeneratedKeyColumns("id");
 		this.insertContact = new SimpleJdbcInsert(dataSource).withTableName("contact").usingGeneratedKeyColumns("id");
 		this.insertProfile = new SimpleJdbcInsert(dataSource).withTableName("profile").usingGeneratedKeyColumns("id");
+		this.insertProjectBagInfo = new SimpleJdbcInsert(dataSource).withTableName("project_baginfo").usingGeneratedKeyColumns("id");
 		this.insertPersonProject = new SimpleJdbcInsert(dataSource).withTableName("person_projects").usingGeneratedKeyColumns("id");
 		this.insertUserContact = new SimpleJdbcInsert(dataSource).withTableName("user_contact").usingGeneratedKeyColumns("id");
 	}
@@ -326,6 +329,22 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		return project;
 	}
 	
+	@Transactional(readOnly = true)
+	public ProjectBagInfo loadProjectBagInfo(int id) throws DataAccessException {
+		ProjectBagInfo projectBagInfo = new ProjectBagInfo();
+		try {
+			projectBagInfo = this.simpleJdbcTemplate.queryForObject(
+					"SELECT * FROM project_baginfo WHERE project_id=?",
+					ParameterizedBeanPropertyRowMapper.newInstance(ProjectBagInfo.class),
+					id);
+		}
+		catch (EmptyResultDataAccessException ex) {
+			ex.printStackTrace();
+			throw new ObjectRetrievalFailureException(ProjectBagInfo.class, new Integer(id));
+		}
+		return projectBagInfo;
+	}
+
 	@Transactional
 	public void storePerson(Person person) throws DataAccessException {
 		try {
@@ -485,9 +504,36 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			exception.printStackTrace();
 		}
 	}
+
+	public String storeProjectBagInfo(ProjectBagInfo projectBagInfo) throws DataAccessException {
+		String messages = null;
+		String defaults = projectBagInfo.getDefaults();
+		try {
+			ProjectBagInfo projBagInfo = loadProjectBagInfo(projectBagInfo.getId());
+			projectBagInfo.setId(projBagInfo.getId());
+			this.simpleJdbcTemplate.update(
+					"UPDATE project_baginfo SET project_id=:projectId, defaults=:bagInfoDefaults WHERE id=:id",
+					new BeanPropertySqlParameterSource(projectBagInfo));
+			sqlCommand = "UPDATE profile SET project_id=" + projectBagInfo.getProjectId() + ", defaults='" + defaults + "' WHERE id=" + projectBagInfo.getId() + ";";
+			commandList.add(sqlCommand);
+		}
+		catch (Exception ex) {
+			try {
+				Number newKey = this.insertProjectBagInfo.executeAndReturnKey(new BeanPropertySqlParameterSource(projectBagInfo)); 
+				projectBagInfo.setId(newKey.intValue());
+				sqlCommand = "INSERT INTO project_baginfo VALUES (" + newKey.intValue() + ", " + projectBagInfo.getProjectId() + ", '" + defaults + "');"; 
+				commandList.add(sqlCommand);
+			}
+			catch (Exception exception) {
+				messages = "JdbcBagger.storeProjectBagInfo exception: " + ex.getMessage();
+				exception.printStackTrace();
+			}
+		}
+		return messages;
+	}
 /* */
 	@Transactional
-	public String storeBaggerUpdates(Collection<Profile> profiles, String homeDir) throws DataAccessException {
+	public String storeBaggerUpdates(Collection<Profile> profiles, ProjectBagInfo projectBagInfo, String homeDir) throws DataAccessException {
 		String messages = null;
 		try {
 			Object[] profileList = profiles.toArray();
@@ -524,10 +570,23 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				profile.setProjectId(project.getId());
 				if (profile != null) this.storeProfile(profile);
 			}
+		}
+		catch (Exception ex) {
+			messages = "Exception storing project defaults: " + ex.getMessage();
+			ex.printStackTrace();
+		}
+		try {
+			messages = this.storeProjectBagInfo(projectBagInfo);
+		}
+		catch (Exception ex) {
+			messages = "Exception storing project bag-info defaults: " + ex.getMessage();
+			ex.printStackTrace();
+		}
+		try {
 			messages = write(homeDir);
 		}
 		catch (Exception ex) {
-			messages = "JdbcBagger.storeBaggerUpdates exception: " + ex.getMessage();
+			messages = "Exception writing project bag-info defaults: " + ex.getMessage();
 			ex.printStackTrace();
 		}
 		return messages;

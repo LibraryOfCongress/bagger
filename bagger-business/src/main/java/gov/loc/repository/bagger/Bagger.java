@@ -32,10 +32,14 @@ public interface Bagger {
 	
 	Project loadProject(int id) throws DataAccessException;
 
+	ProjectBagInfo loadProjectBagInfo(int id) throws DataAccessException;
+
 	void storeProfile(Profile prof) throws DataAccessException;
 	
 	void storeOrganization(Organization org) throws DataAccessException;
 	
-	String storeBaggerUpdates(Collection<Profile> profiles, String homeDir) throws DataAccessException;
+	String storeProjectBagInfo(ProjectBagInfo profileBagInfo) throws DataAccessException;
+
+	String storeBaggerUpdates(Collection<Profile> profiles, ProjectBagInfo projectBagInfo, String homeDir) throws DataAccessException;
 
 }

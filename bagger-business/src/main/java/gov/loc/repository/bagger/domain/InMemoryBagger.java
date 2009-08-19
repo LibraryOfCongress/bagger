@@ -68,6 +68,9 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("alter table profile add constraint fk_profile_project foreign key (project_id) references projects(id)");
         template.execute("alter table profile add constraint fk_profile_contact foreign key (contact_id) references contact(id)");
 
+        template.execute("CREATE TABLE project_baginfo (id INT NOT NULL IDENTITY PRIMARY KEY, project_id INT NOT NULL, defaults VARCHAR(1000))");
+        template.execute("alter table project_baginfo add constraint fk_project_baginfo_project foreign key (project_id) references projects(id)");
+
         template.execute("CREATE TABLE person_projects (person_id INT NOT NULL, project_id INT NOT NULL)");
         template.execute("alter table person_projects add constraint fk_person_projects_person foreign key (person_id) references person(id)");
         template.execute("alter table person_projects add constraint fk_person_projects_project foreign key (project_id) references projects(id)");

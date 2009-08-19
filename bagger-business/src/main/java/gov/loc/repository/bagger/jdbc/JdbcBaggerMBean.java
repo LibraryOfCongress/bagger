@@ -5,6 +5,7 @@ import java.util.Collection;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.Organization;
+import gov.loc.repository.bagger.ProjectBagInfo;
 
 import org.springframework.dao.DataAccessException;
 
@@ -29,10 +30,14 @@ public interface JdbcBaggerMBean {
 
 	Organization loadOrganization(int id) throws DataAccessException;
 
+	ProjectBagInfo loadProjectBagInfo(int id) throws DataAccessException;
+
 	void storeProfile(Profile prof) throws DataAccessException;
 	
 	void storeOrganization(Organization org) throws DataAccessException;
 
-	String storeBaggerUpdates(Collection<Profile> profiles, String homeDir) throws DataAccessException;
+	String storeProjectBagInfo(ProjectBagInfo profileBagInfo) throws DataAccessException;
+
+	String storeBaggerUpdates(Collection<Profile> profiles, ProjectBagInfo projectBagInfo, String homeDir) throws DataAccessException;
 	/* */
 }
