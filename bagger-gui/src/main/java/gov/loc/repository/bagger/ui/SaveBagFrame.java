@@ -194,7 +194,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         serializeGroupPanel.setEnabled(true);
         serializeGroupPanel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
 
-    	// TODO: Add tag manifest generate checkbox
         JLabel tagLabel = new JLabel(getMessage("bag.label.istag"));
         tagLabel.setToolTipText(getMessage("bag.label.istag.help"));
         isTagCheckbox = new JCheckBox();
@@ -203,7 +202,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         isTagCheckbox.addActionListener(new TagManifestHandler());
         isTagCheckbox.setToolTipText(getMessage("bag.checkbox.istag.help"));
 
-        // TODO: Add tag manifest algorithm selection
         JLabel tagAlgorithmLabel = new JLabel(getMessage("bag.label.tagalgorithm"));
         tagAlgorithmLabel.setToolTipText(getMessage("bag.label.tagalgorithm.help"));
         ArrayList<String> listModel = new ArrayList<String>();
@@ -216,7 +214,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         tagAlgorithmList.addActionListener(new TagAlgorithmListHandler());
         tagAlgorithmList.setToolTipText(getMessage("bag.tagalgorithmlist.help"));
     	
-    	// TODO: Add payload manifest generate checkbox
         JLabel payloadLabel = new JLabel(getMessage("bag.label.ispayload"));
         payloadLabel.setToolTipText(getMessage("bag.ispayload.help"));
         isPayloadCheckbox = new JCheckBox();
@@ -225,7 +222,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         isPayloadCheckbox.addActionListener(new PayloadManifestHandler());
         isPayloadCheckbox.setToolTipText(getMessage("bag.ispayload.help"));
 
-        // TODO: Add payload manifest algorithm selection
         JLabel payAlgorithmLabel = new JLabel(bagView.getPropertyMessage("bag.label.payalgorithm"));
         payAlgorithmLabel.setToolTipText(getMessage("bag.payalgorithm.help"));
         payAlgorithmList = new JComboBox(listModel.toArray());

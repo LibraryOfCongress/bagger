@@ -3,7 +3,9 @@ package gov.loc.repository.bagger.ui;
 
 import java.awt.Dimension;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -25,6 +27,8 @@ import org.springframework.richclient.form.FormModelHelper;
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.Project;
+import gov.loc.repository.bagger.ProjectBagInfo;
+import gov.loc.repository.bagger.ProjectProfile;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
@@ -41,10 +45,13 @@ public class BagInfoInputPane extends JTabbedPane {
 	private BagView parentView;
 	private DefaultBag defaultBag;
 	private BaggerProfile baggerProfile;
+	private ProjectBagInfo projectBagInfo;
     private OrganizationInfoForm bagInfoForm = null;
     private OrganizationProfileForm profileForm = null;
+//    private ProjectProfileForm projectForm = null;
     private HierarchicalFormModel infoFormModel = null;
     private HierarchicalFormModel profileFormModel = null;
+//    private HierarchicalFormModel projectFormModel = null;
 
     private Dimension dimension = new Dimension(400, 370);
 
@@ -81,6 +88,7 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public void enableForms(DefaultBag bag, boolean b) {
+    	//projectForm.setEnabled(b);
     	profileForm.setEnabled(b);
     	bagInfoForm.setEnabled(b);
     }
@@ -91,6 +99,7 @@ public class BagInfoInputPane extends JTabbedPane {
     	DefaultBagInfo bagInfo = bag.getInfo();
         BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
         BaggerProfile profile = parentView.getBaggerProfile();
+        projectBagInfo = parentView.getProjectBagInfo();
         profile.setOrganization(baggerOrganization);
         profile.setToContact(parentView.projectContact);
         baggerProfile = profile;
@@ -107,6 +116,9 @@ public class BagInfoInputPane extends JTabbedPane {
 
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
         bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), parentView, bagInfo.getFieldMap(), enabled);
+
+        //projectFormModel = FormModelHelper.createCompoundFormModel(projectBagInfo);
+        //projectForm = new ProjectProfileForm(FormModelHelper.createChildPageFormModel(projectFormModel, null), parentView, profile.getProfileMap(), enabled);
         
         profileFormModel = FormModelHelper.createCompoundFormModel(baggerProfile);
         profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), this.parentView);
@@ -124,6 +136,8 @@ public class BagInfoInputPane extends JTabbedPane {
         addTab(parentView.getPropertyMessage("infoInputPane.tab.details"), bagInfoForm);
         profileForm.getControl().setToolTipText("Profile Form");
         addTab(parentView.getPropertyMessage("infoInputPane.tab.profile"), profileForm.getControl());
+//        projectForm.setToolTipText("Project Form");
+//        addTab(parentView.getPropertyMessage("infoInputPane.tab.project"), projectForm);
     }
 
     public String verifyForms(DefaultBag bag) {
@@ -206,29 +220,12 @@ public class BagInfoInputPane extends JTabbedPane {
     	Project project = bag.getProject();
     	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
 		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
+/* */
 		if (bag.isEdeposit()) {
-			//if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
-				BagInfoField field = new BagInfoField();
-				field.setLabel(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
-				field.setName(field.getLabel().toLowerCase());
-				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-				field.isEnabled(true);
-				field.isRequired(true);
-				currentMap.put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, field);
-			//}
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
 				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
 			}
 		} else if (bag.isNdnp()) {
-			//if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
-				BagInfoField field = new BagInfoField();
-				field.setLabel(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
-				field.setName(field.getLabel().toLowerCase());
-				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-				field.isEnabled(true);
-				field.isRequired(true);
-				currentMap.put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, field);
-			//}
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
 				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
 			}
@@ -241,19 +238,27 @@ public class BagInfoInputPane extends JTabbedPane {
 			}
 		}
 		if (!bag.isNoProject()) {
-			//if (currentMap.isEmpty() || !currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
-				BagInfoField field = new BagInfoField();
-				field.setLabel(DefaultBagInfo.FIELD_LC_PROJECT);
-				field.setName(field.getLabel().toLowerCase());
-				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-				field.isEnabled(false);
-				field.isRequired(true);
-				field.setValue(bagView.getBag().getProject().getName());
-				currentMap.put(DefaultBagInfo.FIELD_LC_PROJECT, field);
-			//}
 		} else {
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
 				currentMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
+			}
+		}
+/* */
+    	Collection<ProjectProfile> projectMap = bagView.userProjectProfiles;
+		for (Iterator<ProjectProfile> iter = projectMap.iterator(); iter.hasNext();) {
+			ProjectProfile projectProfile = (ProjectProfile) iter.next();
+			if (projectProfile.getProjectId() == project.getId()) {
+				BagInfoField field = new BagInfoField();
+				field.setLabel(projectProfile.getFieldName());
+				field.setName(field.getLabel().toLowerCase());
+				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+				field.isEnabled(!projectProfile.getIsValueRequired());
+				field.isEditable(!projectProfile.getIsValueRequired());
+				field.isRequiredvalue(projectProfile.getIsValueRequired());
+				field.isRequired(projectProfile.getIsRequired());
+				field.setValue(projectProfile.getFieldValue());
+				System.out.println("add projectProfile: " + field);
+				currentMap.put(field.getLabel(), field);
 			}
 		}
 		bag.getInfo().setFieldMap(currentMap);

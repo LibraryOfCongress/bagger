@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import gov.loc.repository.bagger.ui.handlers.UpdateBagHandler;
 import gov.loc.repository.bagger.ui.handlers.VersionListHandler;
 import gov.loc.repository.bagit.BagFactory.Version;
 
+import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -46,19 +48,22 @@ public class InfoFormsPane extends JScrollPane {
     private DefaultBag bag;
     private JScrollPane bagInfoScrollPane;
     public UpdateBagHandler updateBagHandler;
+	public JPanel buttonPanel;
     public JPanel infoPanel;
     public SerializeBagHandler serializeBagHandler;
+	private NewProjectFrame newProjectFrame;
 
     public InfoFormsPane(BagView bagView) {
     	super();
 		this.bagView = bagView;
 		this.bag = bagView.getBag();
 		bag.getInfo().setBag(bag);
-    	createScrollPane();
+    	createScrollPane(true);
     }
 
-    private void createScrollPane() {
-    	// TODO: Add buttons for editing BagInfo form fields
+    private void createScrollPane(boolean enabled) {
+    	buttonPanel = createButtonPanel(enabled);
+
     	bagView.bagInfoInputPane = new BagInfoInputPane(bagView, bagView.username, bagView.projectContact, false);
     	bagView.bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
     	bagView.bagInfoInputPane.setEnabled(false);
@@ -81,6 +86,9 @@ public class InfoFormsPane extends JScrollPane {
         bagView.buildConstraints(gbc, 0, row, 3, 1, 50, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         infoLayout.setConstraints(bagView.bagSettingsPanel, gbc);
         row++;
+        bagView.buildConstraints(gbc, 0, row, 3, 1, 20, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        infoLayout.setConstraints(buttonPanel, gbc);
+        row++;
         bagView.buildConstraints(gbc, 0, row, 3, 1, 20, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         infoLayout.setConstraints(bagInfoScrollPane, gbc);
         
@@ -89,7 +97,8 @@ public class InfoFormsPane extends JScrollPane {
         Border emptyBorder = new EmptyBorder(5, 5, 5, 5);
         infoPanel.setBorder(emptyBorder);
         infoPanel.add(bagView.bagSettingsPanel, BorderLayout.NORTH);
-        infoPanel.add(bagInfoScrollPane, BorderLayout.CENTER);
+        infoPanel.add(buttonPanel, BorderLayout.CENTER);
+        infoPanel.add(bagInfoScrollPane, BorderLayout.SOUTH);
     	this.setViewportView(infoPanel);
     }
 
@@ -122,6 +131,7 @@ public class InfoFormsPane extends JScrollPane {
     	bagView.bagVersionValue.setText(Version.V0_96.versionString);
     	bagView.bagVersionList.addActionListener(new VersionListHandler(bagView));
     	bagView.bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
+    	bagView.bagVersionList.setEnabled(false);
 
     	// Project control
     	JLabel projectLabel = new JLabel(bagView.getPropertyMessage("bag.label.project"));
@@ -134,6 +144,7 @@ public class InfoFormsPane extends JScrollPane {
     	bagView.projectList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
     	bagView.projectList.addActionListener(new ProjectListHandler(bagView));
     	bagView.projectList.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
+    	bagView.projectList.setEnabled(false);
     	String selected = (String) bagView.projectList.getSelectedItem();
     	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.edeposit"))) {
     		bag.isEdeposit(true);
@@ -145,6 +156,11 @@ public class InfoFormsPane extends JScrollPane {
     	} else {
     		bag.isNdnp(false);
     	}
+    	bagView.newProjectButton = new JButton(bagView.getPropertyMessage("bag.button.project.new"));
+    	bagView.newProjectButton.addActionListener(new NewProjectHandler());
+    	bagView.newProjectButton.setOpaque(true);
+    	bagView.newProjectButton.setToolTipText(bagView.getPropertyMessage("bag.button.project.new.help"));
+    	bagView.newProjectButton.setEnabled(false);
 
     	// Default project bag control
     	JLabel defaultLabel = new JLabel(bagView.getPropertyMessage("bag.label.projectDefault"));
@@ -169,6 +185,7 @@ public class InfoFormsPane extends JScrollPane {
     	bagView.holeyCheckbox.setEnabled(false);
     	bagView.holeyCheckbox.addActionListener(new HoleyBagHandler(bagView));
     	bagView.holeyCheckbox.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
+    	bagView.holeyCheckbox.setEnabled(false);
 
     	// Bag is to be serialized control
     	bagView.serializeLabel = new JLabel(bagView.getPropertyMessage("bag.label.ispackage"));
@@ -254,20 +271,21 @@ public class InfoFormsPane extends JScrollPane {
     	bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(bagNameLabel, gbc);
     	panel.add(bagNameLabel);
-    	bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+    	bagView.buildConstraints(gbc, 1, row, 2, 1, wx2, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
     	gridLayout.setConstraints(bagView.bagNameField, gbc);
     	panel.add(bagView.bagNameField);
     	row++;
-    	bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    	/* */
+		bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(projectLabel, gbc);
     	panel.add(projectLabel);
-    	bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    	bagView.buildConstraints(gbc, 1, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(bagView.projectList, gbc);
     	panel.add(bagView.projectList);
-    	bagView.projectList.setEnabled(false);
-//     	      gridLayout.setConstraints(bagView.defaultProject, gbc);
-//            this.add(bagView.defaultProject);
-    	bagView.defaultProject.setEnabled(false);
+    	bagView.buildConstraints(gbc, 2, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    	gridLayout.setConstraints(bagView.newProjectButton, gbc);
+    	panel.add(bagView.newProjectButton);
+    	/* */
     	row++;
     	bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(bagVersionLabel, gbc);
@@ -275,7 +293,6 @@ public class InfoFormsPane extends JScrollPane {
     	bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(bagView.bagVersionValue, gbc);
     	panel.add(bagView.bagVersionValue);
-    	bagView.bagVersionList.setEnabled(false);
     	row++;
     	bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(holeyLabel, gbc);
@@ -283,7 +300,6 @@ public class InfoFormsPane extends JScrollPane {
     	bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(bagView.holeyValue, gbc);
     	panel.add(bagView.holeyValue);
-    	bagView.holeyCheckbox.setEnabled(false);
     	row++;
     	bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(bagView.serializeLabel, gbc);
@@ -293,6 +309,70 @@ public class InfoFormsPane extends JScrollPane {
     	panel.add(bagView.serializeValue);
     	
     	return panel;
+    }
+
+    private JPanel createButtonPanel(boolean enabled) {
+    	JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+
+    	JButton saveButton = new JButton(bagView.getPropertyMessage("bag.button.field.save"));
+    	saveButton.addActionListener(new SaveFieldHandler());
+    	saveButton.setOpaque(true);
+    	saveButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.save.help"));
+    	saveButton.setEnabled(enabled);
+    	buttonPanel.add(saveButton);
+    	
+    	JButton loadDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.load"));
+    	loadDefaultsButton.addActionListener(new LoadFieldHandler());
+    	loadDefaultsButton.setOpaque(true);
+    	loadDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.load.help"));
+    	loadDefaultsButton.setEnabled(enabled);
+    	buttonPanel.add(loadDefaultsButton);
+
+    	JButton clearDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.clear"));
+    	clearDefaultsButton.addActionListener(new ClearFieldHandler());
+    	clearDefaultsButton.setOpaque(true);
+    	clearDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.clear.help"));
+    	clearDefaultsButton.setEnabled(enabled);
+    	buttonPanel.add(clearDefaultsButton);
+
+    	return buttonPanel;
+    }
+
+    private class NewProjectHandler extends AbstractAction {
+       	private static final long serialVersionUID = 1L;
+
+    	public void actionPerformed(ActionEvent e) {
+    		newProjectFrame = new NewProjectFrame(bagView, bagView.getPropertyMessage("bag.frame.newproject"));
+    		newProjectFrame.setVisible(true);
+       	}
+    }
+
+    private class SaveFieldHandler extends AbstractAction {
+       	private static final long serialVersionUID = 1L;
+
+    	public void actionPerformed(ActionEvent e) {
+        	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
+    		bagView.saveProfiles();
+    		bagView.bagInfoInputPane.setSelectedIndex(1);
+       	}
+    }
+
+    private class LoadFieldHandler extends AbstractAction {
+       	private static final long serialVersionUID = 1L;
+
+    	public void actionPerformed(ActionEvent e) {
+    		bagView.loadProfiles();
+    		bagView.bagInfoInputPane.setSelectedIndex(1);
+       	}
+    }
+
+    private class ClearFieldHandler extends AbstractAction {
+       	private static final long serialVersionUID = 1L;
+
+    	public void actionPerformed(ActionEvent e) {
+    		bagView.clearProfiles();
+    		bagView.bagInfoInputPane.setSelectedIndex(1);
+       	}
     }
 
     public void updateInfoFormsPane(boolean enabled) {

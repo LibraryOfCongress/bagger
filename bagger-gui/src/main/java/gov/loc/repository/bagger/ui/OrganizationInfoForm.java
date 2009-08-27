@@ -48,13 +48,13 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 	private static final Log logger = LogFactory.getLog(OrganizationInfoForm.class);
 
 	public static final String INFO_FORM_PAGE = "infoPage";
-	private static final int MIN_ROWS = 13;
+	private static final int MIN_ROWS = 11;
 
 	private BindingFactory bindingFactory = null;
 	private FormModel formModel;
     private JComponent infoForm;
     private JComponent focusField;
-    private Dimension dimension = new Dimension(400, 370);
+    private Dimension dimension = new Dimension(400, 300);
     private BagView bagView;
     private DefaultBag defaultBag;
     private HashMap<String, BagInfoField> fieldMap;
@@ -123,6 +123,13 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             	removeButton.setBorderPainted(false);
             	removeButton.setContentAreaFilled(false);
             	removeButton.addActionListener(new RemoveFieldHandler());
+				logger.debug("OrganizationInfoForm add: " + field);
+            	if (field.isRequired()) {
+            		removeButton = new JButton();
+            		removeButton.setOpaque(false);
+            		removeButton.setBorderPainted(false);
+            		removeButton.setContentAreaFilled(false);
+            	}
                 switch (field.getComponentType()) {
                 case BagInfoField.TEXTAREA_COMPONENT:
                     JComponent textarea = formBuilder.addTextArea(field.getName(), field.isRequired(), field.getLabel(), removeButton, "")[index];

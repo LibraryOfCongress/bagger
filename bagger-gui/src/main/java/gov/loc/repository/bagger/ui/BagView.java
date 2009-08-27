@@ -5,23 +5,21 @@ import gov.loc.repository.bagger.Bagger;
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.ProjectBagInfo;
-//import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
+import gov.loc.repository.bagger.ProjectProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
+import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
-import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.Cancellable;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
-import gov.loc.repository.bagit.impl.StringBagFile;
-//import gov.loc.repository.bagit.utilities.LongRunningOperationBase;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
 import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
@@ -44,9 +42,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -87,6 +89,7 @@ import org.springframework.richclient.progress.BusyIndicator;
 import org.springframework.util.Assert;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.dao.DataAccessException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -111,6 +114,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public File parentSrc;
     public Collection<Project> userProjects;
     public Collection<Profile> userProfiles;
+    public Collection<ProjectProfile> userProjectProfiles;
     private BaggerProfile baggerProfile = new BaggerProfile();
     private ProjectBagInfo projectBagInfo = new ProjectBagInfo();
     public String username;
@@ -153,6 +157,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public JComboBox bagVersionList;
     public JLabel bagVersionValue = new JLabel(Version.V0_96.versionString);
     public JComboBox projectList;
+    public JButton newProjectButton;
     public JCheckBox defaultProject;
     public JCheckBox holeyCheckbox;
     public JLabel holeyValue;
@@ -169,21 +174,21 @@ public class BagView extends AbstractView implements ApplicationListener {
     public FileFilter tarFilter;
 
     private CreateBagInPlaceHandler createBagInPlaceHandler;
+    public CreateBagInPlaceExecutor createBagInPlaceExecutor = new CreateBagInPlaceExecutor();
     private ClearBagHandler clearBagHandler;
+    public ClearBagExecutor clearExecutor = new ClearBagExecutor();
     private ValidateBagHandler validateBagHandler;
+    public ValidateExecutor validateExecutor = new ValidateExecutor();
     private CompleteBagHandler completeBagHandler;
+    public CompleteExecutor completeExecutor = new CompleteExecutor();
     private AddDataHandler addDataHandler;
+    public AddDataExecutor addDataExecutor = new AddDataExecutor();
     private SaveBagHandler saveBagHandler;
+    public SaveBagExecutor saveBagExecutor = new SaveBagExecutor();
 	public StartExecutor startExecutor = new StartExecutor();
     public OpenExecutor openExecutor = new OpenExecutor();
-    public CreateBagInPlaceExecutor createBagInPlaceExecutor = new CreateBagInPlaceExecutor();
-    public AddDataExecutor addDataExecutor = new AddDataExecutor();
     public RemoveDataExecutor removeDataExecutor = new RemoveDataExecutor();
-    public SaveBagExecutor saveBagExecutor = new SaveBagExecutor();
     public SaveBagAsExecutor saveBagAsExecutor = new SaveBagAsExecutor(this);
-    public ValidateExecutor validateExecutor = new ValidateExecutor();
-    public ClearBagExecutor clearExecutor = new ClearBagExecutor();
-    public CompleteExecutor completeExecutor = new CompleteExecutor();
     public AddTagFileExecutor addTagFileExecutor = new AddTagFileExecutor();
     public RemoveTagFileExecutor removeTagFileExecutor = new RemoveTagFileExecutor();
     public SaveProfileExecutor saveProfileExecutor = new SaveProfileExecutor();
@@ -223,6 +228,53 @@ public class BagView extends AbstractView implements ApplicationListener {
     
     public ProjectBagInfo getProjectBagInfo() {
     	return this.projectBagInfo;
+    }
+    
+    public boolean projectExists(Project project) {
+    	Collection<Project> projectList = this.userProjects;
+		for (Iterator<Project> iter = projectList.iterator(); iter.hasNext();) {
+			Project p = (Project) iter.next();
+			if (p.getName().equalsIgnoreCase(project.getName())) {
+				return true;
+			}
+		}
+    	return false;
+    }
+
+    public void addProject(Project project) {
+    	this.userProjects.add(project);
+
+    	projectList.addItem(project.getName());
+    	projectList.invalidate();
+    	this.updateProject(project.getName());
+    	bagger.storeProject(project);
+    	bag.setProject(project);
+    	bag.getInfo().setLcProject(project.getName());
+    	ProjectProfile projectProfile = new ProjectProfile();
+    	projectProfile.setProjectId(project.getId());
+    	projectProfile.setFieldName(DefaultBagInfo.FIELD_LC_PROJECT);
+    	projectProfile.setFieldValue(bag.getInfo().getLcProject());
+    	projectProfile.setIsRequired(true);
+    	projectProfile.setIsValueRequired(true);
+    	userProjectProfiles.add(projectProfile);
+		baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
+		this.bagInfoInputPane.updateProject(this);
+		this.bagInfoInputPane.populateForms(bag, true);
+    }
+
+    public void addProjectField(BagInfoField field) {
+    	if (field.isRequired() || field.isRequiredvalue() || !field.getValue().trim().isEmpty()) {
+        	log.debug("BagView.addProjectField: " + field);
+    		Project project = bag.getProject();
+    		ProjectProfile projectProfile = new ProjectProfile();
+	    	projectProfile.setProjectId(project.getId());
+	    	projectProfile.setFieldName(field.getLabel());
+	    	projectProfile.setFieldValue(field.getValue());
+	    	projectProfile.setIsRequired(field.isRequired());
+	    	projectProfile.setIsValueRequired(field.isRequiredvalue());
+	    	userProjectProfiles.add(projectProfile);
+			baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
+    	}
     }
 
     public Dimension getMinimumSize() {
@@ -285,8 +337,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         	Project project = bag.getProject();
         	this.projectBagInfo = bagger.loadProjectBagInfo(project.getId());
         	bag.parseBagInfoDefaults(projectBagInfo.getDefaults());
-
         	this.initializeProfile();
+        	bagInfoInputPane.updateProject(this);
         	bagInfoInputPane.populateForms(bag, true);
             bagInfoInputPane.update(bag);
     		compositePane.updateCompositePaneTabs(bag, message);
@@ -568,6 +620,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTagFileTree.setEnabled(b);
     	bagTagFileTreePanel.setEnabled(b);
         projectList.setEnabled(b);
+        newProjectButton.setEnabled(b);
     	bagInfoInputPane.setEnabled(b);
         defaultProject.setEnabled(b);
         holeyCheckbox.setEnabled(false);
@@ -593,6 +646,22 @@ public class BagView extends AbstractView implements ApplicationListener {
     
     public void initializeProfile() {
    		userProjects = bagger.getProjects();
+   		userProjectProfiles = bagger.getProjectProfiles();
+    	Collection<ProjectProfile> projectMap = userProjectProfiles;
+		Object[] reqs = bag.getInfo().getRequiredStrings();
+		for (Iterator<ProjectProfile> iter = projectMap.iterator(); iter.hasNext();) {
+			ProjectProfile projectProfile = (ProjectProfile) iter.next();
+			log.debug("initializeProfile: " + projectProfile);
+			if (projectProfile.getIsRequired()) {
+				if (!bag.getInfo().getRequiredSet().contains(projectProfile.getFieldName())) {
+					List<Object> list = new ArrayList();
+					for (int i=0; i < reqs.length; i++) {list.add(reqs[i]);}
+					list.add(projectProfile.getFieldName());
+					bag.getInfo().setRequiredStrings(list.toArray());
+				}
+			}
+		}
+
    		Object[] projectArray = userProjects.toArray();
     	Project bagProject = bag.getProject();
     	if (bagProject == null) {
@@ -638,6 +707,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                        		bag.setInfo(bagInfo);
                        		projectContact = profile.getPerson();
                        		baggerProfile.setOrganization(bagOrg);
+                	   		baggerProfile.setSourceCountact(profile.getContact());
                        		baggerProfile.setToContact(projectContact);
                        		log.debug("InitProfiles: " + bagOrg);
                    		}
@@ -1388,6 +1458,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagNameField.setEnabled(b);
         bagVersionValue.setEnabled(b);
         projectList.setEnabled(b);
+        newProjectButton.setEnabled(b);
         holeyValue.setEnabled(b);
         serializeValue.setEnabled(b);
     }
@@ -1435,8 +1506,19 @@ public class BagView extends AbstractView implements ApplicationListener {
         	Project bagProject = bag.getProject();
         	if (bagProject == null) bagProject = new Project();
     		projectBagInfo.setProjectId(bagProject.getId());
-    		projectBagInfo.setDefaults(bag.getBag().getBagInfoTxt().toString());
-    		String messages = bagger.storeBaggerUpdates(userProfiles, projectBagInfo, userHomeDir);
+    		String defaults = "";
+    		HashMap<String, BagInfoField> fieldMap = baggerProfile.getProfileMap();
+    		if (fieldMap != null && !fieldMap.isEmpty()) {
+    			Set<String> keys = fieldMap.keySet();
+    			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+    				String key = (String) iter.next();
+    				BagInfoField val = fieldMap.get(key);
+    				defaults += key + "=" + val;
+    				if (iter.hasNext()) defaults += ", ";
+    			}
+            }
+    		projectBagInfo.setDefaults(defaults);
+    		String messages = bagger.storeBaggerUpdates(userProfiles, userProjects, userProjectProfiles, projectBagInfo, userHomeDir);
     		if (messages != null) {
         	    showWarningErrorDialog("Error Dialog", "Error trying to store project defaults:\n" + messages);
         	    return null;
@@ -1789,13 +1871,22 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    bag.isClear(false);
         bag.getInfo().setBag(bag);
     	bag.copyBagToForm();
+    	baggerProfile = new BaggerProfile();
 	    if (!bag.getInfo().getLcProject().isEmpty()){
-    		messages += updateProject(bag.getInfo().getLcProject());
+    		String name = bag.getInfo().getLcProject().trim();
+    		Project project = new Project();
+    		project.setName(name);
+    		if (!projectExists(project)) {
+        		addProject(project);
+    		}
+    		messages += updateProject(name);
     		bag.isNoProject(false);
     	} else {
     		messages += updateProject(getPropertyMessage("bag.project.noproject"));
     		bag.isNoProject(true);
     	}
+	    // TODO: if LC-Project field exists then open Project Profile and
+	    // add LC-Project to the baggerProfile map or modify it
 		bag.getInfo().createExistingFieldMap(true);
     	baggerProfile.setOrganization(bag.getInfo().getBagOrganization());
     	if (bag.getInfo().getBagSize() != null && bag.getInfo().getBagSize().isEmpty()) {
@@ -1832,6 +1923,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 			else messages = msgs;
 		}
 		bag.getInfo().setBag(bag);
+		bagInfoInputPane.updateProject(this);
     	bagInfoInputPane.populateForms(bag, true);
         compositePane.updateCompositePaneTabs(bag, messages);
 
@@ -1954,13 +2046,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	if (projectName.equalsIgnoreCase(getPropertyMessage("bag.project.noproject"))) {
     		projectList.setSelectedItem(projectName);
     		bag.isNoProject(true);
-    	} else if (bag.isEdeposit()) {
-    		projectList.setSelectedItem(projectName);
-    		bag.isNoProject(false);
-    	} else if (bag.isNdnp()) {
-    		projectList.setSelectedItem(projectName);
-    		bag.isNoProject(false);
     	} else {
+    		projectList.setSelectedItem(projectName);
       		bag.isNoProject(false);
     	}
     	setBag(bag);

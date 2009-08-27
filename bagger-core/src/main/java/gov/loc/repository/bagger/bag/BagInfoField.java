@@ -17,6 +17,8 @@ public class BagInfoField {
 	private int componentType = TEXTFIELD_COMPONENT;
 	private boolean isEnabled = false;
 	private boolean isRequired = false;
+	private boolean isRequiredvalue = false;
+	private boolean isEditable = true;
 	private boolean isProfile = false;
 
     public BagInfoField() {
@@ -54,6 +56,14 @@ public class BagInfoField {
     	return this.componentType;
     }
 
+    public void isEditable(boolean b) {
+    	this.isEditable = b;
+    }
+    
+    public boolean isEditable() {
+    	return this.isEditable;
+    }
+    
     public void isEnabled(boolean b) {
     	this.isEnabled = b;
     }
@@ -69,7 +79,15 @@ public class BagInfoField {
     public boolean isRequired() {
     	return this.isRequired;
     }
-    
+        
+    public void isRequiredvalue(boolean b) {
+    	this.isRequiredvalue = b;
+    }
+
+    public boolean isRequiredvalue() {
+    	return this.isRequiredvalue;
+    }
+
     public void isProfile(boolean b) {
     	this.isProfile = b;
     }
@@ -79,6 +97,15 @@ public class BagInfoField {
     }
     
     public String toString() {
-    	return this.label;
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("\n");
+    	sb.append("Label: " + getLabel() + "\n");
+    	sb.append("Name: " + getName() + "\n");
+    	sb.append("Value: " + getValue() + "\n");
+    	sb.append("isRequired: " + isRequired() + "\n");
+    	sb.append("isRequiredvalue: " + isRequiredvalue() + "\n");
+    	sb.append("isEnabled: " + isEnabled() + "\n");
+    	sb.append("isEditable: " + isEditable() + "\n");
+    	return sb.toString();
     }
 }

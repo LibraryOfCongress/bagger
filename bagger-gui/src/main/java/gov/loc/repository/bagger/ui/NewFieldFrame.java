@@ -40,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
@@ -64,9 +65,12 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     JTextField fieldName;
     JComboBox typeList;
 	JCheckBox isRequiredCheckbox;
+	JCheckBox isRequiredValue;
 	JRadioButton stndFieldButton;
 	JRadioButton newFieldButton;
 	JPanel fieldGroupPanel;
+    JLabel valueLabel;
+	JTextField valueField;
 
 	public NewFieldFrame(BagView bagView, String title) {
         super(title);
@@ -90,7 +94,9 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     }
 
     private JPanel createComponents() {
-    	FieldListHandler fieldListHandler = new FieldListHandler();
+        Border border = new EmptyBorder(5, 5, 5, 5);
+
+        FieldListHandler fieldListHandler = new FieldListHandler();
     	List<String> listModel = bagView.getBag().getInfo().getStandardBagFields();
         fieldList = new JComboBox(listModel.toArray());
         fieldList.setName(getMessage("baginfo.field.fieldlist"));
@@ -121,6 +127,17 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         fieldGroupPanel.add(newFieldButton);
         fieldGroupPanel.add(fieldName);
 
+        JLabel isReqLabel = new JLabel(getMessage("bag.label.isreq"));
+        isReqLabel.setToolTipText(getMessage("bag.isreq.help"));
+        isRequiredCheckbox = new JCheckBox();
+        isRequiredCheckbox.setBorder(border);
+        isRequiredCheckbox.setSelected(false);
+        isRequiredCheckbox.addActionListener(new FieldRequiredHandler());
+        isRequiredCheckbox.setToolTipText(getMessage("bag.isreq.help"));
+        JPanel reqPanel = new JPanel(new FlowLayout());
+        reqPanel.add(isReqLabel);
+        reqPanel.add(isRequiredCheckbox);
+
         ArrayList<String> typeModel = new ArrayList<String>();
         typeModel.add(TEXTFIELD);
         typeModel.add(TEXTAREA);
@@ -132,7 +149,22 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         typeList.addActionListener(new TypeListHandler());
         typeList.setToolTipText(getMessage("baginfo.field.typelist.help"));
 
-    	okButton = new JButton("Add");
+        valueLabel = new JLabel(bagView.getPropertyMessage("fieldvalue.label"));
+        valueLabel.setToolTipText(bagView.getPropertyMessage("fieldvalue.help"));
+    	valueField = new JTextField("");
+
+        JLabel isReqValueLabel = new JLabel(getMessage("bag.label.isreqvalue"));
+        isReqValueLabel.setToolTipText(getMessage("bag.isreqvalue.help"));
+        isRequiredValue = new JCheckBox();
+        isRequiredValue.setBorder(border);
+        isRequiredValue.setSelected(false);
+        isRequiredValue.addActionListener(new RequiredValueHandler());
+        isRequiredValue.setToolTipText(getMessage("bag.isreqvalue.help"));
+        JPanel reqValuePanel = new JPanel(new FlowLayout());
+        reqValuePanel.add(isReqValueLabel);
+        reqValuePanel.add(isRequiredValue);
+
+        okButton = new JButton("Add");
     	okButton.addActionListener(new OkAddFieldHandler());
         okButton.setEnabled(true);
 
@@ -152,6 +184,17 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
         layout.setConstraints(typeList, glbc);
         row++;
+        buildConstraints(glbc, 0, row, 3, 1, 100, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        layout.setConstraints(reqPanel, glbc);
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(valueLabel, glbc);
+        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
+        layout.setConstraints(valueField, glbc);
+        row++;
+        buildConstraints(glbc, 0, row, 3, 1, 100, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        layout.setConstraints(reqValuePanel, glbc);
+        row++;
         buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST);
         layout.setConstraints(cancelButton, glbc);
         buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.NONE, GridBagConstraints.CENTER);
@@ -162,6 +205,10 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         panel.add(fieldGroupPanel);
     	panel.add(typeListLabel);
     	panel.add(typeList);
+        panel.add(reqPanel);
+        panel.add(valueLabel);
+        panel.add(valueField);
+        panel.add(reqValuePanel);
     	panel.add(cancelButton);
     	panel.add(okButton);
 
@@ -198,6 +245,25 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     	}
     }
 
+    private class RequiredValueHandler extends AbstractAction {
+    	private static final long serialVersionUID = 75893358194076314L;
+    	public void actionPerformed(ActionEvent e) {
+    		JCheckBox cb = (JCheckBox)e.getSource();
+                
+    		// Determine status
+    		boolean isSelected = cb.isSelected();
+    		if (isSelected) {
+    			field.isRequiredvalue(true);
+    			field.isEditable(false);
+    			field.isEnabled(false);
+    		} else {
+    			field.isRequiredvalue(false);
+    			field.isEditable(true);
+    			field.isEnabled(true);
+    		}
+    	}
+    }
+
     private class FieldButtonHandler extends AbstractAction {
     	private static final long serialVersionUID = 1L;
 		public void actionPerformed(ActionEvent e) {
@@ -224,7 +290,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     	public void actionPerformed(ActionEvent e) {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String fieldLabel = (String) jlist.getSelectedItem();
-        	// TODO: if not new, populate with stnd values
+        	// if not new, populate with stnd values
         	if (newFieldButton.isSelected()) {
                 typeList.setSelectedItem(TEXTFIELD);
     			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
@@ -234,14 +300,14 @@ public class NewFieldFrame extends JFrame implements ActionListener {
                 fieldName.requestFocus();
                 field.setLabel("");
         	} else {
-        		if (DefaultBagInfo.textAreaSet.contains(fieldLabel)) {
+        		if (DefaultBagInfo.textAreaSet.contains(fieldLabel.trim())) {
                     typeList.setSelectedItem(TEXTAREA);
         			field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
         		} else {
-                    typeList.setSelectedItem(TEXTAREA);
+                    typeList.setSelectedItem(TEXTFIELD);
         			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
         		}
-        		if (DefaultBagInfo.requiredSet.contains(fieldLabel)) {
+        		if (bagView.getBag().getInfo().getRequiredSet().contains(fieldLabel)) {
         			field.isRequired(true);
         		} else {
         			field.isRequired(false);
@@ -260,7 +326,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     	public void actionPerformed(ActionEvent e) {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String type = (String) jlist.getSelectedItem();
-        	if (type.equalsIgnoreCase(TEXTAREA)) {
+        	if (type.trim().equalsIgnoreCase(TEXTAREA)) {
         		field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
         	} else {
         		field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
@@ -277,13 +343,23 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     		String name = fieldName.getText();
     		field.setName(name.toLowerCase());
     		field.setLabel(name);
+    		field.setValue(valueField.getText().trim());
     		prepopulate(field);
 
+    		if (field.isRequiredvalue() && field.getValue().trim().isEmpty()) {
+    			bagView.showWarningErrorDialog("New Field Dialog", "Field: " + field.getLabel() + " must have a default value!");
+    			return;
+    		}
+    		if (name.trim().isEmpty()) {
+    			bagView.showWarningErrorDialog("New Field Dialog", "Field name must be selected!");
+    			return;
+    		}
     		HashMap<String, BagInfoField> currentMap = bagInfo.getFieldMap();
     		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
     		if (currentMap.isEmpty() || !currentMap.containsKey(field.getLabel())) {
-    			currentMap.put(field.getLabel(), field);
     			setVisible(false);
+    			bagView.addProjectField(field);
+    			currentMap.put(field.getLabel(), field);
     			bagInfo.setFieldMap(currentMap);
                 bag.setInfo(bagInfo);
                 bagView.setBag(bag);

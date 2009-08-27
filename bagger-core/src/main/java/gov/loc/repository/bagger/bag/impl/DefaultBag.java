@@ -581,7 +581,10 @@ public class DefaultBag {
 			for (int i=0; i<tokens.size(); i++) {
 				String bagInfoLine = tokens.get(i);
 				if (i == 0) {
-					fieldKey = bagInfoLine.substring(1);
+					if (bagInfoLine.startsWith("{"))
+						fieldKey = bagInfoLine.substring(1);
+					else
+						fieldKey = bagInfoLine.trim();
 				} else if (i == tokens.size()-1) {
 					fieldValue = bagInfoLine.substring(0, bagInfoLine.length()-1);
 					BagInfoField field = new BagInfoField();

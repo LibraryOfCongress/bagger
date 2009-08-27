@@ -1,10 +1,13 @@
 package gov.loc.repository.bagger.bag;
 
+import java.util.HashMap;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
+import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 
 /**
  * Simple JavaBean domain object representing an organization.
@@ -20,8 +23,8 @@ import gov.loc.repository.bagger.Organization;
 public class BaggerProfile {
 	private static final Log log = LogFactory.getLog(BaggerProfile.class);
 
+	private HashMap<String, BagInfoField> fieldMap = new HashMap<String, BagInfoField>();
 	private BaggerOrganization sourceOrganization = new BaggerOrganization();
-//	private Contact sourceContact = new Contact();
 	private Contact toContact = new Contact();
 	
 	public BaggerOrganization getOrganization() {
@@ -31,7 +34,31 @@ public class BaggerProfile {
 	public void setOrganization(BaggerOrganization organization) {
 		this.sourceOrganization = organization;
 	}
+
+	public HashMap<String, BagInfoField> getProfileMap() {
+		return this.fieldMap;
+	}
 	
+	public void setProfileMap(HashMap<String, BagInfoField> fieldMap) {
+		this.fieldMap = fieldMap;
+	}
+	
+	public void addField(String key, String value, boolean required, boolean enabled, boolean prof) {
+		BagInfoField field = new BagInfoField();
+		field.isRequired(required);
+		field.isEnabled(enabled);
+		field.isEditable(enabled);
+		field.isProfile(prof);
+		field.setLabel(key);
+		field.setName(key);
+		field.setValue(value);
+		fieldMap.put(field.getLabel(), field);
+	}
+	
+	public void removeField(String key) {
+		this.fieldMap.remove(key);
+	}
+
 	public Contact getSourceContact() {
 		return this.sourceOrganization.getContact();
 	}

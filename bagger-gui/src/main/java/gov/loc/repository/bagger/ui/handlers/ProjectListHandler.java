@@ -62,6 +62,8 @@ public class ProjectListHandler extends AbstractAction {
     		bag.getInfo().setLcProject(selected);
     		bag.isNoProject(false);
     	}
+	    // TODO: if LC-Project field exists then open Project Profile and
+	    // add LC-Project to the baggerProfile map or modify it
     	bagView.updateBaggerRules();
     	changeProject(selected);
     	bagView.bagInfoInputPane.updateProject(bagView);

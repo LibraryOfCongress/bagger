@@ -27,7 +27,7 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
     private JComponent contactName;
     private JComponent field;
     private BagView bagView;
-    private Dimension dimension = new Dimension(400, 370);
+    private Dimension dimension = new Dimension(400, 300);
 
     public OrganizationProfileForm(FormModel formModel, BagView bagView) {
         super(formModel, PROFILE_FORM_PAGE);
@@ -37,8 +37,8 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
     protected JComponent createFormControl() {
     	form = new JPanel();
 		form.setLayout(new BorderLayout());
-		JPanel buttonPanel = createButtonPanel(true);
-		form.add(buttonPanel, BorderLayout.NORTH);
+		//JPanel buttonPanel = createButtonPanel(true);
+		//form.add(buttonPanel, BorderLayout.NORTH);
         JComponent formFields = createFormFields();
         form.add(formFields, BorderLayout.CENTER);
 

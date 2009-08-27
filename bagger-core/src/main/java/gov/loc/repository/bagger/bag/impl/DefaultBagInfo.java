@@ -42,12 +42,12 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	private HashMap<String, BagInfoField> fieldMap = new HashMap<String, BagInfoField>();
 	public static final String[] profileStrings = {FIELD_SOURCE_ORGANIZATION, FIELD_ORGANIZATION_ADDRESS, FIELD_CONTACT_NAME, FIELD_CONTACT_PHONE, FIELD_CONTACT_EMAIL};
 	public static final HashSet<String> profileSet = new HashSet<String>(Arrays.asList(profileStrings));
-	public static final String[] readOnlyStrings = {FIELD_PAYLOAD_OXUM, FIELD_LC_PROJECT};
+	public static String[] readOnlyStrings = {FIELD_PAYLOAD_OXUM, FIELD_LC_PROJECT};
 	public static final HashSet<String> readOnlySet = new HashSet<String>(Arrays.asList(readOnlyStrings));
 	public static final String[] textAreaStrings = {FIELD_EXTERNAL_DESCRIPTION, FIELD_INTERNAL_SENDER_DESCRIPTION};
 	public static final HashSet<String> textAreaSet = new HashSet<String>(Arrays.asList(textAreaStrings));
-	public static final String[] requiredStrings = {FIELD_EXTERNAL_DESCRIPTION, FIELD_BAGGING_DATE, FIELD_EXTERNAL_IDENTIFIER, FIELD_BAG_SIZE, FIELD_EDEPOSIT_PUBLISHER, FIELD_NDNP_AWARDEE_PHASE, FIELD_LC_PROJECT};
-	public static final HashSet<String> requiredSet = new HashSet<String>(Arrays.asList(requiredStrings));
+	private Object[] requiredStrings = {}; //{FIELD_EXTERNAL_DESCRIPTION, FIELD_BAGGING_DATE, FIELD_EXTERNAL_IDENTIFIER, FIELD_BAG_SIZE, FIELD_EDEPOSIT_PUBLISHER, FIELD_NDNP_AWARDEE_PHASE, FIELD_LC_PROJECT};
+	private HashSet<Object> requiredSet = new HashSet<Object>();
 
 	private String name;
 	private String content;
@@ -60,6 +60,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		standardBagInfo = baggerBag.getBag().getBagPartFactory().createBagInfoTxt();
 		this.setBagName(baggerBag.getName());
 		this.baggerBag = baggerBag;
+		this.setRequiredSet(new HashSet<Object>(Arrays.asList(requiredStrings)));
 		log.debug("DefaultBagInfo");
 	}
 	
@@ -93,6 +94,23 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 
 	public String getContent() {
 		return this.content;
+	}
+
+	public Object[] getRequiredStrings() {
+		return this.requiredStrings;
+	}
+	
+	public void setRequiredStrings(Object[] s) {
+		this.requiredStrings = s;
+		this.setRequiredSet(new HashSet<Object>(Arrays.asList(requiredStrings)));
+	}
+
+	public HashSet<Object> getRequiredSet() {
+		return this.requiredSet;
+	}
+	
+	public void setRequiredSet(HashSet<Object> s) {
+		this.requiredSet = s;
 	}
 	
 	public void setPublisher(String publisher) {
@@ -458,11 +476,11 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		log.info("getFieldList: " + fields.length);
 		try {
 			for(Field field : fields) {
-				log.info("getField: " + field.getName());
+				log.debug("getField: " + field.getName());
 				if (field.getName().startsWith("FIELD_")) {
 //				if (field.getName().startsWith("FIELD_") && this.containsKey(field.get(this))) {
 					String fieldName = (String)field.get(this);
-					log.info("add: " + fieldName);
+					log.debug("add: " + fieldName);
 					standardFields.add(fieldName);
 				}
 			}

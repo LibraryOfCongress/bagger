@@ -36,6 +36,7 @@ import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.PersonProjects;
 import gov.loc.repository.bagger.ProjectBagInfo;
+import gov.loc.repository.bagger.ProjectProfile;
 import gov.loc.repository.bagger.UserContact;
 import gov.loc.repository.bagger.Organization;
 
@@ -70,6 +71,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	private SimpleJdbcInsert insertOrganization;
 	private SimpleJdbcInsert insertContact;
 	private SimpleJdbcInsert insertProfile;
+	private SimpleJdbcInsert insertProjectProfile;
 	private SimpleJdbcInsert insertProjectBagInfo;
 	private SimpleJdbcInsert insertPersonProject;
 	private SimpleJdbcInsert insertUserContact;
@@ -90,6 +92,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		this.insertOrganization = new SimpleJdbcInsert(dataSource).withTableName("organization").usingGeneratedKeyColumns("id");
 		this.insertContact = new SimpleJdbcInsert(dataSource).withTableName("contact").usingGeneratedKeyColumns("id");
 		this.insertProfile = new SimpleJdbcInsert(dataSource).withTableName("profile").usingGeneratedKeyColumns("id");
+		this.insertProjectProfile = new SimpleJdbcInsert(dataSource).withTableName("project_profile").usingGeneratedKeyColumns("id");
 		this.insertProjectBagInfo = new SimpleJdbcInsert(dataSource).withTableName("project_baginfo").usingGeneratedKeyColumns("id");
 		this.insertPersonProject = new SimpleJdbcInsert(dataSource).withTableName("person_projects").usingGeneratedKeyColumns("id");
 		this.insertUserContact = new SimpleJdbcInsert(dataSource).withTableName("user_contact").usingGeneratedKeyColumns("id");
@@ -202,8 +205,14 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	public Collection<Project> getProjects() throws DataAccessException {
 		return this.simpleJdbcTemplate.query(
 				"SELECT * FROM projects",
-//				"SELECT * FROM projects ORDER BY name",
 				ParameterizedBeanPropertyRowMapper.newInstance(Project.class));
+	}
+	
+	@Transactional(readOnly = true)
+	public Collection<ProjectProfile> getProjectProfiles() throws DataAccessException {
+		return this.simpleJdbcTemplate.query(
+				"SELECT * FROM project_profile",
+				ParameterizedBeanPropertyRowMapper.newInstance(ProjectProfile.class));
 	}
 	
 	@Transactional(readOnly = true)
@@ -330,6 +339,36 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	}
 	
 	@Transactional(readOnly = true)
+	public ProjectProfile loadProjectProfile(int id) throws DataAccessException {
+		ProjectProfile projectProfile = new ProjectProfile();
+		try {
+			projectProfile = this.simpleJdbcTemplate.queryForObject(
+					"SELECT * FROM project_profile WHERE id=?",
+					ParameterizedBeanPropertyRowMapper.newInstance(ProjectProfile.class),
+					id);
+		}
+		catch (EmptyResultDataAccessException ex) {
+			ex.printStackTrace();
+			throw new ObjectRetrievalFailureException(ProjectBagInfo.class, new Integer(id));
+		}
+		return projectProfile;
+	}
+
+	@Transactional(readOnly = true)
+	public Collection<ProjectProfile> loadProjectProfiles(int id) throws DataAccessException {
+		try {
+			return this.simpleJdbcTemplate.query(
+					"SELECT * FROM project_profile WHERE project_id=?",
+					ParameterizedBeanPropertyRowMapper.newInstance(ProjectProfile.class),
+					id);
+		}
+		catch (EmptyResultDataAccessException ex) {
+			ex.printStackTrace();
+			throw new ObjectRetrievalFailureException(ProjectBagInfo.class, new Integer(id));
+		}
+	}
+
+	@Transactional(readOnly = true)
 	public ProjectBagInfo loadProjectBagInfo(int id) throws DataAccessException {
 		ProjectBagInfo projectBagInfo = new ProjectBagInfo();
 		try {
@@ -435,9 +474,9 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 		catch (Exception ex) {
 			try {
-				Number newKey = this.insertContact.executeAndReturnKey(new BeanPropertySqlParameterSource(project));
+				Number newKey = this.insertProject.executeAndReturnKey(new BeanPropertySqlParameterSource(project));
 				project.setId(newKey.intValue());
-				sqlCommand = "INSERT INTO projects VALUES (" + newKey.intValue() + ", '" + project.getName() + "', '" + project.getIsDefault() + "');";
+				sqlCommand = "INSERT INTO projects VALUES (" + newKey.intValue() + ", '" + project.getName() + "', false);";
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
@@ -475,6 +514,31 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 	}
 	
+	@Transactional
+	public void storeProjectProfile(ProjectProfile projectProfile) throws DataAccessException {
+		try {
+			ProjectProfile p = this.loadProjectProfile(projectProfile.getId());
+			projectProfile.setId(p.getId());
+			this.simpleJdbcTemplate.update(
+					"UPDATE project_profile SET field_name=:fieldName, is_required=:isRequired, field_value=:fieldValue, is_value_required=:isValueRequired WHERE id=:id",
+					new BeanPropertySqlParameterSource(projectProfile));
+			sqlCommand = "UPDATE project_profile SET field_name='" + projectProfile.getFieldName() + "', is_required=" + projectProfile.getIsRequired() + ", field_value='" + projectProfile.getFieldValue() + "', is_value_required=" + projectProfile.getIsValueRequired() + " WHERE id=" + "', is_required=" + projectProfile.getId() + ";";
+			commandList.add(sqlCommand);
+		}
+		catch (Exception ex) {
+			try {
+				Number newKey = this.insertProjectProfile.executeAndReturnKey(new BeanPropertySqlParameterSource(projectProfile));
+				projectProfile.setId(newKey.intValue());
+				sqlCommand = "INSERT INTO project_profile VALUES (" + newKey.intValue() + ", '" + projectProfile.getFieldName() + "', " + projectProfile.getIsRequired() + ", '" + projectProfile.getFieldValue() + "', " + projectProfile.getIsValueRequired() + ");";
+				commandList.add(sqlCommand);
+			}
+			catch (Exception exception) {
+				exception.printStackTrace();
+				throw new UnsupportedOperationException("ProjectProfile update not supported");				
+			}
+		}
+	}
+
 	public void storePersonProject(Person person, Project project) throws DataAccessException {
 		try {
 			PersonProjects personProject = new PersonProjects();
@@ -533,7 +597,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	}
 /* */
 	@Transactional
-	public String storeBaggerUpdates(Collection<Profile> profiles, ProjectBagInfo projectBagInfo, String homeDir) throws DataAccessException {
+	public String storeBaggerUpdates(Collection<Profile> profiles, Collection<Project> projects, Collection<ProjectProfile> projectProfiles, ProjectBagInfo projectBagInfo, String homeDir) throws DataAccessException {
 		String messages = null;
 		try {
 			Object[] profileList = profiles.toArray();
@@ -574,6 +638,22 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		catch (Exception ex) {
 			messages = "Exception storing project defaults: " + ex.getMessage();
 			ex.printStackTrace();
+		}
+		try {
+			Object[] projectList = projects.toArray();
+			for (int i=0; i < projectList.length; i++) {
+				Project project = (Project) projectList[i];
+				storeProject(project);
+			}
+			Object[] projectProfileList = projectProfiles.toArray();
+			for (int i=0; i < projectProfileList.length; i++) {
+				ProjectProfile projectProfile = (ProjectProfile) projectProfileList[i];
+				storeProjectProfile(projectProfile);
+			}
+		}
+		catch (Exception ex) {
+			messages = "Exception storing project profiles: " + ex.getMessage();
+			ex.printStackTrace();			
 		}
 		try {
 			messages = this.storeProjectBagInfo(projectBagInfo);

@@ -16,6 +16,8 @@ public interface Bagger {
 	
 	Collection<Project> getProjects() throws DataAccessException;
 
+	Collection<ProjectProfile> getProjectProfiles() throws DataAccessException;
+
 	Collection<Organization> findOrganizations(String name) throws DataAccessException;
 
 	Collection<Profile> findProfiles(String name) throws DataAccessException;
@@ -32,7 +34,15 @@ public interface Bagger {
 	
 	Project loadProject(int id) throws DataAccessException;
 
+	ProjectProfile loadProjectProfile(int id) throws DataAccessException;
+
+	Collection<ProjectProfile> loadProjectProfiles(int id) throws DataAccessException;
+
 	ProjectBagInfo loadProjectBagInfo(int id) throws DataAccessException;
+
+	void storeProject(Project project) throws DataAccessException;
+	
+	void storeProjectProfile(ProjectProfile prof) throws DataAccessException;
 
 	void storeProfile(Profile prof) throws DataAccessException;
 	
@@ -40,6 +50,6 @@ public interface Bagger {
 	
 	String storeProjectBagInfo(ProjectBagInfo profileBagInfo) throws DataAccessException;
 
-	String storeBaggerUpdates(Collection<Profile> profiles, ProjectBagInfo projectBagInfo, String homeDir) throws DataAccessException;
+	String storeBaggerUpdates(Collection<Profile> profiles, Collection<Project> projects, Collection<ProjectProfile> projectProfiles, ProjectBagInfo projectBagInfo, String homeDir) throws DataAccessException;
 
 }
