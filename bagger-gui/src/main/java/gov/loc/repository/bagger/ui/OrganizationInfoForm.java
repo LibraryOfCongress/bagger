@@ -48,7 +48,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 	private static final Log logger = LogFactory.getLog(OrganizationInfoForm.class);
 
 	public static final String INFO_FORM_PAGE = "infoPage";
-	private static final int MIN_ROWS = 11;
+	private static final int MIN_ROWS = 12;
 
 	private BindingFactory bindingFactory = null;
 	private FormModel formModel;

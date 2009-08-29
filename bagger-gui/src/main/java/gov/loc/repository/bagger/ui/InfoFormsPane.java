@@ -86,13 +86,13 @@ public class InfoFormsPane extends JScrollPane {
         GridBagLayout infoLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         int row = 0;
-        bagView.buildConstraints(gbc, 0, row, 3, 1, 60, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        bagView.buildConstraints(gbc, 0, row, 3, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         infoLayout.setConstraints(bagView.bagSettingsPanel, gbc);
         row++;
-        bagView.buildConstraints(gbc, 0, row, 3, 1, 20, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        bagView.buildConstraints(gbc, 0, row, 3, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         infoLayout.setConstraints(buttonPanel, gbc);
         row++;
-        bagView.buildConstraints(gbc, 0, row, 3, 1, 20, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        bagView.buildConstraints(gbc, 0, row, 3, 1, 1, 0, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         infoLayout.setConstraints(bagInfoScrollPane, gbc);
         
         infoPanel = new JPanel(new BorderLayout(5, 5));
