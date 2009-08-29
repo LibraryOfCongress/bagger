@@ -1378,6 +1378,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         	            completeButton.setEnabled(true);
         	            clearExecutor.setEnabled(true);
         	            validateExecutor.setEnabled(true);
+        	            completeExecutor.setEnabled(true);
         	            topButtonPanel.invalidate();
         	            bag.isNewbag(false);
                     } else {
@@ -1767,6 +1768,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         clearButton.setEnabled(true);
         validateButton.setEnabled(true);
         completeButton.setEnabled(true);
+        completeExecutor.setEnabled(true);
         validateExecutor.setEnabled(true);
         bagButtonPanel.invalidate();
         topButtonPanel.invalidate();
@@ -1824,6 +1826,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             clearButton.setEnabled(true);
             validateButton.setEnabled(true);
             completeButton.setEnabled(true);
+            completeExecutor.setEnabled(true);
             validateExecutor.setEnabled(true);
             topButtonPanel.invalidate();
             bag.isNewbag(false);

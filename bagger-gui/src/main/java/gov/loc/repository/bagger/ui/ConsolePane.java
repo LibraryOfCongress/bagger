@@ -93,7 +93,7 @@ public class ConsolePane extends JPanel {
     	validMetaResult.setToolTipText(parentView.getPropertyMessage("consolepane.ismetadata.help"));
     	font = validMetaResult.getFont().deriveFont(Font.BOLD);
     	validMetaResult.setFont(font);
-    	if (defaultBag.isMetadataChecked()) {
+    	if (!defaultBag.isNoProject() && defaultBag.isMetadataChecked()) {
     		if (defaultBag.isValidMetadata()) validMetaResult.setText("yes");
     		else validMetaResult.setText("no");
     	} else {

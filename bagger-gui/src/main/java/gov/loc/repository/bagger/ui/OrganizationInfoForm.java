@@ -137,7 +137,10 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             	}
                 switch (field.getComponentType()) {
                 case BagInfoField.TEXTAREA_COMPONENT:
-                    JComponent textarea = formBuilder.addTextArea(field.getName(), field.isRequired(), field.getLabel(), removeButton, "")[index];
+                    JComponent[] tlist = formBuilder.addTextArea(field.getName(), field.isRequired(), field.getLabel(), removeButton, ""); 
+                    JComponent tcomp = tlist[0];
+                    tcomp.addMouseListener(this);
+                    JComponent textarea = tlist[index];
                     textarea.setEnabled(field.isEnabled());
             		textarea.addFocusListener(this);
             		textarea.addKeyListener(this);
