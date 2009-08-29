@@ -2,7 +2,7 @@ package gov.loc.repository.bagger;
 
 public class ProjectProfile {
 	private int id = -1;
-	private int projectId;
+	private int projectId = -1;
 	private String fieldName = "";
 	private String fieldValue = "";
 	private boolean isRequired;
