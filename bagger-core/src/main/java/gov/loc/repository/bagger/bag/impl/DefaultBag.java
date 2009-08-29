@@ -1120,17 +1120,19 @@ public class DefaultBag {
 			Bag newBag = bw.write(bilBag, bagFile);
 			if (newBag != null) bilBag = newBag;
 			this.isNewbag(false);
-			try {
-				String msgs = validateMetadata();
-				if (msgs != null) {
+			if (!isNoProject()) {
+				try {
+					String msgs = validateMetadata();
+					if (msgs != null) {
+						if (messages != null) messages += msgs;
+						else messages = msgs;
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					String msgs = "ERROR validating bag: \n" + ex.getMessage() + "\n";
 					if (messages != null) messages += msgs;
 					else messages = msgs;
 				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				String msgs = "ERROR validating bag: \n" + ex.getMessage() + "\n";
-				if (messages != null) messages += msgs;
-				else messages = msgs;
 			}
 		} catch (Exception e) {
 			this.isSerialized(false);
