@@ -50,6 +50,9 @@ public class InfoFormsPane extends JScrollPane {
     public UpdateBagHandler updateBagHandler;
 	public JPanel buttonPanel;
     public JPanel infoPanel;
+    public JButton saveButton;
+    public JButton loadDefaultsButton;
+    public JButton clearDefaultsButton;
     public SerializeBagHandler serializeBagHandler;
 	private NewProjectFrame newProjectFrame;
 
@@ -58,7 +61,7 @@ public class InfoFormsPane extends JScrollPane {
 		this.bagView = bagView;
 		this.bag = bagView.getBag();
 		bag.getInfo().setBag(bag);
-    	createScrollPane(true);
+    	createScrollPane(false);
     }
 
     private void createScrollPane(boolean enabled) {
@@ -83,7 +86,7 @@ public class InfoFormsPane extends JScrollPane {
         GridBagLayout infoLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         int row = 0;
-        bagView.buildConstraints(gbc, 0, row, 3, 1, 50, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        bagView.buildConstraints(gbc, 0, row, 3, 1, 60, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         infoLayout.setConstraints(bagView.bagSettingsPanel, gbc);
         row++;
         bagView.buildConstraints(gbc, 0, row, 3, 1, 20, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
@@ -312,23 +315,23 @@ public class InfoFormsPane extends JScrollPane {
     }
 
     private JPanel createButtonPanel(boolean enabled) {
-    	JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+    	JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
 
-    	JButton saveButton = new JButton(bagView.getPropertyMessage("bag.button.field.save"));
+    	saveButton = new JButton(bagView.getPropertyMessage("bag.button.field.save"));
     	saveButton.addActionListener(new SaveFieldHandler());
     	saveButton.setOpaque(true);
     	saveButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.save.help"));
     	saveButton.setEnabled(enabled);
     	buttonPanel.add(saveButton);
     	
-    	JButton loadDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.load"));
+    	loadDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.load"));
     	loadDefaultsButton.addActionListener(new LoadFieldHandler());
     	loadDefaultsButton.setOpaque(true);
     	loadDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.load.help"));
     	loadDefaultsButton.setEnabled(enabled);
     	buttonPanel.add(loadDefaultsButton);
 
-    	JButton clearDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.clear"));
+    	clearDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.clear"));
     	clearDefaultsButton.addActionListener(new ClearFieldHandler());
     	clearDefaultsButton.setOpaque(true);
     	clearDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.clear.help"));

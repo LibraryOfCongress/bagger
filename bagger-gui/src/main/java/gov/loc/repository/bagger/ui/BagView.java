@@ -335,9 +335,24 @@ public class BagView extends AbstractView implements ApplicationListener {
         	String message = bagger.loadProfiles();
         	this.username = getPropertyMessage("user.name");
         	Project project = bag.getProject();
-        	this.projectBagInfo = bagger.loadProjectBagInfo(project.getId());
-        	bag.parseBagInfoDefaults(projectBagInfo.getDefaults());
+        	//this.projectBagInfo = bagger.loadProjectBagInfo(project.getId());
+        	//bag.parseBagInfoDefaults(projectBagInfo.getDefaults());
         	this.initializeProfile();
+        	Object[] array = userProjects.toArray();
+        	boolean b = true;
+        	for (int i=0; i < userProjects.size(); i++) {
+        		String name = ((Project)array[i]).getName();
+        		for (int j=0; j < projectList.getModel().getSize(); j++) {
+        			String proj = (String) projectList.getModel().getElementAt(j);
+            		if (name.trim().equalsIgnoreCase(proj.trim())) {
+            			b = false;
+            			break;
+            		}
+        		}
+        		if (b) { projectList.addItem(name);	}
+        		b = true;
+        	}
+        	projectList.invalidate();
         	bagInfoInputPane.updateProject(this);
         	bagInfoInputPane.populateForms(bag, true);
             bagInfoInputPane.update(bag);
@@ -623,6 +638,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         newProjectButton.setEnabled(b);
     	bagInfoInputPane.setEnabled(b);
         defaultProject.setEnabled(b);
+        infoInputPane.saveButton.setEnabled(b);
+        infoInputPane.loadDefaultsButton.setEnabled(b);
+        infoInputPane.clearDefaultsButton.setEnabled(b);
         holeyCheckbox.setEnabled(false);
         holeyValue.setText("false");
         serializeGroupPanel.setEnabled(false);
@@ -646,10 +664,11 @@ public class BagView extends AbstractView implements ApplicationListener {
     
     public void initializeProfile() {
    		userProjects = bagger.getProjects();
+   		log.debug("userProjects: " + userProjects);
    		userProjectProfiles = bagger.getProjectProfiles();
-    	Collection<ProjectProfile> projectMap = userProjectProfiles;
+    	Collection<ProjectProfile> projectProfileMap = userProjectProfiles;
 		Object[] reqs = bag.getInfo().getRequiredStrings();
-		for (Iterator<ProjectProfile> iter = projectMap.iterator(); iter.hasNext();) {
+		for (Iterator<ProjectProfile> iter = projectProfileMap.iterator(); iter.hasNext();) {
 			ProjectProfile projectProfile = (ProjectProfile) iter.next();
 			log.debug("initializeProfile: " + projectProfile);
 			if (projectProfile.getIsRequired()) {
@@ -1461,6 +1480,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         newProjectButton.setEnabled(b);
         holeyValue.setEnabled(b);
         serializeValue.setEnabled(b);
+        infoInputPane.saveButton.setEnabled(b);
+        infoInputPane.loadDefaultsButton.setEnabled(b);
+        infoInputPane.clearDefaultsButton.setEnabled(b);
     }
 
     private void updateCommands() {
@@ -1517,7 +1539,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     				if (iter.hasNext()) defaults += ", ";
     			}
             }
-    		projectBagInfo.setDefaults(defaults);
+    		//projectBagInfo.setDefaults(defaults);
     		String messages = bagger.storeBaggerUpdates(userProfiles, userProjects, userProjectProfiles, projectBagInfo, userHomeDir);
     		if (messages != null) {
         	    showWarningErrorDialog("Error Dialog", "Error trying to store project defaults:\n" + messages);

@@ -257,7 +257,7 @@ public class BagInfoInputPane extends JTabbedPane {
 				field.isRequiredvalue(projectProfile.getIsValueRequired());
 				field.isRequired(projectProfile.getIsRequired());
 				field.setValue(projectProfile.getFieldValue());
-				System.out.println("add projectProfile: " + field);
+				logger.debug("add projectProfile: " + field);
 				currentMap.put(field.getLabel(), field);
 			}
 		}
