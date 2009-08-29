@@ -340,7 +340,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 	
 	@Transactional(readOnly = true)
 	public ProjectProfile loadProjectProfile(int id) throws DataAccessException {
-		ProjectProfile projectProfile = new ProjectProfile();
+		ProjectProfile projectProfile;
 		try {
 			projectProfile = this.simpleJdbcTemplate.queryForObject(
 					"SELECT * FROM project_profile WHERE id=?",
@@ -349,22 +349,22 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 		catch (EmptyResultDataAccessException ex) {
 			ex.printStackTrace();
-			throw new ObjectRetrievalFailureException(ProjectBagInfo.class, new Integer(id));
+			throw new ObjectRetrievalFailureException(ProjectProfile.class, new Integer(id));
 		}
 		return projectProfile;
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<ProjectProfile> loadProjectProfiles(int id) throws DataAccessException {
+	public Collection<ProjectProfile> loadProjectProfiles(int projectId) throws DataAccessException {
 		try {
 			return this.simpleJdbcTemplate.query(
 					"SELECT * FROM project_profile WHERE project_id=?",
 					ParameterizedBeanPropertyRowMapper.newInstance(ProjectProfile.class),
-					id);
+					projectId);
 		}
 		catch (EmptyResultDataAccessException ex) {
 			ex.printStackTrace();
-			throw new ObjectRetrievalFailureException(ProjectBagInfo.class, new Integer(id));
+			throw new ObjectRetrievalFailureException(ProjectProfile.class, new Integer(projectId));
 		}
 	}
 
@@ -522,14 +522,14 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			this.simpleJdbcTemplate.update(
 					"UPDATE project_profile SET field_name=:fieldName, is_required=:isRequired, field_value=:fieldValue, is_value_required=:isValueRequired WHERE id=:id",
 					new BeanPropertySqlParameterSource(projectProfile));
-			sqlCommand = "UPDATE project_profile SET field_name='" + projectProfile.getFieldName() + "', is_required=" + projectProfile.getIsRequired() + ", field_value='" + projectProfile.getFieldValue() + "', is_value_required=" + projectProfile.getIsValueRequired() + " WHERE id=" + "', is_required=" + projectProfile.getId() + ";";
+			sqlCommand = "UPDATE project_profile SET field_name='" + projectProfile.getFieldName() + "', is_required=" + projectProfile.getIsRequired() + ", field_value='" + projectProfile.getFieldValue() + "', is_value_required=" + projectProfile.getIsValueRequired() + " WHERE id=" + projectProfile.getId() + ";";
 			commandList.add(sqlCommand);
 		}
 		catch (Exception ex) {
 			try {
 				Number newKey = this.insertProjectProfile.executeAndReturnKey(new BeanPropertySqlParameterSource(projectProfile));
 				projectProfile.setId(newKey.intValue());
-				sqlCommand = "INSERT INTO project_profile VALUES (" + newKey.intValue() + ", '" + projectProfile.getFieldName() + "', " + projectProfile.getIsRequired() + ", '" + projectProfile.getFieldValue() + "', " + projectProfile.getIsValueRequired() + ");";
+				sqlCommand = "INSERT INTO project_profile VALUES (" + newKey.intValue() + ", " + projectProfile.getProjectId() + ", '" + projectProfile.getFieldName() + "', " + projectProfile.getIsRequired() + ", '" + projectProfile.getFieldValue() + "', " + projectProfile.getIsValueRequired() + ");";
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
@@ -640,11 +640,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			ex.printStackTrace();
 		}
 		try {
-			Object[] projectList = projects.toArray();
-			for (int i=0; i < projectList.length; i++) {
-				Project project = (Project) projectList[i];
-				storeProject(project);
-			}
 			Object[] projectProfileList = projectProfiles.toArray();
 			for (int i=0; i < projectProfileList.length; i++) {
 				ProjectProfile projectProfile = (ProjectProfile) projectProfileList[i];
@@ -655,6 +650,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			messages = "Exception storing project profiles: " + ex.getMessage();
 			ex.printStackTrace();			
 		}
+/*
 		try {
 			messages = this.storeProjectBagInfo(projectBagInfo);
 		}
@@ -662,6 +658,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			messages = "Exception storing project bag-info defaults: " + ex.getMessage();
 			ex.printStackTrace();
 		}
+*/
 		try {
 			messages = write(homeDir);
 		}
