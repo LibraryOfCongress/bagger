@@ -1,6 +1,8 @@
 
 package gov.loc.repository.bagger.ui;
 
+import gov.loc.repository.bagger.Project;
+import gov.loc.repository.bagger.ProjectProfile;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
@@ -28,8 +30,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +48,7 @@ import org.springframework.richclient.form.AbstractForm;
 import org.springframework.richclient.form.binding.BindingFactory;
 import org.springframework.richclient.form.binding.BindingFactoryProvider;
 
-public class OrganizationInfoForm extends JPanel implements PropertyChangeListener, FocusListener, KeyListener {
+public class OrganizationInfoForm extends JPanel implements PropertyChangeListener, FocusListener, KeyListener, MouseListener {
 	private static final long serialVersionUID = -3231249644435262577L;
 	private static final Log logger = LogFactory.getLog(OrganizationInfoForm.class);
 
@@ -146,8 +151,11 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                     rowCount += 1;
                 	break;
                 case BagInfoField.TEXTFIELD_COMPONENT:
-                    JComponent comp = formBuilder.add(field.getName(), field.isRequired(), field.getLabel(), removeButton, "")[index];
+                    JComponent[] flist = formBuilder.add(field.getName(), field.isRequired(), field.getLabel(), removeButton, "");
+                    JComponent comp = flist[index];
                     comp.setEnabled(field.isEnabled());
+                    JComponent mcomp = flist[0];
+                    mcomp.addMouseListener(this);
                     comp.addFocusListener(this);
                     comp.addKeyListener(this);
                     comp.addPropertyChangeListener(this);
@@ -317,4 +325,46 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     public void keyReleased(KeyEvent event) {
     	if (bagView != null) bagView.updatePropButton.setEnabled(true);
     }
+
+    public void mouseReleased(MouseEvent event) {
+    }
+
+    public void mousePressed(MouseEvent event) {
+    }
+
+    public void mouseEntered(MouseEvent event) {
+    }
+
+    public void mouseExited(MouseEvent event) {
+    }
+
+    public void mouseClicked(MouseEvent event) {
+    	if (event.getClickCount() == 2) {
+    		// TODO: edit selected field
+	        newFieldFrame = new NewFieldFrame(bagView, bagView.getPropertyMessage("bag.frame.addfield")); 
+	        Collection<ProjectProfile> fieldList = bagView.userProjectProfiles;
+	        JComponent component = (JComponent) event.getComponent();
+	        if (component instanceof JLabel) {
+		        BagInfoField field = new BagInfoField();
+		        String txt = ((JLabel)component).getText();
+		        field.setLabel(txt.trim());
+		    	for (Iterator<ProjectProfile> iter = fieldList.iterator(); iter.hasNext();) {
+		    		Project project = bagView.getBag().getProject();
+					ProjectProfile projectProfile = (ProjectProfile) iter.next();
+					if (txt.equalsIgnoreCase(projectProfile.getFieldName()) && project.getId() == projectProfile.getProjectId()) {
+						field.setLabel(projectProfile.getFieldName());
+						field.setName(field.getLabel().toLowerCase());
+						field.isEnabled(!projectProfile.getIsValueRequired());
+						field.isEditable(!projectProfile.getIsValueRequired());
+						field.isRequiredvalue(projectProfile.getIsValueRequired());
+						field.isRequired(projectProfile.getIsRequired());
+						field.setValue(projectProfile.getFieldValue());
+					}
+				}
+		        newFieldFrame.setField(field);
+		        newFieldFrame.setVisible(true);
+	        }
+    	}
+    }
+
 }

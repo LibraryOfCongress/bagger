@@ -71,6 +71,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
 	JPanel fieldGroupPanel;
     JLabel valueLabel;
 	JTextField valueField;
+	boolean edit = false;
 
 	public NewFieldFrame(BagView bagView, String title) {
         super(title);
@@ -92,6 +93,35 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         getContentPane().add(addPanel, BorderLayout.CENTER);
         pack();
     }
+	
+	public void setField(BagInfoField field) {
+		this.edit = true;
+		this.field = field;
+		this.isRequiredCheckbox.setSelected(field.isRequired());
+		this.isRequiredValue.setSelected(field.isRequiredvalue());
+		this.valueField.setText(field.getValue());
+
+		String name = field.getLabel();
+		boolean b = false;
+		for (int j=0; j < fieldList.getModel().getSize(); j++) {
+			String proj = (String) fieldList.getModel().getElementAt(j);
+    		if (name.trim().equalsIgnoreCase(proj.trim())) {
+    			b = true;
+    			break;
+    		}
+		}
+		if (b) {
+			stndFieldButton.setSelected(b);
+	    	fieldList.setEnabled(b);
+	    	fieldList.setSelectedItem(name);
+		} else {
+			stndFieldButton.setSelected(b);
+	    	fieldList.setEnabled(b);
+	    	newFieldButton.setSelected(!b);
+	    	fieldList.setSelectedItem("");
+	    	fieldName.setText(name);
+		}
+	}
 
     private JPanel createComponents() {
         Border border = new EmptyBorder(5, 5, 5, 5);
