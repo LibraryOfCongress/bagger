@@ -4,7 +4,7 @@
 <td valign="top">
 <b>Bagger Application</b>
 <p>
-Version: 1.7
+Version: 1.8
 <p>
 <b>Bag It Library</b>
 <p>
@@ -14,7 +14,7 @@ Version: 3.0
 <p>
 Version: 1.6
 <p>
-Update: 7
+Update: 16
 <p>
 </td>
 </tr>
@@ -28,12 +28,7 @@ Update: 7
 <p>
 <a href="http://hsqldb.sourceforge.net/"><img src="image:about.hsql" border="0" alt=""></a>
 <p>
-<a href="http://www.jgoodies.com/"><img src="image:about.jgoodies" border="0" alt=""></a>
-<p>
-<a href="http://www.junit.org/"><img src="image:about.junit" border="0" alt=""></a>
-<p>
-<a href="http://www.caucho.com/hessian/index.xtp"><img src="image:about.caucho" border="0" alt=""></a>
-<p>
+<a href="http://zeus.pin.unifi.it/projectsSites/lablib-checkboxtree/"><img src="image:about.cnr" border="0" alt=""></a>
 .
 <p>
 .
