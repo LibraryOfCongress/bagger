@@ -158,12 +158,12 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         fieldGroupPanel.add(fieldName);
 
         JLabel isReqLabel = new JLabel(getMessage("bag.label.isreq"));
-        isReqLabel.setToolTipText(getMessage("bag.isreq.help"));
+        isReqLabel.setToolTipText(getMessage("bag.label.isreq.help"));
         isRequiredCheckbox = new JCheckBox();
         isRequiredCheckbox.setBorder(border);
         isRequiredCheckbox.setSelected(false);
         isRequiredCheckbox.addActionListener(new FieldRequiredHandler());
-        isRequiredCheckbox.setToolTipText(getMessage("bag.isreq.help"));
+        isRequiredCheckbox.setToolTipText(getMessage("bag.label.isreq.help"));
         JPanel reqPanel = new JPanel(new FlowLayout());
         reqPanel.add(isReqLabel);
         reqPanel.add(isRequiredCheckbox);
@@ -171,7 +171,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         ArrayList<String> typeModel = new ArrayList<String>();
         typeModel.add(TEXTFIELD);
         typeModel.add(TEXTAREA);
-        JLabel typeListLabel = new JLabel(bagView.getPropertyMessage("baginfo.field.typelist"));
+        JLabel typeListLabel = new JLabel(getMessage("baginfo.field.typelist"));
         typeListLabel.setToolTipText(getMessage("baginfo.field.typelist.help"));
         typeList = new JComboBox(typeModel.toArray());
         typeList.setName(getMessage("baginfo.field.typelist"));
@@ -184,12 +184,12 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     	valueField = new JTextField("");
 
         JLabel isReqValueLabel = new JLabel(getMessage("bag.label.isreqvalue"));
-        isReqValueLabel.setToolTipText(getMessage("bag.isreqvalue.help"));
+        isReqValueLabel.setToolTipText(getMessage("bag.label.isreqvalue.help"));
         isRequiredValue = new JCheckBox();
         isRequiredValue.setBorder(border);
         isRequiredValue.setSelected(false);
         isRequiredValue.addActionListener(new RequiredValueHandler());
-        isRequiredValue.setToolTipText(getMessage("bag.isreqvalue.help"));
+        isRequiredValue.setToolTipText(getMessage("bag.label.isreqvalue.help"));
         JPanel reqValuePanel = new JPanel(new FlowLayout());
         reqValuePanel.add(isReqValueLabel);
         reqValuePanel.add(isRequiredValue);
