@@ -1,1 +1,1 @@
-jre1.6.0_07\bin\java.exe -jar bagger.jar -Xms512m
+jre6\bin\java.exe -jar bagger.jar -Xms512m
