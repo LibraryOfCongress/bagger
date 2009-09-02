@@ -67,7 +67,7 @@
         	  <keypass>bagger-rdc</keypass>
 	          <storepass>bagger-rdc</storepass>
     	      <alias>rdc</alias>
-    	      <jarPath>${project.build.directory}/bagger-standalone-1.5.jar</jarPath>
+    	      <jarPath>${project.build.directory}/bagger-standalone-1.8.jar</jarPath>
         	  <signedjar>${project.build.directory}/../signed/bagger.jar</signedjar>
 	          <verify>true</verify>
     	    </configuration>
