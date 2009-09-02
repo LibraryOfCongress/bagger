@@ -438,8 +438,9 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	            File file = fs.getSelectedFile();
 	            bagFile = file;
 	            bagFileName = bagFile.getAbsolutePath();
-	            bagView.bagNameField.setText(bagFile.getName());
-	            bagView.bagNameField.setCaretPosition(bagFile.getName().length()-1);
+	            String name = bagFileName; //bagFile.getName();
+	            bagView.bagNameField.setText(name);
+	            bagView.bagNameField.setCaretPosition(name.length());
 	        	bagView.bagNameField.setEnabled(true);
 	            bagNameField.setText(bagFileName);
 	            bagNameField.setCaretPosition(bagFileName.length());
