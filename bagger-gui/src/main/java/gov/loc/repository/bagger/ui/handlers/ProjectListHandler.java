@@ -75,7 +75,8 @@ public class ProjectListHandler extends AbstractAction {
         bagView.updateProfile();
 
     	Object[] project_array = bagView.userProjects.toArray();
-        for (int i=0; i < bagView.userProjects.size(); i++) {
+    	int projectSize = bagView.userProjects.size();
+        for (int i=0; i < projectSize; i++) {
         	Project project = (Project)project_array[i];
         	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(project.getName())) {
         		log.info("bagProject: " + project.getId());
@@ -84,7 +85,6 @@ public class ProjectListHandler extends AbstractAction {
         		for (int j=0; j < profiles.length; j++) {
         			Profile profile = (Profile) profiles[j];
         			if (profile.getProjectId() == project.getId()) {
-               			// TODO: user is org contact
         				Contact person = profile.getPerson();
         				if (person == null) person = new Contact();
                    		DefaultBagInfo bagInfo = bag.getInfo();
@@ -100,20 +100,8 @@ public class ProjectListHandler extends AbstractAction {
                    		bagOrg.setOrganizationAddress(org.getAddress());
                    		bagInfo.setBagOrganization(bagOrg);
                    		bag.setInfo(bagInfo);
-                   		bagView.setBag(bag);
                    		bagView.projectContact = profile.getPerson();
-                		bag.getInfo().setBag(bag);
-                   		//bagView.bagInfoInputPane.populateForms(bag, true);
-                   		//bagView.bagInfoInputPane.updateSelected(bag);
-                   		//bag.completeMetaFiles();
-                   		bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
-                        Collection<BagFile> tags = bag.getBag().getTags();
-                        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-                        	BagFile bf = it.next();
-                            bagView.bagTagFileTree.addNode(bf.getFilepath());
-                        }
-                        bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
-                   		bagView.tagManifestPane.updateCompositePaneTabs(bag);
+//                		bagView.updateTreePanels();
                    	}
         		}
         	}
