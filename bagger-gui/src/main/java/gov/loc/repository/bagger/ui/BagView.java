@@ -17,6 +17,7 @@ import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
+import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.Cancellable;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
@@ -760,35 +761,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
     }
     
-    public String updateProfile() {
-    	String message = "";
-    	Project project = bag.getProject();
-    	if (project == null) return message;
-    	Object[] profiles = this.userProfiles.toArray();
-    	Collection<Profile> profileList = new ArrayList<Profile>();
-    	for (int i=0; i < profiles.length; i++) {
-    		Profile profile = (Profile) profiles[i];
-    		if (profile.getProject().getId() == project.getId()) {
-    			BaggerOrganization org = bag.getInfo().getBagOrganization();
-    			log.debug("updateProfile: " + org);
-    			Contact orgContact = bag.getInfo().getBagOrganization().getContact();
-    			orgContact.getOrganization().setName(org.getSourceOrganization());
-    			orgContact.getOrganization().setAddress(org.getOrganizationAddress());
-    			profile.setContact(orgContact);
-    			profile.setContactId(orgContact.getId());
-    			profile.setProject(project);
-    			profile.setProjectId(project.getId());
-    			profile.setPerson(this.projectContact);
-    			profile.setUsername(this.username);
-    			message = getPropertyMessage("profile.message.changed") + " " + project.getName() + "\n";
-    			profiles[i] = profile;
-    		}
-    		profileList.add(profile);
-    	}
-    	userProfiles = profileList;
-    	return message;
-    }
-
     private Profile createProfile(Project project) {
 		Profile profile = new Profile();
 		profile.setProject(project);
@@ -1352,7 +1324,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         				log.info("BagView.openExistingBag: " + bagFile);
         				openExistingBag(bagFile);
         				// If openExistingBag is not used then do this
-                    	/*
+                    	/* 
                     	bag.getInfo().createExistingFieldMap(true);
                     	bag.copyBagToForm();
                         bagInfoInputPane.populateForms(bag, true);
@@ -1850,7 +1822,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagVersionValue.setText(bag.getVersion());
         bagVersionList.setSelectedItem(bagVersionValue.getText());
         String fileName = file.getName();
-        bagNameField.setText(file.getAbsolutePath());
+        fileName = file.getAbsolutePath();
+        bagNameField.setText(fileName);
+        bagNameField.setCaretPosition(fileName.length());
         enableSettings(true);
         bagNameField.invalidate();
 
@@ -1897,7 +1871,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bag.getInfo().setBag(bag);
     	bag.copyBagToForm();
     	baggerProfile = new BaggerProfile();
-	    if (!bag.getInfo().getLcProject().isEmpty()){
+	    if (!bag.getInfo().getLcProject().trim().isEmpty()){
     		String name = bag.getInfo().getLcProject().trim();
     		Project project = new Project();
     		project.setName(name);
@@ -1910,17 +1884,20 @@ public class BagView extends AbstractView implements ApplicationListener {
     		messages += updateProject(getPropertyMessage("bag.project.noproject"));
     		bag.isNoProject(true);
     	}
-	    // TODO: if LC-Project field exists then open Project Profile and
+	    // if LC-Project field exists then open Project Profile and
 	    // add LC-Project to the baggerProfile map or modify it
-		bag.getInfo().createExistingFieldMap(true);
-    	baggerProfile.setOrganization(bag.getInfo().getBagOrganization());
-    	if (bag.getInfo().getBagSize() != null && bag.getInfo().getBagSize().isEmpty()) {
+	    DefaultBagInfo bagInfo = bag.getInfo();
+		bagInfo.createExistingFieldMap(true);
+		bag.setInfo(bagInfo);
+        baggerProfile.setOrganization(bagInfo.getBagOrganization());
+    	if (bagInfo.getBagSize() != null && bagInfo.getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
     	} 
 	    if (bag.isHoley()) {
 	        holeyCheckbox.setSelected(true);
 	        holeyValue.setText("true");
 	    }
+		bagInfoInputPane.updateProject(this);
     	bag.copyBagToForm();
 	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
 	    	defaultProject.setSelected(true);
@@ -1947,8 +1924,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 			if (messages != null) messages += msgs;
 			else messages = msgs;
 		}
-		bag.getInfo().setBag(bag);
-		bagInfoInputPane.updateProject(this);
     	bagInfoInputPane.populateForms(bag, true);
         compositePane.updateCompositePaneTabs(bag, messages);
 
@@ -2077,6 +2052,50 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
     	setBag(bag);
 		return messages;
+    }
+
+    public String updateProfile() {
+    	String message = "";
+    	Project project = bag.getProject();
+    	if (project == null) return message;
+    	Object[] profiles = this.userProfiles.toArray();
+    	Collection<Profile> profileList = new ArrayList<Profile>();
+    	for (int i=0; i < profiles.length; i++) {
+    		Profile profile = (Profile) profiles[i];
+    		if (profile.getProject().getId() == project.getId()) {
+    			BaggerOrganization org = bag.getInfo().getBagOrganization();
+    			log.debug("updateProfile: " + org);
+    			Contact orgContact = bag.getInfo().getBagOrganization().getContact();
+    			orgContact.getOrganization().setName(org.getSourceOrganization());
+    			orgContact.getOrganization().setAddress(org.getOrganizationAddress());
+    			profile.setContact(orgContact);
+    			profile.setContactId(orgContact.getId());
+    			profile.setProject(project);
+    			profile.setProjectId(project.getId());
+    			profile.setPerson(this.projectContact);
+    			profile.setUsername(this.username);
+    			message = getPropertyMessage("profile.message.changed") + " " + project.getName() + "\n";
+    			profiles[i] = profile;
+    		}
+    		profileList.add(profile);
+    	}
+    	userProfiles = profileList;
+    	return message;
+    }
+    
+    public void updateTreePanels() {
+    	try {
+    		bag.getInfo().setBag(bag);
+    		bagTagFileTree = new BagTree(this, bag.getName(), false);
+    		Collection<BagFile> tags = bag.getBag().getTags();
+    		for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
+    			BagFile bf = it.next();
+    			bagTagFileTree.addNode(bf.getFilepath());
+    		}
+    		bagTagFileTreePanel.refresh(bagTagFileTree);
+    		tagManifestPane.updateCompositePaneTabs(bag);
+    	} catch (Exception e) {
+    	}
     }
 
     public void onApplicationEvent(ApplicationEvent e) {
