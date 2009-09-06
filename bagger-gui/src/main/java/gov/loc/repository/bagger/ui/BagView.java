@@ -643,7 +643,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         infoInputPane.loadDefaultsButton.setEnabled(b);
         infoInputPane.clearDefaultsButton.setEnabled(b);
         holeyCheckbox.setEnabled(false);
-        holeyValue.setText("false");
         serializeGroupPanel.setEnabled(false);
         zipButton.setEnabled(false);
         tarButton.setEnabled(false);
@@ -1819,13 +1818,13 @@ public class BagView extends AbstractView implements ApplicationListener {
     	    //showWarningErrorDialog("Warning - file not opened", "Error trying to open file: " + file + "\n" + ex.getMessage());
     	    return;
 		}
+		enableSettings(true);
         bagVersionValue.setText(bag.getVersion());
         bagVersionList.setSelectedItem(bagVersionValue.getText());
         String fileName = file.getName();
         fileName = file.getAbsolutePath();
         bagNameField.setText(fileName);
         bagNameField.setCaretPosition(fileName.length());
-        enableSettings(true);
         bagNameField.invalidate();
 
         /* */
@@ -1866,7 +1865,13 @@ public class BagView extends AbstractView implements ApplicationListener {
     		bag.isSerial(false);
 	    }
 	    serializeValue.invalidate();
-	    /* */
+
+	    if (bag.isHoley()) {
+	        holeyCheckbox.setSelected(true);
+	        holeyValue.setText("true");
+	        holeyValue.invalidate();
+	    }
+
 	    bag.isClear(false);
         bag.getInfo().setBag(bag);
     	bag.copyBagToForm();
@@ -1884,8 +1889,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     		messages += updateProject(getPropertyMessage("bag.project.noproject"));
     		bag.isNoProject(true);
     	}
-	    // if LC-Project field exists then open Project Profile and
-	    // add LC-Project to the baggerProfile map or modify it
+
 	    DefaultBagInfo bagInfo = bag.getInfo();
 		bagInfo.createExistingFieldMap(true);
 		bag.setInfo(bagInfo);
@@ -1893,10 +1897,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	if (bagInfo.getBagSize() != null && bagInfo.getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
     	} 
-	    if (bag.isHoley()) {
-	        holeyCheckbox.setSelected(true);
-	        holeyValue.setText("true");
-	    }
 		bagInfoInputPane.updateProject(this);
     	bag.copyBagToForm();
 	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
