@@ -162,7 +162,6 @@ public class DefaultBag {
 		FetchTxt fetchTxt = bilBag.getFetchTxt();
 		if (fetchTxt != null && !fetchTxt.isEmpty()) {
     		String url = getBaseUrl(fetchTxt);
-    		display("DefaultBag fetch URL: " + url);
     		if (url != null && !url.isEmpty()) {
             	isHoley(true);
             	BaggerFetch fetch = this.getFetch();
@@ -803,20 +802,20 @@ public class DefaultBag {
 
 	// TODO: Bagger currently only supports one base URL location per bag
 	public String getBaseUrl(FetchTxt fetchTxt) {
-		String httpToken = "http:\\/\\/";
-		String delimToken = "\\/";
+		String httpToken = "http:";
+		String delimToken = "bagit";
 		String baseUrl = "";
 		if (fetchTxt != null) {
 			if (!fetchTxt.isEmpty()) {
     			FilenameSizeUrl fsu = fetchTxt.get(0);
     			if (fsu != null) {
-    				String url = fsu.getFilename(); //fsu.getUrl();
-    				String[] list = url.split(httpToken);
-    				if (list != null && list.length > 1) {
-    					String urlSuffix = list[1];
-    					String[] hostUrl = urlSuffix.split(delimToken);
-    					if (hostUrl != null && hostUrl.length > 1) {
-            				baseUrl = "http://" + hostUrl[0];
+    				String url = fsu.getUrl();
+    				baseUrl = url;
+    				String[] list = url.split(delimToken);
+    				for (int i=0; i<list.length; i++) {
+    					String s = list[i];
+    					if (s.trim().startsWith(httpToken)) {
+    						baseUrl = s;
     					}
     				}
     			}
