@@ -74,7 +74,7 @@ public class BagTree extends CheckboxTree {
 	}
 	
 	public void populateNodes(DefaultBag bag, File rootSrc, boolean isParent) {
-		log.debug("BagTree.populateNodes" );
+		log.debug("BagTree.populateNodes");
 		if (bag.getBag().getPayload() != null && rootSrc.listFiles() != null) {
 			addNodes(rootSrc, isParent);
 		} else {
@@ -84,7 +84,7 @@ public class BagTree extends CheckboxTree {
 				log.debug("BagTree.populateNodes getPayloadPaths:" );
 				payload = bag.getPayloadPaths();
 		    } else {
-				log.debug("BagTree.populateNodes getFetchPayload:" );
+				log.debug("BagTree.populateNodes getFetchPayload:");
 				payload = bag.getFetchPayload();
 				basePath = bag.getFetch().getBaseURL();
 		    }
