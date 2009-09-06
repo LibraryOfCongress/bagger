@@ -1909,11 +1909,12 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bag.setRootDir(bagRootPath);
 		File rootSrc = new File(file, bag.getDataDirectory());
     	if (bag.getBag().getFetchTxt() != null) {
+        	bagPayloadTree = new BagTree(this, bag.getFetch().getBaseURL(), true);
     		rootSrc = new File(file, bag.getBag().getFetchTxt().getFilepath());
     	} else {
+        	bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
     		rootSrc = new File(file, bag.getDataDirectory());
     	}
-    	bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
 		bagPayloadTree.populateNodes(bag, rootSrc, true);
         bagPayloadTreePanel.refresh(bagPayloadTree);
         updateManifestPane();
