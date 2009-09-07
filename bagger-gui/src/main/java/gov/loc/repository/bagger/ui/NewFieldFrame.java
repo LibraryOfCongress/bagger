@@ -370,13 +370,17 @@ public class NewFieldFrame extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
     		DefaultBag bag = bagView.getBag();
     		DefaultBagInfo bagInfo = bag.getInfo();
+    		prepopulate(field);
     		String name = fieldName.getText();
     		field.setName(name.toLowerCase());
     		field.setLabel(name);
     		field.setValue(valueField.getText().trim());
-    		prepopulate(field);
 
-    		if (field.isRequiredvalue() && field.getValue().trim().isEmpty()) {
+    		if (field.isRequired() && field.getValue().isEmpty()) {
+    			bagView.showWarningErrorDialog("New Field Dialog", "Required field: " + field.getLabel() + " must have a value!");
+    			return;
+    		}
+    		if (field.isRequiredvalue() && field.getValue().isEmpty()) {
     			bagView.showWarningErrorDialog("New Field Dialog", "Field: " + field.getLabel() + " must have a default value!");
     			return;
     		}
