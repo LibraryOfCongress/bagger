@@ -45,17 +45,19 @@
       <div id="content">
       <p>
 		<dl>
-		  <dt>Java Web Start
+		  <dt>Web
 		    <dl>
-		    	<dt><p>The Bagger application can be initiated using Java Web Start from a Web server using a Web browser that runs Java Runtime Environment 1.6+.  Refer to the release notes for your environment to determine the Web site for accessing Bagger.
-		    	This will start the signed executable bagger.jar file.</p></dt>
+		    	<dt><p>The Bagger application can be initiated using Java Web Start from a Web server using a Web browser that runs Java Runtime Environment 1.6+.  Refer to the release notes for your environment to determine the Web site for accessing Bagger.</p>
+		    	<p>Selecting the link ‘Start Bagger Application’ will start the signed executable bagger.jar file and open the Bagger application.
+				</p></dt>
 		    </dl>
 		  </dt>
-		  <dt>Windows Stand-Alone
+		  <dt>Windows Stand-alone
 		    <dl>
-      		    <p>The file bagger.jar is a signed executable application.
-     		    To start the Bagger application find the directory bagger_stndalone_win.
-     		    In this directory you can double-click on the bagger_stndalone.bat file or you may:</p>
+				<p>The stand-alone version of Bagger is intended for users that do not have access to the Internet, have multiple versions of the Java VM that may conflict with the Bagger application, or may have security constraints that prevent them from downloading and installing software on their systems.</p>
+				<p>To use the stand-alone version, copy and unzip the file bagger_stndalone_win.zip from the CD provided to you, or download the bagger_stndalone_win.zip file by selecting the link:</p>
+				<p><a href="bagger_stndalone_win.zip" >Download the Bagger Stand-Alone Program (requires about 80MB disk space)</a></p>
+      		    <p>The file bagger.jar is a signed executable application. To start the Bagger application, find the directory bagger_stndalone_win. In this directory you can double-click on the bagger_stndalone.bat file or you may:</p>
     		    <dt><p>Select Start->Run</p></dt>
      		    <dt><p>Select the Browse button</p></dt>
     		    <dt><p>Select the location of bagger_stndalone.bat then select the Open button</p></dt>
@@ -65,6 +67,9 @@
 		</dl>
 		<p>
 		The Bagger application starts with a splash banner page.
+		</p>
+		<p>
+		Note:  Selecting the bagger.jar file directly may start Bagger correctly but it will rely upon a pre-existing installation of the Java 1.6+ VM instead of the included Java VM.  It will also omit some initialization settings that improve performance and allow operation in environments with no Internet connectivity.
 		</p>
       </p>
       </div>
