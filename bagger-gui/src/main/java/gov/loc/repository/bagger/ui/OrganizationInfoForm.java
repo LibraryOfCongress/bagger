@@ -58,7 +58,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 	private BindingFactory bindingFactory = null;
 	private FormModel formModel;
     private JComponent infoForm;
-    private JComponent focusField;
+    public JComponent focusField;
     private Dimension dimension = new Dimension(400, 300);
     private BagView bagView;
     private DefaultBag defaultBag;
@@ -129,6 +129,9 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             	removeButton.setContentAreaFilled(false);
             	removeButton.addActionListener(new RemoveFieldHandler());
 				logger.debug("OrganizationInfoForm add: " + field);
+				if (field.getValue().length() > 30) {
+					field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+				}
             	if (field.isRequired()) {
             		removeButton = new JButton();
             		removeButton.setOpaque(false);
@@ -197,7 +200,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     }
     
     public void focusLost(FocusEvent evt) {
-    	if (dirty) bagView.infoInputPane.updateBagHandler.updateBag(this.defaultBag);
+    	bagView.infoInputPane.updateBagHandler.updateBag(this.defaultBag);
 		bagView.bagInfoInputPane.setSelectedIndex(0);
     }
 
