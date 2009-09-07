@@ -1889,7 +1889,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     		messages += updateProject(getPropertyMessage("bag.project.noproject"));
     		bag.isNoProject(true);
     	}
-
 	    DefaultBagInfo bagInfo = bag.getInfo();
 		bagInfo.createExistingFieldMap(true);
 		bag.setInfo(bagInfo);

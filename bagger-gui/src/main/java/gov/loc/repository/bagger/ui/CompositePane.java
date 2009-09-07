@@ -47,7 +47,8 @@ public class CompositePane extends JScrollPane {
     public void updateCompositePaneTabs(DefaultBag bag, String messages) {
     	if (messages == null) messages = "";
         setBag(bag);
-    	if (bag.isSerialized()) {
+/*
+        if (bag.isSerialized()) {
             messages += "\n";
             messages += parentView.getPropertyMessage("compositePane.message.files.total") + " " + bag.getDataNumber();
             messages += "\n";
@@ -65,6 +66,7 @@ public class CompositePane extends JScrollPane {
                 messages += parentView.getPropertyMessage("compositePane.message.files.size") + " " + parentView.getPropertyMessage("compositePane.message.files.tiny");
             }
     	}
+*/
     	populateBagPane(bag, messages);
         this.invalidate();
     }

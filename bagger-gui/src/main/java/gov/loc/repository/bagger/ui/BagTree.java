@@ -85,13 +85,20 @@ public class BagTree extends CheckboxTree {
 				payload = bag.getPayloadPaths();
 		    } else {
 				log.debug("BagTree.populateNodes getFetchPayload:");
-				payload = bag.getFetchPayload();
-				basePath = bag.getFetch().getBaseURL();
+				payload = bag.getPayloadPaths(); //bag.getFetchPayload();
+				//basePath = bag.getFetch().getBaseURL();
 		    }
 		    for (Iterator<String> it=payload.iterator(); it.hasNext(); ) {
 		    	String filePath = it.next();
 		    	try {
-		    		String normalPath = BaggerFileEntity.removeBasePath(basePath, filePath);
+		    		String normalPath;
+		    		System.out.println("BagTree.basePath: " + basePath + ", filepath: " + filePath);
+		    		if (bag.isHoley()) {
+			    		normalPath = BaggerFileEntity.removeBasePath("data", filePath);
+		    		} else {
+			    		normalPath = BaggerFileEntity.removeBasePath(basePath, filePath);
+		    		}
+		    		System.out.println("BagTree.normalPath: " + normalPath);
 		    		if (!nodeAlreadyExists(normalPath)) {
 		    			this.addNode(normalPath);
 		    		}
