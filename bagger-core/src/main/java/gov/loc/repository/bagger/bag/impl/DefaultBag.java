@@ -550,14 +550,16 @@ public class DefaultBag {
 			}
 			this.isNdnp(true);
 		}
+/* */
 		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
 			String lcProject = bagInfoTxt.get(DefaultBagInfo.FIELD_LC_PROJECT);
 			if (lcProject != null && !lcProject.trim().isEmpty()) {
 				this.bagInfo.setLcProject(lcProject);
+				this.isNoProject(false);
 			} else {
 				this.bagInfo.setLcProject("");
+				this.isNoProject(true);
 			}
-			this.isNoProject(false);
 		} else {
 			this.isNoProject(true);
 		}
