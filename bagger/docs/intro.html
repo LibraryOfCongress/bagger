@@ -17,6 +17,10 @@
   </div>
 
   <div id="page_head"><h1><a href="index.html">Bagger User Guide</a>: Introduction</h1></div>
+    <div id="content">
+      <a href="index.html">Previous</a>
+      <a href="display.html">Next</a>
+    </div>
     <a name="about">    </a>
       <div id="page_head"><h2>About</h2></div>
       <div id="content">
@@ -31,6 +35,7 @@
           Contacts</br>
           Leslie Johnston</br>
           Jon Steinbach</br>
+          Justin Littman</br>
           </p>
         </dt>
         <dt>
@@ -40,28 +45,54 @@
       </dl>
       </div>
 
+    <a name="bil">    </a>
+      <div id="page_head"><h2>Bagger and BIL</h2></div>
+      <div id="content">
+      <dl>
+        <dt>
+        <div id="page_head"><h2>Bagger Version 1.6 supporting BagIt Library (BIL) version 3.0</h2></div>
+          <p>
+			The Bagger application is a graphical user interface to the BIL (BagIt Library) command line driver which is an implementation of tools conforming to the BagIt specification.  For this document, 'bag' refers to BIL's representation of a bag. This bag is in computer memory which may have been loaded into the Bagger application from content on a disk. 'Bag on disk' refers to an instance of a bag that exists on a disk-drive as opposed to merely in computer memory.
+		  </p>
+		  <p>
+			Bagger differs from BIL by providing graphical dialogs and buttons for file and data manipulation features as well as a visual view of the bag contents, bag state and options.  In addition Bagger provides a project profile capability.  The user can create customized bag-info.txt data with project specific properties that the user defines, including: required fields, required field values and default field values.  These project profile values can be saved and loaded as desired or shared with other users.
+          </p>
+        </dt>
+      </dl>
+      </div>
+
     <a name="gettingstarted">    </a>
       <div id="page_head"><h2>Getting Started</h2></div>
       <div id="content">
       <p>
 		<dl>
+	    <a name="web">    </a>
 		  <dt>Web
 		    <dl>
-		    	<dt><p>The Bagger application can be initiated using Java Web Start from a Web server using a Web browser that runs Java Runtime Environment 1.6+.  Refer to the release notes for your environment to determine the Web site for accessing Bagger.</p>
-		    	<p>Selecting the link ‘Start Bagger Application’ will start the signed executable bagger.jar file and open the Bagger application.
-				</p></dt>
+		    	<dt>
+				<p>The Bagger application can be initiated using Java Web Start from a Web server using a Web browser that runs Java Runtime Environment 1.6+.  Refer to the release notes for your environment to determine the Web site for accessing Bagger.</p>
+				<p>Selecting the link ‘Start Bagger Application’ will start the signed executable bagger.jar file and open the Bagger application.</p>
+				</dt>
+				<dt>
+				<p>
+				<img src="images/bagger_homepage.jpg" alt="Bagger home page" />
+				</p>
+				</dt>
 		    </dl>
 		  </dt>
+	    <a name="windows">    </a>
 		  <dt>Windows Stand-alone
 		    <dl>
-				<p>The stand-alone version of Bagger is intended for users that do not have access to the Internet, have multiple versions of the Java VM that may conflict with the Bagger application, or may have security constraints that prevent them from downloading and installing software on their systems.</p>
+				<p>The stand-alone version of Bagger is intended for users that do not have access to the Internet, have multiple versions of the Java VM that may conflict with the Bagger application, or may have security constraints that prevent them from downloading and installing software on their systems. </p>
 				<p>To use the stand-alone version, copy and unzip the file bagger_stndalone_win.zip from the CD provided to you, or download the bagger_stndalone_win.zip file by selecting the link:</p>
-				<p><a href="bagger_stndalone_win.zip" >Download the Bagger Stand-Alone Program (requires about 80MB disk space)</a></p>
-      		    <p>The file bagger.jar is a signed executable application. To start the Bagger application, find the directory bagger_stndalone_win. In this directory you can double-click on the bagger_stndalone.bat file or you may:</p>
+				<p>Download the Bagger Stand-Alone Program (requires about 80MB disk space)</p>
+				<p></p>
+				<p>The file bagger.jar is a signed executable application. To start the Bagger application, find the directory bagger_stndalone_win. In this directory you can double-click on the bagger_stndalone.bat file or you may:</p>
     		    <dt><p>Select Start->Run</p></dt>
-     		    <dt><p>Select the Browse button</p></dt>
+    		    <dt><p>Select the Browse button</p></dt>
     		    <dt><p>Select the location of bagger_stndalone.bat then select the Open button</p></dt>
     		    <dt><p>Select the OK button</p></dt>
+				<p></p>
 		    </dl>
 		  </dt>
 		</dl>
@@ -69,112 +100,14 @@
 		The Bagger application starts with a splash banner page.
 		</p>
 		<p>
+			<img src="images/bagger_splash.jpg" alt="Bagger startup splash page" />
+		</p>
+		<p>
 		Note:  Selecting the bagger.jar file directly may start Bagger correctly but it will rely upon a pre-existing installation of the Java 1.6+ VM instead of the included Java VM.  It will also omit some initialization settings that improve performance and allow operation in environments with no Internet connectivity.
 		</p>
       </p>
       </div>
 
-    <a name="display">    </a>
-      <div id="page_head"><h2>Display</h2></div>
-      <div id="content">
-		The application displays the following information for the bag:<br\>
-		<ul>
-	    <li>* The payload contents (i.e., the list of files in the data directory)</li>
-	    <li>* The tag contents (i.e., the list of files in the base directory)</li>
-	    <li>* The BagInfo contents</li>
-	    <li>* The BagInfo profile</li>
-	    <li>* If the bag exists on disk:</li>
-	      <ul>
-          <li>o The path/filename</li>
-          <li>o The format (unserialized, serialization format)</li>
-          <li>o The version</li>
-          </ul>
-	    <li>* If the bag is complete</li>
-	    <li>* If the bag is valid</li>
-	    <li>* If the bag has a BagInfo profile and satisfies that profile</li>
-	    <li>* Any completion, validation, additional verify warning or errors</li>
-		</ul>
-		<ul>Bag Content Read-Only Display
-		<li>* Console of bag activity display tab</li>
-		<li>* Manifest file contents tab</li>
-		<li>* TagManifest file contents tab</li>
-		<li>* Bag-Info file contents tab</li>
-		<li>* BagIt file contents tab</li>
-		<li>* Data directory contents tab</li>
-		<li>* Fetch file contents tab</li>
-		</ul>
-	<p>
-	As the user manipulates the bag contents the results of these actions are displayed in a series of tabs on the lower left-hand side of the Bagger Application.  The first tab displayed is a console that displays the state and validity of the bag as well as any messages that result during bag creation.  In addition, there is a tab representing the contents of each file the bag contains according to the BagIt specification for those files that are recognized.  The Data tab does not show the contents of a file, rather it displays the list of files and directories that will exist within the data directory of the bag itself.
-	</p>
-		<ul>Console Activity Display Tab
-		<li>* Are all required fields set?</li>
-		<li>* Is bag complete?</li>
-		<li>* Has a bag been created?</li>
-		<li>* Is bag valid?</li>
-		<li>* Log messages window</li>
-		</ul>
-	<p>
-	This is the topmost tab displayed on the left-hand side of the Bagger Application.
-	It conveys the current status of any actions initiated by the user and displays messages and progress reports regarding bag creation and validation.  At the top are a series of bag validation indicators based upon what makes an acceptable bag according to the BagIt specification.
-	</p>
-	<ul>
-		<ul>
-		<li>* Are all required fields set?  yes or no, are the contents of the bag-info.txt file fields valid for the project this bag belongs to. The BagIt specification allows a bag to be created even though all fields are not valid.</li>
-		<li>* Is bag complete?  yes or no, are all the files indicated in the manifests present and accounted for.</li>
-		<li>* Has a bag been created?  yes or no, has the bag directory been created on the local file system or has a serialized zip/tar archive file been created successfully.</li>
-		<li>* Is bag valid?  yes or no, do all of the files indicated have valid checksum results and is the bag successfully verified according to the BagIt specification.</li>
-		</ul>
-	</ul>
-	<p>
-	Below these status indicators is a log message display window.  Here are shown the results of the status checks listed above and any problems or missing conditions that occurred.
-	</p>
-
-		<ul>Bag Content Buttons
-		<li>* Start New Bag : always enabled</li>
-			<ul>
-			<li>o	Enables Add Data button</li>
-			</ul>
-		<li>* Open Existing Bag : always enabled</li>
-			<ul>
-			<li>o	Enables Add Data button</li>
-			<li>o	Enables Save Bag button</li>
-			<li>o	Enables Save Bag As button</li>
-			<li>o	Enables Validate Bag button</li>
-			</ul>
-		<li>* Validate Bag : default disabled</li>
-			<ul>
-			<li>o	Enabled after Open Existing Bag selected</li>
-			<li>o	Enabled after Save Bag selected</li>
-			<li>o	Enabled after Save Bag As selected</li>
-			</ul>
-		<li>* Add Data : default disabled</li>
-			<ul>
-			<li>o	Enabled after Start New Bag selected</li>
-			<li>o	Enabled after Open Existing Bag</li>
-			<li>o	Disables Validate Bag button</li>
-			<li>o	Enables Save Bag As button</li>
-			</ul>
-		<li>* Save Bag : default disabled</li>
-			<ul>
-			<li>o	Enabled after Open Existing Bag selected</li>
-			<li>o	Enabled after Save Bag As selected</li>
-			<li>o	Enables Validate Bag button</li>
-			</ul>
-		<li>* Save Bag As : default disabled</li>
-			<ul>
-			<li>o	Enabled after Open Existing Bag selected</li>
-			<li>o	Enabled after Add Data selected</li>
-			<li>o	Enables Validate Bag button</li>
-			<li>o	Enables Save Bag button</li>
-			</ul>
-		</ul>
-		<p>
-		These buttons are used to create new bags or view existing bags.  They also allow the user to add content to a bag and save the bag.  Once a bag exists it can be validated.  The results of bag creation and validation are displayed in the console tab.  Adjacent to the buttons is a selectable checkbox tree that displays a hierarchical representation of the files and directories currently added to the bag.  Selecting and deselecting a file will add or remove it to or from the bag.  Selecting and deselecting a directory will add or remove the directory and all its child contents to the bag.
-		</p>
-		</div>
-<p>
-<img src="images/bagger_display_empty.jpg" alt="Bagger display elements" />
-</p>
   </div>
 
   <div id="footer">
