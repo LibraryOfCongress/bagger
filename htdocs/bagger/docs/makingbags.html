@@ -16,70 +16,120 @@
     </ul>
   </div>
 
-  <div id="page_head"><h1><a href="index.html">Bagger User Guide</a>: Making Bags</h1></div>
+  <div id="page_head"><h1>Bagger User Guide: Making bags</h1>
+    <div id="content">
+      <a href="display.html">Previous</a>
+      <a href="savingbags.html">Next</a>
+    </div>
+  </div>
   <div id="navlist">
     <a name="newbag"></a>
       <div id="page_head"><h2>Creating a new bag</h2></div>
       <div id="content">
-	<p>
-	To create a new bag from scratch the user first selects the ‘Create New Bag’ button from the Bag Content Control buttons at the top of the application.  This creates an empty bag with blank values for the Details input form and resets and previously selected buttons and options to their default values.  The user does not yet need to enter a bag name since the bag does not yet exist on disk.  This name is set when the user is ready to save the bag.
-	</p>
-	<p>
+	<p>	Advantages of creating a new bag - 	</p>
+	<p>Any arbitrary files or directories can be added to a new bag.  The bag can be saved in any location either as an unserialized directory or using any of the serialization formats provided.  </p>
+	<p>Disadvantages of creating a new bag - </p>
+	<p>If the bag is saved in a new location and/or in a serialized format, all of the files will be copied, which is potentially expensive in terms of time and disk space.</p>
+	<p>To create a new bag from scratch the user first selects the ‘Create New Bag’ button from the Bag action buttons at the top of the Bagger application.  This clears any pre-existing bag and creates an empty bag with blank values for the input forms and resets previously selected buttons and options to their default values.  The user does not yet need to enter a bag name.  This name and location will be defined when the user saves the bag. </p>
+
 	<ul>Basic flow:<br/>
 	   <li>1. User selects to create a new bag.<br/></li>
 	   <li>2. User selects a bag version.<br/></li>
 	   <li>3. Application clears any displayed information from previous bag and creates a new bag.<br/></li>
 	</ul>
-	</p>
+
 	<p>
-	Notice that now the new bag has enabled the ‘Add Data’ button. The user can now begin to add data files to the bag.
+	<img src="images/bagger_newbag_version.jpg" alt="New bag dialog" />
 	</p>
+
+	<p>A New Bag Dialog window appears that gives the user the option to select which version of BagIt this bag will comply with.  The default bag version will be the latest BagIt specification implemented in BIL.  Selecting the New Bag button will create an empty bag with default settings.</p>
+	<p>
+	<img src="images/bagger_newbag_empty.jpg" alt="New empty bag" />
+	</p>
+
+	<p>Notice that the new bag has several additional buttons now enabled:</p>
+	<ul>
+	  <li>‘Add Data’<br/></li>
+	  <li>‘View Tags’<br/></li>
+	  <li>‘Add Tag’<br/></li>
+	  <li>‘Remove Tag’<br/></li>
+	  <li>‘Create New Project’<br/></li>
+	  <li>‘Save Profiles’<br/></li>
+	  <li>‘Load Profiles’<br/></li>
+	  <li>‘Clear Profiles’<br/></li>
+	  <li>‘Add Field’<br/></li>
+	  <li>‘Add All BagIt Fields’<br/></li>
+	</ul>
+	<p>We will address the function of each of these buttons later in the guide.</p>
+
+	<p>For now, select the ‘Add Data’ button to select the first directory of files to include in the bag data payload.</p>
+	<p>
+	<img src="images/bagger_addata_dialog.jpg" alt="Add file or directory" />
+	</p>
+
+	<p>An Add File or Directory chooser dialog is displayed that allows the user to select multiple files and/or directories to be included in the bag.  Go to the directory containing the files you would like to include in the bag.  Then select the Open button to include them.</p>
+	<p>
+	<img src="images/bagger_addata_payload.jpg" alt="Added data" />
+	</p>
+
+	<p>The frame next to the ‘Add Data’ button now displays the hierarchical tree of files as they will be created within the bag data payload directory.  Notice that now the ‘Save Bag As’ and ‘Remove Data’ buttons are enabled.  Now that the bag has had data content added it can be saved. Select the ‘Save Bag As’ button.</p>
+	<p>
+	<img src="images/bagger_savebagas_dialog.jpg" alt="Save Bag Dialog" />
+	</p>
+
+	<p>The ‘Save Bag Dialog’ is displayed.  This presents the user with all the options available for saving a bag.  Next select the Browse button.  This will let you select the name and location of the bag that will be saved to your disk drive.</p>
+	<p>
+	<img src="images/bagger_savebagas_browse.jpg" alt="Save Bag As dialog" />
+	</p>
+
+	<p>An Add File or Directory chooser dialog is displayed that allows the user to select the location the bag is to be saved within.  Enter the name of the bag in the File Name field and then select the Save button.  You have now selected where you want to save the bag and what it is to be called.
+	We will look at the other features of the ‘Save Bag Dialog’ later in this guide.  For now, select the ‘Save’ button.  Once the bag has successfully been saved a Bag saved popup confirmation dialog is shown.</p>
+	<p>
+	<img src="images/bagger_savebag_ok.jpg" alt="Bag saved dialog" />
+	</p>
+
+	<p>Select Ok from the popup dialog to see the newly saved bag.</p>
+	<p>
+	<img src="images/bagger_savebagas_saved.jpg" alt="Saved bag" />
+	</p>
+
+	<p>Notice that the ‘Check Is Complete’, ‘Check Is Valid’ and ‘Save Bag’ buttons are now enabled.  These features will be discussed later in the guide.</p>
+
 	</div>
 
-<p>
-<img src="images/bagger_newbag_version.jpg" alt="Select new bag version" />
-</p>
-<p>
-<img src="images/bagger_newbag_empty.jpg" alt="Newly created empty bag" />
-</p>
-
-<a name="existingbag"></a>
+	<a name="existingbag"></a>
       <div id="page_head"><h2>Open an existing bag on disk</h2></div>
       <div id="content">
-	<p>
-	The Bagger Application can also load an existing bag folder or serialized file.  This could be done to check whether the folder contains a valid bag or to add more data or more information to an existing bag.
-	Start by selecting the ‘Open Existing Bag’ button from the Bag Content Control buttons at the top of the application.  This displays a directory and file chooser dialog window.  Select the desired bag from the file chooser dialog and then select the Open button.  This will load the directory or file and create a bag if one exists.
-	</p>
+	<p>The Bagger Application can also load an existing bag folder or serialized bag file.  This could be done to check whether the folder contains a valid bag or to add more data or more information to an existing bag.</p>
+	<p>Start by selecting the ‘Open Existing Bag’ button from the Bag action buttons at the top of the application.  This displays a directory and file chooser dialog window.  Select the desired bag from the file chooser dialog and then select the Open button.  This will load the directory or file and create a bag if one exists.</p>
 	<ul>Basic flow:<br/>
-	   <li>1. User selects to open an existing bag.<br/></li>
-	   <li>2. User selects a bag on disk. (User provides file/directory using a File/Directory picker. User should have option to limit display of files by serialization format.)<br/></li>
-	   <li>3. Application creates the bag.<br/></li>
-	   <li>4. Application clears any displayed information from the previous bag and displays information from new bag.<br/></li>
+	   	<li>1. User selects to open an existing bag.<br/></li>
+		<li>2. User selects a bag on disk. (User provides file/directory using a File/Directory picker. User should have option to limit display of files by serialization format.)<br/></li>
+   		<li>3. Application creates the bag.<br/></li>
+   		<li>4. Application clears any displayed information from the previous bag and displays information from new bag.<br/></li>
 	</ul>
-	<p>
-	Note:  You do not need to close the current bag you are working on.  It will start a new bag in its place, but if you have not already saved the current bag it will be overwritten with the new bag.
-	</p>
-	<p>
-	The existing bag has been loaded and its data contents are now displayed in the data hierarchy file tree.  Notice that all the buttons are now enabled: the Add Data, Save Bag, Save Bag As, Validate Bag and Update Bag buttons are all enabled.  You may now validate this bag, or add additional data, or edit the Details information and update it.  Also notice that the Serialized Bag Type is back to being ‘none’.
-	</p>
-	<p>
-	Note:  Since the existing bag has no concept of Profiles, the Send to org and Send to contact information for the loaded Bag will overwrite whatever was loaded for the currently selected project, however the Send from contact is not changed since this is not part of the bag.
-	</p>
-	</div>
+	<p>Note:  You do not need to close the current bag you are working on.  It will start a new bag in its place, but if you have not already saved the current bag it will be replaced with the new bag.</p>
 
-<p>
-<img src="images/bagger_existingbag_dialog.jpg" alt="Open existing bag dialog" />
-</p>
-<p>
-<img src="images/bagger_existingbag_browse.jpg" alt="Browse to select the existing bag file" />
-</p>
-<p>
-<img src="images/bagger_existingbag_display.jpg" alt="Display the existing bag" />
-</p>
+	<p>
+	<img src="images/bagger_existingbag_browse.jpg" alt="Open existing bag" />
+	</p>
+
+	<p>
+	<img src="images/bagger_existingbag_display.jpg" alt="Existing bag loaded" />
+	</p>
+	<p>The existing bag has been loaded and its data contents are now displayed in the data hierarchy file tree.  Notice that all the buttons are now enabled.  You may now check the status of this bag, add additional data, or edit the Bag-Info forms and update it.</p>
+
+	</div>
 
     <a name="baginplace"></a>
       <div id="page_head"><h2>Creating a bag-in-place</h2></div>
       <div id="content">
+      <p>Advantages of creating a bag in place - </p>
+	  <p>The files or directories will be moved into the bag structure rather than copied, which is efficient in terms of time and disk space.</p>
+	  <br/>
+	  <p>Disadvantages of creating a bag in place - </p>
+	  <p>Only the files or directories at a particular location will be added to the new bag.  The bag will be saved at that location and must be unserialized.</p>
+	  <p>To create a new bag-in-place the user first selects the ‘Create Bag-in-place’ button from the Bag action buttons at the top of the Bagger application. </p>
 	<ul>Basic flow:<br/>
 	   <li>1. User selects to create a bag-in-place.<br/></li>
 	   <li>2. User selects a directory on disk. (User provides file/directory using a File/Directory picker. User should have option to limit display of files by serialization format.)<br/></li>
@@ -87,33 +137,39 @@
 	   <li>4. Application creates the bag, including moving the directory/files as necessary to create the bag structure, completing the bag, and writes to disk.<br/></li>
 	   <li>5. Application clears any displayed information from the previous bag and displays information from new bag.<br/></li>
 	</ul>
+	<p>Notes: The directory that is bagged in place may be:</p>
+	  <ul>
+	    <li>- A set of files/directories in the basic structure of bag a bag (i.e., it has a data directory with content), but is not complete.<br/></li>
+       	<li>- A directory containing a set of files/directories.<br/></li>
+      </ul>
+
+	<p>A New Bag in Place Dialog window appears that gives the user the option to select which version of BagIt this bag will comply with.  The default bag version will be the latest BagIt specification implemented in BIL.</p>
+	<p>
+	<img src="images/bagger_baginplace_browse.jpg" alt="New Bag-in-place Dialog" />
+	</p>
+
+	<p>In addition the user chooses the data directory to be bagged by selecting the Browse button.</p>
+	<p>
+	<img src="images/bagger_baginplace_browse_data.jpg" alt="New Bag-in-place Browse" />
+	</p>
+
+	<p>Choose the existing data location you wish to bag and then select the Open button.</p>
+	<p>
+	<img src="images/bagger_baginplace_browse_ok.jpg" alt="Choose existing data" />
+	</p>
+
+	<p>Selecting the Bag In Place button will clear any pre-existing bag and save a bag with a data payload from the chosen directory.  A Bag saved dialog confirms that the bag was successfully saved to disk.</p>
+	<p>
+	<img src="images/bagger_baginplace_bagsaved.jpg" alt="Bag In Place" />
+	</p>
+
+	<p>Select the Ok button to view the newly created bag. The input forms and previously selected buttons and options are reset to their default values.  The bag name and location were derived from the selected data directory name.</p>
+	<p>
+	<img src="images/bagger_baginplace_saved.jpg" alt="New Bag-in-place" />
+	</p>
+
 	</div>
 
-<p>
-<img src="images/bagger_baginplace_version.jpg" alt="Bag in place dialog" />
-</p>
-<p>
-<img src="images/bagger_baginplace_browse.jpg" alt="Bag in place browse" />
-</p>
-<p>
-<img src="images/bagger_baginplace_ok.jpg" alt="Bag in place continue" />
-</p>
-<p>
-<img src="images/bagger_baginplace_writing.jpg" alt="Bag in place writing in progress" />
-</p>
-<p>
-<img src="images/bagger_baginplace_saved.jpg" alt="Bag in place saved bag" />
-</p>
-
-	<div id="content">
-	<ul>Notes:
-	    <li>* The directory that is bagged in place may be:</li>
-	    <ul>
-	          <li>o A set of files/directories in the basic structure of bag a bag (i.e., it has a data directory with content), but is not complete.<br/></li>
-	          <li>o A directory containing a set of files/directories.<br/></li>
-	    </ul>
-	</ul>
-	</div>
   </div>
 
   <div id="footer">

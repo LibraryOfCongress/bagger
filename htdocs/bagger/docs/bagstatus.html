@@ -16,64 +16,94 @@
     </ul>
   </div>
 
-  <div id="page_head"><h1><a href="index.html">Bagger User Guide</a>: Checking Bag Status</h1></div>
+  <div id="page_head"><h1>Bagger User Guide: Checking Bag Status</h1>
+    <div id="content">
+      <a href="bagfiles.html">Previous</a>
+      <a href="baginfo.html">Next</a>
+    </div>
+  </div>
   <div id="navlist">
     <a name="complete"></a>
       <div id="page_head"><h2>Checking that a bag is complete</h2></div>
       <div id="content">
-	<ul>Basic flow:<br/>
-	   <li>1. User selects to check that a bag is complete.<br/></li>
-	   <li>2. Application checks that a bag is complete.<br/></li>
-	   <li>3. If a BagInfo profile has been selected, application checks that it has been satisfied.<br/></li>
-	   <li>4. Application updates the displayed information with the result, including warning about any unsatisfied fields from BagInfo profile.<br/></li>
-	</ul>
-	<ul>Note:<br/>
-	    <li>* A user may want to check that a bag is complete instead of verifying a bag because it is less time-consuming.</li>
-	</ul>
-	</div>
-<p>
-<img src="images/bagger_iscomplete_dialog.jpg" alt="Bag is complete dialog" />
-</p>
-<p>
-<img src="images/bagger_iscomplete_complete.jpg" alt="Bag is complete" />
-</p>
-<p>
-<img src="images/bagger_iscomplete_incomplete.jpg" alt="Bag is incomplete" />
-</p>
+        <p>From the BagIt specification: A bag is considered complete if every file in every payload manifest and tag manifest is present, and if every payload file appears in at least one payload manifest. A payload file does not need to appear in every payload manifest as long as it appears in one payload manifest (i.e., it must belong to the "union" of payload manifests). In a complete bag containing one or more tag manifests, any tag file may appear in zero or more of those manifests, but every tag file appearing in any tag manifest must be present in the bag.</p>
+      </div>
+
+      <div id="content">
+		<ul>Basic flow:<br/>
+		   <li>1. User selects to check that a bag is complete.<br/></li>
+		   <li>2. Application checks that a bag is complete.<br/></li>
+		   <li>3. If a Project profile has been selected, application checks that it has been satisfied.<br/></li>
+		   <li>4. Application updates the displayed information with the result, including warning about any unsatisfied fields from Project profile.<br/></li>
+		</ul>
+		<ul>
+			<li>Note: A user may want to check that a bag is complete instead of verifying a bag because it is less time-consuming.</li>
+		</ul>
+	  </div>
+
+      <div id="content">
+        <p>In order to check for a bag’s completeness, the bag must first be saved.  Once the bag is saved to disk, the ‘Check is Complete’ button will be enabled.  Select the ‘Check is Complete’ button.</p>
+	    <p>
+	    <img src="images/bagger_iscomplete_dialog.jpg" alt="Check is complete" />
+	    </p>
+	    <p>When a bag is complete, the ‘Is Complete Dialog’ pops up with the message: ‘Bag is complete.’ </p>
+	    <p>
+	    <img src="images/bagger_iscomplete_complete.jpg" alt="Bag is complete" />
+	    </p>
+	    <p>Selecting Ok on the popup dialog displays the bag and the ‘Is bag complete?’ state message will now display ‘yes’.</p>
+      </div>
+
+      <div id="page_head"><h2>Incomplete bag</h2></div>
+      <div id="content">
+	    <p>
+	    <img src="images/bagger_iscomplete_incomplete.jpg" alt="Warning incomplete" />
+	    </p>
+	    <p>If a bag is not complete, a ‘Warning - incomplete’ popup dialog will appear and display the problem causing the bag to be incomplete.  In this example, there is a file in the data payload called ‘robots.txt’ which is not found in the ‘manifest-md5.txt’ tag file. </p>
+	    <p>
+	    <img src="images/bagger_iscomplete_no.jpg" alt="Bag is incomplete" />
+	    </p>
+	    <p>Selecting Ok on the popup dialog displays the bag and the ‘Is bag complete?’ state message will now display ‘no’.</p>
+      </div>
 
     <a name="valid"></a>
       <div id="page_head"><h2>Checking that a bag is valid</h2></div>
-      <div id="content">
-	<ul>Basic flow:<br/>
-	   <li>1. User selects to check that a bag is valid.<br/></li>
-	   <li>2. Application checks that a bag is valid.<br/></li>
-	   <li>3. If a BagInfo profile has been selected, application checks that it has been satisfied.<br/></li>
-	   <li>4. Application updates the displayed information with the result, including warning about any unsatisfied fields from BagInfo profile.<br/></li>
-	</ul>
-	<p>
-	The bag is now invalid since the eDeposit project enforces bag-info.txt rules, such as requiring that a Publisher exist.  The Details form contains a Publisher field with a red x next to it, indicating that this field is required and the Console tab indicates missing form fields are present.
-	</p>
-	<p>
-	Select the Ok button on the error message dialog to continue.
-	</p>
-	<p>
-	The bag fails the ‘Are all required fields set?’ test.<br/>
-	The Console tab indicates that for the selected project eDeposit, there are missing required form fields.  Enter a Publisher value, select the Update Bag button and then select the Save Bag button again.
-	</p>
-	<p>
-	The bag information has been updated and now all the bag tests pass.  The bag has now been validated successfully.  The bag is complete, the bag is valid and the bag required fields are valid, and the bag has been successfully saved over the previously existing bag.
-	</p>
-	</div>
-<p>
-<img src="images/bagger_isvalid_dialog.jpg" alt="Bag is valid dialog" />
-</p>
-<p>
-<img src="images/bagger_isvalid_valid.jpg" alt="Bag is valid" />
-</p>
-<p>
-<img src="images/bagger_isvalid_invalid.jpg" alt="Bag is invalid" />
-</p>
+        <p>The spec does not require a bag-info.txt at all, let alone the contact information.
+		A bag is considered valid if it is complete and if each CHECKSUM in every payload manifest and tag manifest can be verified against the contents of its corresponding FILENAME.
+		Note that tag files (including tag manifest files) can be added to or removed from a bag without impacting the completeness or validity of the bag as long as the tag files do not appear in a tag manifest. </p>
+	  </div>
 
+      <div id="content">
+		<ul>Basic flow:<br/>
+		   <li>1. User selects to check that a bag is valid.<br/></li>
+		   <li>2. Application checks that a bag is valid.<br/></li>
+		   <li>3. If a Project profile has been selected, application checks that it has been satisfied.<br/></li>
+		   <li>4. Application updates the displayed information with the result, including warning about any unsatisfied fields from Project profile.<br/></li>
+		</ul>
+	  </div>
+
+      <div id="content">
+        <p>In order to check for a bag’s validity, the bag must first be saved.  Once the bag is saved to disk, the ‘Check is Valid’ button will be enabled.  Select the ‘Check is Valid’ button.</p>
+	    <p>
+	    <img src="images/bagger_isvalid_dialog.jpg" alt="Check is valid" />
+	    </p>
+	    <p>When a bag is valid, the ‘Validation Dialog’ pops up with the message: ‘Validation successful.’ </p>
+	    <p>
+	    <img src="images/bagger_isvalid_valid.jpg" alt="Bag is valid" />
+	    </p>
+	    <p>Selecting Ok on the popup dialog displays the bag and both the ‘Is bag complete?’ and ‘Is bag valid?’ state messages will now display ‘yes’.</p>
+	  </div>
+
+      <div id="page_head"><h2>Invalid bag</h2></div>
+      <div id="content">
+	    <p>
+	    <img src="images/bagger_isvalid_invalid.jpg" alt="Warning invalid" />
+	    </p>
+	    <p>If a bag is not valid, a ‘Warning - validation failure’ popup dialog will appear and display the problem causing the bag to be invalid.  In this case there is a mismatch between the fixity values in the manifest and tag manifest files.  See the BagIt specification for more information about fixity checksums and bag verification.</p>
+	    <p>
+	    <img src="images/bagger_isvalid_no.jpg" alt="Bag is invalid" />
+	    </p>
+	    <p>Selecting Ok on the popup dialog displays the bag and the ‘Is bag valid?’ state message will now display ‘no’.</p>
+      </div>
   </div>
 
   <div id="footer">
