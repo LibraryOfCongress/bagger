@@ -16,203 +16,217 @@
     </ul>
   </div>
 
-  <div id="page_head"><h1><a href="index.html">Bagger User Guide</a>: Display layout</h1></div>
+  <div id="navlist">
+  <div id="page_head"><h1><a href="index.html">Bagger User Guide</a>: Display layout</h1>
     <div id="content">
       <a href="intro.html">Previous</a>
       <a href="makingbags.html">Next</a>
     </div>
+
     <a name="about">    </a>
       <div id="page_head"><h2>Views</h2></div>
       <div id="content">
-	  <dl>
-	    <dt>
-	      The Bagger application consists of 4 main section views:</br>
-	      <ul>
-	        <li>Bag action buttons along the top of the display<br/></li>
-	        <li>Bag content display on the left-hand side of the display<br/></li>
-	        <li>Bag property display on the upper right-hand side of the display<br/></li>
-	        <li>Bag-Info input forms on the lower right-hand side of the display<br/></li>
-	      </ul>
-		<p>
-		<img src="images/bagger_display_empty.jpg" alt="Bagger default display" />
-		</p>
-	    </dt>
-	  </dl>
+		  <dl>
+			<dt>
+			  The Bagger application consists of 4 main section views:</br>
+			  <ul>
+				<li>Bag action buttons along the top of the display<br/></li>
+				<li>Bag content display on the left-hand side of the display<br/></li>
+				<li>Bag property display on the upper right-hand side of the display<br/></li>
+				<li>Bag-Info input forms on the lower right-hand side of the display<br/></li>
+			  </ul>
+			<p>
+			<img src="images/bagger_display_empty.jpg" alt="Bagger default display" />
+			</p>
+			</dt>
+		  </dl>
+	  </div>
 
-      <dl>
-        <dt>
-	    <a name="buttons">    </a>
-        <div id="page_head"><h2>Bag action buttons</h2></div>
-        <p>
-		The top row action buttons allow the user to create bags and determine a bag’s state.
-		Upon startup the Bagger application buttons and properties are disabled except for the three top buttons that open a new or existing bag: 1) ‘Create New Bag’, 2) ‘Open Existing Bag’, and 3) ‘Create Bag-in-place’.  Once a bag is initiated with one of those buttons then the other buttons become enabled as needed according to the following rules.
-        </p>
+      <div id="content">
+		  <dl>
+			<dt>
+			<a name="buttons">    </a>
+			<div id="page_head"><h2>Bag action buttons</h2></div>
+			<p>
+			The top row action buttons allow the user to create bags and determine a bag’s state.
+			Upon startup the Bagger application buttons and properties are disabled except for the three top buttons that open a new or existing bag: 1) ‘Create New Bag’, 2) ‘Open Existing Bag’, and 3) ‘Create Bag-in-place’.  Once a bag is initiated with one of those buttons then the other buttons become enabled as needed according to the following rules.
+			</p>
 
-          <ul>
-            <li>‘Create New Bag’: always enabled<br/></li>
-              <ul>
-                <li>Enables Add Data button<br/></li>
-                <li>Enables Clear Bag button<br/></li>
-              </ul>
-            <li>‘Open Existing Bag’: always enabled<br/></li>
-              <ul>
-                <li>Enables Add Data button<br/></li>
-                <li>Enables Save Bag button<br/></li>
-                <li>Enables Save Bag As button<br/></li>
-                <li>Enables Check is Complete button<br/></li>
-                <li>Enables Check is Valid button<br/></li>
-                <li>Enables Clear Bag button<br/></li>
-              </ul>
-            <li>‘Create Bag-in-place’: always enabled<br/></li>
-              <ul>
-                <li>Enables Add Data button<br/></li>
-                <li>Enables Save Bag button<br/></li>
-                <li>Enables Save Bag As button<br/></li>
-                <li>Enables Check is Complete button<br/></li>
-                <li>Enables Check is Valid button<br/></li>
-                <li>Enables Clear Bag button<br/></li>
-              </ul>
-            <li>‘Save Bag’: default disabled<br/></li>
-              <ul>
-                <li>Enabled after Open Existing Bag selected<br/></li>
-                <li>Enabled after Create Bag-in-place selected<br/></li>
-                <li>Enabled after Save Bag As selected<br/></li>
-                <li>Enables Check is Complete button<br/></li>
-                <li>Enables Check is Valid button<br/></li>
-              </ul>
-            <li>‘Save Bag As’: default disabled<br/></li>
-              <ul>
-                <li>Enabled after Open Existing Bag selected<br/></li>
-                <li>Enabled after Create Bag-in-place selected<br/></li>
-                <li>Enabled after Add Data selected<br/></li>
-                <li>Enables Check is Complete button<br/></li>
-                <li>Enables Check is Valid button<br/></li>
-                <li>Enables Save Bag button<br/></li>
-              </ul>
-            <li>‘Check is Complete’: default disabled<br/></li>
-              <ul>
-                <li>Enabled after Open Existing Bag selected<br/></li>
-                <li>Enabled after Create Bag-in-place selected<br/></li>
-                <li>Enabled after Save Bag selected<br/></li>
-                <li>Enabled after Save Bag As selected<br/></li>
-              </ul>
-            <li>‘Check is Valid’: default disabled<br/></li>
-              <ul>
-                <li>Enabled after Open Existing Bag selected<br/></li>
-                <li>Enabled after Create Bag-in-place selected<br/></li>
-                <li>Enabled after Save Bag selected<br/></li>
-                <li>Enabled after Save Bag As selected<br/></li>
-              </ul>
-            <li>‘Check Bag’: always enabled<br/></li>
-              <ul>
-                <li>Disables Save Bag button<br/></li>
-                <li>Disables Save Bag As button<br/></li>
-                <li>Disables Check is Complete button<br/></li>
-                <li>Disables Check is Valid button<br/></li>
-                <li>Disables Add Data button<br/></li>
-              </ul>
-          </ul>
+			  <ul>
+				<li>‘Create New Bag’: always enabled<br/></li>
+				  <ul>
+					<li>Enables Add Data button<br/></li>
+					<li>Enables Clear Bag button<br/></li>
+				  </ul>
+				<li>‘Open Existing Bag’: always enabled<br/></li>
+				  <ul>
+					<li>Enables Add Data button<br/></li>
+					<li>Enables Save Bag button<br/></li>
+					<li>Enables Save Bag As button<br/></li>
+					<li>Enables Check is Complete button<br/></li>
+					<li>Enables Check is Valid button<br/></li>
+					<li>Enables Clear Bag button<br/></li>
+				  </ul>
+				<li>‘Create Bag-in-place’: always enabled<br/></li>
+				  <ul>
+					<li>Enables Add Data button<br/></li>
+					<li>Enables Save Bag button<br/></li>
+					<li>Enables Save Bag As button<br/></li>
+					<li>Enables Check is Complete button<br/></li>
+					<li>Enables Check is Valid button<br/></li>
+					<li>Enables Clear Bag button<br/></li>
+				  </ul>
+				<li>‘Save Bag’: default disabled<br/></li>
+				  <ul>
+					<li>Enabled after Open Existing Bag selected<br/></li>
+					<li>Enabled after Create Bag-in-place selected<br/></li>
+					<li>Enabled after Save Bag As selected<br/></li>
+					<li>Enables Check is Complete button<br/></li>
+					<li>Enables Check is Valid button<br/></li>
+				  </ul>
+				<li>‘Save Bag As’: default disabled<br/></li>
+				  <ul>
+					<li>Enabled after Open Existing Bag selected<br/></li>
+					<li>Enabled after Create Bag-in-place selected<br/></li>
+					<li>Enabled after Add Data selected<br/></li>
+					<li>Enables Check is Complete button<br/></li>
+					<li>Enables Check is Valid button<br/></li>
+					<li>Enables Save Bag button<br/></li>
+				  </ul>
+				<li>‘Check is Complete’: default disabled<br/></li>
+				  <ul>
+					<li>Enabled after Open Existing Bag selected<br/></li>
+					<li>Enabled after Create Bag-in-place selected<br/></li>
+					<li>Enabled after Save Bag selected<br/></li>
+					<li>Enabled after Save Bag As selected<br/></li>
+				  </ul>
+				<li>‘Check is Valid’: default disabled<br/></li>
+				  <ul>
+					<li>Enabled after Open Existing Bag selected<br/></li>
+					<li>Enabled after Create Bag-in-place selected<br/></li>
+					<li>Enabled after Save Bag selected<br/></li>
+					<li>Enabled after Save Bag As selected<br/></li>
+				  </ul>
+				<li>‘Check Bag’: always enabled<br/></li>
+				  <ul>
+					<li>Disables Save Bag button<br/></li>
+					<li>Disables Save Bag As button<br/></li>
+					<li>Disables Check is Complete button<br/></li>
+					<li>Disables Check is Valid button<br/></li>
+					<li>Disables Add Data button<br/></li>
+				  </ul>
+			  </ul>
 
-        <p>These buttons are used to create new bags or view existing bags.  They also allow the user to add content to a bag and save the bag.  Once a bag exists it can be validated.  The results of bag creation and validation are displayed in the console display at the lower-left.  Adjacent to the buttons is a selectable checkbox tree that displays a hierarchical representation of the payload files and directories and tag files currently added to the bag.  Selecting and deselecting a file will add it to or remove it from the bag.  Selecting and deselecting a directory will add to or remove from the bag the selected directory and all its child contents.</p>
-        </dt>
-      </dl>
+			<p>These buttons are used to create new bags or view existing bags.  They also allow the user to add content to a bag and save the bag.  Once a bag exists it can be validated.  The results of bag creation and validation are displayed in the console display at the lower-left.  Adjacent to the buttons is a selectable checkbox tree that displays a hierarchical representation of the payload files and directories and tag files currently added to the bag.  Selecting and deselecting a file will add it to or remove it from the bag.  Selecting and deselecting a directory will add to or remove from the bag the selected directory and all its child contents.</p>
+			</dt>
+		  </dl>
+	  </div>
 
-      <dl>
-        <dt>
-	    <a name="content">    </a>
-        <div id="page_head"><h2>Bag content display</h2></div>
-          <p>The application displays the following information for the bag:</p>
-          <p>
-            <ul>
-              <li>The payload contents (i.e., the list of files in the bag data directory)<br/></li>
-              <li>The tag contents (i.e., the list of files in the base directory)<br/></li>
-              <li>The BagInfo contents<br/></li>
-              <li>The Project profile<br/></li>
-              <li>If the bag exists on disk:<br/></li>
-                <ul>
-                  <li>The path/filename<br/></li>
-                  <li>The format (unserialized, serialization format)<br/></li>
-                  <li>The version<br/></li>
-                </ul>
-              <li>If the bag is complete<br/></li>
-              <li>If the bag is valid<br/></li>
-              <li>If the bag has a Project profile and satisfies that profile<br/></li>
-              <li>Any completion, validation, additional verify warning or errors<br/></li>
-          </p>
-          <p>
-			Console Display
-		  </p>
-		    <p>As the user manipulates the bag contents the results of these actions are displayed in a console on the lower left-hand side of the Bagger Application.  This console displays the following information:</p>
-		    <ul>
-		      <li><b>‘Is bag complete?’</b> - ‘not checked’ by default<br/></li>
-			</ul>
-			<p>From the BagIt specification: A bag is considered complete if every file in every payload manifest and tag manifest is present, and if every payload file appears in at least one payload manifest. A payload file does not need to appear in every payload manifest as long as it appears in one payload manifest (i.e., it must belong to the "union" of payload manifests). In a complete bag containing one or more tag manifests, any tag file may appear in zero or more of those manifests, but every tag file appearing in any tag manifest must be present in the bag.</p>
-			<ul>
-			  <li><b>‘Is bag valid?’</b> - ‘not checked’ by default<br/></li>
-			</ul>
-			<p>From the BagIt specification: A bag is considered valid if it is complete and if each CHECKSUM in every payload manifest and tag manifest can be verified against the contents of its corresponding FILENAME.</p>
-			<ul>
-				<p>Note that tag files (including tag manifest files) can be added to or removed from a bag without impacting the completeness or validity of the bag as long as the tag files do not appear in a tag manifest.</p>
-			  <li><b>‘Satisfies project profile?’</b> - ‘not checked’ by default
-			</ul>
-			<p>This status is disabled by default.  It becomes enabled when a ‘Project profile’ other than <no profile> has been selected.  If the bag has a Bag-Info project profile and satisfies that profile when the required fields and values specified for the selected project appear in the bag-info.txt tag file of the bag.  The BagIt specification allows a bag to be created even though all fields are not valid.</p>
-			<ul>
-			  <li><b>Console display</b><br/></li>
-			</ul>
-			<p>This console shows any status check, warning or error messages.  The default value is a definition of bag status.</p>
-        </dt>
-      </dl>
+      <div id="content">
+		  <dl>
+			<dt>
+			<a name="content">    </a>
+			<div id="page_head"><h2>Bag content display</h2></div>
+			  <p>The application displays the following information for the bag:</p>
+			  <p>
+				<ul>
+				  <li>The payload contents (i.e., the list of files in the bag data directory)<br/></li>
+				  <li>The tag contents (i.e., the list of files in the base directory)<br/></li>
+				  <li>The BagInfo contents<br/></li>
+				  <li>The Project profile<br/></li>
+				  <li>If the bag exists on disk:<br/></li>
+					<ul>
+					  <li>The path/filename<br/></li>
+					  <li>The format (unserialized, serialization format)<br/></li>
+					  <li>The version<br/></li>
+					</ul>
+				  <li>If the bag is complete<br/></li>
+				  <li>If the bag is valid<br/></li>
+				  <li>If the bag has a Project profile and satisfies that profile<br/></li>
+				  <li>Any completion, validation, additional verify warning or errors<br/></li>
+			  </p>
+			  <p>
+				Console Display
+			  </p>
+				<p>As the user manipulates the bag contents the results of these actions are displayed in a console on the lower left-hand side of the Bagger Application.  This console displays the following information:</p>
+				<ul>
+				  <li><b>‘Is bag complete?’</b> - ‘not checked’ by default<br/></li>
+				</ul>
+				<p>From the BagIt specification: A bag is considered complete if every file in every payload manifest and tag manifest is present, and if every payload file appears in at least one payload manifest. A payload file does not need to appear in every payload manifest as long as it appears in one payload manifest (i.e., it must belong to the "union" of payload manifests). In a complete bag containing one or more tag manifests, any tag file may appear in zero or more of those manifests, but every tag file appearing in any tag manifest must be present in the bag.</p>
+				<ul>
+				  <li><b>‘Is bag valid?’</b> - ‘not checked’ by default<br/></li>
+				</ul>
+				<p>From the BagIt specification: A bag is considered valid if it is complete and if each CHECKSUM in every payload manifest and tag manifest can be verified against the contents of its corresponding FILENAME.</p>
+				<ul>
+					<p>Note that tag files (including tag manifest files) can be added to or removed from a bag without impacting the completeness or validity of the bag as long as the tag files do not appear in a tag manifest.</p>
+				  <li><b>‘Satisfies project profile?’</b> - ‘not checked’ by default
+				</ul>
+				<p>This status is disabled by default.  It becomes enabled when a ‘Project profile’ other than <no profile> has been selected.  If the bag has a Bag-Info project profile and satisfies that profile when the required fields and values specified for the selected project appear in the bag-info.txt tag file of the bag.  The BagIt specification allows a bag to be created even though all fields are not valid.</p>
+				<ul>
+				  <li><b>Console display</b><br/></li>
+				</ul>
+				<p>This console shows any status check, warning or error messages.  The default value is a definition of bag status.</p>
+			</dt>
+		  </dl>
+	  </div>
 
-      <dl>
-        <dt>
-	    <a name="property">    </a>
-        <div id="page_head"><h2>Bag property display</h2></div>
-          <p>If the bag exists on disk then the following information is enabled and displayed on the upper-right view of the Bagger application:</p>
-			<ul>
-			  <li>‘File name’<br/></li>
-				<p>The name and path of the bag base location on disk.</p>
-		      <li>‘Project profile’<br/></li>
-				<p>The current project profile selected for this bag.</p>
-				<p>Here is shown the list of bag project profiles the user can choose to associate a bag with and also add validation restrictions to the bag input forms based upon the chosen project.  Default project options are [<no profile>, eDeposit, ndiipp, ndnp].  The default option is <no profile>.  Each project profile associates a project to user and contact information as well as other fields that are to be included in the bag-info.txt metadata file.  These fields uniquely identify a bag as belonging to a specific project and are necessary project input.</p>
-			  <li>‘Create New Project’ button: the user can create a new project<br/></li>
-				<p>See the section ‘Project profiles’ for more information on this feature.</p>
-			  <li>‘Bag version’<br/></li>
-				<p>BagIt version for this bag</p>
-			  <li>‘Holey bag?’</p>
-			    <p>Whether the bag is holey, i.e. the payload is included. This option is unselected by default.  Selecting the holey bag option when saving a bag will indicate that the data files for this bag will not be included in the bag package. The payload data is to be retrieved from an address which will be provided in the URL field.  See the ‘BagIt Overview’ for more details.</p>
-			  <li>‘Serialize type’<br/></li>
-				<p>Format of the bag on disk, either unserialized or serialized based upon the format specified when the bag was created.</p>
-				<p>This option is selected to none by default.  Selecting an option other than none tells the Bagger Application to create a serialized archive file from the bag contents with the same name as the bag directory in the format of zip or tar.  The success of this operation is indicated by the ‘Has a bag been created?’ indicator in the Console tab.  See the ‘BagIt Overview’ for more details about bag serialization.</p>
-        </dt>
-      </dl>
+      <div id="content">
+		  <dl>
+			<dt>
+			<a name="property">    </a>
+			<div id="page_head"><h2>Bag property display</h2></div>
+			  <p>If the bag exists on disk then the following information is enabled and displayed on the upper-right view of the Bagger application:</p>
+				<ul>
+				  <li>‘File name’<br/></li>
+					<p>The name and path of the bag base location on disk.</p>
+				  <li>‘Project profile’<br/></li>
+					<p>The current project profile selected for this bag.</p>
+					<p>Here is shown the list of bag project profiles the user can choose to associate a bag with and also add validation restrictions to the bag input forms based upon the chosen project.  Default project options are [<no profile>, eDeposit, ndiipp, ndnp].  The default option is <no profile>.  Each project profile associates a project to user and contact information as well as other fields that are to be included in the bag-info.txt metadata file.  These fields uniquely identify a bag as belonging to a specific project and are necessary project input.</p>
+				  <li>‘Create New Project’ button: the user can create a new project<br/></li>
+					<p>See the section ‘Project profiles’ for more information on this feature.</p>
+				  <li>‘Bag version’<br/></li>
+					<p>BagIt version for this bag</p>
+				  <li>‘Holey bag?’</p>
+					<p>Whether the bag is holey, i.e. the payload is included. This option is unselected by default.  Selecting the holey bag option when saving a bag will indicate that the data files for this bag will not be included in the bag package. The payload data is to be retrieved from an address which will be provided in the URL field.  See the ‘BagIt Overview’ for more details.</p>
+				  <li>‘Serialize type’<br/></li>
+					<p>Format of the bag on disk, either unserialized or serialized based upon the format specified when the bag was created.</p>
+					<p>This option is selected to none by default.  Selecting an option other than none tells the Bagger Application to create a serialized archive file from the bag contents with the same name as the bag directory in the format of zip or tar.  The success of this operation is indicated by the ‘Has a bag been created?’ indicator in the Console tab.  See the ‘BagIt Overview’ for more details about bag serialization.</p>
+			</dt>
+		  </dl>
+	  </div>
 
-      <dl>
-        <dt>
-	    <a name="inputforms">    </a>
-        <div id="page_head"><h2>Bag-Info input forms display</h2></div>
-          <p>This form consists of a list of buttons above two tab forms:</p>
-          <ul>
-            <li>Project profile buttons<br/></li>
-              <ul>
-                <li>‘Save Profiles’<br/></li>
-                <li>‘Load Profiles’<br/></li>
-                <li>‘Clear Profiles’<br/></li>
-              </ul>
-      		<li>‘Other Bag-Info’<br/></li>
-	          <p>This lists the fields and field values to be included in bag-info.txt tag file.  If a field has no value then it is not included when bag-info.txt is created.  Some fields are automatically generated upon bag creation and are displayed when the bag is loaded from disk.  It includes the action buttons:</p>
-	          <ul>
-	            <li>‘Add Field’<br/></li>
-	            <li>‘Add All BagIt Fields’<br/></li>
-	          </ul>
-	        <li>‘Bag-Info Contact’<br/></li>
-	          <p>Contact information specific to the current ‘Project profile’.</p>
-          </ul>
-		  <p>See the sections ‘Bag-Info Editing’ and ‘Project profile’ for more details about this feature.</p>
-        </dt>
-      </dl>
+      <div id="content">
+		  <dl>
+			<dt>
+			<a name="inputforms">    </a>
+			<div id="page_head"><h2>Bag-Info input forms display</h2></div>
+			  <p>This form consists of a list of buttons above two tab forms:</p>
+			  <ul>
+				<li>Project profile buttons<br/></li>
+				  <ul>
+					<li>‘Save Profiles’<br/></li>
+					<li>‘Load Profiles’<br/></li>
+					<li>‘Clear Profiles’<br/></li>
+				  </ul>
+				<li>‘Other Bag-Info’<br/></li>
+				  <p>This lists the fields and field values to be included in bag-info.txt tag file.  If a field has no value then it is not included when bag-info.txt is created.  Some fields are automatically generated upon bag creation and are displayed when the bag is loaded from disk.  It includes the action buttons:</p>
+				  <ul>
+					<li>‘Add Field’<br/></li>
+					<li>‘Add All BagIt Fields’<br/></li>
+				  </ul>
+				<li>‘Bag-Info Contact’<br/></li>
+				  <p>Contact information specific to the current ‘Project profile’.</p>
+			  </ul>
+			  <p>See the sections ‘Bag-Info Editing’ and ‘Project profile’ for more details about this feature.</p>
+			</dt>
+		  </dl>
+	  </div>
 
-      </div>
-
+    <div id="content">
+      <a href="intro.html">Previous</a>
+      <a href="makingbags.html">Next</a>
+    </div>
+  </div>
   </div>
 
   <div id="footer">
