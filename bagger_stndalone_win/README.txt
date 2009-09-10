@@ -1,7 +1,7 @@
                               README
 
                     Bagger, Stand-Alone Edition
-                             Version 1.7
+                             Version 1.8
 
 
 The Bagger Stand-Alone Edition is intended for users with no or 
@@ -21,7 +21,7 @@ run Bagger.
 In order to access the Bagger application via the web, access the
 Library of Congress Repository Development Center website:
 
-    http://baggertest.rdc.lctl.gov/bagger/
+    http://baggerqa.rdc.lctl.gov/
 
 -----------------------------------------------------------------------
    Running the stand-alone version of Bagger on Windows
