@@ -17,7 +17,6 @@ import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
-import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.Cancellable;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
@@ -43,10 +42,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -90,7 +87,6 @@ import org.springframework.richclient.progress.BusyIndicator;
 import org.springframework.util.Assert;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.dao.DataAccessException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -674,7 +670,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 			log.debug("initializeProfile: " + projectProfile);
 			if (projectProfile.getIsRequired()) {
 				if (!bag.getInfo().getRequiredSet().contains(projectProfile.getFieldName())) {
-					List<Object> list = new ArrayList();
+					List<Object> list = new ArrayList<Object>();
 					for (int i=0; i < reqs.length; i++) {list.add(reqs[i]);}
 					list.add(projectProfile.getFieldName());
 					bag.getInfo().setRequiredStrings(list.toArray());
