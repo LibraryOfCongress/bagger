@@ -26,9 +26,9 @@ public class ConsolePane extends JPanel {
 	private static final Log log = LogFactory.getLog(ConsolePane.class);
 
 	public static final String CONSOLE_PANE = "consolePane";
-	private Dimension maxDimension = new Dimension(400, 400);
-	private Dimension consoleDimension = new Dimension(300, 300);
-	private Dimension preferredDimension = new Dimension(400, 380);
+	private Dimension maxDimension = new Dimension(400, 300);
+	private Dimension consoleDimension = new Dimension(300, 150);
+	private Dimension preferredDimension = new Dimension(400, 150);
     private GridBagLayout layout = new GridBagLayout();
     private GridBagConstraints gbc = new GridBagConstraints();
     private String messages = new String();
@@ -229,8 +229,6 @@ public class ConsolePane extends JPanel {
 
     	serializedArea.setEditable(false);
     	serializedArea.setLineWrap(true);
-    	//serializedArea.setRows(textRows);
-    	//serializedArea.setColumns(textCols);
     	serializedArea.setBackground(textBackground);
     	serializedArea.setWrapStyleWord(true);
     	serializedArea.setAutoscrolls(true);
@@ -280,6 +278,7 @@ public class ConsolePane extends JPanel {
     	} catch (Exception e) {
     		log.error("ConsolePane.getRowCount: " + e.getMessage());
     	}
+    	if (rows <=0) rows = 1;
     	
     	return rows;
     }

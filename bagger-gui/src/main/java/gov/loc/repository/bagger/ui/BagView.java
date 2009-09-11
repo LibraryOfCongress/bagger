@@ -577,7 +577,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagPanel.add(bagTagFileTreePanel);
         row++;
         colspan = 3;
-        buildConstraints(glbc, 0, row, colspan, 1, 1, 20, GridBagConstraints.BOTH, GridBagConstraints.WEST);
+        buildConstraints(glbc, 0, row, colspan, 1, 1, 30, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         layout.setConstraints(compositePane, glbc);
         bagPanel.add(compositePane);
 
@@ -2133,22 +2133,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	StringBuffer buffer = new StringBuffer();
     	buffer.append(getPropertyMessage("consolepane.msg.help"));
     	buffer.append("\n\n");
-    	buffer.append(getPropertyMessage("compositePane.message.isComplete"));
-    	buffer.append("\n");
-    	buffer.append(getPropertyMessage("consolepane.iscomplete.help"));
+    	buffer.append(getPropertyMessage("consolepane.status.help"));
     	buffer.append("\n\n");
-    	buffer.append(getPropertyMessage("compositePane.message.isValid"));
-    	buffer.append("\n");
-    	buffer.append(getPropertyMessage("consolepane.isvalid.help"));
-    	buffer.append("\n\n");
-    	buffer.append(getPropertyMessage("compositePane.message.isMetadata"));
-    	buffer.append("\n");
-    	buffer.append(getPropertyMessage("consolepane.ismetadata.help"));
-    	buffer.append("\n\n");
-//    	buffer.append(getPropertyMessage("compositePane.message.isSerialized"));
-//    	buffer.append("\n");
-//   	buffer.append(getPropertyMessage("consolepane.isserialized.help"));
-//    	buffer.append("\n\n");
     	return buffer.toString();
     }
 

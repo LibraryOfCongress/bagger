@@ -31,7 +31,7 @@ import java.util.Vector;
 public class BagTree extends CheckboxTree {
 	private static final long serialVersionUID = -5361474872106399068L;
 	private static final Log log = LogFactory.getLog(BagTree.class);
-	private int BAGTREE_WIDTH = 400; // 500 - 60 for Add button width
+	private int BAGTREE_WIDTH = 400;
 	private int BAGTREE_HEIGHT = 160;
 	private int BAGTREE_ROW_MODIFIER = 22;
 
@@ -92,13 +92,11 @@ public class BagTree extends CheckboxTree {
 		    	String filePath = it.next();
 		    	try {
 		    		String normalPath;
-		    		System.out.println("BagTree.basePath: " + basePath + ", filepath: " + filePath);
 		    		if (bag.isHoley()) {
 			    		normalPath = BaggerFileEntity.removeBasePath("data", filePath);
 		    		} else {
 			    		normalPath = BaggerFileEntity.removeBasePath(basePath, filePath);
 		    		}
-		    		System.out.println("BagTree.normalPath: " + normalPath);
 		    		if (!nodeAlreadyExists(normalPath)) {
 		    			this.addNode(normalPath);
 		    		}
