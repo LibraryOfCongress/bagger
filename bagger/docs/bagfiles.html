@@ -91,15 +91,15 @@
 		  <ul>
 		    <li>Add Tag: default disabled</li>
 		      <ul>
-		        <li>Enabled after Create New Bag selected</li>
-		        <li>Enabled after Open Existing Bag selected</li>
-		        <li>Enabled after Create Bag-in-place selected</li>
+		        <li>Enabled after Create New Bag selected<br/></li>
+		        <li>Enabled after Open Existing Bag selected<br/></li>
+		        <li>Enabled after Create Bag-in-place selected<br/></li>
 		      </ul>
 		    <li>Remove Tag: default disabled</li>
 		      <ul>
-		        <li>Enabled after Create New Bag selected</li>
-		        <li>Enabled after Open Existing Bag selected</li>
-		        <li>Enabled after Create Bag-in-place selected</li>
+		        <li>Enabled after Create New Bag selected<br/></li>
+		        <li>Enabled after Open Existing Bag selected<br/></li>
+		        <li>Enabled after Create Bag-in-place selected<br/></li>
 			  </ul>
 		  </ul>
       </div>
@@ -143,6 +143,32 @@
 	  <img src="images/bagger_tag_removed.jpg" alt="Tag file removed" />
 	  </p>
 	  <p>Likewise, you may also pick the tag file to be removed and drag it off of the Bagger application screen.  This will also remove the tag file from the bag.</p>
+	  </div>
+
+    <a name="view"></a>
+	  <div id="content">
+      <div id="page_head"><h2>View Tag Files</h2></div>
+        <p>Once you have a new bag or an open bag, you can view the tag files contents.  This can be accomplished by selecting the View Tags button.  The following state changes activate this button:</p>
+		  <ul>
+		    <li>View Tags: default disabled</li>
+		      <ul>
+		        <li>Enabled after Create New Bag selected<br/></li>
+		        <li>Enabled after Open Existing Bag selected<br/></li>
+		        <li>Enabled after Create Bag-in-place selected<br/></li>
+		      </ul>
+		  </ul>
+		<p>Upon selecting the View Tags button, a tabbed frame opens showing the currently added tag file contents displayed as read-only.  The default tag files consist of:</p>
+		  <ul>
+		    <li>‘manifest.txt’<br/></li>
+		    <li>‘tag-manifest.txt’<br/></li>
+		    <li>‘bag-info.txt’<br/></li>
+		    <li>‘bagit.txt’<br/></li>
+		    <li>‘fetch.txt’ (for holey bags only)<br/></li>
+		  </ul>
+	  <p>
+	  <img src="images/bagger_viewtags_dialog.jpg" alt="View Tag files" />
+	  </p>
+	  <p>In addition there is a tab containing the non-tag listing of the data directory payload contents.  For more information regarding tag files, refer to the BagIt specification.</p>
 	  </div>
 
     <div id="content">
