@@ -971,6 +971,20 @@ public class DefaultBag {
 			}
 			this.isComplete(result.isSuccess());
 			this.isCompleteChecked = true;
+			if (!isNoProject()) {
+				try {
+					String msgs = validateMetadata();
+					if (msgs != null) {
+						if (messages != null) messages += msgs;
+						else messages = msgs;
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					String msgs = "ERROR validating bag: \n" + ex.getMessage() + "\n";
+					if (messages != null) messages += msgs;
+					else messages = msgs;
+				}
+			}
 		} catch (Exception e) {
 			this.isComplete(false);
 			e.printStackTrace();
@@ -1007,9 +1021,6 @@ public class DefaultBag {
 		bagToValidate = bilBag;
 		this.validVerifier = validVerifier;
 		try {
-	    	//if (this.getDataSize() > MAX_SIZE) {
-	    	//	confirmValidateBag();
-	    	//} else {
 			SimpleResult result = validVerifier.verify(bagToValidate);
 			if (!result.isSuccess()) {
 				messages = "Bag is not valid:\n";
@@ -1019,7 +1030,20 @@ public class DefaultBag {
 			if (this.isValid) this.isComplete(this.isValid);
 			this.isCompleteChecked = true;
 			this.isValidChecked = true;
-	    	//}
+			if (!isNoProject()) {
+				try {
+					String msgs = validateMetadata();
+					if (msgs != null) {
+						if (messages != null) messages += msgs;
+						else messages = msgs;
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					String msgs = "ERROR validating bag: \n" + ex.getMessage() + "\n";
+					if (messages != null) messages += msgs;
+					else messages = msgs;
+				}
+			}
 		} catch (Exception e) {
 			this.isValid(false);
 			e.printStackTrace();
@@ -1121,7 +1145,7 @@ public class DefaultBag {
 			Bag newBag = bw.write(bilBag, bagFile);
 			if (newBag != null) bilBag = newBag;
 			this.isNewbag(false);
-			if (!isNoProject()) {
+/*			if (!isNoProject()) {
 				try {
 					String msgs = validateMetadata();
 					if (msgs != null) {
@@ -1135,6 +1159,7 @@ public class DefaultBag {
 					else messages = msgs;
 				}
 			}
+ */
 		} catch (Exception e) {
 			this.isSerialized(false);
 			String msgs = "ERROR creating bag: " + bagFile + "\n" + e.getMessage() + "\n";
