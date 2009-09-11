@@ -26,6 +26,17 @@
     <div id="page_head"><h2>BagIt</h2></div>
 	<div id="page_head"><h3>BIL (BagIt Library) Overview</h3></div>
 	<div id="content">
+		<p>Bagger and BagIt</p>
+		<p>
+		The Bagger application creates bags that conform to the BagIt specification.  However, in addition the Bagger application includes project specific context in the bag.  For example, the eDeposit project out of the U.S. Copyright Office requires the Publisher field in the bagit-info.txt file.
+		</p>
+		<p>For details of the BagIt specification reference the specification document online:</p>
+		<p>
+		<a href="http://www.cdlib.org/inside/diglib/bagit/bagitspec.html"><b>BagIt specification</b></a>
+		</p>
+	</div>
+
+	<div id="content">
 	<p>BagIt package layout</p>
 	<p>
 	A "bag" consists of a base directory containing a set of top-level files comprising the "tag" and a sub-directory named "data/" that holds the payload. The base directory may have any name and the "data/" directory may contain an arbitrary file hierarchy.
@@ -47,7 +58,6 @@
     <div id="page_head"><h2>Required</h2></div>
 	<div id="page_head"><h3>BagIt required vs optional</h3></div>
 	<div id="content">
-	<p>
 	<ul>BagIt requires a bag directory that contains:<br/>
 		<li>manifest txt</li>
 		<ul>
@@ -66,15 +76,6 @@
 		<li>fetch.txt (optional, required for Holey bags)</li>
 		<li>tagmanifest.txt (optional)</li>
 	</ul>
-	</p>
-	<p>Bagger and BagIt</p>
-	<p>
-	The Bagger application creates bags that conform to the BagIt specification.  However, in addition the Bagger application includes project specific context in the bag.  For example, the eDeposit project out of the U.S. Copyright Office requires the Publisher field in the bagit-info.txt file.
-	</p>
-	<p>
-	For details of the BagIt specification reference the specification document online:
-	<a href="http://www.cdlib.org/inside/diglib/bagit/bagitspec.html">BagIt specification</a>
-	</p>
 	</div>
 
     <div id="content">

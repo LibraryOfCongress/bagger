@@ -105,6 +105,50 @@
 	    <p>Selecting Ok on the popup dialog displays the bag and the ‘Is bag valid?’ state message will now display ‘no’.</p>
       </div>
 
+    <a name="profile"></a>
+      <div id="page_head"><h2>Satisfies project profile</h2></div>
+      <div id="content">
+        <p>If a Project profile other than ‘<no profile>’ has been selected, then the bag is not considered valid until all profile rules have been met for that project.  These rules are determined by adding fields to the Project profile that contain requirement constraints.  Each project contains a unique profile.  Additions to a project profile must be saved and reloaded each time the Bagger application is restarted.  See the section Project profiles for more information.</p>
+   		<ul>As an example, selecting the Project profile ‘eDeposit’ will automatically include the Bag-Info fields required for that project.  This Project profile, by default, requires two Bag-Info fields:<br/>
+		   <li><b>’LC-Project’</b>: is required to be present and also is required to have a value equal to the project name, e.g. ‘eDeposit’.  This field cannot be modified or removed<br/></li>
+		   <li><b>’Publisher’</b>: is required to be present.  This field can be modified but not removed.<br/></li>
+		</ul>
+		<p>Once a Project profile has been selected, any validation check performed by Bagger will also check whether the bag satisfies the Project profile rules.  Any required fields will be denoted by an ‘R‘adjacent to the field name.</p>
+		<p>Enter a value for all ‘Other Bag-Info’ fields and select the ‘Save Bag As’ button.</p>
+	    <p>
+	    <img src="images/bagger_edeposit_publisher.jpg" alt="Project profile eDeposit with Publisher" />
+	    </p>
+	    <p>
+	    <img src="images/bagger_edeposit_onsave.jpg" alt="Save Bag As Project profile eDeposit" />
+	    </p>
+	    <p>Select the bag file name you desire, select the ‘Verify Bag after Save?’ checkbox, and then select the ‘Save’ button.</p>
+	    <p>
+	    <img src="images/bagger_edeposit_satisfied_yes.jpg" alt="Satisfies project profile" />
+	    </p>
+	    <p>Once you have selected Ok to confirm all of the popup dialog windows, the status console will now display  ‘yes’ for all three status checks.  Since a Project profile is selected, the ‘Satisfies project profile?’ status is also set to ‘yes’.</p>
+      </div>
+
+      <div id="page_head"><h2>Unsatisfied project profile</h2></div>
+      <div id="content">
+        <p>If there are missing required Bag-Info fields, the ‘Check is complete’ or ‘Check is valid’ test will include a warning about any unsatisfied fields from the Project profile.  An invalid bag can still be saved; however, it will not be considered a valid bag for the selected project.</p>
+        <p>To demonstrate, do not enter a value in the ‘eDeposit’ required field ‘Publisher’.  Then select the ‘Save Bag As’ button.</p>
+	    <p>
+	    <img src="images/bagger_edeposit_nopublisher.jpg" alt="Project profile eDeposit with no Publisher" />
+	    </p>
+	    <p>
+	    <img src="images/bagger_edeposit_valid_onsave.jpg" alt="Save Bag as project profile" />
+	    </p>
+	    <p>Select the bag file name you desire, select the ‘Verify Bag after Save?’ checkbox, and then select the ‘Save’ button.</p>
+	    <p>
+	    <img src="images/bagger_edeposit_unsatisfied.jpg" alt="Project profile validation failed" />
+	    </p>
+	    <p>After the bag is saved and the validation check is performed, a ‘Warning - validation failed’ dialog appears indicating that the, 'Required field Publisher is not provided.'  Selecting the Ok button will update the bag status console.</p>
+	    <p>
+	    <img src="images/bagger_edeposit_satisfied_no.jpg" alt="Does not satisfy project profile" />
+	    </p>
+	    <p>Since a Project profile is selected, and there is a missing required field value, the ‘Satisfies project profile?’ status is set to ‘no’.</p>
+      </div>
+
     <div id="content">
       <a href="bagfiles.html">Previous</a>
       <a href="baginfo.html">Next</a>
