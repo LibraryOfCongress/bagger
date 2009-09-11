@@ -129,7 +129,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             	removeButton.setContentAreaFilled(false);
             	removeButton.addActionListener(new RemoveFieldHandler());
 				logger.debug("OrganizationInfoForm add: " + field);
-				if (field.getValue().length() > 30) {
+				if (field.getValue() != null && field.getValue().length() > 30) {
 					field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
 				}
             	if (field.isRequired()) {

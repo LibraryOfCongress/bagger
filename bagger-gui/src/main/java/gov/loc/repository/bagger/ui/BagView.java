@@ -1315,7 +1315,6 @@ public class BagView extends AbstractView implements ApplicationListener {
                             progressMonitor.close();
                         }
                         if (clearAfterSaving) {
-                        	task.done = true;
                 			bag.isSerialized(false);
                         	statusBarEnd();
             	        	clearExistingBag(getPropertyMessage("compositePane.message.clear"));
@@ -1433,6 +1432,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         holeyCheckbox.setSelected(false);
         holeyValue.setText("false");
         this.baggerRules.clear();
+        clearProfiles();
+		updateProject(getPropertyMessage("bag.project.noproject"));
     	bag.isNewbag(true);
     	bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
     	bagPayloadTreePanel.refresh(bagPayloadTree);
@@ -1741,8 +1742,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             bagTagFileTree.addNode(bf.getFilepath());
         }
         bagTagFileTreePanel.refresh(bagTagFileTree);
-    	bagInfoInputPane.populateForms(bag, true);
-        compositePane.updateCompositePaneTabs(bag, messages);
 /* */
         addDataButton.setEnabled(true);
         addDataExecutor.setEnabled(true);
@@ -1765,6 +1764,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagButtonPanel.invalidate();
         topButtonPanel.invalidate();
         bag.isNewbag(true);
+    	bagInfoInputPane.populateForms(bag, true);
+        compositePane.updateCompositePaneTabs(bag, messages);
 
         statusBarEnd();
     }
