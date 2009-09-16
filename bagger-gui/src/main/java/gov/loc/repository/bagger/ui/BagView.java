@@ -16,6 +16,8 @@ import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagger.ui.handlers.RemoveTagFileHandler;
+import gov.loc.repository.bagger.ui.handlers.StartExecutor;
+import gov.loc.repository.bagger.ui.handlers.StartNewBagHandler;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.Cancellable;
@@ -184,7 +186,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     public AddDataExecutor addDataExecutor = new AddDataExecutor();
     private SaveBagHandler saveBagHandler;
     public SaveBagExecutor saveBagExecutor = new SaveBagExecutor();
-	public StartExecutor startExecutor = new StartExecutor();
+    public StartNewBagHandler startNewBagHandler;
+	public StartExecutor startExecutor = new StartExecutor(this);
     public OpenExecutor openExecutor = new OpenExecutor();
     public RemoveDataExecutor removeDataExecutor = new RemoveDataExecutor();
     public SaveBagAsExecutor saveBagAsExecutor = new SaveBagAsExecutor(this);
@@ -448,7 +451,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buttonPanel.setBackground(bgColor);
 
     	JButton createButton = new JButton(getPropertyMessage("bag.button.create"));
-    	createButton.addActionListener(new StartNewBagHandler(this));
+    	startNewBagHandler = new StartNewBagHandler(this);
+    	createButton.addActionListener(startNewBagHandler);
     	createButton.setOpaque(true);
     	createButton.setBackground(bgColor);
     	createButton.setForeground(fgColor);
@@ -1582,31 +1586,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 	        enableSettings(true);
     	}
 		bag.setName(bagName);
-    }
-
-    private class StartExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	newBag();
-        }
-    }
-
-    private class StartNewBagHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-	   	BagView bagView;
-	   	
-	   	public StartNewBagHandler(BagView bagView) {
-	   		this.bagView = bagView;
-	   	}
-
-    	public void actionPerformed(ActionEvent e) {
-    		newBag();
-       	}
-    }
-
-    private void newBag() {
-        newBagFrame = new NewBagFrame(this, getPropertyMessage("bag.frame.new"));
-        newBagFrame.setBag(bag);
-        newBagFrame.setVisible(true);
     }
 
     public void createNewBag() {
