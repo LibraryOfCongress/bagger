@@ -83,7 +83,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 					if (bagView.clearAfterSaving) {
 						bag.isSerialized(false);
 						bagView.statusBarEnd();
-						bagView.clearExistingBag(bagView.getPropertyMessage("compositePane.message.clear"));
+						bagView.clearBagHandler.clearExistingBag(bagView.getPropertyMessage("compositePane.message.clear"));
 					} else {
 						bag.isValidateOnSave(bagView.validateOnSave);
 						if (bag.isValidateOnSave()) {

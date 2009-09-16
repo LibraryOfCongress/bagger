@@ -15,6 +15,8 @@ import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
+import gov.loc.repository.bagger.ui.handlers.ClearBagExecutor;
+import gov.loc.repository.bagger.ui.handlers.ClearBagHandler;
 import gov.loc.repository.bagger.ui.handlers.CompleteBagHandler;
 import gov.loc.repository.bagger.ui.handlers.CompleteExecutor;
 import gov.loc.repository.bagger.ui.handlers.OpenBagHandler;
@@ -118,7 +120,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
 	private Bagger bagger;
     private DefaultBag bag;
-    private BaggerValidationRulesSource baggerRules;
+    public BaggerValidationRulesSource baggerRules;
     public int bagCount = 0;
     public boolean clearAfterSaving = false;
     public File bagRootPath;
@@ -187,8 +189,8 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     private CreateBagInPlaceHandler createBagInPlaceHandler;
     public CreateBagInPlaceExecutor createBagInPlaceExecutor = new CreateBagInPlaceExecutor();
-    private ClearBagHandler clearBagHandler;
-    public ClearBagExecutor clearExecutor = new ClearBagExecutor();
+    public ClearBagHandler clearBagHandler;
+    public ClearBagExecutor clearExecutor = new ClearBagExecutor(this);
     public ValidateBagHandler validateBagHandler;
     public ValidateExecutor validateExecutor = new ValidateExecutor(this);
     public CompleteBagHandler completeBagHandler;
@@ -532,7 +534,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         buttonPanel.add(validateButton);
         
         closeButton = new JButton(getPropertyMessage("bag.button.clear"));
-    	clearBagHandler = new ClearBagHandler();
+    	clearBagHandler = new ClearBagHandler(this);
     	closeButton.addActionListener(clearBagHandler);
     	closeButton.setEnabled(false);
     	closeButton.setOpaque(true);
@@ -998,86 +1000,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    dialog.showDialog();
     }
 
-    public class ClearBagExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-    		closeExistingBag();
-        }
-    }
-
-    private class ClearBagHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-	   	
-    	public void actionPerformed(ActionEvent e) {
-    		closeExistingBag();
-       	}
-    }
-    
-    public void closeExistingBag() {
-    	confirmCloseBag();
-    }
-
-    private void confirmCloseBag() {
-	    ConfirmationDialog dialog = new ConfirmationDialog() {
-	        protected void onConfirm() {
-	        	clearAfterSaving = true;
-	        	saveBagHandler.saveBagAs();
-	        }
-	        protected void onCancel() {
-        		super.onCancel();
-	        	clearExistingBag(getPropertyMessage("compositePane.message.clear"));
-	        }
-	    };
-
-	    dialog.setCloseAction(CloseAction.DISPOSE);
-	    dialog.setTitle(getPropertyMessage("bag.dialog.title.close"));
-	    dialog.setConfirmationMessage(getPropertyMessage("bag.dialog.message.close"));
-	    dialog.showDialog();
-	}
-    
-    public void clearExistingBag(String messages) {
-    	clearAfterSaving = false;
-    	bagInfoInputPane.enableForms(bag, false);
-    	newDefaultBag(null);
-    	bag.getInfo().setFieldMap(null);
-    	bag.getInfo().setProfileMap(null);
-        holeyCheckbox.setSelected(false);
-        holeyValue.setText("false");
-        this.baggerRules.clear();
-        clearProfiles();
-		updateProject(getPropertyMessage("bag.project.noproject"));
-    	bag.isNewbag(true);
-    	bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
-    	bagPayloadTreePanel.refresh(bagPayloadTree);
-    	bagTagFileTree = new BagTree(this, getPropertyMessage("bag.label.noname"), false);
-    	bagTagFileTreePanel.refresh(bagTagFileTree);
-    	enableBagSettings(false);
-        noneButton.setSelected(true);
-    	addDataButton.setEnabled(false);
-    	addDataExecutor.setEnabled(false);
-        updatePropButton.setEnabled(false);
-    	saveButton.setEnabled(false);
-    	saveBagExecutor.setEnabled(false);
-    	saveAsButton.setEnabled(false);
-    	saveBagAsExecutor.setEnabled(false);
-    	removeDataButton.setEnabled(false);
-    	showTagButton.setEnabled(false);
-    	addTagFileButton.setEnabled(false);
-    	removeTagFileButton.setEnabled(false);
-    	closeButton.setEnabled(false);
-    	validateButton.setEnabled(false);
-    	completeButton.setEnabled(false);
-    	clearExecutor.setEnabled(false);
-    	validateExecutor.setEnabled(false);
-    	completeExecutor.setEnabled(false);
-    	bagButtonPanel.invalidate();
-    	topButtonPanel.invalidate();
-
-        bagNameField.setText(bag.getName());
-        enableSettings(false);
-		bagInfoInputPane.populateForms(bag, false);
-        compositePane.updateCompositePaneTabs(bag, messages);
-    }
-    
     public void enableSettings(boolean b) {
         bagNameField.setEnabled(b);
         bagVersionValue.setEnabled(b);
@@ -1100,7 +1022,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         addDataExecutor.setEnabled(false);
         saveBagExecutor.setEnabled(false);
         saveBagAsExecutor.setEnabled(false);
-        //saveProfileExecutor.setEnabled(true);
     }
 
     protected void registerLocalCommandExecutors(PageComponentContext context) {
@@ -1113,15 +1034,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	context.register("addDataCommand", addDataExecutor);
     	context.register("saveBagCommand", saveBagExecutor);
     	context.register("saveBagAsCommand", saveBagAsExecutor);
-    	//context.register("saveProfileCommand", saveProfileExecutor);
     }
-/*
-    private class SaveProfileExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	storeProfile();
-        }
-    }
-*/
+
     public String storeProfile() {
     	try {
         	Project bagProject = bag.getProject();
@@ -1206,7 +1120,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagCount++;
 
     	bagInfoInputPane.enableForms(bag, true);
-    	clearExistingBag(messages);
+    	clearBagHandler.clearExistingBag(messages);
         bagVersionList.setSelectedItem(bagVersionValue.getText());
         bagVersionValue.setText(bagVersionValue.getText());
 
@@ -1219,7 +1133,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 		messages = updateBaggerRules();
     	initializeProfile();
 
-        // TODO: populate tag file names into bagTagFileTree
         Bag b = bag.getBag();
     	bagTagFileTree = new BagTree(this, bag.getName(), false);
         Collection<BagFile> tags = b.getTags();
@@ -1283,7 +1196,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     public void createPreBag(File data) {
     	String messages = "";
-    	clearExistingBag(messages);
+    	clearBagHandler.clearExistingBag(messages);
     	try {
     		bag.createPreBag(data, this.bagVersionValue.getText());
     	} catch (Exception e) {
@@ -1352,7 +1265,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public void openExistingBag(File file) {
     	String messages = "";
     	bagInfoInputPane.enableForms(bag, true);
-    	clearExistingBag(messages);
+    	clearBagHandler.clearExistingBag(messages);
     	messages = "";
 
 		try {
