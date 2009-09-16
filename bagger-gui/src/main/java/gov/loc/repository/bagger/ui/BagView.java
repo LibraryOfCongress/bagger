@@ -15,6 +15,7 @@ import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
+import gov.loc.repository.bagger.ui.handlers.RemoveTagFileHandler;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.Cancellable;
@@ -188,7 +189,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     public RemoveDataExecutor removeDataExecutor = new RemoveDataExecutor();
     public SaveBagAsExecutor saveBagAsExecutor = new SaveBagAsExecutor(this);
     public AddTagFileExecutor addTagFileExecutor = new AddTagFileExecutor();
-    public RemoveTagFileExecutor removeTagFileExecutor = new RemoveTagFileExecutor();
     public SaveProfileExecutor saveProfileExecutor = new SaveProfileExecutor();
 
     public Color errorColor = new Color(255, 128, 128);
@@ -619,7 +619,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buttonPanel.add(addTagFileButton, BorderLayout.CENTER);
     	
     	removeTagFileButton = new JButton(getPropertyMessage("bag.tagbutton.remove"));
-    	removeTagFileButton.addActionListener(new RemoveTagFileHandler());
+    	removeTagFileButton.addActionListener(new RemoveTagFileHandler(this));
     	removeTagFileButton.setEnabled(false);
     	removeTagFileButton.setToolTipText(getPropertyMessage("bag.tagbutton.remove.help"));
     	buttonPanel.add(removeTagFileButton, BorderLayout.SOUTH);
@@ -803,12 +803,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             bag.isValidChecked(false);
             compositePane.updateCompositePaneTabs(bag, "Tag files changed.");
     	}
-    }
-
-    private class RemoveTagFileExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	removeTagFile();
-        }
     }
 
     public class RemoveDataExecutor extends AbstractActionCommandExecutor {
@@ -1487,7 +1481,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         saveBagExecutor.setEnabled(false);
         saveBagAsExecutor.setEnabled(false);
         addTagFileExecutor.setEnabled(false);
-        removeTagFileExecutor.setEnabled(false);
         saveProfileExecutor.setEnabled(true);
     }
 
@@ -1503,7 +1496,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	context.register("saveBagCommand", saveBagExecutor);
     	context.register("saveBagAsCommand", saveBagAsExecutor);
     	context.register("addTagFileCommand", addTagFileExecutor);
-    	context.register("removeTagFileCommand", removeTagFileExecutor);
     	context.register("saveProfileCommand", saveProfileExecutor);
     }
 
@@ -2006,48 +1998,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             compositePane.updateCompositePaneTabs(bag, "Tag file added.");
             bagTagFileTreePanel.refresh(bagTagFileTree);
         }
-    }
-
-    private class RemoveTagFileHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-    		removeTagFile();
-       	}
-    }
-
-    public void removeTagFile() {
-    	String message = "";
-    	Bag b = bag.getBag();
-
-    	TreePath[] paths = bagTagFileTree.getSelectionPaths();
-    	if (paths != null) {
-    		DefaultTreeModel model = (DefaultTreeModel)bagTagFileTree.getModel();
-        	for (int i=0; i < paths.length; i++) {
-        		TreePath path = paths[i];
-        		Object node = path.getLastPathComponent();
-    			try {
-            		if (node != null) {
-                		if (node instanceof MutableTreeNode) {
-                    		b.removeBagFile(node.toString());
-            				model.removeNodeFromParent((MutableTreeNode)node);
-            			} else {
-                    		b.removeBagFile((String)node);
-            				DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(node);
-            				model.removeNodeFromParent((MutableTreeNode)aNode);
-            			}
-            		}
-    			} catch (Exception e) {
-            	    message += "Error trying to remove file: " + node + "\n";
-            	    showWarningErrorDialog("Error - file not removed", "Error trying to remove file: " + node + "\n" + e.getMessage());
-    			}
-        	}
-    		bag.isCompleteChecked(false);
-            bag.isValidChecked(false);
-            compositePane.updateCompositePaneTabs(bag, "Tag file removed.");
-        	bagTagFileTree.removeSelectionPaths(paths);
-        	bagTagFileTreePanel.refresh(bagTagFileTree);
-    	}
     }
 
     public String updateProject(String projectName) {
