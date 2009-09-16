@@ -16,6 +16,7 @@ import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagger.ui.handlers.RemoveTagFileHandler;
+import gov.loc.repository.bagger.ui.handlers.ShowTagFilesHandler;
 import gov.loc.repository.bagger.ui.handlers.StartExecutor;
 import gov.loc.repository.bagger.ui.handlers.StartNewBagHandler;
 import gov.loc.repository.bagit.Bag;
@@ -611,7 +612,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	JPanel buttonPanel = new JPanel(new BorderLayout(5, 5));
 
     	showTagButton = new JButton(getPropertyMessage("bag.tagbutton.show"));
-    	showTagButton.addActionListener(new ShowTagFilesHandler());
+    	showTagButton.addActionListener(new ShowTagFilesHandler(this));
     	showTagButton.setEnabled(false);
     	showTagButton.setToolTipText(getPropertyMessage("bag.tagbutton.show.help"));
     	buttonPanel.add(showTagButton, BorderLayout.NORTH);
@@ -1927,21 +1928,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             bagTagFileTree.addNode(bf.getFilepath());
         }
         bagTagFileTreePanel.refresh(bagTagFileTree);
-    }
-    
-    private class ShowTagFilesHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-    		showTagFiles();
-       	}
-    }
-    
-    public void showTagFiles() {
-    	tagManifestPane.updateCompositePaneTabs(bag);
-    	tagFilesFrame.addComponents(tagManifestPane);
-    	tagFilesFrame.setVisible(true);
-    	tagFilesFrame.setAlwaysOnTop(true);
     }
 
     private class AddTagFileHandler extends AbstractAction {

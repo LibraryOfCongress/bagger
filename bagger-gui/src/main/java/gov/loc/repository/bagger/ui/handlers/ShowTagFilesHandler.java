@@ -12,25 +12,26 @@ import javax.swing.AbstractAction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class StartNewBagHandler extends AbstractAction {
-	private static final Log log = LogFactory.getLog(StartNewBagHandler.class);
+public class ShowTagFilesHandler extends AbstractAction {
+	private static final Log log = LogFactory.getLog(ShowTagFilesHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;
 
-	public StartNewBagHandler(BagView bagView) {
+	public ShowTagFilesHandler(BagView bagView) {
 		super();
 		this.bagView = bagView;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		newBag();
+   		showTagFiles();
 	}
 
-    public void newBag() {
+    public void showTagFiles() {
     	bag = bagView.getBag();
-    	NewBagFrame newBagFrame = new NewBagFrame(bagView, bagView.getPropertyMessage("bag.frame.new"));
-        newBagFrame.setBag(bag);
-        newBagFrame.setVisible(true);
+    	bagView.tagManifestPane.updateCompositePaneTabs(bag);
+    	bagView.tagFilesFrame.addComponents(bagView.tagManifestPane);
+    	bagView.tagFilesFrame.setVisible(true);
+    	bagView.tagFilesFrame.setAlwaysOnTop(true);
     }
 }
