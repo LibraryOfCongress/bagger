@@ -17,6 +17,8 @@ import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagger.ui.handlers.CompleteBagHandler;
 import gov.loc.repository.bagger.ui.handlers.CompleteExecutor;
+import gov.loc.repository.bagger.ui.handlers.OpenBagHandler;
+import gov.loc.repository.bagger.ui.handlers.OpenExecutor;
 import gov.loc.repository.bagger.ui.handlers.RemoveTagFileHandler;
 import gov.loc.repository.bagger.ui.handlers.SaveBagAsExecutor;
 import gov.loc.repository.bagger.ui.handlers.SaveBagAsHandler;
@@ -195,7 +197,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     public SaveBagExecutor saveBagExecutor = new SaveBagExecutor();
     public StartNewBagHandler startNewBagHandler;
 	public StartExecutor startExecutor = new StartExecutor(this);
-    public OpenExecutor openExecutor = new OpenExecutor();
+	public OpenBagHandler openBagHandler;
+    public OpenExecutor openExecutor = new OpenExecutor(this);
     public SaveBagAsHandler saveBagAsHandler;
     public SaveBagAsExecutor saveBagAsExecutor = new SaveBagAsExecutor(this);
     //public SaveProfileExecutor saveProfileExecutor = new SaveProfileExecutor();
@@ -466,8 +469,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buttonPanel.add(createButton);
 
     	openButton = new JButton(getPropertyMessage("bag.button.open"));
-    	//openBagHandler = new OpenBagHandler(this);
-    	openButton.addActionListener(new OpenBagHandler());
+    	openBagHandler = new OpenBagHandler(this);
+    	openButton.addActionListener(openBagHandler);
     	openButton.setEnabled(true);
     	openButton.setOpaque(true);
     	openButton.setBackground(bgColor);
@@ -987,71 +990,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         	topButtonPanel.invalidate();
     	}
     }
-/*
-    public class ValidateExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-			validateBagHandler.validateBag();
-        }
-    }
 
-    private class ValidateBagHandler extends AbstractAction implements Progress {
-       	private static final long serialVersionUID = 1L;
-    	private LongTask task;
-
-    	public void actionPerformed(ActionEvent e) {
-    		validateBag();
-    	}
-
-    	public void setTask(LongTask task) {
-    		this.task = task;
-    	}
-
-    	public void execute() {
-        	while (!task.canceled && !task.done) {
-                try {
-                    Thread.sleep(1000); //sleep for a second
-
-            		CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
-            		completeVerifier.addProgressListener(task);
-            		
-            		ParallelManifestChecksumVerifier manifestVerifier = new ParallelManifestChecksumVerifier();
-            		manifestVerifier.addProgressListener(task);
-            		
-            		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
-            		validVerifier.addProgressListener(task);
-            		longRunningProcess = validVerifier;
-
-                    String messages = bag.validateBag(validVerifier);
-            	    if (messages != null && !messages.trim().isEmpty()) {
-            	    	showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);
-            	    	task.current = task.lengthOfTask;
-            	    }
-            	    else {
-            	    	showWarningErrorDialog("Validation Dialog", "Validation successful.");
-            	    	task.current = task.lengthOfTask;
-            	    }
-                	setBag(bag);
-                	compositePane.updateCompositePaneTabs(bag, messages);
-                    if (task.current >= task.lengthOfTask) {
-                        task.done = true;
-                        task.current = task.lengthOfTask;
-                    }
-                    task.statMessage = "Completed " + task.current +
-                                  " out of " + task.lengthOfTask + ".";
-                } catch (InterruptedException e) {
-                	e.printStackTrace();
-                	task.current = task.lengthOfTask;
-            	    showWarningErrorDialog("Warning - validation interrupted", "Error trying validate bag: " + e.getMessage());
-                }
-            }
-        	statusBarEnd();
-    	}
-    }
-
-    private void validateBag() {
-    	statusBarBegin(validateBagHandler, "Validating bag...", 1L);
-    }
-*/
     public void saveBagAs() {
         File selectFile = new File(File.separator+".");
         JFrame frame = new JFrame();
@@ -1581,7 +1520,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bag.getBag().addFileToPayload(data);
     	boolean alreadyExists = bagPayloadTree.addNodes(data, false);
     	bagPayloadTreePanel.refresh(bagPayloadTree);
-    	/* */
+
     	File bagDir = data.getParentFile();
     	String bagFileName = "bag_" + data.getName();
     	bag.isClear(false);
@@ -1589,7 +1528,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagNameField.invalidate();
         File bagFile = new File(bagDir, bagFileName);
 		save(bagFile);
-    	/* */
+
     	compositePane.setBag(bag);
     	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
         updateManifestPane();
@@ -1609,7 +1548,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             bagTagFileTree.addNode(bf.getFilepath());
         }
         bagTagFileTreePanel.refresh(bagTagFileTree);
-/* */
+
         addDataButton.setEnabled(true);
         addDataExecutor.setEnabled(true);
         updatePropButton.setEnabled(false);
@@ -1636,62 +1575,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         statusBarEnd();
     }
 
-    private class OpenExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	openBag();
-        }    	
-    }
-    
-    private class OpenBagHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-    		openBag();
-    	}
-
-    }
-
-    private void openBag() {
-        File selectFile = new File(File.separator+".");
-        JFrame frame = new JFrame();
-		JFileChooser fo = new JFileChooser(selectFile);
-		fo.setDialogType(JFileChooser.OPEN_DIALOG);
-    	fo.addChoosableFileFilter(noFilter);
-    	fo.addChoosableFileFilter(zipFilter);
-        fo.addChoosableFileFilter(tarFilter);
-		fo.setFileFilter(noFilter);
-	    fo.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-	    if (bagRootPath != null) fo.setCurrentDirectory(bagRootPath.getParentFile());
-		fo.setDialogTitle("Existing Bag Location");
-    	int option = fo.showOpenDialog(frame);
-
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File file = fo.getSelectedFile();
-            if (file == null) file = bagRootPath;
-            openExistingBag(file);
-            addDataButton.setEnabled(true);
-            addDataExecutor.setEnabled(true);
-            updatePropButton.setEnabled(false);
-            saveButton.setEnabled(true);
-            saveBagExecutor.setEnabled(true);
-            saveAsButton.setEnabled(true);
-            removeDataButton.setEnabled(true);
-            addTagFileButton.setEnabled(true);
-            removeTagFileButton.setEnabled(true);
-            showTagButton.setEnabled(true);
-            saveBagAsExecutor.setEnabled(true);
-            bagButtonPanel.invalidate();
-            closeButton.setEnabled(true);
-            validateButton.setEnabled(true);
-            completeButton.setEnabled(true);
-            completeExecutor.setEnabled(true);
-            validateExecutor.setEnabled(true);
-            topButtonPanel.invalidate();
-            bag.isNewbag(false);
-        }
-    }
-
-    private void openExistingBag(File file) {
+    public void openExistingBag(File file) {
     	String messages = "";
     	bagInfoInputPane.enableForms(bag, true);
     	clearExistingBag(messages);
