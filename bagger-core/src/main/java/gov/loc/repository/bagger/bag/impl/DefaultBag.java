@@ -986,11 +986,12 @@ public class DefaultBag {
 				}
 			}
 		} catch (Exception e) {
-			this.isComplete(false);
 			e.printStackTrace();
 			if (completeVerifier.isCancelled()) {
+				this.isCompleteChecked = false;
 				messages = "Completeness check cancelled.";
 			} else {
+				this.isComplete(false);
 				messages = "Error - Invalid result returned from verifier: " + e.getMessage() + "\n";
 			}
 		}
@@ -1045,11 +1046,12 @@ public class DefaultBag {
 				}
 			}
 		} catch (Exception e) {
-			this.isValid(false);
 			e.printStackTrace();
 			if (validVerifier.isCancelled()) {
 				messages = "Validation check cancelled.";
 			} else {
+				this.isValidChecked = false;
+				this.isValid(false);
 				messages = "Error - Invalid result returned from verifier: " + e.getMessage() + "\n";
 			}
 		}
