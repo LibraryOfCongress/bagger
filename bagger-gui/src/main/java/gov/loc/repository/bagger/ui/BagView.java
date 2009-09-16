@@ -16,6 +16,8 @@ import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagger.ui.handlers.RemoveTagFileHandler;
+import gov.loc.repository.bagger.ui.handlers.SaveBagAsExecutor;
+import gov.loc.repository.bagger.ui.handlers.SaveBagAsHandler;
 import gov.loc.repository.bagger.ui.handlers.ShowTagFilesHandler;
 import gov.loc.repository.bagger.ui.handlers.StartExecutor;
 import gov.loc.repository.bagger.ui.handlers.StartNewBagHandler;
@@ -191,6 +193,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	public StartExecutor startExecutor = new StartExecutor(this);
     public OpenExecutor openExecutor = new OpenExecutor();
     public RemoveDataExecutor removeDataExecutor = new RemoveDataExecutor();
+    public SaveBagAsHandler saveBagAsHandler;
     public SaveBagAsExecutor saveBagAsExecutor = new SaveBagAsExecutor(this);
     public AddTagFileExecutor addTagFileExecutor = new AddTagFileExecutor();
     public SaveProfileExecutor saveProfileExecutor = new SaveProfileExecutor();
@@ -491,7 +494,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         buttonPanel.add(saveButton);
 
     	saveAsButton = new JButton(getPropertyMessage("bag.button.saveas"));
-    	saveAsButton.addActionListener(new SaveBagAsHandler(this));
+    	saveBagAsHandler = new SaveBagAsHandler(this);
+    	saveAsButton.addActionListener(saveBagAsHandler);
         saveAsButton.setEnabled(false);
         saveAsButton.setOpaque(true);
         saveAsButton.setBackground(bgColor);
@@ -1116,37 +1120,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     public void completeBag() {
     	statusBarBegin(completeBagHandler, "Checking if complete...", 1L);
     }
-
-    public class SaveBagAsExecutor extends AbstractActionCommandExecutor {
-	   	BagView bagView;
-
-	   	public SaveBagAsExecutor(BagView bagView) {
-	   		this.bagView = bagView;
-	   	}
-
-	   	public void execute() {
-//        	saveBagAs();
-	        saveBagFrame = new SaveBagFrame(bagView, getPropertyMessage("bag.frame.save"));
-	        saveBagFrame.setBag(bag);
-			saveBagFrame.setVisible(true);
-        }
-    }
-
-	private class SaveBagAsHandler extends AbstractAction {
-	   	private static final long serialVersionUID = 1L;
-	   	BagView bagView;
-	   	
-	   	public SaveBagAsHandler(BagView bagView) {
-	   		this.bagView = bagView;
-	   	}
-
-		public void actionPerformed(ActionEvent e) {
-	        saveBagFrame = new SaveBagFrame(bagView, getPropertyMessage("bag.frame.save"));
-	        saveBagFrame.setBag(bag);
-			saveBagFrame.setVisible(true);
-	   	}
-
-	}
 
     public void saveBagAs() {
         File selectFile = new File(File.separator+".");
