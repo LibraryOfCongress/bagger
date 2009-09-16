@@ -22,6 +22,8 @@ import gov.loc.repository.bagger.ui.handlers.OpenExecutor;
 import gov.loc.repository.bagger.ui.handlers.RemoveTagFileHandler;
 import gov.loc.repository.bagger.ui.handlers.SaveBagAsExecutor;
 import gov.loc.repository.bagger.ui.handlers.SaveBagAsHandler;
+import gov.loc.repository.bagger.ui.handlers.SaveBagExecutor;
+import gov.loc.repository.bagger.ui.handlers.SaveBagHandler;
 import gov.loc.repository.bagger.ui.handlers.ShowTagFilesHandler;
 import gov.loc.repository.bagger.ui.handlers.StartExecutor;
 import gov.loc.repository.bagger.ui.handlers.StartNewBagHandler;
@@ -107,18 +109,18 @@ public class BagView extends AbstractView implements ApplicationListener {
     public final static int ONE_SECOND = 1000;
 	private int DEFAULT_WIDTH = 1024;
 	private int DEFAULT_HEIGHT = 768;
-    private ProgressMonitor progressMonitor;
+    public ProgressMonitor progressMonitor;
     private JTextArea taskOutput;
     private Timer timer;
     public LongTask task;
     public Cancellable longRunningProcess = null;
-    private Writer bagWriter = null;
+    public Writer bagWriter = null;
 
 	private Bagger bagger;
     private DefaultBag bag;
     private BaggerValidationRulesSource baggerRules;
     public int bagCount = 0;
-    private boolean clearAfterSaving = false;
+    public boolean clearAfterSaving = false;
     public File bagRootPath;
     public File tmpRootPath;
     public File parentSrc;
@@ -193,8 +195,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     public CompleteExecutor completeExecutor = new CompleteExecutor(this);
     private AddDataHandler addDataHandler;
     public AddDataExecutor addDataExecutor = new AddDataExecutor();
-    private SaveBagHandler saveBagHandler;
-    public SaveBagExecutor saveBagExecutor = new SaveBagExecutor();
+    public SaveBagHandler saveBagHandler;
+    public SaveBagExecutor saveBagExecutor = new SaveBagExecutor(this);
     public StartNewBagHandler startNewBagHandler;
 	public StartExecutor startExecutor = new StartExecutor(this);
 	public OpenBagHandler openBagHandler;
@@ -489,7 +491,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buttonPanel.add(createSkeletonButton);
 
         saveButton = new JButton(getPropertyMessage("bag.button.save"));
-        saveBagHandler = new SaveBagHandler();
+        saveBagHandler = new SaveBagHandler(this);
         saveButton.addActionListener(saveBagHandler);
         saveButton.setEnabled(false);
         saveButton.setOpaque(true);
@@ -991,240 +993,12 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
     }
 
-    public void saveBagAs() {
-        File selectFile = new File(File.separator+".");
-        JFrame frame = new JFrame();
-        JFileChooser fs = new JFileChooser(selectFile);
-    	fs.setDialogType(JFileChooser.SAVE_DIALOG);
-    	fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    	fs.addChoosableFileFilter(noFilter);
-    	fs.addChoosableFileFilter(zipFilter);
-        fs.addChoosableFileFilter(tarFilter);
-        fs.setDialogTitle("Save Bag As");
-    	fs.setCurrentDirectory(bag.getRootDir());
-    	if (bag.getName() != null && !bag.getName().equalsIgnoreCase(getPropertyMessage("bag.label.noname"))) {
-    		String selectedName = bag.getName();
-    		if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
-    			selectedName += "."+DefaultBag.ZIP_LABEL;
-    			fs.setFileFilter(zipFilter);
-    		}
-    		else if (bag.getSerialMode() == DefaultBag.TAR_MODE) {
-    			selectedName += "."+DefaultBag.TAR_LABEL;
-    			fs.setFileFilter(tarFilter);
-    		}
-    		else {
-    			fs.setFileFilter(noFilter);
-    		}
-    		fs.setSelectedFile(new File(selectedName));
-    	}
-    	int	option = fs.showSaveDialog(frame);
-
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File file = fs.getSelectedFile();
-            save(file);
-        }
-    }
-
-    public void save(File file) {
-        if (file == null) file = bagRootPath;
-        bag.setName(file.getName());
-		File bagFile = new File(file, bag.getName());
-    	if (bagFile.exists()) {
-    		tmpRootPath = file;
-            confirmWriteBag();
-    	} else {
-        	if (bag.getSize() > DefaultBag.MAX_SIZE) {
-        		tmpRootPath = file;
-        		confirmAcceptBagSize();
-        	} else {
-        		bagRootPath = file;
-        		saveBag(bagRootPath);
-        	}
-    	}
-        String fileName = bagFile.getName(); //bagFile.getAbsolutePath();
-        bagNameField.setText(fileName);
-        this.getControl().invalidate();
-        bagNameField.setCaretPosition(fileName.length()-1);
-        enableSettings(true);
-    }
-
-    private void confirmWriteBag() {
-	    ConfirmationDialog dialog = new ConfirmationDialog() {
-	    	boolean isCancel = true;
-	        protected void onConfirm() {
-	        	if (bag.getSize() > DefaultBag.MAX_SIZE) {
-	        		confirmAcceptBagSize();
-	        	} else {
-		        	bagRootPath = tmpRootPath;
-		        	saveBag(bagRootPath);
-	        	}
-	        }
-	        protected void onCancel() {
-        		super.onCancel();
-	        	if (isCancel) {
-	        		cancelWriteBag();
-	        		isCancel = false;
-	        	}
-	        }
-	    };
-
-	    dialog.setCloseAction(CloseAction.DISPOSE);
-	    dialog.setTitle(getPropertyMessage("bag.dialog.title.create"));
-	    dialog.setConfirmationMessage(getPropertyMessage("bag.dialog.message.create"));
-	    dialog.showDialog();
-	}
-
-    private void cancelWriteBag() {
-    	clearAfterSaving = false;
-    	saveBagAs();
-    }
-
-    private void confirmAcceptBagSize() {
-	    ConfirmationDialog dialog = new ConfirmationDialog() {
-	        protected void onConfirm() {
-	        	bagRootPath = tmpRootPath;
-	        	saveBag(bagRootPath);
-	        }
-	    };
-
-	    dialog.setCloseAction(CloseAction.DISPOSE);
-	    dialog.setTitle(getPropertyMessage("bag.dialog.title.create"));
-	    dialog.setConfirmationMessage(getPropertyMessage("bag.dialog.message.accept"));
-	    dialog.showDialog();
-	}
-
-	public class SaveBagExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	if (bagRootPath.exists()) {
-        		tmpRootPath = bagRootPath;
-                confirmWriteBag();
-        	} else {
-        		saveBag(bagRootPath);
-        	}
-        }
-    }
-
-    private class SaveBagHandler extends AbstractAction implements Progress {
-       	private static final long serialVersionUID = 1L;
-       	private LongTask task;
-
-       	public void actionPerformed(ActionEvent e) {
-        	if (bagRootPath.exists()) {
-        		tmpRootPath = bagRootPath;
-                confirmWriteBag();
-        	} else {
-        		saveBag(bagRootPath);
-        	}
-       	}
-
-    	public void setTask(LongTask task) {
-    		this.task = task;
-    	}
-
-    	public void execute() {
-        	while (!task.canceled && !task.done) {
-                try {
-                    Thread.sleep(1000); //sleep for a second
-                    /* */
-                    short mode = bag.getSerialMode();
-                    if (mode == DefaultBag.NO_MODE) {
-                    	bagWriter = new FileSystemWriter(bag.getBagFactory());
-                    } else if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
-                    	bagWriter = new ZipWriter(bag.getBagFactory());
-                    } else if (mode == DefaultBag.TAR_MODE) {
-                    	bagWriter = new TarWriter(bag.getBagFactory());
-                    } else if (mode == DefaultBag.TAR_GZ_MODE) {
-                    	bagWriter = new TarGzWriter(bag.getBagFactory());
-                    } else if (mode == DefaultBag.TAR_BZ2_MODE) {
-                    	bagWriter = new TarBz2Writer(bag.getBagFactory());
-					}
-        			bagWriter.addProgressListener(task);
-            		longRunningProcess = bagWriter;
-                    String messages = bag.write(bagWriter);
-
-                    if (task.current >= task.lengthOfTask) {
-                        task.done = true;
-                        task.current = task.lengthOfTask;
-                    }
-                    if (messages != null && !messages.trim().isEmpty()) showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
-                    else showWarningErrorDialog("Bag saved", "Bag saved successfully.\n" );
-                    if (bag.isSerialized()) {
-                        if (progressMonitor.isCanceled() || task.isDone()) {
-                            progressMonitor.close();
-                        }
-                        if (clearAfterSaving) {
-                			bag.isSerialized(false);
-                        	statusBarEnd();
-            	        	clearExistingBag(getPropertyMessage("compositePane.message.clear"));
-                        } else {
-                            bag.isValidateOnSave(validateOnSave);
-                    		if (bag.isValidateOnSave()) {
-                    			validateBagHandler.validateBag();
-                    		}
-                        	statusBarEnd();
-            				File bagFile = bag.getBagFileName();
-            				log.info("BagView.openExistingBag: " + bagFile);
-            				openExistingBag(bagFile);
-            	            addDataButton.setEnabled(true);
-            	            addDataExecutor.setEnabled(true);
-            	            updatePropButton.setEnabled(false);
-            	            saveButton.setEnabled(true);
-            	            saveBagExecutor.setEnabled(true);
-            	            saveAsButton.setEnabled(true);
-            	            removeDataButton.setEnabled(true);
-            	            addTagFileButton.setEnabled(true);
-            	            removeTagFileButton.setEnabled(true);
-            	            showTagButton.setEnabled(true);
-            	            saveBagAsExecutor.setEnabled(true);
-            	            bagButtonPanel.invalidate();
-            	            closeButton.setEnabled(true);
-            	            validateButton.setEnabled(true);
-            	            completeButton.setEnabled(true);
-            	            clearExecutor.setEnabled(true);
-            	            validateExecutor.setEnabled(true);
-            	            completeExecutor.setEnabled(true);
-            	            topButtonPanel.invalidate();
-            	            bag.isNewbag(false);
-                        }
-                    } else {
-                        compositePane.updateCompositePaneTabs(bag, messages);
-                        updateManifestPane();
-                    }
-                } catch (InterruptedException e) {
-                	task.done = true;
-        			bag.isSerialized(false);
-        			if (longRunningProcess.isCancelled()) {
-            			showWarningErrorDialog("Save cancelled", "Save cancelled.");
-        			} else {
-            			showWarningErrorDialog("Warning - save interrupted", "Problem saving bag: " + bagRootPath + "\n" + e.getMessage());
-        			}
-                	e.printStackTrace();
-                } catch (Exception e) {
-                	task.done = true;
-        			bag.isSerialized(false);
-        			if (longRunningProcess.isCancelled()) {
-            			showWarningErrorDialog("Save cancelled", "Save cancelled.");
-        			} else {
-            			showWarningErrorDialog("Error - bag not saved", "Error saving bag: " + bagRootPath + "\n" + e.getMessage());
-        			}
-                	e.printStackTrace();
-                }
-        	}
-        	statusBarEnd();
-    	}
-    }
-
-    public void saveBag(File file) {
-        bag.setRootDir(file);
-        statusBarBegin(saveBagHandler, "Writing bag...", 1L);
-    }
-
     public void showWarningErrorDialog(String title, String msg) {
     	MessageDialog dialog = new MessageDialog(title, msg);
 	    dialog.showDialog();
     }
 
-    private class ClearBagExecutor extends AbstractActionCommandExecutor {
+    public class ClearBagExecutor extends AbstractActionCommandExecutor {
         public void execute() {
     		closeExistingBag();
         }
@@ -1246,7 +1020,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	        protected void onConfirm() {
 	        	clearAfterSaving = true;
-	        	saveBagAs();
+	        	saveBagHandler.saveBagAs();
 	        }
 	        protected void onCancel() {
         		super.onCancel();
@@ -1304,7 +1078,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         compositePane.updateCompositePaneTabs(bag, messages);
     }
     
-    private void enableSettings(boolean b) {
+    public void enableSettings(boolean b) {
         bagNameField.setEnabled(b);
         bagVersionValue.setEnabled(b);
         projectList.setEnabled(b);
@@ -1527,7 +1301,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bag.setName(bagFileName);
         bagNameField.invalidate();
         File bagFile = new File(bagDir, bagFileName);
-		save(bagFile);
+		saveBagHandler.save(bagFile);
 
     	compositePane.setBag(bag);
     	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));

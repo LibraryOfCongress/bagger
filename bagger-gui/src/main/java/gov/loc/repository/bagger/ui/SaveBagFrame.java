@@ -474,7 +474,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 			setVisible(false);
             bagView.getBag().setName(bagFileName);
             bagView.bagNameField.invalidate();
-			bagView.save(bagFile);
+			bagView.saveBagHandler.save(bagFile);
         }
     }
 
