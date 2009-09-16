@@ -159,6 +159,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			bag = bagView.getBag();
 			File selectFile = new File(File.separator+".");
 	        JFrame frame = new JFrame();
 	        JFileChooser fs = new JFileChooser(selectFile);
@@ -210,7 +211,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 			log.info("BagVersionFrame.OkNewBagHandler");
 			setVisible(false);
 	        bagView.bagVersionValue.setText(bagVersion);
-			bagView.createPreBag(bagFile);
+			bagView.createBagInPlaceHandler.createPreBag(bagFile);
         }
     }
 

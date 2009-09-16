@@ -137,7 +137,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
 			log.info("BagVersionFrame.OkNewBagHandler");
 			setVisible(false);
 	        bagView.bagVersionValue.setText(bagVersion);
-			bagView.createNewBag();
+			bagView.startNewBagHandler.createNewBag();
         }
     }
 

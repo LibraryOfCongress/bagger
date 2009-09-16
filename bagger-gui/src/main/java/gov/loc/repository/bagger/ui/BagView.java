@@ -15,36 +15,13 @@ import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
-import gov.loc.repository.bagger.ui.handlers.ClearBagExecutor;
-import gov.loc.repository.bagger.ui.handlers.ClearBagHandler;
-import gov.loc.repository.bagger.ui.handlers.CompleteBagHandler;
-import gov.loc.repository.bagger.ui.handlers.CompleteExecutor;
-import gov.loc.repository.bagger.ui.handlers.OpenBagHandler;
-import gov.loc.repository.bagger.ui.handlers.OpenExecutor;
-import gov.loc.repository.bagger.ui.handlers.RemoveTagFileHandler;
-import gov.loc.repository.bagger.ui.handlers.SaveBagAsExecutor;
-import gov.loc.repository.bagger.ui.handlers.SaveBagAsHandler;
-import gov.loc.repository.bagger.ui.handlers.SaveBagExecutor;
-import gov.loc.repository.bagger.ui.handlers.SaveBagHandler;
-import gov.loc.repository.bagger.ui.handlers.ShowTagFilesHandler;
-import gov.loc.repository.bagger.ui.handlers.StartExecutor;
-import gov.loc.repository.bagger.ui.handlers.StartNewBagHandler;
-import gov.loc.repository.bagger.ui.handlers.ValidateBagHandler;
-import gov.loc.repository.bagger.ui.handlers.ValidateExecutor;
+import gov.loc.repository.bagger.ui.handlers.*;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.Cancellable;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
-import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
-import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
-import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
 import gov.loc.repository.bagit.writer.Writer;
-import gov.loc.repository.bagit.writer.impl.FileSystemWriter;
-import gov.loc.repository.bagit.writer.impl.TarBz2Writer;
-import gov.loc.repository.bagit.writer.impl.TarGzWriter;
-import gov.loc.repository.bagit.writer.impl.TarWriter;
-import gov.loc.repository.bagit.writer.impl.ZipWriter;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -95,8 +72,6 @@ import org.springframework.richclient.application.PageComponentContext;
 import org.springframework.richclient.application.event.LifecycleApplicationEvent;
 import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.command.support.AbstractActionCommandExecutor;
-import org.springframework.richclient.dialog.CloseAction;
-import org.springframework.richclient.dialog.ConfirmationDialog;
 import org.springframework.richclient.dialog.MessageDialog;
 import org.springframework.richclient.image.ImageSource;
 import org.springframework.richclient.progress.BusyIndicator;
@@ -129,7 +104,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public Collection<Project> userProjects;
     public Collection<Profile> userProfiles;
     public Collection<ProjectProfile> userProjectProfiles;
-    private BaggerProfile baggerProfile = new BaggerProfile();
+    public BaggerProfile baggerProfile = new BaggerProfile();
     private ProjectBagInfo projectBagInfo = new ProjectBagInfo();
     public String username;
     public Contact projectContact;
@@ -187,8 +162,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     public FileFilter zipFilter;
     public FileFilter tarFilter;
 
-    private CreateBagInPlaceHandler createBagInPlaceHandler;
-    public CreateBagInPlaceExecutor createBagInPlaceExecutor = new CreateBagInPlaceExecutor();
+    public CreateBagInPlaceHandler createBagInPlaceHandler;
+    public CreateBagInPlaceExecutor createBagInPlaceExecutor = new CreateBagInPlaceExecutor(this);
     public ClearBagHandler clearBagHandler;
     public ClearBagExecutor clearExecutor = new ClearBagExecutor(this);
     public ValidateBagHandler validateBagHandler;
@@ -205,7 +180,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     public OpenExecutor openExecutor = new OpenExecutor(this);
     public SaveBagAsHandler saveBagAsHandler;
     public SaveBagAsExecutor saveBagAsExecutor = new SaveBagAsExecutor(this);
-    //public SaveProfileExecutor saveProfileExecutor = new SaveProfileExecutor();
 
     public Color errorColor = new Color(255, 128, 128);
 	public Color infoColor = new Color(120, 120, 120);
@@ -425,13 +399,14 @@ public class BagView extends AbstractView implements ApplicationListener {
         Object rulesSource = services.getService(org.springframework.rules.RulesSource.class);
         baggerRules = (BaggerValidationRulesSource) rulesSource;
 		
-		newDefaultBag(null);
-    	initializeProfile();
-    	updateCommands();
     	Color bgColor = new Color(20,20,100);
-
     	topButtonPanel = createTopButtonPanel();
     	topButtonPanel.setBackground(bgColor);
+
+    	clearBagHandler.newDefaultBag(null);
+    	initializeProfile();
+    	updateCommands();
+
     	infoInputPane = new InfoFormsPane(this);
     	enableSettings(false);
         JPanel bagPanel = createBagPanel();
@@ -483,7 +458,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buttonPanel.add(openButton);
 
     	createSkeletonButton = new JButton(getPropertyMessage("bag.button.createskeleton"));
-    	createBagInPlaceHandler = new CreateBagInPlaceHandler();
+    	createBagInPlaceHandler = new CreateBagInPlaceHandler(this);
     	createSkeletonButton.addActionListener(createBagInPlaceHandler);
     	createSkeletonButton.setEnabled(true);
     	createSkeletonButton.setOpaque(true);
@@ -1097,295 +1072,6 @@ public class BagView extends AbstractView implements ApplicationListener {
                 }
             }
         }
-    }
-
-    public void newDefaultBag(File f) {
-    	String bagName = "";
-    	bag = new DefaultBag(f, bagVersionValue.getText());
-    	bag.isClear(true);
-    	if (f == null) {
-        	bagName = getPropertyMessage("bag.label.noname");
-    	} else {
-	    	bagName = f.getName();
-	        String fileName = f.getAbsolutePath();
-	        bagNameField.setText(fileName);
-	        bagNameField.setCaretPosition(fileName.length()-1);
-	        enableSettings(true);
-    	}
-		bag.setName(bagName);
-    }
-
-    public void createNewBag() {
-    	String messages = "";
-    	bagCount++;
-
-    	bagInfoInputPane.enableForms(bag, true);
-    	clearBagHandler.clearExistingBag(messages);
-        bagVersionList.setSelectedItem(bagVersionValue.getText());
-        bagVersionValue.setText(bagVersionValue.getText());
-
-    	String bagName = getPropertyMessage("bag.label.noname");
-		bag.setName(bagName);
-        bagNameField.setText(bagName);
-        bagNameField.setCaretPosition(bagName.length()-1);
-        enableSettings(false);
-		bag.setRootDir(bagRootPath);
-		messages = updateBaggerRules();
-    	initializeProfile();
-
-        Bag b = bag.getBag();
-    	bagTagFileTree = new BagTree(this, bag.getName(), false);
-        Collection<BagFile> tags = b.getTags();
-        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-        	BagFile bf = it.next();
-            bagTagFileTree.addNode(bf.getFilepath());
-        }
-        bagTagFileTreePanel.refresh(bagTagFileTree);
-        showTagButton.setEnabled(true);
-    	enableBagSettings(true);
-        bag.isClear(false);
-		bag.getInfo().setBag(bag);
-		bagInfoInputPane.populateForms(bag, true);
-        //bagInfoInputPane.updateSelected(bag);
-        compositePane.updateCompositePaneTabs(bag, messages);
-
-		bag.isNewbag(true);
-    	addDataButton.setEnabled(true);
-    	addDataExecutor.setEnabled(true);
-    	addTagFileButton.setEnabled(true);
-    	closeButton.setEnabled(true);
-    	removeTagFileButton.setEnabled(true);
-    	bagButtonPanel.invalidate();
-    }
-
-    private class CreateBagInPlaceExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	createBagInPlace();
-        }
-    }
-
-    private class CreateBagInPlaceHandler extends AbstractAction implements Progress {
-       	private static final long serialVersionUID = 1L;
-    	private LongTask task;
-    	BagView bagView;
-    	DefaultBag bag;
-
-    	public void actionPerformed(ActionEvent e) {
-    		this.bag = getBag();
-    		createBagInPlace();
-    	}
-
-    	public void setBagView(BagView bagView) {
-    		this.bag = bagView.getBag();
-    	}
-
-    	public void setTask(LongTask task) {
-    		this.task = task;
-    	}
-
-    	public void execute() {
-        	statusBarEnd();
-    	}
-    }
-
-    public void createBagInPlace() {
-        newBagInPlaceFrame = new NewBagInPlaceFrame(this, getPropertyMessage("bag.frame.newbaginplace"));
-        newBagInPlaceFrame.setBag(bag);
-        newBagInPlaceFrame.setVisible(true);
-    }
-
-    public void createPreBag(File data) {
-    	String messages = "";
-    	clearBagHandler.clearExistingBag(messages);
-    	try {
-    		bag.createPreBag(data, this.bagVersionValue.getText());
-    	} catch (Exception e) {
-    	    showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
-    		return;
-    	}
-        bag.getInfo().setBag(bag);
-    	bag.getBag().addFileToPayload(data);
-    	boolean alreadyExists = bagPayloadTree.addNodes(data, false);
-    	bagPayloadTreePanel.refresh(bagPayloadTree);
-
-    	File bagDir = data.getParentFile();
-    	String bagFileName = "bag_" + data.getName();
-    	bag.isClear(false);
-        bag.setName(bagFileName);
-        bagNameField.invalidate();
-        File bagFile = new File(bagDir, bagFileName);
-		saveBagHandler.save(bagFile);
-
-    	compositePane.setBag(bag);
-    	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
-        updateManifestPane();
-    	enableBagSettings(true);
-		bag.isSerialized(true);
-		String msgs = bag.validateMetadata();
-		if (msgs != null) {
-			if (messages != null) messages += msgs;
-			else messages = msgs;
-		}
-		bag.getInfo().setBag(bag);
-        Bag b = bag.getBag();
-    	bagTagFileTree = new BagTree(this, bag.getName(), false);
-        Collection<BagFile> tags = b.getTags();
-        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-        	BagFile bf = it.next();
-            bagTagFileTree.addNode(bf.getFilepath());
-        }
-        bagTagFileTreePanel.refresh(bagTagFileTree);
-
-        addDataButton.setEnabled(true);
-        addDataExecutor.setEnabled(true);
-        updatePropButton.setEnabled(false);
-        saveButton.setEnabled(false);
-        saveBagExecutor.setEnabled(false);
-        saveAsButton.setEnabled(true);
-        saveBagAsExecutor.setEnabled(true);
-        removeDataButton.setEnabled(true);
-        addTagFileButton.setEnabled(true);
-        removeTagFileButton.setEnabled(true);
-        showTagButton.setEnabled(true);
-        bagButtonPanel.invalidate();
-        closeButton.setEnabled(true);
-        validateButton.setEnabled(true);
-        completeButton.setEnabled(true);
-        completeExecutor.setEnabled(true);
-        validateExecutor.setEnabled(true);
-        bagButtonPanel.invalidate();
-        topButtonPanel.invalidate();
-        bag.isNewbag(true);
-    	bagInfoInputPane.populateForms(bag, true);
-        compositePane.updateCompositePaneTabs(bag, messages);
-
-        statusBarEnd();
-    }
-
-    public void openExistingBag(File file) {
-    	String messages = "";
-    	bagInfoInputPane.enableForms(bag, true);
-    	clearBagHandler.clearExistingBag(messages);
-    	messages = "";
-
-		try {
-	    	newDefaultBag(file);
-		} catch (Exception ex) {
-			log.error("openExistingBag DefaultBag: " + ex.getMessage());
-        	messages +=  "Failed to create bag: " + ex.getMessage() + "\n";
-    	    //showWarningErrorDialog("Warning - file not opened", "Error trying to open file: " + file + "\n" + ex.getMessage());
-    	    return;
-		}
-		enableSettings(true);
-        bagVersionValue.setText(bag.getVersion());
-        bagVersionList.setSelectedItem(bagVersionValue.getText());
-        String fileName = file.getName();
-        fileName = file.getAbsolutePath();
-        bagNameField.setText(fileName);
-        bagNameField.setCaretPosition(fileName.length());
-        bagNameField.invalidate();
-
-        /* */
-    	String s = file.getName();
-	    int i = s.lastIndexOf('.');
-	    if (i > 0 && i < s.length() - 1) {
-	    	String sub = s.substring(i + 1).toLowerCase();
-	    	if (sub.contains("gz")) {
-	    		serializeValue.setText(DefaultBag.TAR_GZ_LABEL);
-	    		tarGzButton.setSelected(true);
-	    		bag.setSerialMode(DefaultBag.TAR_GZ_MODE);
-	    		bag.isSerial(true);
-	    	} else if (sub.contains("bz2")) {
-	    		serializeValue.setText(DefaultBag.TAR_BZ2_LABEL);
-	    		tarBz2Button.setSelected(true);
-	    		bag.setSerialMode(DefaultBag.TAR_BZ2_MODE);
-	    		bag.isSerial(true);
-	    	} else if (sub.contains(DefaultBag.TAR_LABEL)) {
-	    		serializeValue.setText(DefaultBag.TAR_LABEL);
-	    		tarButton.setSelected(true);
-	    		bag.setSerialMode(DefaultBag.TAR_MODE);
-	    		bag.isSerial(true);
-	    	} else if (sub.contains(DefaultBag.ZIP_LABEL)) {
-	    		serializeValue.setText(DefaultBag.ZIP_LABEL);
-	    		zipButton.setSelected(true);
-	    		bag.setSerialMode(DefaultBag.ZIP_MODE);
-	    		bag.isSerial(true);
-	    	} else {
-	    		serializeValue.setText(DefaultBag.NO_LABEL);
-	    		noneButton.setSelected(true);
-	    		bag.setSerialMode(DefaultBag.NO_MODE);
-	    		bag.isSerial(false);
-	    	}
-	    } else {
-    		serializeValue.setText(DefaultBag.NO_LABEL);
-    		noneButton.setSelected(true);
-    		bag.setSerialMode(DefaultBag.NO_MODE);
-    		bag.isSerial(false);
-	    }
-	    serializeValue.invalidate();
-
-	    if (bag.isHoley()) {
-	        holeyCheckbox.setSelected(true);
-	        holeyValue.setText("true");
-	        holeyValue.invalidate();
-	    }
-
-	    bag.isClear(false);
-        bag.getInfo().setBag(bag);
-    	bag.copyBagToForm();
-    	baggerProfile = new BaggerProfile();
-	    if (!bag.getInfo().getLcProject().trim().isEmpty()){
-    		String name = bag.getInfo().getLcProject().trim();
-    		Project project = new Project();
-    		project.setName(name);
-    		if (!projectExists(project)) {
-        		addProject(project);
-    		}
-    		messages += updateProject(name);
-    		bag.isNoProject(false);
-    	} else {
-    		messages += updateProject(getPropertyMessage("bag.project.noproject"));
-    		bag.isNoProject(true);
-    	}
-	    DefaultBagInfo bagInfo = bag.getInfo();
-		bagInfo.createExistingFieldMap(true);
-		bag.setInfo(bagInfo);
-        baggerProfile.setOrganization(bagInfo.getBagOrganization());
-    	if (bagInfo.getBagSize() != null && bagInfo.getBagSize().isEmpty()) {
-        	bag.setSize(bag.getDataSize());
-    	} 
-		bagInfoInputPane.updateProject(this);
-    	bag.copyBagToForm();
-	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
-	    	defaultProject.setSelected(true);
-	    } else {
-	    	defaultProject.setSelected(false);
-	    }
-		messages = updateBaggerRules();
-    	bagRootPath = file;
-    	bag.setRootDir(bagRootPath);
-		File rootSrc = new File(file, bag.getDataDirectory());
-    	if (bag.getBag().getFetchTxt() != null) {
-        	bagPayloadTree = new BagTree(this, bag.getFetch().getBaseURL(), true);
-    		rootSrc = new File(file, bag.getBag().getFetchTxt().getFilepath());
-    	} else {
-        	bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
-    		rootSrc = new File(file, bag.getDataDirectory());
-    	}
-		bagPayloadTree.populateNodes(bag, rootSrc, true);
-        bagPayloadTreePanel.refresh(bagPayloadTree);
-        updateManifestPane();
-    	enableBagSettings(true);
-		bag.isSerialized(true);
-		String msgs = bag.validateMetadata();
-		if (msgs != null) {
-			if (messages != null) messages += msgs;
-			else messages = msgs;
-		}
-    	bagInfoInputPane.populateForms(bag, true);
-        compositePane.updateCompositePaneTabs(bag, messages);
-
-    	statusBarEnd();
     }
 
     public void updateManifestPane() {

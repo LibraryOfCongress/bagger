@@ -11,6 +11,7 @@ import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 import javax.swing.AbstractAction;
 
@@ -62,7 +63,7 @@ public class ClearBagHandler extends AbstractAction {
     	bag = bagView.getBag();
     	bagView.clearAfterSaving = false;
     	bagView.bagInfoInputPane.enableForms(bag, false);
-    	bagView.newDefaultBag(null);
+    	newDefaultBag(null);
     	bag.getInfo().setFieldMap(null);
     	bag.getInfo().setProfileMap(null);
         bagView.holeyCheckbox.setSelected(false);
@@ -97,9 +98,27 @@ public class ClearBagHandler extends AbstractAction {
     	bagView.bagButtonPanel.invalidate();
     	bagView.topButtonPanel.invalidate();
 
+    	bagView.setBag(bag);
     	bagView.bagNameField.setText(bag.getName());
     	bagView.enableSettings(false);
     	bagView.bagInfoInputPane.populateForms(bag, false);
     	bagView.compositePane.updateCompositePaneTabs(bag, messages);
+    }
+
+    public void newDefaultBag(File f) {
+    	String bagName = "";
+    	bag = new DefaultBag(f, bagView.bagVersionValue.getText());
+    	bag.isClear(true);
+    	if (f == null) {
+        	bagName = bagView.getPropertyMessage("bag.label.noname");
+    	} else {
+	    	bagName = f.getName();
+	        String fileName = f.getAbsolutePath();
+	        bagView.bagNameField.setText(fileName);
+	        bagView.bagNameField.setCaretPosition(fileName.length()-1);
+	        bagView.enableSettings(true);
+    	}
+		bag.setName(bagName);
+		bagView.setBag(bag);
     }
 }
