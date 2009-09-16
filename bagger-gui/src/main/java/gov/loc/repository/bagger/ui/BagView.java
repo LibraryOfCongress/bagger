@@ -15,12 +15,16 @@ import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
+import gov.loc.repository.bagger.ui.handlers.CompleteBagHandler;
+import gov.loc.repository.bagger.ui.handlers.CompleteExecutor;
 import gov.loc.repository.bagger.ui.handlers.RemoveTagFileHandler;
 import gov.loc.repository.bagger.ui.handlers.SaveBagAsExecutor;
 import gov.loc.repository.bagger.ui.handlers.SaveBagAsHandler;
 import gov.loc.repository.bagger.ui.handlers.ShowTagFilesHandler;
 import gov.loc.repository.bagger.ui.handlers.StartExecutor;
 import gov.loc.repository.bagger.ui.handlers.StartNewBagHandler;
+import gov.loc.repository.bagger.ui.handlers.ValidateBagHandler;
+import gov.loc.repository.bagger.ui.handlers.ValidateExecutor;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.Cancellable;
@@ -104,8 +108,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     private ProgressMonitor progressMonitor;
     private JTextArea taskOutput;
     private Timer timer;
-    private LongTask task;
-    private Cancellable longRunningProcess = null;
+    public LongTask task;
+    public Cancellable longRunningProcess = null;
     private Writer bagWriter = null;
 
 	private Bagger bagger;
@@ -181,10 +185,10 @@ public class BagView extends AbstractView implements ApplicationListener {
     public CreateBagInPlaceExecutor createBagInPlaceExecutor = new CreateBagInPlaceExecutor();
     private ClearBagHandler clearBagHandler;
     public ClearBagExecutor clearExecutor = new ClearBagExecutor();
-    private ValidateBagHandler validateBagHandler;
-    public ValidateExecutor validateExecutor = new ValidateExecutor();
-    private CompleteBagHandler completeBagHandler;
-    public CompleteExecutor completeExecutor = new CompleteExecutor();
+    public ValidateBagHandler validateBagHandler;
+    public ValidateExecutor validateExecutor = new ValidateExecutor(this);
+    public CompleteBagHandler completeBagHandler;
+    public CompleteExecutor completeExecutor = new CompleteExecutor(this);
     private AddDataHandler addDataHandler;
     public AddDataExecutor addDataExecutor = new AddDataExecutor();
     private SaveBagHandler saveBagHandler;
@@ -192,11 +196,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     public StartNewBagHandler startNewBagHandler;
 	public StartExecutor startExecutor = new StartExecutor(this);
     public OpenExecutor openExecutor = new OpenExecutor();
-    public RemoveDataExecutor removeDataExecutor = new RemoveDataExecutor();
     public SaveBagAsHandler saveBagAsHandler;
     public SaveBagAsExecutor saveBagAsExecutor = new SaveBagAsExecutor(this);
-    public AddTagFileExecutor addTagFileExecutor = new AddTagFileExecutor();
-    public SaveProfileExecutor saveProfileExecutor = new SaveProfileExecutor();
+    //public SaveProfileExecutor saveProfileExecutor = new SaveProfileExecutor();
 
     public Color errorColor = new Color(255, 128, 128);
 	public Color infoColor = new Color(120, 120, 120);
@@ -505,7 +507,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         buttonPanel.add(saveAsButton);
 
         completeButton = new JButton(getPropertyMessage("bag.button.complete"));
-    	completeBagHandler = new CompleteBagHandler();
+    	completeBagHandler = new CompleteBagHandler(this);
         completeButton.addActionListener(completeBagHandler);
         completeButton.setEnabled(false);
         completeButton.setOpaque(true);
@@ -515,7 +517,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         buttonPanel.add(completeButton);
         
         validateButton = new JButton(getPropertyMessage("bag.button.validate"));
-    	validateBagHandler = new ValidateBagHandler();
+    	validateBagHandler = new ValidateBagHandler(this);
         validateButton.addActionListener(validateBagHandler);
         validateButton.setEnabled(false);
         validateButton.setOpaque(true);
@@ -786,12 +788,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         return messages;
     }
 
-    private class AddTagFileExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	addTagFile();
-        }
-    }
-
     public void dropBagTagFile(List<File> files) {
     	if (bagTagFileTree.isEnabled()) {
     		if (files != null) {
@@ -812,12 +808,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             bag.isValidChecked(false);
             compositePane.updateCompositePaneTabs(bag, "Tag files changed.");
     	}
-    }
-
-    public class RemoveDataExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	removeData();
-        }
     }
 
     private class RemoveDataHandler extends AbstractAction {
@@ -997,10 +987,10 @@ public class BagView extends AbstractView implements ApplicationListener {
         	topButtonPanel.invalidate();
     	}
     }
-
+/*
     public class ValidateExecutor extends AbstractActionCommandExecutor {
         public void execute() {
-        	validateBag();
+			validateBagHandler.validateBag();
         }
     }
 
@@ -1020,7 +1010,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         	while (!task.canceled && !task.done) {
                 try {
                     Thread.sleep(1000); //sleep for a second
-                    /* */
+
             		CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
             		completeVerifier.addProgressListener(task);
             		
@@ -1030,7 +1020,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             		ValidVerifierImpl validVerifier = new ValidVerifierImpl(completeVerifier, manifestVerifier);
             		validVerifier.addProgressListener(task);
             		longRunningProcess = validVerifier;
-            		/* */
+
                     String messages = bag.validateBag(validVerifier);
             	    if (messages != null && !messages.trim().isEmpty()) {
             	    	showWarningErrorDialog("Warning - validation failed", "Validation result: " + messages);
@@ -1061,66 +1051,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private void validateBag() {
     	statusBarBegin(validateBagHandler, "Validating bag...", 1L);
     }
-
-    public class CompleteExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	completeBag();
-        }
-    }
-
-    private class CompleteBagHandler extends AbstractAction implements Progress {
-       	private static final long serialVersionUID = 1L;
-    	private LongTask task;
-
-    	public void actionPerformed(ActionEvent e) {
-     		completeBag();
-    	}
-
-    	public void setTask(LongTask task) {
-    		this.task = task;
-    	}
-
-    	public void execute() {
-        	while (!task.canceled && !task.done) {
-                try {
-                    Thread.sleep(1000); //sleep for a second
-                    /* */
-                    CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
-                    completeVerifier.addProgressListener(task);
-            		longRunningProcess = completeVerifier;
-            		/*             		 */
-            		Bag completeBag = bag.getBag();
-                    String messages = bag.completeBag(completeVerifier, completeBag);
-            	    if (messages != null && !messages.trim().isEmpty()) {
-            	    	showWarningErrorDialog("Warning - incomplete", "Is complete result: " + messages);
-            	    	task.current = task.lengthOfTask;
-            	    }
-            	    else {
-            	    	showWarningErrorDialog("Is Complete Dialog", "Bag is complete.");
-            	    	task.current = task.lengthOfTask;
-            	    }
-                	setBag(bag);
-                	compositePane.updateCompositePaneTabs(bag, messages);
-                    if (task.current >= task.lengthOfTask) {
-                        task.done = true;
-                        task.current = task.lengthOfTask;
-                    }
-                    task.statMessage = "Completed " + task.current +
-                                  " out of " + task.lengthOfTask + ".";
-                } catch (InterruptedException e) {
-                	e.printStackTrace();
-                	task.current = task.lengthOfTask;
-            	    showWarningErrorDialog("Warning - complete check interrupted", "Error checking bag completeness: " + e.getMessage());
-                }
-            }
-        	statusBarEnd();
-    	}
-    }
-
-    public void completeBag() {
-    	statusBarBegin(completeBagHandler, "Checking if complete...", 1L);
-    }
-
+*/
     public void saveBagAs() {
         File selectFile = new File(File.separator+".");
         JFrame frame = new JFrame();
@@ -1289,7 +1220,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                         } else {
                             bag.isValidateOnSave(validateOnSave);
                     		if (bag.isValidateOnSave()) {
-                    			validateBag();
+                    			validateBagHandler.validateBag();
                     		}
                         	statusBarEnd();
             				File bagFile = bag.getBagFileName();
@@ -1301,7 +1232,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             	            saveButton.setEnabled(true);
             	            saveBagExecutor.setEnabled(true);
             	            saveAsButton.setEnabled(true);
-            	            removeDataExecutor.setEnabled(true);
             	            removeDataButton.setEnabled(true);
             	            addTagFileButton.setEnabled(true);
             	            removeTagFileButton.setEnabled(true);
@@ -1455,11 +1385,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         validateExecutor.setEnabled(false);
         completeExecutor.setEnabled(false);
         addDataExecutor.setEnabled(false);
-        removeDataExecutor.setEnabled(false);
         saveBagExecutor.setEnabled(false);
         saveBagAsExecutor.setEnabled(false);
-        addTagFileExecutor.setEnabled(false);
-        saveProfileExecutor.setEnabled(true);
+        //saveProfileExecutor.setEnabled(true);
     }
 
     protected void registerLocalCommandExecutors(PageComponentContext context) {
@@ -1470,19 +1398,17 @@ public class BagView extends AbstractView implements ApplicationListener {
     	context.register("validateCommand", validateExecutor);
     	context.register("completeCommand", completeExecutor);
     	context.register("addDataCommand", addDataExecutor);
-    	context.register("removeDataCommand", removeDataExecutor);
     	context.register("saveBagCommand", saveBagExecutor);
     	context.register("saveBagAsCommand", saveBagAsExecutor);
-    	context.register("addTagFileCommand", addTagFileExecutor);
-    	context.register("saveProfileCommand", saveProfileExecutor);
+    	//context.register("saveProfileCommand", saveProfileExecutor);
     }
-
+/*
     private class SaveProfileExecutor extends AbstractActionCommandExecutor {
         public void execute() {
         	storeProfile();
         }
     }
-
+*/
     public String storeProfile() {
     	try {
         	Project bagProject = bag.getProject();
@@ -1691,7 +1617,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         saveBagExecutor.setEnabled(false);
         saveAsButton.setEnabled(true);
         saveBagAsExecutor.setEnabled(true);
-        removeDataExecutor.setEnabled(true);
         removeDataButton.setEnabled(true);
         addTagFileButton.setEnabled(true);
         removeTagFileButton.setEnabled(true);
@@ -1750,7 +1675,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             saveButton.setEnabled(true);
             saveBagExecutor.setEnabled(true);
             saveAsButton.setEnabled(true);
-            removeDataExecutor.setEnabled(true);
             removeDataButton.setEnabled(true);
             addTagFileButton.setEnabled(true);
             removeTagFileButton.setEnabled(true);
