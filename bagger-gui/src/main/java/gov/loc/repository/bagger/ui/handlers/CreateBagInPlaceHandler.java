@@ -56,7 +56,6 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     }
 
     public void createPreBag(File data) {
-    	bag = bagView.getBag();
     	String messages = "";
     	bagView.clearBagHandler.clearExistingBag(messages);
     	try {
@@ -65,6 +64,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     	    bagView.showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
     		return;
     	}
+    	bag = bagView.getBag();
         bag.getInfo().setBag(bag);
     	bag.getBag().addFileToPayload(data);
     	boolean alreadyExists = bagView.bagPayloadTree.addNodes(data, false);
