@@ -169,7 +169,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     public RemoveDataHandler removeDataHandler;
     public RemoveTagFileHandler removeTagFileHandler;
     public AddDataHandler addDataHandler;
-    public AddDataExecutor addDataExecutor = new AddDataExecutor();
+    public AddDataExecutor addDataExecutor = new AddDataExecutor(this);
     public AddTagFileHandler addTagFileHandler;
     public SaveBagHandler saveBagHandler;
     public SaveBagExecutor saveBagExecutor = new SaveBagExecutor(this);
@@ -509,7 +509,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	JPanel buttonPanel = new JPanel(new BorderLayout(5, 5));
 
     	addDataButton = new JButton(getPropertyMessage("bag.button.add"));
-    	addDataHandler = new AddDataHandler();
+    	addDataHandler = new AddDataHandler(this);
     	addDataButton.addActionListener(addDataHandler);
     	addDataButton.setEnabled(false);
     	addDataButton.setToolTipText(getPropertyMessage("bag.button.add.help"));
@@ -705,110 +705,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	addTagFileHandler.addTagFiles(files);
     }
 
-    public class AddDataExecutor extends AbstractActionCommandExecutor {
-        public void execute() {
-        	addData();
-        }
-    }
-
-    private class AddDataHandler extends AbstractAction implements Progress {
-       	private static final long serialVersionUID = 1L;
-    	private LongTask task;
-
-    	public void actionPerformed(ActionEvent e) {
-    		addData();
-       	}
-    	
-    	public void setTask(LongTask task) {
-    		this.task = task;
-    	}
-
-    	public void execute() {
-        	statusBarEnd();
-    	}
-    }
-
-    public void addData() {
-        File selectFile = new File(File.separator+".");
-        JFrame frame = new JFrame();
-        JFileChooser fc = new JFileChooser(selectFile);
-        fc.setDialogType(JFileChooser.OPEN_DIALOG);
-    	fc.setMultiSelectionEnabled(true);
-        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fc.setDialogTitle("Add File or Directory");
-    	int option = fc.showOpenDialog(frame);
-
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File[] files = fc.getSelectedFiles();
-            if (files != null && files.length >0) {
-            	display("addBagDataFiles");
-                addBagData(files);
-            } else {
-            	File file = fc.getSelectedFile();
-            	display("addBagDataFile");
-            	addBagData(file, true);
-            }
-    		bag.isCompleteChecked(false);
-            bag.isValidChecked(false);
-        	bagPayloadTreePanel.refresh(bagPayloadTree);
-        	compositePane.setBag(bag);
-        	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
-
-    		saveAsButton.setEnabled(true);
-            saveBagAsExecutor.setEnabled(true);
-            removeDataButton.setEnabled(true);
-            bagButtonPanel.invalidate();
-        	topButtonPanel.invalidate();
-        }
-    }
-
-    public void addBagData(File[] files) {
-    	if (files != null) {
-        	for (int i=0; i < files.length; i++) {
-        		log.info("addBagData[" + i + "] " + files[i].getName());
-        		if (i < files.length-1) addBagData(files[i], false);
-        		else addBagData(files[i], true);
-        	}
-    	}
-    }
-
-    public void addBagData(File file, boolean lastFileFlag) {
-    	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-        parentSrc = file.getParentFile().getAbsoluteFile();
-        try {
-        	bag.getBag().addFileToPayload(file);
-        	boolean alreadyExists = bagPayloadTree.addNodes(file, false);
-        	if (alreadyExists) {
-        	    showWarningErrorDialog("Warning - file already exists", "File: " + file.getName() + "\n" + "already exists in bag.");
-        	}
-        } catch (Exception e) {
-        	log.error("BagView.addBagData: " + e);
-    	    showWarningErrorDialog("Error - file not added", "Error adding bag file: " + file + "\ndue to:\n" + e.getMessage());
-        }
-    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
-    }
-
     public void dropBagPayloadData(List<File> files) {
-    	if (bagPayloadTree.isEnabled()) {
-        	if (files != null) {
-            	for (int i=0; i < files.size(); i++) {
-            		//log.info("addBagData[" + i + "] " + files.get(i).getName());
-            		if (i < files.size()-1) addBagData(files.get(i), false);
-            		else addBagData(files.get(i), true);
-            	}
-        	}
-        	bagPayloadTreePanel.refresh(bagPayloadTree);
-    		bag.isCompleteChecked(false);
-            bag.isValidChecked(false);
-        	compositePane.setBag(bag);
-        	compositePane.updateCompositePaneTabs(bag, getPropertyMessage("bag.message.filesadded"));
-
-            saveAsButton.setEnabled(true);
-            saveBagAsExecutor.setEnabled(true);
-            removeDataButton.setEnabled(true);
-            bagButtonPanel.invalidate();
-        	topButtonPanel.invalidate();
-    	}
+    	addDataHandler.addPayloadData(files);
     }
 
     public void showWarningErrorDialog(String title, String msg) {
