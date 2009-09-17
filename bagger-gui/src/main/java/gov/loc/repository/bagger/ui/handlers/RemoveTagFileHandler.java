@@ -6,6 +6,7 @@ import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagit.Bag;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -28,12 +29,13 @@ public class RemoveTagFileHandler extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-    		removeTagFile();
+		bag = bagView.getBag();
+		removeTagFile();
 	}
 
     public void removeTagFile() {
     	String message = "";
-    	this.bag = bagView.getBag();
+    	bag = bagView.getBag();
     	Bag b = bag.getBag();
 
     	TreePath[] paths = bagView.bagTagFileTree.getSelectionPaths();
@@ -54,13 +56,14 @@ public class RemoveTagFileHandler extends AbstractAction {
             			}
             		}
     			} catch (Exception e) {
-            	    message += "Error trying to remove file: " + node + "\n";
-            	    bagView.showWarningErrorDialog("Error - file not removed", "Error trying to remove file: " + node + "\n" + e.getMessage());
+    				message += "Error trying to remove file: " + node + "\n";
+    				bagView.showWarningErrorDialog("Error - file not removed", "Error trying to remove file: " + node + "\n" + e.getMessage());
     			}
         	}
     		bag.isCompleteChecked(false);
             bag.isValidChecked(false);
-            bagView.setBag(bag);
+    		bag.setBag(b);
+    		bagView.setBag(bag);
             bagView.compositePane.updateCompositePaneTabs(bag, "Tag file removed.");
         	bagView.bagTagFileTree.removeSelectionPaths(paths);
         	bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);

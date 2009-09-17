@@ -2,15 +2,18 @@
 package gov.loc.repository.bagger.ui.handlers;
 
 import gov.loc.repository.bagger.Project;
+import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -31,11 +34,11 @@ public class OpenBagHandler extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+    	bag = bagView.getBag();
 		openBag();
 	}
 
 	public void openBag() {
-		bag = bagView.getBag();
         File selectFile = new File(File.separator+".");
         JFrame frame = new JFrame();
 		JFileChooser fo = new JFileChooser(selectFile);
@@ -77,7 +80,6 @@ public class OpenBagHandler extends AbstractAction {
 	}
 
     public void openExistingBag(File file) {
-    	bag = bagView.getBag();
     	String messages = "";
     	bagView.bagInfoInputPane.enableForms(bag, true);
     	bagView.clearBagHandler.clearExistingBag(messages);
@@ -91,6 +93,7 @@ public class OpenBagHandler extends AbstractAction {
     	    //showWarningErrorDialog("Warning - file not opened", "Error trying to open file: " + file + "\n" + ex.getMessage());
     	    return;
 		}
+		bag = bagView.getBag();
 		bagView.enableSettings(true);
         bagView.bagVersionValue.setText(bag.getVersion());
         bagView.bagVersionList.setSelectedItem(bagView.bagVersionValue.getText());
@@ -100,7 +103,6 @@ public class OpenBagHandler extends AbstractAction {
         bagView.bagNameField.setCaretPosition(fileName.length());
         bagView.bagNameField.invalidate();
 
-        /* */
     	String s = file.getName();
 	    int i = s.lastIndexOf('.');
 	    if (i > 0 && i < s.length() - 1) {
@@ -179,6 +181,7 @@ public class OpenBagHandler extends AbstractAction {
 		messages = bagView.updateBaggerRules();
 		bagView.bagRootPath = file;
     	bag.setRootDir(bagView.bagRootPath);
+//		bagView.setBag(bag);
 		File rootSrc = new File(file, bag.getDataDirectory());
     	if (bag.getBag().getFetchTxt() != null) {
     		bagView.bagPayloadTree = new BagTree(bagView, bag.getFetch().getBaseURL(), true);
@@ -199,7 +202,7 @@ public class OpenBagHandler extends AbstractAction {
 		}
 		bagView.bagInfoInputPane.populateForms(bag, true);
 		bagView.compositePane.updateCompositePaneTabs(bag, messages);
-
+		bagView.setBag(bag);
 		bagView.statusBarEnd();
     }
 }

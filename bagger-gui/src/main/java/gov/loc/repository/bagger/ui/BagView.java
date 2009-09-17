@@ -57,10 +57,6 @@ import javax.swing.ProgressMonitor;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreePath;
 import javax.swing.JFrame;
 
 import org.acegisecurity.Authentication;
@@ -170,8 +166,11 @@ public class BagView extends AbstractView implements ApplicationListener {
     public ValidateExecutor validateExecutor = new ValidateExecutor(this);
     public CompleteBagHandler completeBagHandler;
     public CompleteExecutor completeExecutor = new CompleteExecutor(this);
-    private AddDataHandler addDataHandler;
+    public RemoveDataHandler removeDataHandler;
+    public RemoveTagFileHandler removeTagFileHandler;
+    public AddDataHandler addDataHandler;
     public AddDataExecutor addDataExecutor = new AddDataExecutor();
+    public AddTagFileHandler addTagFileHandler;
     public SaveBagHandler saveBagHandler;
     public SaveBagExecutor saveBagExecutor = new SaveBagExecutor(this);
     public StartNewBagHandler startNewBagHandler;
@@ -313,77 +312,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	return this.userProfiles;
     }
     
-    public String saveProfiles() {
-    	String message = storeProfile();
-    	return message;
-    }
-    
-    public String loadProfiles() {
-    	try {
-        	String message = bagger.loadProfiles();
-        	this.username = getPropertyMessage("user.name");
-        	Project project = bag.getProject();
-        	//this.projectBagInfo = bagger.loadProjectBagInfo(project.getId());
-        	//bag.parseBagInfoDefaults(projectBagInfo.getDefaults());
-        	this.initializeProfile();
-        	Object[] array = userProjects.toArray();
-        	boolean b = true;
-        	for (int i=0; i < userProjects.size(); i++) {
-        		String name = ((Project)array[i]).getName();
-        		for (int j=0; j < projectList.getModel().getSize(); j++) {
-        			String proj = (String) projectList.getModel().getElementAt(j);
-            		if (name.trim().equalsIgnoreCase(proj.trim())) {
-            			b = false;
-            			break;
-            		}
-        		}
-        		if (b) { projectList.addItem(name);	}
-        		b = true;
-        	}
-        	projectList.invalidate();
-        	bagInfoInputPane.updateProject(this);
-        	bagInfoInputPane.populateForms(bag, true);
-            bagInfoInputPane.update(bag);
-    		compositePane.updateCompositePaneTabs(bag, message);
-        	return message;
-    	} catch (Exception e) {
-    	    showWarningErrorDialog("Error Dialog", "Error trying to load project defaults:\n" + e.getMessage());
-    		return null;
-    	}
-    }
-
-    public String clearProfiles() {
-    	String message = "";
-    	ArrayList<Profile> newProfiles = new ArrayList<Profile>();
-    	Object[] profiles = userProfiles.toArray();
-    	for (int j=0; j < profiles.length; j++) {
-    		Profile profile = (Profile) profiles[j];
-    		Contact person = new Contact();
-    		person.setOrganization(new Organization());
-    		profile.setPerson(person);
-    		Contact contact = new Contact();
-    		contact.setOrganization(new Organization());
-    		profile.setContact(contact);
-    		newProfiles.add(profile);
-    		if (j == 0) {
-    			DefaultBagInfo bagInfo = bag.getInfo();
-    	   		BaggerOrganization bagOrg = new BaggerOrganization();
-    	   		bagOrg.setContact(contact);
-    	   		bagInfo.setBagOrganization(bagOrg);
-    	   		bag.setInfo(bagInfo);
-    	   		projectContact = profile.getPerson();
-    	   		baggerProfile.setOrganization(bagOrg);
-    	   		baggerProfile.setSourceCountact(profile.getContact());
-    	   		baggerProfile.setToContact(projectContact);
-    		}
-    	}
-    	userProfiles = newProfiles;
-   		bagInfoInputPane.populateForms(bag, true);
-   		bagInfoInputPane.update(bag);
-		compositePane.updateCompositePaneTabs(bag, message);
-    	return message;
-    }
-
     @Override
     // This populates the default view descriptor declared as the startingPageId
     // property in the richclient-application-context.xml file.
@@ -588,7 +516,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         buttonPanel.add(addDataButton, BorderLayout.NORTH);
 
     	removeDataButton = new JButton(getPropertyMessage("bag.button.remove"));
-    	removeDataButton.addActionListener(new RemoveDataHandler());
+    	removeDataHandler = new RemoveDataHandler(this);
+    	removeDataButton.addActionListener(removeDataHandler);
     	removeDataButton.setEnabled(false);
     	removeDataButton.setToolTipText(getPropertyMessage("bag.button.remove.help"));
     	buttonPanel.add(removeDataButton, BorderLayout.CENTER);
@@ -606,13 +535,15 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buttonPanel.add(showTagButton, BorderLayout.NORTH);
 
     	addTagFileButton = new JButton(getPropertyMessage("bag.tagbutton.add"));
-    	addTagFileButton.addActionListener(new AddTagFileHandler());
+    	addTagFileHandler = new AddTagFileHandler(this);
+    	addTagFileButton.addActionListener(addTagFileHandler);
     	addTagFileButton.setEnabled(false);
     	addTagFileButton.setToolTipText(getPropertyMessage("bag.tagbutton.add.help"));
     	buttonPanel.add(addTagFileButton, BorderLayout.CENTER);
     	
     	removeTagFileButton = new JButton(getPropertyMessage("bag.tagbutton.remove"));
-    	removeTagFileButton.addActionListener(new RemoveTagFileHandler(this));
+    	removeTagFileHandler = new RemoveTagFileHandler(this);
+    	removeTagFileButton.addActionListener(removeTagFileHandler);
     	removeTagFileButton.setEnabled(false);
     	removeTagFileButton.setToolTipText(getPropertyMessage("bag.tagbutton.remove.help"));
     	buttonPanel.add(removeTagFileButton, BorderLayout.SOUTH);
@@ -771,97 +702,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public void dropBagTagFile(List<File> files) {
-    	if (bagTagFileTree.isEnabled()) {
-    		if (files != null) {
-    			for (int i=0; i < files.size(); i++) {
-    				//log.info("addBagData[" + i + "] " + files.get(i).getName());
-    	            bag.addTagFile(files.get(i));
-    			}
-	        	bagTagFileTree = new BagTree(this, bag.getName(), false);
-	            Bag b = bag.getBag();
-	            Collection<BagFile> tags = b.getTags();
-	            for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-	            	BagFile bf = it.next();
-	                bagTagFileTree.addNode(bf.getFilepath());
-	            }
-	            bagTagFileTreePanel.refresh(bagTagFileTree);
-    		}
-    		bag.isCompleteChecked(false);
-            bag.isValidChecked(false);
-            compositePane.updateCompositePaneTabs(bag, "Tag files changed.");
-    	}
-    }
-
-    private class RemoveDataHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-    		removeData();
-       	}
-
-    }
-
-    public String removeData() {
-    	String message = "";
-    	Bag b = bag.getBag();
-
-    	log.debug("Bag payload size pre: " + b.getPayload().size());
-
-    	TreePath[] paths = bagPayloadTree.getCheckingPaths(); //bagPayloadTree.getSelectionPaths();
-    	if (paths != null) {
-    		DefaultTreeModel model = (DefaultTreeModel)bagPayloadTree.getModel();
-        	for (int i=0; i < paths.length; i++) {
-        		TreePath path = paths[i];
-        		Object node = path.getLastPathComponent();
-        		log.debug("removeData: " + path.toString());
-        		log.debug("removeData pathCount: " + path.getPathCount());
-        		File filePath = null;
-        		String fileName = null;
-        		if (path.getPathCount() > 0) {
-        			filePath = new File(""+path.getPathComponent(0));
-            		for (int j=1; j<path.getPathCount(); j++) {
-            			filePath = new File(filePath, ""+path.getPathComponent(j));
-            			log.debug("\t" + filePath);
-            		}
-        		}
-    			if (filePath != null) fileName = BaggerFileEntity.normalize(filePath.getPath());
-    			log.debug("removeData filePath: " + fileName);
-        		if (fileName != null && !fileName.isEmpty()) {
-            		try {
-            			b.removeBagFile(fileName);
-            			if (node instanceof MutableTreeNode) {
-            				model.removeNodeFromParent((MutableTreeNode)node);
-            			} else {
-            				DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(node);
-            				model.removeNodeFromParent((MutableTreeNode)aNode);
-            			}
-            		} catch (Exception e) {
-            			try {
-                			b.removePayloadDirectory(fileName);
-                			if (node instanceof MutableTreeNode) {
-                				model.removeNodeFromParent((MutableTreeNode)node);
-                			} else {
-                				DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(node);
-                				model.removeNodeFromParent((MutableTreeNode)aNode);
-                			}
-            			} catch (Exception ex) {
-                			message = "Error trying to remove: " + fileName + "\n";
-                			showWarningErrorDialog("Error - file not removed", message + ex.getMessage());
-            			}
-            		}
-        		}
-        	}
-    		bag.isCompleteChecked(false);
-            bag.isValidChecked(false);
-            compositePane.updateCompositePaneTabs(bag, "Payload data removed.");
-        	bagPayloadTree.removeSelectionPaths(paths);
-        	bagPayloadTreePanel.refresh(bagPayloadTree);
-
-        	bag.setBag(b);
-        	setBag(bag);
-    	}
-
-    	return message;
+    	addTagFileHandler.addTagFiles(files);
     }
 
     public class AddDataExecutor extends AbstractActionCommandExecutor {
@@ -1011,7 +852,73 @@ public class BagView extends AbstractView implements ApplicationListener {
     	context.register("saveBagAsCommand", saveBagAsExecutor);
     }
 
-    public String storeProfile() {
+    public String loadProfiles() {
+    	try {
+        	String message = bagger.loadProfiles();
+        	this.username = getPropertyMessage("user.name");
+        	Project project = bag.getProject();
+        	//this.projectBagInfo = bagger.loadProjectBagInfo(project.getId());
+        	//bag.parseBagInfoDefaults(projectBagInfo.getDefaults());
+        	this.initializeProfile();
+        	Object[] array = userProjects.toArray();
+        	boolean b = true;
+        	for (int i=0; i < userProjects.size(); i++) {
+        		String name = ((Project)array[i]).getName();
+        		for (int j=0; j < projectList.getModel().getSize(); j++) {
+        			String proj = (String) projectList.getModel().getElementAt(j);
+            		if (name.trim().equalsIgnoreCase(proj.trim())) {
+            			b = false;
+            			break;
+            		}
+        		}
+        		if (b) { projectList.addItem(name);	}
+        		b = true;
+        	}
+        	projectList.invalidate();
+        	bagInfoInputPane.updateProject(this);
+        	bagInfoInputPane.populateForms(bag, true);
+            bagInfoInputPane.update(bag);
+    		compositePane.updateCompositePaneTabs(bag, message);
+        	return message;
+    	} catch (Exception e) {
+    	    showWarningErrorDialog("Error Dialog", "Error trying to load project defaults:\n" + e.getMessage());
+    		return null;
+    	}
+    }
+
+    public String clearProfiles() {
+    	String message = "";
+    	ArrayList<Profile> newProfiles = new ArrayList<Profile>();
+    	Object[] profiles = userProfiles.toArray();
+    	for (int j=0; j < profiles.length; j++) {
+    		Profile profile = (Profile) profiles[j];
+    		Contact person = new Contact();
+    		person.setOrganization(new Organization());
+    		profile.setPerson(person);
+    		Contact contact = new Contact();
+    		contact.setOrganization(new Organization());
+    		profile.setContact(contact);
+    		newProfiles.add(profile);
+    		if (j == 0) {
+    			DefaultBagInfo bagInfo = bag.getInfo();
+    	   		BaggerOrganization bagOrg = new BaggerOrganization();
+    	   		bagOrg.setContact(contact);
+    	   		bagInfo.setBagOrganization(bagOrg);
+    	   		bag.setInfo(bagInfo);
+    	   		projectContact = profile.getPerson();
+    	   		baggerProfile.setOrganization(bagOrg);
+    	   		baggerProfile.setSourceCountact(profile.getContact());
+    	   		baggerProfile.setToContact(projectContact);
+    		}
+    	}
+    	userProfiles = newProfiles;
+   		bagInfoInputPane.populateForms(bag, true);
+   		bagInfoInputPane.update(bag);
+		compositePane.updateCompositePaneTabs(bag, message);
+    	return message;
+    }
+
+    public String saveProfiles() {
     	try {
         	Project bagProject = bag.getProject();
         	if (bagProject == null) bagProject = new Project();
@@ -1044,36 +951,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
     }
 
-    /**
-     * The actionPerformed method in this class
-     * is called each time the Timer "goes off".
-     */
-    class TimerListener implements ActionListener {
-        public void actionPerformed(ActionEvent evt) {
-            progressMonitor.setProgress(task.getCurrent().intValue());
-            String s = task.getMessage();
-            if (s != null) {
-                progressMonitor.setNote(s);
-                taskOutput.append(s + "\n");
-                taskOutput.setCaretPosition(
-                    taskOutput.getDocument().getLength());
-            }
-            if (progressMonitor.isCanceled() || task.isDone()) {
-                progressMonitor.close();
-                task.stop();
-                Toolkit.getDefaultToolkit().beep();
-                timer.stop();
-                if (longRunningProcess != null) longRunningProcess.cancel();
-                if (task.isDone()) {
-                    taskOutput.append("Task completed.\n");
-                } else {
-                    taskOutput.append("Task canceled.\n");
-
-                }
-            }
-        }
-    }
-
     public void updateManifestPane() {
         bagTagFileTree = new BagTree(this, bag.getName(), false);
         Collection<BagFile> tags = bag.getBag().getTags();
@@ -1082,41 +959,6 @@ public class BagView extends AbstractView implements ApplicationListener {
             bagTagFileTree.addNode(bf.getFilepath());
         }
         bagTagFileTreePanel.refresh(bagTagFileTree);
-    }
-
-    private class AddTagFileHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-    		addTagFile();
-       	}
-    }
-
-    public void addTagFile() {
-        File selectFile = new File(File.separator+".");
-        JFrame frame = new JFrame();
-		JFileChooser fo = new JFileChooser(selectFile);
-		fo.setDialogType(JFileChooser.OPEN_DIALOG);
-	    fo.setFileSelectionMode(JFileChooser.FILES_ONLY);
-	    if (bagRootPath != null) fo.setCurrentDirectory(bagRootPath.getParentFile());
-		fo.setDialogTitle("Tag File Chooser");
-    	int option = fo.showOpenDialog(frame);
-
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File file = fo.getSelectedFile();
-            bag.addTagFile(file);
-        	bagTagFileTree = new BagTree(this, bag.getName(), false);
-            Bag b = bag.getBag();
-            Collection<BagFile> tags = b.getTags();
-            for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-            	BagFile bf = it.next();
-                bagTagFileTree.addNode(bf.getFilepath());
-            }
-    		bag.isCompleteChecked(false);
-            bag.isValidChecked(false);
-            compositePane.updateCompositePaneTabs(bag, "Tag file added.");
-            bagTagFileTreePanel.refresh(bagTagFileTree);
-        }
     }
 
     public String updateProject(String projectName) {
@@ -1169,7 +1011,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	userProfiles = profileList;
     	return message;
     }
-    
+/*    
     public void updateTreePanels() {
     	try {
     		bag.getInfo().setBag(bag);
@@ -1184,7 +1026,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	} catch (Exception e) {
     	}
     }
-
+*/
     public void onApplicationEvent(ApplicationEvent e) {
     	log.info("BagView.onApplicationEvent: " + e);
         if (e instanceof LifecycleApplicationEvent) {
@@ -1205,6 +1047,36 @@ public class BagView extends AbstractView implements ApplicationListener {
     	buffer.append(getPropertyMessage("consolepane.status.help"));
     	buffer.append("\n\n");
     	return buffer.toString();
+    }
+
+    /**
+     * The actionPerformed method in this class
+     * is called each time the Timer "goes off".
+     */
+    class TimerListener implements ActionListener {
+        public void actionPerformed(ActionEvent evt) {
+            progressMonitor.setProgress(task.getCurrent().intValue());
+            String s = task.getMessage();
+            if (s != null) {
+                progressMonitor.setNote(s);
+                taskOutput.append(s + "\n");
+                taskOutput.setCaretPosition(
+                    taskOutput.getDocument().getLength());
+            }
+            if (progressMonitor.isCanceled() || task.isDone()) {
+                progressMonitor.close();
+                task.stop();
+                Toolkit.getDefaultToolkit().beep();
+                timer.stop();
+                if (longRunningProcess != null) longRunningProcess.cancel();
+                if (task.isDone()) {
+                    taskOutput.append("Task completed.\n");
+                } else {
+                    taskOutput.append("Task canceled.\n");
+
+                }
+            }
+        }
     }
 
     public void statusBarBegin(Progress progress, String message, Long size) {

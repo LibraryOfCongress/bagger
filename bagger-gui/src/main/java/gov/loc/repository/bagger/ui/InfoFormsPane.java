@@ -13,9 +13,12 @@ import java.util.ArrayList;
 
 import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.handlers.ClearFieldHandler;
 import gov.loc.repository.bagger.ui.handlers.DefaultProjectHandler;
 import gov.loc.repository.bagger.ui.handlers.HoleyBagHandler;
+import gov.loc.repository.bagger.ui.handlers.LoadFieldHandler;
 import gov.loc.repository.bagger.ui.handlers.ProjectListHandler;
+import gov.loc.repository.bagger.ui.handlers.SaveFieldHandler;
 import gov.loc.repository.bagger.ui.handlers.SerializeBagHandler;
 import gov.loc.repository.bagger.ui.handlers.UpdateBagHandler;
 import gov.loc.repository.bagger.ui.handlers.VersionListHandler;
@@ -318,21 +321,21 @@ public class InfoFormsPane extends JScrollPane {
     	JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
 
     	saveButton = new JButton(bagView.getPropertyMessage("bag.button.field.save"));
-    	saveButton.addActionListener(new SaveFieldHandler());
+    	saveButton.addActionListener(new SaveFieldHandler(bagView));
     	saveButton.setOpaque(true);
     	saveButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.save.help"));
     	saveButton.setEnabled(enabled);
     	buttonPanel.add(saveButton);
     	
     	loadDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.load"));
-    	loadDefaultsButton.addActionListener(new LoadFieldHandler());
+    	loadDefaultsButton.addActionListener(new LoadFieldHandler(bagView));
     	loadDefaultsButton.setOpaque(true);
     	loadDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.load.help"));
     	loadDefaultsButton.setEnabled(enabled);
     	buttonPanel.add(loadDefaultsButton);
 
     	clearDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.clear"));
-    	clearDefaultsButton.addActionListener(new ClearFieldHandler());
+    	clearDefaultsButton.addActionListener(new ClearFieldHandler(bagView));
     	clearDefaultsButton.setOpaque(true);
     	clearDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.clear.help"));
     	clearDefaultsButton.setEnabled(enabled);
@@ -347,34 +350,6 @@ public class InfoFormsPane extends JScrollPane {
     	public void actionPerformed(ActionEvent e) {
     		newProjectFrame = new NewProjectFrame(bagView, bagView.getPropertyMessage("bag.frame.newproject"));
     		newProjectFrame.setVisible(true);
-       	}
-    }
-
-    private class SaveFieldHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-        	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
-    		bagView.saveProfiles();
-    		bagView.bagInfoInputPane.setSelectedIndex(1);
-       	}
-    }
-
-    private class LoadFieldHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-    		bagView.loadProfiles();
-    		bagView.bagInfoInputPane.setSelectedIndex(1);
-       	}
-    }
-
-    private class ClearFieldHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-    		bagView.clearProfiles();
-    		bagView.bagInfoInputPane.setSelectedIndex(1);
        	}
     }
 
