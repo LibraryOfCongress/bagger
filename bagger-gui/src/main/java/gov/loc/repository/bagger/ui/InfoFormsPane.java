@@ -38,15 +38,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.richclient.application.Application;
-import org.springframework.richclient.application.ApplicationPage;
-import org.springframework.richclient.application.PageComponent;
-
 public class InfoFormsPane extends JScrollPane {
 	private static final long serialVersionUID = -5988111446773491301L;
-	private static final Log log = LogFactory.getLog(InfoFormsPane.class);
     private BagView bagView;
     private DefaultBag bag;
     private JScrollPane bagInfoScrollPane;
@@ -70,7 +63,7 @@ public class InfoFormsPane extends JScrollPane {
     private void createScrollPane(boolean enabled) {
     	buttonPanel = createButtonPanel(enabled);
 
-    	bagView.bagInfoInputPane = new BagInfoInputPane(bagView, bagView.username, bagView.projectContact, false);
+    	bagView.bagInfoInputPane = new BagInfoInputPane(bagView, bagView.bagProject.username, bagView.bagProject.projectContact, false);
     	bagView.bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
     	bagView.bagInfoInputPane.setEnabled(false);
     	bagView.bagSettingsPanel = createSettingsPanel();
@@ -143,8 +136,8 @@ public class InfoFormsPane extends JScrollPane {
     	JLabel projectLabel = new JLabel(bagView.getPropertyMessage("bag.label.project"));
     	projectLabel.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
     	ArrayList<String> listModel = new ArrayList<String>();
-    	Object[] array = bagView.userProjects.toArray();
-    	for (int i=0; i < bagView.userProjects.size(); i++) listModel.add(((Project)array[i]).getName());
+    	Object[] array = bagView.bagProject.userProjects.toArray();
+    	for (int i=0; i < bagView.bagProject.userProjects.size(); i++) listModel.add(((Project)array[i]).getName());
     	bagView.projectList = new JComboBox(listModel.toArray());
     	bagView.projectList.setName(bagView.getPropertyMessage("bag.label.projectlist"));
     	bagView.projectList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
@@ -354,7 +347,7 @@ public class InfoFormsPane extends JScrollPane {
     }
 
     public void updateInfoFormsPane(boolean enabled) {
-    	bagView.bagInfoInputPane = new BagInfoInputPane(bagView, bagView.username, bagView.projectContact, enabled);
+    	bagView.bagInfoInputPane = new BagInfoInputPane(bagView, bagView.bagProject.username, bagView.bagProject.projectContact, enabled);
     	bagView.bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
     	bagInfoScrollPane.setViewportView(bagView.bagInfoInputPane);
     	bagInfoScrollPane.setPreferredSize(bagView.bagInfoInputPane.getPreferredSize());

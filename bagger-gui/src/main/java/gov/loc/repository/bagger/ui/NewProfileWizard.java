@@ -1,10 +1,7 @@
 
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.Contact;
-import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 
 import org.springframework.binding.form.HierarchicalFormModel;

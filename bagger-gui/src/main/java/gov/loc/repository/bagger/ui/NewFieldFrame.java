@@ -43,14 +43,11 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationPage;
 import org.springframework.richclient.application.PageComponent;
 
 public class NewFieldFrame extends JFrame implements ActionListener {
-	private static final Log log = LogFactory.getLog(NewFieldFrame.class);
 	private static final long serialVersionUID = 1L;
 	private static final String TEXTFIELD = "Brief Text";
 	private static final String TEXTAREA = "Extended Text";
@@ -392,7 +389,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
     		if (currentMap.isEmpty() || !currentMap.containsKey(field.getLabel())) {
     			setVisible(false);
-    			bagView.addProjectField(field);
+    			bagView.bagProject.addProjectField(field);
     			currentMap.put(field.getLabel(), field);
     			bagInfo.setFieldMap(currentMap);
                 bag.setInfo(bagInfo);

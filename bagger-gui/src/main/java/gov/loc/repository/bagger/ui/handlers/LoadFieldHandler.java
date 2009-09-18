@@ -8,11 +8,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class LoadFieldHandler extends AbstractAction {
-	private static final Log log = LogFactory.getLog(LoadFieldHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;
@@ -23,7 +19,7 @@ public class LoadFieldHandler extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		bagView.loadProfiles();
+		bagView.bagProject.loadProfiles();
 		bagView.bagInfoInputPane.setSelectedIndex(1);
 	}
 }

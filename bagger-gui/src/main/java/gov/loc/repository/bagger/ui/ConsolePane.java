@@ -143,7 +143,7 @@ public class ConsolePane extends JPanel {
         layout.setConstraints(completeResult, gbc);
         this.add(completeResult);
     }
-    
+/*    
     private void createBaggedLine(int row) {
     	JLabel serializedLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isBagged"));
     	serializedLabel.setToolTipText(parentView.getPropertyMessage("consolepane.isbagged.help"));
@@ -175,7 +175,7 @@ public class ConsolePane extends JPanel {
     	layout.setConstraints(serializedResult, gbc);
     	this.add(serializedResult);
     }
-    
+*/    
     private void createValidLine(int row) {
     	JLabel validLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isValid"));
     	validLabel.setToolTipText(parentView.getPropertyMessage("consolepane.isvalid.help"));

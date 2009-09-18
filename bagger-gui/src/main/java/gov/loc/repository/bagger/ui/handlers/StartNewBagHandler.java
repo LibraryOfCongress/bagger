@@ -1,6 +1,7 @@
 
 package gov.loc.repository.bagger.ui.handlers;
 
+import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
@@ -14,11 +15,7 @@ import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class StartNewBagHandler extends AbstractAction {
-	private static final Log log = LogFactory.getLog(StartNewBagHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;
@@ -40,12 +37,13 @@ public class StartNewBagHandler extends AbstractAction {
     }
 
     public void createNewBag() {
-    	bag = bagView.getBag();
     	String messages = "";
     	bagView.bagCount++;
 
-    	bagView.bagInfoInputPane.enableForms(bag, true);
     	bagView.clearBagHandler.clearExistingBag(messages);
+    	bag = bagView.getBag();
+		bagView.enableSettings(false);
+    	bagView.bagInfoInputPane.enableForms(bag, true);
     	bagView.bagVersionList.setSelectedItem(bagView.bagVersionValue.getText());
     	bagView.bagVersionValue.setText(bagView.bagVersionValue.getText());
 
@@ -53,10 +51,6 @@ public class StartNewBagHandler extends AbstractAction {
 		bag.setName(bagName);
 		bagView.bagNameField.setText(bagName);
 		bagView.bagNameField.setCaretPosition(bagName.length()-1);
-		bagView.enableSettings(false);
-		bag.setRootDir(bagView.bagRootPath);
-		messages = bagView.updateBaggerRules();
-		bagView.initializeProfile();
 
         Bag b = bag.getBag();
         bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
@@ -66,21 +60,17 @@ public class StartNewBagHandler extends AbstractAction {
         	bagView.bagTagFileTree.addNode(bf.getFilepath());
         }
         bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
-        bagView.showTagButton.setEnabled(true);
-        bagView.enableBagSettings(true);
         bag.isClear(false);
 		bag.getInfo().setBag(bag);
-		bagView.bagInfoInputPane.populateForms(bag, true);
-        //bagInfoInputPane.updateSelected(bag);
-		bagView.compositePane.updateCompositePaneTabs(bag, messages);
-
 		bag.isNewbag(true);
-		bagView.addDataButton.setEnabled(true);
-		bagView.addDataExecutor.setEnabled(true);
-		bagView.addTagFileButton.setEnabled(true);
-		bagView.closeButton.setEnabled(true);
-		bagView.removeTagFileButton.setEnabled(true);
-		bagView.bagButtonPanel.invalidate();
+    	bagView.bagProject.baggerProfile = new BaggerProfile();
+		//bagView.bagProject.initializeProfile();
+		messages = bagView.updateBaggerRules();
+		bag.setRootDir(bagView.bagRootPath);
+
+    	bagView.bagInfoInputPane.populateForms(bag, true);
+		bagView.compositePane.updateCompositePaneTabs(bag, messages);
     	bagView.setBag(bag);
+    	bagView.updateNewBag();
     }
 }

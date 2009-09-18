@@ -23,11 +23,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class TagFilesFrame extends JFrame implements ActionListener {
-	private static final Log log = LogFactory.getLog(TagFilesFrame.class);
 	private static final long serialVersionUID = 1L;
 
     public TagFilesFrame(Frame parent, String title) {

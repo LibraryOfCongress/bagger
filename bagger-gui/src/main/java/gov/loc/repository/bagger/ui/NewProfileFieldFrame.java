@@ -26,7 +26,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,14 +42,11 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationPage;
 import org.springframework.richclient.application.PageComponent;
 
 public class NewProfileFieldFrame extends JFrame implements ActionListener {
-	private static final Log log = LogFactory.getLog(NewProfileFieldFrame.class);
 	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag = null;
@@ -301,11 +297,11 @@ public class NewProfileFieldFrame extends JFrame implements ActionListener {
     		field.setName(name.toLowerCase());
     		field.setLabel(name);
 
-    		HashMap<String, BagInfoField> currentMap = bagView.getBaggerProfile().getProfileMap();
+    		HashMap<String, BagInfoField> currentMap = bagView.bagProject.getBaggerProfile().getProfileMap();
     		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
     		if (currentMap.isEmpty() || !currentMap.containsKey(field.getLabel())) {
     			currentMap.put(field.getLabel(), field);
-    			bagView.getBaggerProfile().addField(field.getLabel(), field.getValue(), field.isRequired(), field.isEnabled(), field.isProfile());
+    			bagView.bagProject.getBaggerProfile().addField(field.getLabel(), field.getValue(), field.isRequired(), field.isEnabled(), field.isProfile());
     			setVisible(false);
     			bagView.bagInfoInputPane.populateForms(bag, true);
     		} else {

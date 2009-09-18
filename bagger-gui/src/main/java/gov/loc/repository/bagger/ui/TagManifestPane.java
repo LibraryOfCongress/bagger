@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
-import gov.loc.repository.bagit.Manifest;
 
 public class TagManifestPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;

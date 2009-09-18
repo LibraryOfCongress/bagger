@@ -38,17 +38,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.richclient.application.Application;
-import org.springframework.richclient.application.ApplicationPage;
-import org.springframework.richclient.application.PageComponent;
 
 public class SaveBagFrame extends JFrame implements ActionListener {
 	private static final Log log = LogFactory.getLog(SaveBagFrame.class);

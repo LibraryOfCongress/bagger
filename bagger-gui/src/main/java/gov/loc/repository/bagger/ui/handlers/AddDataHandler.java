@@ -2,17 +2,12 @@
 package gov.loc.repository.bagger.ui.handlers;
 
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagger.ui.LongTask;
 import gov.loc.repository.bagger.ui.Progress;
-import gov.loc.repository.bagit.Bag;
-import gov.loc.repository.bagit.BagFile;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;

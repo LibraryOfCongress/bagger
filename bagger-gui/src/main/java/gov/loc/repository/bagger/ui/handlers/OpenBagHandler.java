@@ -2,18 +2,15 @@
 package gov.loc.repository.bagger.ui.handlers;
 
 import gov.loc.repository.bagger.Project;
-import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
-import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -56,26 +53,6 @@ public class OpenBagHandler extends AbstractAction {
             File file = fo.getSelectedFile();
             if (file == null) file = bagView.bagRootPath;
             openExistingBag(file);
-            bagView.addDataButton.setEnabled(true);
-            bagView.addDataExecutor.setEnabled(true);
-            bagView.updatePropButton.setEnabled(false);
-            bagView.saveButton.setEnabled(true);
-            bagView.saveBagExecutor.setEnabled(true);
-            bagView.saveAsButton.setEnabled(true);
-            bagView.removeDataButton.setEnabled(true);
-            bagView.addTagFileButton.setEnabled(true);
-            bagView.removeTagFileButton.setEnabled(true);
-            bagView.showTagButton.setEnabled(true);
-            bagView.saveBagAsExecutor.setEnabled(true);
-            bagView.bagButtonPanel.invalidate();
-            bagView.closeButton.setEnabled(true);
-            bagView.validateButton.setEnabled(true);
-            bagView.completeButton.setEnabled(true);
-            bagView.completeExecutor.setEnabled(true);
-            bagView.validateExecutor.setEnabled(true);
-            bagView.topButtonPanel.invalidate();
-            bag.isNewbag(false);
-            bagView.setBag(bag);
         }
 	}
 
@@ -83,7 +60,6 @@ public class OpenBagHandler extends AbstractAction {
     	String messages = "";
     	bagView.bagInfoInputPane.enableForms(bag, true);
     	bagView.clearBagHandler.clearExistingBag(messages);
-    	messages = "";
 
 		try {
 	    	bagView.clearBagHandler.newDefaultBag(file);
@@ -150,24 +126,24 @@ public class OpenBagHandler extends AbstractAction {
 	    bag.isClear(false);
         bag.getInfo().setBag(bag);
     	bag.copyBagToForm();
-    	bagView.baggerProfile = new BaggerProfile();
+    	bagView.bagProject.baggerProfile = new BaggerProfile();
 	    if (!bag.getInfo().getLcProject().trim().isEmpty()){
     		String name = bag.getInfo().getLcProject().trim();
     		Project project = new Project();
     		project.setName(name);
-    		if (!bagView.projectExists(project)) {
-    			bagView.addProject(project);
+    		if (!bagView.bagProject.projectExists(project)) {
+    			bagView.bagProject.addProject(project);
     		}
-    		messages += bagView.updateProject(name);
+    		messages += bagView.bagProject.updateProject(name);
     		bag.isNoProject(false);
     	} else {
-    		messages += bagView.updateProject(bagView.getPropertyMessage("bag.project.noproject"));
+    		messages += bagView.bagProject.updateProject(bagView.getPropertyMessage("bag.project.noproject"));
     		bag.isNoProject(true);
     	}
 	    DefaultBagInfo bagInfo = bag.getInfo();
 		bagInfo.createExistingFieldMap(true);
 		bag.setInfo(bagInfo);
-		bagView.baggerProfile.setOrganization(bagInfo.getBagOrganization());
+		bagView.bagProject.baggerProfile.setOrganization(bagInfo.getBagOrganization());
     	if (bagInfo.getBagSize() != null && bagInfo.getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
     	} 
@@ -181,7 +157,6 @@ public class OpenBagHandler extends AbstractAction {
 		messages = bagView.updateBaggerRules();
 		bagView.bagRootPath = file;
     	bag.setRootDir(bagView.bagRootPath);
-//		bagView.setBag(bag);
 		File rootSrc = new File(file, bag.getDataDirectory());
     	if (bag.getBag().getFetchTxt() != null) {
     		bagView.bagPayloadTree = new BagTree(bagView, bag.getFetch().getBaseURL(), true);
@@ -195,6 +170,7 @@ public class OpenBagHandler extends AbstractAction {
     	bagView.updateManifestPane();
     	bagView.enableBagSettings(true);
 		bag.isSerialized(true);
+        bag.isNewbag(false);
 		String msgs = bag.validateMetadata();
 		if (msgs != null) {
 			if (messages != null) messages += msgs;
@@ -203,6 +179,7 @@ public class OpenBagHandler extends AbstractAction {
 		bagView.bagInfoInputPane.populateForms(bag, true);
 		bagView.compositePane.updateCompositePaneTabs(bag, messages);
 		bagView.setBag(bag);
+		bagView.updateOpenBag();
 		bagView.statusBarEnd();
     }
 }

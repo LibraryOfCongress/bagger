@@ -5,27 +5,18 @@ import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
-import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
-import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
-import gov.loc.repository.bagit.BagFile;
 
 import java.awt.event.ActionEvent;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.richclient.application.Application;
-import org.springframework.richclient.application.ApplicationPage;
-import org.springframework.richclient.application.PageComponent;
 
 public class ProjectListHandler extends AbstractAction {
 	private static final Log log = LogFactory.getLog(ProjectListHandler.class);
@@ -72,16 +63,16 @@ public class ProjectListHandler extends AbstractAction {
 	}
 
     private void changeProject(String selected) {
-        bagView.updateProfile();
+        bagView.bagProject.updateProfile();
 
-    	Object[] project_array = bagView.userProjects.toArray();
-    	int projectSize = bagView.userProjects.size();
+    	Object[] project_array = bagView.bagProject.userProjects.toArray();
+    	int projectSize = bagView.bagProject.userProjects.size();
         for (int i=0; i < projectSize; i++) {
         	Project project = (Project)project_array[i];
         	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(project.getName())) {
         		log.info("bagProject: " + project.getId());
         		bag.setProject(project);
-        		Object[] profiles = bagView.userProfiles.toArray();
+        		Object[] profiles = bagView.bagProject.userProfiles.toArray();
         		for (int j=0; j < profiles.length; j++) {
         			Profile profile = (Profile) profiles[j];
         			if (profile.getProjectId() == project.getId()) {
@@ -100,8 +91,7 @@ public class ProjectListHandler extends AbstractAction {
                    		bagOrg.setOrganizationAddress(org.getAddress());
                    		bagInfo.setBagOrganization(bagOrg);
                    		bag.setInfo(bagInfo);
-                   		bagView.projectContact = profile.getPerson();
-//                		bagView.updateTreePanels();
+                   		bagView.bagProject.projectContact = profile.getPerson();
                    	}
         		}
         	}

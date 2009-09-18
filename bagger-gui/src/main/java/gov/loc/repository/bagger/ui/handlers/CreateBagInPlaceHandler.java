@@ -1,13 +1,13 @@
 
 package gov.loc.repository.bagger.ui.handlers;
 
+import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagger.ui.LongTask;
 import gov.loc.repository.bagger.ui.NewBagInPlaceFrame;
 import gov.loc.repository.bagger.ui.Progress;
-import gov.loc.repository.bagger.ui.SaveBagFrame;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 
@@ -18,11 +18,7 @@ import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class CreateBagInPlaceHandler extends AbstractAction implements Progress {
-	private static final Log log = LogFactory.getLog(CreateBagInPlaceHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;
@@ -67,7 +63,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     	bag = bagView.getBag();
         bag.getInfo().setBag(bag);
     	bag.getBag().addFileToPayload(data);
-    	boolean alreadyExists = bagView.bagPayloadTree.addNodes(data, false);
+    	bagView.bagPayloadTree.addNodes(data, false);
     	bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
 
     	File bagDir = data.getParentFile();
@@ -79,6 +75,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
         bagView.setBag(bag);
         bagView.saveBagHandler.save(bagFile);
 
+    	bagView.bagProject.baggerProfile = new BaggerProfile();
         bagView.compositePane.setBag(bag);
         bagView.compositePane.updateCompositePaneTabs(bag, bagView.getPropertyMessage("bag.message.filesadded"));
         bagView.updateManifestPane();
@@ -98,31 +95,11 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
         	bagView.bagTagFileTree.addNode(bf.getFilepath());
         }
         bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
-        bagView.setBag(bag);
-
-        bagView.addDataButton.setEnabled(true);
-        bagView.addDataExecutor.setEnabled(true);
-        bagView.updatePropButton.setEnabled(false);
-        bagView.saveButton.setEnabled(false);
-        bagView.saveBagExecutor.setEnabled(false);
-        bagView.saveAsButton.setEnabled(true);
-        bagView.saveBagAsExecutor.setEnabled(true);
-        bagView.removeDataButton.setEnabled(true);
-        bagView.addTagFileButton.setEnabled(true);
-        bagView.removeTagFileButton.setEnabled(true);
-        bagView.showTagButton.setEnabled(true);
-        bagView.bagButtonPanel.invalidate();
-        bagView.closeButton.setEnabled(true);
-        bagView.validateButton.setEnabled(true);
-        bagView.completeButton.setEnabled(true);
-        bagView.completeExecutor.setEnabled(true);
-        bagView.validateExecutor.setEnabled(true);
-        bagView.bagButtonPanel.invalidate();
-        bagView.topButtonPanel.invalidate();
         bag.isNewbag(true);
+        bagView.setBag(bag);
         bagView.bagInfoInputPane.populateForms(bag, true);
         bagView.compositePane.updateCompositePaneTabs(bag, messages);
-
+        bagView.updateBagInPlace();
         bagView.statusBarEnd();
     }
 }

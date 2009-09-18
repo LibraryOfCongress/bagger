@@ -17,11 +17,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class AddTagFileHandler extends AbstractAction {
-	private static final Log log = LogFactory.getLog(AddTagFileHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;

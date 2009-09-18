@@ -5,7 +5,6 @@ import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagger.ui.LongTask;
 import gov.loc.repository.bagger.ui.Progress;
-import gov.loc.repository.bagger.ui.SaveBagFrame;
 import gov.loc.repository.bagit.writer.impl.FileSystemWriter;
 import gov.loc.repository.bagit.writer.impl.TarBz2Writer;
 import gov.loc.repository.bagit.writer.impl.TarGzWriter;

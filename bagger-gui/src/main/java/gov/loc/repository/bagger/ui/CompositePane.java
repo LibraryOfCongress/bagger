@@ -11,7 +11,6 @@ import gov.loc.repository.bagger.bag.impl.DefaultBag;
 public class CompositePane extends JScrollPane {
 	private static final long serialVersionUID = 1L;
 	public static final String COMPOSITE_PANE = "compositePane";
-    private String messages = new String();
     private BagView parentView;
     private DefaultBag bag;
     private ConsolePane consolePane = null;

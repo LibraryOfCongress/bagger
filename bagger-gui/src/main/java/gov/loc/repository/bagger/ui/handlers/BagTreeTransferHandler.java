@@ -22,9 +22,6 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.richclient.application.Application;
-import org.springframework.richclient.application.ApplicationPage;
-import org.springframework.richclient.application.PageComponent;
 
 public class BagTreeTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;

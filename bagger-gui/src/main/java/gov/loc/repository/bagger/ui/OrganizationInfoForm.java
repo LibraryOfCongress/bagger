@@ -11,20 +11,16 @@ import gov.loc.repository.bagit.Bag;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -37,14 +33,12 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.application.ApplicationServicesLocator;
-import org.springframework.richclient.form.AbstractForm;
 import org.springframework.richclient.form.binding.BindingFactory;
 import org.springframework.richclient.form.binding.BindingFactoryProvider;
 
@@ -67,7 +61,6 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     private JComponent  form;
 	protected Bag bag;
 	public boolean dirty = false;
-	private boolean enabled;
 	private NewFieldFrame newFieldFrame;
 	
     public OrganizationInfoForm(FormModel formModel, BagView bagView, HashMap<String, BagInfoField> map, boolean enabled) {
@@ -77,7 +70,6 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
         this.defaultBag = bagView.getBag();
         this.bag = this.defaultBag.getBag();
 		this.fieldMap = map;
-		this.enabled = enabled;
 		
 		this.setLayout(new BorderLayout());
 		buttonPanel = createButtonPanel(enabled);
@@ -348,7 +340,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     	if (event.getClickCount() == 2) {
     		// TODO: edit selected field
 	        newFieldFrame = new NewFieldFrame(bagView, bagView.getPropertyMessage("bag.frame.addfield")); 
-	        Collection<ProjectProfile> fieldList = bagView.userProjectProfiles;
+	        Collection<ProjectProfile> fieldList = bagView.bagProject.userProjectProfiles;
 	        JComponent component = (JComponent) event.getComponent();
 	        if (component instanceof JLabel) {
 		        BagInfoField field = new BagInfoField();

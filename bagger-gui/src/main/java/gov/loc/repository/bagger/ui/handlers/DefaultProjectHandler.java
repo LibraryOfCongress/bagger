@@ -10,14 +10,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.richclient.application.Application;
-import org.springframework.richclient.application.ApplicationPage;
-import org.springframework.richclient.application.PageComponent;
-
 public class DefaultProjectHandler extends AbstractAction {
-	private static final Log log = LogFactory.getLog(DefaultProjectHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;
@@ -34,7 +27,7 @@ public class DefaultProjectHandler extends AbstractAction {
 
 		// Determine status
 		boolean isSelected = cb.isSelected();
-   		Object[] projectArray = bagView.userProjects.toArray();
+   		Object[] projectArray = bagView.bagProject.userProjects.toArray();
    		for (int i=0; i < projectArray.length; i++) {
    			Project project = (Project) projectArray[i];
    			project.setIsDefault(false);

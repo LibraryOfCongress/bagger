@@ -2,7 +2,6 @@
 package gov.loc.repository.bagger.ui;
 
 import java.awt.Dimension;
-import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +26,7 @@ import org.springframework.richclient.form.FormModelHelper;
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.Project;
-import gov.loc.repository.bagger.ProjectBagInfo;
+//import gov.loc.repository.bagger.ProjectBagInfo;
 import gov.loc.repository.bagger.ProjectProfile;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
@@ -45,13 +44,11 @@ public class BagInfoInputPane extends JTabbedPane {
 	private BagView parentView;
 	private DefaultBag defaultBag;
 	private BaggerProfile baggerProfile;
-	private ProjectBagInfo projectBagInfo;
+	//private ProjectBagInfo projectBagInfo;
     public OrganizationInfoForm bagInfoForm = null;
     private OrganizationProfileForm profileForm = null;
-//    private ProjectProfileForm projectForm = null;
     private HierarchicalFormModel infoFormModel = null;
     private HierarchicalFormModel profileFormModel = null;
-//    private HierarchicalFormModel projectFormModel = null;
 
     private Dimension dimension = new Dimension(400, 370);
 
@@ -90,7 +87,11 @@ public class BagInfoInputPane extends JTabbedPane {
     public void enableForms(DefaultBag bag, boolean b) {
     	//projectForm.setEnabled(b);
     	profileForm.setEnabled(b);
+    	profileForm.getControl().invalidate();
     	bagInfoForm.setEnabled(b);
+    	bagInfoForm.invalidate();
+    	this.setEnabled(b);
+    	this.invalidate();
     }
     
     // Define the information forms
@@ -98,10 +99,10 @@ public class BagInfoInputPane extends JTabbedPane {
     	defaultBag = bag;
     	DefaultBagInfo bagInfo = bag.getInfo();
         BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
-        BaggerProfile profile = parentView.getBaggerProfile();
-        projectBagInfo = parentView.getProjectBagInfo();
+        BaggerProfile profile = parentView.bagProject.getBaggerProfile();
+        //projectBagInfo = parentView.bagProject.getProjectBagInfo();
         profile.setOrganization(baggerOrganization);
-        profile.setToContact(parentView.projectContact);
+        profile.setToContact(parentView.bagProject.projectContact);
         baggerProfile = profile;
 
         Contact orgContact = bagInfo.getBagOrganization().getContact();
@@ -109,7 +110,7 @@ public class BagInfoInputPane extends JTabbedPane {
         	orgContact = new Contact();
         }
 
-        Contact projectContact = parentView.projectContact;
+        Contact projectContact = parentView.bagProject.projectContact;
         if (projectContact == null) {
         	projectContact = new Contact();
         }
@@ -168,7 +169,7 @@ public class BagInfoInputPane extends JTabbedPane {
         } catch (Exception e) {
         	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
         }
-        parentView.projectContact = profile.getToContact();
+        parentView.bagProject.projectContact = profile.getToContact();
         baggerProfile = profile;
         bag.getInfo().setBagOrganization(baggerOrg);
         createBagInfo(bag);
@@ -205,9 +206,9 @@ public class BagInfoInputPane extends JTabbedPane {
 
     private class BagInfoChangeListener implements ChangeListener {
     	public void stateChanged(ChangeEvent changeEvent) {
-    		JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
-            int count = sourceTabbedPane.getTabCount();
-            int selected = sourceTabbedPane.getSelectedIndex();
+    		//JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
+            //int count = sourceTabbedPane.getTabCount();
+            //int selected = sourceTabbedPane.getSelectedIndex();
     	}
     }
     
@@ -242,7 +243,7 @@ public class BagInfoInputPane extends JTabbedPane {
 			}
 		}
 /* */
-    	Collection<ProjectProfile> projectMap = bagView.userProjectProfiles;
+    	Collection<ProjectProfile> projectMap = bagView.bagProject.userProjectProfiles;
 		for (Iterator<ProjectProfile> iter = projectMap.iterator(); iter.hasNext();) {
 			ProjectProfile projectProfile = (ProjectProfile) iter.next();
 			if (projectProfile.getProjectId() == project.getId()) {
@@ -293,7 +294,7 @@ public class BagInfoInputPane extends JTabbedPane {
         	i++;
         	c = components[i];
         	if (c instanceof JCheckBox) {
-        		JCheckBox cb = (JCheckBox) c;
+        		//JCheckBox cb = (JCheckBox) c;
         	}
         }
         bagInfoForm.dirty = false;

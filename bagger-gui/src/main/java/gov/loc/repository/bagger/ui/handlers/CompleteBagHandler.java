@@ -12,15 +12,10 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class CompleteBagHandler extends AbstractAction implements Progress {
-	private static final Log log = LogFactory.getLog(CompleteBagHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;
-	//private LongTask task;
 
 	public CompleteBagHandler(BagView bagView) {
 		super();
@@ -37,7 +32,6 @@ public class CompleteBagHandler extends AbstractAction implements Progress {
     }
 
     public void setTask(LongTask task) {
-//		this.task = task;
 	}
 
 	public void execute() {
@@ -45,11 +39,11 @@ public class CompleteBagHandler extends AbstractAction implements Progress {
     	while (!bagView.task.canceled && !bagView.task.done) {
             try {
                 Thread.sleep(1000); //sleep for a second
-                /* */
+
                 CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
                 completeVerifier.addProgressListener(bagView.task);
         		bagView.longRunningProcess = completeVerifier;
-        		/*             		 */
+
         		Bag completeBag = bag.getBag();
                 String messages = bag.completeBag(completeVerifier, completeBag);
         	    if (messages != null && !messages.trim().isEmpty()) {

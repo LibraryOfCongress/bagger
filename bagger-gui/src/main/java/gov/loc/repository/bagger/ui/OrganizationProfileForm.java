@@ -3,16 +3,12 @@ package gov.loc.repository.bagger.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -109,7 +105,7 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
 
         return fieldForm;
     }
-
+/* 
     private JPanel createButtonPanel(boolean enabled) {
     	JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 
@@ -142,7 +138,7 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
 
     	public void actionPerformed(ActionEvent e) {
         	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
-    		bagView.saveProfiles();
+    		bagView.bagProject.saveProfiles();
     		bagView.bagInfoInputPane.setSelectedIndex(1);
        	}
     }
@@ -151,7 +147,7 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
        	private static final long serialVersionUID = 1L;
 
     	public void actionPerformed(ActionEvent e) {
-    		bagView.loadProfiles();
+    		bagView.bagProject.loadProfiles();
     		bagView.bagInfoInputPane.setSelectedIndex(1);
        	}
     }
@@ -160,11 +156,11 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
        	private static final long serialVersionUID = 1L;
 
     	public void actionPerformed(ActionEvent e) {
-    		bagView.clearProfiles();
+    		bagView.bagProject.clearProfiles();
     		bagView.bagInfoInputPane.setSelectedIndex(1);
        	}
     }
-
+*/
     public void propertyChange(PropertyChangeEvent evt) {
         if (bagView != null && !this.hasErrors()) {
         	bagView.updatePropButton.setEnabled(true);

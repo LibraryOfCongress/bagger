@@ -2,21 +2,10 @@
 package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.Bagger;
-import gov.loc.repository.bagger.Contact;
-import gov.loc.repository.bagger.Organization;
-import gov.loc.repository.bagger.ProjectBagInfo;
 import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.Project;
-import gov.loc.repository.bagger.ProjectProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
-import gov.loc.repository.bagger.bag.BagInfoField;
-import gov.loc.repository.bagger.bag.BaggerFileEntity;
-import gov.loc.repository.bagger.bag.BaggerOrganization;
-import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagger.ui.handlers.*;
-import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.Cancellable;
 import gov.loc.repository.bagit.BagFactory.Version;
@@ -34,17 +23,12 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JComponent;
 import javax.swing.JCheckBox;
@@ -59,15 +43,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.JFrame;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationServices;
 import org.springframework.richclient.application.ApplicationWindow;
 import org.springframework.richclient.application.PageComponentContext;
 import org.springframework.richclient.application.event.LifecycleApplicationEvent;
 import org.springframework.richclient.application.support.AbstractView;
-import org.springframework.richclient.command.support.AbstractActionCommandExecutor;
 import org.springframework.richclient.dialog.MessageDialog;
 import org.springframework.richclient.image.ImageSource;
 import org.springframework.richclient.progress.BusyIndicator;
@@ -89,22 +70,16 @@ public class BagView extends AbstractView implements ApplicationListener {
     public Cancellable longRunningProcess = null;
     public Writer bagWriter = null;
 
-	private Bagger bagger;
+	public Bagger bagger;
     private DefaultBag bag;
     public BaggerValidationRulesSource baggerRules;
+    public BagProject bagProject = new BagProject(this);
     public int bagCount = 0;
     public boolean clearAfterSaving = false;
     public File bagRootPath;
     public File tmpRootPath;
     public File parentSrc;
-    public Collection<Project> userProjects;
-    public Collection<Profile> userProfiles;
-    public Collection<ProjectProfile> userProjectProfiles;
-    public BaggerProfile baggerProfile = new BaggerProfile();
-    private ProjectBagInfo projectBagInfo = new ProjectBagInfo();
-    public String username;
-    public Contact projectContact;
-	private String userHomeDir;
+	public String userHomeDir;
 	public boolean validateOnSave = false;
 
 	public BagTree bagPayloadTree;
@@ -200,69 +175,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     public DefaultBag getBag() {
         return this.bag;
     }
-    
-    public void setBaggerProfile(BaggerProfile profile) {
-    	this.baggerProfile = profile;
-    }
-    
-    public BaggerProfile getBaggerProfile() {
-    	return this.baggerProfile;
-    }
-    
-    public void setProjectBagInfo(ProjectBagInfo projBagInfo) {
-    	this.projectBagInfo = projBagInfo;
-    }
-    
-    public ProjectBagInfo getProjectBagInfo() {
-    	return this.projectBagInfo;
-    }
-    
-    public boolean projectExists(Project project) {
-    	Collection<Project> projectList = this.userProjects;
-		for (Iterator<Project> iter = projectList.iterator(); iter.hasNext();) {
-			Project p = (Project) iter.next();
-			if (p.getName().equalsIgnoreCase(project.getName())) {
-				return true;
-			}
-		}
-    	return false;
-    }
-
-    public void addProject(Project project) {
-    	this.userProjects.add(project);
-
-    	projectList.addItem(project.getName());
-    	projectList.invalidate();
-    	this.updateProject(project.getName());
-    	bagger.storeProject(project);
-    	bag.setProject(project);
-    	bag.getInfo().setLcProject(project.getName());
-    	ProjectProfile projectProfile = new ProjectProfile();
-    	projectProfile.setProjectId(project.getId());
-    	projectProfile.setFieldName(DefaultBagInfo.FIELD_LC_PROJECT);
-    	projectProfile.setFieldValue(bag.getInfo().getLcProject());
-    	projectProfile.setIsRequired(true);
-    	projectProfile.setIsValueRequired(true);
-    	userProjectProfiles.add(projectProfile);
-		baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
-		this.bagInfoInputPane.updateProject(this);
-		this.bagInfoInputPane.populateForms(bag, true);
-    }
-
-    public void addProjectField(BagInfoField field) {
-    	if (field.isRequired() || field.isRequiredvalue() || !field.getValue().trim().isEmpty()) {
-        	log.debug("BagView.addProjectField: " + field);
-    		Project project = bag.getProject();
-    		ProjectProfile projectProfile = new ProjectProfile();
-	    	projectProfile.setProjectId(project.getId());
-	    	projectProfile.setFieldName(field.getLabel());
-	    	projectProfile.setFieldValue(field.getValue());
-	    	projectProfile.setIsRequired(field.isRequired());
-	    	projectProfile.setIsValueRequired(field.isRequiredvalue());
-	    	userProjectProfiles.add(projectProfile);
-			baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
-    	}
-    }
 
     public Dimension getMinimumSize() {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -304,21 +216,12 @@ public class BagView extends AbstractView implements ApplicationListener {
     	return this.bagTagFileTree;
     }
 
-    public void setProfiles(Collection<Profile> profiles) {
-    	this.userProfiles = profiles;
-    }
-    
-    public Collection<Profile> getProfiles() {
-    	return this.userProfiles;
-    }
-    
     @Override
     // This populates the default view descriptor declared as the startingPageId
     // property in the richclient-application-context.xml file.
     protected JComponent createControl() {
     	ApplicationWindow window = Application.instance().getActiveWindow();
     	JFrame f = window.getControl();
-    	//Application.instance().getApplicationContext().
     	f.setBackground(Color.red);
     	this.userHomeDir = System.getProperty("user.home");
         display("createControl - User Home Path: "+ userHomeDir);
@@ -332,7 +235,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	topButtonPanel.setBackground(bgColor);
 
     	clearBagHandler.newDefaultBag(null);
-    	initializeProfile();
+    	bagProject.initializeProfile();
     	updateCommands();
 
     	infoInputPane = new InfoFormsPane(this);
@@ -582,116 +485,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	gbc.fill = fill; // the way how the control fills cells
     	gbc.anchor = anchor; // alignment
     }
-    
-    public void initializeProfile() {
-   		userProjects = bagger.getProjects();
-   		log.debug("userProjects: " + userProjects);
-   		userProjectProfiles = bagger.getProjectProfiles();
-    	Collection<ProjectProfile> projectProfileMap = userProjectProfiles;
-		Object[] reqs = bag.getInfo().getRequiredStrings();
-		for (Iterator<ProjectProfile> iter = projectProfileMap.iterator(); iter.hasNext();) {
-			ProjectProfile projectProfile = (ProjectProfile) iter.next();
-			log.debug("initializeProfile: " + projectProfile);
-			if (projectProfile.getIsRequired()) {
-				if (!bag.getInfo().getRequiredSet().contains(projectProfile.getFieldName())) {
-					List<Object> list = new ArrayList<Object>();
-					for (int i=0; i < reqs.length; i++) {list.add(reqs[i]);}
-					list.add(projectProfile.getFieldName());
-					bag.getInfo().setRequiredStrings(list.toArray());
-				}
-			}
-		}
-
-   		Object[] projectArray = userProjects.toArray();
-    	Project bagProject = bag.getProject();
-    	if (bagProject == null) {
-    		for (int i=0; i < projectArray.length; i++) {
-        		bagProject = (Project) projectArray[i];
-        		if (bagProject.getIsDefault()) {
-            		bag.setProject(bagProject);
-            		break;
-        		}
-    		}
-    	}
-   		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-    	if (a != null) this.username = a.getName();
-    	else this.username = getPropertyMessage("user.name");
-    	if (projectContact == null) {
-    		projectContact = new Contact();
-    		Organization org = new Organization();
-    		projectContact.setOrganization(org);
-    	}
-    	if (this.username != null && this.username.length() > 0) {
-        	Collection<Profile> profiles = bagger.findProfiles(this.username);
-        	if (profiles == null) profiles = new ArrayList<Profile>();
-        	userProfiles = profiles;
-        	Object[] profileArray = profiles.toArray();
-        	for (int p=0; p < projectArray.length; p++) {
-        		Project project = (Project) projectArray[p];
-        		boolean found = false;
-            	for (int i=0; i < profileArray.length; i++) {
-            		Profile profile = (Profile) profileArray[i];
-            		log.debug("loadProfiles profile: " + profile);
-            		if (project.getId() == profile.getProject().getId()) {
-            			found = true;
-            			log.debug("projectId: " + project.getId() + ", bagId: " + bagProject.getId());
-                   		if (project.getId() == bagProject.getId()) {
-                   			// TODO: user is org contact
-                       		DefaultBagInfo bagInfo = bag.getInfo();
-                       		BaggerOrganization bagOrg = bagInfo.getBagOrganization();
-                       		bagOrg.setContact(profile.getContact());
-                       		Organization contactOrg = profile.getContact().getOrganization();
-                       		bagOrg.setSourceOrganization(contactOrg.getName());
-                       		bagOrg.setOrganizationAddress(contactOrg.getAddress());
-                       		bagInfo.setBagOrganization(bagOrg);
-                       		bag.setInfo(bagInfo);
-                       		projectContact = profile.getPerson();
-                       		baggerProfile.setOrganization(bagOrg);
-                	   		baggerProfile.setSourceCountact(profile.getContact());
-                       		baggerProfile.setToContact(projectContact);
-                       		log.debug("InitProfiles: " + bagOrg);
-                   		}
-            		}
-            	}
-            	if (!found) {
-            		log.error("initializeProfile - profile does NOT exist: " + project.getId());
-            		userProfiles.add(createProfile(project));
-            	}
-            	if (userProjects == null || userProjects.isEmpty()) {
-            		userProjects = bagger.getProjects();
-            		Object[] projList = userProjects.toArray();
-            		for (int i=0; i < projList.length; i++) {
-            			Project proj = (Project) projList[i];
-            			userProfiles.add(createProfile(proj));
-            		}
-            	}
-        	}
-    	} else {
-    		username = getPropertyMessage("user.name");
-    		projectContact = new Contact();
-    		Organization org = new Organization();
-    		projectContact.setOrganization(org);
-    		userProfiles = new ArrayList<Profile>();
-    		userProjects = bagger.getProjects();
-    		Object[] projList = userProjects.toArray();
-    		for (int i=0; i < projList.length; i++) {
-    			Project project = (Project) projList[i];
-    			userProfiles.add(createProfile(project));
-    		}
-    	}
-    }
-    
-    private Profile createProfile(Project project) {
-		Profile profile = new Profile();
-		profile.setProject(project);
-		profile.setProjectId(project.getId());
-		profile.setPerson(projectContact);
-		profile.setUsername(username);
-		Contact contact = new Contact();
-		contact.setOrganization(new Organization());
-		profile.setContact(contact);
-		return profile;
-    }
 
     public String updateBaggerRules() {
         baggerRules.init(bag.isEdeposit(), bag.isNdnp(), !bag.isNoProject(), bag.isHoley());
@@ -750,105 +543,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	context.register("saveBagAsCommand", saveBagAsExecutor);
     }
 
-    public String loadProfiles() {
-    	try {
-        	String message = bagger.loadProfiles();
-        	this.username = getPropertyMessage("user.name");
-        	Project project = bag.getProject();
-        	//this.projectBagInfo = bagger.loadProjectBagInfo(project.getId());
-        	//bag.parseBagInfoDefaults(projectBagInfo.getDefaults());
-        	this.initializeProfile();
-        	Object[] array = userProjects.toArray();
-        	boolean b = true;
-        	for (int i=0; i < userProjects.size(); i++) {
-        		String name = ((Project)array[i]).getName();
-        		for (int j=0; j < projectList.getModel().getSize(); j++) {
-        			String proj = (String) projectList.getModel().getElementAt(j);
-            		if (name.trim().equalsIgnoreCase(proj.trim())) {
-            			b = false;
-            			break;
-            		}
-        		}
-        		if (b) { projectList.addItem(name);	}
-        		b = true;
-        	}
-        	projectList.invalidate();
-        	bagInfoInputPane.updateProject(this);
-        	bagInfoInputPane.populateForms(bag, true);
-            bagInfoInputPane.update(bag);
-    		compositePane.updateCompositePaneTabs(bag, message);
-        	return message;
-    	} catch (Exception e) {
-    	    showWarningErrorDialog("Error Dialog", "Error trying to load project defaults:\n" + e.getMessage());
-    		return null;
-    	}
-    }
-
-    public String clearProfiles() {
-    	String message = "";
-    	ArrayList<Profile> newProfiles = new ArrayList<Profile>();
-    	Object[] profiles = userProfiles.toArray();
-    	for (int j=0; j < profiles.length; j++) {
-    		Profile profile = (Profile) profiles[j];
-    		Contact person = new Contact();
-    		person.setOrganization(new Organization());
-    		profile.setPerson(person);
-    		Contact contact = new Contact();
-    		contact.setOrganization(new Organization());
-    		profile.setContact(contact);
-    		newProfiles.add(profile);
-    		if (j == 0) {
-    			DefaultBagInfo bagInfo = bag.getInfo();
-    	   		BaggerOrganization bagOrg = new BaggerOrganization();
-    	   		bagOrg.setContact(contact);
-    	   		bagInfo.setBagOrganization(bagOrg);
-    	   		bag.setInfo(bagInfo);
-    	   		projectContact = profile.getPerson();
-    	   		baggerProfile.setOrganization(bagOrg);
-    	   		baggerProfile.setSourceCountact(profile.getContact());
-    	   		baggerProfile.setToContact(projectContact);
-    		}
-    	}
-    	userProfiles = newProfiles;
-   		bagInfoInputPane.populateForms(bag, true);
-   		bagInfoInputPane.update(bag);
-		compositePane.updateCompositePaneTabs(bag, message);
-    	return message;
-    }
-
-    public String saveProfiles() {
-    	try {
-        	Project bagProject = bag.getProject();
-        	if (bagProject == null) bagProject = new Project();
-    		projectBagInfo.setProjectId(bagProject.getId());
-    		String defaults = "";
-    		HashMap<String, BagInfoField> fieldMap = baggerProfile.getProfileMap();
-    		if (fieldMap != null && !fieldMap.isEmpty()) {
-    			Set<String> keys = fieldMap.keySet();
-    			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-    				String key = (String) iter.next();
-    				BagInfoField val = fieldMap.get(key);
-    				defaults += key + "=" + val;
-    				if (iter.hasNext()) defaults += ", ";
-    			}
-            }
-    		//projectBagInfo.setDefaults(defaults);
-    		String messages = bagger.storeBaggerUpdates(userProfiles, userProjects, userProjectProfiles, projectBagInfo, userHomeDir);
-    		if (messages != null) {
-        	    showWarningErrorDialog("Error Dialog", "Error trying to store project defaults:\n" + messages);
-        	    return null;
-    		}
-
-    		String message = getPropertyMessage("profile.message.saved") + " " + bag.getProject().getName() + "\n";
-    		compositePane.updateCompositePaneTabs(bag, message);
-    	    showWarningErrorDialog("Project Defaults Stored", message);
-    		return message;
-    	} catch (Exception e) {
-    	    showWarningErrorDialog("Error Dialog", "Error trying to store project defaults:\n" + e.getMessage());
-    		return null;
-    	}
-    }
-
     public void updateManifestPane() {
         bagTagFileTree = new BagTree(this, bag.getName(), false);
         Collection<BagFile> tags = bag.getBag().getTags();
@@ -859,81 +553,108 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagTagFileTreePanel.refresh(bagTagFileTree);
     }
 
-    public String updateProject(String projectName) {
-    	String messages = "";
+    public void updateClearBag(String messages) {
+    	enableBagSettings(false);
+        holeyCheckbox.setSelected(false);
+        holeyValue.setText("false");
+        baggerRules.clear();
+        bagProject.clearProfiles();
+		bagProject.updateProject(getPropertyMessage("bag.project.noproject"));
+    	bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
+    	bagPayloadTreePanel.refresh(bagPayloadTree);
+    	bagTagFileTree = new BagTree(this, getPropertyMessage("bag.label.noname"), false);
+    	bagTagFileTreePanel.refresh(bagTagFileTree);
+    	bagNameField.setText(bag.getName());
+    	bagNameField.invalidate();
+    	bagInfoInputPane.populateForms(bag, false);
+    	bagInfoInputPane.enableForms(bag, false);
+    	bagInfoInputPane.invalidate();
+    	compositePane.updateCompositePaneTabs(bag, messages);
+    	compositePane.invalidate();
 
-   		Object[] projectArray = userProjects.toArray();
-   		for (int i=0; i < projectArray.length; i++) {
-   			Project bagProject = (Project) projectArray[i];
-   			if (projectName != null && projectName.matches(bagProject.getName())) {
-   				bag.setProject(bagProject);
-   			}
-   		}
-   		messages += updateProfile();
-    	if (projectName.equalsIgnoreCase(getPropertyMessage("bag.project.noproject"))) {
-    		projectList.setSelectedItem(projectName);
-    		bag.isNoProject(true);
-    	} else {
-    		projectList.setSelectedItem(projectName);
-      		bag.isNoProject(false);
-    	}
-    	setBag(bag);
-		return messages;
+    	noneButton.setSelected(true);
+    	addDataButton.setEnabled(false);
+    	addDataExecutor.setEnabled(false);
+    	updatePropButton.setEnabled(false);
+    	saveButton.setEnabled(false);
+    	saveBagExecutor.setEnabled(false);
+    	saveAsButton.setEnabled(false);
+    	saveBagAsExecutor.setEnabled(false);
+    	removeDataButton.setEnabled(false);
+    	showTagButton.setEnabled(false);
+    	addTagFileButton.setEnabled(false);
+    	removeTagFileButton.setEnabled(false);
+    	closeButton.setEnabled(false);
+    	validateButton.setEnabled(false);
+    	completeButton.setEnabled(false);
+    	clearExecutor.setEnabled(false);
+    	validateExecutor.setEnabled(false);
+    	completeExecutor.setEnabled(false);
+    	bagButtonPanel.invalidate();
+    	topButtonPanel.invalidate();
     }
 
-    public String updateProfile() {
-    	String message = "";
-    	Project project = bag.getProject();
-    	if (project == null) return message;
-    	Object[] profiles = this.userProfiles.toArray();
-    	Collection<Profile> profileList = new ArrayList<Profile>();
-    	for (int i=0; i < profiles.length; i++) {
-    		Profile profile = (Profile) profiles[i];
-    		if (profile.getProject().getId() == project.getId()) {
-    			BaggerOrganization org = bag.getInfo().getBagOrganization();
-    			log.debug("updateProfile: " + org);
-    			Contact orgContact = bag.getInfo().getBagOrganization().getContact();
-    			orgContact.getOrganization().setName(org.getSourceOrganization());
-    			orgContact.getOrganization().setAddress(org.getOrganizationAddress());
-    			profile.setContact(orgContact);
-    			profile.setContactId(orgContact.getId());
-    			profile.setProject(project);
-    			profile.setProjectId(project.getId());
-    			profile.setPerson(this.projectContact);
-    			profile.setUsername(this.username);
-    			message = getPropertyMessage("profile.message.changed") + " " + project.getName() + "\n";
-    			profiles[i] = profile;
-    		}
-    		profileList.add(profile);
-    	}
-    	userProfiles = profileList;
-    	return message;
+    public void updateNewBag() {
+        showTagButton.setEnabled(true);
+        enableBagSettings(true);
+		addDataButton.setEnabled(true);
+		addDataExecutor.setEnabled(true);
+		addTagFileButton.setEnabled(true);
+		closeButton.setEnabled(true);
+		removeTagFileButton.setEnabled(true);
+		bagButtonPanel.invalidate();
     }
-/*    
-    public void updateTreePanels() {
-    	try {
-    		bag.getInfo().setBag(bag);
-    		bagTagFileTree = new BagTree(this, bag.getName(), false);
-    		Collection<BagFile> tags = bag.getBag().getTags();
-    		for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-    			BagFile bf = it.next();
-    			bagTagFileTree.addNode(bf.getFilepath());
-    		}
-    		bagTagFileTreePanel.refresh(bagTagFileTree);
-    		tagManifestPane.updateCompositePaneTabs(bag);
-    	} catch (Exception e) {
-    	}
+
+    public void updateOpenBag() {
+        addDataButton.setEnabled(true);
+        addDataExecutor.setEnabled(true);
+        updatePropButton.setEnabled(false);
+        saveButton.setEnabled(true);
+        saveBagExecutor.setEnabled(true);
+        saveAsButton.setEnabled(true);
+        removeDataButton.setEnabled(true);
+        addTagFileButton.setEnabled(true);
+        removeTagFileButton.setEnabled(true);
+        showTagButton.setEnabled(true);
+        saveBagAsExecutor.setEnabled(true);
+        bagButtonPanel.invalidate();
+        closeButton.setEnabled(true);
+        validateButton.setEnabled(true);
+        completeButton.setEnabled(true);
+        completeExecutor.setEnabled(true);
+        validateExecutor.setEnabled(true);
+        topButtonPanel.invalidate();
     }
-*/
+    
+    public void updateBagInPlace() {
+        addDataButton.setEnabled(true);
+        addDataExecutor.setEnabled(true);
+        updatePropButton.setEnabled(false);
+        saveButton.setEnabled(false);
+        saveBagExecutor.setEnabled(false);
+        saveAsButton.setEnabled(true);
+        saveBagAsExecutor.setEnabled(true);
+        removeDataButton.setEnabled(true);
+        addTagFileButton.setEnabled(true);
+        removeTagFileButton.setEnabled(true);
+        showTagButton.setEnabled(true);
+        bagButtonPanel.invalidate();
+        closeButton.setEnabled(true);
+        validateButton.setEnabled(true);
+        completeButton.setEnabled(true);
+        completeExecutor.setEnabled(true);
+        validateExecutor.setEnabled(true);
+        bagButtonPanel.invalidate();
+        topButtonPanel.invalidate();
+    }
+
     public void onApplicationEvent(ApplicationEvent e) {
     	log.info("BagView.onApplicationEvent: " + e);
         if (e instanceof LifecycleApplicationEvent) {
-        	//display("onApplicationEvent");
             LifecycleApplicationEvent le = (LifecycleApplicationEvent)e;
             if (le.getEventType() == LifecycleApplicationEvent.CREATED && le.objectIs(Profile.class)) {
-            	// TODO: Add and insert the newly created profile from wizard
             	Profile profile = (Profile) le.getObject();
-            	userProfiles.add(profile);
+            	bagProject.userProfiles.add(profile);
             }
         }
     }

@@ -6,7 +6,6 @@ import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagit.Bag;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -14,11 +13,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class RemoveTagFileHandler extends AbstractAction {
-	private static final Log log = LogFactory.getLog(RemoveTagFileHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;

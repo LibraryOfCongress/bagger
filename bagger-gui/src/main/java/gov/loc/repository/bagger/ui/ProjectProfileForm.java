@@ -9,20 +9,16 @@ import gov.loc.repository.bagit.Bag;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -32,20 +28,15 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.application.ApplicationServicesLocator;
-import org.springframework.richclient.form.AbstractForm;
 import org.springframework.richclient.form.binding.BindingFactory;
 import org.springframework.richclient.form.binding.BindingFactoryProvider;
 
 public class ProjectProfileForm extends JPanel implements PropertyChangeListener, FocusListener, KeyListener {
 	private static final long serialVersionUID = 1L;
-	private static final Log logger = LogFactory.getLog(ProjectProfileForm.class);
 
 	public static final String PROFILE_FORM_PAGE = "profilePage";
 	private static final int MIN_ROWS = 13;
@@ -62,7 +53,6 @@ public class ProjectProfileForm extends JPanel implements PropertyChangeListener
     private JComponent  form;
 	protected Bag bag;
 	public boolean dirty = false;
-	private boolean enabled;
 	private NewProfileFieldFrame newFieldFrame;
 	private NewProjectFrame newProjectFrame;
 
@@ -72,7 +62,6 @@ public class ProjectProfileForm extends JPanel implements PropertyChangeListener
         this.defaultBag = bagView.getBag();
         this.bag = this.defaultBag.getBag();
 		this.fieldMap = map;
-		this.enabled = enabled;
 
 		this.setLayout(new BorderLayout());
 		buttonPanel = createButtonPanel(enabled);
@@ -237,7 +226,7 @@ public class ProjectProfileForm extends JPanel implements PropertyChangeListener
 
     	public void actionPerformed(ActionEvent e) {
         	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
-    		bagView.saveProfiles();
+    		bagView.bagProject.saveProfiles();
     		bagView.bagInfoInputPane.setSelectedIndex(1);
        	}
     }

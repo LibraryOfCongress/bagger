@@ -3,8 +3,6 @@ package gov.loc.repository.bagger.ui;
 import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.handlers.BagTreeTransferHandler;
-import gov.loc.repository.bagger.util.RecursiveFileListIterator;
-import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
 
@@ -22,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +32,6 @@ public class BagTree extends CheckboxTree {
 	private int BAGTREE_HEIGHT = 160;
 	private int BAGTREE_ROW_MODIFIER = 22;
 
-	private BagView bagView;
 	private File bagDir;
 	private DefaultTreeModel bagTreeModel;
 	private TreePath rootPath;
@@ -45,7 +41,6 @@ public class BagTree extends CheckboxTree {
 	
 	public BagTree(BagView bagView, String path, boolean isPayload) {
 		super();
-		this.bagView = bagView;
 		basePath = path;
 		parentNode = new DefaultMutableTreeNode(basePath);
 		initialize();
@@ -204,10 +199,6 @@ public class BagTree extends CheckboxTree {
 		return displayDir;
 	}
 
-	private void display(String msg) {
-		log.info("BagTree: " + msg);
-	}
-	
 	public void setParentNode(DefaultMutableTreeNode parent) {
 		this.parentNode = parent;
 	}
@@ -252,7 +243,7 @@ public class BagTree extends CheckboxTree {
         	public void valueChanged(TreeSelectionEvent e) {
         		DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
         		if (node == null) return;
-        		Object nodeInfo = node.getUserObject();
+        		//Object nodeInfo = node.getUserObject();
         	}
         });
         addTreeExpansionListener(new TreeExpansionListener() {
