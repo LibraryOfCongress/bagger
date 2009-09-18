@@ -164,8 +164,8 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 	        JFileChooser fs = new JFileChooser(selectFile);
 	    	fs.setDialogType(JFileChooser.OPEN_DIALOG);
 	    	fs.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	    	fs.addChoosableFileFilter(bagView.noFilter);
-			fs.setFileFilter(bagView.noFilter);
+	    	fs.addChoosableFileFilter(bagView.infoInputPane.noFilter);
+			fs.setFileFilter(bagView.infoInputPane.noFilter);
 	        fs.setDialogTitle("Existing Data Location");
 		    if (bagView.bagRootPath != null) fs.setCurrentDirectory(bagView.bagRootPath.getParentFile());
 	    	fs.setCurrentDirectory(bag.getRootDir());
@@ -173,20 +173,20 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 	    		String selectedName = bag.getName();
 	    		if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
 	    			selectedName += "."+DefaultBag.ZIP_LABEL;
-	    			fs.setFileFilter(bagView.zipFilter);
+	    			fs.setFileFilter(bagView.infoInputPane.zipFilter);
 	    		}
 	    		else if (bag.getSerialMode() == DefaultBag.TAR_MODE ||
 	    				bag.getSerialMode() == DefaultBag.TAR_GZ_MODE ||
 	    				bag.getSerialMode() == DefaultBag.TAR_BZ2_MODE) {
 	    			selectedName += "."+DefaultBag.TAR_LABEL;
-	    			fs.setFileFilter(bagView.tarFilter);
+	    			fs.setFileFilter(bagView.infoInputPane.tarFilter);
 	    		}
 	    		else {
-	    			fs.setFileFilter(bagView.noFilter);
+	    			fs.setFileFilter(bagView.infoInputPane.noFilter);
 	    		}
 	    		fs.setSelectedFile(new File(selectedName));
 	    	} else {
-    			fs.setFileFilter(bagView.noFilter);
+    			fs.setFileFilter(bagView.infoInputPane.noFilter);
 	    	}
 	    	int	option = fs.showOpenDialog(frame);
 
@@ -209,7 +209,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			log.info("BagVersionFrame.OkNewBagHandler");
 			setVisible(false);
-	        bagView.bagVersionValue.setText(bagVersion);
+	        bagView.infoInputPane.bagVersionValue.setText(bagVersion);
 			bagView.createBagInPlaceHandler.createPreBag(bagFile);
         }
     }
@@ -228,7 +228,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String version = (String) jlist.getSelectedItem();
         	bagVersion = version;
-        	bagView.bagVersionValue.setText(version);
+        	bagView.infoInputPane.bagVersionValue.setText(version);
     	}
     }
 

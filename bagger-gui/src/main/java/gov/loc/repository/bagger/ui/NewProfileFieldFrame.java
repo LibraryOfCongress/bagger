@@ -303,7 +303,7 @@ public class NewProfileFieldFrame extends JFrame implements ActionListener {
     			currentMap.put(field.getLabel(), field);
     			bagView.bagProject.getBaggerProfile().addField(field.getLabel(), field.getValue(), field.isRequired(), field.isEnabled(), field.isProfile());
     			setVisible(false);
-    			bagView.bagInfoInputPane.populateForms(bag, true);
+    			bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
     		} else {
     			bagView.showWarningErrorDialog("New Field Dialog", "Field: " + field.getLabel() + " already exists!");
     		}

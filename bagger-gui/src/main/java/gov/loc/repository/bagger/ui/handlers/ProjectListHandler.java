@@ -57,7 +57,7 @@ public class ProjectListHandler extends AbstractAction {
 	    // add LC-Project to the baggerProfile map or modify it
     	bagView.updateBaggerRules();
     	changeProject(selected);
-    	bagView.bagInfoInputPane.updateProject(bagView);
+    	bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);
         bagView.compositePane.updateCompositePaneTabs(bag, "Project changed.");
     	bagView.setBag(bag);
 	}

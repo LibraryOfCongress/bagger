@@ -163,7 +163,7 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
 */
     public void propertyChange(PropertyChangeEvent evt) {
         if (bagView != null && !this.hasErrors()) {
-        	bagView.updatePropButton.setEnabled(true);
+        	bagView.infoInputPane.updatePropButton.setEnabled(true);
         }
     }
 
@@ -177,7 +177,7 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
     public void focusLost(FocusEvent evt) {
     	if (bagView != null && !this.hasErrors() && this.isDirty()) {
         	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
-    		bagView.bagInfoInputPane.setSelectedIndex(1);
+    		bagView.infoInputPane.bagInfoInputPane.setSelectedIndex(1);
     	}
     }
 }

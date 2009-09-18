@@ -66,12 +66,7 @@ public class AddDataHandler extends AbstractAction implements Progress {
         	bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
         	bagView.compositePane.setBag(bag);
         	bagView.compositePane.updateCompositePaneTabs(bag, bagView.getPropertyMessage("bag.message.filesadded"));
-
-        	bagView.saveAsButton.setEnabled(true);
-        	bagView.saveBagAsExecutor.setEnabled(true);
-        	bagView.removeDataButton.setEnabled(true);
-        	bagView.bagButtonPanel.invalidate();
-        	bagView.topButtonPanel.invalidate();
+        	bagView.updateAddData();
         }
     }
 
@@ -116,12 +111,7 @@ public class AddDataHandler extends AbstractAction implements Progress {
             bag.isValidChecked(false);
             bagView.compositePane.setBag(bag);
             bagView.compositePane.updateCompositePaneTabs(bag, bagView.getPropertyMessage("bag.message.filesadded"));
-
-            bagView.saveAsButton.setEnabled(true);
-            bagView.saveBagAsExecutor.setEnabled(true);
-            bagView.removeDataButton.setEnabled(true);
-            bagView.bagButtonPanel.invalidate();
-            bagView.topButtonPanel.invalidate();
+            bagView.updateAddData();
     	}
     }
 

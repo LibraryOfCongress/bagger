@@ -135,7 +135,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			log.info("BagVersionFrame.OkNewBagHandler");
 			setVisible(false);
-	        bagView.bagVersionValue.setText(bagVersion);
+	        bagView.infoInputPane.bagVersionValue.setText(bagVersion);
 			bagView.startNewBagHandler.createNewBag();
         }
     }
@@ -154,7 +154,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String version = (String) jlist.getSelectedItem();
         	bagVersion = version;
-        	bagView.bagVersionValue.setText(version);
+        	bagView.infoInputPane.bagVersionValue.setText(version);
     	}
     }
 

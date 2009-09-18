@@ -43,14 +43,14 @@ public class StartNewBagHandler extends AbstractAction {
     	bagView.clearBagHandler.clearExistingBag(messages);
     	bag = bagView.getBag();
 		bagView.enableSettings(false);
-    	bagView.bagInfoInputPane.enableForms(bag, true);
-    	bagView.bagVersionList.setSelectedItem(bagView.bagVersionValue.getText());
-    	bagView.bagVersionValue.setText(bagView.bagVersionValue.getText());
+    	bagView.infoInputPane.bagInfoInputPane.enableForms(bag, true);
+    	bagView.infoInputPane.bagVersionList.setSelectedItem(bagView.infoInputPane.bagVersionValue.getText());
+    	bagView.infoInputPane.bagVersionValue.setText(bagView.infoInputPane.bagVersionValue.getText());
 
     	String bagName = bagView.getPropertyMessage("bag.label.noname");
 		bag.setName(bagName);
-		bagView.bagNameField.setText(bagName);
-		bagView.bagNameField.setCaretPosition(bagName.length()-1);
+		bagView.infoInputPane.bagNameField.setText(bagName);
+		bagView.infoInputPane.bagNameField.setCaretPosition(bagName.length()-1);
 
         Bag b = bag.getBag();
         bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
@@ -68,7 +68,7 @@ public class StartNewBagHandler extends AbstractAction {
 		messages = bagView.updateBaggerRules();
 		bag.setRootDir(bagView.bagRootPath);
 
-    	bagView.bagInfoInputPane.populateForms(bag, true);
+    	bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
 		bagView.compositePane.updateCompositePaneTabs(bag, messages);
     	bagView.setBag(bag);
     	bagView.updateNewBag();

@@ -398,7 +398,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     		} else {
     			bagView.showWarningErrorDialog("New Field Dialog", "Field: " + field.getLabel() + " already exists!");
     		}
-    		bagView.bagInfoInputPane.bagInfoForm.requestFocus();
+    		bagView.infoInputPane.bagInfoInputPane.bagInfoForm.requestFocus();
         }
     }
     

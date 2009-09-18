@@ -176,7 +176,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-    	if (bagView != null) bagView.updatePropButton.setEnabled(true);
+    	if (bagView != null) bagView.infoInputPane.updatePropButton.setEnabled(true);
     	dirty = true;
     }
 
@@ -193,7 +193,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     
     public void focusLost(FocusEvent evt) {
     	bagView.infoInputPane.updateBagHandler.updateBag(this.defaultBag);
-		bagView.bagInfoInputPane.setSelectedIndex(0);
+		bagView.infoInputPane.bagInfoInputPane.setSelectedIndex(0);
     }
 
 	public BindingFactory getBindingFactory() {
@@ -313,15 +313,15 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     }
 
     public void keyTyped(KeyEvent event) {
-    	if (bagView != null) bagView.updatePropButton.setEnabled(true);
+    	if (bagView != null) bagView.infoInputPane.updatePropButton.setEnabled(true);
     }
 
     public void keyPressed(KeyEvent event) {
-    	if (bagView != null) bagView.updatePropButton.setEnabled(true);
+    	if (bagView != null) bagView.infoInputPane.updatePropButton.setEnabled(true);
     }
 
     public void keyReleased(KeyEvent event) {
-    	if (bagView != null) bagView.updatePropButton.setEnabled(true);
+    	if (bagView != null) bagView.infoInputPane.updatePropButton.setEnabled(true);
     }
 
     public void mouseReleased(MouseEvent event) {

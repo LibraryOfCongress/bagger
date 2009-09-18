@@ -25,30 +25,30 @@ public class SerializeBagHandler extends AbstractAction {
 		JRadioButton cb = (JRadioButton)e.getSource();
         boolean isSel = cb.isSelected();
         if (isSel) {
-        	if (cb == bagView.noneButton) {
+        	if (cb == bagView.infoInputPane.noneButton) {
             	bag.isSerial(false);
             	bag.setSerialMode(DefaultBag.NO_MODE);
-            	bagView.serializeValue.setText(DefaultBag.NO_LABEL);
-        	} else if (cb == bagView.zipButton) {
+            	bagView.infoInputPane.serializeValue.setText(DefaultBag.NO_LABEL);
+        	} else if (cb == bagView.infoInputPane.zipButton) {
             	bag.isSerial(true);
             	bag.setSerialMode(DefaultBag.ZIP_MODE);
-            	bagView.serializeValue.setText(DefaultBag.ZIP_LABEL);
-        	} else if (cb == bagView.tarButton) {
+            	bagView.infoInputPane.serializeValue.setText(DefaultBag.ZIP_LABEL);
+        	} else if (cb == bagView.infoInputPane.tarButton) {
             	bag.isSerial(true);
             	bag.setSerialMode(DefaultBag.TAR_MODE);
-            	bagView.serializeValue.setText(DefaultBag.TAR_LABEL);
-        	} else if (cb == bagView.tarGzButton) {
+            	bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_LABEL);
+        	} else if (cb == bagView.infoInputPane.tarGzButton) {
         		bag.isSerial(true);
         		bag.setSerialMode(DefaultBag.TAR_GZ_MODE);
-        		bagView.serializeValue.setText(DefaultBag.TAR_GZ_LABEL);
-        	} else if (cb == bagView.tarBz2Button) {
+        		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_GZ_LABEL);
+        	} else if (cb == bagView.infoInputPane.tarBz2Button) {
         		bag.isSerial(true);
         		bag.setSerialMode(DefaultBag.TAR_BZ2_MODE);
-        		bagView.serializeValue.setText(DefaultBag.TAR_BZ2_LABEL);
+        		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_BZ2_LABEL);
         	} else {
             	bag.isSerial(false);
             	bag.setSerialMode(DefaultBag.NO_MODE);
-            	bagView.serializeValue.setText(DefaultBag.NO_LABEL);
+            	bagView.infoInputPane.serializeValue.setText(DefaultBag.NO_LABEL);
         	}
         }
         bagView.setBag(bag);

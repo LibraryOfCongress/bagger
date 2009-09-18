@@ -21,6 +21,6 @@ public class SaveFieldHandler extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
     	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
 		bagView.bagProject.saveProfiles();
-		bagView.bagInfoInputPane.setSelectedIndex(1);
+		bagView.infoInputPane.bagInfoInputPane.setSelectedIndex(1);
 	}
 }

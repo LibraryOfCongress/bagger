@@ -42,13 +42,36 @@ public class InfoFormsPane extends JScrollPane {
 	private static final long serialVersionUID = -5988111446773491301L;
     private BagView bagView;
     private DefaultBag bag;
+	private JPanel bagSettingsPanel;
     private JScrollPane bagInfoScrollPane;
+	public BagInfoInputPane bagInfoInputPane;
     public UpdateBagHandler updateBagHandler;
+    public JTextField bagNameField;
+    public JComboBox bagVersionList;
+    public JLabel bagVersionValue = new JLabel(Version.V0_96.versionString);
+    public JComboBox projectList;
+
 	public JPanel buttonPanel;
     public JPanel infoPanel;
     public JButton saveButton;
     public JButton loadDefaultsButton;
     public JButton clearDefaultsButton;
+	public JButton updatePropButton;
+    public JCheckBox holeyCheckbox;
+    public JLabel holeyValue;
+    public JLabel serializeLabel;
+    public JPanel serializeGroupPanel;
+    public JLabel serializeValue;
+    public JCheckBox defaultProject;
+    public JButton newProjectButton;
+    public JRadioButton noneButton;
+    public JRadioButton zipButton;
+    public JRadioButton tarButton;
+    public JRadioButton tarGzButton;
+    public JRadioButton tarBz2Button;
+    public FileFilter noFilter;
+    public FileFilter zipFilter;
+    public FileFilter tarFilter;
     public SerializeBagHandler serializeBagHandler;
 	private NewProjectFrame newProjectFrame;
 
@@ -63,27 +86,27 @@ public class InfoFormsPane extends JScrollPane {
     private void createScrollPane(boolean enabled) {
     	buttonPanel = createButtonPanel(enabled);
 
-    	bagView.bagInfoInputPane = new BagInfoInputPane(bagView, bagView.bagProject.username, bagView.bagProject.projectContact, false);
-    	bagView.bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
-    	bagView.bagInfoInputPane.setEnabled(false);
-    	bagView.bagSettingsPanel = createSettingsPanel();
+    	bagInfoInputPane = new BagInfoInputPane(bagView, bagView.bagProject.username, bagView.bagProject.projectContact, false);
+    	bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
+    	bagInfoInputPane.setEnabled(false);
+    	bagSettingsPanel = createSettingsPanel();
     	bagInfoScrollPane = new JScrollPane();
-    	bagInfoScrollPane.setViewportView(bagView.bagInfoInputPane);
+    	bagInfoScrollPane.setViewportView(bagInfoInputPane);
     	bagInfoScrollPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
 
         // Create a panel for the form error messages and the update button
-        bagView.updatePropButton = new JButton(bagView.getPropertyMessage("button.saveupdates"));
-        bagView.updatePropButton.setMnemonic(KeyEvent.VK_S);
+        updatePropButton = new JButton(bagView.getPropertyMessage("button.saveupdates"));
+        updatePropButton.setMnemonic(KeyEvent.VK_S);
         updateBagHandler = new UpdateBagHandler(bagView);
-        bagView.updatePropButton.addActionListener(updateBagHandler);
-        bagView.updatePropButton.setToolTipText(bagView.getPropertyMessage("button.saveupdates.help"));
-        bagView.updatePropButton.setEnabled(false);
+        updatePropButton.addActionListener(updateBagHandler);
+        updatePropButton.setToolTipText(bagView.getPropertyMessage("button.saveupdates.help"));
+        updatePropButton.setEnabled(false);
         
         GridBagLayout infoLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         int row = 0;
         bagView.buildConstraints(gbc, 0, row, 3, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-        infoLayout.setConstraints(bagView.bagSettingsPanel, gbc);
+        infoLayout.setConstraints(bagSettingsPanel, gbc);
         row++;
         bagView.buildConstraints(gbc, 0, row, 3, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         infoLayout.setConstraints(buttonPanel, gbc);
@@ -95,7 +118,7 @@ public class InfoFormsPane extends JScrollPane {
         infoPanel.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
         Border emptyBorder = new EmptyBorder(5, 5, 5, 5);
         infoPanel.setBorder(emptyBorder);
-        infoPanel.add(bagView.bagSettingsPanel, BorderLayout.NORTH);
+        infoPanel.add(bagSettingsPanel, BorderLayout.NORTH);
         infoPanel.add(buttonPanel, BorderLayout.CENTER);
         infoPanel.add(bagInfoScrollPane, BorderLayout.SOUTH);
     	this.setViewportView(infoPanel);
@@ -107,14 +130,14 @@ public class InfoFormsPane extends JScrollPane {
 
     	JLabel bagNameLabel = new JLabel(bagView.getPropertyMessage("bag.label.name"));
     	Dimension labelDim = bagNameLabel.getPreferredSize();
-    	bagView.bagNameField = new JTextField(" " + bag.getName() + " ");
-    	bagView.bagNameField.setEditable(false);
-    	bagView.bagNameField.setEnabled(false);
-        bagView.bagNameField.setCaretPosition(bag.getName().length()-1);
-    	Dimension fieldDim = bagView.bagInfoInputPane.getPreferredSize();
+    	bagNameField = new JTextField(" " + bag.getName() + " ");
+    	bagNameField.setEditable(false);
+    	bagNameField.setEnabled(false);
+        bagNameField.setCaretPosition(bag.getName().length()-1);
+    	Dimension fieldDim = bagInfoInputPane.getPreferredSize();
     	Dimension maxFieldDim = new Dimension(fieldDim.width/2, labelDim.height+10);
-    	bagView.bagNameField.setMaximumSize(maxFieldDim);
-    	bagView.bagNameField.setPreferredSize(maxFieldDim);
+    	bagNameField.setMaximumSize(maxFieldDim);
+    	bagNameField.setPreferredSize(maxFieldDim);
 
     	JLabel bagVersionLabel = new JLabel(bagView.getPropertyMessage("bag.label.version"));
     	bagVersionLabel.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
@@ -123,14 +146,14 @@ public class InfoFormsPane extends JScrollPane {
     	for (int i=0; i < vals.length; i++) {
     		versionModel.add(vals[i].versionString);
     	}
-    	bagView.bagVersionValue = new JLabel(Version.V0_96.versionString);
-    	bagView.bagVersionList = new JComboBox(versionModel.toArray());
-    	bagView.bagVersionList.setName(bagView.getPropertyMessage("bag.label.versionlist"));
-    	bagView.bagVersionList.setSelectedItem(Version.V0_96.versionString);
-    	bagView.bagVersionValue.setText(Version.V0_96.versionString);
-    	bagView.bagVersionList.addActionListener(new VersionListHandler(bagView));
-    	bagView.bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
-    	bagView.bagVersionList.setEnabled(false);
+    	bagVersionValue = new JLabel(Version.V0_96.versionString);
+    	bagVersionList = new JComboBox(versionModel.toArray());
+    	bagVersionList.setName(bagView.getPropertyMessage("bag.label.versionlist"));
+    	bagVersionList.setSelectedItem(Version.V0_96.versionString);
+    	bagVersionValue.setText(Version.V0_96.versionString);
+    	bagVersionList.addActionListener(new VersionListHandler(bagView));
+    	bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
+    	bagVersionList.setEnabled(false);
 
     	// Project control
     	JLabel projectLabel = new JLabel(bagView.getPropertyMessage("bag.label.project"));
@@ -138,13 +161,13 @@ public class InfoFormsPane extends JScrollPane {
     	ArrayList<String> listModel = new ArrayList<String>();
     	Object[] array = bagView.bagProject.userProjects.toArray();
     	for (int i=0; i < bagView.bagProject.userProjects.size(); i++) listModel.add(((Project)array[i]).getName());
-    	bagView.projectList = new JComboBox(listModel.toArray());
-    	bagView.projectList.setName(bagView.getPropertyMessage("bag.label.projectlist"));
-    	bagView.projectList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
-    	bagView.projectList.addActionListener(new ProjectListHandler(bagView));
-    	bagView.projectList.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
-    	bagView.projectList.setEnabled(false);
-    	String selected = (String) bagView.projectList.getSelectedItem();
+    	projectList = new JComboBox(listModel.toArray());
+    	projectList.setName(bagView.getPropertyMessage("bag.label.projectlist"));
+    	projectList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
+    	projectList.addActionListener(new ProjectListHandler(bagView));
+    	projectList.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
+    	projectList.setEnabled(false);
+    	String selected = (String) projectList.getSelectedItem();
     	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.edeposit"))) {
     		bag.isEdeposit(true);
     	} else {
@@ -155,48 +178,48 @@ public class InfoFormsPane extends JScrollPane {
     	} else {
     		bag.isNdnp(false);
     	}
-    	bagView.newProjectButton = new JButton(bagView.getPropertyMessage("bag.button.project.new"));
-    	bagView.newProjectButton.addActionListener(new NewProjectHandler());
-    	bagView.newProjectButton.setOpaque(true);
-    	bagView.newProjectButton.setToolTipText(bagView.getPropertyMessage("bag.button.project.new.help"));
-    	bagView.newProjectButton.setEnabled(false);
+    	newProjectButton = new JButton(bagView.getPropertyMessage("bag.button.project.new"));
+    	newProjectButton.addActionListener(new NewProjectHandler());
+    	newProjectButton.setOpaque(true);
+    	newProjectButton.setToolTipText(bagView.getPropertyMessage("bag.button.project.new.help"));
+    	newProjectButton.setEnabled(false);
 
     	// Default project bag control
     	JLabel defaultLabel = new JLabel(bagView.getPropertyMessage("bag.label.projectDefault"));
     	defaultLabel.setToolTipText(bagView.getPropertyMessage("bag.isdefault.help"));
-    	bagView.defaultProject = new JCheckBox(bagView.getPropertyMessage("bag.checkbox.isdefault"));
-    	bagView.defaultProject.setBorder(border);
+    	defaultProject = new JCheckBox(bagView.getPropertyMessage("bag.checkbox.isdefault"));
+    	defaultProject.setBorder(border);
     	Project project = bag.getProject();
     	if (project != null && project.getIsDefault())
-    		bagView.defaultProject.setSelected(true);
+    		defaultProject.setSelected(true);
     	else
-    		bagView.defaultProject.setSelected(false);
-    	bagView.defaultProject.addActionListener(new DefaultProjectHandler(bagView));
-    	bagView.defaultProject.setToolTipText(bagView.getPropertyMessage("bag.isdefault.help"));
+    		defaultProject.setSelected(false);
+    	defaultProject.addActionListener(new DefaultProjectHandler(bagView));
+    	defaultProject.setToolTipText(bagView.getPropertyMessage("bag.isdefault.help"));
     	
     	// Holey bag control
     	JLabel holeyLabel = new JLabel(bagView.getPropertyMessage("bag.label.isholey"));
     	holeyLabel.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
-    	bagView.holeyValue = new JLabel("false");
-    	bagView.holeyCheckbox = new JCheckBox(bagView.getPropertyMessage("bag.checkbox.isholey"));
-    	bagView.holeyCheckbox.setBorder(border);
-    	bagView.holeyCheckbox.setSelected(false);
-    	bagView.holeyCheckbox.setEnabled(false);
-    	bagView.holeyCheckbox.addActionListener(new HoleyBagHandler(bagView));
-    	bagView.holeyCheckbox.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
-    	bagView.holeyCheckbox.setEnabled(false);
+    	holeyValue = new JLabel("false");
+    	holeyCheckbox = new JCheckBox(bagView.getPropertyMessage("bag.checkbox.isholey"));
+    	holeyCheckbox.setBorder(border);
+    	holeyCheckbox.setSelected(false);
+    	holeyCheckbox.setEnabled(false);
+    	holeyCheckbox.addActionListener(new HoleyBagHandler(bagView));
+    	holeyCheckbox.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
+    	holeyCheckbox.setEnabled(false);
 
     	// Bag is to be serialized control
-    	bagView.serializeLabel = new JLabel(bagView.getPropertyMessage("bag.label.ispackage"));
-    	bagView.serializeLabel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
-    	bagView.serializeValue = new JLabel(DefaultBag.NO_LABEL);
-    	bagView.noneButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.none"));
-    	bagView.noneButton.setSelected(true);
-    	bagView.noneButton.setEnabled(false);
+    	serializeLabel = new JLabel(bagView.getPropertyMessage("bag.label.ispackage"));
+    	serializeLabel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
+    	serializeValue = new JLabel(DefaultBag.NO_LABEL);
+    	noneButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.none"));
+    	noneButton.setSelected(true);
+    	noneButton.setEnabled(false);
     	serializeBagHandler = new SerializeBagHandler(bagView);
-    	bagView.noneButton.addActionListener(serializeBagHandler);
-    	bagView.noneButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.none.help"));
-    	bagView.noFilter = new FileFilter() {
+    	noneButton.addActionListener(serializeBagHandler);
+    	noneButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.none.help"));
+    	noFilter = new FileFilter() {
     		public boolean accept(File f) {
     			return f.isFile() || f.isDirectory();
     		}
@@ -205,12 +228,12 @@ public class InfoFormsPane extends JScrollPane {
     		}
     	};
 
-    	bagView.zipButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.zip"));
-    	bagView.zipButton.setSelected(false);
-    	bagView.zipButton.setEnabled(false);
-    	bagView.zipButton.addActionListener(serializeBagHandler);
-    	bagView.zipButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.zip.help"));
-    	bagView.zipFilter = new FileFilter() {
+    	zipButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.zip"));
+    	zipButton.setSelected(false);
+    	zipButton.setEnabled(false);
+    	zipButton.addActionListener(serializeBagHandler);
+    	zipButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.zip.help"));
+    	zipFilter = new FileFilter() {
     		public boolean accept(File f) {
     			return f.getName().toLowerCase().endsWith("."+DefaultBag.ZIP_LABEL)	|| f.isDirectory();
     		}
@@ -219,12 +242,12 @@ public class InfoFormsPane extends JScrollPane {
     		}
     	};
 
-    	bagView.tarButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.tar"));
-    	bagView.tarButton.setSelected(false);
-    	bagView.tarButton.setEnabled(false);
-    	bagView.tarButton.addActionListener(serializeBagHandler);
-    	bagView.tarButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.tar.help"));
-    	bagView.tarFilter = new FileFilter() {
+    	tarButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.tar"));
+    	tarButton.setSelected(false);
+    	tarButton.setEnabled(false);
+    	tarButton.addActionListener(serializeBagHandler);
+    	tarButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.tar.help"));
+    	tarFilter = new FileFilter() {
     		public boolean accept(File f) {
     			return f.getName().toLowerCase().endsWith("."+DefaultBag.TAR_LABEL)	|| f.isDirectory();
     		}
@@ -233,32 +256,32 @@ public class InfoFormsPane extends JScrollPane {
     		}
     	};
 
-    	bagView.tarGzButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.targz"));
-    	bagView.tarGzButton.setEnabled(false);
-    	bagView.tarGzButton.addActionListener(serializeBagHandler);
-    	bagView.tarGzButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.targz.help"));
+    	tarGzButton = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.targz"));
+    	tarGzButton.setEnabled(false);
+    	tarGzButton.addActionListener(serializeBagHandler);
+    	tarGzButton.setToolTipText(bagView.getPropertyMessage("bag.serializetype.targz.help"));
     	
-    	bagView.tarBz2Button = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.tarbz2"));
-    	bagView.tarBz2Button.setEnabled(false);
-    	bagView.tarBz2Button.addActionListener(serializeBagHandler);
-    	bagView.tarBz2Button.setToolTipText(bagView.getPropertyMessage("bag.serializetype.tarbz2.help"));
+    	tarBz2Button = new JRadioButton(bagView.getPropertyMessage("bag.serializetype.tarbz2"));
+    	tarBz2Button.setEnabled(false);
+    	tarBz2Button.addActionListener(serializeBagHandler);
+    	tarBz2Button.setToolTipText(bagView.getPropertyMessage("bag.serializetype.tarbz2.help"));
     	
     	ButtonGroup serializeGroup = new ButtonGroup();
-    	serializeGroup.add(bagView.noneButton);
-    	serializeGroup.add(bagView.zipButton);
-    	serializeGroup.add(bagView.tarButton);
-    	serializeGroup.add(bagView.tarGzButton);
-    	serializeGroup.add(bagView.tarBz2Button);
-    	bagView.serializeGroupPanel = new JPanel(new FlowLayout());
-    	bagView.serializeGroupPanel.add(bagView.serializeLabel);
-    	bagView.serializeGroupPanel.add(bagView.noneButton);
-    	bagView.serializeGroupPanel.add(bagView.zipButton);
-    	bagView.serializeGroupPanel.add(bagView.tarButton);
-    	bagView.serializeGroupPanel.add(bagView.tarGzButton);
-    	bagView.serializeGroupPanel.add(bagView.tarBz2Button);
-    	bagView.serializeGroupPanel.setBorder(border);
-    	bagView.serializeGroupPanel.setEnabled(false);
-    	bagView.serializeGroupPanel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
+    	serializeGroup.add(noneButton);
+    	serializeGroup.add(zipButton);
+    	serializeGroup.add(tarButton);
+    	serializeGroup.add(tarGzButton);
+    	serializeGroup.add(tarBz2Button);
+    	serializeGroupPanel = new JPanel(new FlowLayout());
+    	serializeGroupPanel.add(serializeLabel);
+    	serializeGroupPanel.add(noneButton);
+    	serializeGroupPanel.add(zipButton);
+    	serializeGroupPanel.add(tarButton);
+    	serializeGroupPanel.add(tarGzButton);
+    	serializeGroupPanel.add(tarBz2Button);
+    	serializeGroupPanel.setBorder(border);
+    	serializeGroupPanel.setEnabled(false);
+    	serializeGroupPanel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
     	
     	GridBagLayout gridLayout = new GridBagLayout();
     	GridBagConstraints gbc = new GridBagConstraints();
@@ -271,41 +294,41 @@ public class InfoFormsPane extends JScrollPane {
     	gridLayout.setConstraints(bagNameLabel, gbc);
     	panel.add(bagNameLabel);
     	bagView.buildConstraints(gbc, 1, row, 2, 1, wx2, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-    	gridLayout.setConstraints(bagView.bagNameField, gbc);
-    	panel.add(bagView.bagNameField);
+    	gridLayout.setConstraints(bagNameField, gbc);
+    	panel.add(bagNameField);
     	row++;
     	/* */
 		bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(projectLabel, gbc);
     	panel.add(projectLabel);
     	bagView.buildConstraints(gbc, 1, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-    	gridLayout.setConstraints(bagView.projectList, gbc);
-    	panel.add(bagView.projectList);
+    	gridLayout.setConstraints(projectList, gbc);
+    	panel.add(projectList);
     	bagView.buildConstraints(gbc, 2, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-    	gridLayout.setConstraints(bagView.newProjectButton, gbc);
-    	panel.add(bagView.newProjectButton);
+    	gridLayout.setConstraints(newProjectButton, gbc);
+    	panel.add(newProjectButton);
     	/* */
     	row++;
     	bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(bagVersionLabel, gbc);
     	panel.add(bagVersionLabel);
     	bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-    	gridLayout.setConstraints(bagView.bagVersionValue, gbc);
-    	panel.add(bagView.bagVersionValue);
+    	gridLayout.setConstraints(bagVersionValue, gbc);
+    	panel.add(bagVersionValue);
     	row++;
     	bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(holeyLabel, gbc);
     	panel.add(holeyLabel);
     	bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-    	gridLayout.setConstraints(bagView.holeyValue, gbc);
-    	panel.add(bagView.holeyValue);
+    	gridLayout.setConstraints(holeyValue, gbc);
+    	panel.add(holeyValue);
     	row++;
     	bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-    	gridLayout.setConstraints(bagView.serializeLabel, gbc);
-    	panel.add(bagView.serializeLabel);
+    	gridLayout.setConstraints(serializeLabel, gbc);
+    	panel.add(serializeLabel);
     	bagView.buildConstraints(gbc, 1, row, 1, 1, wx2, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
-    	gridLayout.setConstraints(bagView.serializeValue, gbc);
-    	panel.add(bagView.serializeValue);
+    	gridLayout.setConstraints(serializeValue, gbc);
+    	panel.add(serializeValue);
     	
     	return panel;
     }
@@ -347,10 +370,10 @@ public class InfoFormsPane extends JScrollPane {
     }
 
     public void updateInfoFormsPane(boolean enabled) {
-    	bagView.bagInfoInputPane = new BagInfoInputPane(bagView, bagView.bagProject.username, bagView.bagProject.projectContact, enabled);
-    	bagView.bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
-    	bagInfoScrollPane.setViewportView(bagView.bagInfoInputPane);
-    	bagInfoScrollPane.setPreferredSize(bagView.bagInfoInputPane.getPreferredSize());
+    	bagInfoInputPane = new BagInfoInputPane(bagView, bagView.bagProject.username, bagView.bagProject.projectContact, enabled);
+    	bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
+    	bagInfoScrollPane.setViewportView(bagInfoInputPane);
+    	bagInfoScrollPane.setPreferredSize(bagInfoInputPane.getPreferredSize());
     	this.setPreferredSize(bagInfoScrollPane.getPreferredSize());
     	this.invalidate();
     }

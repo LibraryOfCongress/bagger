@@ -92,25 +92,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 						File bagFile = bag.getBagFileName();
 						log.info("BagView.openExistingBag: " + bagFile);
 						bagView.openBagHandler.openExistingBag(bagFile);
-						bagView.addDataButton.setEnabled(true);
-						bagView.addDataExecutor.setEnabled(true);
-						bagView.updatePropButton.setEnabled(false);
-						bagView.saveButton.setEnabled(true);
-						bagView.saveBagExecutor.setEnabled(true);
-						bagView.saveAsButton.setEnabled(true);
-						bagView.removeDataButton.setEnabled(true);
-						bagView.addTagFileButton.setEnabled(true);
-						bagView.removeTagFileButton.setEnabled(true);
-						bagView.showTagButton.setEnabled(true);
-						bagView.saveBagAsExecutor.setEnabled(true);
-						bagView.bagButtonPanel.invalidate();
-						bagView.closeButton.setEnabled(true);
-						bagView.validateButton.setEnabled(true);
-						bagView.completeButton.setEnabled(true);
-						bagView.clearExecutor.setEnabled(true);
-						bagView.validateExecutor.setEnabled(true);
-						bagView.completeExecutor.setEnabled(true);
-						bagView.topButtonPanel.invalidate();
+						bagView.updateSaveBag();
 						bag.isNewbag(false);
 					}
 				} else {
@@ -199,23 +181,23 @@ public class SaveBagHandler extends AbstractAction implements Progress {
         JFileChooser fs = new JFileChooser(selectFile);
     	fs.setDialogType(JFileChooser.SAVE_DIALOG);
     	fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    	fs.addChoosableFileFilter(bagView.noFilter);
-    	fs.addChoosableFileFilter(bagView.zipFilter);
-        fs.addChoosableFileFilter(bagView.tarFilter);
+    	fs.addChoosableFileFilter(bagView.infoInputPane.noFilter);
+    	fs.addChoosableFileFilter(bagView.infoInputPane.zipFilter);
+        fs.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
         fs.setDialogTitle("Save Bag As");
     	fs.setCurrentDirectory(bag.getRootDir());
     	if (bag.getName() != null && !bag.getName().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
     		String selectedName = bag.getName();
     		if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
     			selectedName += "."+DefaultBag.ZIP_LABEL;
-    			fs.setFileFilter(bagView.zipFilter);
+    			fs.setFileFilter(bagView.infoInputPane.zipFilter);
     		}
     		else if (bag.getSerialMode() == DefaultBag.TAR_MODE) {
     			selectedName += "."+DefaultBag.TAR_LABEL;
-    			fs.setFileFilter(bagView.tarFilter);
+    			fs.setFileFilter(bagView.infoInputPane.tarFilter);
     		}
     		else {
-    			fs.setFileFilter(bagView.noFilter);
+    			fs.setFileFilter(bagView.infoInputPane.noFilter);
     		}
     		fs.setSelectedFile(new File(selectedName));
     	}
@@ -245,9 +227,9 @@ public class SaveBagHandler extends AbstractAction implements Progress {
         	}
     	}
         String fileName = bagFile.getName(); //bagFile.getAbsolutePath();
-        bagView.bagNameField.setText(fileName);
+        bagView.infoInputPane.bagNameField.setText(fileName);
         bagView.getControl().invalidate();
-        bagView.bagNameField.setCaretPosition(fileName.length()-1);
+        bagView.infoInputPane.bagNameField.setCaretPosition(fileName.length()-1);
         bagView.enableSettings(true);
     }
 }

@@ -70,10 +70,10 @@ public class BagProject {
     	bag = bagView.getBag();
     	this.userProjects.add(project);
 
-    	bagView.projectList.addItem(project.getName());
-    	bagView.projectList.invalidate();
+    	bagView.infoInputPane.projectList.addItem(project.getName());
+    	bagView.infoInputPane.projectList.invalidate();
     	this.updateProject(project.getName());
-    	bagView.bagger.storeProject(project);
+    	bagView.getBagger().storeProject(project);
     	bag.setProject(project);
     	bag.getInfo().setLcProject(project.getName());
     	bagView.setBag(bag);
@@ -85,8 +85,8 @@ public class BagProject {
     	projectProfile.setIsValueRequired(true);
     	userProjectProfiles.add(projectProfile);
 		baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
-		bagView.bagInfoInputPane.updateProject(bagView);
-		bagView.bagInfoInputPane.populateForms(bag, true);
+		bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);
+		bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
     }
 
     public void addProjectField(BagInfoField field) {
@@ -113,8 +113,8 @@ public class BagProject {
 
     public void initializeProfile() {
     	bag = bagView.getBag();
-   		userProjects = bagView.bagger.getProjects();
-   		userProjectProfiles = bagView.bagger.getProjectProfiles();
+   		userProjects = bagView.getBagger().getProjects();
+   		userProjectProfiles = bagView.getBagger().getProjectProfiles();
     	Collection<ProjectProfile> projectProfileMap = userProjectProfiles;
 		Object[] reqs = bag.getInfo().getRequiredStrings();
 		for (Iterator<ProjectProfile> iter = projectProfileMap.iterator(); iter.hasNext();) {
@@ -149,7 +149,7 @@ public class BagProject {
     		projectContact.setOrganization(org);
     	}
     	if (this.username != null && this.username.length() > 0) {
-        	Collection<Profile> profiles = bagView.bagger.findProfiles(this.username);
+        	Collection<Profile> profiles = bagView.getBagger().findProfiles(this.username);
         	if (profiles == null) profiles = new ArrayList<Profile>();
         	userProfiles = profiles;
         	Object[] profileArray = profiles.toArray();
@@ -180,7 +180,7 @@ public class BagProject {
             		userProfiles.add(createProfile(project));
             	}
             	if (userProjects == null || userProjects.isEmpty()) {
-            		userProjects = bagView.bagger.getProjects();
+            		userProjects = bagView.getBagger().getProjects();
             		Object[] projList = userProjects.toArray();
             		for (int i=0; i < projList.length; i++) {
             			Project proj = (Project) projList[i];
@@ -194,7 +194,7 @@ public class BagProject {
     		Organization org = new Organization();
     		projectContact.setOrganization(org);
     		userProfiles = new ArrayList<Profile>();
-    		userProjects = bagView.bagger.getProjects();
+    		userProjects = bagView.getBagger().getProjects();
     		Object[] projList = userProjects.toArray();
     		for (int i=0; i < projList.length; i++) {
     			Project project = (Project) projList[i];
@@ -219,27 +219,27 @@ public class BagProject {
     public String loadProfiles() {
     	bag = bagView.getBag();
     	try {
-        	String message = bagView.bagger.loadProfiles();
+        	String message = bagView.getBagger().loadProfiles();
         	this.username = bagView.getPropertyMessage("user.name");
         	this.initializeProfile();
         	Object[] array = userProjects.toArray();
         	boolean b = true;
         	for (int i=0; i < userProjects.size(); i++) {
         		String name = ((Project)array[i]).getName();
-        		for (int j=0; j < bagView.projectList.getModel().getSize(); j++) {
-        			String proj = (String) bagView.projectList.getModel().getElementAt(j);
+        		for (int j=0; j < bagView.infoInputPane.projectList.getModel().getSize(); j++) {
+        			String proj = (String) bagView.infoInputPane.projectList.getModel().getElementAt(j);
             		if (name.trim().equalsIgnoreCase(proj.trim())) {
             			b = false;
             			break;
             		}
         		}
-        		if (b) { bagView.projectList.addItem(name);	}
+        		if (b) { bagView.infoInputPane.projectList.addItem(name);	}
         		b = true;
         	}
-        	bagView.projectList.invalidate();
-        	bagView.bagInfoInputPane.updateProject(bagView);
-        	bagView.bagInfoInputPane.populateForms(bag, true);
-        	bagView.bagInfoInputPane.update(bag);
+        	bagView.infoInputPane.projectList.invalidate();
+        	bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);
+        	bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
+        	bagView.infoInputPane.bagInfoInputPane.update(bag);
         	bagView.compositePane.updateCompositePaneTabs(bag, message);
         	return message;
     	} catch (Exception e) {
@@ -275,8 +275,8 @@ public class BagProject {
     		}
     	}
     	userProfiles = newProfiles;
-    	bagView.bagInfoInputPane.populateForms(bag, true);
-    	bagView.bagInfoInputPane.update(bag);
+    	bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
+    	bagView.infoInputPane.bagInfoInputPane.update(bag);
     	bagView.compositePane.updateCompositePaneTabs(bag, message);
     	return message;
     }
@@ -298,7 +298,7 @@ public class BagProject {
     				if (iter.hasNext()) defaults += ", ";
     			}
             }
-    		String messages = bagView.bagger.storeBaggerUpdates(userProfiles, userProjects, userProjectProfiles, projectBagInfo, bagView.userHomeDir);
+    		String messages = bagView.getBagger().storeBaggerUpdates(userProfiles, userProjects, userProjectProfiles, projectBagInfo, bagView.userHomeDir);
     		if (messages != null) {
     			bagView.showWarningErrorDialog("Error Dialog", "Error trying to store project defaults:\n" + messages);
         	    return null;
@@ -327,10 +327,10 @@ public class BagProject {
    		}
    		messages += updateProfile();
     	if (projectName.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.noproject"))) {
-    		bagView.projectList.setSelectedItem(projectName);
+    		bagView.infoInputPane.projectList.setSelectedItem(projectName);
     		bag.isNoProject(true);
     	} else {
-    		bagView.projectList.setSelectedItem(projectName);
+    		bagView.infoInputPane.projectList.setSelectedItem(projectName);
       		bag.isNoProject(false);
     	}
     	bagView.setBag(bag);
