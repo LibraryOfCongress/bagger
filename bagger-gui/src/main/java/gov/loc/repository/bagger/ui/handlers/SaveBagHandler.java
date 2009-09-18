@@ -227,9 +227,8 @@ public class SaveBagHandler extends AbstractAction implements Progress {
         	}
     	}
         String fileName = bagFile.getName(); //bagFile.getAbsolutePath();
-        bagView.infoInputPane.bagNameField.setText(fileName);
+        bagView.infoInputPane.setBagName(fileName);
         bagView.getControl().invalidate();
-        bagView.infoInputPane.bagNameField.setCaretPosition(fileName.length()-1);
         bagView.enableSettings(true);
     }
 }

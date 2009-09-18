@@ -20,6 +20,6 @@ public class ClearFieldHandler extends AbstractAction {
 
 	public void actionPerformed(ActionEvent e) {
 		bagView.bagProject.clearProfiles();
-		bagView.infoInputPane.bagInfoInputPane.setSelectedIndex(1);
+		bagView.infoInputPane.showTabPane(1);
 	}
 }

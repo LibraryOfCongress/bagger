@@ -55,7 +55,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     	String messages = "";
     	bagView.clearBagHandler.clearExistingBag(messages);
     	try {
-    		bag.createPreBag(data, bagView.infoInputPane.bagVersionValue.getText());
+    		bag.createPreBag(data, bagView.infoInputPane.getBagVersion());
     	} catch (Exception e) {
     	    bagView.showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
     		return;
@@ -70,7 +70,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     	String bagFileName = "bag_" + data.getName();
     	bag.isClear(false);
         bag.setName(bagFileName);
-        bagView.infoInputPane.bagNameField.invalidate();
+        bagView.infoInputPane.setBagName(bagFileName);
         File bagFile = new File(bagDir, bagFileName);
         bagView.setBag(bag);
         bagView.saveBagHandler.save(bagFile);

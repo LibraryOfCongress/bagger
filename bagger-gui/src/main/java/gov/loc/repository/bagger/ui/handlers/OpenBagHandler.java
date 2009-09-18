@@ -71,13 +71,11 @@ public class OpenBagHandler extends AbstractAction {
 		}
 		bag = bagView.getBag();
 		bagView.enableSettings(true);
-        bagView.infoInputPane.bagVersionValue.setText(bag.getVersion());
-        bagView.infoInputPane.bagVersionList.setSelectedItem(bagView.infoInputPane.bagVersionValue.getText());
+        bagView.infoInputPane.setBagVersion(bag.getVersion());
+        bagView.infoInputPane.setBagVersionList(bagView.infoInputPane.getBagVersion());
         String fileName = file.getName();
         fileName = file.getAbsolutePath();
-        bagView.infoInputPane.bagNameField.setText(fileName);
-        bagView.infoInputPane.bagNameField.setCaretPosition(fileName.length());
-        bagView.infoInputPane.bagNameField.invalidate();
+        bagView.infoInputPane.setBagName(fileName);
 
     	String s = file.getName();
 	    int i = s.lastIndexOf('.');

@@ -43,27 +43,30 @@ public class InfoFormsPane extends JScrollPane {
     private BagView bagView;
     private DefaultBag bag;
 	private JPanel bagSettingsPanel;
+	private JPanel buttonPanel;
+    private JPanel infoPanel;
+    protected JPanel serializeGroupPanel;
     private JScrollPane bagInfoScrollPane;
-	public BagInfoInputPane bagInfoInputPane;
-    public UpdateBagHandler updateBagHandler;
-    public JTextField bagNameField;
-    public JComboBox bagVersionList;
-    public JLabel bagVersionValue = new JLabel(Version.V0_96.versionString);
-    public JComboBox projectList;
+	private NewProjectFrame newProjectFrame;
 
-	public JPanel buttonPanel;
-    public JPanel infoPanel;
-    public JButton saveButton;
-    public JButton loadDefaultsButton;
-    public JButton clearDefaultsButton;
+    public BagInfoInputPane bagInfoInputPane;
+	public UpdateBagHandler updateBagHandler;
+    public SerializeBagHandler serializeBagHandler;
+
+	protected JTextField bagNameField;
+    protected JButton saveButton;
+    protected JButton loadDefaultsButton;
+    protected JButton clearDefaultsButton;
 	public JButton updatePropButton;
-    public JCheckBox holeyCheckbox;
+    public JButton newProjectButton;
+	protected JLabel bagVersionValue = new JLabel(Version.V0_96.versionString);
     public JLabel holeyValue;
     public JLabel serializeLabel;
-    public JPanel serializeGroupPanel;
     public JLabel serializeValue;
+	protected JComboBox bagVersionList;
+	protected JComboBox projectList;
+    public JCheckBox holeyCheckbox;
     public JCheckBox defaultProject;
-    public JButton newProjectButton;
     public JRadioButton noneButton;
     public JRadioButton zipButton;
     public JRadioButton tarButton;
@@ -72,8 +75,6 @@ public class InfoFormsPane extends JScrollPane {
     public FileFilter noFilter;
     public FileFilter zipFilter;
     public FileFilter tarFilter;
-    public SerializeBagHandler serializeBagHandler;
-	private NewProjectFrame newProjectFrame;
 
     public InfoFormsPane(BagView bagView) {
     	super();
@@ -368,6 +369,38 @@ public class InfoFormsPane extends JScrollPane {
     		newProjectFrame.setVisible(true);
        	}
     }
+    
+    public void setBagVersion(String value) {
+    	bagVersionValue.setText(value);
+    	bagVersionValue.invalidate();
+    }
+
+    public String getBagVersion() {
+    	return bagVersionValue.getText();
+    }
+
+    public void setBagVersionList(String version) {
+    	bagVersionList.setSelectedItem(version);
+    	bagVersionList.invalidate();
+    }
+
+    public void setBagName(String name) {
+    	if (name == null || name.length() < 1) return;
+    	bagNameField.setText(name);
+        bagNameField.setCaretPosition(name.length()-1);
+    	bagNameField.invalidate();
+    	this.invalidate();
+    }
+    
+    public String getBagName() {
+    	return bagNameField.getText();
+    }
+    
+    public void updateInfoForms() {
+    	bagInfoInputPane.populateForms(bag, false);
+    	bagInfoInputPane.enableForms(bag, false);
+    	bagInfoInputPane.invalidate();
+    }
 
     public void updateInfoFormsPane(boolean enabled) {
     	bagInfoInputPane = new BagInfoInputPane(bagView, bagView.bagProject.username, bagView.bagProject.projectContact, enabled);
@@ -376,5 +409,10 @@ public class InfoFormsPane extends JScrollPane {
     	bagInfoScrollPane.setPreferredSize(bagInfoInputPane.getPreferredSize());
     	this.setPreferredSize(bagInfoScrollPane.getPreferredSize());
     	this.invalidate();
+    }
+    
+    public void showTabPane(int i) {
+    	bagInfoInputPane.setSelectedIndex(i);
+    	bagInfoInputPane.invalidate();
     }
 }

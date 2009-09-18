@@ -44,13 +44,11 @@ public class StartNewBagHandler extends AbstractAction {
     	bag = bagView.getBag();
 		bagView.enableSettings(false);
     	bagView.infoInputPane.bagInfoInputPane.enableForms(bag, true);
-    	bagView.infoInputPane.bagVersionList.setSelectedItem(bagView.infoInputPane.bagVersionValue.getText());
-    	bagView.infoInputPane.bagVersionValue.setText(bagView.infoInputPane.bagVersionValue.getText());
+    	bagView.infoInputPane.setBagVersionList(bagView.infoInputPane.getBagVersion());
 
     	String bagName = bagView.getPropertyMessage("bag.label.noname");
 		bag.setName(bagName);
-		bagView.infoInputPane.bagNameField.setText(bagName);
-		bagView.infoInputPane.bagNameField.setCaretPosition(bagName.length()-1);
+		bagView.infoInputPane.setBagName(bagName);
 
         Bag b = bag.getBag();
         bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
