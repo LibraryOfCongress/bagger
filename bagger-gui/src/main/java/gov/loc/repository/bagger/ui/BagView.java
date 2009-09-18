@@ -215,7 +215,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     	topButtonPanel = createTopButtonPanel();
     	topButtonPanel.setBackground(bgColor);
 
-    	clearBagHandler.newDefaultBag(null);
     	bagProject.initializeProfile();
     	updateCommands();
 

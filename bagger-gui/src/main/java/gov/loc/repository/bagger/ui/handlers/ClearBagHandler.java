@@ -75,7 +75,11 @@ public class ClearBagHandler extends AbstractAction {
 
     public void newDefaultBag(File f) {
     	String bagName = "";
-    	bag = new DefaultBag(f, bagView.infoInputPane.getBagVersion());
+    	try {
+        	bag = new DefaultBag(f, bagView.infoInputPane.getBagVersion());
+    	} catch (Exception e) {
+        	bag = new DefaultBag(f, null);    		
+    	}
     	bag.isClear(true);
     	if (f == null) {
         	bagName = bagView.getPropertyMessage("bag.label.noname");
@@ -86,5 +90,6 @@ public class ClearBagHandler extends AbstractAction {
 	        bagView.enableSettings(true);
     	}
 		bag.setName(bagName);
+		bagView.setBag(bag);
     }
 }

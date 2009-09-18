@@ -131,7 +131,7 @@ public class InfoFormsPane extends JScrollPane {
 
     	JLabel bagNameLabel = new JLabel(bagView.getPropertyMessage("bag.label.name"));
     	Dimension labelDim = bagNameLabel.getPreferredSize();
-    	bagNameField = new JTextField(" " + bag.getName() + " ");
+    	bagNameField = new JTextField(bagView.getPropertyMessage("bag.label.noname"));
     	bagNameField.setEditable(false);
     	bagNameField.setEnabled(false);
         bagNameField.setCaretPosition(bag.getName().length()-1);
@@ -388,6 +388,9 @@ public class InfoFormsPane extends JScrollPane {
     	if (name == null || name.length() < 1) return;
     	bagNameField.setText(name);
         bagNameField.setCaretPosition(name.length()-1);
+        if (name.trim().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
+        	bagNameField.setEnabled(false);
+        }
     	bagNameField.invalidate();
     	this.invalidate();
     }
