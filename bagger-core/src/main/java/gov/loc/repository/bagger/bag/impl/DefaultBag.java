@@ -85,6 +85,7 @@ public class DefaultBag {
 	private short serialMode = NO_MODE;
 
 	// Bag state flags
+	private boolean isClearOnSave = false;
 	private boolean isValidateOnSave = false;
 	private boolean isComplete = false;
 	private boolean isCompleteChecked = false;
@@ -409,7 +410,15 @@ public class DefaultBag {
 	public boolean isValidateOnSave() {
 		return this.isValidateOnSave;
 	}
-	
+
+	public void isClearOnSave(boolean b) {
+		this.isClearOnSave = b;
+	}
+
+	public boolean isClearOnSave() {
+		return this.isClearOnSave;
+	}
+
 	public void isComplete(boolean b) {
 		this.isComplete = b;
 	}
