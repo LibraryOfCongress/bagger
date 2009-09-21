@@ -59,6 +59,7 @@ public class InfoFormsPane extends JScrollPane {
     protected JButton clearDefaultsButton;
 	public JButton updatePropButton;
     public JButton newProjectButton;
+    public JButton removeProjectButton;
 	protected JLabel bagVersionValue = new JLabel(Version.V0_96.versionString);
     public JLabel holeyValue;
     public JLabel serializeLabel;
@@ -184,6 +185,12 @@ public class InfoFormsPane extends JScrollPane {
     	newProjectButton.setOpaque(true);
     	newProjectButton.setToolTipText(bagView.getPropertyMessage("bag.button.project.new.help"));
     	newProjectButton.setEnabled(false);
+    	
+    	removeProjectButton = new JButton(bagView.getPropertyMessage("bag.button.project.remove"));
+    	removeProjectButton.addActionListener(new RemoveProjectHandler());
+    	removeProjectButton.setOpaque(true);
+    	removeProjectButton.setToolTipText(bagView.getPropertyMessage("bag.button.project.remove.help"));
+    	removeProjectButton.setEnabled(false);
 
     	// Default project bag control
     	JLabel defaultLabel = new JLabel(bagView.getPropertyMessage("bag.label.projectDefault"));
@@ -302,12 +309,15 @@ public class InfoFormsPane extends JScrollPane {
 		bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(projectLabel, gbc);
     	panel.add(projectLabel);
-    	bagView.buildConstraints(gbc, 1, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    	bagView.buildConstraints(gbc, 1, row, 1, 1, 30, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(projectList, gbc);
     	panel.add(projectList);
-    	bagView.buildConstraints(gbc, 2, row, 1, 1, 40, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    	bagView.buildConstraints(gbc, 2, row, 1, 1, 30, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
     	gridLayout.setConstraints(newProjectButton, gbc);
     	panel.add(newProjectButton);
+    	bagView.buildConstraints(gbc, 3, row, 1, 1, 30, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    	gridLayout.setConstraints(removeProjectButton, gbc);
+    	panel.add(removeProjectButton);
     	/* */
     	row++;
     	bagView.buildConstraints(gbc, 0, row, 1, 1, wx1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -370,6 +380,15 @@ public class InfoFormsPane extends JScrollPane {
        	}
     }
     
+    private class RemoveProjectHandler extends AbstractAction {
+       	private static final long serialVersionUID = 1L;
+
+    	public void actionPerformed(ActionEvent e) {
+    		String name = (String) bagView.infoInputPane.projectList.getSelectedItem();
+    		bagView.bagProject.removeProject(name);
+       	}
+    }
+
     public void setBagVersion(String value) {
     	bagVersionValue.setText(value);
     	bagVersionValue.invalidate();

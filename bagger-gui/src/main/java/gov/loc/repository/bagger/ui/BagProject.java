@@ -88,6 +88,51 @@ public class BagProject {
 		bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);
 		bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
     }
+    
+    public void removeProject(String name) {
+    	bag = bagView.getBag();
+    	if (name.trim().equalsIgnoreCase(bagView.getPropertyMessage("bag.project.noproject"))) {
+    		// Cannot remove no project
+    		return;
+    	}
+    	Project project = null;
+    	Project noProject = null;
+		for (Iterator<Project> iter = userProjects.iterator(); iter.hasNext();) {
+			try {
+				Project p = (Project) iter.next();
+				if (p.getName().equalsIgnoreCase(name.trim())) {
+					project = p;
+				} else if (p.getName().equalsIgnoreCase(bagView.getPropertyMessage("bag.project.noproject"))) {
+					noProject = p;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		if (project != null) {
+			userProjects.remove(project);
+	    	bagView.infoInputPane.projectList.removeItem(project.getName());
+			if (noProject != null) {
+				bagView.infoInputPane.projectList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
+		    	bag.setProject(noProject);
+			}
+	    	ProjectProfile projectProfile = null;
+	    	for (Iterator<ProjectProfile> iter = userProjectProfiles.iterator(); iter.hasNext();) {
+	    		ProjectProfile pp = (ProjectProfile) iter.next();
+	    		if (pp.getProjectId() == project.getId()) {
+	    			projectProfile = pp;
+	    		}
+	    	}
+	    	if (projectProfile != null) {
+		    	userProjectProfiles.remove(projectProfile);
+				baggerProfile.removeField(projectProfile.getFieldName());
+	    	}
+		}
+    	bagView.infoInputPane.projectList.invalidate();
+    	bagView.setBag(bag);
+		bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);
+		bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
+    }
 
     public void addProjectField(BagInfoField field) {
     	if (field.isRequired() || field.isRequiredvalue() || !field.getValue().trim().isEmpty()) {
