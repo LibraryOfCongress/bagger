@@ -92,7 +92,7 @@ public class BagProject {
     public void removeProject(String name) {
     	bag = bagView.getBag();
     	if (name.trim().equalsIgnoreCase(bagView.getPropertyMessage("bag.project.noproject"))) {
-    		// Cannot remove no project
+    		bagView.showWarningErrorDialog("Project Profile Dialog", "You cannot delete the " + bagView.getPropertyMessage("bag.project.noproject") + " project.");
     		return;
     	}
     	Project project = null;
