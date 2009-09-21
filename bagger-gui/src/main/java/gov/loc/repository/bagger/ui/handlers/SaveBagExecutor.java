@@ -17,11 +17,11 @@ public class SaveBagExecutor extends AbstractActionCommandExecutor {
 	}
 
 	public void execute() {
-		if (bagView.bagRootPath.exists()) {
-			bagView.tmpRootPath = bagView.bagRootPath;
+		if (bagView.getBagRootPath().exists()) {
+			bagView.saveBagHandler.setTmpRootPath(bagView.getBagRootPath());
 			bagView.saveBagHandler.confirmWriteBag();
 		} else {
-			bagView.saveBagHandler.saveBag(bagView.bagRootPath);
+			bagView.saveBagHandler.saveBag(bagView.getBagRootPath());
 		}
 	}
 

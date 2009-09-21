@@ -37,7 +37,7 @@ public class ClearBagHandler extends AbstractAction {
     private void confirmCloseBag() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	        protected void onConfirm() {
-	        	bagView.clearAfterSaving = true;
+	        	bagView.saveBagHandler.setClearAfterSaving(true);
 	    		bagView.saveBagAsHandler.openSaveBagAsFrame();
 	        }
 	        protected void onCancel() {
@@ -53,8 +53,9 @@ public class ClearBagHandler extends AbstractAction {
 	}
     
     public void clearExistingBag(String messages) {
-    	bagView.clearAfterSaving = false;
+    	//bagView.clearAfterSaving = false;
     	newDefaultBag(null);
+    	bag.isClearOnSave(false);
     	bag.getInfo().setFieldMap(null);
     	bag.getInfo().setProfileMap(null);
     	bag.isNewbag(true);
@@ -69,7 +70,6 @@ public class ClearBagHandler extends AbstractAction {
     	bagView.infoInputPane.setBagName(bag.getName());
     	bagView.infoInputPane.updateInfoForms();
     	bagView.compositePane.updateCompositePaneTabs(bag, messages);
-    	bagView.compositePane.invalidate();
     	bagView.updateClearBag(messages);
     }
 

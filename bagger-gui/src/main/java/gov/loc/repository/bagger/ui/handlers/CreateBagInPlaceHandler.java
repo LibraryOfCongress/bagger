@@ -76,7 +76,6 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
         bagView.saveBagHandler.save(bagFile);
 
     	bagView.bagProject.baggerProfile = new BaggerProfile();
-        bagView.compositePane.setBag(bag);
         bagView.compositePane.updateCompositePaneTabs(bag, bagView.getPropertyMessage("bag.message.filesadded"));
         bagView.updateManifestPane();
         bagView.enableBagSettings(true);

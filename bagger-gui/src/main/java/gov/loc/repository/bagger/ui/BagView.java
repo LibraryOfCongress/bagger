@@ -79,28 +79,19 @@ public class BagView extends AbstractView implements ApplicationListener {
 	public BagTree bagTagFileTree;
 
 	public int bagCount = 0;
-    public File bagRootPath;
-    public File tmpRootPath;
-    public File parentSrc;
+    private File bagRootPath;
 	public String userHomeDir;
-    public boolean clearAfterSaving = false;
-	public boolean validateOnSave = false;
-
-	public SaveBagFrame saveBagFrame;
-    public NewBagFrame newBagFrame;
-    public NewBagInPlaceFrame newBagInPlaceFrame;
-	public TagFilesFrame tagFilesFrame;
 
 	public CompositePane compositePane;
 	public TagManifestPane tagManifestPane;
 	public InfoFormsPane infoInputPane;
 	public BagTreePanel bagPayloadTreePanel;
 	public BagTreePanel bagTagFileTreePanel;
-	public JPanel bagButtonPanel;
-	public JPanel bagTagButtonPanel;
-	public JPanel bagPanel;
-	public JPanel topButtonPanel;
 
+	private JPanel bagButtonPanel;
+	private JPanel bagTagButtonPanel;
+	private JPanel bagPanel;
+	private JPanel topButtonPanel;
 	private JButton openButton;
 	private JButton createSkeletonButton;
 	private JButton addDataButton;
@@ -156,7 +147,15 @@ public class BagView extends AbstractView implements ApplicationListener {
     public DefaultBag getBag() {
         return this.bag;
     }
-
+    
+    public void setBagRootPath(File f) {
+    	this.bagRootPath = f;
+    }
+    
+    public File getBagRootPath() {
+    	return this.bagRootPath;
+    }
+    
     public Dimension getMinimumSize() {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
@@ -296,7 +295,6 @@ public class BagView extends AbstractView implements ApplicationListener {
         saveAsButton.setBackground(bgColor);
         saveAsButton.setForeground(fgColor);
         saveAsButton.setToolTipText(getPropertyMessage("bag.button.saveas.help"));
-        saveBagFrame = new SaveBagFrame(this, getPropertyMessage("bag.frame.save"));
         buttonPanel.add(saveAsButton);
 
         completeButton = new JButton(getPropertyMessage("bag.button.complete"));
@@ -354,8 +352,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     	tagManifestPane = new TagManifestPane(this);
     	tagManifestPane.setToolTipText(getPropertyMessage("compositePane.tab.help"));
-		tagFilesFrame = new TagFilesFrame(getActiveWindow().getControl(), getPropertyMessage("bagView.tagFrame.title"));
-		tagFilesFrame.addComponents(tagManifestPane);
     	
     	compositePane = new CompositePane(this, getInitialConsoleMsg());
     	compositePane.setToolTipText(getPropertyMessage("compositePane.tab.help"));

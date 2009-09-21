@@ -465,7 +465,9 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 				bagView.infoInputPane.holeyCheckbox.setSelected(false);
 				bagView.infoInputPane.holeyValue.setText("false");
 			}
-			bagView.validateOnSave = bagView.getBag().isValidateOnSave();
+			bag.isValidateOnSave(bagView.getBag().isValidateOnSave());
+			bagView.saveBagHandler.setValidateOnSave(bagView.getBag().isValidateOnSave());
+			bagView.setBag(bag);
 			setVisible(false);
             bagView.getBag().setName(bagFileName);
             bagView.infoInputPane.bagNameField.invalidate();

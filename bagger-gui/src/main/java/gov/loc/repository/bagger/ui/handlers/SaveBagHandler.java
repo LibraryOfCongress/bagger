@@ -28,6 +28,9 @@ public class SaveBagHandler extends AbstractAction implements Progress {
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;
+    private File tmpRootPath;
+    private boolean clearAfterSaving = false;
+	private boolean validateOnSave = false;
 
 	public SaveBagHandler(BagView bagView) {
 		super();
@@ -36,11 +39,11 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 
 	public void actionPerformed(ActionEvent e) {
 		bag = bagView.getBag();
-		if (bagView.bagRootPath.exists()) {
-			bagView.tmpRootPath = bagView.bagRootPath;
+		if (bagView.getBagRootPath().exists()) {
+			tmpRootPath = bagView.getBagRootPath();
 			confirmWriteBag();
 		} else {
-			saveBag(bagView.bagRootPath);
+			saveBag(bagView.getBagRootPath());
 		}
 	}
 
@@ -49,10 +52,9 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 
 	public void execute() {
 		//bag = bagView.getBag();
-		while (!bagView.task.canceled && !bagView.task.done) {
+		//while (!bagView.task.canceled && !bagView.task.done) {
 			try {
 				Thread.sleep(1000); //sleep for a second
-				/* */
 				short mode = bag.getSerialMode();
 				if (mode == DefaultBag.NO_MODE) {
 					bagView.bagWriter = new FileSystemWriter(bag.getBagFactory());
@@ -79,12 +81,12 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 					if (bagView.progressMonitor.isCanceled() || bagView.task.isDone()) {
 						bagView.progressMonitor.close();
 					}
-					if (bagView.clearAfterSaving) {
+					if (this.clearAfterSaving) {
 						bag.isSerialized(false);
 						bagView.statusBarEnd();
 						bagView.clearBagHandler.clearExistingBag(bagView.getPropertyMessage("compositePane.message.clear"));
 					} else {
-						bag.isValidateOnSave(bagView.validateOnSave);
+						bag.isValidateOnSave(this.validateOnSave);
 						if (bag.isValidateOnSave()) {
 							bagView.validateBagHandler.validateBag();
 						}
@@ -105,7 +107,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 				if (bagView.longRunningProcess.isCancelled()) {
 					bagView.showWarningErrorDialog("Save cancelled", "Save cancelled.");
 				} else {
-					bagView.showWarningErrorDialog("Warning - save interrupted", "Problem saving bag: " + bagView.bagRootPath + "\n" + e.getMessage());
+					bagView.showWarningErrorDialog("Warning - save interrupted", "Problem saving bag: " + bagView.getBagRootPath() + "\n" + e.getMessage());
 				}
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -114,18 +116,43 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 					bagView.task.done = true;
 					bagView.showWarningErrorDialog("Save cancelled", "Save cancelled.");
 				} else {
-					bagView.showWarningErrorDialog("Error - bag not saved", "Error saving bag: " + bagView.bagRootPath + "\n" + e.getMessage());
+					bagView.showWarningErrorDialog("Error - bag not saved", "Error saving bag: " + bagView.getBagRootPath() + "\n" + e.getMessage());
 				}
 				e.printStackTrace();
 			}
-		}
+		//}
 		bagView.setBag(bag);
 		bagView.statusBarEnd();
+	}
+
+	public void setTmpRootPath(File f) {
+		this.tmpRootPath = f;
+	}
+	
+	public File getTmpRootPath() {
+		return this.tmpRootPath;
+	}
+
+	public void setValidateOnSave(boolean b) {
+		this.validateOnSave = b;
+	}
+	
+	public boolean getValidateOnSave() {
+		return this.validateOnSave;
+	}
+
+	public void setClearAfterSaving(boolean b) {
+		this.clearAfterSaving = b;
+	}
+
+	public boolean getClearAfterSaving() {
+		return this.clearAfterSaving;
 	}
 
     public void saveBag(File file) {
     	bag = bagView.getBag();
         bag.setRootDir(file);
+        bagView.setBag(bag);
         bagView.statusBarBegin(this, "Writing bag...", 1L);
     }
 
@@ -136,8 +163,8 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 	        	if (bag.getSize() > DefaultBag.MAX_SIZE) {
 	        		confirmAcceptBagSize();
 	        	} else {
-		        	bagView.bagRootPath = bagView.tmpRootPath;
-		        	saveBag(bagView.bagRootPath);
+		        	bagView.setBagRootPath(tmpRootPath);
+		        	saveBag(bagView.getBagRootPath());
 	        	}
 	        }
 	        protected void onCancel() {
@@ -156,15 +183,15 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 	}
 
     private void cancelWriteBag() {
-    	bagView.clearAfterSaving = false;
+    	clearAfterSaving = false;
     	saveBagAs();
     }
 
     public void confirmAcceptBagSize() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	        protected void onConfirm() {
-	        	bagView.bagRootPath = bagView.tmpRootPath;
-	        	saveBag(bagView.bagRootPath);
+	        	bagView.setBagRootPath(tmpRootPath);
+	        	saveBag(bagView.getBagRootPath());
 	        }
 	    };
 
@@ -211,19 +238,19 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 
     public void save(File file) {
     	bag = bagView.getBag();
-        if (file == null) file = bagView.bagRootPath;
+        if (file == null) file = bagView.getBagRootPath();
         bag.setName(file.getName());
 		File bagFile = new File(file, bag.getName());
     	if (bagFile.exists()) {
-    		bagView.tmpRootPath = file;
+    		tmpRootPath = file;
             confirmWriteBag();
     	} else {
         	if (bag.getSize() > DefaultBag.MAX_SIZE) {
-        		bagView.tmpRootPath = file;
+        		tmpRootPath = file;
         		confirmAcceptBagSize();
         	} else {
-        		bagView.bagRootPath = file;
-        		saveBag(bagView.bagRootPath);
+        		bagView.setBagRootPath(file);
+        		saveBag(bagView.getBagRootPath());
         	}
     	}
         String fileName = bagFile.getName(); //bagFile.getAbsolutePath();

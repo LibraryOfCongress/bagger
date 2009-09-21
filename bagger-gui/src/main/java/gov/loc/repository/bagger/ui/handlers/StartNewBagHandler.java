@@ -64,11 +64,11 @@ public class StartNewBagHandler extends AbstractAction {
     	bagView.bagProject.baggerProfile = new BaggerProfile();
 		//bagView.bagProject.initializeProfile();
 		messages = bagView.updateBaggerRules();
-		bag.setRootDir(bagView.bagRootPath);
+		bag.setRootDir(bagView.getBagRootPath());
 
+    	bagView.setBag(bag);
     	bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
 		bagView.compositePane.updateCompositePaneTabs(bag, messages);
-    	bagView.setBag(bag);
     	bagView.updateNewBag();
     }
 }

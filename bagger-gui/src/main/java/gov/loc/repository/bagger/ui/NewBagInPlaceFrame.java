@@ -167,7 +167,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 	    	fs.addChoosableFileFilter(bagView.infoInputPane.noFilter);
 			fs.setFileFilter(bagView.infoInputPane.noFilter);
 	        fs.setDialogTitle("Existing Data Location");
-		    if (bagView.bagRootPath != null) fs.setCurrentDirectory(bagView.bagRootPath.getParentFile());
+		    if (bagView.getBagRootPath() != null) fs.setCurrentDirectory(bagView.getBagRootPath().getParentFile());
 	    	fs.setCurrentDirectory(bag.getRootDir());
 	    	if (bag.getName() != null && !bag.getName().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
 	    		String selectedName = bag.getName();

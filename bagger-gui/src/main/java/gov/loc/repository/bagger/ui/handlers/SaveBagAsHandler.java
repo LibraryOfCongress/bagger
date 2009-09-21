@@ -11,6 +11,7 @@ import javax.swing.AbstractAction;
 
 public class SaveBagAsHandler extends AbstractAction {
    	private static final long serialVersionUID = 1L;
+	private SaveBagFrame saveBagFrame;
 	BagView bagView;
 	DefaultBag bag;
 
@@ -25,8 +26,8 @@ public class SaveBagAsHandler extends AbstractAction {
 	
 	public void openSaveBagAsFrame() {
 		bag = bagView.getBag();
-		bagView.saveBagFrame = new SaveBagFrame(bagView, bagView.getPropertyMessage("bag.frame.save"));
-		bagView.saveBagFrame.setBag(bag);
-		bagView.saveBagFrame.setVisible(true);
+		saveBagFrame = new SaveBagFrame(bagView, bagView.getPropertyMessage("bag.frame.save"));
+		saveBagFrame.setBag(bag);
+		saveBagFrame.setVisible(true);
 	}
 }

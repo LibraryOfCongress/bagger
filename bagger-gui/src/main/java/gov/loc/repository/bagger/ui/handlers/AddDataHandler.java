@@ -64,7 +64,6 @@ public class AddDataHandler extends AbstractAction implements Progress {
             bag.isValidChecked(false);
             bagView.setBag(bag);
         	bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
-        	bagView.compositePane.setBag(bag);
         	bagView.compositePane.updateCompositePaneTabs(bag, bagView.getPropertyMessage("bag.message.filesadded"));
         	bagView.updateAddData();
         }
@@ -82,7 +81,7 @@ public class AddDataHandler extends AbstractAction implements Progress {
 
     public void addBagData(File file, boolean lastFileFlag) {
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
-    	bagView.parentSrc = file.getParentFile().getAbsoluteFile();
+    	//bagView.parentSrc = file.getParentFile().getAbsoluteFile();
         try {
         	bag.getBag().addFileToPayload(file);
         	boolean alreadyExists = bagView.bagPayloadTree.addNodes(file, false);
@@ -109,7 +108,7 @@ public class AddDataHandler extends AbstractAction implements Progress {
         	bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
     		bag.isCompleteChecked(false);
             bag.isValidChecked(false);
-            bagView.compositePane.setBag(bag);
+            bagView.setBag(bag);
             bagView.compositePane.updateCompositePaneTabs(bag, bagView.getPropertyMessage("bag.message.filesadded"));
             bagView.updateAddData();
     	}

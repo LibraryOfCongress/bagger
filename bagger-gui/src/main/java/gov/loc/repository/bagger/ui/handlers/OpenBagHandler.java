@@ -45,13 +45,13 @@ public class OpenBagHandler extends AbstractAction {
         fo.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
 		fo.setFileFilter(bagView.infoInputPane.noFilter);
 	    fo.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-	    if (bagView.bagRootPath != null) fo.setCurrentDirectory(bagView.bagRootPath.getParentFile());
+	    if (bagView.getBagRootPath() != null) fo.setCurrentDirectory(bagView.getBagRootPath().getParentFile());
 		fo.setDialogTitle("Existing Bag Location");
     	int option = fo.showOpenDialog(frame);
 
         if (option == JFileChooser.APPROVE_OPTION) {
             File file = fo.getSelectedFile();
-            if (file == null) file = bagView.bagRootPath;
+            if (file == null) file = bagView.getBagRootPath();
             openExistingBag(file);
         }
 	}
@@ -153,8 +153,8 @@ public class OpenBagHandler extends AbstractAction {
 	    	bagView.infoInputPane.defaultProject.setSelected(false);
 	    }
 		messages = bagView.updateBaggerRules();
-		bagView.bagRootPath = file;
-    	bag.setRootDir(bagView.bagRootPath);
+		bagView.setBagRootPath(file);
+    	bag.setRootDir(bagView.getBagRootPath());
 		File rootSrc = new File(file, bag.getDataDirectory());
     	if (bag.getBag().getFetchTxt() != null) {
     		bagView.bagPayloadTree = new BagTree(bagView, bag.getFetch().getBaseURL(), true);
@@ -174,9 +174,9 @@ public class OpenBagHandler extends AbstractAction {
 			if (messages != null) messages += msgs;
 			else messages = msgs;
 		}
+		bagView.setBag(bag);
 		bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
 		bagView.compositePane.updateCompositePaneTabs(bag, messages);
-		bagView.setBag(bag);
 		bagView.updateOpenBag();
 		bagView.statusBarEnd();
     }
