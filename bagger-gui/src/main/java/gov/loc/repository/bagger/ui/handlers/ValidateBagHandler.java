@@ -73,8 +73,21 @@ public class ValidateBagHandler extends AbstractAction implements Progress {
             } catch (InterruptedException e) {
             	e.printStackTrace();
             	bagView.task.done = true;
-            	bagView.task.current = bagView.task.lengthOfTask;
-        	    bagView.showWarningErrorDialog("Warning - validation interrupted", "Error trying validate bag: " + e.getMessage());
+				if (bagView.longRunningProcess.isCancelled()) {
+					bagView.task.canceled = true;
+					bagView.showWarningErrorDialog("Validation cancelled", "Validation cancelled.");
+				} else {
+	        	    bagView.showWarningErrorDialog("Warning - validation interrupted", "Error trying validate bag: " + e.getMessage());
+				}
+            } catch (Exception e) {
+            	e.printStackTrace();
+            	bagView.task.done = true;
+				if (bagView.longRunningProcess.isCancelled()) {
+					bagView.task.canceled = true;
+					bagView.showWarningErrorDialog("Validation cancelled", "Validation cancelled.");
+				} else {
+	        	    bagView.showWarningErrorDialog("Warning - validation interrupted", "Error trying validate bag: " + e.getMessage());
+				}
             }
         }
     	bagView.statusBarEnd();

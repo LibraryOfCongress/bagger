@@ -109,9 +109,10 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 					bagView.task.current = bagView.task.lengthOfTask;
 				}
 			} catch (InterruptedException e) {
-				bagView.task.done = true;
 				bag.isSerialized(false);
+				bagView.task.done = true;
 				if (bagView.longRunningProcess.isCancelled()) {
+					bagView.task.canceled = true;
 					bagView.showWarningErrorDialog("Save cancelled", "Save cancelled.");
 				} else {
 					bagView.showWarningErrorDialog("Warning - save interrupted", "Problem saving bag: " + bagView.getBagRootPath() + "\n" + e.getMessage());
@@ -119,8 +120,9 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 				e.printStackTrace();
 			} catch (Exception e) {
 				bag.isSerialized(false);
+				bagView.task.done = true;
 				if (bagView.longRunningProcess.isCancelled()) {
-					bagView.task.done = true;
+					bagView.task.canceled = true;
 					bagView.showWarningErrorDialog("Save cancelled", "Save cancelled.");
 				} else {
 					bagView.showWarningErrorDialog("Error - bag not saved", "Error saving bag: " + bagView.getBagRootPath() + "\n" + e.getMessage());
