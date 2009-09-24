@@ -64,8 +64,22 @@ public class CompleteBagHandler extends AbstractAction implements Progress {
                               " out of " + bagView.task.lengthOfTask + ".";
             } catch (InterruptedException e) {
             	e.printStackTrace();
-            	bagView.task.current = bagView.task.lengthOfTask;
-        	    bagView.showWarningErrorDialog("Warning - complete check interrupted", "Error checking bag completeness: " + e.getMessage());
+            	bagView.task.done = true;
+            	if (bagView.longRunningProcess.isCancelled()) {
+            		bagView.task.canceled = true;
+            		bagView.showWarningErrorDialog("Check cancelled", "Completion check cancelled.");
+            	} else {
+            		bagView.showWarningErrorDialog("Warning - complete check interrupted", "Error checking bag completeness: " + e.getMessage());
+            	}
+            } catch (Exception e) {
+            	e.printStackTrace();
+            	bagView.task.done = true;
+            	if (bagView.longRunningProcess.isCancelled()) {
+            		bagView.task.canceled = true;
+            		bagView.showWarningErrorDialog("Check cancelled", "Completion check cancelled.");
+            	} else {
+            		bagView.showWarningErrorDialog("Warning - complete check interrupted", "Error checking bag completeness: " + e.getMessage());
+            	}
             }
         }
     	bagView.statusBarEnd();
