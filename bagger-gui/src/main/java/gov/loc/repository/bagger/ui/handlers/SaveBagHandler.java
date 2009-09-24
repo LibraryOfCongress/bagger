@@ -51,7 +51,8 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 	}
 
 	public void execute() {
-		//while (!bagView.task.canceled && !bagView.task.done) {
+		boolean isValidating = false;
+		while (!bagView.task.canceled && !bagView.task.done && !isValidating) {
 			try {
 				Thread.sleep(1000); //sleep for a second
 				short mode = bag.getSerialMode();
@@ -70,35 +71,42 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 				bagView.longRunningProcess = bagView.bagWriter;
 				String messages = bag.write(bagView.bagWriter);
 
+				if (bagView.progressMonitor.isCanceled() || bagView.task.canceled) {
+					bagView.progressMonitor.close();
+					bagView.task.canceled = true;
+					bagView.longRunningProcess.cancel();
+					bagView.task.current = bagView.task.lengthOfTask;
+					bag.isSerialized(false);
+					bagView.showWarningErrorDialog("Save cancelled", "Save cancelled.");
+				} else {
+					if (messages != null && !messages.trim().isEmpty()) bagView.showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
+					else bagView.showWarningErrorDialog("Bag saved", "Bag saved successfully.\n" );
+					if (bag.isSerialized()) {
+						if (this.clearAfterSaving) {
+							bag.isSerialized(false);
+							bagView.statusBarEnd();
+							bagView.clearBagHandler.clearExistingBag(bagView.getPropertyMessage("compositePane.message.clear"));
+						} else {
+							bag.isValidateOnSave(this.validateOnSave);
+							if (bag.isValidateOnSave()) {
+					        	isValidating = true;
+								bagView.validateBagHandler.validateBag();
+							}
+							bagView.statusBarEnd();
+							File bagFile = bag.getBagFileName();
+							log.info("BagView.openExistingBag: " + bagFile);
+							bagView.openBagHandler.openExistingBag(bagFile);
+							bagView.updateSaveBag();
+							bag.isNewbag(false);
+						}
+					} else {
+						bagView.compositePane.updateCompositePaneTabs(bag, messages);
+						bagView.updateManifestPane();
+					}
+				}
 				if (bagView.task.current >= bagView.task.lengthOfTask) {
 					bagView.task.done = true;
 					bagView.task.current = bagView.task.lengthOfTask;
-				}
-				if (messages != null && !messages.trim().isEmpty()) bagView.showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
-				else bagView.showWarningErrorDialog("Bag saved", "Bag saved successfully.\n" );
-				if (bag.isSerialized()) {
-					if (bagView.progressMonitor.isCanceled() || bagView.task.isDone()) {
-						bagView.progressMonitor.close();
-					}
-					if (this.clearAfterSaving) {
-						bag.isSerialized(false);
-						bagView.statusBarEnd();
-						bagView.clearBagHandler.clearExistingBag(bagView.getPropertyMessage("compositePane.message.clear"));
-					} else {
-						bag.isValidateOnSave(this.validateOnSave);
-						if (bag.isValidateOnSave()) {
-							bagView.validateBagHandler.validateBag();
-						}
-						bagView.statusBarEnd();
-						File bagFile = bag.getBagFileName();
-						log.info("BagView.openExistingBag: " + bagFile);
-						bagView.openBagHandler.openExistingBag(bagFile);
-						bagView.updateSaveBag();
-						bag.isNewbag(false);
-					}
-				} else {
-					bagView.compositePane.updateCompositePaneTabs(bag, messages);
-					bagView.updateManifestPane();
 				}
 			} catch (InterruptedException e) {
 				bagView.task.done = true;
@@ -119,7 +127,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 				}
 				e.printStackTrace();
 			}
-		//}
+		}
 		bagView.setBag(bag);
 		bagView.statusBarEnd();
 	}

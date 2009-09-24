@@ -72,6 +72,7 @@ public class ValidateBagHandler extends AbstractAction implements Progress {
                               " out of " + bagView.task.lengthOfTask + ".";
             } catch (InterruptedException e) {
             	e.printStackTrace();
+            	bagView.task.done = true;
             	bagView.task.current = bagView.task.lengthOfTask;
         	    bagView.showWarningErrorDialog("Warning - validation interrupted", "Error trying validate bag: " + e.getMessage());
             }
