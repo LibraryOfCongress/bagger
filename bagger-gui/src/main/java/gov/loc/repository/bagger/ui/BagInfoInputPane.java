@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -41,7 +42,7 @@ public class BagInfoInputPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
 	private static final Log logger = LogFactory.getLog(BagInfoInputPane.class);
 	
-	private BagView parentView;
+	private BagView bagView;
 	private DefaultBag defaultBag;
 	private BaggerProfile baggerProfile;
 	//private ProjectBagInfo projectBagInfo;
@@ -53,7 +54,7 @@ public class BagInfoInputPane extends JTabbedPane {
     private Dimension dimension = new Dimension(400, 370);
 
     public BagInfoInputPane(BagView bagView, String username, Contact c, boolean b ) {
-    	this.parentView = bagView;
+    	this.bagView = bagView;
     	this.defaultBag = bagView.getBag();
     	populateForms(defaultBag, b);
     	setMinimumSize(dimension);
@@ -99,10 +100,10 @@ public class BagInfoInputPane extends JTabbedPane {
     	defaultBag = bag;
     	DefaultBagInfo bagInfo = bag.getInfo();
         BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
-        BaggerProfile profile = parentView.bagProject.getBaggerProfile();
+        BaggerProfile profile = bagView.bagProject.getBaggerProfile();
         //projectBagInfo = parentView.bagProject.getProjectBagInfo();
         profile.setOrganization(baggerOrganization);
-        profile.setToContact(parentView.bagProject.projectContact);
+        profile.setToContact(bagView.bagProject.projectContact);
         baggerProfile = profile;
 
         Contact orgContact = bagInfo.getBagOrganization().getContact();
@@ -110,19 +111,19 @@ public class BagInfoInputPane extends JTabbedPane {
         	orgContact = new Contact();
         }
 
-        Contact projectContact = parentView.bagProject.projectContact;
+        Contact projectContact = bagView.bagProject.projectContact;
         if (projectContact == null) {
         	projectContact = new Contact();
         }
 
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
-        bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), parentView, bagInfo.getFieldMap(), enabled);
+        bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), bagView, bagInfo.getFieldMap(), enabled);
 
         //projectFormModel = FormModelHelper.createCompoundFormModel(projectBagInfo);
         //projectForm = new ProjectProfileForm(FormModelHelper.createChildPageFormModel(projectFormModel, null), parentView, profile.getProfileMap(), enabled);
         
         profileFormModel = FormModelHelper.createCompoundFormModel(baggerProfile);
-        profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), this.parentView);
+        profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), bagView);
         profileFormModel.addPropertyChangeListener(profileForm);
 
         updateProfileForms(bag);
@@ -133,10 +134,10 @@ public class BagInfoInputPane extends JTabbedPane {
         removeAll();
         invalidate();
         setName("Profile");
-        bagInfoForm.setToolTipText(parentView.getPropertyMessage("infoinputpane.tab.details.help"));
-        addTab(parentView.getPropertyMessage("infoInputPane.tab.details"), bagInfoForm);
+        bagInfoForm.setToolTipText(bagView.getPropertyMessage("infoinputpane.tab.details.help"));
+        addTab(bagView.getPropertyMessage("infoInputPane.tab.details"), bagInfoForm);
         profileForm.getControl().setToolTipText("Profile Form");
-        addTab(parentView.getPropertyMessage("infoInputPane.tab.profile"), profileForm.getControl());
+        addTab(bagView.getPropertyMessage("infoInputPane.tab.profile"), profileForm.getControl());
     }
 
     public String verifyForms(DefaultBag bag) {
@@ -169,7 +170,7 @@ public class BagInfoInputPane extends JTabbedPane {
         } catch (Exception e) {
         	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
         }
-        parentView.bagProject.projectContact = profile.getToContact();
+        bagView.bagProject.projectContact = profile.getToContact();
         baggerProfile = profile;
         bag.getInfo().setBagOrganization(baggerOrg);
         createBagInfo(bag);
@@ -213,13 +214,12 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public void updateProject(BagView bagView) {
-    	// TODO: add project field to bag-info form
     	this.bagInfoForm.setBagView(bagView);
     	DefaultBag bag = bagView.getBag();
     	Project project = bag.getProject();
     	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
 		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
-/* */
+
 		if (bag.isEdeposit()) {
 			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
 				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
@@ -242,23 +242,23 @@ public class BagInfoInputPane extends JTabbedPane {
 				currentMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
 			}
 		}
-/* */
-    	Collection<ProjectProfile> projectMap = bagView.bagProject.userProjectProfiles;
-		for (Iterator<ProjectProfile> iter = projectMap.iterator(); iter.hasNext();) {
-			ProjectProfile projectProfile = (ProjectProfile) iter.next();
-			if (projectProfile.getProjectId() == project.getId()) {
-				BagInfoField field = new BagInfoField();
-				field.setLabel(projectProfile.getFieldName());
-				field.setName(field.getLabel().toLowerCase());
-				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-				field.isEnabled(!projectProfile.getIsValueRequired());
-				field.isEditable(!projectProfile.getIsValueRequired());
-				field.isRequiredvalue(projectProfile.getIsValueRequired());
-				field.isRequired(projectProfile.getIsRequired());
-				field.setValue(projectProfile.getFieldValue());
-				logger.debug("add projectProfile: " + field);
-				currentMap.put(field.getLabel(), field);
-			}
+
+		ProjectProfile projectProfile = null;
+		if (project != null) {
+			projectProfile = bagView.bagProject.userProjectProfiles.get(project.getName());
+		}
+		if (projectProfile != null) {
+			BagInfoField field = new BagInfoField();
+			field.setLabel(projectProfile.getFieldName());
+			field.setName(field.getLabel().toLowerCase());
+			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+			field.isEnabled(!projectProfile.getIsValueRequired());
+			field.isEditable(!projectProfile.getIsValueRequired());
+			field.isRequiredvalue(projectProfile.getIsValueRequired());
+			field.isRequired(projectProfile.getIsRequired());
+			field.setValue(projectProfile.getFieldValue());
+			logger.debug("add projectProfile: " + field);
+			currentMap.put(field.getLabel(), field);
 		}
 		bag.getInfo().setFieldMap(currentMap);
         bagView.setBag(bag);

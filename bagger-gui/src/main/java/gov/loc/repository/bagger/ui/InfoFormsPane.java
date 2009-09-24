@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 
 import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
@@ -161,8 +163,12 @@ public class InfoFormsPane extends JScrollPane {
     	JLabel projectLabel = new JLabel(bagView.getPropertyMessage("bag.label.project"));
     	projectLabel.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
     	ArrayList<String> listModel = new ArrayList<String>();
-    	Object[] array = bagView.bagProject.userProjects.toArray();
-    	for (int i=0; i < bagView.bagProject.userProjects.size(); i++) listModel.add(((Project)array[i]).getName());
+		Set<String> projectKeys = bagView.bagProject.userProjects.keySet();
+		for (Iterator<String> iter = projectKeys.iterator(); iter.hasNext();) {
+			String key = (String) iter.next();
+			Project p = bagView.bagProject.userProjects.get(key);
+			if (p != null) listModel.add(p.getName());
+		}
     	projectList = new JComboBox(listModel.toArray());
     	projectList.setName(bagView.getPropertyMessage("bag.label.projectlist"));
     	projectList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));

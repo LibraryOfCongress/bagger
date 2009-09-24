@@ -11,6 +11,8 @@ import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 import gov.loc.repository.bagger.ui.BagView;
 
 import java.awt.event.ActionEvent;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -65,10 +67,10 @@ public class ProjectListHandler extends AbstractAction {
     private void changeProject(String selected) {
         bagView.bagProject.updateProfile();
 
-    	Object[] project_array = bagView.bagProject.userProjects.toArray();
-    	int projectSize = bagView.bagProject.userProjects.size();
-        for (int i=0; i < projectSize; i++) {
-        	Project project = (Project)project_array[i];
+        Set<String> projectKeys = bagView.bagProject.userProjects.keySet();
+        for (Iterator<String> iter = projectKeys.iterator(); iter.hasNext();) {
+        	String key = (String) iter.next();
+        	Project project = bagView.bagProject.userProjects.get(key);
         	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(project.getName())) {
         		log.info("bagProject: " + project.getId());
         		bag.setProject(project);

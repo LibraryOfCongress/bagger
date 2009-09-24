@@ -51,7 +51,6 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 	}
 
 	public void execute() {
-		//bag = bagView.getBag();
 		//while (!bagView.task.canceled && !bagView.task.done) {
 			try {
 				Thread.sleep(1000); //sleep for a second

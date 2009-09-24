@@ -340,15 +340,19 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     	if (event.getClickCount() == 2) {
     		// TODO: edit selected field
 	        newFieldFrame = new NewFieldFrame(bagView, bagView.getPropertyMessage("bag.frame.addfield")); 
-	        Collection<ProjectProfile> fieldList = bagView.bagProject.userProjectProfiles;
+	        //Collection<ProjectProfile> fieldList = bagView.bagProject.userProjectProfiles;
 	        JComponent component = (JComponent) event.getComponent();
 	        if (component instanceof JLabel) {
 		        BagInfoField field = new BagInfoField();
 		        String txt = ((JLabel)component).getText();
 		        field.setLabel(txt.trim());
-		    	for (Iterator<ProjectProfile> iter = fieldList.iterator(); iter.hasNext();) {
+				Set<String> keys = bagView.bagProject.userProjectProfiles.keySet();
+		    	//for (Iterator<ProjectProfile> iter = fieldList.iterator(); iter.hasNext();) {
+				for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+					String label = (String) iter.next();
 		    		Project project = bagView.getBag().getProject();
-					ProjectProfile projectProfile = (ProjectProfile) iter.next();
+					//ProjectProfile projectProfile = (ProjectProfile) iter.next();
+					ProjectProfile projectProfile = bagView.bagProject.userProjectProfiles.get(label);
 					if (txt.equalsIgnoreCase(projectProfile.getFieldName()) && project.getId() == projectProfile.getProjectId()) {
 						field.setLabel(projectProfile.getFieldName());
 						field.setName(field.getLabel().toLowerCase());
