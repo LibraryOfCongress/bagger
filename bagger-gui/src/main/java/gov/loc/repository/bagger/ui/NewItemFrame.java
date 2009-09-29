@@ -15,7 +15,6 @@
  */
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 
 import java.awt.BorderLayout;
@@ -112,7 +111,7 @@ public class NewItemFrame extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
     		String name = itemName.getText().trim();
     		boolean b = false;
-    		for (int i=0; i < itemList.getComponentCount(); i++) {
+    		for (int i=0; i < itemList.getItemCount(); i++) {
     			String s = (String) itemList.getItemAt(i);
     			if (s != null && name.equalsIgnoreCase(s.trim())) {
     				b = true;
@@ -125,8 +124,8 @@ public class NewItemFrame extends JFrame implements ActionListener {
     			return;
     		} else {
         		itemList.addItem(name);
+        		itemList.invalidate();
         		itemList.setSelectedItem(name);
-        		itemList.invalidate();    			
     		}
         }
     }
@@ -150,7 +149,4 @@ public class NewItemFrame extends JFrame implements ActionListener {
     	gbc.anchor = anchor; // alignment
     }
 
-    private String getMessage(String property) {
-    	return bagView.getPropertyMessage(property);
-    }
 }

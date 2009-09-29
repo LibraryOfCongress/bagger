@@ -173,7 +173,6 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                 	lcomp.addFocusListener(this);
                 	lcomp.addKeyListener(this);
                 	lcomp.addPropertyChangeListener(this);
-                	System.out.println("fieldValue: " + field.getValue());
             		((JComboBox) lcomp).setSelectedItem(field.getValue().trim());
                 	if (count == 0) focusField = lcomp;
                 	break;

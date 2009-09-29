@@ -438,6 +438,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			listField.invalidate();
 			NewItemFrame newItemFrame = new NewItemFrame(bagView, listField, "Add Field Item");
 			newItemFrame.setVisible(true);
 		}
@@ -468,13 +469,22 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     		field.setValue(valueField.getText().trim());
 			List<String> elements = new ArrayList<String>();
     		if (field.getComponentType() == BagInfoField.LIST_COMPONENT) {
-    			field.setValue(listField.getSelectedItem().toString());
-    			for (int i=0; i < listField.getComponentCount(); i++) {
-    				elements.add(listField.getItemAt(i).toString());
+    			listField.invalidate();
+    			if (listField.getSelectedItem() == null) {
+        			field.setValue("");
+    			} else {
+        			for (int i=0; i < listField.getItemCount(); i++) {
+        				elements.add(listField.getItemAt(i).toString());
+        			}
+        			field.setValue(listField.getSelectedItem().toString());
     			}
     		}
 			field.setElements(elements);
 
+    		if (field.getComponentType() == BagInfoField.LIST_COMPONENT && field.getValue().isEmpty()) {
+    			bagView.showWarningErrorDialog("New Field Dialog", "List field: " + field.getLabel() + " must have a value!");
+    			return;
+    		}
     		if (field.isRequired() && field.getValue().isEmpty()) {
     			bagView.showWarningErrorDialog("New Field Dialog", "Required field: " + field.getLabel() + " must have a value!");
     			return;
