@@ -5,12 +5,14 @@ import java.awt.Dimension;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
@@ -242,30 +244,34 @@ public class BagInfoInputPane extends JTabbedPane {
 			}
 		}
 
-		ProjectProfile projectProfile = null;
 		if (project != null) {
-			projectProfile = bagView.bagProject.userProjectProfiles.get(project.getName());
-		}
-		if (projectProfile != null) {
-			BagInfoField field = new BagInfoField();
-			field.setLabel(projectProfile.getFieldName());
-			field.setName(field.getLabel().toLowerCase());
-			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-			field.isEnabled(!projectProfile.getIsValueRequired());
-			field.isEditable(!projectProfile.getIsValueRequired());
-			field.isRequiredvalue(projectProfile.getIsValueRequired());
-			field.isRequired(projectProfile.getIsRequired());
-			field.setValue(projectProfile.getFieldValue());
-			field.buildElements(projectProfile.getElements());
-			if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
-				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-			} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
-				field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
-			} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
-				field.setComponentType(BagInfoField.LIST_COMPONENT);
+			List<ProjectProfile> list = bagView.bagProject.userProjectProfiles.get(project.getName());
+			if (list != null) {
+				for (int i=0; i < list.size(); i++) {
+					ProjectProfile projectProfile = list.get(i);
+					if (projectProfile != null) {
+						BagInfoField field = new BagInfoField();
+						field.setLabel(projectProfile.getFieldName());
+						field.setName(field.getLabel().toLowerCase());
+						field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+						field.isEnabled(!projectProfile.getIsValueRequired());
+						field.isEditable(!projectProfile.getIsValueRequired());
+						field.isRequiredvalue(projectProfile.getIsValueRequired());
+						field.isRequired(projectProfile.getIsRequired());
+						field.setValue(projectProfile.getFieldValue());
+						field.buildElements(projectProfile.getElements());
+						if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
+							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
+							field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
+							field.setComponentType(BagInfoField.LIST_COMPONENT);
+						}
+						logger.debug("add projectProfile: " + field);
+						currentMap.put(field.getLabel(), field);
+					}
+				}
 			}
-			logger.debug("add projectProfile: " + field);
-			currentMap.put(field.getLabel(), field);
 		}
 		bag.getInfo().setFieldMap(currentMap);
         bagView.setBag(bag);
@@ -296,6 +302,9 @@ public class BagInfoInputPane extends JTabbedPane {
         	} else if (c instanceof JTextArea) {
         		JTextArea ta = (JTextArea) c;
             	value = ta.getText();
+        	} else if (c instanceof JComboBox) {
+        		JComboBox tb = (JComboBox) c;
+        		value = (String) tb.getSelectedItem();
         	}
         	map.put(key, value);
         	i++;

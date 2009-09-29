@@ -173,7 +173,9 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                 	lcomp.addFocusListener(this);
                 	lcomp.addKeyListener(this);
                 	lcomp.addPropertyChangeListener(this);
-            		((JComboBox) lcomp).setSelectedItem(field.getValue().trim());
+                	if (field.getValue() != null) {
+                		((JComboBox) lcomp).setSelectedItem(field.getValue().trim());
+                	}
                 	if (count == 0) focusField = lcomp;
                 	break;
                 default:
@@ -356,35 +358,35 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     	if (event.getClickCount() == 2) {
     		// TODO: edit selected field
 	        newFieldFrame = new NewFieldFrame(bagView, bagView.getPropertyMessage("bag.frame.addfield")); 
-	        //Collection<ProjectProfile> fieldList = bagView.bagProject.userProjectProfiles;
 	        JComponent component = (JComponent) event.getComponent();
 	        if (component instanceof JLabel) {
 		        BagInfoField field = new BagInfoField();
 		        String txt = ((JLabel)component).getText();
 		        field.setLabel(txt.trim());
 				Set<String> keys = bagView.bagProject.userProjectProfiles.keySet();
-		    	//for (Iterator<ProjectProfile> iter = fieldList.iterator(); iter.hasNext();) {
 				for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
 					String label = (String) iter.next();
 		    		Project project = bagView.getBag().getProject();
-					//ProjectProfile projectProfile = (ProjectProfile) iter.next();
-					ProjectProfile projectProfile = bagView.bagProject.userProjectProfiles.get(label);
-					if (txt.equalsIgnoreCase(projectProfile.getFieldName()) && project.getId() == projectProfile.getProjectId()) {
-						field.setLabel(projectProfile.getFieldName());
-						field.setName(field.getLabel().toLowerCase());
-						field.isEnabled(!projectProfile.getIsValueRequired());
-						field.isEditable(!projectProfile.getIsValueRequired());
-						field.isRequiredvalue(projectProfile.getIsValueRequired());
-						field.isRequired(projectProfile.getIsRequired());
-						field.setValue(projectProfile.getFieldValue());
-						if (projectProfile.getFieldType().equalsIgnoreCase("TF")) {
-							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-						} else if (projectProfile.getFieldType().equalsIgnoreCase("TA")) {
-							field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
-						} else if (projectProfile.getFieldType().equalsIgnoreCase("LF")) {
-							field.setComponentType(BagInfoField.LIST_COMPONENT);
+		    		List<ProjectProfile> list = bagView.bagProject.userProjectProfiles.get(label);
+		    		for (int i=0; i < list.size(); i++) {
+						ProjectProfile projectProfile = list.get(i);
+						if (txt.equalsIgnoreCase(projectProfile.getFieldName()) && project.getId() == projectProfile.getProjectId()) {
+							field.setLabel(projectProfile.getFieldName());
+							field.setName(field.getLabel().toLowerCase());
+							field.isEnabled(!projectProfile.getIsValueRequired());
+							field.isEditable(!projectProfile.getIsValueRequired());
+							field.isRequiredvalue(projectProfile.getIsValueRequired());
+							field.isRequired(projectProfile.getIsRequired());
+							field.setValue(projectProfile.getFieldValue());
+							if (projectProfile.getFieldType().equalsIgnoreCase("TF")) {
+								field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+							} else if (projectProfile.getFieldType().equalsIgnoreCase("TA")) {
+								field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+							} else if (projectProfile.getFieldType().equalsIgnoreCase("LF")) {
+								field.setComponentType(BagInfoField.LIST_COMPONENT);
+							}
 						}
-					}
+		    		}
 				}
 		        newFieldFrame.setField(field);
 		        newFieldFrame.setVisible(true);

@@ -26,7 +26,7 @@ import org.acegisecurity.context.SecurityContextHolder;
 public class BagProject {
 	public HashMap<String, Project> userProjects = new HashMap<String, Project>();
     public Collection<Profile> userProfiles;
-    public HashMap<String, ProjectProfile> userProjectProfiles = new HashMap<String, ProjectProfile>();
+    public HashMap<String, List<ProjectProfile>> userProjectProfiles = new HashMap<String, List<ProjectProfile>>();
     public BaggerProfile baggerProfile = new BaggerProfile();
     public ProjectBagInfo projectBagInfo = new ProjectBagInfo();
     public String username;
@@ -82,7 +82,7 @@ public class BagProject {
     	projectProfile.setIsRequired(true);
     	projectProfile.setFieldType(BagInfoField.TEXTFIELD_CODE);
     	projectProfile.setIsValueRequired(true);
-    	userProjectProfiles.put(project.getName(), projectProfile);
+    	addProjectProfile(project, projectProfile);
 		baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
 		bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);
 		bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
@@ -140,7 +140,7 @@ public class BagProject {
     	    		projectProfile.setFieldType(BagInfoField.LIST_CODE);
     	    	}
     	    	projectProfile.setElements(field.concatElements());
-    	    	userProjectProfiles.put(project.getName(), projectProfile);
+    	    	addProjectProfile(project, projectProfile);
     			baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
     		}
     	}
@@ -163,13 +163,12 @@ public class BagProject {
    			userProjects.put(p.getName(), p);
    		}
    		Collection<ProjectProfile> projectProfileMap = bagView.getBagger().getProjectProfiles();
-   		userProjectProfiles = new HashMap<String, ProjectProfile>();
+   		userProjectProfiles = new HashMap<String, List<ProjectProfile>>();
 		Object[] reqs = bag.getInfo().getRequiredStrings();
 		for (Iterator<ProjectProfile> iter = projectProfileMap.iterator(); iter.hasNext();) {
 			ProjectProfile projectProfile = (ProjectProfile) iter.next();
 			Project proj = bagView.getBagger().loadProject(projectProfile.getProjectId());
-			String projName = proj.getName();
-			userProjectProfiles.put(projName, projectProfile);
+	    	addProjectProfile(proj, projectProfile);
 			if (projectProfile.getIsRequired()) {
 				if (!bag.getInfo().getRequiredSet().contains(projectProfile.getFieldName())) {
 					List<Object> list = new ArrayList<Object>();
@@ -369,8 +368,11 @@ public class BagProject {
 			Set<String> keys = userProjectProfiles.keySet();
 			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
 				String label = (String) iter.next();
-				ProjectProfile projProfile = (ProjectProfile) userProjectProfiles.get(label);
-				projectProfiles.add(projProfile);
+				List<ProjectProfile> list = userProjectProfiles.get(label);
+				for (int i=0; i < list.size(); i++) {
+					ProjectProfile projProfile = list.get(i);
+					projectProfiles.add(projProfile);
+				}
 			}
 			Collection<Project> projects = new ArrayList<Project>();
 			Set<String> pkeys = userProjects.keySet();
@@ -443,4 +445,10 @@ public class BagProject {
     	return message;
     }
 
+    public void addProjectProfile(Project project, ProjectProfile projectProfile) {
+    	List<ProjectProfile> list = userProjectProfiles.get(project.getName());
+    	if (list == null) list = new ArrayList<ProjectProfile>();
+    	list.add(projectProfile);
+    	userProjectProfiles.put(project.getName(), list);
+    }
 }
