@@ -68,7 +68,7 @@ public class InMemoryBagger extends JdbcBagger {
         template.execute("alter table profile add constraint fk_profile_project foreign key (project_id) references projects(id)");
         template.execute("alter table profile add constraint fk_profile_contact foreign key (contact_id) references contact(id)");
 
-        template.execute("CREATE TABLE project_profile (id INT NOT NULL IDENTITY PRIMARY KEY, project_id INT NOT NULL, field_name VARCHAR(32), is_required boolean, field_value VARCHAR(100), is_value_required boolean)");
+        template.execute("CREATE TABLE project_profile (id INT NOT NULL IDENTITY PRIMARY KEY, project_id INT NOT NULL, field_name VARCHAR(32), is_required boolean, field_value VARCHAR(100), is_value_required boolean, field_type VARCHAR(2), elements VARCHAR(500))");
         template.execute("alter table project_profile add constraint fk_project_profile_project foreign key (project_id) references projects(id)");
 
         template.execute("CREATE TABLE project_baginfo (id INT NOT NULL IDENTITY PRIMARY KEY, project_id INT NOT NULL, defaults VARCHAR(1000))");
@@ -109,11 +109,11 @@ public class InMemoryBagger extends JdbcBagger {
         defaultList.add("INSERT INTO projects VALUES (" + rowcount++ + ", 'ndnp', false)");
 
         rowcount = 1;
-        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 2, 'LC-Project', true, 'eDeposit', true)");
-        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 2, 'Publisher', true, '', false)");
-        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 3, 'LC-Project', true, 'ndiipp', true)");
-        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 4, 'LC-Project', true, 'ndnp', true)");
-        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 4, 'Awardee-Phase', true, '', false)");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 2, 'LC-Project', true, 'eDeposit', true, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 2, 'Publisher', true, '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 3, 'LC-Project', true, 'ndiipp', true, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 4, 'LC-Project', true, 'ndnp', true, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 4, 'Awardee-Phase', true, '', false, 'TF', '')");
 
         boolean loadOnStartup = false;
     	if (loadOnStartup) readCommandList();

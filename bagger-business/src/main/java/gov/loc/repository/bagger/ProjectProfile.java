@@ -5,6 +5,8 @@ public class ProjectProfile {
 	private int projectId = -1;
 	private String fieldName = "";
 	private String fieldValue = "";
+	private String fieldType = "";
+	private String elements = "";
 	private boolean isRequired;
 	private boolean isValueRequired;
 
@@ -46,6 +48,22 @@ public class ProjectProfile {
 
 	public String getFieldValue() {
 		return this.fieldValue;
+	}
+
+	public void setElements(String s) {
+		this.elements = s;
+	}
+	
+	public String getElements() {
+		return this.elements;
+	}
+
+	public void setFieldType(String s) {
+		this.fieldType = s;
+	}
+	
+	public String getFieldType() {
+		return this.fieldType;
 	}
 
 	public void setIsValueRequired(boolean b) {

@@ -520,16 +520,16 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			ProjectProfile p = this.loadProjectProfile(projectProfile.getId());
 			projectProfile.setId(p.getId());
 			this.simpleJdbcTemplate.update(
-					"UPDATE project_profile SET field_name=:fieldName, is_required=:isRequired, field_value=:fieldValue, is_value_required=:isValueRequired WHERE id=:id",
+					"UPDATE project_profile SET field_name=:fieldName, is_required=:isRequired, field_value=:fieldValue, is_value_required=:isValueRequired, field_type=:fieldType, elements=:elements WHERE id=:id",
 					new BeanPropertySqlParameterSource(projectProfile));
-			sqlCommand = "UPDATE project_profile SET field_name='" + projectProfile.getFieldName() + "', is_required=" + projectProfile.getIsRequired() + ", field_value='" + projectProfile.getFieldValue() + "', is_value_required=" + projectProfile.getIsValueRequired() + " WHERE id=" + projectProfile.getId() + ";";
+			sqlCommand = "UPDATE project_profile SET field_name='" + projectProfile.getFieldName() + "', is_required=" + projectProfile.getIsRequired() + ", field_value='" + projectProfile.getFieldValue() + "', is_value_required=" + projectProfile.getIsValueRequired() + ", field_type='" + projectProfile.getFieldType() + "', elements='" + projectProfile.getElements()+ "' WHERE id=" + projectProfile.getId() + ";";
 			commandList.add(sqlCommand);
 		}
 		catch (Exception ex) {
 			try {
 				Number newKey = this.insertProjectProfile.executeAndReturnKey(new BeanPropertySqlParameterSource(projectProfile));
 				projectProfile.setId(newKey.intValue());
-				sqlCommand = "INSERT INTO project_profile VALUES (" + newKey.intValue() + ", " + projectProfile.getProjectId() + ", '" + projectProfile.getFieldName() + "', " + projectProfile.getIsRequired() + ", '" + projectProfile.getFieldValue() + "', " + projectProfile.getIsValueRequired() + ");";
+				sqlCommand = "INSERT INTO project_profile VALUES (" + newKey.intValue() + ", " + projectProfile.getProjectId() + ", '" + projectProfile.getFieldName() + "', " + projectProfile.getIsRequired() + ", '" + projectProfile.getFieldValue() + "', " + projectProfile.getIsValueRequired() + ", '" + projectProfile.getFieldType() + "', '" + projectProfile.getElements() + "');";
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
@@ -650,15 +650,6 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			messages = "Exception storing project profiles: " + ex.getMessage();
 			ex.printStackTrace();			
 		}
-/*
-		try {
-			messages = this.storeProjectBagInfo(projectBagInfo);
-		}
-		catch (Exception ex) {
-			messages = "Exception storing project bag-info defaults: " + ex.getMessage();
-			ex.printStackTrace();
-		}
-*/
 		try {
 			messages = write(homeDir);
 		}
@@ -668,8 +659,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 		return messages;
 	}
-/* */
-/* */
+
 	private String write(String homeDir) {
 		String message = null;
 		String name = "bagger.sql";
@@ -693,7 +683,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 		return message;		
 	}
-/* */	
+
 	/**
 	 * Creates a {@link MapSqlParameterSource} based on data values from the
 	 * supplied {@link Profile} instance.
