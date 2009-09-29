@@ -49,6 +49,7 @@ import org.springframework.richclient.application.PageComponent;
 
 public class NewFieldFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
+	// TODO: Any new field type needs to be handled in BagInfoInputPane.createBagInfo
 	private static final String TEXTFIELD = "Brief Text";
 	private static final String TEXTAREA = "Extended Text";
 	private static final String LISTFIELD = "List";
