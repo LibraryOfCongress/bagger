@@ -1,6 +1,11 @@
 
 package gov.loc.repository.bagger.bag;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -9,11 +14,16 @@ public class BagInfoField {
 	private static final Log logger = LogFactory.getLog(BagInfoField.class);
 	public static final int TEXTFIELD_COMPONENT = 1;
 	public static final int TEXTAREA_COMPONENT = 2;
+	public static final int LIST_COMPONENT = 3;
+	public static final String TEXTFIELD_CODE = "TF";
+	public static final String TEXTAREA_CODE = "TA";
+	public static final String LIST_CODE = "LF";
 	public static final int MAX_VALUE = 32;
 
 	private String name = "";
 	private String label = "";
 	private String value = "";
+	private List<String> elements = new ArrayList<String>();
 	private int componentType = TEXTFIELD_COMPONENT;
 	private boolean isEnabled = false;
 	private boolean isRequired = false;
@@ -46,6 +56,14 @@ public class BagInfoField {
     
     public String getValue() {
     	return this.value;
+    }
+    
+    public void setElements(List<String> e) {
+    	this.elements = e;
+    }
+    
+    public List<String> getElements() {
+    	return this.elements;
     }
 
     public void setComponentType(int type) {
@@ -96,12 +114,32 @@ public class BagInfoField {
     	return this.isProfile;
     }
     
+    public void buildElements(String e) {
+		ArrayList<String> tokens = new ArrayList<String>();
+		StringTokenizer st = new StringTokenizer(e, ";");
+		while (st.hasMoreTokens()) {
+			  String t=st.nextToken();
+			  tokens.add(t);
+		}
+		this.elements = tokens;
+    }
+    
+    public String concatElements() {
+    	StringBuffer sb = new StringBuffer();
+    	for (int i=0; i < this.elements.size(); i++) {
+    		sb.append(this.elements.get(i));
+    		sb.append(";");
+    	}
+    	return sb.toString();
+    }
+    
     public String toString() {
     	StringBuffer sb = new StringBuffer();
     	sb.append("\n");
     	sb.append("Label: " + getLabel() + "\n");
     	sb.append("Name: " + getName() + "\n");
     	sb.append("Value: " + getValue() + "\n");
+    	sb.append("Type: " + getComponentType() + "\n");
     	sb.append("isRequired: " + isRequired() + "\n");
     	sb.append("isRequiredvalue: " + isRequiredvalue() + "\n");
     	sb.append("isEnabled: " + isEnabled() + "\n");
