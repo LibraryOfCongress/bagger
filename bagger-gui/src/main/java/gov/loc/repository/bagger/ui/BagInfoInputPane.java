@@ -27,7 +27,6 @@ import org.springframework.richclient.form.FormModelHelper;
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Person;
 import gov.loc.repository.bagger.Project;
-//import gov.loc.repository.bagger.ProjectBagInfo;
 import gov.loc.repository.bagger.ProjectProfile;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
@@ -257,6 +256,14 @@ public class BagInfoInputPane extends JTabbedPane {
 			field.isRequiredvalue(projectProfile.getIsValueRequired());
 			field.isRequired(projectProfile.getIsRequired());
 			field.setValue(projectProfile.getFieldValue());
+			field.buildElements(projectProfile.getElements());
+			if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
+				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+			} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
+				field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+			} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
+				field.setComponentType(BagInfoField.LIST_COMPONENT);
+			}
 			logger.debug("add projectProfile: " + field);
 			currentMap.put(field.getLabel(), field);
 		}

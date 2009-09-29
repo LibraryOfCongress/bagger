@@ -80,6 +80,7 @@ public class BagProject {
     	projectProfile.setFieldName(DefaultBagInfo.FIELD_LC_PROJECT);
     	projectProfile.setFieldValue(bag.getInfo().getLcProject());
     	projectProfile.setIsRequired(true);
+    	projectProfile.setFieldType(BagInfoField.TEXTFIELD_CODE);
     	projectProfile.setIsValueRequired(true);
     	userProjectProfiles.put(project.getName(), projectProfile);
 		baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
@@ -131,6 +132,14 @@ public class BagProject {
     	    	projectProfile.setFieldValue(field.getValue());
     	    	projectProfile.setIsRequired(field.isRequired());
     	    	projectProfile.setIsValueRequired(field.isRequiredvalue());
+    	    	if (field.getComponentType() == BagInfoField.TEXTFIELD_COMPONENT) {
+    	    		projectProfile.setFieldType(BagInfoField.TEXTFIELD_CODE);
+    	    	} else if (field.getComponentType() == BagInfoField.TEXTAREA_COMPONENT) {
+    	    		projectProfile.setFieldType(BagInfoField.TEXTAREA_CODE);
+    	    	} else if (field.getComponentType() == BagInfoField.LIST_COMPONENT) {
+    	    		projectProfile.setFieldType(BagInfoField.LIST_CODE);
+    	    	}
+    	    	projectProfile.setElements(field.concatElements());
     	    	userProjectProfiles.put(project.getName(), projectProfile);
     			baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
     		}

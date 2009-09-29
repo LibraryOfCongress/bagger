@@ -1,10 +1,17 @@
 
 package gov.loc.repository.bagger.ui;
 
+import gov.loc.repository.bagger.Project;
+
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -36,6 +43,17 @@ public class BagTableFormBuilder extends TableFormBuilder {
     public JComponent[] add(String fieldName, boolean isRequired, String label, JComponent checkbox, String attributes) {
     	JComponent textField = new JTextField();
         return addBinding(fieldName, isRequired, label, textField, textField, checkbox, attributes, getLabelAttributes());
+    }
+
+    public JComponent[] addList(String fieldName, boolean isRequired, String label, Collection<String> elements, JComponent checkbox, String attributes) {
+    	ArrayList<String> listModel = new ArrayList<String>();
+		for (Iterator<String> iter = elements.iterator(); iter.hasNext();) {
+			String item = (String) iter.next();
+			listModel.add(item);
+		}
+		JComponent list = new JComboBox(listModel.toArray());
+        JComponent wrappedComponent = list;
+        return addBinding(fieldName, isRequired, label, list, wrappedComponent, checkbox, attributes, getLabelAttributes());
     }
 
     public JComponent[] addTextArea(String fieldName, boolean isRequired, String label, JComponent checkbox, String attributes) {

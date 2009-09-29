@@ -8,7 +8,6 @@ import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagger.ui.handlers.*;
 import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.Cancellable;
-import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.writer.Writer;
 
@@ -29,18 +28,12 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JComponent;
-import javax.swing.JCheckBox;
-import javax.swing.JRadioButton;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.JFrame;
 
 import org.springframework.richclient.application.Application;

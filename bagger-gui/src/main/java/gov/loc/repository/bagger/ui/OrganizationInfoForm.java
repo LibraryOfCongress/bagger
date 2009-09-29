@@ -11,6 +11,7 @@ import gov.loc.repository.bagit.Bag;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,9 +31,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -159,6 +162,20 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                     comp.addPropertyChangeListener(this);
                     ((JTextField) comp).setText(field.getValue());
             		if (count == 0) focusField = comp;
+                	break;
+                case BagInfoField.LIST_COMPONENT:
+                	List<String> elements = field.getElements();
+                    JComponent[] llist = formBuilder.addList(field.getName(), field.isRequired(), field.getLabel(), elements, removeButton, "");
+                    JComponent lccomp = llist[0];
+                    lccomp.addMouseListener(this);
+                	JComponent lcomp = llist[index];
+                	lcomp.setEnabled(field.isEnabled());
+                	lcomp.addFocusListener(this);
+                	lcomp.addKeyListener(this);
+                	lcomp.addPropertyChangeListener(this);
+                	System.out.println("fieldValue: " + field.getValue());
+            		((JComboBox) lcomp).setSelectedItem(field.getValue().trim());
+                	if (count == 0) focusField = lcomp;
                 	break;
                 default:
                 }
@@ -361,6 +378,13 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 						field.isRequiredvalue(projectProfile.getIsValueRequired());
 						field.isRequired(projectProfile.getIsRequired());
 						field.setValue(projectProfile.getFieldValue());
+						if (projectProfile.getFieldType().equalsIgnoreCase("TF")) {
+							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+						} else if (projectProfile.getFieldType().equalsIgnoreCase("TA")) {
+							field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+						} else if (projectProfile.getFieldType().equalsIgnoreCase("LF")) {
+							field.setComponentType(BagInfoField.LIST_COMPONENT);
+						}
 					}
 				}
 		        newFieldFrame.setField(field);
