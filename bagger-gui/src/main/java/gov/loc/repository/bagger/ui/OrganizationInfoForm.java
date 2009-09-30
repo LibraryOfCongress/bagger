@@ -247,7 +247,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 
     	public void actionPerformed(ActionEvent e) {
 //        	if (dirty) bagView.infoInputPane.updateBagHandler.updateBag(defaultBag);
-	        newFieldFrame = new NewFieldFrame(bagView, bagView.getPropertyMessage("bag.frame.addfield"));
+	        newFieldFrame = new NewFieldFrame(bagView, null, bagView.getPropertyMessage("bag.frame.addfield"));
 	        newFieldFrame.setVisible(true);
        	}
     }
@@ -357,7 +357,6 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     public void mouseClicked(MouseEvent event) {
     	if (event.getClickCount() == 2) {
     		// TODO: edit selected field
-	        newFieldFrame = new NewFieldFrame(bagView, bagView.getPropertyMessage("bag.frame.addfield")); 
 	        JComponent component = (JComponent) event.getComponent();
 	        if (component instanceof JLabel) {
 		        BagInfoField field = new BagInfoField();
@@ -384,10 +383,12 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 								field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
 							} else if (projectProfile.getFieldType().equalsIgnoreCase("LF")) {
 								field.setComponentType(BagInfoField.LIST_COMPONENT);
+								field.buildElements(projectProfile.getElements());
 							}
 						}
 		    		}
 				}
+		        newFieldFrame = new NewFieldFrame(bagView, field, bagView.getPropertyMessage("bag.frame.addfield")); 
 		        newFieldFrame.setField(field);
 		        newFieldFrame.setVisible(true);
 	        }

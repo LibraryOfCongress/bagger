@@ -434,7 +434,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         infoInputPane.defaultProject.setEnabled(b);
         infoInputPane.bagInfoInputPane.setEnabled(b);
         infoInputPane.saveButton.setEnabled(b);
-        infoInputPane.loadDefaultsButton.setEnabled(b);
+        infoInputPane.loadDefaultsButton.setEnabled(true);
         infoInputPane.clearDefaultsButton.setEnabled(b);
         infoInputPane.holeyCheckbox.setEnabled(false);
         infoInputPane.serializeGroupPanel.setEnabled(false);
@@ -486,7 +486,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         infoInputPane.holeyValue.setEnabled(b);
         infoInputPane.serializeValue.setEnabled(b);
         infoInputPane.saveButton.setEnabled(b);
-        infoInputPane.loadDefaultsButton.setEnabled(b);
+        infoInputPane.loadDefaultsButton.setEnabled(true);
         infoInputPane.clearDefaultsButton.setEnabled(b);
     }
 

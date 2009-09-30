@@ -83,6 +83,7 @@ public class BagTableFormBuilder extends TableFormBuilder {
     public JComponent[] addBinding(String fieldName, boolean isRequired, String labelName, JComponent component, JComponent wrappedComponent, JComponent removeButton, String attributes, String labelAttributes) {
     	removeButton.setFocusable(false);
     	JLabel label = new JLabel(labelName); //createLabelFor(fieldName, component);
+    	label.setToolTipText("Double-Click to Edit");
         if (wrappedComponent == null) {
             wrappedComponent = component;
         }

@@ -2,11 +2,8 @@
 package gov.loc.repository.bagger.ui;
 
 import java.awt.Dimension;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -46,7 +43,6 @@ public class BagInfoInputPane extends JTabbedPane {
 	private BagView bagView;
 	private DefaultBag defaultBag;
 	private BaggerProfile baggerProfile;
-	//private ProjectBagInfo projectBagInfo;
     public OrganizationInfoForm bagInfoForm = null;
     private OrganizationProfileForm profileForm = null;
     private HierarchicalFormModel infoFormModel = null;
@@ -87,7 +83,6 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public void enableForms(DefaultBag bag, boolean b) {
-    	//projectForm.setEnabled(b);
     	profileForm.setEnabled(b);
     	profileForm.getControl().invalidate();
     	bagInfoForm.setEnabled(b);
@@ -96,13 +91,11 @@ public class BagInfoInputPane extends JTabbedPane {
     	this.invalidate();
     }
     
-    // Define the information forms
     public void populateForms(DefaultBag bag, boolean enabled) {
     	defaultBag = bag;
     	DefaultBagInfo bagInfo = bag.getInfo();
         BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
         BaggerProfile profile = bagView.bagProject.getBaggerProfile();
-        //projectBagInfo = parentView.bagProject.getProjectBagInfo();
         profile.setOrganization(baggerOrganization);
         profile.setToContact(bagView.bagProject.projectContact);
         baggerProfile = profile;
@@ -120,9 +113,6 @@ public class BagInfoInputPane extends JTabbedPane {
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
         bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), bagView, bagInfo.getFieldMap(), enabled);
 
-        //projectFormModel = FormModelHelper.createCompoundFormModel(projectBagInfo);
-        //projectForm = new ProjectProfileForm(FormModelHelper.createChildPageFormModel(projectFormModel, null), parentView, profile.getProfileMap(), enabled);
-        
         profileFormModel = FormModelHelper.createCompoundFormModel(baggerProfile);
         profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), bagView);
         profileFormModel.addPropertyChangeListener(profileForm);
@@ -267,7 +257,6 @@ public class BagInfoInputPane extends JTabbedPane {
 						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
 							field.setComponentType(BagInfoField.LIST_COMPONENT);
 						}
-						logger.debug("add projectProfile: " + field);
 						currentMap.put(field.getLabel(), field);
 					}
 				}

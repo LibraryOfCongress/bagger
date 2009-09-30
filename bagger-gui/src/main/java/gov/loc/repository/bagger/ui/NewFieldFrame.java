@@ -43,12 +43,15 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationPage;
 import org.springframework.richclient.application.PageComponent;
 
 public class NewFieldFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
+	private static final Log logger = LogFactory.getLog(NewFieldFrame.class);
 	// TODO: Any new field type needs to be handled in BagInfoInputPane.createBagInfo
 	private static final String TEXTFIELD = "Brief Text";
 	private static final String TEXTAREA = "Extended Text";
@@ -75,54 +78,32 @@ public class NewFieldFrame extends JFrame implements ActionListener {
 	JButton listRemoveButton;
 	boolean edit = false;
 
-	public NewFieldFrame(BagView bagView, String title) {
+	public NewFieldFrame(BagView bagView, BagInfoField field, String title) {
         super(title);
 		Application app = Application.instance();
 		ApplicationPage page = app.getActiveWindow().getPage();
 		PageComponent component = page.getActiveComponent();
 		if (component != null) this.bagView = (BagView) component;
 		else this.bagView = bagView;
-		field = new BagInfoField();
-		field.isEnabled(true);
 		if (bagView != null) {
 			bag = bagView.getBag();
 	        getContentPane().removeAll();
-	        addPanel = createComponents();
+	        addPanel = createComponents(field);
 		} else {
 			addPanel = new JPanel();
 		}
+		if (field != null) {
+			this.field = field;
+		} else {
+			this.field = new BagInfoField();
+		}
+		this.field.isEnabled(true);
         addPanel.setPreferredSize(preferredDimension);
         getContentPane().add(addPanel, BorderLayout.CENTER);
         pack();
     }
 	
 	public void setField(BagInfoField field) {
-		this.edit = true;
-		this.field = field;
-		this.isRequiredCheckbox.setSelected(field.isRequired());
-		this.isRequiredValue.setSelected(field.isRequiredvalue());
-		this.valueField.setText(field.getValue());
-		this.valueField.setEnabled(true);
-		this.listField.setEnabled(false);
-		this.listAddButton.setEnabled(false);
-		this.listRemoveButton.setEnabled(false);
-		if (field.getComponentType() == BagInfoField.TEXTFIELD_COMPONENT) {
-			this.typeList.setSelectedItem(TEXTFIELD);
-		} else if (field.getComponentType() == BagInfoField.TEXTAREA_COMPONENT) {
-			this.typeList.setSelectedItem(TEXTAREA);
-		} else if (field.getComponentType() == BagInfoField.LIST_COMPONENT) {
-			this.typeList.setSelectedItem(LISTFIELD);
-	    	List<String> listModel = field.getElements();
-	        this.listField = new JComboBox(listModel.toArray());
-	        this.listField.setEnabled(true);
-	        this.listAddButton.setEnabled(true);
-	        this.listRemoveButton.setEnabled(true);
-	        this.listField.setSelectedItem(field.getValue());
-	        this.valueField.setEnabled(false);
-		} else {
-			this.typeList.setSelectedItem(TEXTFIELD);
-		}
-
 		String name = field.getLabel();
 		boolean b = false;
 		for (int j=0; j < fieldList.getModel().getSize(); j++) {
@@ -145,10 +126,17 @@ public class NewFieldFrame extends JFrame implements ActionListener {
 		}
 	}
 
-    private JPanel createComponents() {
+    private JPanel createComponents(BagInfoField field) {
         Border border = new EmptyBorder(5, 5, 5, 5);
 
-        FieldListHandler fieldListHandler = new FieldListHandler();
+        logger.debug("NewFieldFrame createComponents: " + field);
+        if (field != null) {
+    		this.edit = true;
+        } else {
+        	this.edit = false;
+        }
+
+		FieldListHandler fieldListHandler = new FieldListHandler();
     	List<String> listModel = bagView.getBag().getInfo().getStandardBagFields();
         fieldList = new JComboBox(listModel.toArray());
         fieldList.setName(getMessage("baginfo.field.fieldlist"));
@@ -183,7 +171,11 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         isReqLabel.setToolTipText(getMessage("bag.label.isreq.help"));
         isRequiredCheckbox = new JCheckBox();
         isRequiredCheckbox.setBorder(border);
-        isRequiredCheckbox.setSelected(false);
+        if (field != null) {
+    		isRequiredCheckbox.setSelected(field.isRequired());
+        } else {
+            isRequiredCheckbox.setSelected(false);
+        }
         isRequiredCheckbox.addActionListener(new FieldRequiredHandler());
         isRequiredCheckbox.setToolTipText(getMessage("bag.label.isreq.help"));
         JPanel reqPanel = new JPanel(new FlowLayout());
@@ -198,24 +190,49 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         typeListLabel.setToolTipText(getMessage("baginfo.field.typelist.help"));
         typeList = new JComboBox(typeModel.toArray());
         typeList.setName(getMessage("baginfo.field.typelist"));
-        typeList.setSelectedItem(TEXTFIELD);
+        if (field == null) {
+        	typeList.setSelectedItem(TEXTFIELD);
+        } else if (field.getComponentType() == BagInfoField.TEXTFIELD_COMPONENT) {
+			typeList.setSelectedItem(TEXTFIELD);
+		} else if (field.getComponentType() == BagInfoField.TEXTAREA_COMPONENT) {
+			typeList.setSelectedItem(TEXTAREA);
+		} else if (field.getComponentType() == BagInfoField.LIST_COMPONENT) {
+			typeList.setSelectedItem(LISTFIELD);
+		} else {
+			typeList.setSelectedItem(TEXTFIELD);
+		}
         typeList.addActionListener(new TypeListHandler());
         typeList.setToolTipText(getMessage("baginfo.field.typelist.help"));
 
         valueLabel = new JLabel(bagView.getPropertyMessage("fieldvalue.label"));
         valueLabel.setToolTipText(bagView.getPropertyMessage("fieldvalue.help"));
     	valueField = new JTextField("");
-    	listField = new JComboBox();
-    	listField.addActionListener(new ListFieldHandler());
-    	listField.setEnabled(false);
-
+    	if (field != null) {
+    		valueField.setText(field.getValue());
+    	}
         listAddButton = new JButton("Add Item");
     	listAddButton.addActionListener(new ListAddHandler());
-        listAddButton.setEnabled(false);
         
         listRemoveButton = new JButton("Remove Item");
         listRemoveButton.addActionListener(new ListRemoveHandler());
-        listRemoveButton.setEnabled(false);
+		if (field != null && field.getComponentType() == BagInfoField.LIST_COMPONENT) {
+	    	List<String> model = field.getElements();
+	        listField = new JComboBox(model.toArray());
+	        listField.invalidate();
+	        listField.setSelectedItem(field.getValue());
+	    	listField.addActionListener(new ListFieldHandler());
+			listField.setEnabled(true);
+	        valueField.setEnabled(false);
+	        listAddButton.setEnabled(true);
+	        listRemoveButton.setEnabled(true);
+		} else {
+	    	listField = new JComboBox();
+	    	listField.addActionListener(new ListFieldHandler());
+	    	listField.setEnabled(false);
+			valueField.setEnabled(true);
+	        listAddButton.setEnabled(false);
+	        listRemoveButton.setEnabled(false);
+		}
 
     	JPanel listPanel = new JPanel();
     	listPanel.add(listAddButton);
@@ -225,7 +242,11 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         isReqValueLabel.setToolTipText(getMessage("bag.label.isreqvalue.help"));
         isRequiredValue = new JCheckBox();
         isRequiredValue.setBorder(border);
-        isRequiredValue.setSelected(false);
+        if (field != null) {
+    		isRequiredValue.setSelected(field.isRequiredvalue());
+        } else {
+            isRequiredValue.setSelected(false);
+        }
         isRequiredValue.addActionListener(new RequiredValueHandler());
         isRequiredValue.setToolTipText(getMessage("bag.label.isreqvalue.help"));
         JPanel reqValuePanel = new JPanel(new FlowLayout());
@@ -367,7 +388,16 @@ public class NewFieldFrame extends JFrame implements ActionListener {
         	String fieldLabel = (String) jlist.getSelectedItem();
         	// if not new, populate with stnd values
         	if (newFieldButton.isSelected()) {
-                typeList.setSelectedItem(TEXTFIELD);
+//                typeList.setSelectedItem(TEXTFIELD);
+        		if (field.getComponentType() == BagInfoField.LIST_COMPONENT) {
+        			typeList.setSelectedItem(LISTFIELD);
+        		} else if (DefaultBagInfo.textAreaSet.contains(fieldLabel.trim())) {
+                    typeList.setSelectedItem(TEXTAREA);
+        			field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+        		} else {
+                    typeList.setSelectedItem(TEXTFIELD);
+        			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+        		}
     			field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
     			field.isRequired(true);
                 fieldName.setText("");

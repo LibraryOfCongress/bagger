@@ -364,7 +364,7 @@ public class InfoFormsPane extends JScrollPane {
     	loadDefaultsButton.addActionListener(new LoadFieldHandler(bagView));
     	loadDefaultsButton.setOpaque(true);
     	loadDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.load.help"));
-    	loadDefaultsButton.setEnabled(enabled);
+    	loadDefaultsButton.setEnabled(true);
     	buttonPanel.add(loadDefaultsButton);
 
     	clearDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.clear"));
