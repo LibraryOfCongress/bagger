@@ -140,6 +140,7 @@ public class BagInfoField {
     	sb.append("Name: " + getName() + "\n");
     	sb.append("Value: " + getValue() + "\n");
     	sb.append("Type: " + getComponentType() + "\n");
+    	sb.append("Elements: " + getElements() + "\n");
     	sb.append("isRequired: " + isRequired() + "\n");
     	sb.append("isRequiredvalue: " + isRequiredvalue() + "\n");
     	sb.append("isEnabled: " + isEnabled() + "\n");
