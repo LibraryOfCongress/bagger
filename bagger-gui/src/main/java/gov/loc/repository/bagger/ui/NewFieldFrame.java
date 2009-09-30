@@ -530,7 +530,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     		}
     		HashMap<String, BagInfoField> currentMap = bagInfo.getFieldMap();
     		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
-    		if (currentMap.isEmpty() || !currentMap.containsKey(field.getLabel())) {
+//    		if (currentMap.isEmpty() || !currentMap.containsKey(field.getLabel())) {
     			setVisible(false);
     			bagView.bagProject.addProjectField(field);
     			currentMap.put(field.getLabel(), field);
@@ -538,9 +538,9 @@ public class NewFieldFrame extends JFrame implements ActionListener {
                 bag.setInfo(bagInfo);
                 bagView.setBag(bag);
                 bagView.infoInputPane.updateInfoFormsPane(enabled);
-    		} else {
-    			bagView.showWarningErrorDialog("New Field Dialog", "Field: " + field.getLabel() + " already exists!");
-    		}
+//    		} else {
+//    			bagView.showWarningErrorDialog("New Field Dialog", "Field: " + field.getLabel() + " already exists!");
+//    		}
     		bagView.infoInputPane.bagInfoInputPane.bagInfoForm.requestFocus();
         }
     }
