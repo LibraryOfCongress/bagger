@@ -38,17 +38,5 @@ public interface JdbcBaggerMBean {
 	Collection<ProjectProfile> loadProjectProfiles(int id) throws DataAccessException;
 
 	ProjectBagInfo loadProjectBagInfo(int id) throws DataAccessException;
-
-	void storeProject(Project project) throws DataAccessException;
-	
-	void storeProjectProfile(ProjectProfile prof) throws DataAccessException;
-
-	void storeProfile(Profile prof) throws DataAccessException;
-	
-	void storeOrganization(Organization org) throws DataAccessException;
-
-	String storeProjectBagInfo(ProjectBagInfo profileBagInfo) throws DataAccessException;
-
-	String storeBaggerUpdates(Collection<Profile> profiles, Collection<Project> projects, Collection<ProjectProfile> projectProfiles, ProjectBagInfo projectBagInfo, String homeDir) throws DataAccessException;
 	/* */
 }
