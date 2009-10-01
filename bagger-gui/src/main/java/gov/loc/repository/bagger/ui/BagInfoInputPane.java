@@ -25,6 +25,7 @@ import org.springframework.richclient.form.FormModelHelper;
 
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Person;
+import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.ProjectProfile;
 import gov.loc.repository.bagger.bag.BagInfoField;
@@ -42,7 +43,7 @@ public class BagInfoInputPane extends JTabbedPane {
 	
 	private BagView bagView;
 	private DefaultBag defaultBag;
-	private BaggerProfile baggerProfile;
+	private BaggerProfile bagProfile;
     public OrganizationInfoForm bagInfoForm = null;
     private OrganizationProfileForm profileForm = null;
     private HierarchicalFormModel infoFormModel = null;
@@ -95,10 +96,14 @@ public class BagInfoInputPane extends JTabbedPane {
     	defaultBag = bag;
     	DefaultBagInfo bagInfo = bag.getInfo();
         BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
-        BaggerProfile profile = bagView.bagProject.getBaggerProfile();
-        profile.setOrganization(baggerOrganization);
-        profile.setToContact(bagView.bagProject.projectContact);
-        baggerProfile = profile;
+        Project project = bagView.getBag().getProject();
+        bagProfile = bagView.bagProject.getBaggerProfile(project);
+        if (bagProfile == null) {
+        	bagProfile = new BaggerProfile();
+        }
+    	bagProfile.setOrganization(baggerOrganization);
+        bagProfile.setToContact(bagView.bagProject.projectContact);
+        bagView.bagProject.baggerProfile.put(project.getName(), bagProfile);
 
         Contact orgContact = bagInfo.getBagOrganization().getContact();
         if (orgContact == null) {
@@ -113,7 +118,7 @@ public class BagInfoInputPane extends JTabbedPane {
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
         bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), bagView, bagInfo.getFieldMap(), enabled);
 
-        profileFormModel = FormModelHelper.createCompoundFormModel(baggerProfile);
+        profileFormModel = FormModelHelper.createCompoundFormModel(bagProfile);
         profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), bagView);
         profileFormModel.addPropertyChangeListener(profileForm);
 
@@ -134,12 +139,13 @@ public class BagInfoInputPane extends JTabbedPane {
     public String verifyForms(DefaultBag bag) {
         String messages = "";
 
+        Project project = bagView.getBag().getProject();
         if (!profileForm.hasErrors()) {
         	profileForm.commit();
         }
-        BaggerProfile profile = (BaggerProfile) profileForm.getFormObject();
-        BaggerOrganization baggerOrg = profile.getOrganization();
-        Person userPerson = profile.getToContact().getPerson();
+        BaggerProfile bprofile = (BaggerProfile) profileForm.getFormObject();
+        BaggerOrganization baggerOrg = bprofile.getOrganization();
+        Person userPerson = bprofile.getToContact().getPerson();
 /*
         if (parentView.username == null || parentView.username.length() == 0) {
     		try {
@@ -150,19 +156,25 @@ public class BagInfoInputPane extends JTabbedPane {
     		}
         }
 */
-        userPerson.parse(profile.getToContact().getContactName());
-        profile.getToContact().setPerson(userPerson);
+        userPerson.parse(bprofile.getToContact().getContactName());
+        bprofile.getToContact().setPerson(userPerson);
 
-        Contact orgContact = profile.getSourceContact();
+        Contact orgContact = bprofile.getSourceContact();
         try {
         	Person contactPerson = orgContact.getPerson();
         	contactPerson.parse(orgContact.getContactName());
         	orgContact.setPerson(contactPerson);
+
+        	Profile profile = bagView.bagProject.userProfiles.get(project.getName());
+        	orgContact.getOrganization().setName(baggerOrg.getSourceOrganization());
+        	orgContact.getOrganization().setAddress(baggerOrg.getOrganizationAddress());
+            profile.setContact(orgContact);
+            bagView.bagProject.userProfiles.put(project.getName(), profile);
         } catch (Exception e) {
         	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
         }
-        bagView.bagProject.projectContact = profile.getToContact();
-        baggerProfile = profile;
+        bagView.bagProject.projectContact = bprofile.getToContact();
+        bagView.bagProject.baggerProfile.put(project.getName(), bprofile);
         bag.getInfo().setBagOrganization(baggerOrg);
         createBagInfo(bag);
 

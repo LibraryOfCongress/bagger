@@ -74,28 +74,23 @@ public class ProjectListHandler extends AbstractAction {
         	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(project.getName())) {
         		log.info("bagProject: " + project.getId());
         		bag.setProject(project);
-        		Object[] profiles = bagView.bagProject.userProfiles.toArray();
-        		for (int j=0; j < profiles.length; j++) {
-        			Profile profile = (Profile) profiles[j];
-        			if (profile.getProjectId() == project.getId()) {
-        				Contact person = profile.getPerson();
-        				if (person == null) person = new Contact();
-                   		DefaultBagInfo bagInfo = bag.getInfo();
-                   		BaggerOrganization bagOrg = bagInfo.getBagOrganization();
-                   		Contact contact = profile.getContact();
-                   		if (contact == null) {
-                   			contact = new Contact();
-                   		}
-                   		bagOrg.setContact(contact);
-                   		Organization org = contact.getOrganization();
-                   		if (org == null) org = new Organization();
-                   		bagOrg.setSourceOrganization(org.getName());
-                   		bagOrg.setOrganizationAddress(org.getAddress());
-                   		bagInfo.setBagOrganization(bagOrg);
-                   		bag.setInfo(bagInfo);
-                   		bagView.bagProject.projectContact = profile.getPerson();
-                   	}
+        		Profile profile = bagView.bagProject.userProfiles.get(project.getName());
+        		Contact person = profile.getPerson();
+        		if (person == null) person = new Contact();
+        		DefaultBagInfo bagInfo = bag.getInfo();
+        		BaggerOrganization bagOrg = bagInfo.getBagOrganization();
+        		Contact contact = profile.getContact();
+        		if (contact == null) {
+        			contact = new Contact();
         		}
+        		bagOrg.setContact(contact);
+        		Organization org = contact.getOrganization();
+        		if (org == null) org = new Organization();
+        		bagOrg.setSourceOrganization(org.getName());
+        		bagOrg.setOrganizationAddress(org.getAddress());
+        		bagInfo.setBagOrganization(bagOrg);
+        		bag.setInfo(bagInfo);
+        		bagView.bagProject.projectContact = profile.getPerson();
         	}
         }
     }

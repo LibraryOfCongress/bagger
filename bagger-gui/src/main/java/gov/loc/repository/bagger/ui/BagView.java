@@ -53,7 +53,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class BagView extends AbstractView implements ApplicationListener {
 	private static final Log log = LogFactory.getLog(BagView.class);
-    public final static int ONE_SECOND = 1000;
+    private final static int ONE_SECOND = 1000;
 	private int DEFAULT_WIDTH = 1024;
 	private int DEFAULT_HEIGHT = 768;
 
@@ -644,7 +644,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             LifecycleApplicationEvent le = (LifecycleApplicationEvent)e;
             if (le.getEventType() == LifecycleApplicationEvent.CREATED && le.objectIs(Profile.class)) {
             	Profile profile = (Profile) le.getObject();
-            	bagProject.userProfiles.add(profile);
+            	bagProject.userProfiles.put(bag.getProject().getName(), profile);
             }
         }
     }

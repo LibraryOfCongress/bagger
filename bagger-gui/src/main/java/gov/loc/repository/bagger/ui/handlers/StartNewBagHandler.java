@@ -61,7 +61,8 @@ public class StartNewBagHandler extends AbstractAction {
         bag.isClear(false);
 		bag.getInfo().setBag(bag);
 		bag.isNewbag(true);
-    	bagView.bagProject.baggerProfile = new BaggerProfile();
+		String projName = bagView.getPropertyMessage("bag.project.noproject");
+    	bagView.bagProject.baggerProfile.put(projName, new BaggerProfile());
 		//bagView.bagProject.initializeProfile();
 		messages = bagView.updateBaggerRules();
 		bag.setRootDir(bagView.getBagRootPath());

@@ -25,9 +25,9 @@ import org.acegisecurity.context.SecurityContextHolder;
 
 public class BagProject {
 	public HashMap<String, Project> userProjects = new HashMap<String, Project>();
-    public Collection<Profile> userProfiles;
+    public HashMap<String, Profile> userProfiles = new HashMap<String, Profile>();
     public HashMap<String, List<ProjectProfile>> userProjectProfiles = new HashMap<String, List<ProjectProfile>>();
-    public BaggerProfile baggerProfile = new BaggerProfile();
+    public HashMap<String, BaggerProfile> baggerProfile = new HashMap<String, BaggerProfile>();
     public ProjectBagInfo projectBagInfo = new ProjectBagInfo();
     public String username;
     public Contact projectContact;
@@ -39,12 +39,12 @@ public class BagProject {
 		this.bagView = bagView;
 	}
 
-    public void setBaggerProfile(BaggerProfile profile) {
-    	this.baggerProfile = profile;
+    public void setBaggerProfile(BaggerProfile profile, Project project) {
+    	this.baggerProfile.put(project.getName(), profile);
     }
 
-    public BaggerProfile getBaggerProfile() {
-    	return this.baggerProfile;
+    public BaggerProfile getBaggerProfile(Project project) {
+    	return this.baggerProfile.get(project.getName());
     }
 
     public void setProjectBagInfo(ProjectBagInfo projBagInfo) {
@@ -83,7 +83,10 @@ public class BagProject {
     	projectProfile.setFieldType(BagInfoField.TEXTFIELD_CODE);
     	projectProfile.setIsValueRequired(true);
     	addProjectProfile(project, projectProfile);
-		baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
+    	BaggerProfile bProfile = baggerProfile.get(project.getName());
+   		if (bProfile == null) bProfile = new BaggerProfile();
+		bProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
+		baggerProfile.put(project.getName(), bProfile);
 		bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);
 		bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
     }
@@ -113,7 +116,10 @@ public class BagProject {
 			projectProfile = (ProjectProfile) userProjectProfiles.get(project.getName());
 	    	if (projectProfile != null) {
 		    	userProjectProfiles.remove(projectProfile);
-				baggerProfile.removeField(projectProfile.getFieldName());
+		    	BaggerProfile bProfile = baggerProfile.get(project.getName());
+           		if (bProfile == null) bProfile = new BaggerProfile();
+		    	bProfile.removeField(projectProfile.getFieldName());
+		    	baggerProfile.put(project.getName(), bProfile);
 	    	}
 		}
     	bagView.infoInputPane.projectList.invalidate();
@@ -141,17 +147,20 @@ public class BagProject {
     	    	}
     	    	projectProfile.setElements(field.concatElements());
     	    	addProjectProfile(project, projectProfile);
-    			baggerProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
+    	    	BaggerProfile bProfile = baggerProfile.get(project.getName());
+           		if (bProfile == null) bProfile = new BaggerProfile();
+    			bProfile.addField(projectProfile.getFieldName(), projectProfile.getFieldValue(), projectProfile.getIsRequired(), !projectProfile.getIsValueRequired(), false);
+    			baggerProfile.put(project.getName(), bProfile);
     		}
     	}
     }
 
-    public void setProfiles(Collection<Profile> profiles) {
-    	this.userProfiles = profiles;
+    public void setProfiles(Profile profile, Project project) {
+    	this.userProfiles.put(project.getName(), profile);
     }
 
-    public Collection<Profile> getProfiles() {
-    	return this.userProfiles;
+    public Profile getProfile(Project project) {
+    	return this.userProfiles.get(project.getName());
     }
 
     public void initializeProfile() {
@@ -202,7 +211,6 @@ public class BagProject {
     	if (this.username != null && this.username.length() > 0) {
         	Collection<Profile> profiles = bagView.getBagger().findProfiles(this.username);
         	if (profiles == null) profiles = new ArrayList<Profile>();
-        	userProfiles = profiles;
         	Object[] profileArray = profiles.toArray();
     		for (Iterator<String> it = projectKeys.iterator(); it.hasNext();) {
     			String pkey = (String) it.next();
@@ -212,6 +220,7 @@ public class BagProject {
             		Profile profile = (Profile) profileArray[i];
             		if (project.getId() == profile.getProject().getId()) {
             			found = true;
+                    	userProfiles.put(project.getName(), profile);
                    		if (project.getId() == bagProject.getId()) {
                        		DefaultBagInfo bagInfo = bag.getInfo();
                        		BaggerOrganization bagOrg = bagInfo.getBagOrganization();
@@ -222,14 +231,18 @@ public class BagProject {
                        		bagInfo.setBagOrganization(bagOrg);
                        		bag.setInfo(bagInfo);
                        		projectContact = profile.getPerson();
-                       		baggerProfile.setOrganization(bagOrg);
-                	   		baggerProfile.setSourceCountact(profile.getContact());
-                       		baggerProfile.setToContact(projectContact);
+                       		BaggerProfile bProfile = baggerProfile.get(project.getName());
+                       		if (bProfile == null) bProfile = new BaggerProfile();
+                       		bProfile.setOrganization(bagOrg);
+                       		bProfile.setSourceCountact(profile.getContact());
+                       		bProfile.setToContact(projectContact);
+                       		baggerProfile.put(project.getName(), bProfile);
                    		}
             		}
             	}
             	if (!found) {
-            		userProfiles.add(createProfile(project));
+            		Profile prof = createProfile(project);
+            		userProfiles.put(project.getName(), prof);
             	}
             	if (userProjects == null || userProjects.isEmpty()) {
                 	Collection<Project> cp = bagView.getBagger().getProjects();
@@ -242,7 +255,8 @@ public class BagProject {
         			for (Iterator<String> iter = pkeys.iterator(); iter.hasNext();) {
         				String key = (String) iter.next();
         				Project proj = userProjects.get(key);
-        				userProfiles.add(createProfile(proj));
+        				Profile prof = createProfile(proj);
+        				userProfiles.put(proj.getName(), prof);
         			}
             	}
         	}
@@ -251,7 +265,7 @@ public class BagProject {
     		projectContact = new Contact();
     		Organization org = new Organization();
     		projectContact.setOrganization(org);
-    		userProfiles = new ArrayList<Profile>();
+    		userProfiles = new HashMap<String, Profile>();
         	Collection<Project> cp = bagView.getBagger().getProjects();
        		userProjects = new HashMap<String, Project>();
        		for (Iterator<Project> iter = cp.iterator(); iter.hasNext();) {
@@ -262,7 +276,8 @@ public class BagProject {
 			for (Iterator<String> iter = pkeys.iterator(); iter.hasNext();) {
 				String key = (String) iter.next();
 				Project project = userProjects.get(key);
-				userProfiles.add(createProfile(project));
+				Profile prof = createProfile(project);
+				userProfiles.put(project.getName(), prof);
 			}
     	}
     	bagView.setBag(bag);
@@ -317,27 +332,39 @@ public class BagProject {
     public String clearProfiles() {
     	String message = "";
     	bag = bagView.getBag();
-    	ArrayList<Profile> newProfiles = new ArrayList<Profile>();
-    	Object[] profiles = userProfiles.toArray();
-    	for (int j=0; j < profiles.length; j++) {
-    		Profile profile = (Profile) profiles[j];
+    	HashMap<String, Profile> newProfiles = new HashMap<String, Profile>();
+		Set<String> pkeys = userProfiles.keySet();
+		for (Iterator<String> iter = pkeys.iterator(); iter.hasNext();) {
+			String key = (String) iter.next();
+    		Profile profile = userProfiles.get(key);
     		Contact person = new Contact();
     		person.setOrganization(new Organization());
     		profile.setPerson(person);
     		Contact contact = new Contact();
     		contact.setOrganization(new Organization());
     		profile.setContact(contact);
-    		newProfiles.add(profile);
-    		if (j == 0) {
+    		newProfiles.put(key, profile);
+    		if (key.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.noproject"))) {
     			DefaultBagInfo bagInfo = bag.getInfo();
     	   		BaggerOrganization bagOrg = new BaggerOrganization();
     	   		bagOrg.setContact(contact);
     	   		bagInfo.setBagOrganization(bagOrg);
     	   		bag.setInfo(bagInfo);
     	   		projectContact = profile.getPerson();
-    	   		baggerProfile.setOrganization(bagOrg);
-    	   		baggerProfile.setSourceCountact(profile.getContact());
-    	   		baggerProfile.setToContact(projectContact);
+    	   		Project proj = bag.getProject();
+    			String projName = "";
+    	        if (proj == null) {
+    	        	projName = bagView.getPropertyMessage("bag.project.noproject");
+    	        	bagView.getBag().setProject(userProjects.get(projName));
+    	        } else {
+    	        	projName = proj.getName();
+    	        }
+    	   		BaggerProfile bProfile = baggerProfile.get(projName);
+           		if (bProfile == null) bProfile = new BaggerProfile();
+    	   		bProfile.setOrganization(bagOrg);
+    	   		bProfile.setSourceCountact(profile.getContact());
+    	   		bProfile.setToContact(projectContact);
+    	   		baggerProfile.put(projName, bProfile);
     		}
     	}
     	userProfiles = newProfiles;
@@ -350,20 +377,19 @@ public class BagProject {
     public String saveProfiles() {
     	try {
     		bag = bagView.getBag();
-        	Project bagProject = bag.getProject();
+
+    		Project bagProject = bag.getProject();
         	if (bagProject == null) bagProject = new Project();
     		projectBagInfo.setProjectId(bagProject.getId());
-    		String defaults = "";
-    		HashMap<String, BagInfoField> fieldMap = baggerProfile.getProfileMap();
-    		if (fieldMap != null && !fieldMap.isEmpty()) {
-    			Set<String> keys = fieldMap.keySet();
-    			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-    				String key = (String) iter.next();
-    				BagInfoField val = fieldMap.get(key);
-    				defaults += key + "=" + val;
-    				if (iter.hasNext()) defaults += ", ";
-    			}
-            }
+
+    		Collection<Profile> profiles = new ArrayList<Profile>();
+			Set<String> ukeys = userProfiles.keySet();
+			for (Iterator<String> iter = ukeys.iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
+				Profile profile = userProfiles.get(key);
+				profiles.add(profile);
+			}
+			
     		Collection<ProjectProfile> projectProfiles = new ArrayList<ProjectProfile>();
 			Set<String> keys = userProjectProfiles.keySet();
 			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
@@ -374,14 +400,33 @@ public class BagProject {
 					projectProfiles.add(projProfile);
 				}
 			}
+
 			Collection<Project> projects = new ArrayList<Project>();
 			Set<String> pkeys = userProjects.keySet();
 			for (Iterator<String> iter = pkeys.iterator(); iter.hasNext();) {
 				String key = (String) iter.next();
-				Project pj = userProjects.get(key);
-				projects.add(pj);
+				Project project = userProjects.get(key);
+				projects.add(project);
+				// Store bagger profile for each project
+	        	//Project bagProject = bag.getProject();
+	        	if (project == null) project = new Project();
+	    		projectBagInfo.setProjectId(project.getId());
+	    		String defaults = "";
+	    		BaggerProfile bProfile = baggerProfile.get(project.getName());
+	       		if (bProfile == null) bProfile = new BaggerProfile();
+	    		HashMap<String, BagInfoField> fieldMap = bProfile.getProfileMap();
+	    		if (fieldMap != null && !fieldMap.isEmpty()) {
+	    			Set<String> bkeys = fieldMap.keySet();
+	    			for (Iterator<String> biter = bkeys.iterator(); biter.hasNext();) {
+	    				String bkey = (String) biter.next();
+	    				BagInfoField val = fieldMap.get(bkey);
+	    				defaults += bkey + "=" + val;
+	    				if (biter.hasNext()) defaults += ", ";
+	    			}
+	            }
+	    		//
 			}
-			String messages = bagView.getBagger().storeBaggerUpdates(userProfiles, projects, projectProfiles, projectBagInfo, bagView.userHomeDir);
+			String messages = bagView.getBagger().storeBaggerUpdates(profiles, projects, projectProfiles, projectBagInfo, bagView.userHomeDir);
     		if (messages != null) {
     			bagView.showWarningErrorDialog("Error Dialog", "Error trying to store project defaults:\n" + messages);
         	    return null;
@@ -421,27 +466,19 @@ public class BagProject {
     	bag = bagView.getBag();
     	Project project = bag.getProject();
     	if (project == null) return message;
-    	Object[] profiles = this.userProfiles.toArray();
-    	Collection<Profile> profileList = new ArrayList<Profile>();
-    	for (int i=0; i < profiles.length; i++) {
-    		Profile profile = (Profile) profiles[i];
-    		if (profile.getProject().getId() == project.getId()) {
-    			BaggerOrganization org = bag.getInfo().getBagOrganization();
-    			Contact orgContact = bag.getInfo().getBagOrganization().getContact();
-    			orgContact.getOrganization().setName(org.getSourceOrganization());
-    			orgContact.getOrganization().setAddress(org.getOrganizationAddress());
-    			profile.setContact(orgContact);
-    			profile.setContactId(orgContact.getId());
-    			profile.setProject(project);
-    			profile.setProjectId(project.getId());
-    			profile.setPerson(this.projectContact);
-    			profile.setUsername(this.username);
-    			message = bagView.getPropertyMessage("profile.message.changed") + " " + project.getName() + "\n";
-    			profiles[i] = profile;
-    		}
-    		profileList.add(profile);
-    	}
-    	userProfiles = profileList;
+    	Profile profile = userProfiles.get(project.getName());
+    	BaggerOrganization org = bag.getInfo().getBagOrganization();
+    	Contact orgContact = bag.getInfo().getBagOrganization().getContact();
+    	orgContact.getOrganization().setName(org.getSourceOrganization());
+    	orgContact.getOrganization().setAddress(org.getOrganizationAddress());
+    	profile.setContact(orgContact);
+    	profile.setContactId(orgContact.getId());
+    	profile.setProject(project);
+    	profile.setProjectId(project.getId());
+    	profile.setPerson(this.projectContact);
+    	profile.setUsername(this.username);
+    	userProfiles.put(project.getName(), profile);
+    	message = bagView.getPropertyMessage("profile.message.changed") + " " + project.getName() + "\n";
     	return message;
     }
 

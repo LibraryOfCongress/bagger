@@ -124,24 +124,38 @@ public class OpenBagHandler extends AbstractAction {
 	    bag.isClear(false);
         bag.getInfo().setBag(bag);
     	bag.copyBagToForm();
-    	bagView.bagProject.baggerProfile = new BaggerProfile();
 	    if (!bag.getInfo().getLcProject().trim().isEmpty()){
     		String name = bag.getInfo().getLcProject().trim();
-    		Project project = new Project();
-    		project.setName(name);
+    		Project project = bagView.bagProject.userProjects.get(name);
+    		if (project == null) {
+        		project = new Project();
+        		project.setName(name);
+    		}
     		if (!bagView.bagProject.projectExists(project)) {
     			bagView.bagProject.addProject(project);
     		}
+        	bagView.bagProject.baggerProfile.put(name, new BaggerProfile());
     		messages += bagView.bagProject.updateProject(name);
     		bag.isNoProject(false);
     	} else {
+        	String projName = bagView.getPropertyMessage("bag.project.noproject");
+        	bagView.bagProject.baggerProfile.put(projName, new BaggerProfile());
     		messages += bagView.bagProject.updateProject(bagView.getPropertyMessage("bag.project.noproject"));
     		bag.isNoProject(true);
     	}
 	    DefaultBagInfo bagInfo = bag.getInfo();
 		bagInfo.createExistingFieldMap(true);
 		bag.setInfo(bagInfo);
-		bagView.bagProject.baggerProfile.setOrganization(bagInfo.getBagOrganization());
+		Project proj = bagView.getBag().getProject();
+		String projName = "";
+        if (proj == null) {
+        	projName = bagView.getPropertyMessage("bag.project.noproject");
+        } else {
+        	projName = proj.getName();
+        }
+		BaggerProfile bProfile = bagView.bagProject.baggerProfile.get(projName);
+		bProfile.setOrganization(bagInfo.getBagOrganization());
+    	bagView.bagProject.baggerProfile.put(projName, bProfile);
     	if (bagInfo.getBagSize() != null && bagInfo.getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
     	} 
