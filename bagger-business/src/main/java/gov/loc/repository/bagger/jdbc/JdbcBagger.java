@@ -139,7 +139,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		catch(Exception e)
 		{
 			message = "InMemoryBagger.readCommandList: " + e.getMessage();
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return message;		
 	}
@@ -182,14 +182,14 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			catch(Exception ex)
 			{
 				message = "InMemoryBagger.readCommandList: " + ex.getMessage();
-				ex.printStackTrace();
+				//ex.printStackTrace();
 				throw new RuntimeException(ex);
 			}				
 		}
 		catch(IOException e)
 		{
 			message = "InMemoryBagger.readCommandList: " + e.getMessage();
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return message;
 	}
@@ -348,7 +348,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 					id);
 		}
 		catch (EmptyResultDataAccessException ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			throw new ObjectRetrievalFailureException(ProjectProfile.class, new Integer(id));
 		}
 		return projectProfile;
@@ -363,7 +363,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 					projectId);
 		}
 		catch (EmptyResultDataAccessException ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			throw new ObjectRetrievalFailureException(ProjectProfile.class, new Integer(projectId));
 		}
 	}
@@ -378,7 +378,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 					id);
 		}
 		catch (EmptyResultDataAccessException ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			throw new ObjectRetrievalFailureException(ProjectBagInfo.class, new Integer(id));
 		}
 		return projectBagInfo;
@@ -403,7 +403,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
-				exception.printStackTrace();
+				//exception.printStackTrace();
 				throw new UnsupportedOperationException("Profile update not supported");				
 			}
 		}
@@ -430,7 +430,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
-				exception.printStackTrace();
+				//exception.printStackTrace();
 				throw new UnsupportedOperationException("Profile update not supported");				
 			}
 		}
@@ -455,7 +455,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
-				exception.printStackTrace();
+				//exception.printStackTrace();
 				throw new UnsupportedOperationException("Organization update not supported");				
 			}
 		}
@@ -480,7 +480,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
-				exception.printStackTrace();
+				//exception.printStackTrace();
 				throw new UnsupportedOperationException("Project update not supported");				
 			}
 		}
@@ -508,7 +508,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
-				exception.printStackTrace();
+				//exception.printStackTrace();
 				throw new UnsupportedOperationException("Profile update not supported");				
 			}
 		}
@@ -533,7 +533,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 				commandList.add(sqlCommand);
 			}
 			catch (Exception exception) {
-				exception.printStackTrace();
+				//exception.printStackTrace();
 				throw new UnsupportedOperationException("ProjectProfile update not supported");				
 			}
 		}
@@ -550,7 +550,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			commandList.add(sqlCommand);
 		}
 		catch (Exception exception) {
-			exception.printStackTrace();
+			//exception.printStackTrace();
 		}
 	}
 	
@@ -565,7 +565,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			commandList.add(sqlCommand);
 		}
 		catch (Exception exception) {
-			exception.printStackTrace();
+			//exception.printStackTrace();
 		}
 	}
 
@@ -590,7 +590,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 			}
 			catch (Exception exception) {
 				messages = "JdbcBagger.storeProjectBagInfo exception: " + ex.getMessage();
-				exception.printStackTrace();
+				//exception.printStackTrace();
 			}
 		}
 		return messages;
@@ -637,7 +637,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 		catch (Exception ex) {
 			messages = "Exception storing project defaults: " + ex.getMessage();
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 		try {
 			Object[] projectProfileList = projectProfiles.toArray();
@@ -648,14 +648,14 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		}
 		catch (Exception ex) {
 			messages = "Exception storing project profiles: " + ex.getMessage();
-			ex.printStackTrace();			
+			//ex.printStackTrace();			
 		}
 		try {
 			messages = write(homeDir);
 		}
 		catch (Exception ex) {
 			messages = "Exception writing project bag-info defaults: " + ex.getMessage();
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 		return messages;
 	}
@@ -679,7 +679,7 @@ public class JdbcBagger implements Bagger, JdbcBaggerMBean {
 		catch(IOException e)
 		{
 			message = "JdbcBagger.write: " + e.getMessage();
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return message;		
 	}
