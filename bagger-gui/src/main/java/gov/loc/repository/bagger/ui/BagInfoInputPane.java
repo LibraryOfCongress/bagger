@@ -65,15 +65,18 @@ public class BagInfoInputPane extends JTabbedPane {
         am.put("tabNext", new AbstractAction("tabNext") {
         	private static final long serialVersionUID = 1L;
         	public void actionPerformed(ActionEvent evt) {
-                int selected = getSelectedIndex();
-                int count = getComponentCount();
-                if (selected >= 0 && selected < count-1) {
-                	setSelectedIndex(selected+1);
-                } else {
-                	setSelectedIndex(0);
-                }
-            	invalidate();
-            	repaint();
+        		try {
+                    int selected = getSelectedIndex();
+                    int count = getComponentCount();
+                    if (selected >= 0 && selected < count-1) {
+                    	setSelectedIndex(selected+1);
+                    } else {
+                    	setSelectedIndex(0);
+                    }
+                	invalidate();
+                	repaint();
+        		} catch (Exception e) {
+        		}
         	}
         });
         this.setActionMap(am);
@@ -217,105 +220,111 @@ public class BagInfoInputPane extends JTabbedPane {
     }
     
     public void updateProject(BagView bagView) {
-    	this.bagInfoForm.setBagView(bagView);
-    	DefaultBag bag = bagView.getBag();
-    	Project project = bag.getProject();
-    	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
-		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
+    	try {
+        	this.bagInfoForm.setBagView(bagView);
+        	DefaultBag bag = bagView.getBag();
+        	Project project = bag.getProject();
+        	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
+    		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
 
-		if (bag.isEdeposit()) {
-			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
-				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
-			}
-		} else if (bag.isNdnp()) {
-			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
-				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
-			}
-		} else {
-			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
-				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
-			}
-			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
-				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
-			}
-		}
-		if (!bag.isNoProject()) {
-		} else {
-			if (currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
-				currentMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
-			}
-		}
+    		if (bag.isEdeposit()) {
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
+    			}
+    		} else if (bag.isNdnp()) {
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
+    			}
+    		} else {
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
+    			}
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
+    			}
+    		}
+    		if (!bag.isNoProject()) {
+    		} else {
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
+    			}
+    		}
 
-		if (project != null) {
-			List<ProjectProfile> list = bagView.bagProject.userProjectProfiles.get(project.getName());
-			if (list != null) {
-				for (int i=0; i < list.size(); i++) {
-					ProjectProfile projectProfile = list.get(i);
-					if (projectProfile != null) {
-						BagInfoField field = new BagInfoField();
-						field.setLabel(projectProfile.getFieldName());
-						field.setName(field.getLabel().toLowerCase());
-						field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-						field.isEnabled(!projectProfile.getIsValueRequired());
-						field.isEditable(!projectProfile.getIsValueRequired());
-						field.isRequiredvalue(projectProfile.getIsValueRequired());
-						field.isRequired(projectProfile.getIsRequired());
-						field.setValue(projectProfile.getFieldValue());
-						field.buildElements(projectProfile.getElements());
-						if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
-							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
-							field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
-						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
-							field.setComponentType(BagInfoField.LIST_COMPONENT);
-						}
-						currentMap.put(field.getLabel(), field);
-					}
-				}
-			}
-		}
-		bag.getInfo().setFieldMap(currentMap);
-        bagView.setBag(bag);
-        bagView.infoInputPane.updateInfoFormsPane(true);
+    		if (project != null) {
+    			List<ProjectProfile> list = bagView.bagProject.userProjectProfiles.get(project.getName());
+    			if (list != null) {
+    				for (int i=0; i < list.size(); i++) {
+    					ProjectProfile projectProfile = list.get(i);
+    					if (projectProfile != null) {
+    						BagInfoField field = new BagInfoField();
+    						field.setLabel(projectProfile.getFieldName());
+    						field.setName(field.getLabel().toLowerCase());
+    						field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+    						field.isEnabled(!projectProfile.getIsValueRequired());
+    						field.isEditable(!projectProfile.getIsValueRequired());
+    						field.isRequiredvalue(projectProfile.getIsValueRequired());
+    						field.isRequired(projectProfile.getIsRequired());
+    						field.setValue(projectProfile.getFieldValue());
+    						field.buildElements(projectProfile.getElements());
+    						if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
+    							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+    						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
+    							field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+    						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
+    							field.setComponentType(BagInfoField.LIST_COMPONENT);
+    						}
+    						currentMap.put(field.getLabel(), field);
+    					}
+    				}
+    			}
+    		}
+    		bag.getInfo().setFieldMap(currentMap);
+            bagView.setBag(bag);
+            bagView.infoInputPane.updateInfoFormsPane(true);
+    	} catch (Exception e) {
+    	}
     }
 
     private void createBagInfo(DefaultBag bag) {
-        HashMap<String,String> map = new HashMap<String,String>();
-        String key = "";
-        String value = "";
-        JComponent infoForm = this.bagInfoForm.getForm();
-        java.awt.Component[] components = infoForm.getComponents();
-        for (int i=0; i<components.length; i++) {
-        	java.awt.Component c;
-        	c = components[i];
-        	if (c instanceof JLabel) {
-            	JLabel label = (JLabel) c;
-            	key = label.getText();
-        	}
-        	i++;
-        	// Is required component
-        	c = components[i];
-        	i++;
-        	c = components[i];
-        	if (c instanceof JTextField) {
-        		JTextField tf = (JTextField) c;
-            	value = tf.getText();
-        	} else if (c instanceof JTextArea) {
-        		JTextArea ta = (JTextArea) c;
-            	value = ta.getText();
-        	} else if (c instanceof JComboBox) {
-        		JComboBox tb = (JComboBox) c;
-        		value = (String) tb.getSelectedItem();
-        	}
-        	map.put(key, value);
-        	i++;
-        	c = components[i];
-        	if (c instanceof JCheckBox) {
-        		//JCheckBox cb = (JCheckBox) c;
-        	}
-        }
-        bagInfoForm.dirty = false;
-        bag.createBagInfo(map);
-        bag.copyFormToBag();
+    	try {
+            HashMap<String,String> map = new HashMap<String,String>();
+            String key = "";
+            String value = "";
+            JComponent infoForm = this.bagInfoForm.getForm();
+            java.awt.Component[] components = infoForm.getComponents();
+            for (int i=0; i<components.length; i++) {
+            	java.awt.Component c;
+            	c = components[i];
+            	if (c instanceof JLabel) {
+                	JLabel label = (JLabel) c;
+                	key = label.getText();
+            	}
+            	i++;
+            	// Is required component
+            	c = components[i];
+            	i++;
+            	c = components[i];
+            	if (c instanceof JTextField) {
+            		JTextField tf = (JTextField) c;
+                	value = tf.getText();
+            	} else if (c instanceof JTextArea) {
+            		JTextArea ta = (JTextArea) c;
+                	value = ta.getText();
+            	} else if (c instanceof JComboBox) {
+            		JComboBox tb = (JComboBox) c;
+            		value = (String) tb.getSelectedItem();
+            	}
+            	map.put(key, value);
+            	i++;
+            	c = components[i];
+            	if (c instanceof JCheckBox) {
+            		//JCheckBox cb = (JCheckBox) c;
+            	}
+            }
+            bagInfoForm.dirty = false;
+            bag.createBagInfo(map);
+            bag.copyFormToBag();
+    	} catch (Exception e) {
+    	}
     }
 }

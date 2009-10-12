@@ -109,80 +109,82 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
         formBuilder.row();
         if (fieldMap != null && !fieldMap.isEmpty()) {
 			Set<String> keys = fieldMap.keySet();
-			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-				String key = (String) iter.next();
-            	BagInfoField field = fieldMap.get(key);
-                formBuilder.row();
-                rowCount++;
-                ImageIcon imageIcon = bagView.getPropertyImage("bag.delete.image");
-            	JButton removeButton = new JButton(imageIcon);
-            	Dimension dimension = removeButton.getPreferredSize();
-            	dimension.width = imageIcon.getIconWidth();
-            	removeButton.setMaximumSize(dimension);
-            	removeButton.setOpaque(false);
-            	removeButton.setBorderPainted(false);
-            	removeButton.setContentAreaFilled(false);
-            	removeButton.addActionListener(new RemoveFieldHandler());
-				logger.debug("OrganizationInfoForm add: " + field);
-				if (field.getValue() != null && field.getValue().length() > 30) {
-					field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
-				}
-            	if (field.isRequired()) {
-            		removeButton = new JButton();
-            		removeButton.setOpaque(false);
-            		removeButton.setBorderPainted(false);
-            		removeButton.setContentAreaFilled(false);
-            	}
-                switch (field.getComponentType()) {
-                case BagInfoField.TEXTAREA_COMPONENT:
-                    JComponent[] tlist = formBuilder.addTextArea(field.getName(), field.isRequired(), field.getLabel(), removeButton, ""); 
-                    JComponent tcomp = tlist[0];
-                    tcomp.addMouseListener(this);
-                    JComponent textarea = tlist[index];
-                    textarea.setEnabled(field.isEnabled());
-            		textarea.addFocusListener(this);
-            		textarea.addKeyListener(this);
-            		textarea.addPropertyChangeListener(this);
-            		((NoTabTextArea) textarea).setText(field.getValue());
-            		((NoTabTextArea) textarea).setBorder(new EmptyBorder(1,1,1,1));
-            		((NoTabTextArea) textarea).setColumns(1);
-            		((NoTabTextArea) textarea).setRows(3);
-            		((NoTabTextArea) textarea).setLineWrap(true);
-            		if (count == 0) focusField = textarea;
-                    rowCount += 1;
-                	break;
-                case BagInfoField.TEXTFIELD_COMPONENT:
-                    JComponent[] flist = formBuilder.add(field.getName(), field.isRequired(), field.getLabel(), removeButton, "");
-                    JComponent comp = flist[index];
-                    comp.setEnabled(field.isEnabled());
-                    JComponent mcomp = flist[0];
-                    mcomp.addMouseListener(this);
-                    comp.addFocusListener(this);
-                    comp.addKeyListener(this);
-                    comp.addPropertyChangeListener(this);
-                    ((JTextField) comp).setText(field.getValue());
-            		if (count == 0) focusField = comp;
-                	break;
-                case BagInfoField.LIST_COMPONENT:
-                	List<String> elements = field.getElements();
-                    JComponent[] llist = formBuilder.addList(field.getName(), field.isRequired(), field.getLabel(), elements, removeButton, "");
-                    JComponent lccomp = llist[0];
-                    lccomp.addMouseListener(this);
-                	JComponent lcomp = llist[index];
-                	lcomp.setEnabled(field.isEnabled());
-                	lcomp.addFocusListener(this);
-                	lcomp.addKeyListener(this);
-                	lcomp.addPropertyChangeListener(this);
-                	if (field.getValue() != null) {
-                		((JComboBox) lcomp).setSelectedItem(field.getValue().trim());
-                	}
-                	if (count == 0) focusField = lcomp;
-                	break;
-                default:
-                }
-                count++;
-            }
-            focusField.requestFocus();
+			if (keys != null) {
+				for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+					String key = (String) iter.next();
+	            	BagInfoField field = fieldMap.get(key);
+	                formBuilder.row();
+	                rowCount++;
+	                ImageIcon imageIcon = bagView.getPropertyImage("bag.delete.image");
+	            	JButton removeButton = new JButton(imageIcon);
+	            	Dimension dimension = removeButton.getPreferredSize();
+	            	dimension.width = imageIcon.getIconWidth();
+	            	removeButton.setMaximumSize(dimension);
+	            	removeButton.setOpaque(false);
+	            	removeButton.setBorderPainted(false);
+	            	removeButton.setContentAreaFilled(false);
+	            	removeButton.addActionListener(new RemoveFieldHandler());
+					logger.debug("OrganizationInfoForm add: " + field);
+					if (field.getValue() != null && field.getValue().length() > 30) {
+						field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+					}
+	            	if (field.isRequired()) {
+	            		removeButton = new JButton();
+	            		removeButton.setOpaque(false);
+	            		removeButton.setBorderPainted(false);
+	            		removeButton.setContentAreaFilled(false);
+	            	}
+	                switch (field.getComponentType()) {
+	                case BagInfoField.TEXTAREA_COMPONENT:
+	                    JComponent[] tlist = formBuilder.addTextArea(field.getName(), field.isRequired(), field.getLabel(), removeButton, ""); 
+	                    JComponent tcomp = tlist[0];
+	                    tcomp.addMouseListener(this);
+	                    JComponent textarea = tlist[index];
+	                    textarea.setEnabled(field.isEnabled());
+	            		textarea.addFocusListener(this);
+	            		textarea.addKeyListener(this);
+	            		textarea.addPropertyChangeListener(this);
+	            		((NoTabTextArea) textarea).setText(field.getValue());
+	            		((NoTabTextArea) textarea).setBorder(new EmptyBorder(1,1,1,1));
+	            		((NoTabTextArea) textarea).setColumns(1);
+	            		((NoTabTextArea) textarea).setRows(3);
+	            		((NoTabTextArea) textarea).setLineWrap(true);
+	            		if (count == 0) focusField = textarea;
+	                    rowCount += 1;
+	                	break;
+	                case BagInfoField.TEXTFIELD_COMPONENT:
+	                    JComponent[] flist = formBuilder.add(field.getName(), field.isRequired(), field.getLabel(), removeButton, "");
+	                    JComponent comp = flist[index];
+	                    comp.setEnabled(field.isEnabled());
+	                    JComponent mcomp = flist[0];
+	                    mcomp.addMouseListener(this);
+	                    comp.addFocusListener(this);
+	                    comp.addKeyListener(this);
+	                    comp.addPropertyChangeListener(this);
+	                    ((JTextField) comp).setText(field.getValue());
+	            		if (count == 0) focusField = comp;
+	                	break;
+	                case BagInfoField.LIST_COMPONENT:
+	                	List<String> elements = field.getElements();
+	                    JComponent[] llist = formBuilder.addList(field.getName(), field.isRequired(), field.getLabel(), elements, removeButton, "");
+	                    JComponent lccomp = llist[0];
+	                    lccomp.addMouseListener(this);
+	                	JComponent lcomp = llist[index];
+	                	lcomp.setEnabled(field.isEnabled());
+	                	lcomp.addFocusListener(this);
+	                	lcomp.addKeyListener(this);
+	                	lcomp.addPropertyChangeListener(this);
+	                	if (field.getValue() != null) {
+	                		((JComboBox) lcomp).setSelectedItem(field.getValue().trim());
+	                	}
+	                	if (count == 0) focusField = lcomp;
+	                	break;
+	                default:
+	                }
+	                count++;
+	            }
+	            if (focusField != null) focusField.requestFocus();
+			}
         }
         infoForm = formBuilder.getForm();
         if (rowCount < MIN_ROWS) rowCount = MIN_ROWS;
@@ -281,50 +283,55 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
        	private static final long serialVersionUID = 1L;
 
     	public void actionPerformed(ActionEvent e) {
-    		Component selected = (Component) e.getSource();
-    		String key = "";
-            Component[] components = form.getComponents();
-            for (int i=0; i<components.length; i++) {
-            	Component c;
-            	// See BagTableFormBuilder.addBinding for component info
-            	// Field label
-            	c = components[i];
-            	if (c instanceof JLabel) {
-                	JLabel label = (JLabel) c;
-                	key = label.getText();
-            	}
-            	i++;
-            	// Required button
-            	c = components[i];
-            	i++;
-            	// Input text field
-            	c = components[i];
-            	i++;
-            	// Remove button
-            	c = components[i];
-            	if (c instanceof JButton) {
-            		if (c == selected) {
-            			BagInfoField field = getField(key);
-            			if (field != null) fieldMap.remove(key);
-            		}
-            	}
-            }
-            DefaultBagInfo info = defaultBag.getInfo();
-            info.setFieldMap(fieldMap);
-            defaultBag.setInfo(info);
-            bagView.setBag(defaultBag);
-            bagView.infoInputPane.updateInfoFormsPane(true);
+    		try {
+        		Component selected = (Component) e.getSource();
+        		String key = "";
+                Component[] components = form.getComponents();
+                for (int i=0; i<components.length; i++) {
+                	Component c;
+                	// See BagTableFormBuilder.addBinding for component info
+                	// Field label
+                	c = components[i];
+                	if (c instanceof JLabel) {
+                    	JLabel label = (JLabel) c;
+                    	key = label.getText();
+                	}
+                	i++;
+                	// Required button
+                	c = components[i];
+                	i++;
+                	// Input text field
+                	c = components[i];
+                	i++;
+                	// Remove button
+                	c = components[i];
+                	if (c instanceof JButton) {
+                		if (c == selected) {
+                			BagInfoField field = getField(key);
+                			if (field != null) fieldMap.remove(key);
+                		}
+                	}
+                }
+                DefaultBagInfo info = defaultBag.getInfo();
+                info.setFieldMap(fieldMap);
+                defaultBag.setInfo(info);
+                bagView.setBag(defaultBag);
+                bagView.infoInputPane.updateInfoFormsPane(true);
+    		} catch (Exception ex) {
+    		}
        	}
     }
 
     private BagInfoField getField(String key) {
     	BagInfoField field = null;
 		Set<String> keys = fieldMap.keySet();
-		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-			String keySet = (String) iter.next();
-			if (keySet.equalsIgnoreCase(key)) {
-				field = fieldMap.get(key);
-				return field;
+		if (keys != null) {
+			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+				String keySet = (String) iter.next();
+				if (keySet.equalsIgnoreCase(key)) {
+					field = fieldMap.get(key);
+					return field;
+				}
 			}
 		}
     	return field;
