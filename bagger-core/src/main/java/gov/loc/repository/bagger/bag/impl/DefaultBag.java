@@ -669,134 +669,146 @@ public class DefaultBag {
 	}
 
 	public void createBagInfo(HashMap<String,String> map) {
-		initializeBagInfo();
-		BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
-		bilBag.getBagInfoTxt().clear();
-		Set<String> keys = map.keySet();
-		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-			String key = (String) iter.next();
-			String value = (String) map.get(key);
-			if (!value.trim().isEmpty()) {
-				bagInfoTxt.put(key, value);
-				copyMapToBag(key, value);
+		try {
+			initializeBagInfo();
+			BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+			bilBag.getBagInfoTxt().clear();
+			Set<String> keys = map.keySet();
+			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
+				String value = (String) map.get(key);
+				if (!value.trim().isEmpty()) {
+					bagInfoTxt.put(key, value);
+					copyMapToBag(key, value);
+				}
 			}
+			bilBag.putBagFile(bagInfoTxt);
+			display("DefaultBag.createBagInfo bagInfo:" + this.bilBag.getBagInfoTxt());
+		} catch (Exception e) {
 		}
-		bilBag.putBagFile(bagInfoTxt);
-		display("DefaultBag.createBagInfo bagInfo:" + this.bilBag.getBagInfoTxt());
 	}
 
 	private void copyMapToBag(String key, String value) {
-		if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_CONTACT_NAME)) {
-			bagInfo.getBagOrganization().getContact().setContactName(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_CONTACT_PHONE)) {
-			bagInfo.getBagOrganization().getContact().setTelephone(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_CONTACT_EMAIL)) {
-			bagInfo.getBagOrganization().getContact().setEmail(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_SOURCE_ORGANIZATION)) {
-			bagInfo.getBagOrganization().setSourceOrganization(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_ORGANIZATION_ADDRESS)) {
-			bagInfo.getBagOrganization().setOrganizationAddress(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_EXTERNAL_DESCRIPTION)) {
-			bagInfo.setExternalDescription(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_BAGGING_DATE)) {
-			bagInfo.setBaggingDate(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER)) {
-			bagInfo.setExternalIdentifier(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_BAG_SIZE)) {
-			bagInfo.setBagSize(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_PAYLOAD_OXUM)) {
-			bagInfo.setPayloadOxum(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_BAG_GROUP_IDENTIFIER)) {
-			bagInfo.setBagGroupIdentifier(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_BAG_COUNT)) {
-			bagInfo.setBagCount(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_INTERNAL_SENDER_IDENTIFIER)) {
-			bagInfo.setInternalSenderIdentifier(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_INTERNAL_SENDER_DESCRIPTION)) {
-			bagInfo.setInternalSenderDescription(value);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
-			bagInfo.setPublisher(value);
-			this.isEdeposit(true);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
-			bagInfo.setAwardeePhase(value);
-			this.isNdnp(true);
-		} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
-			bagInfo.setLcProject(value);
-			this.isNoProject(true);
-		} 
+		try {
+			if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_CONTACT_NAME)) {
+				bagInfo.getBagOrganization().getContact().setContactName(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_CONTACT_PHONE)) {
+				bagInfo.getBagOrganization().getContact().setTelephone(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_CONTACT_EMAIL)) {
+				bagInfo.getBagOrganization().getContact().setEmail(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_SOURCE_ORGANIZATION)) {
+				bagInfo.getBagOrganization().setSourceOrganization(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_ORGANIZATION_ADDRESS)) {
+				bagInfo.getBagOrganization().setOrganizationAddress(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_EXTERNAL_DESCRIPTION)) {
+				bagInfo.setExternalDescription(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_BAGGING_DATE)) {
+				bagInfo.setBaggingDate(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER)) {
+				bagInfo.setExternalIdentifier(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_BAG_SIZE)) {
+				bagInfo.setBagSize(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_PAYLOAD_OXUM)) {
+				bagInfo.setPayloadOxum(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_BAG_GROUP_IDENTIFIER)) {
+				bagInfo.setBagGroupIdentifier(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_BAG_COUNT)) {
+				bagInfo.setBagCount(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_INTERNAL_SENDER_IDENTIFIER)) {
+				bagInfo.setInternalSenderIdentifier(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_INTERNAL_SENDER_DESCRIPTION)) {
+				bagInfo.setInternalSenderDescription(value);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
+				bagInfo.setPublisher(value);
+				this.isEdeposit(true);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
+				bagInfo.setAwardeePhase(value);
+				this.isNdnp(true);
+			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
+				bagInfo.setLcProject(value);
+				this.isNoProject(true);
+			}
+		} catch (Exception e) {
+		}
 	}
 
 	public void copyFormToBag() {
-		BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
-		Contact contact = baggerOrganization.getContact();
-		if (bilBag.getBagInfoTxt() != null) {
-			if (!baggerOrganization.getSourceOrganization().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
+		try {
+			BaggerOrganization baggerOrganization = this.bagInfo.getBagOrganization();
+			Contact contact = baggerOrganization.getContact();
+			if (bilBag.getBagInfoTxt() != null) {
+				if (!baggerOrganization.getSourceOrganization().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().setSourceOrganization(baggerOrganization.getSourceOrganization());
+				}
+				if (!baggerOrganization.getOrganizationAddress().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrganizationAddress());
+				}
+				if (!contact.getContactName().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().setContactName(contact.getContactName());
+				}
+				if (!contact.getTelephone().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
+				}
+				if (!contact.getEmail().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
+				}
+				boolean useFieldMap = false;
+				if (useFieldMap) {
+					if (!bagInfo.getExternalDescription().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
+					}
+					if (!bagInfo.getBaggingDate().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
+					}
+					if (!bagInfo.getExternalIdentifier().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
+					}
+					if (!bagInfo.getBagSize().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
+					}
+					if (!bagInfo.getPayloadOxum().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
+					}
+					if (!bagInfo.getBagGroupIdentifier().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
+					}
+					if (!bagInfo.getBagCount().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
+					}
+					if (!bagInfo.getInternalSenderIdentifier().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
+					}
+					if (!bagInfo.getInternalSenderDescription().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
+					}
+					if (this.isEdeposit() && !bagInfo.getPublisher().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
+					}
+					if (this.isNdnp() && !bagInfo.getAwardeePhase().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+					}
+					if (!this.isNoProject() && !bagInfo.getLcProject().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
+					}
+				}
 			}
-			if (!baggerOrganization.getOrganizationAddress().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrganizationAddress());
-			}
-			if (!contact.getContactName().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setContactName(contact.getContactName());
-			}
-			if (!contact.getTelephone().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
-			}
-			if (!contact.getEmail().trim().isEmpty()) {
-				bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
-			}
-			boolean useFieldMap = false;
-			if (useFieldMap) {
-				if (!bagInfo.getExternalDescription().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
-				}
-				if (!bagInfo.getBaggingDate().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
-				}
-				if (!bagInfo.getExternalIdentifier().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
-				}
-				if (!bagInfo.getBagSize().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
-				}
-				if (!bagInfo.getPayloadOxum().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
-				}
-				if (!bagInfo.getBagGroupIdentifier().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
-				}
-				if (!bagInfo.getBagCount().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
-				}
-				if (!bagInfo.getInternalSenderIdentifier().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
-				}
-				if (!bagInfo.getInternalSenderDescription().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
-				}
-				if (this.isEdeposit() && !bagInfo.getPublisher().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
-				}
-				if (this.isNdnp() && !bagInfo.getAwardeePhase().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
-				}
-				if (!this.isNoProject() && !bagInfo.getLcProject().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
-				}
-			}
+			display("DefaultBag.copyFormToBag bagInfo:" + this.bilBag.getBagInfoTxt());
+		} catch (Exception e) {
 		}
-		display("DefaultBag.copyFormToBag bagInfo:" + this.bilBag.getBagInfoTxt());
 	}
 
 	public void setInfo(DefaultBagInfo bagInfo) {
-        String bagName = bagInfo.getBagName();
-        if (bagName == null || bagName.trim().length() == 0 || bagName.trim().equalsIgnoreCase("null")) {
-        	this.setName(this.bagInfo.getName());
-        } else {
-            this.setName(bagName);
-        }
-		this.bagInfo.copy(bagInfo);
-		this.copyFormToBag();
+		try {
+	        String bagName = bagInfo.getBagName();
+	        if (bagName == null || bagName.trim().length() == 0 || bagName.trim().equalsIgnoreCase("null")) {
+	        	this.setName(this.bagInfo.getName());
+	        } else {
+	            this.setName(bagName);
+	        }
+			this.bagInfo.copy(bagInfo);
+			this.copyFormToBag();
+		} catch (Exception e) {
+		}
 	}
 
 	public DefaultBagInfo getInfo() {
@@ -816,21 +828,24 @@ public class DefaultBag {
 		String httpToken = "http:";
 		String delimToken = "bagit";
 		String baseUrl = "";
-		if (fetchTxt != null) {
-			if (!fetchTxt.isEmpty()) {
-    			FilenameSizeUrl fsu = fetchTxt.get(0);
-    			if (fsu != null) {
-    				String url = fsu.getUrl();
-    				baseUrl = url;
-    				String[] list = url.split(delimToken);
-    				for (int i=0; i<list.length; i++) {
-    					String s = list[i];
-    					if (s.trim().startsWith(httpToken)) {
-    						baseUrl = s;
-    					}
-    				}
-    			}
+		try {
+			if (fetchTxt != null) {
+				if (!fetchTxt.isEmpty()) {
+	    			FilenameSizeUrl fsu = fetchTxt.get(0);
+	    			if (fsu != null) {
+	    				String url = fsu.getUrl();
+	    				baseUrl = url;
+	    				String[] list = url.split(delimToken);
+	    				for (int i=0; i<list.length; i++) {
+	    					String s = list[i];
+	    					if (s.trim().startsWith(httpToken)) {
+	    						baseUrl = s;
+	    					}
+	    				}
+	    			}
+				}
 			}
+		} catch (Exception e) {
 		}
 		return baseUrl;
 	}
@@ -866,20 +881,20 @@ public class DefaultBag {
 		dcontent.append(this.getDataDirectory() + "/");
 		dcontent.append('\n');
 		Collection<BagFile> files = this.bilBag.getPayload();
-		for (Iterator<BagFile> it=files.iterator(); it.hasNext(); ) {
-        	try {
-            	BagFile bf = it.next();
-            	if (bf != null) {
-                	totalSize += bf.getSize();
-                	/* */
-                	dcontent.append(bf.getFilepath());
-                	dcontent.append('\n');
-                	/* */
-            	}
-        	} catch (Exception e) {
-        		log.error("DefaultBag.getDataContent: " + e.getMessage());
-        	}
-        }
+		if (files != null) {
+			for (Iterator<BagFile> it=files.iterator(); it.hasNext(); ) {
+	        	try {
+	            	BagFile bf = it.next();
+	            	if (bf != null) {
+	                	totalSize += bf.getSize();
+	                	dcontent.append(bf.getFilepath());
+	                	dcontent.append('\n');
+	            	}
+	        	} catch (Exception e) {
+	        		log.error("DefaultBag.getDataContent: " + e.getMessage());
+	        	}
+	        }
+		}
         this.setSize(totalSize);
 		return dcontent.toString();
 	}
@@ -903,10 +918,12 @@ public class DefaultBag {
 	public List<String> getPayloadPaths() {
 		ArrayList<String> pathList = new ArrayList<String>();
 		Collection<BagFile> payload = this.bilBag.getPayload();
-        for (Iterator<BagFile> it=payload.iterator(); it.hasNext(); ) {
-        	BagFile bf = it.next();
-        	pathList.add(bf.getFilepath());
-        }
+		if (payload != null) {
+	        for (Iterator<BagFile> it=payload.iterator(); it.hasNext(); ) {
+	        	BagFile bf = it.next();
+	        	pathList.add(bf.getFilepath());
+	        }
+		}
 		return pathList;		
 	}
 	
@@ -1020,6 +1037,7 @@ public class DefaultBag {
 			this.isMetadataChecked = true;
 		} catch (Exception e) {
 			this.isValidMetadata(false);
+			this.isMetadataChecked = false;
 			messages = "Bag-info fields are not correct: " + e.getMessage() + "\n";
 			e.printStackTrace();
 		}
@@ -1048,6 +1066,8 @@ public class DefaultBag {
 						else messages = msgs;
 					}
 				} catch (Exception ex) {
+					this.isValidMetadata(false);
+					this.isMetadataChecked = false;
 					ex.printStackTrace();
 					String msgs = "ERROR validating bag: \n" + ex.getMessage() + "\n";
 					if (messages != null) messages += msgs;
