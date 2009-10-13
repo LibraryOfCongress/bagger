@@ -467,6 +467,7 @@ public class BagProject {
     	Project project = bag.getProject();
     	if (project == null) return message;
     	Profile profile = userProfiles.get(project.getName());
+    	if (profile == null) profile = new Profile();
     	BaggerOrganization org = bag.getInfo().getBagOrganization();
     	Contact orgContact = bag.getInfo().getBagOrganization().getContact();
     	orgContact.getOrganization().setName(org.getSourceOrganization());

@@ -117,6 +117,9 @@ public class NewProjectFrame extends JFrame implements ActionListener {
     		} else {
     			setVisible(false);
     			bagView.bagProject.addProject(project);
+    			bagView.getBag().setProject(project);
+        		bagView.bagProject.updateProject(name);
+            	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
     		}
         }
     }

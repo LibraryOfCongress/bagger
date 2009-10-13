@@ -212,6 +212,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     }
     
     public void focusLost(FocusEvent evt) {
+    	this.defaultBag = bagView.getBag();
     	bagView.infoInputPane.updateBagHandler.updateBag(this.defaultBag);
 		bagView.infoInputPane.bagInfoInputPane.setSelectedIndex(0);
     }
