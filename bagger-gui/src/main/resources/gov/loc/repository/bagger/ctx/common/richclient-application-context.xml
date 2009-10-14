@@ -16,7 +16,7 @@
   </bean>
 
   <bean id="applicationDescriptor" class="org.springframework.richclient.application.support.DefaultApplicationDescriptor"> 
-    <property name="version" value="1.9" />
+    <property name="version" value="1.9.1" />
     <property name="buildId" value="BagIt 3.0" />
   </bean>
 

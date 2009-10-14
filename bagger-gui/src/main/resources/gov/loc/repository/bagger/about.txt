@@ -4,7 +4,7 @@
 <td valign="top">
 <b>Bagger Application</b>
 <p>
-Version: 1.9
+Version: 1.9.1
 <p>
 <b>Bag It Library</b>
 <p>
