@@ -18,6 +18,7 @@ public class ClearBagHandler extends AbstractAction {
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag;
+	private boolean confirmSaveFlag = false;
 	//private LongTask task;
 
 	public ClearBagHandler(BagView bagView) {
@@ -32,20 +33,25 @@ public class ClearBagHandler extends AbstractAction {
 
     public void closeExistingBag() {
     	confirmCloseBag();
+	    if (isConfirmSaveFlag()){
+        	bagView.saveBagHandler.setClearAfterSaving(true);
+    		bagView.saveBagAsHandler.openSaveBagAsFrame();
+    		setConfirmSaveFlag(false);
+	    }
+
+
     }
 
     private void confirmCloseBag() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	        protected void onConfirm() {
-	        	bagView.saveBagHandler.setClearAfterSaving(true);
-	    		bagView.saveBagAsHandler.openSaveBagAsFrame();
+	        	setConfirmSaveFlag(true);
 	        }
 	        protected void onCancel() {
         		super.onCancel();
 	        	clearExistingBag(bagView.getPropertyMessage("compositePane.message.clear"));
 	        }
 	    };
-
 	    dialog.setCloseAction(CloseAction.DISPOSE);
 	    dialog.setTitle(bagView.getPropertyMessage("bag.dialog.title.close"));
 	    dialog.setConfirmationMessage(bagView.getPropertyMessage("bag.dialog.message.close"));
@@ -92,4 +98,12 @@ public class ClearBagHandler extends AbstractAction {
 		bag.setName(bagName);
 		bagView.setBag(bag);
     }
+
+	public void setConfirmSaveFlag(boolean confirmSaveFlag) {
+		this.confirmSaveFlag = confirmSaveFlag;
+	}
+
+	public boolean isConfirmSaveFlag() {
+		return confirmSaveFlag;
+	}
 }
