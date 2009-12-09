@@ -29,7 +29,5 @@ public class SaveBagAsHandler extends AbstractAction {
 		saveBagFrame = new SaveBagFrame(bagView, bagView.getPropertyMessage("bag.frame.save"));
 		saveBagFrame.setBag(bag);
 		saveBagFrame.setVisible(true);
-		//TODO BNP
-		saveBagFrame.setFocusable(true);
 	}
 }
