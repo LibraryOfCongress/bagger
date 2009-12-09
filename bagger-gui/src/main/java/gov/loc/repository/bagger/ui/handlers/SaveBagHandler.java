@@ -194,7 +194,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 
     private void cancelWriteBag() {
     	clearAfterSaving = false;
-    	saveBagAs();
+//    	saveBagAs();
     }
 
     public void confirmAcceptBagSize() {
