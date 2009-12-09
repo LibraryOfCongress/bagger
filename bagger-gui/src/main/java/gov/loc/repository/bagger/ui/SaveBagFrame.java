@@ -86,6 +86,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 		}
         getContentPane().add(savePanel, BorderLayout.CENTER);
         setPreferredSize(preferredDimension);
+        this.setBounds(300,200, 600, 400);
         pack();
     }
 
