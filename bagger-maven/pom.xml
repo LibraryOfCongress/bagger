@@ -217,5 +217,15 @@
     </pluginRepository>
   </pluginRepositories>
   
+ <distributionManagement>
+    <repository>
+      <id>rdc-releases</id>
+      <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-releases/</url>
+     </repository>
+    <snapshotRepository>
+      <id>rdc-snapshots</id>
+      <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>   
 
 </project>
