@@ -643,13 +643,13 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			field.isRequired(false);
 		}
 		
-    	if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_TO_CONTACT_NAME)) {
-    		field.setValue(DefaultBagInfo.WDL_TO_CONTACT_NAME);
-    	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_TO_CONTACT_PHONE)) {
-       		field.setValue(DefaultBagInfo.WDL_TO_CONTACT_PHONE);
-       	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_TO_CONTACT_EMAIL)) {
-            field.setValue(DefaultBagInfo.WDL_TO_CONTACT_EMAIL);
-       	}
+//    	if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_TO_CONTACT_NAME)) {
+//    		field.setValue(DefaultBagInfo.WDL_TO_CONTACT_NAME);
+//    	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_TO_CONTACT_PHONE)) {
+//       		field.setValue(DefaultBagInfo.WDL_TO_CONTACT_PHONE);
+//       	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_TO_CONTACT_EMAIL)) {
+//            field.setValue(DefaultBagInfo.WDL_TO_CONTACT_EMAIL);
+//       	}
 		
 		return field;
 	}
