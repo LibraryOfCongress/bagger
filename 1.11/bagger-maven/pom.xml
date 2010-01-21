@@ -1,0 +1,231 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>loc-repository</groupId>
+  <artifactId>bagger-maven</artifactId>
+  <packaging>pom</packaging>
+  <name>BagIt Bagger</name>
+  <version>1.11</version>
+  <description>Bagger application runnable in standalone form.</description>
+  <developers>
+    <developer>
+      <id>pbok</id>
+      <name>Praveen Bokka</name>
+      <email>pbok@loc.gov</email>
+    </developer>
+  </developers>
+	<properties>
+		<spring.version>2.5.1</spring.version>
+		<richclient.version>1.0.0</richclient.version>
+	</properties>
+  <build>
+    <plugins>
+    <!-- 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+     -->    
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <modules>
+    <module>../bagger-common</module>
+    <module>../bagger-core</module>
+    <module>../bagger-business</module>
+    <module>../bagger-gui</module>
+    <module>../bagger-standalone</module>
+  </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1</version>
+    </dependency>
+  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+    <dependency>
+      <groupId>loc-repository</groupId>
+      <artifactId>bagit</artifactId>
+      <version>3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-support</artifactId>
+      <version>${richclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-resources</artifactId>
+      <version>${richclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-core</artifactId>
+      <version>${richclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-binding</artifactId>
+      <version>${richclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-form</artifactId>
+      <version>${richclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-jdk5</artifactId>
+      <version>${richclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-jdk6</artifactId>
+      <version>${richclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-sandbox</artifactId>
+      <version>${richclient.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.acegisecurity</groupId>
+      <artifactId>acegi-security</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots />
+      <id>rdc-snapshots</id>
+      <name>RDC snapshots</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
+    </repository>
+    <repository>
+      <releases />
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>rdc-releases</id>
+      <name>RDC releases</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-releases/</url>
+    </repository>
+    <repository>
+      <releases />
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>local-releases</id>
+      <name>Local releases</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/local-releases/</url>
+    </repository>
+    <repository>
+      <releases />
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>proxy-releases</id>
+      <name>Proxy releases</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-releases/</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots />
+      <id>proxy-snapshots</id>
+      <name>Proxy snapshots</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-snapshots/</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <releases />
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>proxy-releases</id>
+      <name>Proxy releases</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-releases/</url>
+    </pluginRepository>
+    <pluginRepository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots />
+      <id>proxy-snapshots</id>
+      <name>Proxy snapshots</name>
+      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-snapshots/</url>
+    </pluginRepository>
+  </pluginRepositories>
+  
+ <distributionManagement>
+    <repository>
+      <id>rdc-releases</id>
+      <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-releases/</url>
+     </repository>
+    <snapshotRepository>
+      <id>rdc-snapshots</id>
+      <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>   
+
+</project>

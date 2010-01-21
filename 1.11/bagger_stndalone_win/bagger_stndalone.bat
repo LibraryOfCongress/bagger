@@ -1,0 +1,1 @@
+jre6\bin\java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
