@@ -105,7 +105,12 @@ public class BagInfoInputPane extends JTabbedPane {
         	bagProfile = new BaggerProfile();
         }
     	bagProfile.setOrganization(baggerOrganization);
-        bagProfile.setToContact(bagView.bagProject.projectContact);
+//        bagProfile.setToContact(bagView.bagProject.projectContact);
+    	Contact toContact= new Contact();
+    	toContact.setContactName(bagInfo.getToContactName());
+    	toContact.setTelephone(bagInfo.getToContactPhone());
+    	toContact.setEmail(bagInfo.getToContactEmail());
+    	bagProfile.setToContact(toContact);
         bagView.bagProject.baggerProfile.put(project.getName(), bagProfile);
 
         Contact orgContact = bagInfo.getBagOrganization().getContact();
@@ -172,6 +177,10 @@ public class BagInfoInputPane extends JTabbedPane {
         	orgContact.getOrganization().setName(baggerOrg.getSourceOrganization());
         	orgContact.getOrganization().setAddress(baggerOrg.getOrganizationAddress());
             profile.setContact(orgContact);
+            //TODO
+            Contact toContact = bprofile.getToContact();
+            profile.setPerson(toContact);
+            
             bagView.bagProject.userProfiles.put(project.getName(), profile);
         } catch (Exception e) {
         	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
@@ -179,6 +188,11 @@ public class BagInfoInputPane extends JTabbedPane {
         bagView.bagProject.projectContact = bprofile.getToContact();
         bagView.bagProject.baggerProfile.put(project.getName(), bprofile);
         bag.getInfo().setBagOrganization(baggerOrg);
+        //TODO
+        bag.getInfo().setToContactName(bprofile.getToContactName());
+        bag.getInfo().setToContactPhone(bprofile.getToContactPhone());
+        bag.getInfo().setToContactEmail(bprofile.getToContactEmail());
+        
         createBagInfo(bag);
 
         return messages;
@@ -227,26 +241,55 @@ public class BagInfoInputPane extends JTabbedPane {
         	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
     		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
 
-    		if (bag.isEdeposit()) {
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
-    			}
-    		} else if (bag.isNdnp()) {
+    		if (!bag.isEdeposit()) {
     			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
     				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
     			}
-    		} else {
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER);
     			}
+    		} 
+    		if (!bag.isNdnp()) {
     			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
     				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
     			}
-    		}
-    		if (!bag.isNoProject()) {
-    		} else {
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER);
+    			}
+    		} 
+    		if (!bag.isWdl()) {
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS);
+    			}
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED);
+    			}
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT);
+    			}
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_DATE)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_DATE);
+    			}
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_METHOD)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_METHOD);
+    			}
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER);
+    			}
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA);
+    			}
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_TO_ADDRESS)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_TO_ADDRESS);
+    			}
+    		} 
+    		
+    		if (bag.isNoProject()) {
     			if (currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
     				currentMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
+    			}
+    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER)) {
+    				currentMap.remove(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER);
     			}
     		}
 
@@ -255,6 +298,7 @@ public class BagInfoInputPane extends JTabbedPane {
     			if (list != null) {
     				for (int i=0; i < list.size(); i++) {
     					ProjectProfile projectProfile = list.get(i);
+//    					if ((projectProfile != null) && (projectProfile.getFieldValue() != null) && (!projectProfile.getFieldValue().trim().equals(""))) {
     					if (projectProfile != null) {
     						BagInfoField field = new BagInfoField();
     						field.setLabel(projectProfile.getFieldName());

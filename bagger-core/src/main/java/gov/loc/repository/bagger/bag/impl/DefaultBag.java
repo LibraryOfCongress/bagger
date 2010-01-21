@@ -77,6 +77,8 @@ public class DefaultBag {
 	private boolean isNoProject = true;
 	private boolean isEdeposit = false;
 	private boolean isNdnp = false;
+	//TODO
+	private boolean isWdl = false;
 	private boolean isNewbag = true;
 	private boolean isBuildTagManifest = true;
 	private boolean isBuildPayloadManifest = true;
@@ -338,6 +340,14 @@ public class DefaultBag {
 	public boolean isNdnp() {
 		return this.isNdnp;
 	}
+	//TODO
+	public void isWdl(boolean b) {
+		this.isWdl = b;
+	}
+
+	public boolean isWdl() {
+		return this.isWdl;
+	}
 	
 	public void isNewbag(boolean b) {
 		this.isNewbag = b;
@@ -504,6 +514,28 @@ public class DefaultBag {
 		else
     		baggerOrganization.setOrganizationAddress("");
 		this.bagInfo.setBagOrganization(baggerOrganization);
+		
+		//TODO
+		Contact toContact = new Contact();
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_TO_CONTACT_NAME))
+    		toContact.setContactName(bagInfoTxt.get(DefaultBagInfo.FIELD_TO_CONTACT_NAME));
+		else
+    		toContact.setContactName("");
+
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_TO_CONTACT_PHONE))
+    		toContact.setTelephone(bagInfoTxt.get(DefaultBagInfo.FIELD_TO_CONTACT_PHONE));
+		else
+    		toContact.setTelephone("");
+
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_TO_CONTACT_EMAIL))
+    		toContact.setEmail(bagInfoTxt.get(DefaultBagInfo.FIELD_TO_CONTACT_EMAIL));
+		else
+    		toContact.setEmail("");
+		
+		this.bagInfo.setToContactName(toContact.getContactName());
+		this.bagInfo.setToContactPhone(toContact.getTelephone());
+		this.bagInfo.setToContactEmail(toContact.getEmail());
+		
 		/* */
 		if (bagInfoTxt.getExternalDescription() != null && !bagInfoTxt.getExternalDescription().trim().isEmpty())
 			this.bagInfo.setExternalDescription(bagInfoTxt.getExternalDescription());
@@ -559,6 +591,81 @@ public class DefaultBag {
 			}
 			this.isNdnp(true);
 		}
+		//TODO
+		//WDL Field setting from BagiInfoTxt
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT)) {
+			String additionalEquipment = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT);
+			if (additionalEquipment != null && !additionalEquipment.trim().isEmpty()) {
+				this.bagInfo.setAdditionalEquipment(additionalEquipment);
+			} else {
+				this.bagInfo.setAdditionalEquipment("");
+			}
+			this.isWdl(true);
+		}
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS)) {
+			String mediaIdentifiers = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS);
+			if (mediaIdentifiers != null && !mediaIdentifiers.trim().isEmpty()) {
+				this.bagInfo.setMediaIdentifiers(mediaIdentifiers);
+			} else {
+				this.bagInfo.setMediaIdentifiers("");
+			}
+			this.isWdl(true);
+		}
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED)) {
+			String numberOfMediaShipped = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED);
+			if (numberOfMediaShipped != null && !numberOfMediaShipped.trim().isEmpty()) {
+				this.bagInfo.setNumberOfMediaShipped(numberOfMediaShipped);
+			} else {
+				this.bagInfo.setNumberOfMediaShipped("");
+			}
+			this.isWdl(true);
+		}
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_DATE)) {
+			String shipDate = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_DATE);
+			if (shipDate != null && !shipDate.trim().isEmpty()) {
+				this.bagInfo.setShipDate(shipDate);
+			} else {
+				this.bagInfo.setShipDate("");
+			}
+			this.isWdl(true);
+		}
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA)) {
+			String shipMedia = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA);
+			if (shipMedia != null && !shipMedia.trim().isEmpty()) {
+				this.bagInfo.setShipMedia(shipMedia);
+			} else {
+				this.bagInfo.setShipMedia("");
+			}
+			this.isWdl(true);
+		}
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_METHOD)) {
+			String shipMethod = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_METHOD);
+			if (shipMethod != null && !shipMethod.trim().isEmpty()) {
+				this.bagInfo.setShipMethod(shipMethod);
+			} else {
+				this.bagInfo.setShipMethod("");
+			}
+			this.isWdl(true);
+		}
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_TO_ADDRESS)) {
+			String shipToAddress = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_TO_ADDRESS);
+			if (shipToAddress != null && !shipToAddress.trim().isEmpty()) {
+				this.bagInfo.setShipToAddress(shipToAddress);
+			} else {
+				this.bagInfo.setShipToAddress("");
+			}
+			this.isWdl(true);
+		}
+		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER)) {
+			String shipTrackingNumber = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER);
+			if (shipTrackingNumber != null && !shipTrackingNumber.trim().isEmpty()) {
+				this.bagInfo.setShipTrackingNumber(shipTrackingNumber);
+			} else {
+				this.bagInfo.setShipTrackingNumber("");
+			}
+			this.isWdl(true);
+		}
+		
 /* */
 		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
 			String lcProject = bagInfoTxt.get(DefaultBagInfo.FIELD_LC_PROJECT);
@@ -649,7 +756,9 @@ public class DefaultBag {
 				String key = field.getLabel();
 				String value = bagInfoTxt.get(key);
 				field.setValue(value);
-				fieldMap.put(label, field);
+//				if((value !=null) && (value.trim() != "")){
+					fieldMap.put(label, field);
+//				}
 			}
 			this.bagInfo.setFieldMap(fieldMap);
 		}
@@ -752,6 +861,17 @@ public class DefaultBag {
 				if (!contact.getEmail().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
 				}
+				//TODO
+				if ((bagInfo.getToContactName() != null) && !bagInfo.getToContactName().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_TO_CONTACT_NAME, bagInfo.getToContactName());		
+				}
+				if ((bagInfo.getToContactPhone() != null) && !bagInfo.getToContactPhone().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_TO_CONTACT_PHONE, bagInfo.getToContactPhone());		
+				}
+				if ((bagInfo.getToContactName() != null) && !bagInfo.getToContactEmail().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_TO_CONTACT_EMAIL, bagInfo.getToContactEmail());		
+				}
+				
 				boolean useFieldMap = false;
 				if (useFieldMap) {
 					if (!bagInfo.getExternalDescription().trim().isEmpty()) {
@@ -786,6 +906,28 @@ public class DefaultBag {
 					}
 					if (this.isNdnp() && !bagInfo.getAwardeePhase().trim().isEmpty()) {
 						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
+					}
+					//TODO
+					if (this.isWdl() && !bagInfo.getMediaIdentifiers().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS, bagInfo.getMediaIdentifiers());		
+					}
+					if (this.isWdl() && !bagInfo.getNumberOfMediaShipped().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED, bagInfo.getNumberOfMediaShipped());		
+					}
+					if (this.isWdl() && !bagInfo.getAdditionalEquipment().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT, bagInfo.getAdditionalEquipment());		
+					}
+					if (this.isWdl() && !bagInfo.getShipDate().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_SHIP_DATE, bagInfo.getShipDate());		
+					}
+					if (this.isWdl() && !bagInfo.getShipMethod().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_SHIP_METHOD, bagInfo.getShipMethod());		
+					}
+					if (this.isWdl() && !bagInfo.getShipTrackingNumber().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER, bagInfo.getShipTrackingNumber());		
+					}
+					if (this.isWdl() && !bagInfo.getShipMedia().trim().isEmpty()) {
+						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA, bagInfo.getShipMedia());		
 					}
 					if (!this.isNoProject() && !bagInfo.getLcProject().trim().isEmpty()) {
 						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());

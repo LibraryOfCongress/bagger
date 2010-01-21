@@ -63,7 +63,7 @@ public class BaggerProfile {
 		return this.sourceOrganization.getContact();
 	}
 	
-	public void setSourceCountact(Contact contact) {
+	public void setSourceContact(Contact contact) {
 		this.sourceOrganization.setContact(contact);
 	}
 	

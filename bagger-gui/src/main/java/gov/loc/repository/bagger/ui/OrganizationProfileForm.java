@@ -83,14 +83,23 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("toContactName")[1];
+        if(bagView.getBag().isWdl()){
+        	field.setEnabled(false);
+        }
         this.field.addFocusListener(this);
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("toContactPhone")[1];
+        if(bagView.getBag().isWdl()){
+        	field.setEnabled(false);
+        }
         this.field.addFocusListener(this);
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("toContactEmail")[1];
+        if(bagView.getBag().isWdl()){
+        	field.setEnabled(false);
+        }
         this.field.addFocusListener(this);
         formBuilder.row();
         rowCount++;

@@ -457,7 +457,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public String updateBaggerRules() {
-        baggerRules.init(bag.isEdeposit(), bag.isNdnp(), !bag.isNoProject(), bag.isHoley());
+        baggerRules.init(bag.isEdeposit(), bag.isNdnp(), bag.isWdl(), !bag.isNoProject(), bag.isHoley());
         String messages = "";
         bag.updateStrategy();
         

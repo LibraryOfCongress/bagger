@@ -49,6 +49,13 @@ public class ProjectListHandler extends AbstractAction {
     	} else {
     		bag.isNdnp(false);
     	}
+    	//TODO
+    	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.wdl"))) {
+    		bag.isWdl(true);
+      		bag.isNoProject(false);
+    	} else {
+    		bag.isWdl(false);
+    	}
     	if (selected == null || selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.noproject"))) {
       		bag.isNoProject(true);
     	} else {
@@ -89,6 +96,17 @@ public class ProjectListHandler extends AbstractAction {
         		bagOrg.setSourceOrganization(org.getName());
         		bagOrg.setOrganizationAddress(org.getAddress());
         		bagInfo.setBagOrganization(bagOrg);
+        		//TODO
+        		if (!bag.isWdl()){
+        			bagInfo.setToContactName(person.getContactName());
+        			bagInfo.setToContactPhone(person.getTelephone());
+        			bagInfo.setToContactEmail(person.getEmail());
+        		} else {
+        			bagInfo.setToContactName(DefaultBagInfo.WDL_TO_CONTACT_NAME);
+        			bagInfo.setToContactPhone(DefaultBagInfo.WDL_TO_CONTACT_PHONE);
+        			bagInfo.setToContactEmail(DefaultBagInfo.WDL_TO_CONTACT_EMAIL);
+        		}
+        		
         		bag.setInfo(bagInfo);
         		bagView.bagProject.projectContact = profile.getPerson();
         	}

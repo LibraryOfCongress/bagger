@@ -234,7 +234,7 @@ public class BagProject {
                        		BaggerProfile bProfile = baggerProfile.get(project.getName());
                        		if (bProfile == null) bProfile = new BaggerProfile();
                        		bProfile.setOrganization(bagOrg);
-                       		bProfile.setSourceCountact(profile.getContact());
+                       		bProfile.setSourceContact(profile.getContact());
                        		bProfile.setToContact(projectContact);
                        		baggerProfile.put(project.getName(), bProfile);
                    		}
@@ -362,7 +362,7 @@ public class BagProject {
     	   		BaggerProfile bProfile = baggerProfile.get(projName);
            		if (bProfile == null) bProfile = new BaggerProfile();
     	   		bProfile.setOrganization(bagOrg);
-    	   		bProfile.setSourceCountact(profile.getContact());
+    	   		bProfile.setSourceContact(profile.getContact());
     	   		bProfile.setToContact(projectContact);
     	   		baggerProfile.put(projName, bProfile);
     		}
@@ -476,8 +476,18 @@ public class BagProject {
     	profile.setContactId(orgContact.getId());
     	profile.setProject(project);
     	profile.setProjectId(project.getId());
-    	profile.setPerson(this.projectContact);
-    	profile.setUsername(this.username);
+
+    	//TODO
+//    	profile.setPerson(this.projectContact);
+//    	profile.setUsername(this.username);
+
+    	Contact toContact = new Contact();
+    	toContact.setContactName(bag.getInfo().getToContactName());
+    	toContact.setTelephone(bag.getInfo().getToContactPhone());
+    	toContact.setEmail(bag.getInfo().getToContactEmail());
+    	profile.setPerson(toContact);
+    	profile.setUsername(toContact.getContactName());
+    	
     	userProfiles.put(project.getName(), profile);
     	message = bagView.getPropertyMessage("profile.message.changed") + " " + project.getName() + "\n";
     	return message;

@@ -107,6 +107,7 @@ public class InMemoryBagger extends JdbcBagger {
         defaultList.add("INSERT INTO projects VALUES (" + rowcount++ + ", 'eDeposit', false)");
         defaultList.add("INSERT INTO projects VALUES (" + rowcount++ + ", 'ndiipp', false)");
         defaultList.add("INSERT INTO projects VALUES (" + rowcount++ + ", 'ndnp', false)");
+        defaultList.add("INSERT INTO projects VALUES (" + rowcount++ + ", 'wdl', false)");
 
         rowcount = 1;
         defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 2, 'LC-Project', true, 'eDeposit', true, 'TF', '')");
@@ -114,6 +115,16 @@ public class InMemoryBagger extends JdbcBagger {
         defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 3, 'LC-Project', true, 'ndiipp', true, 'TF', '')");
         defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 4, 'LC-Project', true, 'ndnp', true, 'TF', '')");
         defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 4, 'Awardee-Phase', true, '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'LC-Project', true, 'World Digital Library', true, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'External-Identifier', 'true', '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'Media-Identifiers', false, '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'Number-Of-Media-Shipped', false, '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'Additional-Equipment', false, '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'Ship-Date', false, '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'Ship-Method', false, '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'Ship-Tracking-Number', false, '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'Ship-Media', false, '', false, 'TF', '')");
+        defaultList.add("INSERT INTO project_profile VALUES (" + rowcount++ + ", 5, 'Ship-To-Address', true, 'World Digital Library, Library of Congress, 101 Independence Ave, SE, Washington, DC 20540 USA', true, 'TA', '')");
 
         boolean loadOnStartup = false;
     	if (loadOnStartup) readCommandList();

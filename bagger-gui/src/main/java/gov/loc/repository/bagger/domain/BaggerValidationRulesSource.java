@@ -13,6 +13,7 @@ import org.springframework.rules.support.DefaultRulesSource;
 public class BaggerValidationRulesSource extends DefaultRulesSource {
 	boolean isCopyright = false;
 	boolean isNdnp = false;
+	boolean isWdl = false;
 	boolean isLcProject = false;
 	boolean isHoley = false;
 	
@@ -20,10 +21,11 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
         super();
     }
     
-    public void init(boolean isCopyright, boolean isNdnp, boolean isLcProject, boolean isHoley) {
+    public void init(boolean isCopyright, boolean isNdnp, boolean isWdl, boolean isLcProject, boolean isHoley) {
     	clear();
     	this.isCopyright = isCopyright;
     	this.isNdnp = isNdnp;
+    	this.isWdl = isWdl;
     	this.isLcProject = isLcProject;
     	this.isHoley = isHoley;
 /*
