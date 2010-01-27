@@ -14,7 +14,7 @@
    </security>
    <resources>
       <j2se version="1.6+"/>
-      <jar href="https://beryllium.rdc.lctl.gov/trac/transfer/browser/bagger/tags/1.9.0.0/htdocs/bagger/bagger.jar?format=raw"/>
+      <jar href="https://rdc.lctl.gov/trac/transfer/browser/bagger/tags/1.11/htdocs/bagger/bagger.jar?format=raw"/>
    </resources>
    <application-desc main-class="gov.loc.repository.bagger.BaggerStandalone"/>
 </jnlp> 
