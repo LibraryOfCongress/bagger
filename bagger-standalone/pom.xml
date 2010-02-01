@@ -5,7 +5,7 @@
   <parent>
     <groupId>loc-repository</groupId>
     <artifactId>bagger-maven</artifactId>
-    <version>1.11</version>
+    <version>1.12-SNAPSHOT</version>
   </parent>
 
   <artifactId>bagger-standalone</artifactId>
@@ -67,7 +67,7 @@
         	  <keypass>bagger-rdc</keypass>
 	          <storepass>bagger-rdc</storepass>
     	      <alias>rdc</alias>
-    	      <jarPath>${project.build.directory}/bagger-standalone-1.11-SNAPSHOT.jar</jarPath>
+    	      <jarPath>${project.build.directory}/bagger-standalone-1.12-SNAPSHOT.jar</jarPath>
         	  <signedjar>${project.build.directory}/../signed/bagger.jar</signedjar>
 	          <verify>true</verify>
     	    </configuration>
