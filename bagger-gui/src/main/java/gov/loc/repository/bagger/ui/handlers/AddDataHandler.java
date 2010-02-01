@@ -41,6 +41,7 @@ public class AddDataHandler extends AbstractAction implements Progress {
 		bag = bagView.getBag();
     	BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
 		addData();
+    	BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());
 	}
 
     public void addData() {
