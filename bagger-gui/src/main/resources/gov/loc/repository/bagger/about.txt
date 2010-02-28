@@ -4,11 +4,11 @@
 <td valign="top">
 <b>Bagger Application</b>
 <p>
-Version: 1.9.1
+Version: 1.12
 <p>
 <b>Bag It Library</b>
 <p>
-Version: 3.0
+Version: 3.2
 <p>
 <b>Java SE Development Kit (JDK)</b>
 <p>
