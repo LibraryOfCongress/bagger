@@ -2,12 +2,14 @@
 package gov.loc.repository.bagger;
 
 import java.awt.Dimension;
+import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.richclient.application.ApplicationWindow;
 import org.springframework.richclient.application.config.ApplicationWindowConfigurer;
 import org.springframework.richclient.application.config.DefaultApplicationLifecycleAdvisor;
+import org.springframework.richclient.application.docking.vldocking.VLDockingPageDescriptor;
 import org.springframework.richclient.application.setup.SetupWizard;
 //import org.springframework.richclient.command.ActionCommand;
 
@@ -38,6 +40,18 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor
                         "setupWizard", SetupWizard.class);
                 setupWizard.execute();
             }
+    	}
+    	
+    	//Make the view layout page as read-only so the user changes to view layout will 
+    	//be reset during restart.
+    	if(getApplication().getApplicationContext().containsBean("proxyPage"));
+    	{
+    		VLDockingPageDescriptor dockingPageDesc = (VLDockingPageDescriptor)getApplication().getApplicationContext().getBean("proxyPage");
+    		try {
+				dockingPageDesc.getInitialLayout().getFile().setReadOnly();
+			} catch (Exception e) {
+				log.debug("Error setting the view layout page as read-only", e);
+			}
     	}
     }
 

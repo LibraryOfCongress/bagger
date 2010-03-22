@@ -108,6 +108,14 @@
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-support</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-vldocking</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.vlsolutions.swing</groupId>
+      <artifactId>docking</artifactId>
+    </dependency>
 
     <!-- Logging -->
     <dependency>

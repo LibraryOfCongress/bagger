@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xmlns="http://www.springframework.org/schema/beans" 
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:p="http://www.springframework.org/schema/p" 
   xsi:schemaLocation="http://www.springframework.org/schema/beans 
  classpath:org/springframework/beans/factory/xml/spring-beans-2.5.xsd"> 
 <!--  As you can see, I'm skipping this xml namespaces
@@ -23,12 +24,24 @@
   <bean id="baggerLifecycleAdvisor" class="gov.loc.repository.bagger.BaggerLifecycleAdvisor"> 
     <property name="windowCommandBarDefinitions"
       value="gov/loc/repository/bagger/ui/commands-context.xml" />
-    <property name="startingPageId" value="bagView" />
+    <property name="startingPageId" value="proxyPage" />
     <property name="registerableExceptionHandler" ref="exceptionHandler" />
     <property name="menubarBeanName" value="menuBar" />
+    <property name="toolbarBeanName" value="toolBar" />
     <property name="windowCommandManagerBeanName" value="windowCommandManager" />
   </bean>
-
+  
+  <bean id="proxyPage" 
+          class="org.springframework.richclient.application.docking.vldocking.VLDockingPageDescriptor">
+        <property name="initialLayout">
+            <bean class="org.springframework.core.io.ClassPathResource">
+                <constructor-arg type="java.lang.String">
+                    <value>gov/loc/repository/bagger/ui/layout/vldocking.xml</value>
+                </constructor-arg>
+            </bean>
+        </property>
+  </bean>
+  
   <bean id="exceptionHandler"
     class="org.springframework.richclient.exceptionhandling.delegation.DelegatingExceptionHandler">
     <property name="delegateList">
@@ -125,6 +138,12 @@
     <property name="rulesSourceId">
       <idref bean="rulesSource" />
     </property>
+    
+    <property name="registryEntries">
+        <map>
+           <entry key="org.springframework.richclient.command.CommandServices" value-ref="commandServices" />
+        </map>
+     </property>
   </bean>
 
   <bean id="applicationObjectConfigurer" depends-on="serviceLocator"
@@ -156,14 +175,16 @@
       </map>
     </property>
   </bean>
-
+   
   <bean id="lookAndFeelConfigurer"
     class="org.springframework.richclient.application.config.JGoodiesLooksConfigurer">
     <property name="popupDropShadowEnabled" value="false" />
     <property name="theme">
       <bean class="com.jgoodies.looks.plastic.theme.ExperienceBlue" />
     </property>
+    <property name="3DEnabled"   value="true"/>
   </bean>
+  
 <!-- 
   <bean name="statusBar" class="org.springframework.richclient.application.statusbar.support.DefaultStatusBar" 
 		depends-on="lookAndFeelConfigurer">
@@ -215,9 +236,18 @@
 
   <bean id="rulesSource"
     class="gov.loc.repository.bagger.domain.BaggerValidationRulesSource" />
+    
+  
+   <bean id="applicationPageFactory" depends-on="serviceLocator"
+       class="org.springframework.richclient.application.docking.vldocking.VLDockingApplicationPageFactory">
+  </bean>
 
-  <bean id="bagView" class="org.springframework.richclient.application.support.DefaultViewDescriptor">
+  <bean id="bagView" class="org.springframework.richclient.application.docking.vldocking.VLDockingViewDescriptor">
     <property name="viewClass" value="gov.loc.repository.bagger.ui.BagView" />
+    <property name="autoHideEnabled" value="true" />
+     <property name="floatEnabled" value="true" />
+     <property name="maximizeEnabled" value="true"/>
+    
     <property name="viewProperties">
       <map>
         <entry key="bagger" value-ref="bagger" />
@@ -225,15 +255,39 @@
       </map>
     </property>
   </bean>
+  
+  <bean id="profilesView" 
+     class="org.springframework.richclient.application.docking.vldocking.VLDockingViewDescriptor" depends-on="bagView">
+    <property name="viewClass" value="gov.loc.repository.bagger.ui.ProfilesView" />
+    <property name="autoHideEnabled" value="true" />
+    <property name="floatEnabled" value="true" />
+    <property name="maximizeEnabled" value="true"/>
+  </bean>
+  
+  <bean id="consoleView" 
+     class="org.springframework.richclient.application.docking.vldocking.VLDockingViewDescriptor" depends-on="bagView">
+    <property name="viewClass" value="gov.loc.repository.bagger.ui.ConsoleView" />
+    <property name="autoHideEnabled" value="true" />
+    <property name="floatEnabled" value="true" />
+    <property name="maximizeEnabled" value="true"/>
+   </bean>
 
   <bean id="newProfileWizard" class="gov.loc.repository.bagger.ui.NewProfileWizard">
   </bean>
+  
 
+  <!--  
   <bean id="exceptionHandlingView" class="org.springframework.richclient.application.support.DefaultViewDescriptor">
     <property name="viewClass" value="gov.loc.repository.bagger.exceptionhandling.ExceptionHandlingView" />
   </bean>
+  -->
 
   <bean id="setupWizard" class="org.springframework.richclient.application.setup.SetupWizard">
     <property name="licenseTextLocation" value="/gov/loc/repository/bagger/license.txt" />
   </bean>
+  
+ <bean id="commandServices" class="org.springframework.richclient.command.support.DefaultCommandServices" p:toolBarButtonConfigurer-ref="toolBarButtonConfigurer"/>
+
+ <bean id="toolBarButtonConfigurer" class="gov.loc.repository.bagger.BbToolBarCommandButtonConfigurer" p:useLargeIcons="true" />
+  
 </beans>

@@ -40,7 +40,8 @@ public class RemoveDataHandler extends AbstractAction {
 
     	log.debug("Bag payload size pre: " + b.getPayload().size());
 
-    	TreePath[] paths = bagView.bagPayloadTree.getCheckingPaths(); //bagPayloadTree.getSelectionPaths();
+    	TreePath[] paths = bagView.bagPayloadTree.getSelectionPaths();
+    	
     	if (paths != null) {
     		DefaultTreeModel model = (DefaultTreeModel)bagView.bagPayloadTree.getModel();
     		for (int i=0; i < paths.length; i++) {

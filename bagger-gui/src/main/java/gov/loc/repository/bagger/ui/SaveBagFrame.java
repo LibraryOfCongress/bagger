@@ -33,17 +33,25 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.richclient.command.AbstractCommand;
+import org.springframework.richclient.command.ActionCommand;
+import org.springframework.richclient.command.CommandGroup;
+import org.springframework.richclient.core.DefaultMessage;
+import org.springframework.richclient.dialog.TitlePane;
+import org.springframework.richclient.util.GuiStandardUtils;
 
 public class SaveBagFrame extends JFrame implements ActionListener {
 	private static final Log log = LogFactory.getLog(SaveBagFrame.class);
@@ -58,7 +66,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	JTextField bagNameField;
 	JLabel urlLabel;
 	JTextField urlField;
-	JButton saveAsButton;
+	JButton browseButton;
 	JButton okButton;
 	JButton cancelButton;
 	JRadioButton noneButton;
@@ -89,16 +97,82 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         this.setBounds(300,200, 600, 400);
         pack();
     }
+	
+	protected JComponent createButtonBar() {
+		CommandGroup dialogCommandGroup = CommandGroup.createCommandGroup(null, getCommandGroupMembers());
+		JComponent buttonBar = dialogCommandGroup.createButtonBar();
+		GuiStandardUtils.attachDialogBorder(buttonBar);
+		return buttonBar;
+	}
+	
+	
+	protected Object[] getCommandGroupMembers() {
+		return new AbstractCommand[] { finishCommand, cancelCommand };
+	}
+	
+	
+    /**
+	 * Initialize the standard commands needed on a Dialog: Ok/Cancel.
+	 */
+	private void initStandardCommands() {
+		finishCommand = new ActionCommand(getFinishCommandId()) {
+			public void doExecuteCommand() {
+				
+				new OkSaveBagHandler().actionPerformed(null);
+
+			}
+		};
+
+
+		cancelCommand = new ActionCommand(getCancelCommandId()) {
+
+			public void doExecuteCommand() {
+				new CancelSaveBagHandler().actionPerformed(null);
+			}
+		};
+	}
+	
+	
+	
+	protected String getFinishCommandId() {
+		return DEFAULT_FINISH_COMMAND_ID;
+	}
+	
+	protected String getCancelCommandId() {
+		return DEFAULT_CANCEL_COMMAND_ID;
+	}
+	
+	protected static final String DEFAULT_FINISH_COMMAND_ID = "okCommand";
+
+	protected static final String DEFAULT_CANCEL_COMMAND_ID = "cancelCommand";
+	
+	private ActionCommand finishCommand;
+
+	private ActionCommand cancelCommand;
+	
+	
 
     private JPanel createComponents() {
         Border border = new EmptyBorder(5, 5, 5, 5);
+        
+        TitlePane titlePane = new TitlePane();
+        initStandardCommands();
+        JPanel pageControl = new JPanel(new BorderLayout());
+		JPanel titlePaneContainer = new JPanel(new BorderLayout());
+		titlePane.setTitle(bagView.getPropertyMessage("SaveBagFrame.title"));
+		titlePane.setMessage( new DefaultMessage(bagView.getPropertyMessage("Define the Bag settings")));
+		titlePaneContainer.add(titlePane.getControl());
+		titlePaneContainer.add(new JSeparator(), BorderLayout.SOUTH);
+		pageControl.add(titlePaneContainer, BorderLayout.NORTH);
+		JPanel contentPane = new JPanel();
 
         // TODO: Add bag name field
     	// TODO: Add save name file selection button
-    	saveAsButton = new JButton(getMessage("bag.button.browse"));
-    	saveAsButton.addActionListener(new SaveBagAsHandler());
-        saveAsButton.setEnabled(true);
-        saveAsButton.setToolTipText(getMessage("bag.button.browse.help"));
+		JLabel location = new JLabel("Save in:");
+    	browseButton = new JButton(getMessage("bag.button.browse"));
+    	browseButton.addActionListener(new SaveBagAsHandler());
+        browseButton.setEnabled(true);
+        browseButton.setToolTipText(getMessage("bag.button.browse.help"));
     	String fileName = "";
     	if (bag != null) fileName = bag.getName();
     	bagNameField = new JTextField(fileName);
@@ -236,13 +310,13 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         isVerifyCheckbox.addActionListener(new VerifyHandler());
         isVerifyCheckbox.setToolTipText(getMessage("bag.isverify.help"));
 
-    	okButton = new JButton("Save");
-    	okButton.addActionListener(new OkSaveBagHandler());
-        okButton.setEnabled(true);
-
-    	cancelButton = new JButton("Cancel");
-    	cancelButton.addActionListener(new CancelSaveBagHandler());
-    	cancelButton.setEnabled(true);
+//    	okButton = new JButton("Save");
+//    	okButton.addActionListener(new OkSaveBagHandler());
+//        okButton.setEnabled(true);
+//
+//    	cancelButton = new JButton("Cancel");
+//    	cancelButton.addActionListener(new CancelSaveBagHandler());
+//    	cancelButton.setEnabled(true);
         
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
@@ -250,17 +324,28 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         int row = 0;
+        
         buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(saveAsButton, glbc);
-        panel.add(saveAsButton);
-        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
+        layout.setConstraints(location, glbc);
+        panel.add(location);
+        
+        buildConstraints(glbc, 2, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.EAST); 
+        glbc.ipadx=5;
+        layout.setConstraints(browseButton, glbc);
+        glbc.ipadx=0;
+        panel.add(browseButton);
+        
+        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        glbc.ipadx=5;
         layout.setConstraints(bagNameField, glbc);
+        glbc.ipadx=0;
         panel.add(bagNameField);
+        
         row++;
         buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
         layout.setConstraints(holeyLabel, glbc);
         panel.add(holeyLabel);
-        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.WEST, GridBagConstraints.WEST); 
         layout.setConstraints(holeyCheckbox, glbc);
         panel.add(holeyCheckbox);
         row++;
@@ -312,15 +397,23 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
         layout.setConstraints(isVerifyCheckbox, glbc);
     	panel.add(isVerifyCheckbox);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(cancelButton, glbc);
-    	panel.add(cancelButton);
-        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.NONE, GridBagConstraints.CENTER); 
-        layout.setConstraints(okButton, glbc);
-    	panel.add(okButton);
-        
-    	return panel;
+//        row++;
+//        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+//        layout.setConstraints(cancelButton, glbc);
+//    	panel.add(cancelButton);
+//        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.NONE, GridBagConstraints.CENTER); 
+//        layout.setConstraints(okButton, glbc);
+//    	panel.add(okButton);
+    	
+    	GuiStandardUtils.attachDialogBorder(contentPane);
+		pageControl.add(panel);
+		JComponent buttonBar = createButtonBar();
+		pageControl.add(buttonBar,BorderLayout.SOUTH);
+	
+		this.pack();
+		return pageControl;
+    	
+ 
     }
     
     public void setBag(DefaultBag bag) {

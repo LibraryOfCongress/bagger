@@ -64,7 +64,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 		Application app = Application.instance();
 		ApplicationPage page = app.getActiveWindow().getPage();
 		PageComponent component = page.getActiveComponent();
-		if (component != null) this.bagView = (BagView) component;
+		if (component != null) this.bagView = BagView.instance;
 		else this.bagView = bagView;
 		if (bagView != null) {
 			bag = bagView.getBag();

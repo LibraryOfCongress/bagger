@@ -8,6 +8,7 @@ import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
 
 import javax.swing.DropMode;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
@@ -25,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-public class BagTree extends CheckboxTree {
+public class BagTree extends JTree {
 	private static final long serialVersionUID = -5361474872106399068L;
 	private static final Log log = LogFactory.getLog(BagTree.class);
 	private int BAGTREE_WIDTH = 400;
@@ -38,6 +39,7 @@ public class BagTree extends CheckboxTree {
 	private String basePath;
 	private DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(AbstractBagConstants.DATA_DIRECTORY);
 	private ArrayList<DefaultMutableTreeNode> srcNodes = new ArrayList<DefaultMutableTreeNode>();
+	List<TreeSelectionListener> selectionListeners = new ArrayList<TreeSelectionListener>();
 	
 	public BagTree(BagView bagView, String path, boolean isPayload) {
 		super();
@@ -51,6 +53,7 @@ public class BagTree extends CheckboxTree {
         this.setDropMode(DropMode.ON_OR_INSERT);
         this.setTransferHandler(new BagTreeTransferHandler(bagView, isPayload));
         this.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
+        bagView.registerTreeListener(path,this);
 	}
 	
 	private void initialize() {
@@ -60,7 +63,7 @@ public class BagTree extends CheckboxTree {
 		//setCheckingPath(rootPath);
         setAnchorSelectionPath(rootPath);
         makeVisible(rootPath);
-        getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE);
+        //getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE);
 		setLargeModel(true);
         setPreferredSize(getTreeSize());
         initListeners();
@@ -228,21 +231,25 @@ public class BagTree extends CheckboxTree {
     }
 
 	private void initListeners() {
-        addTreeCheckingListener(new TreeCheckingListener() {
-            public void valueChanged(TreeCheckingEvent e) {
-            	TreePath epath = new TreePath(e.getLeadingPath().getLastPathComponent());
-                //log.info("BagTree.addTreeCheckingListener valueChanged: " + e.getLeadingPath().getLastPathComponent());
-            	if (!e.isChecked()) {
-            		//log.info("BagTree.addTreeCheckingListener remove: " + (e.getLeadingPath().getLastPathComponent()));
-            	}
-                scrollPathToVisible(epath);
-                makeVisible(epath);
-            }
-        });	
+//        addTreeCheckingListener(new TreeCheckingListener() {
+//            public void valueChanged(TreeCheckingEvent e) {
+//            	TreePath epath = new TreePath(e.getLeadingPath().getLastPathComponent());
+//                //log.info("BagTree.addTreeCheckingListener valueChanged: " + e.getLeadingPath().getLastPathComponent());
+//            	if (!e.isChecked()) {
+//            		//log.info("BagTree.addTreeCheckingListener remove: " + (e.getLeadingPath().getLastPathComponent()));
+//            	}
+//                scrollPathToVisible(epath);
+//                makeVisible(epath);
+//            }
+//        });	
         addTreeSelectionListener(new TreeSelectionListener() {
         	public void valueChanged(TreeSelectionEvent e) {
         		DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
         		if (node == null) return;
+        		for(TreeSelectionListener listener:selectionListeners)
+        		{
+        			listener.valueChanged(e);
+        		}
         		//Object nodeInfo = node.getUserObject();
         	}
         });
@@ -260,6 +267,12 @@ public class BagTree extends CheckboxTree {
                 invalidate();
         	}
         });
+	}
+	
+	public void addSelectionListener(TreeSelectionListener tsl)
+	{
+		//selectionListeners.add(tsl);
+		initListeners();
 	}
 	
 }

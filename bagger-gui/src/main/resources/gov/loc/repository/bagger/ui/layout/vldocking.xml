@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<VLDocking version="2.1">
+    <DockingDesktop name="proxyPage">
+        <DockingPanel>
+            <Split orientation="1" location="0.29">
+              
+               <Dockable>
+                    <Key dockName="bagView"/>
+                </Dockable>
+               
+                 <Split orientation="0" location="0.7">
+                 <Dockable>
+                    <Key dockName="profilesView"/>
+                </Dockable>
+                 <Dockable>
+                    <Key dockName="consoleView"/>
+                </Dockable>
+                 </Split>
+            </Split>
+        </DockingPanel>
+    </DockingDesktop>
+</VLDocking>

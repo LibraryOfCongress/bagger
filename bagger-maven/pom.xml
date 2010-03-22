@@ -141,6 +141,16 @@
       <artifactId>spring-richclient-sandbox</artifactId>
       <version>${richclient.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-vldocking</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.vlsolutions.swing</groupId>
+      <artifactId>docking</artifactId>
+      <version>2.1.4</version>
+    </dependency>
     
     <dependency>
       <groupId>org.acegisecurity</groupId>
