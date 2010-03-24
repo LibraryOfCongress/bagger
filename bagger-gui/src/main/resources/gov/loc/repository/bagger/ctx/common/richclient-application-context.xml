@@ -286,8 +286,19 @@
     <property name="licenseTextLocation" value="/gov/loc/repository/bagger/license.txt" />
   </bean>
   
+ <!--
  <bean id="commandServices" class="org.springframework.richclient.command.support.DefaultCommandServices" p:toolBarButtonConfigurer-ref="toolBarButtonConfigurer"/>
 
  <bean id="toolBarButtonConfigurer" class="gov.loc.repository.bagger.BbToolBarCommandButtonConfigurer" p:useLargeIcons="true" />
-  
+   
+ --> 
+ 
+ <bean id="commandServices" class="org.springframework.richclient.command.support.DefaultCommandServices">
+ <property name="toolBarButtonConfigurer"> <ref bean="toolBarButtonConfigurer"/> </property>
+ </bean> 
+
+ <bean id="toolBarButtonConfigurer" class="gov.loc.repository.bagger.BbToolBarCommandButtonConfigurer">
+ <property name="useLargeIcons" value="true" />
+ </bean> 
+   
 </beans>
