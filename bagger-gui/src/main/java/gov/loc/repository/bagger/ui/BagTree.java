@@ -43,6 +43,7 @@ public class BagTree extends JTree {
 	
 	public BagTree(BagView bagView, String path, boolean isPayload) {
 		super();
+		this.setShowsRootHandles(true);
 		basePath = path;
 		parentNode = new DefaultMutableTreeNode(basePath);
 		initialize();
