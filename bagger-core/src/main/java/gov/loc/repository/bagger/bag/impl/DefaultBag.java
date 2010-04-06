@@ -1,20 +1,11 @@
 package gov.loc.repository.bagger.bag.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.io.File;
-
 import gov.loc.repository.bagger.Contact;
-import gov.loc.repository.bagger.Project;
+import gov.loc.repository.bagger.Profile;
+import gov.loc.repository.bagger.ProfileField;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerFetch;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
-
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.BagFile;
@@ -23,26 +14,27 @@ import gov.loc.repository.bagit.BagItTxt;
 import gov.loc.repository.bagit.FetchTxt;
 import gov.loc.repository.bagit.Manifest;
 import gov.loc.repository.bagit.PreBag;
-import gov.loc.repository.bagit.ProgressListener;
 import gov.loc.repository.bagit.BagFactory.Version;
 import gov.loc.repository.bagit.FetchTxt.FilenameSizeUrl;
 import gov.loc.repository.bagit.Manifest.Algorithm;
-import gov.loc.repository.bagit.writer.Writer;
-import gov.loc.repository.bagit.writer.impl.FileSystemWriter;
-import gov.loc.repository.bagit.writer.impl.TarBz2Writer;
-import gov.loc.repository.bagit.writer.impl.TarGzWriter;
-import gov.loc.repository.bagit.writer.impl.TarWriter;
-import gov.loc.repository.bagit.writer.impl.ZipWriter;
-import gov.loc.repository.bagit.verify.Verifier;
-import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
-import gov.loc.repository.bagit.verify.impl.ParallelManifestChecksumVerifier;
-import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
-import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
-import gov.loc.repository.bagit.impl.StringBagFile;
 import gov.loc.repository.bagit.transformer.HolePuncher;
 import gov.loc.repository.bagit.transformer.impl.DefaultCompleter;
 import gov.loc.repository.bagit.transformer.impl.HolePuncherImpl;
 import gov.loc.repository.bagit.utilities.SimpleResult;
+import gov.loc.repository.bagit.verify.Verifier;
+import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
+import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
+import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
+import gov.loc.repository.bagit.writer.Writer;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,10 +67,7 @@ public class DefaultBag {
 	private boolean isHoley = false;
 	private boolean isSerial = true;
 	private boolean isNoProject = true;
-	private boolean isEdeposit = false;
-	private boolean isNdnp = false;
-	//TODO
-	private boolean isWdl = false;
+
 	private boolean isNewbag = true;
 	private boolean isBuildTagManifest = true;
 	private boolean isBuildPayloadManifest = true;
@@ -112,7 +101,7 @@ public class DefaultBag {
 	protected DefaultBagInfo bagInfo = null;
 	protected Verifier bagStrategy;
 	protected BaggerFetch fetch;
-	private Project project;
+	private Profile Profile;
 	private BagFactory bagFactory = new BagFactory();
 	private DefaultCompleter completer;
 	private boolean includeTags = false;
@@ -325,30 +314,6 @@ public class DefaultBag {
 		return this.isNoProject;
 	}
 	
-	public void isEdeposit(boolean b) {
-		this.isEdeposit = b;
-	}
-
-	public boolean isEdeposit() {
-		return this.isEdeposit;
-	}
-
-	public void isNdnp(boolean b) {
-		this.isNdnp = b;
-	}
-
-	public boolean isNdnp() {
-		return this.isNdnp;
-	}
-	//TODO
-	public void isWdl(boolean b) {
-		this.isWdl = b;
-	}
-
-	public boolean isWdl() {
-		return this.isWdl;
-	}
-	
 	public void isNewbag(boolean b) {
 		this.isNewbag = b;
 	}
@@ -491,19 +456,36 @@ public class DefaultBag {
 			return;
 		}
 		BaggerOrganization baggerOrganization = new BaggerOrganization();
-		Contact contact = new Contact();
+		Contact contact = new Contact(false);
 		if (bagInfoTxt.getContactName() != null && !bagInfoTxt.getContactName().trim().isEmpty()) 
-    		contact.setContactName(bagInfoTxt.getContactName());
+		{
+    		contact.setContactName(
+    				ProfileField.createProfileField(Contact.FIELD_CONTACT_NAME, bagInfoTxt.getContactName()));
+		}
 		else
-    		contact.setContactName("");
+		{
+    		contact.setContactName(ProfileField.createProfileField(Contact.FIELD_CONTACT_NAME, ""));
+		}
 		if (bagInfoTxt.getContactPhone() != null && !bagInfoTxt.getContactPhone().trim().isEmpty()) 
-    		contact.setTelephone(bagInfoTxt.getContactPhone());
+		{
+    		contact.setTelephone(ProfileField.createProfileField(
+    				            Contact.FIELD_CONTACT_PHONE,bagInfoTxt.getContactPhone()));
+		}
 		else
-    		contact.setTelephone("");
+		{
+			contact.setTelephone(ProfileField.createProfileField(
+		            Contact.FIELD_CONTACT_PHONE,""));
+		}
 		if (bagInfoTxt.getContactEmail() != null && !bagInfoTxt.getContactEmail().trim().isEmpty()) 
-    		contact.setEmail(bagInfoTxt.getContactEmail());
+		{
+    		contact.setEmail(ProfileField.createProfileField(
+		            Contact.FIELD_CONTACT_EMAIL,bagInfoTxt.getContactEmail()));
+		}
 		else
-    		contact.setEmail("");
+		{
+			contact.setEmail(ProfileField.createProfileField(
+		            Contact.FIELD_CONTACT_EMAIL,""));
+		}
 		baggerOrganization.setContact(contact);
 		if (bagInfoTxt.getSourceOrganization() != null && !bagInfoTxt.getSourceOrganization().trim().isEmpty()) 
     		baggerOrganization.setSourceOrganization(bagInfoTxt.getSourceOrganization());
@@ -516,156 +498,45 @@ public class DefaultBag {
 		this.bagInfo.setBagOrganization(baggerOrganization);
 		
 		//TODO
-		Contact toContact = new Contact();
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_TO_CONTACT_NAME))
-    		toContact.setContactName(bagInfoTxt.get(DefaultBagInfo.FIELD_TO_CONTACT_NAME));
+		Contact toContact = new Contact(true);
+		if (bagInfoTxt.containsKey(Contact.FIELD_TO_CONTACT_NAME))
+    		toContact.setContactName(
+    				ProfileField.createProfileField(Contact.FIELD_TO_CONTACT_NAME,bagInfoTxt.get(Contact.FIELD_TO_CONTACT_NAME)));
 		else
-    		toContact.setContactName("");
+			ProfileField.createProfileField(Contact.FIELD_TO_CONTACT_NAME,"");
 
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_TO_CONTACT_PHONE))
-    		toContact.setTelephone(bagInfoTxt.get(DefaultBagInfo.FIELD_TO_CONTACT_PHONE));
+		if (bagInfoTxt.containsKey(Contact.FIELD_TO_CONTACT_PHONE))
+    		toContact.setTelephone(ProfileField.createProfileField(Contact.FIELD_TO_CONTACT_PHONE,
+    				                                  bagInfoTxt.get(Contact.FIELD_TO_CONTACT_PHONE)));
 		else
-    		toContact.setTelephone("");
+			toContact.setTelephone(ProfileField.createProfileField(Contact.FIELD_TO_CONTACT_PHONE,""));
 
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_TO_CONTACT_EMAIL))
-    		toContact.setEmail(bagInfoTxt.get(DefaultBagInfo.FIELD_TO_CONTACT_EMAIL));
+		if (bagInfoTxt.containsKey(Contact.FIELD_TO_CONTACT_EMAIL))
+    		toContact.setEmail(ProfileField.createProfileField(Contact.FIELD_TO_CONTACT_EMAIL,
+    				bagInfoTxt.get(Contact.FIELD_TO_CONTACT_EMAIL)));
 		else
-    		toContact.setEmail("");
+    		toContact.setEmail(ProfileField.createProfileField(Contact.FIELD_TO_CONTACT_EMAIL,""));
 		
-		this.bagInfo.setToContactName(toContact.getContactName());
-		this.bagInfo.setToContactPhone(toContact.getTelephone());
-		this.bagInfo.setToContactEmail(toContact.getEmail());
+		this.bagInfo.setToContactName(toContact.getContactName().getFieldValue());
+		this.bagInfo.setToContactPhone(toContact.getContactName().getFieldValue());
+		this.bagInfo.setToContactEmail(toContact.getContactName().getFieldValue());
 		
-		/* */
-		if (bagInfoTxt.getExternalDescription() != null && !bagInfoTxt.getExternalDescription().trim().isEmpty())
-			this.bagInfo.setExternalDescription(bagInfoTxt.getExternalDescription());
-		else
-			this.bagInfo.setExternalDescription("");
-		if (bagInfoTxt.getBaggingDate() != null && !bagInfoTxt.getBaggingDate().trim().isEmpty())
-			this.bagInfo.setBaggingDate(bagInfoTxt.getBaggingDate());
-		else
-			this.bagInfo.setBaggingDate(DefaultBagInfo.getTodaysDate());
-		if (bagInfoTxt.getExternalIdentifier() != null && !bagInfoTxt.getExternalIdentifier().trim().isEmpty())
-			this.bagInfo.setExternalIdentifier(bagInfoTxt.getExternalIdentifier());
-		else
-			this.bagInfo.setExternalIdentifier("");
-		if (bagInfoTxt.getBagSize() != null && !bagInfoTxt.getBagSize().trim().isEmpty())
-			this.bagInfo.setBagSize(bagInfoTxt.getBagSize());
-		else
-			this.bagInfo.setBagSize("");
-		if (bagInfoTxt.getPayloadOxum() != null && !bagInfoTxt.getPayloadOxum().trim().isEmpty())
-			this.bagInfo.setPayloadOxum(bagInfoTxt.getPayloadOxum());
-		else
-			this.bagInfo.setPayloadOxum("");
-		if (bagInfoTxt.getBagGroupIdentifier() != null && !bagInfoTxt.getBagGroupIdentifier().trim().isEmpty())
-			this.bagInfo.setBagGroupIdentifier(bagInfoTxt.getBagGroupIdentifier());
-		else
-			this.bagInfo.setBagGroupIdentifier("");
-		if (bagInfoTxt.getBagCount() != null && !bagInfoTxt.getBagCount().trim().isEmpty())
-			this.bagInfo.setBagCount(bagInfoTxt.getBagCount());
-		else
-			this.bagInfo.setBagCount("");
-		if (bagInfoTxt.getInternalSenderIdentifier() != null && !bagInfoTxt.getInternalSenderIdentifier().trim().isEmpty())
-			this.bagInfo.setInternalSenderIdentifier(bagInfoTxt.getInternalSenderIdentifier());
-		else
-			this.bagInfo.setInternalSenderIdentifier("");
-		if (bagInfoTxt.getInternalSenderDescription() != null && !bagInfoTxt.getInternalSenderDescription().trim().isEmpty())
-			this.bagInfo.setInternalSenderDescription(bagInfoTxt.getInternalSenderDescription());
-		else
-			this.bagInfo.setInternalSenderDescription("");
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
-			String publisher = bagInfoTxt.get(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
-			if (publisher != null && !publisher.trim().isEmpty()) {
-				this.bagInfo.setPublisher(publisher);
-			} else {
-				this.bagInfo.setPublisher("");
+		for(String key: bagInfoTxt.keySet())
+		{
+			if(DefaultBagInfo.ignoreFields.contains(key))
+				continue;
+			else
+			{
+				BagInfoField infoField = new BagInfoField();
+				infoField.setLabel(key);
+				infoField.setName(key);
+				infoField.setValue(bagInfoTxt.get(key));
+				infoField.isEditable(true);
+				infoField.isEnabled(true);
+				this.bagInfo.getFieldMap().put(key, infoField);
+				//this.bagInfo.put(key,  bagInfoTxt.get(key));
 			}
-			this.isEdeposit(true);
 		}
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
-			String awardeePhase = bagInfoTxt.get(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
-			if (awardeePhase != null && !awardeePhase.trim().isEmpty()) {
-				this.bagInfo.setAwardeePhase(awardeePhase);
-			} else {
-				this.bagInfo.setAwardeePhase("");
-			}
-			this.isNdnp(true);
-		}
-		//TODO
-		//WDL Field setting from BagiInfoTxt
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT)) {
-			String additionalEquipment = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT);
-			if (additionalEquipment != null && !additionalEquipment.trim().isEmpty()) {
-				this.bagInfo.setAdditionalEquipment(additionalEquipment);
-			} else {
-				this.bagInfo.setAdditionalEquipment("");
-			}
-			this.isWdl(true);
-		}
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS)) {
-			String mediaIdentifiers = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS);
-			if (mediaIdentifiers != null && !mediaIdentifiers.trim().isEmpty()) {
-				this.bagInfo.setMediaIdentifiers(mediaIdentifiers);
-			} else {
-				this.bagInfo.setMediaIdentifiers("");
-			}
-			this.isWdl(true);
-		}
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED)) {
-			String numberOfMediaShipped = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED);
-			if (numberOfMediaShipped != null && !numberOfMediaShipped.trim().isEmpty()) {
-				this.bagInfo.setNumberOfMediaShipped(numberOfMediaShipped);
-			} else {
-				this.bagInfo.setNumberOfMediaShipped("");
-			}
-			this.isWdl(true);
-		}
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_DATE)) {
-			String shipDate = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_DATE);
-			if (shipDate != null && !shipDate.trim().isEmpty()) {
-				this.bagInfo.setShipDate(shipDate);
-			} else {
-				this.bagInfo.setShipDate("");
-			}
-			this.isWdl(true);
-		}
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA)) {
-			String shipMedia = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA);
-			if (shipMedia != null && !shipMedia.trim().isEmpty()) {
-				this.bagInfo.setShipMedia(shipMedia);
-			} else {
-				this.bagInfo.setShipMedia("");
-			}
-			this.isWdl(true);
-		}
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_METHOD)) {
-			String shipMethod = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_METHOD);
-			if (shipMethod != null && !shipMethod.trim().isEmpty()) {
-				this.bagInfo.setShipMethod(shipMethod);
-			} else {
-				this.bagInfo.setShipMethod("");
-			}
-			this.isWdl(true);
-		}
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_TO_ADDRESS)) {
-			String shipToAddress = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_TO_ADDRESS);
-			if (shipToAddress != null && !shipToAddress.trim().isEmpty()) {
-				this.bagInfo.setShipToAddress(shipToAddress);
-			} else {
-				this.bagInfo.setShipToAddress("");
-			}
-			this.isWdl(true);
-		}
-		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER)) {
-			String shipTrackingNumber = bagInfoTxt.get(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER);
-			if (shipTrackingNumber != null && !shipTrackingNumber.trim().isEmpty()) {
-				this.bagInfo.setShipTrackingNumber(shipTrackingNumber);
-			} else {
-				this.bagInfo.setShipTrackingNumber("");
-			}
-			this.isWdl(true);
-		}
-		
 /* */
 		if (bagInfoTxt.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
 			String lcProject = bagInfoTxt.get(DefaultBagInfo.FIELD_LC_PROJECT);
@@ -800,11 +671,11 @@ public class DefaultBag {
 	private void copyMapToBag(String key, String value) {
 		try {
 			if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_CONTACT_NAME)) {
-				bagInfo.getBagOrganization().getContact().setContactName(value);
+				bagInfo.getBagOrganization().getContact().getContactName().setFieldValue(value);
 			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_CONTACT_PHONE)) {
-				bagInfo.getBagOrganization().getContact().setTelephone(value);
+				bagInfo.getBagOrganization().getContact().getTelephone().setFieldValue(value);;
 			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_CONTACT_EMAIL)) {
-				bagInfo.getBagOrganization().getContact().setEmail(value);
+				bagInfo.getBagOrganization().getContact().getEmail().setFieldValue(value);
 			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_SOURCE_ORGANIZATION)) {
 				bagInfo.getBagOrganization().setSourceOrganization(value);
 			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_ORGANIZATION_ADDRESS)) {
@@ -827,15 +698,13 @@ public class DefaultBag {
 				bagInfo.setInternalSenderIdentifier(value);
 			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_INTERNAL_SENDER_DESCRIPTION)) {
 				bagInfo.setInternalSenderDescription(value);
-			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
-				bagInfo.setPublisher(value);
-				this.isEdeposit(true);
-			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
-				bagInfo.setAwardeePhase(value);
-				this.isNdnp(true);
-			} else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
+			}  else if (key.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
 				bagInfo.setLcProject(value);
 				this.isNoProject(true);
+			}
+			else 
+			{
+				bagInfo.put(key, value);
 			}
 		} catch (Exception e) {
 		}
@@ -852,88 +721,27 @@ public class DefaultBag {
 				if (!baggerOrganization.getOrganizationAddress().trim().isEmpty()) {
 					bilBag.getBagInfoTxt().setOrganizationAddress(baggerOrganization.getOrganizationAddress());
 				}
-				if (!contact.getContactName().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setContactName(contact.getContactName());
+				if (!contact.getContactName().getFieldValue().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().setContactName(contact.getContactName().getFieldValue());
 				}
-				if (!contact.getTelephone().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone());
+				if (!contact.getTelephone().getFieldValue().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().setContactPhone(contact.getTelephone().getFieldValue());
 				}
-				if (!contact.getEmail().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().setContactEmail(contact.getEmail());
+				if (!contact.getEmail().getFieldValue().trim().isEmpty()) {
+					bilBag.getBagInfoTxt().setContactEmail(contact.getEmail().getFieldValue());
 				}
 				//TODO
 				if ((bagInfo.getToContactName() != null) && !bagInfo.getToContactName().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_TO_CONTACT_NAME, bagInfo.getToContactName());		
+					bilBag.getBagInfoTxt().put(Contact.FIELD_TO_CONTACT_NAME, bagInfo.getToContactName());		
 				}
 				if ((bagInfo.getToContactPhone() != null) && !bagInfo.getToContactPhone().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_TO_CONTACT_PHONE, bagInfo.getToContactPhone());		
+					bilBag.getBagInfoTxt().put(Contact.FIELD_TO_CONTACT_PHONE, bagInfo.getToContactPhone());		
 				}
 				if ((bagInfo.getToContactName() != null) && !bagInfo.getToContactEmail().trim().isEmpty()) {
-					bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_TO_CONTACT_EMAIL, bagInfo.getToContactEmail());		
-				}
-				
-				boolean useFieldMap = false;
-				if (useFieldMap) {
-					if (!bagInfo.getExternalDescription().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().setExternalDescription(bagInfo.getExternalDescription());
-					}
-					if (!bagInfo.getBaggingDate().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().setBaggingDate(bagInfo.getBaggingDate());
-					}
-					if (!bagInfo.getExternalIdentifier().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().setExternalIdentifier(bagInfo.getExternalIdentifier());
-					}
-					if (!bagInfo.getBagSize().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().setBagSize(bagInfo.getBagSize());
-					}
-					if (!bagInfo.getPayloadOxum().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().setPayloadOxum(bagInfo.getPayloadOxum());
-					}
-					if (!bagInfo.getBagGroupIdentifier().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
-					}
-					if (!bagInfo.getBagCount().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().setBagCount(bagInfo.getBagCount());
-					}
-					if (!bagInfo.getInternalSenderIdentifier().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
-					}
-					if (!bagInfo.getInternalSenderDescription().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().setInternalSenderDescription(bagInfo.getInternalSenderDescription());			
-					}
-					if (this.isEdeposit() && !bagInfo.getPublisher().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER, bagInfo.getPublisher());
-					}
-					if (this.isNdnp() && !bagInfo.getAwardeePhase().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE, bagInfo.getAwardeePhase());		
-					}
-					//TODO
-					if (this.isWdl() && !bagInfo.getMediaIdentifiers().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS, bagInfo.getMediaIdentifiers());		
-					}
-					if (this.isWdl() && !bagInfo.getNumberOfMediaShipped().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED, bagInfo.getNumberOfMediaShipped());		
-					}
-					if (this.isWdl() && !bagInfo.getAdditionalEquipment().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT, bagInfo.getAdditionalEquipment());		
-					}
-					if (this.isWdl() && !bagInfo.getShipDate().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_SHIP_DATE, bagInfo.getShipDate());		
-					}
-					if (this.isWdl() && !bagInfo.getShipMethod().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_SHIP_METHOD, bagInfo.getShipMethod());		
-					}
-					if (this.isWdl() && !bagInfo.getShipTrackingNumber().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER, bagInfo.getShipTrackingNumber());		
-					}
-					if (this.isWdl() && !bagInfo.getShipMedia().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA, bagInfo.getShipMedia());		
-					}
-					if (!this.isNoProject() && !bagInfo.getLcProject().trim().isEmpty()) {
-						bilBag.getBagInfoTxt().put(DefaultBagInfo.FIELD_LC_PROJECT, bagInfo.getLcProject());
-					}
+					bilBag.getBagInfoTxt().put(Contact.FIELD_TO_CONTACT_EMAIL, bagInfo.getToContactEmail());		
 				}
 			}
+			
 			display("DefaultBag.copyFormToBag bagInfo:" + this.bilBag.getBagInfoTxt());
 		} catch (Exception e) {
 		}
@@ -1049,12 +857,14 @@ public class DefaultBag {
 		return this.bilBag.getPayload().size();
 	}
 	
-	public void setProject(Project project) {
-		this.project = project;
+	public void setProfile(Profile Profile) {
+		this.Profile = Profile;
+		if(this.bagInfo != null && this.bagInfo.getFieldMap()!=null)
+		this.bagInfo.getFieldMap().clear();
 	}
 
-	public Project getProject() {
-		return this.project;
+	public Profile getProfile() {
+		return this.Profile;
 	}
 
 	public List<String> getPayloadPaths() {

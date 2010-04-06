@@ -23,7 +23,7 @@ public class BaggerOrganization {
 
 	private String organizationAddress = "";
 
-	private Contact contact = new Contact();
+	private Contact contact = new Contact(false);
 
 	public String getSourceOrganization() {
 		return this.sourceOrganization;

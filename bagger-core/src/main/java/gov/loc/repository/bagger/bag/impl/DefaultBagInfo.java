@@ -1,5 +1,14 @@
 package gov.loc.repository.bagger.bag.impl;
 
+import gov.loc.repository.bagger.Contact;
+import gov.loc.repository.bagger.Organization;
+import gov.loc.repository.bagger.Profile;
+import gov.loc.repository.bagger.ProfileField;
+import gov.loc.repository.bagger.bag.BagInfoField;
+import gov.loc.repository.bagger.bag.BaggerOrganization;
+import gov.loc.repository.bagit.BagInfoTxt;
+import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
+
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,13 +23,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import gov.loc.repository.bagger.Contact;
-import gov.loc.repository.bagger.bag.BagInfoField;
-import gov.loc.repository.bagger.bag.BaggerOrganization;
-
-import gov.loc.repository.bagit.BagInfoTxt;
-import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
-
 /*
  * @author Jon Steinbach
  */
@@ -28,32 +30,11 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	private static final long serialVersionUID = 1L;
 
 	private static final Log log = LogFactory.getLog(DefaultBagInfo.class);
-	
 	public static final String FIELD_NEW_COMPONENT = "New";
-	public static final String FIELD_EDEPOSIT_PUBLISHER = "Publisher";
-	public static final String FIELD_NDNP_AWARDEE_PHASE = "Awardee-Phase";
-	public static final String FIELD_WDL_MEDIA_IDENTIFIERS = "Media-Identifiers";
-	public static final String FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED = "Number-Of-Media-Shipped";
-	public static final String FIELD_WDL_ADDITIONAL_EQUIPMENT = "Additional-Equipment";
-	public static final String FIELD_WDL_SHIP_DATE = "Ship-Date";
-	public static final String FIELD_WDL_SHIP_METHOD = "Ship-Method";
-	public static final String FIELD_WDL_SHIP_TRACKING_NUMBER = "Ship-Tracking-Number";
-	public static final String FIELD_WDL_SHIP_MEDIA = "Ship-Media";
-	public static final String FIELD_WDL_SHIP_TO_ADDRESS = "Ship-To-Address";	
 	public static final String FIELD_LC_PROJECT = "LC-Project";
 	
-	//TODO 
-	//ProfileSet missing ToContact fields
-	public static final String FIELD_TO_CONTACT_NAME = "To-Contact-Name";
-	public static final String FIELD_TO_CONTACT_PHONE = "To-Contact-Phone";
-	public static final String FIELD_TO_CONTACT_EMAIL = "To-Contact-Email";	
-	
-	//TODO
-	//WDL Specific profile Values 
-	public static final String WDL_TO_CONTACT_NAME = "Sandy Bostian";
-	public static final String WDL_TO_CONTACT_PHONE = "+1.202.707.2342";
-	public static final String WDL_TO_CONTACT_EMAIL = "sbos@loc.gov";	
 
+	
 	protected DefaultBag baggerBag = null;
 	public BagInfoTxt standardBagInfo = null;
 	private String bagName = new String();
@@ -61,12 +42,12 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	private HashMap<String, BagInfoField> profileMap = new HashMap<String, BagInfoField>();
 	private HashMap<String, BagInfoField> fieldMap = new HashMap<String, BagInfoField>();
 	//TODO
-	public static final String[] profileStrings = {FIELD_SOURCE_ORGANIZATION, FIELD_ORGANIZATION_ADDRESS, FIELD_CONTACT_NAME, FIELD_CONTACT_PHONE, FIELD_CONTACT_EMAIL, FIELD_TO_CONTACT_NAME, FIELD_TO_CONTACT_PHONE, FIELD_TO_CONTACT_EMAIL};
+	public static final String[] profileStrings = {FIELD_SOURCE_ORGANIZATION, FIELD_ORGANIZATION_ADDRESS, FIELD_CONTACT_NAME, FIELD_CONTACT_PHONE, FIELD_CONTACT_EMAIL, 
+		                                       Contact.FIELD_TO_CONTACT_NAME,  Contact.FIELD_TO_CONTACT_PHONE,  Contact.FIELD_TO_CONTACT_EMAIL};
+	
+	public static final ArrayList<String> ignoreFields =  new ArrayList(Arrays.asList(profileStrings));
 	public static final HashSet<String> profileSet = new HashSet<String>(Arrays.asList(profileStrings));	
-	public static String[] profileReadOnlyStrings = {FIELD_TO_CONTACT_NAME, FIELD_TO_CONTACT_PHONE, FIELD_TO_CONTACT_EMAIL};
-	public static final HashSet<String> profileReadOnlySet = new HashSet<String>(Arrays.asList(profileReadOnlyStrings));
-
-	public static String[] readOnlyStrings = {FIELD_LC_PROJECT, FIELD_PAYLOAD_OXUM };
+	public static String[] readOnlyStrings = { FIELD_LC_PROJECT, FIELD_PAYLOAD_OXUM };
 	public static final HashSet<String> readOnlySet = new HashSet<String>(Arrays.asList(readOnlyStrings));
 	public static final String[] textAreaStrings = {FIELD_EXTERNAL_DESCRIPTION, FIELD_INTERNAL_SENDER_DESCRIPTION};
 	public static final HashSet<String> textAreaSet = new HashSet<String>(Arrays.asList(textAreaStrings));
@@ -74,18 +55,8 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	private HashSet<Object> requiredSet = new HashSet<Object>();
 
 	private String name;
-	private String content;
-	private String publisher = "";
-	private String awardeePhase = "";
-	private String mediaIdentifiers="";
-	private String numberOfMediaShipped="";
-	private String additionalEquipment="";
-	private String shipDate="";
-	private String shipMethod="";
-	private String shipTrackingNumber="";
-	private String shipMedia="";
-	private String shipToAddress="";
-	private String lcProject = "";
+
+	private String profileName ="";
 
 	public DefaultBagInfo(DefaultBag baggerBag) {
 		super(baggerBag.getBag().getBagConstants());
@@ -120,14 +91,6 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		return this.name;
 	}
 
-	public void setContent(String data) {
-		this.content = data;
-	}
-
-	public String getContent() {
-		return this.content;
-	}
-
 	public Object[] getRequiredStrings() {
 		return this.requiredStrings;
 	}
@@ -146,98 +109,6 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		this.requiredSet = s;
 	}
 	
-	public void setPublisher(String publisher) {
-		if (publisher != null) this.publisher = publisher;
-	}
-	
-	public String getPublisher() {
-		return this.publisher;
-	}
-
-	public void setAwardeePhase(String phase) {
-		if (phase != null) this.awardeePhase = phase;
-	}
-	
-	public String getAwardeePhase() {
-		return this.awardeePhase;
-	}
-	
-	public void setMediaIdentifiers(String mediaIdentifiers) {
-		if (mediaIdentifiers != null) this.mediaIdentifiers = mediaIdentifiers;
-	}
-
-
-	public String getMediaIdentifiers() {
-		return mediaIdentifiers;
-	}
-
-
-	public void setNumberOfMediaShipped(String numberOfMediaShipped) {
-		if (numberOfMediaShipped != null) this.numberOfMediaShipped = numberOfMediaShipped;
-	}
-
-
-	public String getNumberOfMediaShipped() {
-		return numberOfMediaShipped;
-	}
-
-	public void setAdditionalEquipment(String additionalEquipment) {
-		if (additionalEquipment != null) this.additionalEquipment = additionalEquipment;
-	}
-
-
-	public String getAdditionalEquipment() {
-		return additionalEquipment;
-	}
-
-	public void setShipDate(String shipDate) {
-		if (shipDate != null) this.shipDate = shipDate;
-	}
-
-	public String getShipDate() {
-		return shipDate;
-	}
-
-	public void setShipMethod(String shipMethod) {
-		if (shipMethod != null) this.shipMethod = shipMethod;
-	}
-
-	public String getShipMethod() {
-		return shipMethod;
-	}
-
-	public void setShipTrackingNumber(String shipTrackingNumber) {
-		if (shipTrackingNumber != null) this.shipTrackingNumber = shipTrackingNumber;
-	}
-
-	public String getShipTrackingNumber() {
-		return shipTrackingNumber;
-	}
-
-	public void setShipMedia(String shipMedia) {
-		if (shipMedia != null) this.shipMedia = shipMedia;
-	}
-
-	public String getShipMedia() {
-		return shipMedia;
-	}
-
-	public void setShipToAddress(String shipToAddress) {
-		if (shipToAddress != null) this.shipToAddress = shipToAddress;
-	}
-
-	public String getShipToAddress() {
-		return shipToAddress;
-	}
-
-	public void setLcProject(String project) {
-		if (project != null) this.lcProject = project;
-	}
-	
-	public String getLcProject() {
-		return this.lcProject;
-	}
-
 	public void setBagOrganization(BaggerOrganization baggerOrganization) {
 		try {
 			this.setSourceOrganization(baggerOrganization.getSourceOrganization());
@@ -246,12 +117,15 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			this.baggerOrganization.setOrganizationAddress(this.getOrganizationAddress());
 
 			Contact contact = baggerOrganization.getContact();
-			this.setContactName(contact.getContactName());
-			this.setContactPhone(contact.getTelephone());
-			this.setContactEmail(contact.getEmail());
-			this.baggerOrganization.getContact().setContactName(this.getContactName());
-			this.baggerOrganization.getContact().setTelephone(this.getContactPhone());
-			this.baggerOrganization.getContact().setEmail(this.getContactEmail());
+			this.setContactName(contact.getContactName().getFieldValue());
+			this.setContactPhone(contact.getTelephone().getFieldValue());
+			this.setContactEmail(contact.getEmail().getFieldValue());
+			this.baggerOrganization.getContact().setContactName(
+					 ProfileField.createProfileField(Contact.FIELD_CONTACT_NAME,this.getContactName()));
+			this.baggerOrganization.getContact().setTelephone(
+					ProfileField.createProfileField(Contact.FIELD_CONTACT_PHONE,this.getContactPhone()));
+			this.baggerOrganization.getContact().setEmail(
+					ProfileField.createProfileField(Contact.FIELD_CONTACT_EMAIL,this.getContactEmail()));
 		} catch (Exception e) {
 		}
 	}
@@ -264,104 +138,21 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		try {
 			BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
 			this.setBagOrganization(baggerOrganization);
-			if (bagInfo.getExternalDescription() != null && !bagInfo.getExternalDescription().isEmpty())
-				this.setExternalDescription(bagInfo.getExternalDescription());
-			else
-				this.setExternalDescription("");
-			if (bagInfo.getBaggingDate() != null && !bagInfo.getBaggingDate().isEmpty()) {
-				this.setBaggingDate(bagInfo.getBaggingDate());
-			} else {
-				this.setBaggingDate(DefaultBagInfo.getTodaysDate());
-			}
-			if (bagInfo.getExternalIdentifier() != null && !bagInfo.getExternalIdentifier().isEmpty())
-				this.setExternalIdentifier(bagInfo.getExternalIdentifier());
-			else
-				this.setExternalIdentifier("");
-			if (bagInfo.getBagSize() != null && !bagInfo.getBagSize().isEmpty())
-				this.setBagSize(bagInfo.getBagSize());
-			else
-				this.setBagSize("");
-			if (bagInfo.getPayloadOxum() != null && !bagInfo.getPayloadOxum().isEmpty())
-				this.setPayloadOxum(bagInfo.getPayloadOxum());
-			else
-				this.setPayloadOxum("");
-			if (bagInfo.getBagGroupIdentifier() != null && !bagInfo.getBagGroupIdentifier().isEmpty())
-				this.setBagGroupIdentifier(bagInfo.getBagGroupIdentifier());
-			else
-				this.setBagGroupIdentifier("");
-			if (bagInfo.getBagCount() != null && !bagInfo.getBagCount().isEmpty())
-				this.setBagCount(bagInfo.getBagCount());
-			else
-				this.setBagCount("");
-			if (bagInfo.getInternalSenderIdentifier() != null && !bagInfo.getInternalSenderIdentifier().equalsIgnoreCase("null"))
-				this.setInternalSenderIdentifier(bagInfo.getInternalSenderIdentifier());
-			else
-				this.setInternalSenderIdentifier("");
-			if (bagInfo.getInternalSenderDescription() != null && !bagInfo.getInternalSenderDescription().equalsIgnoreCase("null"))
-				this.setInternalSenderDescription(bagInfo.getInternalSenderDescription());
-			else
-				this.setInternalSenderDescription("");
-			if (this.baggerBag.isEdeposit()) {
-				if (bagInfo.getPublisher() != null && !bagInfo.getPublisher().isEmpty())
-					this.setPublisher(bagInfo.getPublisher());
+			
+			for(String key : bagInfo.keySet())
+			{
+				if(ignoreFields.contains(key))
+					continue;
+				
+				String value = this.get(key);
+				String bagValue = bagInfo.get(key);
+				if (value != null && bagValue != null && !bagValue.isEmpty())
+					this.put(key,value);
 				else
-					this.setPublisher("");			
-			}
-			if (this.baggerBag.isNdnp()) {
-				if (bagInfo.getAwardeePhase() != null && !bagInfo.getAwardeePhase().isEmpty())
-					this.setAwardeePhase(bagInfo.getAwardeePhase());
-				else
-					this.setAwardeePhase("");			
-			}
-			if (this.baggerBag.isWdl()) {
-				if (bagInfo.getMediaIdentifiers() != null && !bagInfo.getMediaIdentifiers().isEmpty())
-					this.setMediaIdentifiers(bagInfo.mediaIdentifiers);
-				else
-					this.setMediaIdentifiers("");
-
-				if (bagInfo.getNumberOfMediaShipped() != null && !bagInfo.getNumberOfMediaShipped().isEmpty())
-					this.setNumberOfMediaShipped(bagInfo.numberOfMediaShipped);
-				else
-					this.setNumberOfMediaShipped("");
-
-				if (bagInfo.getAdditionalEquipment() != null && !bagInfo.getAdditionalEquipment().isEmpty())
-					this.setAdditionalEquipment(bagInfo.additionalEquipment);
-				else
-					this.setAdditionalEquipment("");
-
-				if (bagInfo.getShipDate() != null && !bagInfo.getShipDate().isEmpty())
-					this.setShipDate(bagInfo.shipDate);
-				else
-					this.setShipDate("");
-
-				if (bagInfo.getShipMethod() != null && !bagInfo.getShipMethod().isEmpty())
-					this.setShipMethod(bagInfo.shipMethod);
-				else
-					this.setShipMethod("");
-
-				if (bagInfo.getShipTrackingNumber() != null && !bagInfo.getShipTrackingNumber().isEmpty())
-					this.setShipTrackingNumber(bagInfo.shipTrackingNumber);
-				else
-					this.setShipTrackingNumber("");
-
-				if (bagInfo.getShipMedia() != null && !bagInfo.getShipMedia().isEmpty())
-					this.setShipMedia(bagInfo.shipMedia);
-				else
-					this.setShipMedia("");
-
-				if (bagInfo.getShipToAddress() != null && !bagInfo.getShipToAddress().isEmpty())
-					this.setShipToAddress(bagInfo.shipToAddress);
-				else
-					this.setShipToAddress("");
-
+					this.put(key,"");
+				
 			}
 			
-			if (!this.baggerBag.isNoProject()) {
-				if (bagInfo.getLcProject() != null && !bagInfo.getLcProject().isEmpty())
-					this.setLcProject(bagInfo.getLcProject());
-				else
-					this.setLcProject("");
-			}
 		} catch (Exception e) {
 		}
 	}
@@ -369,163 +160,15 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	@Override
 	public String toString() {
 		StringBuffer content = new StringBuffer();
-		content.append(FIELD_SOURCE_ORGANIZATION + ": ");
-		if (this.getSourceOrganization() != null && !this.getSourceOrganization().isEmpty())
-			content.append(this.getSourceOrganization() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_ORGANIZATION_ADDRESS + ": ");
-		if (this.getOrganizationAddress() != null && !this.getOrganizationAddress().isEmpty())
-			content.append(this.getOrganizationAddress() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_CONTACT_NAME + ": ");
-		if (this.getContactName() != null && !this.getContactName().isEmpty())
-			content.append(this.getContactName() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_CONTACT_PHONE + ": ");
-		if (this.getContactPhone() != null && !this.getContactPhone().isEmpty())
-			content.append(this.getContactPhone() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_CONTACT_EMAIL + ": ");
-		if (this.getContactEmail() != null && !this.getContactEmail().isEmpty())
-			content.append(this.getContactEmail() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_TO_CONTACT_NAME + ": ");
-		if (this.getToContactName() != null && !this.getToContactName().isEmpty())
-			content.append(this.getToContactName() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_TO_CONTACT_PHONE + ": ");
-		if (this.getToContactPhone() != null && !this.getToContactPhone().isEmpty())
-			content.append(this.getToContactPhone() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_TO_CONTACT_EMAIL + ": ");
-		if (this.getToContactEmail() != null && !this.getToContactEmail().isEmpty())
-			content.append(this.getToContactEmail() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_EXTERNAL_DESCRIPTION + ": ");
-		if (this.getExternalDescription() != null && !this.getExternalDescription().isEmpty())
-			content.append(this.getExternalDescription() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_BAGGING_DATE + ": ");
-		if (this.getBaggingDate() != null && !this.getBaggingDate().isEmpty())
-			content.append(this.getBaggingDate() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_EXTERNAL_IDENTIFIER + ": ");
-		if (this.getExternalIdentifier() != null && !this.getExternalIdentifier().isEmpty())
-			content.append(this.getExternalIdentifier() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_BAG_SIZE + ": ");
-		if (this.getBagSize() != null && !this.getBagSize().isEmpty())
-			content.append(this.getBagSize() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_PAYLOAD_OXUM + ": ");
-		if (this.getPayloadOxum() != null && !this.getPayloadOxum().isEmpty())
-			content.append(this.getPayloadOxum() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_BAG_GROUP_IDENTIFIER + ": ");
-		if (this.getBagGroupIdentifier() != null && !this.getBagGroupIdentifier().isEmpty())
-			content.append(this.getBagGroupIdentifier() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_BAG_COUNT + ": ");
-		if (this.getBagCount() != null && !this.getBagCount().isEmpty())
-			content.append(this.getBagCount() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_INTERNAL_SENDER_IDENTIFIER + ": ");
-		if (this.getInternalSenderIdentifier() != null && !this.getInternalSenderIdentifier().isEmpty())
-			content.append(this.getInternalSenderIdentifier() + "\n");
-		else
-			content.append("\n");
-		content.append(FIELD_INTERNAL_SENDER_DESCRIPTION + ": ");
-		if (this.getInternalSenderDescription() != null && !this.getInternalSenderDescription().isEmpty())
-			content.append(this.getInternalSenderDescription() + "\n");
-		else
-			content.append("\n");
-		if (this.baggerBag.isEdeposit()) {
-			content.append(FIELD_EDEPOSIT_PUBLISHER + ": ");
-			if (this.getPublisher() != null && !this.getPublisher().isEmpty())
-				content.append(this.getPublisher() + "\n");
+		for(String key: this.keySet())
+		{
+			content.append(key + ": ");
+			String value = this.get(key);
+			if (value != null && !value.isEmpty())
+				content.append(value + "\n");
 			else
-				content.append("\n");			
+				content.append("\n");
 		}
-		if (this.baggerBag.isNdnp()) {
-			content.append(FIELD_NDNP_AWARDEE_PHASE + ": ");
-			if (this.getAwardeePhase() != null && !this.getAwardeePhase().isEmpty())
-				content.append(this.getAwardeePhase() + "\n");
-			else
-				content.append("\n");			
-		}
-		if (this.baggerBag.isWdl()) {
-			content.append(FIELD_WDL_MEDIA_IDENTIFIERS + ": ");
-			if (this.getMediaIdentifiers() != null && !this.getMediaIdentifiers().isEmpty())
-				content.append(this.getMediaIdentifiers() + "\n");
-			else
-				content.append("\n");
-			
-			content.append(FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED + ": ");
-			if (this.getNumberOfMediaShipped() != null && !this.getNumberOfMediaShipped().isEmpty())
-				content.append(this.getNumberOfMediaShipped() + "\n");
-			else
-				content.append("\n");
-			
-			content.append(FIELD_WDL_ADDITIONAL_EQUIPMENT + ": ");
-			if (this.getAdditionalEquipment() != null && !this.getAdditionalEquipment().isEmpty())
-				content.append(this.getAdditionalEquipment() + "\n");
-			else
-				content.append("\n");
-			
-			content.append(FIELD_WDL_SHIP_DATE + ": ");
-			if (this.getShipDate() != null && !this.getShipDate().isEmpty())
-				content.append(this.getShipDate() + "\n");
-			else
-				content.append("\n");
-			
-			content.append(FIELD_WDL_SHIP_METHOD + ": ");
-			if (this.getShipMethod() != null && !this.getShipMethod().isEmpty())
-				content.append(this.getShipMethod() + "\n");
-			else
-				content.append("\n");
-			
-			content.append(FIELD_WDL_SHIP_TRACKING_NUMBER + ": ");
-			if (this.getShipTrackingNumber() != null && !this.getShipTrackingNumber().isEmpty())
-				content.append(this.getShipTrackingNumber() + "\n");
-			else
-				content.append("\n");
-
-			content.append(FIELD_WDL_SHIP_MEDIA + ": ");
-			if (this.getShipMedia() != null && !this.getShipMedia().isEmpty())
-				content.append(this.getShipMedia() + "\n");
-			else
-				content.append("\n");			
-
-			content.append(FIELD_WDL_SHIP_TO_ADDRESS + ": ");
-			if (this.getShipToAddress() != null && !this.getShipToAddress().isEmpty())
-				content.append(this.getShipToAddress() + "\n");
-			else
-				content.append("\n");			
-
-		}
-		if (!this.baggerBag.isNoProject()) {
-			content.append(FIELD_LC_PROJECT + ": ");
-			if (this.getLcProject() != null && !this.getLcProject().isEmpty())
-				content.append(this.getLcProject() + "\n");
-			else
-				content.append("\n");			
-		}
-		
 		return content.toString();
 	}
 
@@ -581,7 +224,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			if (!profileSet.contains(label)) {
 				BagInfoField field = createField(label, enabled);
 		    	if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
-		    		field.setValue(baggerBag.getProject().getName());
+		    		field.setValue(baggerBag.getProfile().getName());
 		    		field.isEnabled(false);
 		    	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_BAGGING_DATE)) {
 		    		field.setValue(DefaultBagInfo.getTodaysDate());
@@ -631,10 +274,27 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		field.setLabel(label);
 		if (readOnlySet.contains(label)) {
 			field.isEnabled(false);
-		}else if (baggerBag.isWdl() && profileReadOnlySet.contains(label)) {
-			field.isEnabled(false);
-		} else {
-			field.isEnabled(enabled);					
+		}else 
+		{
+			Profile profile = this.baggerBag.getProfile();
+			HashMap<String,ProfileField> standardFields = profile.getStandardFields();
+
+			if(standardFields != null && standardFields.get(label) != null)
+			{
+				if(standardFields.get(label).isReadOnly())
+				{
+					field.isEnabled(false);	
+				}
+				else
+				{
+					field.isEnabled(enabled);
+				}
+
+			}
+			else
+			{
+				field.isEnabled(enabled);
+			}
 		}
 
 		if (!baggerBag.isNoProject() && requiredSet.contains(label)) {
@@ -643,13 +303,7 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 			field.isRequired(false);
 		}
 		
-//    	if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_TO_CONTACT_NAME)) {
-//    		field.setValue(DefaultBagInfo.WDL_TO_CONTACT_NAME);
-//    	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_TO_CONTACT_PHONE)) {
-//       		field.setValue(DefaultBagInfo.WDL_TO_CONTACT_PHONE);
-//       	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_TO_CONTACT_EMAIL)) {
-//            field.setValue(DefaultBagInfo.WDL_TO_CONTACT_EMAIL);
-//       	}
+
 		
 		return field;
 	}
@@ -681,25 +335,16 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 		try {
 	        list.add("");
 	        
-	        //Project Specific Fields
 			if (!this.baggerBag.isNoProject()) {
 		        list.add(FIELD_LC_PROJECT);
 			}
-			if (this.baggerBag.isEdeposit()) {
-		        list.add(FIELD_EDEPOSIT_PUBLISHER);
-			} else if (this.baggerBag.isNdnp()) {
-		        list.add(FIELD_NDNP_AWARDEE_PHASE);
-			} else if (this.baggerBag.isWdl()) {
-		        list.add(FIELD_WDL_MEDIA_IDENTIFIERS);
-		        list.add(FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED);
-		        list.add(FIELD_WDL_ADDITIONAL_EQUIPMENT);
-		        list.add(FIELD_WDL_SHIP_DATE);
-		        list.add(FIELD_WDL_SHIP_METHOD);
-		        list.add(FIELD_WDL_SHIP_TRACKING_NUMBER);
-		        list.add(FIELD_WDL_SHIP_MEDIA);
-		        list.add(FIELD_WDL_SHIP_TO_ADDRESS);
+			Profile profile = this.baggerBag.getProfile();
+			HashMap<String,ProfileField> standardFields = profile.getStandardFields();
+			if(standardFields != null)
+			{
+				list.addAll(standardFields.keySet());
 			}
-
+			
 			//Standard Fields from BagInfoTxt
 			List<String> ls = getFieldList();
 			for (int i=0; i<ls.size(); i++) {
@@ -734,9 +379,9 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 				}
 			}
 			//TODO BNP
-			standardFields.add(FIELD_TO_CONTACT_NAME);
-			standardFields.add(FIELD_TO_CONTACT_PHONE);
-			standardFields.add(FIELD_TO_CONTACT_EMAIL);
+			standardFields.add(Contact.FIELD_TO_CONTACT_NAME);
+			standardFields.add(Contact.FIELD_TO_CONTACT_PHONE);
+			standardFields.add(Contact.FIELD_TO_CONTACT_EMAIL);
 			
 		} catch (Exception e) {
 			log.error("getFieldList: " + e);
@@ -747,27 +392,36 @@ public class DefaultBagInfo extends BagInfoTxtImpl {
 	}
 	
 	public String getToContactName() {
-		return this.getCaseInsensitive(FIELD_TO_CONTACT_NAME);
+		return this.getCaseInsensitive(Contact.FIELD_TO_CONTACT_NAME);
 	}
 
 	public void setToContactName(String toContactName) {
-		this.put(FIELD_TO_CONTACT_NAME, toContactName);
+		this.put(Contact.FIELD_TO_CONTACT_NAME, toContactName);
 	}
 	
 	public String getToContactPhone() {
-		return this.getCaseInsensitive(FIELD_TO_CONTACT_PHONE);
+		return this.getCaseInsensitive(Contact.FIELD_TO_CONTACT_PHONE);
 	}
 
 	public void setToContactPhone(String toContactPhone) {
-		this.put(FIELD_TO_CONTACT_PHONE, toContactPhone);
+		this.put(Contact.FIELD_TO_CONTACT_PHONE, toContactPhone);
 	}
 	
 	public String getToContactEmail() {
-		return this.getCaseInsensitive(FIELD_TO_CONTACT_EMAIL);
+		return this.getCaseInsensitive(Contact.FIELD_TO_CONTACT_EMAIL);
 	}
 
 	public void setToContactEmail(String toContactEmail) {
-		this.put(FIELD_TO_CONTACT_EMAIL, toContactEmail);
+		this.put(Contact.FIELD_TO_CONTACT_EMAIL, toContactEmail);
+	}
+	
+
+	public void setLcProject(String value) {
+		this.profileName = value;
+	}
+	
+	public String getLcProject() {
+		return this.profileName;
 	}
 
 }

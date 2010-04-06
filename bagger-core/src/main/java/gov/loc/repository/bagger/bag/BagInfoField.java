@@ -114,25 +114,12 @@ public class BagInfoField {
     	return this.isProfile;
     }
     
-    public void buildElements(String e) {
-		ArrayList<String> tokens = new ArrayList<String>();
-		StringTokenizer st = new StringTokenizer(e, ";");
-		while (st.hasMoreTokens()) {
-			  String t=st.nextToken();
-			  tokens.add(t);
-		}
-		this.elements = tokens;
+    public void buildElements(List<String> elements) {
+		
+		this.elements = elements;
     }
     
-    public String concatElements() {
-    	StringBuffer sb = new StringBuffer();
-    	for (int i=0; i < this.elements.size(); i++) {
-    		sb.append(this.elements.get(i));
-    		sb.append(";");
-    	}
-    	return sb.toString();
-    }
-    
+   
     public String toString() {
     	StringBuffer sb = new StringBuffer();
     	sb.append("\n");

@@ -25,7 +25,7 @@ public class BaggerProfile {
 
 	private HashMap<String, BagInfoField> fieldMap = new HashMap<String, BagInfoField>();
 	private BaggerOrganization sourceOrganization = new BaggerOrganization();
-	private Contact toContact = new Contact();
+	private Contact toContact = new Contact(true);
 	
 	public BaggerOrganization getOrganization() {
 		return this.sourceOrganization;
@@ -92,50 +92,50 @@ public class BaggerProfile {
 	}
 
 	public String getSrcContactName() {
-		return this.sourceOrganization.getContact().getContactName();
+		return this.sourceOrganization.getContact().getContactName().getFieldValue();
 	}
 
 	public void setSrcContactName(String name) {
-		this.sourceOrganization.getContact().setContactName(name);
+		this.sourceOrganization.getContact().getContactName().setFieldValue(name);
 	}
 
 	public String getSrcContactPhone() {
-		return this.sourceOrganization.getContact().getTelephone();
+		return this.sourceOrganization.getContact().getTelephone().getFieldValue();
 	}
 	
 	public void setSrcContactPhone(String phone) {
-		this.sourceOrganization.getContact().setTelephone(phone);
+		this.sourceOrganization.getContact().getTelephone().setFieldValue(phone);
 	}
 
 	public String getSrcContactEmail() {
-		return this.sourceOrganization.getContact().getEmail();
+		return this.sourceOrganization.getContact().getEmail().getFieldValue();
 	}
 	
 	public void setSrcContactEmail(String email) {
-		this.sourceOrganization.getContact().setEmail(email);
+		this.sourceOrganization.getContact().getEmail().setFieldValue(email);
 	}
 
 	public String getToContactName() {
-		return this.toContact.getContactName();
+		return this.toContact.getContactName().getFieldValue();
 	}
 
 	public void setToContactName(String name) {
-		this.toContact.setContactName(name);
+		this.toContact.getContactName().setFieldValue(name);
 	}
 
 	public String getToContactPhone() {
-		return this.toContact.getTelephone();
+		return this.toContact.getTelephone().getFieldValue();
 	}
 	
 	public void setToContactPhone(String phone) {
-		this.toContact.setTelephone(phone);
+		this.toContact.getTelephone().setFieldValue(phone);
 	}
 
 	public String getToContactEmail() {
-		return this.toContact.getEmail();
+		return this.toContact.getEmail().getFieldValue();
 	}
 	
 	public void setToContactEmail(String email) {
-		this.toContact.setEmail(email);
+		this.toContact.getEmail().setFieldValue(email);
 	}
 }
