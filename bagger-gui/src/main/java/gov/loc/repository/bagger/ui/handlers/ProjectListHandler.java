@@ -4,7 +4,6 @@ package gov.loc.repository.bagger.ui.handlers;
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.Project;
 import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
@@ -37,25 +36,7 @@ public class ProjectListHandler extends AbstractAction {
     	JComboBox jlist = (JComboBox)e.getSource();
     	String selected = (String) jlist.getSelectedItem();
     	log.info("BagView.projectList valueChanged: " + selected);
-    	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.edeposit"))) {
-    		bag.isEdeposit(true);
-      		bag.isNoProject(false);
-    	} else {
-    		bag.isEdeposit(false);
-    	}
-    	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.ndnp"))) {
-    		bag.isNdnp(true);
-      		bag.isNoProject(false);
-    	} else {
-    		bag.isNdnp(false);
-    	}
-    	//TODO
-    	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.wdl"))) {
-    		bag.isWdl(true);
-      		bag.isNoProject(false);
-    	} else {
-    		bag.isWdl(false);
-    	}
+    	
     	if (selected == null || selected.equalsIgnoreCase(bagView.getPropertyMessage("bag.project.noproject"))) {
       		bag.isNoProject(true);
     	} else {
@@ -74,41 +55,36 @@ public class ProjectListHandler extends AbstractAction {
     private void changeProject(String selected) {
         bagView.bagProject.updateProfile();
 
-        Set<String> projectKeys = bagView.bagProject.userProjects.keySet();
+        Set<String> projectKeys = bagView.bagProject.userProfiles.keySet();
         for (Iterator<String> iter = projectKeys.iterator(); iter.hasNext();) {
         	String key = (String) iter.next();
-        	Project project = bagView.bagProject.userProjects.get(key);
-        	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(project.getName())) {
-        		log.info("bagProject: " + project.getId());
-        		bag.setProject(project);
-        		Profile profile = bagView.bagProject.userProfiles.get(project.getName());
-        		Contact person = profile.getPerson();
-        		if (person == null) person = new Contact();
+        	Profile profile = bagView.bagProject.userProfiles.get(key);
+        	if (selected != null && !selected.isEmpty() && selected.equalsIgnoreCase(profile.getName())) {
+        		log.info("bagProject: " + profile.getName());
+        		bag.setProfile(profile);
+        		Profile bagProfile = bagView.bagProject.userProfiles.get(profile.getName());
+        		Contact person = bagProfile.getSendToContact();
+        		if (person == null) person = new Contact(true);
         		DefaultBagInfo bagInfo = bag.getInfo();
         		BaggerOrganization bagOrg = bagInfo.getBagOrganization();
-        		Contact contact = profile.getContact();
+        		Contact contact = bagProfile.getSendFromContact();
         		if (contact == null) {
-        			contact = new Contact();
+        			contact = new Contact(false);
         		}
         		bagOrg.setContact(contact);
-        		Organization org = contact.getOrganization();
+        		Organization org = bagProfile.getOrganization();
         		if (org == null) org = new Organization();
-        		bagOrg.setSourceOrganization(org.getName());
-        		bagOrg.setOrganizationAddress(org.getAddress());
+        		bagOrg.setSourceOrganization(org.getName().getFieldValue());
+        		bagOrg.setOrganizationAddress(org.getAddress().getFieldValue());
         		bagInfo.setBagOrganization(bagOrg);
-        		//TODO
-        		if (!bag.isWdl()){
-        			bagInfo.setToContactName(person.getContactName());
-        			bagInfo.setToContactPhone(person.getTelephone());
-        			bagInfo.setToContactEmail(person.getEmail());
-        		} else {
-        			bagInfo.setToContactName(DefaultBagInfo.WDL_TO_CONTACT_NAME);
-        			bagInfo.setToContactPhone(DefaultBagInfo.WDL_TO_CONTACT_PHONE);
-        			bagInfo.setToContactEmail(DefaultBagInfo.WDL_TO_CONTACT_EMAIL);
-        		}
+        		
+        		bagInfo.setToContactName(person.getContactName().getFieldValue());
+        		bagInfo.setToContactPhone(person.getTelephone().getFieldValue());
+        		bagInfo.setToContactEmail(person.getEmail().getFieldValue());
         		
         		bag.setInfo(bagInfo);
-        		bagView.bagProject.projectContact = profile.getPerson();
+        		bagView.bagProject.projectContact = bagProfile.getSendToContact();
+        		break;
         	}
         }
     }

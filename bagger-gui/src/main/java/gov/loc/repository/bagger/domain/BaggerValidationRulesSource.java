@@ -11,9 +11,6 @@ import org.springframework.rules.Rules;
 import org.springframework.rules.support.DefaultRulesSource;
 
 public class BaggerValidationRulesSource extends DefaultRulesSource {
-	boolean isCopyright = false;
-	boolean isNdnp = false;
-	boolean isWdl = false;
 	boolean isLcProject = false;
 	boolean isHoley = false;
 	
@@ -21,11 +18,8 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
         super();
     }
     
-    public void init(boolean isCopyright, boolean isNdnp, boolean isWdl, boolean isLcProject, boolean isHoley) {
+    public void init(boolean isLcProject, boolean isHoley) {
     	clear();
-    	this.isCopyright = isCopyright;
-    	this.isNdnp = isNdnp;
-    	this.isWdl = isWdl;
     	this.isLcProject = isLcProject;
     	this.isHoley = isHoley;
 /*
@@ -68,12 +62,7 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
                 add("baggingDate", getDateConstraint());
                 add("externalIdentifier", required());
                 add("bagSize", required());
-                if (isCopyright) {
-                	add("publisher", required());
-                }
-                if (isNdnp) {
-                	add("awardeePhase", required());
-                }
+                
                 if (isLcProject) {
                 	add("lcProject", required());
                 }

@@ -68,7 +68,7 @@ public class ClearBagHandler extends AbstractAction {
     	bagView.setBag(bag);
         bagView.baggerRules.clear();
         bagView.bagProject.clearProfiles();
-		bagView.bagProject.updateProject(bagView.getPropertyMessage("bag.project.noproject"));
+		bagView.bagProject.updateProfile(bagView.getPropertyMessage("bag.project.noproject"));
     	bagView.bagPayloadTree = new BagTree(bagView, AbstractBagConstants.DATA_DIRECTORY, true);
     	bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
     	bagView.bagTagFileTree = new BagTree(bagView, bagView.getPropertyMessage("bag.label.noname"), false);

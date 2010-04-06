@@ -83,7 +83,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
 		Application app = Application.instance();
 		ApplicationPage page = app.getActiveWindow().getPage();
 		PageComponent component = page.getActiveComponent();
-		if (component != null) this.bagView = (BagView) component;
+		if (component != null) this.bagView = BagView.instance;
 		else this.bagView = bagView;
 		if (bagView != null) {
 			bag = bagView.getBag();
@@ -549,7 +549,7 @@ public class NewFieldFrame extends JFrame implements ActionListener {
     	String label = field.getLabel();
     	
     	if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_LC_PROJECT)) {
-    		field.setValue(bagView.getBag().getProject().getName());
+    		field.setValue(bagView.getBag().getProfile().getName());
     		field.isEnabled(false);
     	} else if (label.equalsIgnoreCase(DefaultBagInfo.FIELD_BAGGING_DATE)) {
     		field.setValue(DefaultBagInfo.getTodaysDate());

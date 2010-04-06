@@ -1,6 +1,9 @@
 
 package gov.loc.repository.bagger.ui;
 
+import gov.loc.repository.bagger.Contact;
+import gov.loc.repository.bagger.Organization;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
@@ -55,49 +58,73 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("sourceOrganization")[1];
+        Organization organization = bagView.getBag().getProfile().getOrganization();
+        if(organization != null &&  organization.getName().isReadOnly()){
+        	field.setEnabled(false);
+        }
         this.field.addFocusListener(this);
         formBuilder.row();
         rowCount++;
         JComponent orgAddress = formBuilder.add("organizationAddress")[1];
+        if(organization != null &&  organization.getAddress().isReadOnly()){
+        	field.setEnabled(false);
+        }
+        
         orgAddress.addFocusListener(this);
 
+        Contact fromContact = bagView.getBag().getProfile().getSendFromContact();
+        
         formBuilder.row();
         rowCount++;
         JComponent contactLabel = formBuilder.addLabel("Send from Contact")[0];
         formBuilder.row();
         rowCount++;
         this.contactName = formBuilder.add("srcContactName")[1];
+        
+        if(fromContact != null &&  fromContact.getContactName().isReadOnly()){
+        	field.setEnabled(false);
+        }
+        
         this.contactName.addFocusListener(this);
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("srcContactPhone")[1];
+        if(fromContact != null &&  fromContact.getTelephone().isReadOnly()){
+        	field.setEnabled(false);
+        }
         this.field.addFocusListener(this);
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("srcContactEmail")[1];
+        
+        if(fromContact != null &&  fromContact.getEmail().isReadOnly()){
+        	field.setEnabled(false);
+        }
+        
         this.field.addFocusListener(this);
-
         formBuilder.row();
         rowCount++;
         contactLabel = formBuilder.addLabel("Send to Contact")[0];
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("toContactName")[1];
-        if(bagView.getBag().isWdl()){
+        Contact contact = bagView.getBag().getProfile().getSendToContact();
+        if(contact != null && contact.getContactName().isReadOnly()){
         	field.setEnabled(false);
         }
         this.field.addFocusListener(this);
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("toContactPhone")[1];
-        if(bagView.getBag().isWdl()){
+        
+        if(contact != null &&  contact.getTelephone().isReadOnly()){
         	field.setEnabled(false);
         }
         this.field.addFocusListener(this);
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("toContactEmail")[1];
-        if(bagView.getBag().isWdl()){
+        if(contact != null && contact.getEmail().isReadOnly()){
         	field.setEnabled(false);
         }
         this.field.addFocusListener(this);

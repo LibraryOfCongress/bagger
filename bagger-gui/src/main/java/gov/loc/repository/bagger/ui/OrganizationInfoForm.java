@@ -1,22 +1,12 @@
 
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.Project;
-import gov.loc.repository.bagger.ProjectProfile;
+import gov.loc.repository.bagger.Profile;
+import gov.loc.repository.bagger.ProfileField;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 import gov.loc.repository.bagit.Bag;
-
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -29,14 +19,22 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,8 +73,8 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 		this.fieldMap = map;
 		
 		this.setLayout(new BorderLayout());
-		buttonPanel = createButtonPanel(enabled);
-		this.add(buttonPanel, BorderLayout.NORTH);
+//		buttonPanel = createButtonPanel(enabled);
+//		this.add(buttonPanel, BorderLayout.NORTH);
 		form = createFormControl();
         this.add(form, BorderLayout.CENTER);
     }
@@ -226,8 +224,8 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 	} 
 
     private JPanel createButtonPanel(boolean enabled) {
+    	
     	JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-
     	JButton addButton = new JButton(bagView.getPropertyMessage("bag.button.field.add"));
     	addButton.addActionListener(new AddFieldHandler());
     	addButton.setOpaque(true);
@@ -245,7 +243,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     	return buttonPanel;
     }
     
-    private class AddFieldHandler extends AbstractAction {
+    class AddFieldHandler extends AbstractAction {
        	private static final long serialVersionUID = 1L;
 
     	public void actionPerformed(ActionEvent e) {
@@ -258,12 +256,12 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
     public void updateForm() {
     	this.removeAll();
     	this.invalidate();
-    	this.add(buttonPanel);
+    	//this.add(buttonPanel);
     	form = createFormControl();
     	this.add(form);
     }
     
-    private class AddFieldDefaultsHandler extends AbstractAction {
+     class AddFieldDefaultsHandler extends AbstractAction {
        	private static final long serialVersionUID = 1L;
 
     	public void actionPerformed(ActionEvent e) {
@@ -373,15 +371,15 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 				Set<String> keys = bagView.bagProject.userProjectProfiles.keySet();
 				for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
 					String label = (String) iter.next();
-		    		Project project = bagView.getBag().getProject();
-		    		List<ProjectProfile> list = bagView.bagProject.userProjectProfiles.get(label);
+		    		Profile profile = bagView.getBag().getProfile();
+		    		List<ProfileField> list = bagView.bagProject.userProjectProfiles.get(label);
 		    		for (int i=0; i < list.size(); i++) {
-						ProjectProfile projectProfile = list.get(i);
-						if (txt.equalsIgnoreCase(projectProfile.getFieldName()) && project.getId() == projectProfile.getProjectId()) {
+						ProfileField projectProfile = list.get(i);
+						if (txt.equalsIgnoreCase(projectProfile.getFieldName())) {
 							field.setLabel(projectProfile.getFieldName());
 							field.setName(field.getLabel().toLowerCase());
-							field.isEnabled(!projectProfile.getIsValueRequired());
-							field.isEditable(!projectProfile.getIsValueRequired());
+							field.isEnabled(!projectProfile.isReadOnly());
+							field.isEditable(!projectProfile.isReadOnly());
 							field.isRequiredvalue(projectProfile.getIsValueRequired());
 							field.isRequired(projectProfile.getIsRequired());
 							field.setValue(projectProfile.getFieldValue());

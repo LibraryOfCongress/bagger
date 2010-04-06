@@ -1,13 +1,10 @@
 
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.Project;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,8 +15,8 @@ import javax.swing.JTextField;
 
 import org.springframework.richclient.application.ApplicationServicesLocator;
 import org.springframework.richclient.factory.ComponentFactory;
-import org.springframework.richclient.form.builder.TableFormBuilder;
 import org.springframework.richclient.form.binding.BindingFactory;
+import org.springframework.richclient.form.builder.TableFormBuilder;
 import org.springframework.richclient.layout.TableLayoutBuilder;
 
 public class BagTableFormBuilder extends TableFormBuilder {

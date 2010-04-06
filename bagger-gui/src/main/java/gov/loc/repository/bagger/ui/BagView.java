@@ -625,21 +625,21 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagPayloadTreePanel.setEnabled(b);
     	bagTagFileTree.setEnabled(b);
     	bagTagFileTreePanel.setEnabled(b);
-    	infoInputPane.projectList.setEnabled(b);
+    	infoInputPane.profileList.setEnabled(b);
         infoInputPane.newProjectButton.setEnabled(b);
-        infoInputPane.removeProjectButton.setEnabled(b);
-        infoInputPane.defaultProject.setEnabled(b);
+        //infoInputPane.removeProjectButton.setEnabled(b);
+        //infoInputPane.defaultProject.setEnabled(b);
         infoInputPane.bagInfoInputPane.setEnabled(b);
         infoInputPane.saveButton.setEnabled(b);
         infoInputPane.loadDefaultsButton.setEnabled(b);
         infoInputPane.clearDefaultsButton.setEnabled(b);
         infoInputPane.holeyCheckbox.setEnabled(false);
-        infoInputPane.serializeGroupPanel.setEnabled(false);
-        infoInputPane.zipButton.setEnabled(false);
-        infoInputPane.tarButton.setEnabled(false);
-        infoInputPane.tarGzButton.setEnabled(false);
-        infoInputPane.tarBz2Button.setEnabled(false);
-        infoInputPane.noneButton.setEnabled(false);
+        //infoInputPane.serializeGroupPanel.setEnabled(false);
+        //infoInputPane.zipButton.setEnabled(false);
+        //infoInputPane.tarButton.setEnabled(false);
+        //infoInputPane.tarGzButton.setEnabled(false);
+        //infoInputPane.tarBz2Button.setEnabled(false);
+        //infoInputPane.noneButton.setEnabled(false);
     }
 
     public void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
@@ -654,7 +654,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     }
 
     public String updateBaggerRules() {
-        baggerRules.init(bag.isEdeposit(), bag.isNdnp(), bag.isWdl(), !bag.isNoProject(), bag.isHoley());
+        baggerRules.init(!bag.isNoProject(), bag.isHoley());
         String messages = "";
         bag.updateStrategy();
         
@@ -677,9 +677,9 @@ public class BagView extends AbstractView implements ApplicationListener {
     public void enableSettings(boolean b) {
     	infoInputPane.bagNameField.setEnabled(b);
     	infoInputPane.bagVersionValue.setEnabled(b);
-    	infoInputPane.projectList.setEnabled(b);
+    	infoInputPane.profileList.setEnabled(b);
     	infoInputPane.newProjectButton.setEnabled(b);
-    	infoInputPane.removeProjectButton.setEnabled(b);
+    	//infoInputPane.removeProjectButton.setEnabled(b);
         infoInputPane.holeyValue.setEnabled(b);
         infoInputPane.serializeValue.setEnabled(b);
         infoInputPane.saveButton.setEnabled(b);
@@ -704,7 +704,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	
     	infoInputPane.holeyCheckbox.setSelected(false);
     	infoInputPane.holeyValue.setText("false");
-    	infoInputPane.noneButton.setSelected(true);
+    	//infoInputPane.noneButton.setSelected(true);
     	addDataToolBarAction.setEnabled(false);
     	removeDataToolBarAction.setEnabled(false);
     	addDataExecutor.setEnabled(false);
@@ -753,6 +753,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         saveBagAsExecutor.setEnabled(true);
         bagButtonPanel.invalidate();
         //closeButton.setEnabled(true);
+        clearExecutor.setEnabled(true);
         //validateButton.setEnabled(true);
         //completeButton.setEnabled(true);
         completeExecutor.setEnabled(true);
@@ -844,7 +845,7 @@ public class BagView extends AbstractView implements ApplicationListener {
             LifecycleApplicationEvent le = (LifecycleApplicationEvent)e;
             if (le.getEventType() == LifecycleApplicationEvent.CREATED && le.objectIs(Profile.class)) {
             	Profile profile = (Profile) le.getObject();
-            	bagProject.userProfiles.put(bag.getProject().getName(), profile);
+            	bagProject.userProfiles.put(bag.getProfile().getName(), profile);
             }
         }
     }
@@ -963,3 +964,4 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
     }
 }
+

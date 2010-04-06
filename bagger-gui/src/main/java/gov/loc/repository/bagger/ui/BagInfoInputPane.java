@@ -1,7 +1,19 @@
 
 package gov.loc.repository.bagger.ui;
 
+import gov.loc.repository.bagger.Contact;
+import gov.loc.repository.bagger.Organization;
+import gov.loc.repository.bagger.Profile;
+import gov.loc.repository.bagger.ProfileField;
+import gov.loc.repository.bagger.bag.BagInfoField;
+import gov.loc.repository.bagger.bag.BaggerOrganization;
+import gov.loc.repository.bagger.bag.BaggerProfile;
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
+
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,26 +28,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import java.awt.event.ActionEvent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.springframework.binding.form.HierarchicalFormModel;
-import org.springframework.richclient.form.FormModelHelper;
-
-import gov.loc.repository.bagger.Contact;
-import gov.loc.repository.bagger.Person;
-import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.Project;
-import gov.loc.repository.bagger.ProjectProfile;
-import gov.loc.repository.bagger.bag.BagInfoField;
-import gov.loc.repository.bagger.bag.BaggerOrganization;
-import gov.loc.repository.bagger.bag.BaggerProfile;
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.form.HierarchicalFormModel;
+import org.springframework.richclient.form.FormModelHelper;
 
 public class BagInfoInputPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
@@ -99,37 +98,23 @@ public class BagInfoInputPane extends JTabbedPane {
     	defaultBag = bag;
     	DefaultBagInfo bagInfo = bag.getInfo();
         BaggerOrganization baggerOrganization = bagInfo.getBagOrganization();
-        Project project = bagView.getBag().getProject();
-        bagProfile = bagView.bagProject.getBaggerProfile(project);
+        Profile profile = bagView.getBag().getProfile();
+       
         if (bagProfile == null) {
         	bagProfile = new BaggerProfile();
         }
     	bagProfile.setOrganization(baggerOrganization);
-//        bagProfile.setToContact(bagView.bagProject.projectContact);
-    	Contact toContact= new Contact();
-    	toContact.setContactName(bagInfo.getToContactName());
-    	toContact.setTelephone(bagInfo.getToContactPhone());
-    	toContact.setEmail(bagInfo.getToContactEmail());
-    	bagProfile.setToContact(toContact);
-        bagView.bagProject.baggerProfile.put(project.getName(), bagProfile);
-
-        Contact orgContact = bagInfo.getBagOrganization().getContact();
-        if (orgContact == null) {
-        	orgContact = new Contact();
-        }
-
-        Contact projectContact = bagView.bagProject.projectContact;
-        if (projectContact == null) {
-        	projectContact = new Contact();
-        }
-
+    	bagProfile.setToContact(profile.getSendToContact());
+       
+        
+    	 updateProject(bagView);
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
         bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), bagView, bagInfo.getFieldMap(), enabled);
 
         profileFormModel = FormModelHelper.createCompoundFormModel(bagProfile);
         profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), bagView);
         profileFormModel.addPropertyChangeListener(profileForm);
-
+       
         updateProfileForms(bag);
     }
 
@@ -147,13 +132,13 @@ public class BagInfoInputPane extends JTabbedPane {
     public String verifyForms(DefaultBag bag) {
         String messages = "";
 
-        Project project = bagView.getBag().getProject();
+        Profile project = bagView.getBag().getProfile();
         if (!profileForm.hasErrors()) {
         	profileForm.commit();
         }
         BaggerProfile bprofile = (BaggerProfile) profileForm.getFormObject();
         BaggerOrganization baggerOrg = bprofile.getOrganization();
-        Person userPerson = bprofile.getToContact().getPerson();
+        Contact userPerson = bprofile.getToContact();
 /*
         if (parentView.username == null || parentView.username.length() == 0) {
     		try {
@@ -164,29 +149,30 @@ public class BagInfoInputPane extends JTabbedPane {
     		}
         }
 */
-        userPerson.parse(bprofile.getToContact().getContactName());
-        bprofile.getToContact().setPerson(userPerson);
+      
 
         Contact orgContact = bprofile.getSourceContact();
         try {
-        	Person contactPerson = orgContact.getPerson();
-        	contactPerson.parse(orgContact.getContactName());
-        	orgContact.setPerson(contactPerson);
+        
 
         	Profile profile = bagView.bagProject.userProfiles.get(project.getName());
-        	orgContact.getOrganization().setName(baggerOrg.getSourceOrganization());
-        	orgContact.getOrganization().setAddress(baggerOrg.getOrganizationAddress());
-            profile.setContact(orgContact);
+        	Organization organization = new Organization();
+        	organization.setName(ProfileField.createProfileField(
+        			   Organization.FIELD_SOURCE_ORGANIZATION, bprofile.getSourceOrganization()));
+        	organization.setName(ProfileField.createProfileField(
+     			   Organization.FIELD_ORGANIZATION_ADDRESS, bprofile.getOrganizationAddress()));
+        	profile.setOrganization(organization);
+            profile.setSendFromContact(orgContact);
             //TODO
             Contact toContact = bprofile.getToContact();
-            profile.setPerson(toContact);
+            profile.setSendToContact(toContact);
             
             bagView.bagProject.userProfiles.put(project.getName(), profile);
         } catch (Exception e) {
         	logger.error("BagInfoInputPane.verifyForms newContact: " + e.getMessage());
         }
         bagView.bagProject.projectContact = bprofile.getToContact();
-        bagView.bagProject.baggerProfile.put(project.getName(), bprofile);
+       
         bag.getInfo().setBagOrganization(baggerOrg);
         //TODO
         bag.getInfo().setToContactName(bprofile.getToContactName());
@@ -235,54 +221,15 @@ public class BagInfoInputPane extends JTabbedPane {
     
     public void updateProject(BagView bagView) {
     	try {
+    		
         	this.bagInfoForm.setBagView(bagView);
         	DefaultBag bag = bagView.getBag();
-        	Project project = bag.getProject();
+        	Profile profile = bag.getProfile();
         	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
     		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
-
-    		if (!bag.isEdeposit()) {
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_EDEPOSIT_PUBLISHER);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER);
-    			}
-    		} 
-    		if (!bag.isNdnp()) {
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_NDNP_AWARDEE_PHASE);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER);
-    			}
-    		} 
-    		if (!bag.isWdl()) {
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_WDL_MEDIA_IDENTIFIERS);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_WDL_NUMBER_OF_MEDIA_SHIPPED);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_WDL_ADDITIONAL_EQUIPMENT);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_DATE)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_DATE);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_METHOD)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_METHOD);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_TRACKING_NUMBER);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_MEDIA);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_WDL_SHIP_TO_ADDRESS)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_WDL_SHIP_TO_ADDRESS);
-    			}
-    		} 
+    		
+    		//HashMap<String,ProfileField> standardFields = profile.getStandardFields();
+    		//currentMap.clear();
     		
     		if (bag.isNoProject()) {
     			if (currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
@@ -293,22 +240,74 @@ public class BagInfoInputPane extends JTabbedPane {
     			}
     		}
 
-    		if (project != null) {
-    			List<ProjectProfile> list = bagView.bagProject.userProjectProfiles.get(project.getName());
-    			if (list != null) {
-    				for (int i=0; i < list.size(); i++) {
-    					ProjectProfile projectProfile = list.get(i);
-//    					if ((projectProfile != null) && (projectProfile.getFieldValue() != null) && (!projectProfile.getFieldValue().trim().equals(""))) {
+    		if (profile != null) {
+    			
+    			
+    			if(!profile.getName().equals(bagView.getPropertyMessage("bag.project.noproject")))
+				{
+					BagInfoField field = new BagInfoField();
+					field.setLabel(DefaultBagInfo.FIELD_LC_PROJECT);
+					field.setName(DefaultBagInfo.FIELD_LC_PROJECT);
+					field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+					field.isEnabled(false);
+					field.isEditable(false);
+					field.isRequiredvalue(true);
+					field.isRequired(true);
+					field.setValue(profile.getName());
+					field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+					currentMap.put(field.getLabel(), field);
+				}
+    			
+    			List<ProfileField> list = bagView.bagProject.userProjectProfiles.get(profile.getName());
+    			HashMap<String, ProfileField> profileFields = convertToMap(list);
+    			
+    			if(currentMap.size()>0)
+    			{
+    				for(BagInfoField field: currentMap.values())
+    				{
+    					ProfileField projectProfile = profileFields.get(field.getLabel());
+    					if(projectProfile == null)
+    					  continue;
+    					
+						field.isEnabled(!projectProfile.isReadOnly());
+						field.isEditable(!projectProfile.isReadOnly());
+						field.isRequiredvalue(projectProfile.getIsValueRequired());
+						field.isRequired(projectProfile.getIsRequired());
+						field.setValue(projectProfile.getFieldValue());
+						field.buildElements(projectProfile.getElements());
+						if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
+							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
+							field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
+							field.setComponentType(BagInfoField.LIST_COMPONENT);
+						}
+    				}
+    			}
+    			
+    			
+    			
+    			HashMap<String, ProfileField> exclusiveProfileFields = new HashMap<String, ProfileField>();
+    			exclusiveProfileFields.putAll(profileFields);
+    			exclusiveProfileFields.keySet().removeAll(currentMap.keySet());
+    			
+    			
+    			if (exclusiveProfileFields.size()>0) {
+    				for (ProfileField profileField : exclusiveProfileFields.values()) {
+    					ProfileField projectProfile = profileField;
     					if (projectProfile != null) {
     						BagInfoField field = new BagInfoField();
     						field.setLabel(projectProfile.getFieldName());
     						field.setName(field.getLabel().toLowerCase());
     						field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-    						field.isEnabled(!projectProfile.getIsValueRequired());
-    						field.isEditable(!projectProfile.getIsValueRequired());
+    						field.isEnabled(!projectProfile.isReadOnly());
+    						field.isEditable(!projectProfile.isReadOnly());
     						field.isRequiredvalue(projectProfile.getIsValueRequired());
     						field.isRequired(projectProfile.getIsRequired());
     						field.setValue(projectProfile.getFieldValue());
+    						//field.setValue("");
+    						if(projectProfile.isReadOnly())
+    							field.isEnabled(false);
     						field.buildElements(projectProfile.getElements());
     						if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
     							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
@@ -321,12 +320,25 @@ public class BagInfoInputPane extends JTabbedPane {
     					}
     				}
     			}
+    			
+    			
     		}
+    		
     		bag.getInfo().setFieldMap(currentMap);
             bagView.setBag(bag);
             bagView.infoInputPane.updateInfoFormsPane(true);
     	} catch (Exception e) {
     	}
+    }
+    
+    private HashMap<String, ProfileField> convertToMap(List<ProfileField> profileFields)
+    {
+    	HashMap<String, ProfileField> filedsToReturn = new HashMap<String, ProfileField>();
+    	for(ProfileField profileFiled: profileFields)
+    	{
+    		filedsToReturn.put(profileFiled.getFieldName(),profileFiled);
+    	}
+    	return filedsToReturn;
     }
 
     private void createBagInfo(DefaultBag bag) {
@@ -359,6 +371,21 @@ public class BagInfoInputPane extends JTabbedPane {
             		value = (String) tb.getSelectedItem();
             	}
             	map.put(key, value);
+            	Profile profile = bagView.bagProject.userProfiles.get(bag.getProfile().getName());
+            	if(profile != null)
+            	{
+            	  if(profile.getCustomFields().containsKey(key))
+            	  {
+            		  ProfileField profileField = profile.getCustomFields().get(key);
+            		  profileField.setFieldValue(value);
+            	  }
+            	  else if(profile.getStandardFields().containsKey(key))
+            	  {
+            		  ProfileField profileField = profile.getStandardFields().get(key);
+            		  profileField.setFieldValue(value);
+            	  }
+            	}
+            	
             	i++;
             	c = components[i];
             	if (c instanceof JCheckBox) {

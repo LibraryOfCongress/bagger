@@ -1,7 +1,7 @@
 
 package gov.loc.repository.bagger.ui.handlers;
 
-import gov.loc.repository.bagger.Project;
+import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagView;
 
@@ -24,22 +24,22 @@ public class DefaultProjectHandler extends AbstractAction {
 
 	public void actionPerformed(ActionEvent e) {
 		this.bag = bagView.getBag();
-
 		JCheckBox cb = (JCheckBox)e.getSource();
 
 		// Determine status
 		boolean isSelected = cb.isSelected();
-		Set<String> projectKeys = bagView.bagProject.userProjects.keySet();
-		for (Iterator<String> iter = projectKeys.iterator(); iter.hasNext();) {
+		Set<String> profileKeys = bagView.bagProject.userProfiles.keySet();
+		for (Iterator<String> iter = profileKeys.iterator(); iter.hasNext();) {
 			String key = (String) iter.next();
-			Project project = bagView.bagProject.userProjects.get(key);
-			project.setIsDefault(false);
-			bagView.bagProject.userProjects.put(key, project);
+			Profile profile = bagView.bagProject.userProfiles.get(key);
+			profile.setIsDefault(false);
+			bagView.bagProject.userProfiles.put(key, profile);
 		}
-		Project bagProject = bag.getProject();
-   		if (isSelected) bagProject.setIsDefault(true);
-   		else bagProject.setIsDefault(false);
-   		bag.setProject(bagProject);
+		
+		Profile bagProfile = bag.getProfile();
+   		if (isSelected) bagProfile.setIsDefault(true);
+   		else bagProfile.setIsDefault(false);
+   		bag.setProfile(bagProfile);
    		bagView.setBag(bag);
 	}
 }

@@ -170,6 +170,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	    	boolean isCancel = true;
 	        protected void onConfirm() {
+	        	bag = bagView.getBag();
 	        	if (bag.getSize() > DefaultBag.MAX_SIZE) {
 	        		confirmAcceptBagSize();
 	        	} else {

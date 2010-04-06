@@ -4,19 +4,6 @@ import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.handlers.BagTreeTransferHandler;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
-import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
-
-import javax.swing.DropMode;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.*;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.awt.Dimension;
 import java.io.File;
@@ -25,6 +12,21 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
+import javax.swing.DropMode;
+import javax.swing.JTextField;
+import javax.swing.JTree;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class BagTree extends JTree {
 	private static final long serialVersionUID = -5361474872106399068L;

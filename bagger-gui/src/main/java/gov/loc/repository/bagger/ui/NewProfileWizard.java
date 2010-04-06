@@ -57,9 +57,8 @@ public class NewProfileWizard extends AbstractWizard implements ActionCommandExe
             profileForm.commit();
         }
         BaggerProfile baggerProfile = (BaggerProfile)profileForm.getFormObject();
-        profile.setContact(baggerProfile.getSourceContact());
-        profile.setPerson(baggerProfile.getToContact());
-
+        profile.setSendFromContact(baggerProfile.getSourceContact());
+        profile.setSendToContact(baggerProfile.getToContact());
         return profile;
     }
 

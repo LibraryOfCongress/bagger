@@ -1,6 +1,7 @@
 
 package gov.loc.repository.bagger.ui.handlers;
 
+import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagTree;
@@ -44,7 +45,7 @@ public class StartNewBagHandler extends AbstractAction {
     	bag = bagView.getBag();
 		bagView.enableSettings(false);
     	bagView.infoInputPane.bagInfoInputPane.enableForms(bag, true);
-    	bagView.infoInputPane.setBagVersionList(bagView.infoInputPane.getBagVersion());
+    	//bagView.infoInputPane.setBagVersionList(bagView.infoInputPane.getBagVersion());
 
     	String bagName = bagView.getPropertyMessage("bag.label.noname");
 		bag.setName(bagName);
@@ -62,7 +63,9 @@ public class StartNewBagHandler extends AbstractAction {
 		bag.getInfo().setBag(bag);
 		bag.isNewbag(true);
 		String projName = bagView.getPropertyMessage("bag.project.noproject");
-    	bagView.bagProject.baggerProfile.put(projName, new BaggerProfile());
+		Profile profile = new Profile();
+		profile.setName(projName);
+    	bagView.bagProject.userProfiles.put(projName, profile);
 		//bagView.bagProject.initializeProfile();
 		messages = bagView.updateBaggerRules();
 		bag.setRootDir(bagView.getBagRootPath());

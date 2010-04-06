@@ -1,7 +1,7 @@
 
 package gov.loc.repository.bagger.ui.handlers;
 
-import gov.loc.repository.bagger.Project;
+import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
@@ -72,7 +72,6 @@ public class OpenBagHandler extends AbstractAction {
 		bag = bagView.getBag();
 		bagView.enableSettings(true);
         bagView.infoInputPane.setBagVersion(bag.getVersion());
-        bagView.infoInputPane.setBagVersionList(bagView.infoInputPane.getBagVersion());
         String fileName = file.getName();
         fileName = file.getAbsolutePath();
         bagView.infoInputPane.setBagName(fileName);
@@ -83,33 +82,33 @@ public class OpenBagHandler extends AbstractAction {
 	    	String sub = s.substring(i + 1).toLowerCase();
 	    	if (sub.contains("gz")) {
 	    		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_GZ_LABEL);
-	    		bagView.infoInputPane.tarGzButton.setSelected(true);
+	    		//bagView.infoInputPane.tarGzButton.setSelected(true);
 	    		bag.setSerialMode(DefaultBag.TAR_GZ_MODE);
 	    		bag.isSerial(true);
 	    	} else if (sub.contains("bz2")) {
 	    		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_BZ2_LABEL);
-	    		bagView.infoInputPane.tarBz2Button.setSelected(true);
+	    		//bagView.infoInputPane.tarBz2Button.setSelected(true);
 	    		bag.setSerialMode(DefaultBag.TAR_BZ2_MODE);
 	    		bag.isSerial(true);
 	    	} else if (sub.contains(DefaultBag.TAR_LABEL)) {
 	    		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_LABEL);
-	    		bagView.infoInputPane.tarButton.setSelected(true);
+	    		//bagView.infoInputPane.tarButton.setSelected(true);
 	    		bag.setSerialMode(DefaultBag.TAR_MODE);
 	    		bag.isSerial(true);
 	    	} else if (sub.contains(DefaultBag.ZIP_LABEL)) {
 	    		bagView.infoInputPane.serializeValue.setText(DefaultBag.ZIP_LABEL);
-	    		bagView.infoInputPane.zipButton.setSelected(true);
+	    		//bagView.infoInputPane.zipButton.setSelected(true);
 	    		bag.setSerialMode(DefaultBag.ZIP_MODE);
 	    		bag.isSerial(true);
 	    	} else {
 	    		bagView.infoInputPane.serializeValue.setText(DefaultBag.NO_LABEL);
-	    		bagView.infoInputPane.noneButton.setSelected(true);
+	    		//bagView.infoInputPane.noneButton.setSelected(true);
 	    		bag.setSerialMode(DefaultBag.NO_MODE);
 	    		bag.isSerial(false);
 	    	}
 	    } else {
 	    	bagView.infoInputPane.serializeValue.setText(DefaultBag.NO_LABEL);
-	    	bagView.infoInputPane.noneButton.setSelected(true);
+	    	//bagView.infoInputPane.noneButton.setSelected(true);
     		bag.setSerialMode(DefaultBag.NO_MODE);
     		bag.isSerial(false);
 	    }
@@ -125,47 +124,48 @@ public class OpenBagHandler extends AbstractAction {
         bag.getInfo().setBag(bag);
     	bag.copyBagToForm();
 	    if (!bag.getInfo().getLcProject().trim().isEmpty()){
+	    	
     		String name = bag.getInfo().getLcProject().trim();
-    		Project project = bagView.bagProject.userProjects.get(name);
-    		if (project == null) {
-        		project = new Project();
-        		project.setName(name);
+    		Profile profile = bagView.bagProject.userProfiles.get(name);
+    		
+    		if (profile == null) {
+        		profile = new Profile();
+        		profile.setName(name);
     		}
-    		if (!bagView.bagProject.projectExists(project)) {
-    			bagView.bagProject.addProject(project);
+    		
+    		if (!bagView.bagProject.ProfileExists(name)) {
+    			bagView.bagProject.addProfile(profile);
     		}
-        	bagView.bagProject.baggerProfile.put(name, new BaggerProfile());
-    		messages += bagView.bagProject.updateProject(name);
+    		
+    		messages += bagView.bagProject.updateProfile(name);
     		bag.isNoProject(false);
+    		
     	} else {
-        	String projName = bagView.getPropertyMessage("bag.project.noproject");
-        	bagView.bagProject.baggerProfile.put(projName, new BaggerProfile());
-    		messages += bagView.bagProject.updateProject(bagView.getPropertyMessage("bag.project.noproject"));
+    		messages += bagView.bagProject.updateProfile(bagView.getPropertyMessage("bag.project.noproject"));
     		bag.isNoProject(true);
     	}
 	    DefaultBagInfo bagInfo = bag.getInfo();
 		bagInfo.createExistingFieldMap(true);
 		bag.setInfo(bagInfo);
-		Project proj = bagView.getBag().getProject();
+		Profile proj = bagView.getBag().getProfile();
 		String projName = "";
         if (proj == null) {
         	projName = bagView.getPropertyMessage("bag.project.noproject");
         } else {
         	projName = proj.getName();
         }
-		BaggerProfile bProfile = bagView.bagProject.baggerProfile.get(projName);
-		bProfile.setOrganization(bagInfo.getBagOrganization());
-    	bagView.bagProject.baggerProfile.put(projName, bProfile);
+		
     	if (bagInfo.getBagSize() != null && bagInfo.getBagSize().isEmpty()) {
         	bag.setSize(bag.getDataSize());
     	} 
+    	
     	bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);
     	bag.copyBagToForm();
-	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
-	    	bagView.infoInputPane.defaultProject.setSelected(true);
-	    } else {
-	    	bagView.infoInputPane.defaultProject.setSelected(false);
-	    }
+//	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
+//	    	bagView.infoInputPane.defaultProject.setSelected(true);
+//	    } else {
+//	    	bagView.infoInputPane.defaultProject.setSelected(false);
+//	    }
 		messages = bagView.updateBaggerRules();
 		bagView.setBagRootPath(file);
     	bag.setRootDir(bagView.getBagRootPath());
