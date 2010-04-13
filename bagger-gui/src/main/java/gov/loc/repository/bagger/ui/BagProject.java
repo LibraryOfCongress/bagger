@@ -96,7 +96,7 @@ public class BagProject {
     }
 
     public void addProjectField(BagInfoField field) {
-    	if (field.isRequired() || field.isRequiredvalue() || !field.getValue().trim().isEmpty()) {
+    	{
     		Profile project = bag.getProfile();
     		if (project != null) {
         		ProfileField projectProfile = new ProfileField();
@@ -300,6 +300,35 @@ public class BagProject {
     	List<ProfileField> list = userProjectProfiles.get(profile.getName());
     	if (list == null) list = new ArrayList<ProfileField>();
     	list.add(projectProfile);
+    	userProjectProfiles.put(profile.getName(), list);
+    }
+    
+    public void removeProjectProfile(Profile profile, String fieldName) {
+    	
+    	List<ProfileField> list = userProjectProfiles.get(profile.getName());
+    	if (list == null) list = new ArrayList<ProfileField>();
+    	else
+    	{
+    		ProfileField fieldToRemove = null;
+    		for(ProfileField profileField: list)
+    		{
+    			if(profileField.getFieldName().equals(fieldName))
+    			{
+    				fieldToRemove = profileField;
+    			}
+    		}
+    		if(fieldToRemove != null)
+    		list.remove(fieldToRemove);
+    	}
+    	
+    	HashMap<String,ProfileField> customFields = profile.getCustomFields();
+    	HashMap<String,ProfileField> standardFields = profile.getCustomFields();
+    	
+    	if(customFields.containsKey(fieldName))
+    		customFields.remove(fieldName);
+    	else if(standardFields.containsKey(fieldName))
+    		standardFields.remove(fieldName);
+    	
     	userProjectProfiles.put(profile.getName(), list);
     }
 }

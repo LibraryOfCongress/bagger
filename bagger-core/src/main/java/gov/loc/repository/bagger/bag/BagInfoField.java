@@ -1,6 +1,8 @@
 
 package gov.loc.repository.bagger.bag;
 
+import gov.loc.repository.bagger.ProfileField;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +34,30 @@ public class BagInfoField {
 	private boolean isProfile = false;
 
     public BagInfoField() {
+    	
+    }
+    
+    public BagInfoField(ProfileField projectProfile)
+    {
+		this.setLabel(projectProfile.getFieldName());
+		this.setName(this.getLabel());
+		this.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+		this.isEnabled(!projectProfile.isReadOnly());
+		this.isEditable(!projectProfile.isReadOnly());
+		this.isRequiredvalue(projectProfile.getIsValueRequired());
+		this.isRequired(projectProfile.getIsRequired());
+		this.setValue(projectProfile.getFieldValue());
+		//field.setValue("");
+		if(projectProfile.isReadOnly())
+			this.isEnabled(false);
+		this.buildElements(projectProfile.getElements());
+		if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
+			this.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+		} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
+			this.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+		} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
+			this.setComponentType(BagInfoField.LIST_COMPONENT);
+		}
     }
 
     public void setName(String n) {
@@ -134,4 +160,6 @@ public class BagInfoField {
     	sb.append("isEditable: " + isEditable() + "\n");
     	return sb.toString();
     }
+
+	
 }

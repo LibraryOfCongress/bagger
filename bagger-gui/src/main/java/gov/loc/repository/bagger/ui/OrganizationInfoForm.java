@@ -136,7 +136,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 	                case BagInfoField.TEXTAREA_COMPONENT:
 	                    JComponent[] tlist = formBuilder.addTextArea(field.getName(), field.isRequired(), field.getLabel(), removeButton, ""); 
 	                    JComponent tcomp = tlist[0];
-	                    tcomp.addMouseListener(this);
+//	                    tcomp.addMouseListener(this);
 	                    JComponent textarea = tlist[index];
 	                    textarea.setEnabled(field.isEnabled());
 	            		textarea.addFocusListener(this);
@@ -155,7 +155,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 	                    JComponent comp = flist[index];
 	                    comp.setEnabled(field.isEnabled());
 	                    JComponent mcomp = flist[0];
-	                    mcomp.addMouseListener(this);
+//	                    mcomp.addMouseListener(this);
 	                    comp.addFocusListener(this);
 	                    comp.addKeyListener(this);
 	                    comp.addPropertyChangeListener(this);
@@ -166,7 +166,7 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
 	                	List<String> elements = field.getElements();
 	                    JComponent[] llist = formBuilder.addList(field.getName(), field.isRequired(), field.getLabel(), elements, removeButton, "");
 	                    JComponent lccomp = llist[0];
-	                    lccomp.addMouseListener(this);
+//	                    lccomp.addMouseListener(this);
 	                	JComponent lcomp = llist[index];
 	                	lcomp.setEnabled(field.isEnabled());
 	                	lcomp.addFocusListener(this);
@@ -275,7 +275,37 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
             bag.setInfo(bagInfo);
             bag.copyBagToForm();
             bagView.setBag(bag);
+            
+           
+			HashMap<String, BagInfoField> currentMap = bagInfo.getFieldMap();
+			if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
+			List<ProfileField> profileFields = bagView.bagProject.userProjectProfiles.get(bag.getProfile().getName());
+			HashMap<String, ProfileField> profileFieldsMap = convertToMap(profileFields);
+			
+			for(BagInfoField bagInfoField :  currentMap.values())
+			{
+				if(bagInfoField.getName().equals(DefaultBagInfo.FIELD_LC_PROJECT))
+						continue;
+				
+				if(profileFieldsMap.get(bagInfoField.getName())== null)
+					bagView.bagProject.addProjectField(bagInfoField);
+			}
+			bagView.showWarningErrorDialog("Fields Added", "Default Fields Sucessfully Added to the profile");
        	}
+    	
+    	 private HashMap<String, ProfileField> convertToMap(List<ProfileField> profileFields)
+    	    {
+    	    	HashMap<String, ProfileField> filedsToReturn = new HashMap<String, ProfileField>();
+    	    	if(profileFields == null)
+    	    		return filedsToReturn;
+    	    	for(ProfileField profileFiled: profileFields)
+    	    	{
+    	    		filedsToReturn.put(profileFiled.getFieldName(),profileFiled);
+    	    	}
+    	    	return filedsToReturn;
+    	    }
+    	    
+    	
     }
 
     private class RemoveFieldHandler extends AbstractAction {

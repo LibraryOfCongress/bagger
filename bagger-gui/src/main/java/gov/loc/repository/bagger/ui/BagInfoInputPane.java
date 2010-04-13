@@ -10,6 +10,7 @@ import gov.loc.repository.bagger.bag.BaggerOrganization;
 import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
+import gov.loc.repository.bagit.Bag;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -103,14 +104,14 @@ public class BagInfoInputPane extends JTabbedPane {
         if (bagProfile == null) {
         	bagProfile = new BaggerProfile();
         }
+        
+        
     	bagProfile.setOrganization(baggerOrganization);
     	bagProfile.setToContact(profile.getSendToContact());
-       
-        
-    	 updateProject(bagView);
+    	updateBagFields();
         infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
         bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), bagView, bagInfo.getFieldMap(), enabled);
-
+     
         profileFormModel = FormModelHelper.createCompoundFormModel(bagProfile);
         profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), bagView);
         profileFormModel.addPropertyChangeListener(profileForm);
@@ -223,57 +224,101 @@ public class BagInfoInputPane extends JTabbedPane {
     	try {
     		
         	this.bagInfoForm.setBagView(bagView);
-        	DefaultBag bag = bagView.getBag();
-        	Profile profile = bag.getProfile();
-        	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
-    		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
-    		
-    		//HashMap<String,ProfileField> standardFields = profile.getStandardFields();
-    		//currentMap.clear();
-    		
-    		if (bag.isNoProject()) {
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
-    			}
-    			if (currentMap.containsKey(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER)) {
-    				currentMap.remove(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER);
-    			}
-    		}
+        	DefaultBag bag = updateBagFields();
+            bagView.setBag(bag);
+            bagView.infoInputPane.updateInfoFormsPane(true);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    public DefaultBag updateBagFields()
+    {
+    	DefaultBag bag = bagView.getBag();
+    	Profile profile = bag.getProfile();
+    	HashMap<String, BagInfoField> currentMap = bag.getInfo().getFieldMap();
+		if (currentMap == null) currentMap = new HashMap<String, BagInfoField>();
+		
+		//HashMap<String,ProfileField> standardFields = profile.getStandardFields();
+		//currentMap.clear();
+		
+		if (bag.isNoProject()) {
+			if (currentMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
+				currentMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
+			}
+			if (currentMap.containsKey(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER)) {
+				currentMap.remove(DefaultBagInfo.FIELD_EXTERNAL_IDENTIFIER);
+			}
+		}
 
-    		if (profile != null) {
-    			
-    			
-    			if(!profile.getName().equals(bagView.getPropertyMessage("bag.project.noproject")))
+		if (profile != null) {
+			
+			
+			if(!profile.getName().equals(bagView.getPropertyMessage("bag.project.noproject")))
+			{
+				BagInfoField field = new BagInfoField();
+				field.setLabel(DefaultBagInfo.FIELD_LC_PROJECT);
+				field.setName(DefaultBagInfo.FIELD_LC_PROJECT);
+				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+				field.isEnabled(false);
+				field.isEditable(false);
+				field.isRequiredvalue(true);
+				field.isRequired(true);
+				field.setValue(profile.getName());
+				field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+				currentMap.put(field.getLabel(), field);
+			}
+			
+			List<ProfileField> list = bagView.bagProject.userProjectProfiles.get(profile.getName());
+			HashMap<String, ProfileField> profileFields = convertToMap(list);
+			
+			if(currentMap.size()>0)
+			{
+				for(BagInfoField field: currentMap.values())
 				{
-					BagInfoField field = new BagInfoField();
-					field.setLabel(DefaultBagInfo.FIELD_LC_PROJECT);
-					field.setName(DefaultBagInfo.FIELD_LC_PROJECT);
-					field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-					field.isEnabled(false);
-					field.isEditable(false);
-					field.isRequiredvalue(true);
-					field.isRequired(true);
-					field.setValue(profile.getName());
-					field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-					currentMap.put(field.getLabel(), field);
+					ProfileField projectProfile = profileFields.get(field.getLabel());
+					if(projectProfile == null)
+					  continue;
+					
+					field.isEnabled(!projectProfile.isReadOnly());
+					field.isEditable(!projectProfile.isReadOnly());
+					field.isRequiredvalue(projectProfile.getIsValueRequired());
+					field.isRequired(projectProfile.getIsRequired());
+					field.setValue(projectProfile.getFieldValue());
+					field.buildElements(projectProfile.getElements());
+					if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
+						field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
+					} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
+						field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
+					} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
+						field.setComponentType(BagInfoField.LIST_COMPONENT);
+					}
 				}
-    			
-    			List<ProfileField> list = bagView.bagProject.userProjectProfiles.get(profile.getName());
-    			HashMap<String, ProfileField> profileFields = convertToMap(list);
-    			
-    			if(currentMap.size()>0)
-    			{
-    				for(BagInfoField field: currentMap.values())
-    				{
-    					ProfileField projectProfile = profileFields.get(field.getLabel());
-    					if(projectProfile == null)
-    					  continue;
-    					
+			}
+			
+			
+			
+			HashMap<String, ProfileField> exclusiveProfileFields = new HashMap<String, ProfileField>();
+			exclusiveProfileFields.putAll(profileFields);
+			exclusiveProfileFields.keySet().removeAll(currentMap.keySet());
+			
+			
+			if (exclusiveProfileFields.size()>0) {
+				for (ProfileField profileField : exclusiveProfileFields.values()) {
+					ProfileField projectProfile = profileField;
+					if (projectProfile != null) {
+						BagInfoField field = new BagInfoField();
+						field.setLabel(projectProfile.getFieldName());
+						field.setName(field.getLabel());
+						field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
 						field.isEnabled(!projectProfile.isReadOnly());
 						field.isEditable(!projectProfile.isReadOnly());
 						field.isRequiredvalue(projectProfile.getIsValueRequired());
 						field.isRequired(projectProfile.getIsRequired());
 						field.setValue(projectProfile.getFieldValue());
+						//field.setValue("");
+						if(projectProfile.isReadOnly())
+							field.isEnabled(false);
 						field.buildElements(projectProfile.getElements());
 						if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
 							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
@@ -282,58 +327,23 @@ public class BagInfoInputPane extends JTabbedPane {
 						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
 							field.setComponentType(BagInfoField.LIST_COMPONENT);
 						}
-    				}
-    			}
-    			
-    			
-    			
-    			HashMap<String, ProfileField> exclusiveProfileFields = new HashMap<String, ProfileField>();
-    			exclusiveProfileFields.putAll(profileFields);
-    			exclusiveProfileFields.keySet().removeAll(currentMap.keySet());
-    			
-    			
-    			if (exclusiveProfileFields.size()>0) {
-    				for (ProfileField profileField : exclusiveProfileFields.values()) {
-    					ProfileField projectProfile = profileField;
-    					if (projectProfile != null) {
-    						BagInfoField field = new BagInfoField();
-    						field.setLabel(projectProfile.getFieldName());
-    						field.setName(field.getLabel().toLowerCase());
-    						field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-    						field.isEnabled(!projectProfile.isReadOnly());
-    						field.isEditable(!projectProfile.isReadOnly());
-    						field.isRequiredvalue(projectProfile.getIsValueRequired());
-    						field.isRequired(projectProfile.getIsRequired());
-    						field.setValue(projectProfile.getFieldValue());
-    						//field.setValue("");
-    						if(projectProfile.isReadOnly())
-    							field.isEnabled(false);
-    						field.buildElements(projectProfile.getElements());
-    						if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
-    							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
-    						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
-    							field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
-    						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
-    							field.setComponentType(BagInfoField.LIST_COMPONENT);
-    						}
-    						currentMap.put(field.getLabel(), field);
-    					}
-    				}
-    			}
-    			
-    			
-    		}
-    		
-    		bag.getInfo().setFieldMap(currentMap);
-            bagView.setBag(bag);
-            bagView.infoInputPane.updateInfoFormsPane(true);
-    	} catch (Exception e) {
-    	}
+						currentMap.put(field.getLabel(), field);
+					}
+				}
+			}
+			
+			
+		}
+		bag.getInfo().setFieldMap(currentMap);
+		bagView.setBag(bag);
+		return bag;
     }
     
-    private HashMap<String, ProfileField> convertToMap(List<ProfileField> profileFields)
+    public HashMap<String, ProfileField> convertToMap(List<ProfileField> profileFields)
     {
     	HashMap<String, ProfileField> filedsToReturn = new HashMap<String, ProfileField>();
+    	if(profileFields == null)
+    		return filedsToReturn;
     	for(ProfileField profileFiled: profileFields)
     	{
     		filedsToReturn.put(profileFiled.getFieldName(),profileFiled);

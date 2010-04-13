@@ -2,6 +2,7 @@
 package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.Profile;
+import gov.loc.repository.bagger.ProfileField;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.handlers.ClearFieldHandler;
 import gov.loc.repository.bagger.ui.handlers.HoleyBagHandler;
@@ -18,9 +19,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -36,10 +39,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
-
-
-
-
 
 public class InfoFormsPane extends JScrollPane {
 	private static final long serialVersionUID = -5988111446773491301L;
@@ -79,6 +78,10 @@ public class InfoFormsPane extends JScrollPane {
     public FileFilter noFilter;
     public FileFilter zipFilter;
     public FileFilter tarFilter;
+	private JButton btnEditProfile;
+	private JButton saveProfiles;
+	private JButton showAllDefaultFeildsButton;
+	private JButton addCustomFieldButton;
 
     public InfoFormsPane(BagView bagView) {
     	super();
@@ -133,7 +136,6 @@ public class InfoFormsPane extends JScrollPane {
     	JPanel panel = new JPanel();
     	Border border = new EmptyBorder(2, 1, 2, 1);
 
-
     	JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(5, 5));
@@ -170,7 +172,6 @@ public class InfoFormsPane extends JScrollPane {
 		gbc_textField_1.gridy = 0;
 		pane.add(bagNameField, gbc_textField_1);
 		bagNameField.setColumns(10);
-		
 		
 		JLabel lblSelectProfile = new JLabel("Select Profile:");
 		lblSelectProfile.setHorizontalAlignment(SwingConstants.LEFT);
@@ -295,16 +296,31 @@ public class InfoFormsPane extends JScrollPane {
 		gbc_btnEditProfile.gridy = 0;
 		panel_2.add(newProjectButton, gbc_btnEditProfile);
 		
-		JButton btnCreateNewProfile = new JButton("Edit Profile");
+		btnEditProfile = new JButton("Edit Profile");
 		GridBagConstraints gbc_btnCreateNewProfile = new GridBagConstraints();
 		gbc_btnCreateNewProfile.fill = GridBagConstraints.BOTH;
 		gbc_btnCreateNewProfile.insets = new Insets(0, 0, 5, 0);
 		gbc_btnCreateNewProfile.gridx = 0;
 		gbc_btnCreateNewProfile.gridy = 1;
-		panel_2.add(btnCreateNewProfile, gbc_btnCreateNewProfile);
+		panel_2.add(btnEditProfile, gbc_btnCreateNewProfile);
+		btnEditProfile.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				 List<ProfileField> profileFields = bagView.bagProject.userProjectProfiles.get(bagView.getBag().getProfile().getName());
+			        if(profileFields == null || profileFields.size()==0)
+			        {
+			        	bagView.showWarningErrorDialog("Edit Profile", "Profile: " + 
+			        			         bagView.getBag().getProfile().getName() + " does not have fields");
+			        	return;
+			        }
+				NewFieldFrame newFieldFrame =new NewFieldFrame(bagView, "Edit Profile Fields");
+				newFieldFrame.setVisible(true);
+			}
+		});
 		
 		
-		JButton saveProfiles = new JButton("Save Profiles");
+		saveProfiles = new JButton("Save Profiles");
 		GridBagConstraints gbc_btnSaveProfles = new GridBagConstraints();
 		gbc_btnSaveProfles.insets = new Insets(0, 0, 5, 0);
 		gbc_btnSaveProfles.fill = GridBagConstraints.HORIZONTAL;
@@ -317,13 +333,15 @@ public class InfoFormsPane extends JScrollPane {
 		mainPanel.add(profileFieldButtonsPane_1, BorderLayout.SOUTH);
 		profileFieldButtonsPane_1.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 0));
 		
-		JButton showAllDefaultFeildsButton = new JButton("Show All Default BagIt Fields");
+		showAllDefaultFeildsButton = new JButton("Add All Default BagIt Fields");
 		showAllDefaultFeildsButton.addActionListener(bagInfoInputPane.bagInfoForm.new  AddFieldDefaultsHandler());
 		profileFieldButtonsPane_1.add(showAllDefaultFeildsButton);
 		
-		JButton addCustomFieldButton= new JButton("Add Custom Field");
+		addCustomFieldButton = new JButton("Add Fields");
 		profileFieldButtonsPane_1.add(addCustomFieldButton);
 		addCustomFieldButton.addActionListener(bagInfoInputPane.bagInfoForm.new  AddFieldHandler());
+		
+		
 	
     	return contentPane;
     }
@@ -418,4 +436,12 @@ public class InfoFormsPane extends JScrollPane {
     	bagInfoInputPane.setSelectedIndex(i);
     	bagInfoInputPane.invalidate();
     }
+
+	public void updateButtonEnableSettings(boolean b) {
+		newProjectButton.setEnabled(b);
+		addCustomFieldButton.setEnabled(b);
+		showAllDefaultFeildsButton.setEnabled(b);
+		saveProfiles.setEnabled(b);
+		btnEditProfile.setEnabled(b);
+	}
 }

@@ -626,7 +626,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	bagTagFileTree.setEnabled(b);
     	bagTagFileTreePanel.setEnabled(b);
     	infoInputPane.profileList.setEnabled(b);
-        infoInputPane.newProjectButton.setEnabled(b);
+    	infoInputPane.updateButtonEnableSettings(b);
+        
         //infoInputPane.removeProjectButton.setEnabled(b);
         //infoInputPane.defaultProject.setEnabled(b);
         infoInputPane.bagInfoInputPane.setEnabled(b);
@@ -678,7 +679,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	infoInputPane.bagNameField.setEnabled(b);
     	infoInputPane.bagVersionValue.setEnabled(b);
     	infoInputPane.profileList.setEnabled(b);
-    	infoInputPane.newProjectButton.setEnabled(b);
+    	infoInputPane.updateButtonEnableSettings(b);
+    	
     	//infoInputPane.removeProjectButton.setEnabled(b);
         infoInputPane.holeyValue.setEnabled(b);
         infoInputPane.serializeValue.setEnabled(b);
@@ -964,4 +966,3 @@ public class BagView extends AbstractView implements ApplicationListener {
     	}
     }
 }
-

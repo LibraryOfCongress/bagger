@@ -30,15 +30,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Provides an in-memory Bagger business object.
+ * Provides JSONBagger business object.
  *
  * <P>
- * Leverages HSQL database's in-memory option and uses the Spring-supplied
- * <code>SimpleJdbcOrganization</code>. This class simply inserts the schema and base
- * data into the in-memory instance at startup time. It also inserts data
- * required for security.
  *
- * @author Ben Alex
+ * Leverages saving and loading profiles in JSON format.
+ *
+ * @author Praveen Bokka
  */
 public class JSonBagger implements Bagger {
 
@@ -62,14 +60,15 @@ public class JSonBagger implements Bagger {
     		profilesFolder.mkdirs();
     	}
 
-
     	if(baggerJarPath != null && !baggerJarPath.endsWith(".jar")){
 
     		String name = new String("gov.loc.repository.bagger.profiles");
     		if (!name.startsWith("/")) {
-    			name = "/" + name;
-    		}        
+    		name = "/" + name;
+    		}
     		name = name.replace('.','/');
+
+
 
     		// Get a File object for the package
     		URL url = JSonBagger.class.getResource(name);
@@ -96,6 +95,7 @@ public class JSonBagger implements Bagger {
     					}
     					os.flush();
     					os.close();
+    					
 
 
 
@@ -108,36 +108,40 @@ public class JSonBagger implements Bagger {
     				}
 
     			}
+    			return;
 
     		}
     	}
-    	try {
-    		java.util.jar.JarFile jf = new java.util.jar.JarFile(baggerJarPath);
-    		Enumeration<JarEntry> resources = jf.entries();
-    		while ( resources.hasMoreElements() ) {
-    			java.util.jar.JarEntry je = (java.util.jar.JarEntry) resources.nextElement();
-    			if ( je.getName().matches(".*\\.json") ) {
-    				try {
-    					InputStream is = jf.getInputStream(je);
-    					String entryName = je.getName();
-    					String fileName = entryName.substring(entryName.lastIndexOf("/")+1, entryName.length());
-    					File file = new File(profilesFolder +File.separator+ fileName);
-    					FileOutputStream os = new FileOutputStream(file);
-    					int content = is.read();
-    					while(content != -1)
-    					{
-    						os.write(content);
-    						content = is.read();
+    	else
+    	{
+    		try {
+    			java.util.jar.JarFile jf = new java.util.jar.JarFile(baggerJarPath);
+    			Enumeration<JarEntry> resources = jf.entries();
+    			while ( resources.hasMoreElements() ) {
+    				java.util.jar.JarEntry je = (java.util.jar.JarEntry) resources.nextElement();
+    				if ( je.getName().matches(".*\\.json") ) {
+    					try {
+    						InputStream is = jf.getInputStream(je);
+    						String entryName = je.getName();
+    						String fileName = entryName.substring(entryName.lastIndexOf("/")+1, entryName.length());
+    						File file = new File(profilesFolder +File.separator+ fileName);
+    						FileOutputStream os = new FileOutputStream(file);
+    						int content = is.read();
+    						while(content != -1)
+    						{
+    							os.write(content);
+    							content = is.read();
+    						}
+    						os.flush();
+    						os.close();
+    					} catch (IOException e) {
+    						e.printStackTrace();
     					}
-    					os.flush();
-    					os.close();
-    				} catch (IOException e) {
-    					e.printStackTrace();
     				}
     			}
+    		} catch (java.io.IOException e) {
+    			e.printStackTrace();
     		}
-    	} catch (java.io.IOException e) {
-    		e.printStackTrace();
     	}
 	}
     
@@ -194,6 +198,7 @@ public class JSonBagger implements Bagger {
 			profile.serialize(jsonWriter);
 			JSONObject jsonObject = new JSONObject(new JSONTokener(stringWriter.toString()));
 			writer.write(jsonObject.toString(4));
+			writer.flush();
 			writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
