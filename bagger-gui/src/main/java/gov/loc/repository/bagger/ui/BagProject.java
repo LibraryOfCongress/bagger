@@ -82,11 +82,9 @@ public class BagProject {
 				bagView.infoInputPane.profileList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
 		    	bag.setProfile(noProfile);
 			}
-	    	ProfileField projectProfile = null;
-			projectProfile = (ProfileField) userProjectProfiles.get(profile.getName());
-	    	if (projectProfile != null) {
-		    	userProjectProfiles.remove(projectProfile);
-	    	}
+	    	
+		    userProjectProfiles.remove(profile.getName());
+	    	bagView.getBagger().removeProfile(profile);
 		}
 		
     	bagView.infoInputPane.profileList.invalidate();

@@ -82,6 +82,7 @@ public class InfoFormsPane extends JScrollPane {
 	private JButton saveProfiles;
 	private JButton showAllDefaultFeildsButton;
 	private JButton addCustomFieldButton;
+	private JButton removeProfileBtn;
 
     public InfoFormsPane(BagView bagView) {
     	super();
@@ -329,6 +330,16 @@ public class InfoFormsPane extends JScrollPane {
 		panel_2.add(saveProfiles, gbc_btnSaveProfles);
 		saveProfiles.addActionListener(new SaveFieldHandler(bagView));
 		
+		removeProfileBtn= new JButton("Remove Profile");
+		GridBagConstraints gbc_removeProfileBtn = new GridBagConstraints();
+		gbc_removeProfileBtn.insets = new Insets(0, 0, 5, 0);
+		gbc_removeProfileBtn.fill = GridBagConstraints.HORIZONTAL;
+		gbc_removeProfileBtn.gridx = 0;
+		gbc_removeProfileBtn.gridy = 3;
+		panel_2.add(removeProfileBtn, gbc_removeProfileBtn);
+		removeProfileBtn.addActionListener(new RemoveProjectHandler());
+
+		
 		JPanel profileFieldButtonsPane_1 = new JPanel();
 		mainPanel.add(profileFieldButtonsPane_1, BorderLayout.SOUTH);
 		profileFieldButtonsPane_1.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 0));
@@ -443,5 +454,6 @@ public class InfoFormsPane extends JScrollPane {
 		showAllDefaultFeildsButton.setEnabled(b);
 		saveProfiles.setEnabled(b);
 		btnEditProfile.setEnabled(b);
+		removeProfileBtn.setEnabled(b);			
 	}
 }

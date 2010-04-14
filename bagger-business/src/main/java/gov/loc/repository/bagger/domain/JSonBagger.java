@@ -213,5 +213,15 @@ public class JSonBagger implements Bagger {
 	{
 		return name+"-profile.json";
 	}
+
+	public void removeProfile(Profile profile) {
+		String homeDir = System.getProperty("user.home");
+    	String profilesPath = homeDir+File.separator+"bagger";
+    	profilesFolder = new File(profilesPath);
+    	String profileFielName = getJsonFileName(profile.getName());
+    	File file = new File(profilesFolder,profileFielName);
+    	if(file.exists())
+    		file.delete();
+	}
 	
 }
