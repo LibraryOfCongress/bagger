@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<jnlp spec="1.0+" codebase="http://cerium.rdc.lctl.gov/bagger/" href="bagger.jnlp?format=raw">
+<jnlp spec="1.0+" codebase="http://baggertest.rdc.lctl.gov/bagger/" href="bagger.jnlp?format=raw">
    <information> 
       <title>Bagger App</title> 
       <vendor>Library of Congress</vendor>
@@ -15,7 +15,7 @@
    </security>
    <resources>
       <j2se version="1.6+" initial-heap-size="512m" />
-      <jar href="http://cerium.rdc.lctl.gov/bagger/bagger.jar?format=raw"/>
+      <jar href="http://baggertest.rdc.lctl.gov/bagger/bagger.jar?format=raw"/>
    </resources>
    <application-desc main-class="gov.loc.repository.bagger.BaggerStandalone"/>
 </jnlp> 
