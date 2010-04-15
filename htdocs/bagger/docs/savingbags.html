@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<title>Bagger Application - Repository Development Center (Library of Congress)</title>
+		<link rel="stylesheet" type="text/css" media="print" href="../css/deposit_print.css" />
+		<link rel="stylesheet" type="text/css" href="../css/deposit.css" />
+	</head>
+<body>
+<div id="container"><a id="skip" href="#skip_menu">skip navigation</a>
+  <div id="header">
+    <ul>
+      <li id="logo"><a href="../index.html"><img src="../images/bagger_logo.jpg" alt="" /></a></li>
+      <li id="welcome"></li>
+      <li id="contact"><img src="../images/mail.gif" alt="" /><a href="mailto:lesliej@loc.gov">Contact</a></li>
+    </ul>
+  </div>
+
+  <div id="navlist">
+  <div id="page_head"><h1><a href="../index.html">Home</a>: <a href="index.html">Bagger User Guide</a>: Saving bags</h1>
+    <div id="content">
+      <a href="makingbags.html">Previous</a>
+      <a href="bagfiles.html">Next</a>
+    </div>
+
+    <a name="bagtodisk"></a>
+      <div id="page_head"><h2>Saving a bag to disk</h2></div>
+      <div id="content">
+		There are two Bag action buttons for saving bags:
+		<ul>
+		  <li>‘Save Bag’ : is available if the selected destination already exists.  It will overwrite the bag on disk with the current bag of the same name using the existing settings.<br/></li>
+		  <li>‘Save Bag As’ : is available to any current bag open in Bagger.  It provides the user with several options such as making a bag holey and serializing the bag.<br/></li>
+		</ul>
+	  </div>
+		<div id="content">
+			<ul>Basic flow:<br/>
+		   <li>1. User selects to save bag.<br/></li>
+		   <li>2. User provides save options. Save options include:</li>
+			 <ul>
+				  <li>* File/directory (User provides file/directory using a File/Directory picker).<br/></li>
+				  <li>* Format (unserialized, zip, tar, etc.)<br/></li>
+				  <li>* Whether to generate/regenerate a tag manifest and if so, the algorithm.<br/></li>
+				  <li>* Whether to generate/regenerate a payload manifest and if so, the algorithm.<br/></li>
+				  <li>* Whether to verify a bag after writing.</li>
+			 </ul>
+		   <li>3. If the selected destination for the bag already exists, user confirms that files will be overwritten.<br/></li>
+		   <li>4. Application completes the bag.<br/></li>
+		   <li>5. Application writes the bag and replaces the current bag with the bag returned by saving. (The bag returned by saving references the new bag on disk.)<br/></li>
+		   <li>6. Application verifies the bag, if selected by user.<br/></li>
+		   <li>7. Application updates the displayed information for the saved bag.<br/></li>
+			</ul>
+		   </div>
+		<div id="content">
+		  <p><b>Save Bag</b></p>
+		  <p>To overwrite an existing bag select the ‘Save Bag’ button.</p>
+		  <p>
+		  <img src="images/bagger_savebag_confirm.jpg" alt="Create bag confirmation" />
+		  </p>
+
+		  <p>Selecting Yes from the Create bag confirmation dialog will save the bag to disk at the preexisting location.  Once the bag has successfully been saved a Bag saved popup confirmation dialog is shown.  Select Ok to continue to the newly saved bag.</p>
+		  <p>
+		  <img src="images/bagger_savebag_ok.jpg" alt="Bag saved dialog" />
+		  </p>
+
+		  <p>
+		  <img src="images/bagger_savebagas_saved.jpg" alt="Saved bag" />
+		  </p>
+		</div>
+		<div id="content">
+		  <p><b>Save Bag As</b></p>
+		  <p>Selecting the ‘Save Bag As’ button will open the Save Bag Dialog which shows the different options that can be applied to saving a bag.</p>
+		  <p>
+		  <img src="images/bagger_savebagas_dialog.jpg" alt="Save Bag Dialog" />
+		  </p>
+
+		  <p>The Save Bag Dialog shows the following options:</p>
+		  <ul>
+		    <li>Browse location button:<br/</li>
+			<li>Holey Bag?:<br/</li>
+				<ul><li>Base URL<br/</li></ul>
+			<li>Serialize Type?<br/</li>
+			  <ul>
+			    <li>none<br/</li>
+			    <li>zip<br/</li>
+			    <li>tar<br/</li>
+			    <li>tar gz<br/</li>
+			    <li>tar bz2<br/</li>
+			  </ul>
+			<li>Generate Tag Manifest?<br/</li>
+			  <ul><li>Tag Manifest Algorithm<br/</li></ul>
+			<li>Generate Payload Manifest?<br/</li>
+			  <ul><li>Payload Manifest Algorithm<br/</li></ul>
+			<li>Verify Bag after Save?<br/</li>
+		  </ul>
+		</div>
+		<div id="content">
+		  <p><b>Browse location button</b></p>
+		  <p>This is the only save input that is required on this dialog.  The browse button will open a file selection chooser to set the bag file name and location.</p>
+		  <p>
+		  <img src="images/bagger_savebagas_browse.jpg" alt="Save Bag As dialog" />
+		  </p>
+		  <p>
+		  <img src="images/bagger_savebagas_filename.jpg" alt="Save Bag Dialog location and name selected" />
+		  </p>
+		</div>
+		<div id="content">
+		  <p><b>Holey Bag?</b></p>
+		  <p>See the section ‘Saving as a holey bag’ for information on creating holey bags.</p>
+		</div>
+
+		<div id="content">
+		  <p><b>Serialize Type?</b></p>
+			<p>In some scenarios, it may be convenient to serialize the bag's base directory (i.e., the filesystem hierarchy representing the bag) into a single-file archive format such as TAR or ZIP (which might involve a compression step). The resulting serialization may later be deserialized (which might involve an uncompression step) to recreate the filesystem hierarchy. </p>
+			<p>When serializing a bag, care must be taken to ensure that the format's restrictions on file naming, such as allowable characters, length, or character encoding, will support the requirements of the systems on which it will be used. See the ‘BagIt Overview’ section for rules on bag serialization. </p>
+			<p>The user may decide it is necessary to create a serialized version of the bag’s base directory by changing the ‘Serialized Type?’ option from none to one of the serialization formats provided.  If a preexisting location exists, but in a different format then it will not be overwritten.  A new bag of the chosen format will be created in the same location.  In the example shown, the serialization format is changed to the zip compression format.</p>
+		  <p>
+		  <img src="images/bagger_savebagas_zip.jpg" alt="Save Bag Dialog with Serialize Type zip" />
+		  </p>
+		  <p>Select the Save button to create the serialized zip format of the bag.  Once the bag has been successfully saved a Bag saved popup confirmation dialog is shown.  Select Ok to continue to the saved zip bag.</p>
+		  <p>Note: The payload file tree displays the file contents in the serialized format in which they are stored in the compressed bag on disk.</p>
+		  <p>
+		  <img src="images/bagger_savebagas_zip_saved.jpg" alt="Saved zip bag" />
+		  </p>
+		  <p>To create a serialized bag in one of the other formats follow the same procedure but select the appropriate format under the ‘Serialize Type?’ option.</p>
+		</div>
+
+		<div id="content">
+		  <p><b>Generate Tag Manifest?</b></p>
+		  <p>A tag manifest is a tag file listing tag files and corresponding checksums generated using a particular cryptographic checksum algorithm. A tag manifest file has a name of the form "tagmanifest-algorithm.txt", where algorithm is a string specifying a checksum algorithm. For example, a tag manifest file using SHA1 would have the name tagmanifest-sha1.txt</p>
+		  <p>Bagger provides the following ‘Tag Manifest Algorithms’ to choose from:<br/>
+			md5, sha1, sha256, sha512
+		  </p>
+		  <p>Note:  A bag may only contain a single tag manifest for a particular checksum algorithm. </p>
+		</div>
+
+		<div id="content">
+		  <p><b>Generate Payload Manifest?</b></p>
+		  <p>A payload manifest is a tag file listing payload files and corresponding checksums generated using a particular cryptographic checksum algorithm. A payload manifest file has a name of the form manifest-algorithm.txt, where algorithm is a string specifying a checksum algorithm, such as manifest-md5.txt or manifest-sha1.txt</p>
+		  <p>Bagger provides the following ‘Payload Manifest Algorithms’ to choose from:<br/>
+			md5, sha1, sha256, sha512
+		  </p>
+		  <p>Note:  A bag may only contain a single payload manifest for a particular checksum algorithm. </p>
+		  <p>Refer to the ‘BagIt Overview’ section for details about checksum algorithms and how they are used in BIL.</p>
+		</div>
+
+		<div id="content">
+		  <p><b>Verify Bag after Save?</b></p>
+		  <p>Another save option is bag verification upon a successful save.</p>
+		  <p>
+		  <img src="images/bagger_savebagas_verify.jpg" alt="Verify bag after save" />
+		  </p>
+		  <p>Upon a successful save the validation test will be performed.  If the bag is valid a Validation dialog will be shown indicating a successful check.  The ‘Is bag complete?’ and ‘Is bag valid?’ status indicators will both show ‘yes’.  If the bag is not valid an error message dialog will be shown indicating the validation problem and the status indicators will show ‘no’.</p>
+		  <p>See the section ‘Checking that a bag is valid’ in the ‘Checking Bag Status’ chapter for information on verifying bags. </p>
+		  <p>
+		  <img src="images/bagger_savebagas_verify_saved.jpg" alt="Verified bag after save" />
+		  </p>
+		</div>
+
+	</div>
+
+    <a name="holeybag"></a>
+      <div id="page_head"><h2>Saving as a holey bag</h2></div>
+      <div id="content">
+		  <p>The Bagger Application allows the user to create a holey bag.  According to the BagIt specification, a holey bag is a bag that does not itself contain its data payload files.  Instead it contains a reference file called fetch.txt that is a list of all the files to be included in the bag and the URL location from which the files can be retrieved at a later time.  A holey bag cannot be complete until these files are actually fetched and reincorporated to create a whole bag with all its payload files.  The Save Bag Dialog provides a checkbox to indicate that a bag should be made holey.  To learn the details about what holey bags are and how they are used, refer to the ‘BagIt Overview’ section. </p>
+		  <p>From the BagIt specification: For reasons of efficiency, a bag may be sent with a list of files to be fetched and added to the payload before it can meaningfully be checked for completeness. An optional top-level file named ‘fetch.txt’, if present, contains such a list.
+		  The ‘fetch.txt’ file allows a bag to be transmitted with ‘holes’ in it, which can be practical for several reasons. For example, it obviates the need for the sender to stage a large serialized copy of the content while the bag is transferred to the receiver. Also, this method allows a sender to construct a bag from components that are either a subset of logically related components (e.g., the localized logical object could be much larger than what is intended for export) or assembled from logically distributed sources (e.g., the object components for export are not stored locally under one filesystem tree).
+		  </p>
+	  </div>
+
+	  <div id="content">
+		<ul>Basic flow:<br/>
+	   <li>1. User selects to save as a holey bag.<br/></li>
+	   <li>2. User provides save options. Save options include:</li>
+	     <ul>
+	          <li>* File/directory (User provides file/directory using a File/Directory picker).<br/></li>
+	          <li>* Base URL.<br/></li>
+	          <li>* Format (unserialized, zip, tar, etc.)<br/></li>
+	          <li>* Whether to generate/regenerate a tag manifest and if so, the algorithm.<br/></li>
+	          <li>* Whether to generate/regenerate a payload manifest and if so, the algorithm.</li>
+		 </ul>
+	   <li>3. If the selected destination for the bag already exists, user confirms that files will be overwritten.<br/></li>
+	   <li>4. Application completes the bag.<br/></li>
+	   <li>5. Application makes the bag holey. (Making the bag copy holey will return a new bag that is holey.)<br/></li>
+	   <li>6. Application writes the holey bag.<br/></li>
+	   <li>7. Application updates the displayed information for the original bag.<br/></li>
+	  </ul>
+	  </div>
+
+      <div id="content">
+		<p>Selecting the ‘Save Bag As’ button will open the Save Bag Dialog which shows the different options that can be applied to saving a bag, including selecting the ‘Holey Bag’ checkbox.</p>
+		<p>Selecting the ‘Holey Bag’ checkbox option enables the ‘Base URL’ field.  This is required in order to identify the server address location of the files to be fetched.  Enter a URL address into the ‘Base URL’ field and select the ‘Save’ button. </p>
+		  <p>
+		  <img src="images/bagger_savebagas_holey.jpg" alt="Save Bag Dialog - holey bag" />
+		  </p>
+		  <p>
+		  <img src="images/bagger_savebagas_holey_saved.jpg" alt="Holey Bag saved" />
+		  </p>
+		<p>This results in a new holey bag.  Notice that the payload directory references the URL address where the files are to be located instead of the data directory.</p>
+		<p>Note:  A holey bag fails the test for ‘Is bag complete?’  The bag will not be complete until the files are fetched and the bag is made whole.</p>
+	  </div>
+
+    <div id="content">
+      <a href="makingbags.html">Previous</a>
+      <a href="bagfiles.html">Next</a>
+    </div>
+  </div>
+  </div>
+
+  <div id="footer">
+    <ul id="footlist">
+      <li><a href="http://www.loc.gov/index.html">Library of Congress</a>&nbsp;|</li>
+      <li><a href="https://beryllium.rdc.lctl.gov/rdc/wiki/Main_Page">About Repository Development Center</a></li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
