@@ -337,7 +337,12 @@ public class OrganizationInfoForm extends JPanel implements PropertyChangeListen
                 	if (c instanceof JButton) {
                 		if (c == selected) {
                 			BagInfoField field = getField(key);
-                			if (field != null) fieldMap.remove(key);
+                			if (field != null) 
+                				{
+                				fieldMap.remove(key);
+                				bagView.bagProject.removeProjectProfile(bagView.getBag().getProfile(), key);
+                				
+                				}
                 		}
                 	}
                 }
