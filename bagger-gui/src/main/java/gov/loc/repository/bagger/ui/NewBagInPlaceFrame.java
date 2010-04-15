@@ -30,10 +30,12 @@ import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -42,13 +44,19 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationPage;
 import org.springframework.richclient.application.PageComponent;
+import org.springframework.richclient.command.AbstractCommand;
+import org.springframework.richclient.command.ActionCommand;
+import org.springframework.richclient.command.CommandGroup;
+import org.springframework.richclient.core.DefaultMessage;
+import org.springframework.richclient.dialog.TitlePane;
+import org.springframework.richclient.util.GuiStandardUtils;
 
 public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 	private static final Log log = LogFactory.getLog(NewBagFrame.class);
 	private static final long serialVersionUID = 1L;
 	BagView bagView;
 	DefaultBag bag = null;
-	private Dimension preferredDimension = new Dimension(400, 300);
+	private Dimension preferredDimension = new Dimension(400, 230);
 	JPanel createPanel;
 	JTextField bagNameField;
 	File bagFile;
@@ -75,14 +83,28 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 		}
         getContentPane().add(createPanel, BorderLayout.CENTER);
         setPreferredSize(preferredDimension);
+        setLocation(200, 100);
         pack();
     }
 
     private JPanel createComponents() {
+
+    	TitlePane titlePane = new TitlePane();
+    	initStandardCommands();
+    	JPanel pageControl = new JPanel(new BorderLayout());
+    	JPanel titlePaneContainer = new JPanel(new BorderLayout());
+    	titlePane.setTitle(bagView.getPropertyMessage("NewBagInPlace.title"));
+    	titlePane.setMessage( new DefaultMessage(bagView.getPropertyMessage("NewBagInPlace.description")));
+    	titlePaneContainer.add(titlePane.getControl());
+    	titlePaneContainer.add(new JSeparator(), BorderLayout.SOUTH);
+    	pageControl.add(titlePaneContainer, BorderLayout.NORTH);
+
+    	JLabel location = new JLabel("Select Data:");
     	saveAsButton = new JButton(bagView.getPropertyMessage("bag.button.browse"));
     	saveAsButton.addActionListener(new BrowseFileHandler());
-        saveAsButton.setEnabled(true);
-        saveAsButton.setToolTipText(bagView.getPropertyMessage("bag.button.browse.help"));
+    	saveAsButton.setEnabled(true);
+    	saveAsButton.setToolTipText(bagView.getPropertyMessage("bag.button.browse.help"));
+    	
     	String fileName = "";
     	if (bag != null) fileName = bag.getName();
     	bagNameField = new JTextField(fileName);
@@ -90,7 +112,8 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
         bagNameField.setEditable(false);
         bagNameField.setEnabled(false);
 
-    	JLabel bagVersionLabel = new JLabel(bagView.getPropertyMessage("bag.label.version"));
+    	//contents
+		JLabel bagVersionLabel = new JLabel(bagView.getPropertyMessage("bag.label.version"));
         bagVersionLabel.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
         ArrayList<String> versionModel = new ArrayList<String>();
         Version[] vals = Version.values();
@@ -104,45 +127,109 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
         bagVersion = Version.V0_96.versionString;
         bagVersionList.addActionListener(new VersionListHandler());
         bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
-
-    	okButton = new JButton("Bag In Place");
-    	okButton.addActionListener(new OkNewBagHandler());
-        okButton.setEnabled(true);
-
-    	cancelButton = new JButton("Cancel");
-    	cancelButton.addActionListener(new CancelNewBagHandler());
-    	cancelButton.setEnabled(true);
-
+        
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
-
-        int row = 0;
-        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(saveAsButton, glbc);
-        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-        layout.setConstraints(bagNameField, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 60, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-        layout.setConstraints(bagVersionLabel, glbc);
-        buildConstraints(glbc, 1, row, 1, 1, 40, 50, GridBagConstraints.NONE, GridBagConstraints.CENTER);
-        layout.setConstraints(bagVersionList, glbc);
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 20, 50, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(cancelButton, glbc);
-        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.NONE, GridBagConstraints.CENTER);
-        layout.setConstraints(okButton, glbc);
-
         JPanel panel = new JPanel(layout);
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-    	panel.add(saveAsButton);
-    	panel.add(bagNameField);
-    	panel.add(bagVersionLabel);
-    	panel.add(bagVersionList);
-    	panel.add(cancelButton);
-    	panel.add(okButton);
 
-    	return panel;
+        int row = 0;
+        
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(location, glbc);
+        panel.add(location);
+        
+        buildConstraints(glbc, 2, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.EAST); 
+        glbc.ipadx=5;
+        layout.setConstraints(saveAsButton, glbc);
+        glbc.ipadx=0;
+        panel.add(saveAsButton);
+        
+        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        glbc.ipadx=5;
+        layout.setConstraints(bagNameField, glbc);
+        glbc.ipadx=0;
+        panel.add(bagNameField);
+        
+        row++;
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        layout.setConstraints(bagVersionLabel, glbc);
+        panel.add(bagVersionLabel);
+        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
+        layout.setConstraints(bagVersionList, glbc);
+        panel.add(bagVersionList);
+        
+        row++;
+        
+        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        JLabel spacerLabel = new JLabel("");
+        layout.setConstraints(spacerLabel, glbc);
+        panel.add(spacerLabel);
+        
+        
+        GuiStandardUtils.attachDialogBorder(panel);
+		pageControl.add(panel);
+		JComponent buttonBar = createButtonBar();
+		pageControl.add(buttonBar,BorderLayout.SOUTH);
+	
+		this.pack();
+		return pageControl;
+        
     }
+    
+    protected JComponent createButtonBar() {
+		CommandGroup dialogCommandGroup = CommandGroup.createCommandGroup(null, getCommandGroupMembers());
+		JComponent buttonBar = dialogCommandGroup.createButtonBar();
+		GuiStandardUtils.attachDialogBorder(buttonBar);
+		return buttonBar;
+	}
+	
+	protected Object[] getCommandGroupMembers() {
+		return new AbstractCommand[] { finishCommand, cancelCommand };
+	}
+	
+    /**
+	 * Initialize the standard commands needed on a Dialog: Ok/Cancel.
+	 */
+	private void initStandardCommands() {
+		finishCommand = new ActionCommand(getFinishCommandId()) {
+			public void doExecuteCommand() {
+				
+				new OkNewBagHandler().actionPerformed(null);
+
+			}
+		};
+
+
+		cancelCommand = new ActionCommand(getCancelCommandId()) {
+			public void doExecuteCommand() {
+				new CancelNewBagHandler().actionPerformed(null);
+			}
+		};
+	}
+	
+	/**
+	 * Select the appropriate close logic.
+	 */
+	private void executeCloseAction() {
+		
+	}
+	
+	protected String getFinishCommandId() {
+		return DEFAULT_FINISH_COMMAND_ID;
+	}
+	
+	protected String getCancelCommandId() {
+		return DEFAULT_CANCEL_COMMAND_ID;
+	}
+	
+	protected static final String DEFAULT_FINISH_COMMAND_ID = "okCommand";
+
+	protected static final String DEFAULT_CANCEL_COMMAND_ID = "cancelCommand";
+	
+	private ActionCommand finishCommand;
+
+	private ActionCommand cancelCommand;
 
     public void setBag(DefaultBag bag) {
     	this.bag = bag;
@@ -232,6 +319,11 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     	}
     }
 
+    private String getMessage(String property) {
+    	return bagView.getPropertyMessage(property);
+    }
+    
+    
     private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
     	gbc.gridx = x; // start cell in a row
     	gbc.gridy = y; // start cell in a column
