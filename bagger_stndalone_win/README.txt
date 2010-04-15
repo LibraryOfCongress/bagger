@@ -1,7 +1,7 @@
                               README
 
                     Bagger, Stand-Alone Edition
-                             Version 1.9
+                             Version 2.0
 
 
 The Bagger Stand-Alone Edition is intended for users with no or 
