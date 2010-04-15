@@ -945,7 +945,7 @@ public class DefaultBag {
 			SimpleResult result = completeVerifier.verify(bag);
 			if (!result.isSuccess()) {
 				messages = "Bag is not complete:\n";
-				messages += result.messagesToString();
+				messages += result.toString();
 			}
 			this.isComplete(result.isSuccess());
 			this.isCompleteChecked = true;
@@ -981,9 +981,9 @@ public class DefaultBag {
 		try {
 			updateStrategy();
 			SimpleResult result = this.bilBag.verify(bagStrategy);
-			if (result.messagesToString() != null && !result.isSuccess()) {
+			if (result.toString() != null && !result.isSuccess()) {
 				messages = "Bag-info fields are not all present for the project selected.\n";
-				messages += result.messagesToString();
+				messages += result.toString();
 			}
 			this.isValidMetadata(result.isSuccess());
 			this.isMetadataChecked = true;
@@ -1004,7 +1004,7 @@ public class DefaultBag {
 			SimpleResult result = validVerifier.verify(bagToValidate);
 			if (!result.isSuccess()) {
 				messages = "Bag is not valid:\n";
-				messages += result.messagesToString();
+				messages += result.toString();
 			}
 			this.isValid(result.isSuccess());
 			if (this.isValid) this.isComplete(this.isValid);

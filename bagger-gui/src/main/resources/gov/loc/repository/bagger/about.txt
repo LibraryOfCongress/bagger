@@ -8,7 +8,7 @@ Version: 1.12
 <p>
 <b>Bag It Library</b>
 <p>
-Version: 3.2
+Version: 3.4
 <p>
 <b>Java SE Development Kit (JDK)</b>
 <p>
