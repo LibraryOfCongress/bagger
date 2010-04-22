@@ -97,6 +97,10 @@ public class LongTask implements ProgressListener {
 	public void reportProgress(String activity, Object item, Long count, Long total) {
 		current = count;
 		lengthOfTask = total;
+		if (count == null)
+			count = 1L;
+		if (total == null)
+			total = 1L;
 		String message = MessageFormat.format("{0} {1} ({2} of {3})", activity, item, count, total);
 		statMessage = message;
 		//System.out.println("LongTask.reportProgress: " + message);
