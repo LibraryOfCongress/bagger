@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -115,6 +116,7 @@ public class JSonBagger implements Bagger {
     	else
     	{
     		try {
+    			baggerJarPath = URLDecoder.decode(baggerJarPath, "UTF-8");
     			java.util.jar.JarFile jf = new java.util.jar.JarFile(baggerJarPath);
     			Enumeration<JarEntry> resources = jf.entries();
     			while ( resources.hasMoreElements() ) {
