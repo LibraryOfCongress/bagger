@@ -61,12 +61,17 @@ a#skip {
 	top: -3.7em;
 	left: 50.5em;
 }
-#header ul li#log {
-	position: relative;
-	top: -3.7em;
-	left: 51.3em;
-}
-#header ul li#info {
+//#header ul li#log {
+//	position: relative;
+//	top: -3.7em;
+//	left: 51.3em;
+//}
+//#header ul li#info {
+//	position: relative;
+//	top: -3.7em;
+//	left: 52.5em;
+//}
+#header ul li#docs {
 	position: relative;
 	top: -3.7em;
 	left: 52.5em;
