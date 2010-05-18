@@ -92,7 +92,7 @@ a#skip {
 #header a:hover, #header a:active, #header a:focus {
 	border: 0;
 	padding: 0 0.5em 0 0.5em;
-	color: #999;
+	color: #ddd;
 	margin: 2em 0 2.5em 0;
 	text-decoration: underline;
 }
@@ -278,10 +278,10 @@ ol li a {
 /********** Footer *************/
 #footer {
 	clear: both;
-	height: 5em;
+	height: 4em;
 	background:#ccc;
 	border-top: 0.1em solid #c00;
-	padding: 1em 0 0 0;
+	padding: 1em 0 1em 0;
 	color: #fff;
 	font-size: .9em;
 	margin: 0;
@@ -316,9 +316,9 @@ ol li a {
 #footlist a:hover, #footlist a:active, #footlist a:focus {
 	border: 0;
 	padding: 1em 0.5em 1em 0.5em;
-	color: #666;
+	color: black;
 	text-decoration: underline;
-	font-weight: 100;
+	font-weight: bold;
 	margin: 0 0 2.5em 0;
 	vertical-align: top;
 }   
