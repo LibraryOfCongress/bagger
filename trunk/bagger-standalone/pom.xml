@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>loc-repository</groupId>
+    <artifactId>bagger-maven</artifactId>
+    <version>2.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>bagger-standalone</artifactId>
+  <packaging>jar</packaging>
+  <name>Spring richclient bagger</name>
+  <description>The standalone final delivery. This produces an executable jar.</description>
+
+  <properties>
+    <project.mainClass>
+      gov.loc.repository.bagger.BaggerStandalone
+    </project.mainClass>
+  </properties>
+  <build>  
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+	        <configuration>
+    	      <archive>
+        	    <manifest>
+            	  <mainClass>${project.mainClass}</mainClass>
+	              <addClasspath>true</addClasspath>
+    	        </manifest>
+        	  </archive>
+	        </configuration>
+          </execution>
+<!--  -->
+          <execution>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+	        <configuration>
+    	      <keystore>${project.build.directory}/../bagger.ks</keystore>
+        	  <keypass>bagger-rdc</keypass>
+	          <storepass>bagger-rdc</storepass>
+    	      <alias>rdc</alias>
+    	      <jarPath>${project.build.directory}/bagger-standalone-2.1-SNAPSHOT.jar</jarPath>
+        	  <signedjar>${project.build.directory}/../signed/bagger.jar</signedjar>
+	          <verify>true</verify>
+    	    </configuration>
+          </execution>
+<!--  -->
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <!-- Internal -->
+    <dependency>
+      <groupId>loc-repository</groupId>
+      <artifactId>bagger-business</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>loc-repository</groupId>
+      <artifactId>bagger-gui</artifactId>
+      <version>${pom.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jdesktop</groupId>
+          <artifactId>jdnc</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Spring rich -->
+    <!-- 
+	-->
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-support</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-vldocking</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.vlsolutions.swing</groupId>
+      <artifactId>docking</artifactId>
+    </dependency>
+
+    <!-- Logging -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging-api</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+    </dependency>
+
+    <!-- Security -->
+    <!-- 
+    -->
+    <dependency>
+      <groupId>org.acegisecurity</groupId>
+      <artifactId>acegi-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+    </dependency>
+    <!-- TODO clean this up as the exclusion bug is fixed
+      following dependencies are added so they will override the ones in acegisecurity,
+      because of the bug with exclusion we cannot exclude them. When acegi is used
+      as a dependency we therefor need to overwrite the following spring modules -->
+    <!-- 
+    -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-binding</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>2.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <version>2.5.1</version>
+    </dependency>
+  </dependencies>
+
+</project>

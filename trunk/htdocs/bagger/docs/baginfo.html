@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<title>Bagger Application - Repository Development Center (Library of Congress)</title>
+		<link rel="stylesheet" type="text/css" media="print" href="../css/deposit_print.css" />
+		<link rel="stylesheet" type="text/css" href="../css/deposit.css" />
+	</head>
+<body>
+<div id="container"><a id="skip" href="#skip_menu">skip navigation</a>
+  <div id="header">
+    <ul>
+      <li id="logo"><a href="../index.html"><img src="../images/bagger_logo.jpg" alt="" /></a></li>
+      <li id="welcome"></li>
+      <li id="contact"><img src="../images/mail.gif" alt="" /><a href="mailto:lesliej@loc.gov">Contact</a></li>
+    </ul>
+  </div>
+
+  <div id="navlist">
+  <div id="page_head"><h1><a href="../index.html">Home</a>: <a href="index.html">Bagger User Guide</a>: Bag-Info</h1>
+    <div id="content">
+      <a href="bagstatus.html">Previous</a>
+      <a href="appendix.html">Next</a>
+    </div>
+
+    <a name="editing"></a>
+      <div id="page_head"><h2>Editing</h2></div>
+      <div id="content">
+        <p>The contents of the ‘bag-info.txt’ tag file can be manipulated in Bagger using input forms that allow you add, remove and edit the fields that are to be included when the ‘bag-info.txt’ file is written to disk.  These values can be stored to your local disk and reloaded for future use in other bags.  They can also be associated with a specific bag project that requires the presence of specific values in the ‘bag-info.txt’ file to identify the bag with a project and project rules.  This will be discussed further in the section ’Project profiles’.</p>
+      </div>
+
+      <div id="content">
+		<ul>
+			<li>* For an existing BagInfo, all fields are displayed.<br/></li>
+			<li>* When displaying a field, the user is provided with the name of the field and the value of the field. Except as noted elsewhere, the user can edit the value.<br/></li>
+			<li>* Some fields may have larger values (and hence require large edit boxes).<br/></li>
+			<li>* Users may add additional fields. The User may select from the list of standard fields or provide his own field name.<br/></li>
+			<li>* Users may delete fields, exccept as noted elsewhere.<br/></li>
+			<li>* An empty field should not be added to BagInfo.<br/></li>
+			<li>* Changes to BagInfo are written to disk when the bag is saved.<br/></li>
+			<li>* Payload-Oxum cannot be edited, but can be deleted.<br/></li>
+			<li>* Bagging-Date is provided by default, but can be edited and deleted.<br/></li>
+		</ul>
+	  </div>
+
+      <div id="content">
+		<p>Here are some excerpts from the BagIt specification regarding BagInfo elements:
+		The ‘bag-info.txt’ file is a tag file that contains metadata elements describing the bag and the payload. The metadata elements contained in the ‘bag-info.txt’ file are intended primarily for human readability. All metadata elements are optional.</p>
+		<p>Reserved metadata element names are case-insensitive and defined as follows. </p>
+		<ul>
+		  <li>External-Description<br/></li>
+			<p>A brief explanation of the contents and provenance.</p>
+		  <li>Bagging-Date<br/></li>
+			<p>Date (YYYY-MM-DD) that the content was prepared for delivery.</p>
+		  <li>External-Identifier<br/></li>
+			<p>A sender-supplied identifier for the bag.</p>
+		  <li>Bag-Size<br/></li>
+			<p>Size or approximate size of the bag being transferred, followed by an abbreviation such as MB (megabytes), GB, or TB; for example, 42600 MB, 42.6 GB, or .043 TB. Compared to Payload-Oxum (described next), Bag-Size is intended for human consumption.</p>
+		  <li>Payload-Oxum<br/></li>
+			<p>The ‘octetstream sum’ of the payload, namely, a two-part number of the form ‘OctetCount.StreamCount’, where OctetCount is the total number of octets (8-bit bytes) across all payload file content and StreamCount is the total number of payload files.  Compared to Bag-Size (described above), Payload-Oxum is intended for machine consumption.</p>
+		  <li>Bag-Group-Identifier<br/></li>
+			<p>A sender-supplied identifier for the set, if any, of bags to which it logically belongs. This identifier must be unique across the sender's content, and if recognizable as belonging to a globally unique scheme, the receiver should make an effort to honor reference to it.</p>
+		  <li>Bag-Count<br/></li>
+			Two numbers separated by "of", in particular, "N of T", where T is the total number of bags in a group of bags and N is the ordinal number within the group; if T is not known, specify it as "?" (question mark). Examples: 1 of 2, 4 of 4, 3 of ?, 89 of 145.</p>
+		  <li>Internal-Sender-Identifier<br/></li>
+			An alternate sender-specific identifier for the content and/or bag.</p>
+		  <li>Internal-Sender-Description<br/></li>
+			A sender-local prose description of the contents of the bag.</p>
+		</ul>
+		<p>In addition to these metadata elements, other arbitrary metadata elements may also be present. </p>
+		<p>To help you manage the contents of the ‘bag-info.txt’ file, Bagger provides two tabbed frames called ’Other Bag-Info’ and ‘Bag-Info Contact’.</p>
+		<p><b>Other Bag-Info</b></p>
+		<p>By default a newly created bag which has no project profile selected will contain no fields in the ‘Other Bag-Info’ tab.  When an existing bag is loaded, the ‘Other Bag-Info’ tab will be populated with all the non-contact related fields contained in that bag’s ‘bag-info.txt’ tag file.</p>
+		<p>Note:  Fields with no value will not be saved to ‘bag-info.txt’ or loaded into Bagger.</p>
+		<p>
+		<img src="images/bagger_baginfo_existing_added.jpg" alt="Bag-Info existing fields" />
+		</p>
+		<p>At the top of this form are these two buttons:</p>
+		<ul>
+		  <li>‘Add Field’: disabled until a bag is opened</li>
+		  <p>Allows the user to add additional fields.</p>
+		  <li>‘Add All BagIt Fields’: disabled until a bag is opened</li>
+		  <p>Allows the user to add all of the standard fields at once.</p>
+		</ul>
+		<p><b>Add Field</b></p>
+		<p>Selecting the ‘Add Field’ button displays the ‘Add Field Dialog’.  This allows the user to select from the list of standard fields or provide a newly created field name of the user’s choice.</p>
+		<p>
+		<img src="images/bagger_baginfo_addnew.jpg" alt="Add Field Dialog" />
+		</p>
+		<p>The ‘Field Type’ specified whether the field has larger values (and hence require large edit boxes) by selecting ‘Extended Text’.  Otherwise use the default value of ‘Brief Text’.  The other options on the field pertain to project profile rules.  See the section Project profiles to learn how to use these options.</p>
+		<p><b>Add Field - Standard</b></p>
+		<p>
+		<img src="images/bagger_baginfo_existing.jpg" alt="Add Field Dialog Standard" />
+		</p>
+		<p>To add a standard field select the ‘Standard’ checkbox option, and then choose from one of the standard options shown in the pull-down menu.  A standard field will automatically set the appropriate ‘Field Type’.  Select the Add button to add the field to the ‘Other Bag-Info’ view.</p>
+		<p>
+		<img src="images/bagger_baginfo_existing_added.jpg" alt="Added Standard Field" />
+		</p>
+		<p>The field is displayed with the name and value.  If the value cannot be edited the value input box will be disabled.  For non-required fields, the user may delete the field by selecting the <img src="images/delete.gif" /> button at the end of the field row.  Required fields will also display an R after the field name.</p>
+		<p><b>Add Field - New</b></p>
+		<p>
+		<img src="images/bagger_baginfo_new.jpg" alt="Add Field Dialog New" />
+		</p>
+		<p>To add a new field, select the ‘New’ checkbox option.  The new field text box will become enabled.  Enter a name for your field, and then select the Add button to add the field to the ‘Other Bag-Info’ view.</p>
+		<p>
+		<img src="images/bagger_baginfo_new_added.jpg" alt="New field added" />
+		</p>
+		<p>To demonstrate how Bagger saves only fields with values, enter a value in one of the added fields but not the other.  Now save the bag as previously described.</p>
+		<p>
+		<img src="images/bagger_baginfo_saved.jpg" alt="Saved fields" />
+		</p>
+		<p>After selecting Ok from the ‘Bag saved’ confirmation dialog, notice that the field with a value is present but the field without a value has been omitted.</p>
+		<p>
+		<img src="images/bagger_baginfo_noblank.jpg" alt="Blank field omitted" />
+		</p>
+		<p></p>
+		<p><b>Remove Field</b></p>
+		<p>
+		<img src="images/bagger_baginfo_removed.jpg" alt="Removed Field" />
+		</p>
+		<p>To remove a field, select the  <img src="images/delete.gif"/> button adjacent to the field you wish to be removed.  The field row is now deleted from the ‘Other Bag-Info’ panel and will not be saved to the ‘bag-info.txt’ tag file.</p>
+		<p></p>
+		<p><b>Add All BagIt Fields</b></p>
+		<p>Selecting the ‘Add All BagIt Fields’ button automatically adds the entire list of standard fields to the ‘Other Bag-Info’ form.</p>
+		<p>
+		<img src="images/bagger_baginfo_allfields.jpg" alt="Add All BagIt Fields" />
+		</p>
+      </div>
+
+      <div id="content">
+        <p><b>Bag-Info Contact</b></p>
+		<p>By default a newly created bag which has no project profile selected will contain no fields in the ‘Bag-Info Contact’ tab.  When an existing bag is loaded, the ‘Bag-Info Contact’ tab will be populated with all the contact fields contained in that bag’s ‘bag-info.txt’ tag file. </p>
+		<p>Note:  If a project profile exists and has been loaded, the contact fields stored for that profile will be displayed unless an existing bag is opened.  In that case the profile fields will be replaced with the field values from the existing bag.</p>
+		<ul>
+		  <li>Send from Organization includes these reserved bag elements:</li>
+			<ul>
+			  <li>* Source-Organization<br/></li>
+			  <li>* Organization-Address<br/></li>
+			</ul>
+		  <li>Send from Contact includes these reserved bag elements:</li>
+		    <ul>
+		      <li>* Contact-Name<br/></li>
+		      <li>* Contact-Phone<br/></li>
+		      <li>* Contact-Email<br/></li>
+		    </ul>
+		  <li>Send to Contact is not yet written to ‘bag-info.txt’ file and is only stored in Bagger.  It includes the elements:</li>
+		    <ul>
+		      <li>* Contact-Name<br/></li>
+		      <li>* Contact-Phone<br/></li>
+		      <li>* Contact-Email<br/></li>
+		    </ul>
+		</ul>
+		<p>Here are some excerpts from the BagIt specification regarding contact BagInfo elements: </p>
+		<p>Reserved metadata element names are case-insensitive and defined as follows. </p>
+		<ul>
+		  <li>Source-Organization</li>
+		  <p>Organization transferring the content.</p>
+		  <li>Organization-Address</li>
+		  <p>Mailing address of the organization.</p>
+		  <li>Contact-Name</li>
+		  <p>Person at the source organization who is responsible for the content transfer.</p>
+		  <li>Contact-Phone</li>
+		  <p>International format telephone number of person or position responsible.</p>
+		  <li>Contact-Email</li>
+		  <p>Fully qualified email address of person or position responsible.</p>
+		</ul>
+		<p>
+		<img src="images/bagger_baginfo_contacts.jpg" alt="Bag-Info contact form" />
+		</p>
+		<p>The ‘Send to Contact’ fields provide information about the destination contact individual this bag will be sent to.  This will not be included in the ‘bag-info.txt’ metadata file as part of the bag, however, if desired this can be included in a later release of Bagger.  See the BagIt specification for more details regarding ‘bag-info.txt’.</p>
+      </div>
+
+    <a name="project"></a>
+      <div id="page_head"><h2>Project profiles</h2></div>
+      <div id="content">
+        <p>The project profile concept is a way to associate a collection of fields and field values with a bag via a standard project or a project of the user’s creation.  These values are stored in the ‘bag-info.txt’ tag file and are identified as a project profile by the LC-Project field.  The default Project profile of a newly created bag is <no profile>. </p>
+	  </div>
+
+      <div id="content">
+        <ul>
+          <li>* Users may select a Project profile. A profile specifies the value of the LC-Project field and one or more: </li>
+          <ul>
+            <li>- Required fields<br/></li>
+            <li>- Required field with required values<br/></li>
+            <li>- Default field values<br/></li>
+          </ul>
+          <li>* Required fields should be displayed for the user to provide a value. The user should not be able to remove required fields. <br/></li>
+		  <li>* Required fields with required values should be displayed for the user. The user should not be able to remove required fields or change their values. <br/></li>
+		  <li>* Fields with default values should be displayed for the user. The user should be able to remove fields with default values and change their values.  <br/></li>
+		  <li>* By default a bag has no Project profile. When loading an existing bag, if the BagInfo contains a recognized LC-Project field, a Project profile is automatically selected.  <br/></li>
+		  <li>* Satisfying a project profile is not required to save a bag.  <br/></li>
+		  <li>* Users may add new Project profiles or modify existing profiles.  <br/></li>
+		  <li>* LC-Project is a required field with required values.  <br/></li>
+	  </div>
+
+      <div id="content">
+        <p>Above the ‘Other Bag-Info’ and ‘Bag-Info Contact’ panels are a set of buttons for managing project profiles.</p>
+        <ul>
+          <li><b>Create New Project</b>: creates a new project to which fields can be added with profile specific rules.<br/></li>
+		  <li><b>Save Profiles</b>:  stores all fields, field values and field properties for the project profiles.<br/></li>
+		  <li><b>Load Profiles</b>:  loads all fields, field values and field properties for the project profiles.<br/></li>
+		  <li><b>Clear Profiles</b>:  removes all fields from the project profiles that have been loaded.<br/></li>
+	    </ul>
+      </div>
+
+      <div id="page_head"><h2>Create New Project</h2></div>
+      <div id="content">
+      	<p>A list of project profiles is displayed in the bag ‘Project profile’ field below the bag ‘File name’ field.  By default this list contains only the standard Bagger projects which are currently:  eDeposit, ndiipp, and ndnp.</p>
+		<p>To create a new project, simply select the ‘Create New Project’ button.</p>
+		<p>
+		<img src="images/bagger_newproject_add.jpg" alt="New project dialog" />
+		</p>
+		<p>There is only one field necessary for a new project and that is the ‘Project Name’ field.  Enter a name and then select the Add button.</p>
+		<p>
+		<img src="images/bagger_newproject_created.jpg" alt="Create new project" />
+		</p>
+		<p>Once the new project is created, the ‘Project Profile’ is set to be the new project.  In addition, a new field is created and added to the project profile.  The field ‘LC-Project’ is saved in the ‘bag-info.txt’ file in order to identify a project profile with the bag.  It is a required field that contains the required value equivalent to the project name.  It also cannot be modified or removed for this project profile. </p>
+		<p></p>
+		<p><b>Project profile - Add Field</b></p>
+		<p>Select the ‘Add Field’ button to add an additional field to this project profile.  The ‘Add Field Dialog’ is displayed, and now all the field options become relevant.</p>
+		<p>
+		<img src="images/bagger_project_addfield.jpg" alt="Add project field" />
+		</p>
+		<p>These ‘Add Field Dialog’ options are associated only with the current project profile:</p>
+		<ul>
+		  <li><b>‘Is Field Required?’</b>:  requires that this field exists for this project profile and it cannot be removed from the ‘Other Bag-Info’ form. <br/></li>
+		  <li><b>‘Default Field Value’</b>:  sets the default value that will be stored for this field in this project profile.  This value will be stored for this field in this project profile.  When this project profile is reloaded, this field will retain the default value.<br/></li>
+		  <li><b>‘Is Field Value Required?’</b>: requires that this field’s value be retained.  It becomes the default value and cannot be changed for this project profile.  The field is added to the ‘Other Bag-Info’ form with the value disabled.  It can, however, be removed unless the field is required<br/></li>.
+		</ul>
+		<p>Note:  The field properties for the ‘Other Bag-Info’ form can be edited by double-clicking on the field name.</p>
+		<p>In this example, select the ‘Is Field Required?’ checkbox and select Add.  </p>
+		<p>
+		<img src="images/bagger_project_addrequired.jpg" alt="Add required field" />
+		</p>
+		<p>
+		<img src="images/bagger_project_addrequired_error.jpg" alt="Add required field error, requires a value" />
+		</p>
+		<p>A required field also requires a value.  So an error message dialog appears.  Select Ok and this time enter a ‘Default Field Value’ and then select the Add button.</p>
+		<p>
+		<img src="images/bagger_project_addrequired_value.jpg" alt="Set required field default value" />
+		</p>
+		<p>
+		<img src="images/bagger_project_addrequired_added.jpg" alt="Required field added with default value" />
+		</p>
+		<p>The new required field appears with a value set.  This field cannot be removed; however, the value can be changed.  It will be stored in the Bagger database with the default value.  When the profile is reloaded it will contain the default value.  </p>
+		<p>In this example, enter a value into the ‘Default Field Value’ and select Add.  </p>
+		<p>
+		<img src="images/bagger_project_adddefault_value.jpg" alt="Add field with default value" />
+		</p>
+		<p>
+		<img src="images/bagger_project_defaultvalue.jpg" alt="Project field added with default value" />
+		</p>
+		<p>The new field appears with the default value set.  This field value can be changed, but it will be stored in the Bagger database with the default value.  When the profile is reloaded it will contain the default value.  However, the value that is assigned to the field in the ‘Other Bag-Info’ form will be the value that is saved to the ‘bag-info.txt’ tag file.</p>
+		<p>In this example, select the ‘Is Field Value Required?’ checkbox and select Add. </p>
+		<p>
+		<img src="images/bagger_project_requiredvalue.jpg" alt="Add required field value" />
+		</p>
+		<p>
+		<img src="images/bagger_project_requiredvalue_error.jpg" alt="Add required field value error, requires a default value" />
+		</p>
+		<p>A required field value also requires a default value.  So an error message dialog appears.  Select Ok and this time enter a ‘Default Field Value’ and then select the Add button.</p>
+		<p>
+		<img src="images/bagger_project_requiredvalue_value.jpg" alt="Set required field default value" />
+		</p>
+		<p>
+		<img src="images/bagger_project_requiredvalue_added.jpg" alt="Required field value added with default value" />
+		</p>
+		<p>The new required field value appears with a value set.  This field can be removed, and this field’s value cannot be changed so it is disabled.  It will be stored in the Bagger database with the default value.  When the profile is reloaded it will contain the default value.  </p>
+		<p>
+		<img src="images/bagger_project_saved.jpg" alt="Project bag saved" />
+		</p>
+		<p>Now save the bag as described previously.  The ‘bag-info.txt’ file contains the ‘LC-Project’ field with the default required value ‘MyProject’.  This allows Bagger to determine that the bag belongs to the ‘MyProject’ project and sets the ‘Project Profile’ field accordingly.  The added field properties are determined by the project profile still in memory, not by the ‘bag-info.txt’ file contents.</p>
+	  </div>
+
+	  <div id="content">
+	    <p><b>Change Project Profile</b></p>
+		<p>By selecting a different project profile, that project’s profile fields will be displayed.  If no profile has been created the form input fields will be blank and the user enters the values as described previously.</p>
+		<p>
+		<img src="images/bagger_project_changed.jpg" alt="Change project profile" />
+		</p>
+		<p>
+		<img src="images/bagger_project_changed_edeposit.jpg" alt="Project profile changed" />
+		</p>
+		<p>The Project profile is now set to the ‘eDeposit’ project.  First, notice that the ‘LC-Project’ field has been replaced with the ‘eDeposit’ project value.  Also, notice that the ‘eDeposit’ project requires a Publisher field to have a value.  The field properties can be edited by double-clicking on the field name.</p>
+	  </div>
+
+	  <div id="content">
+	    <p><b>Save Profiles</b></p>
+		<p>In order to store the project profiles for future use, select the ‘Save Profiles’ button.</p>
+		<p>
+		<img src="images/bagger_projectprofile_stored.jpg" alt="Store project profile dialog" />
+		</p>
+		<p>When stored, the Bagger application creates a bagger.sql file in the home directory path of the environment the current user is logged into.  Each operating system has a home directory designation, e.g. here are just a few examples:</p>
+		<ul>
+		  <li>C:\users\<username><br/></li>
+		  <li>C:\Documents and Settings\<username><br/></li>
+		  <li>/home/<username><br/></li>
+		  <li>/usr/<username><br/></li>
+		  <li>/var/users/<username><br/></li>
+		</ul>
+		<p></p>
+		<p><b>Load Profiles</b></p>
+		<p>Once you have exited the Bagger application, all the ‘Project profiles’ that were in memory are discarded.  When the application is restarted only the default ‘Project profiles’ exist.</p>
+		<p>In order to restore the project profiles select the ‘Load Profiles’ button.</p>
+		<p>
+		<img src="images/bagger_loadprofiles_dialog.jpg" alt="Load profiles dialog" />
+		</p>
+		<p>When the Bagger Application starts it looks for a ‘bagger.sql’ file in the user home directory.  If it finds one it will prompt the user with the message:</p>
+		<p>‘Saved profiles have been detected.  Would you like to load them?</p>
+		<p>If the user selects the Yes button the ‘Project profiles’ will be loaded, otherwise the No button will not load any stored profiles.</p>
+		<p>Once the ‘Project profiles’ have been loaded, you can select the profile you created previously.</p>
+		<p>
+		<img src="images/bagger_loadprofiles_select.jpg" alt="Select loaded project profile" />
+		</p>
+		<p>
+		<img src="images/bagger_loadprofiles_selected.jpg" alt="Selected project profile" />
+		</p>
+		<p></p>
+		<p><b>Clear Profiles</b></p>
+		<p>Selecting the ‘Clear Profiles’ button will remove any Project Profiles previously loaded, except for the standard projects.</p>
+		<p></p>
+	  </div>
+
+    <div id="content">
+      <a href="bagstatus.html">Previous</a>
+      <a href="appendix.html">Next</a>
+    </div>
+  </div>
+  </div>
+
+  <div id="footer">
+    <ul id="footlist">
+      <li><a href="http://www.loc.gov/index.html">Library of Congress</a>&nbsp;|</li>
+      <li><a href="https://beryllium.rdc.lctl.gov/rdc/wiki/Main_Page">About Repository Development Center</a></li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
