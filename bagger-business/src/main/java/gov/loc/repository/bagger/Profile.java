@@ -6,10 +6,21 @@ import gov.loc.repository.bagger.json.JSONTokener;
 import gov.loc.repository.bagger.json.JSONWriter;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Profile {
+	public static String NO_PROFILE_NAME = "<no profile>";
+	
+	public static String FIELD_NAME="name";
+	public static String FIELD_ORGANIZATION="Organization";
+	public static String FIELD_SENDTO="Send-To";
+	public static String FIELD_SENDFROM="Send-From";
+	public static String FIELD_CUSTOM_INFO="Custom-info";
+	public static String FIELD_STANDARD_INFO="Standard-info";
 	
 	private Contact sendToContact = new Contact(true);
 	private Contact sendFromContact = new Contact(false);
@@ -19,12 +30,7 @@ public class Profile {
 	private HashMap<String,ProfileField> customFields =  new HashMap<String, ProfileField>();
 	private HashMap<String,ProfileField> standardFields =  new HashMap<String, ProfileField>();
 	
-	public static String FIELD_NAME="name";
-	public static String FIELD_ORGANIZATION="Organization";
-	public static String FIELD_SENDTO="Send-To";
-	public static String FIELD_SENDFROM="Send-From";
-	public static String FIELD_CUSTOM_INFO="Custom-info";
-	public static String FIELD_STANDARD_INFO="Standard-info";
+	
 	
 	public void setSendToContact(Contact sendToContact) {
 		this.sendToContact = sendToContact;
@@ -176,5 +182,23 @@ public class Profile {
 		}
 		filedWriter.endObject();
 		return writer.toString();
+	}
+	
+	public boolean isNoProfile() {
+		return NO_PROFILE_NAME.equals(getName());
+	}
+	
+	public List<ProfileField> getProfileFields() {
+		ArrayList<ProfileField> fields = new ArrayList<ProfileField>();
+		
+		for (Map.Entry<String, ProfileField> entry : standardFields.entrySet()) {
+			fields.add(entry.getValue());
+		}
+		
+		for (Map.Entry<String, ProfileField> entry : customFields.entrySet()) {
+			fields.add(entry.getValue());
+		}
+		
+		return fields;
 	}
 }

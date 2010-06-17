@@ -4,6 +4,7 @@ package gov.loc.repository.bagger.ui.handlers;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 import java.awt.event.ActionEvent;
@@ -17,9 +18,7 @@ import org.springframework.richclient.dialog.ConfirmationDialog;
 public class ClearBagHandler extends AbstractAction {
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
-	DefaultBag bag;
 	private boolean confirmSaveFlag = false;
-	//private LongTask task;
 
 	public ClearBagHandler(BagView bagView) {
 		super();
@@ -27,7 +26,6 @@ public class ClearBagHandler extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		bag = bagView.getBag();
 		closeExistingBag();
 	}
 
@@ -49,7 +47,7 @@ public class ClearBagHandler extends AbstractAction {
 	        }
 	        protected void onCancel() {
         		super.onCancel();
-	        	clearExistingBag(bagView.getPropertyMessage("compositePane.message.clear"));
+	        	clearExistingBag();
 	        }
 	    };
 	    dialog.setCloseAction(CloseAction.DISPOSE);
@@ -58,42 +56,34 @@ public class ClearBagHandler extends AbstractAction {
 	    dialog.showDialog();
 	}
     
-    public void clearExistingBag(String messages) {
-    	//bagView.clearAfterSaving = false;
+    public void clearExistingBag() {
     	newDefaultBag(null);
-    	bag.isClearOnSave(false);
-    	bag.getInfo().setFieldMap(null);
-    	bag.getInfo().setProfileMap(null);
-    	bag.isNewbag(true);
-    	bagView.setBag(bag);
+    	DefaultBag bag = bagView.getBag();
+    	bag.clear();
         bagView.baggerRules.clear();
-        bagView.bagProject.clearProfiles();
-		bagView.bagProject.updateProfile(bagView.getPropertyMessage("bag.project.noproject"));
     	bagView.bagPayloadTree = new BagTree(bagView, AbstractBagConstants.DATA_DIRECTORY, true);
     	bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
-    	bagView.bagTagFileTree = new BagTree(bagView, bagView.getPropertyMessage("bag.label.noname"), false);
+    	bagView.bagTagFileTree = new BagTree(bagView, ApplicationContextUtil.getMessage("bag.label.noname"), false);
     	bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
     	bagView.infoInputPane.setBagName(bag.getName());
     	bagView.infoInputPane.updateInfoForms();
-    	bagView.compositePane.updateCompositePaneTabs(bag, messages);
-    	bagView.updateClearBag(messages);
+    	bagView.updateClearBag();
     }
 
     public void newDefaultBag(File f) {
+    	DefaultBag bag = null;
     	String bagName = "";
     	try {
         	bag = new DefaultBag(f, bagView.infoInputPane.getBagVersion());
     	} catch (Exception e) {
         	bag = new DefaultBag(f, null);    		
     	}
-    	bag.isClear(true);
     	if (f == null) {
         	bagName = bagView.getPropertyMessage("bag.label.noname");
     	} else {
 	    	bagName = f.getName();
 	        String fileName = f.getAbsolutePath();
 	        bagView.infoInputPane.setBagName(fileName);
-	        bagView.enableSettings(true);
     	}
 		bag.setName(bagName);
 		bagView.setBag(bag);

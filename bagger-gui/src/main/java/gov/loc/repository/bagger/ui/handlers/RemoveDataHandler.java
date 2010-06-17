@@ -4,7 +4,7 @@ package gov.loc.repository.bagger.ui.handlers;
 import gov.loc.repository.bagger.bag.BaggerFileEntity;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagView;
-import gov.loc.repository.bagit.Bag;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -22,7 +22,6 @@ public class RemoveDataHandler extends AbstractAction {
 	private static final Log log = LogFactory.getLog(RemoveDataHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
-	DefaultBag bag;
 
 	public RemoveDataHandler(BagView bagView) {
 		super();
@@ -30,15 +29,12 @@ public class RemoveDataHandler extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		bag = bagView.getBag();
 		removeData();
 	}
 
     public void removeData() {
     	String message = "";
-    	Bag b = bag.getBag();
-
-    	log.debug("Bag payload size pre: " + b.getPayload().size());
+    	DefaultBag bag = bagView.getBag();
 
     	TreePath[] paths = bagView.bagPayloadTree.getSelectionPaths();
     	
@@ -62,7 +58,8 @@ public class RemoveDataHandler extends AbstractAction {
     			log.debug("removeData filePath: " + fileName);
     			if (fileName != null && !fileName.isEmpty()) {
     				try {
-    					b.removeBagFile(fileName);
+    					bag.removeBagFile(fileName);
+    					ApplicationContextUtil.addConsoleMessage("Payload data removed: " + fileName);
     					if (node instanceof MutableTreeNode) {
     						model.removeNodeFromParent((MutableTreeNode)node);
     					} else {
@@ -71,7 +68,7 @@ public class RemoveDataHandler extends AbstractAction {
     					}
     				} catch (Exception e) {
     					try {
-    						b.removePayloadDirectory(fileName);
+    						bag.removePayloadDirectory(fileName);
     						if (node instanceof MutableTreeNode) {
     							model.removeNodeFromParent((MutableTreeNode)node);
     						} else {
@@ -85,11 +82,7 @@ public class RemoveDataHandler extends AbstractAction {
     				}
     			}
     		}
-    		bag.isCompleteChecked(false);
-    		bag.isValidChecked(false);
-    		bag.setBag(b);
-    		bagView.setBag(bag);
-    		bagView.compositePane.updateCompositePaneTabs(bag, "Payload data removed.");
+    		
     		bagView.bagPayloadTree.removeSelectionPaths(paths);
     		bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
     	}

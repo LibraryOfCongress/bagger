@@ -1,78 +1,59 @@
 
 package gov.loc.repository.bagger.ui;
 
+import gov.loc.repository.bagger.model.BagStatus;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
+import gov.loc.repository.bagger.ui.util.LayoutUtil;
+
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Color;
+import java.util.Date;
+
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-
 public class ConsolePane extends JPanel {
+	private static final int MAX_CONSOLE_MESSAGE_LENGTH = 50000;
+	
 	private static final long serialVersionUID = -4290352509246639528L;
 	private static final Log log = LogFactory.getLog(ConsolePane.class);
 
 	public static final String CONSOLE_PANE = "consolePane";
 	private Dimension maxDimension = new Dimension(400, 300);
-	private Dimension consoleDimension = new Dimension(300, 150);
 	private Dimension preferredDimension = new Dimension(400, 150);
-    private GridBagLayout layout = new GridBagLayout();
-    private GridBagConstraints gbc = new GridBagConstraints();
-    private String messages = new String();
     private Color textBackground = new Color(240, 240, 240);
-	private Dimension formDimension = new Dimension(150, 25);
     private Border emptyBorder = new EmptyBorder(10, 10, 10, 10);
-    private Font font;
+    private JTextArea serializedArea;
 
-    private BagView parentView;
-    private DefaultBag defaultBag;
-
-    public ConsolePane(BagView bagView, DefaultBag defaultBag, String messages) {
+    public ConsolePane(String messages) {
         super();
-        this.setLayout(layout);
-        this.parentView = bagView;
-        this.defaultBag = defaultBag;
-        this.messages = messages;
+        this.setLayout(new GridBagLayout());
         createFormControl();
+        addConsoleMessages(messages);
     }
 
-    public void setBag(DefaultBag bag) {
-    	this.defaultBag = bag;
-    }
     
-    public DefaultBag getBag() {
-    	return this.defaultBag;
-    }
-    
-    public void setMessages(String messages) {
-    	this.messages = messages;
-    }
-    
-    public String getMessages() {
-    	return this.messages;
-    }
-
     public JComponent createFormControl() {
     	this.setMaximumSize(maxDimension);
-    	int row = 0;
-//        createBaggedLine(row++);
-        createCompleteLine(row++);
-        createValidLine(row++);
-    	createValidMetaDataLine(row++);
-        createConsoleArea();
+    	
+    	GridBagConstraints gbc = LayoutUtil.buildGridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+    	this.add(createStatusPannel(), gbc);
+    	
+    	gbc = LayoutUtil.buildGridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        this.add(createConsoleArea(), gbc);
 
         this.setBorder(emptyBorder);
         this.setPreferredSize(preferredDimension);
@@ -80,206 +61,84 @@ public class ConsolePane extends JPanel {
     	return this;
     }
     
-    private void createValidMetaDataLine(int row) {
-    	JLabel validMetaLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isMetadata"));
-    	validMetaLabel.setToolTipText(parentView.getPropertyMessage("consolepane.ismetadata.help"));
-    	font = validMetaLabel.getFont().deriveFont(Font.BOLD);
-    	validMetaLabel.setFont(font);
-    	validMetaLabel.setPreferredSize(formDimension);
-        buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(validMetaLabel, gbc);
-        this.add(validMetaLabel);
-    	JLabel validMetaResult = new JLabel(parentView.getPropertyMessage("bag.label.unchecked"));
-    	validMetaResult.setToolTipText(parentView.getPropertyMessage("consolepane.ismetadata.help"));
-    	font = validMetaResult.getFont().deriveFont(Font.BOLD);
-    	validMetaResult.setFont(font);
-    	if (!defaultBag.isNoProject() && defaultBag.isMetadataChecked()) {
-    		if (defaultBag.isValidMetadata()) validMetaResult.setText("yes");
-    		else validMetaResult.setText("no");
-    	} else {
-    		validMetaResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
-    	}
-    	if (defaultBag.isNoProject() || defaultBag.isClear()) {
-    		validMetaLabel.setEnabled(false);
-    		validMetaResult.setEnabled(false);
-    	} else {
-    		validMetaLabel.setEnabled(true);
-    		validMetaResult.setEnabled(true);
-    	}
-    	validMetaResult.setPreferredSize(formDimension);
-        buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(validMetaResult, gbc);
-        this.add(validMetaResult);    	
-    }
-    
-    private void createCompleteLine(int row) {
-        JLabel completeLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isComplete"));
-        completeLabel.setToolTipText(parentView.getPropertyMessage("consolepane.iscomplete.help"));
-    	font = completeLabel.getFont().deriveFont(Font.BOLD);
-    	completeLabel.setFont(font);
-    	completeLabel.setPreferredSize(formDimension);
-        buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(completeLabel, gbc);
-        this.add(completeLabel);
-    	JLabel completeResult = new JLabel(parentView.getPropertyMessage("bag.label.unchecked"));
-    	completeResult.setToolTipText(parentView.getPropertyMessage("consolepane.iscomplete.help"));
-    	font = completeResult.getFont().deriveFont(Font.BOLD);
-    	completeResult.setFont(font);
-    	if (defaultBag.isCompleteChecked()) {
-    		if (defaultBag.isComplete()) completeResult.setText("yes");
-    		else completeResult.setText("no");
-    	} else {
-    		completeResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
-    	}
-    	if (defaultBag.isClear()) {
-    		completeLabel.setEnabled(false);
-    		completeResult.setEnabled(false);
-    	} else {
-    		completeLabel.setEnabled(true);
-    		completeResult.setEnabled(true);
-    	}
-    	completeResult.setPreferredSize(formDimension);
-        buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(completeResult, gbc);
-        this.add(completeResult);
-    }
-/*    
-    private void createBaggedLine(int row) {
-    	JLabel serializedLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isBagged"));
-    	serializedLabel.setToolTipText(parentView.getPropertyMessage("consolepane.isbagged.help"));
-    	font = serializedLabel.getFont().deriveFont(Font.BOLD);
-    	serializedLabel.setFont(font);
-    	serializedLabel.setPreferredSize(formDimension);
-    	buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-    	layout.setConstraints(serializedLabel, gbc);
-    	this.add(serializedLabel);
-    	JLabel serializedResult = new JLabel(parentView.getPropertyMessage("bag.label.unchecked"));
-    	serializedResult.setToolTipText(parentView.getPropertyMessage("consolepane.isbagged.help"));
-    	font = serializedResult.getFont().deriveFont(Font.BOLD);
-    	serializedResult.setFont(font);
-    	if (defaultBag != null) {
-    		if (defaultBag.isSerialized()) serializedResult.setText("yes");
-    		else serializedResult.setText("no");
-    	} else {
-    		serializedResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
-    	}
-    	if (defaultBag.isClear()) {
-    		serializedLabel.setEnabled(false);
-    		serializedResult.setEnabled(false);
-    	} else {
-    		serializedLabel.setEnabled(true);
-    		serializedResult.setEnabled(true);
-    	}
-    	serializedResult.setPreferredSize(formDimension);
-    	buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-    	layout.setConstraints(serializedResult, gbc);
-    	this.add(serializedResult);
-    }
-*/    
-    private void createValidLine(int row) {
-    	JLabel validLabel = new JLabel(parentView.getPropertyMessage("compositePane.message.isValid"));
-    	validLabel.setToolTipText(parentView.getPropertyMessage("consolepane.isvalid.help"));
-    	font = validLabel.getFont().deriveFont(Font.BOLD);
-    	validLabel.setFont(font);
-    	validLabel.setPreferredSize(formDimension);
-        buildConstraints(gbc, 0, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(validLabel, gbc);
-        this.add(validLabel);
-    	JLabel validResult = new JLabel(parentView.getPropertyMessage("bag.label.unchecked"));
-    	validResult.setToolTipText(parentView.getPropertyMessage("consolepane.isvalid.help"));
-    	font = validResult.getFont().deriveFont(Font.BOLD);
-    	validResult.setFont(font);
-    	if (defaultBag.isValidChecked()) {
-    		if (defaultBag.isValid()) validResult.setText("yes");
-    		else validResult.setText("no");
-    	} else {
-    		validResult.setText(parentView.getPropertyMessage("bag.label.unchecked"));
-    	}
-    	if (defaultBag.isClear()) {
-    		validLabel.setEnabled(false);
-    		validResult.setEnabled(false);
-    	} else {
-    		validLabel.setEnabled(true);
-    		validResult.setEnabled(true);
-    	}
-    	validResult.setPreferredSize(formDimension);
-        buildConstraints(gbc, 1, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        layout.setConstraints(validResult, gbc);
-        this.add(validResult);
-    }
-    
-    private void createConsoleArea() {
-    	String text = "";
-    	if (this.messages != null) text = this.messages;
-    	//for (int i=0; i<1500; i++) { text += "" + i%10 + ""; }
-    	int consoleWidth = 600;
-        int consoleHeight = 400;
-        int textRows = 20;
-        int textCols = 60;
+    private JPanel createStatusPannel() {
+    	JPanel statusPanel = new JPanel();
+    	statusPanel.setLayout(new GridBagLayout());
+		int row = 0;
+    	int col = 0;
+    	BagStatus bagStatus = BagStatus.getInstance();
+    	
+    	// Complete Status
+    	JLabel completeLabel = new JLabel(ApplicationContextUtil.getMessage("compositePane.message.isComplete") + " ");
+        completeLabel.setToolTipText(ApplicationContextUtil.getMessage("consolepane.iscomplete.help"));
+        GridBagConstraints gbc = LayoutUtil.buildGridBagConstraints(col++, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        statusPanel.add(completeLabel, gbc);
+        
+        JLabel completeStatus = new StatusImageLabel(bagStatus.getCompletenessStatus());
+		gbc = LayoutUtil.buildGridBagConstraints(col++, row, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+		statusPanel.add(completeStatus, gbc);
+		
+		// Validation Status
+		JLabel validationLabel = new JLabel(ApplicationContextUtil.getMessage("compositePane.message.isValid")  + " ");
+		validationLabel.setToolTipText(ApplicationContextUtil.getMessage("consolepane.isvalid.help"));
+		gbc = LayoutUtil.buildGridBagConstraints(col++, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        statusPanel.add(validationLabel, gbc);
+        
+        JLabel validationStatus = new StatusImageLabel(bagStatus.getValidationStatus());
+        gbc = LayoutUtil.buildGridBagConstraints(col++, row, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+		statusPanel.add(validationStatus, gbc);
+		
+		// Profile Compliance Status
+		JLabel profileComplianceLabel = new JLabel(ApplicationContextUtil.getMessage("compositePane.message.isMetadata")  + " ");
+		profileComplianceLabel.setToolTipText(ApplicationContextUtil.getMessage("consolepane.ismetadata.help"));
+		gbc = LayoutUtil.buildGridBagConstraints(col++, row, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
+        statusPanel.add(profileComplianceLabel, gbc);
+        
+        JLabel profileComplianceStatus = new StatusImageLabel(bagStatus.getProfileComplianceStatus());
+        gbc = LayoutUtil.buildGridBagConstraints(col++, row, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+		statusPanel.add(profileComplianceStatus, gbc);
+    	
+		return statusPanel;
+	}
 
-        JTextArea serializedArea = new JTextArea(text);
-        serializedArea.setToolTipText(parentView.getPropertyMessage("consolepane.msg.help"));
-        Font textFont = serializedArea.getFont();
-        FontMetrics fm = serializedArea.getFontMetrics(textFont);
-        int fontHeight = fm.getHeight();
-        int fontWidth = fm.charWidth('M');
-        textCols = consoleWidth / fontWidth;
-        textRows = getRowCount(text, textCols);
-        if (fontHeight > 0 && textRows > 0) consoleHeight = fontHeight * textRows;
+    private JScrollPane createConsoleArea() {
+        serializedArea = new JTextArea();
+        serializedArea.setToolTipText(ApplicationContextUtil.getMessage("consolepane.msg.help"));
 
     	serializedArea.setEditable(false);
     	serializedArea.setLineWrap(true);
     	serializedArea.setBackground(textBackground);
     	serializedArea.setWrapStyleWord(true);
     	serializedArea.setAutoscrolls(true);
-        consoleDimension = new Dimension(consoleWidth, consoleHeight);
-    	serializedArea.setPreferredSize(consoleDimension);
     	serializedArea.setBorder(BorderFactory.createLineBorder(Color.black));
-        buildConstraints(gbc, 0, 4, 2, 4, 10, 10, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
-        JScrollPane serializedPane = new JScrollPane(serializedArea);
-        layout.setConstraints(serializedPane, gbc);
-        this.add(serializedPane);
+    	
+        return new JScrollPane(serializedArea);
+        
     }
-
-    private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
-    	gbc.gridx = x; // start cell in a row
-    	gbc.gridy = y; // start cell in a column
-    	gbc.gridwidth = w; // how many column does the control occupy in the row
-    	gbc.gridheight = h; // how many column does the control occupy in the column
-    	gbc.weightx = wx; // relative horizontal size
-    	gbc.weighty = wy; // relative vertical size
-    	gbc.fill = fill; // the way how the control fills cells
-    	gbc.anchor = anchor; // alignment
-    }
-
+    
     public boolean requestFocusInWindow() {
         return this.requestFocusInWindow();
     }
 
-    private int getRowCount(String text, int rowWidth) {
-    	int rows = 0;
-    	try {
-        	java.io.StringReader reader = new java.io.StringReader(text);
-        	java.io.LineNumberReader ln = new java.io.LineNumberReader(reader);
-        	String line = ln.readLine();
-            while (line != null) {
-            	if (line.length() > rowWidth) {
-            		int length = line.length() / rowWidth;
-            		rows += length;
-            	} else {
-                	rows++;
-            	}
-            	line = ln.readLine();
-            }
-        	if (line != null && line.length() > rowWidth) {
-        		int length = line.length() / rowWidth;
-        		rows += length;
-        	}
-    	} catch (Exception e) {
-    		log.error("ConsolePane.getRowCount: " + e.getMessage());
+    public void addConsoleMessages(String message) {
+    	if (message != null && message.trim().length() != 0) {
+    		Document consoleMessageDoc = serializedArea.getDocument();
+	    	String date = new Date().toString();
+	    	serializedArea.append("\n[" + date + "]: " + message);
+	    	
+	    	if (consoleMessageDoc.getLength() > MAX_CONSOLE_MESSAGE_LENGTH) {
+	    		try {
+					consoleMessageDoc.remove(0, consoleMessageDoc.getLength() - MAX_CONSOLE_MESSAGE_LENGTH);
+				} catch (BadLocationException e) {
+					throw new RuntimeException(e);
+				}
+	    	}
+	    	serializedArea.setAutoscrolls(true);
+	    	serializedArea.setCaretPosition(consoleMessageDoc.getLength());
     	}
-    	if (rows <=0) rows = 1;
-    	
-    	return rows;
+    }
+    
+    public void clearConsoleMessages() {
+    	serializedArea.setText("");
     }
 }

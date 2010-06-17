@@ -13,6 +13,7 @@ public class OpenExecutor extends AbstractActionCommandExecutor {
 
 	public OpenExecutor(BagView bagView) {
 		super();
+		setEnabled(true);
 		this.bagView = bagView;
 	}
 

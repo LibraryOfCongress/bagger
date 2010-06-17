@@ -1,12 +1,9 @@
 
 package gov.loc.repository.bagger.ui.handlers;
 
-import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.bag.BaggerProfile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
-import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 import java.awt.event.ActionEvent;
@@ -23,7 +20,6 @@ public class OpenBagHandler extends AbstractAction {
 	private static final Log log = LogFactory.getLog(OpenBagHandler.class);
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
-	DefaultBag bag;
 
 	public OpenBagHandler(BagView bagView) {
 		super();
@@ -31,7 +27,6 @@ public class OpenBagHandler extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-    	bag = bagView.getBag();
 		openBag();
 	}
 
@@ -57,21 +52,20 @@ public class OpenBagHandler extends AbstractAction {
 	}
 
     public void openExistingBag(File file) {
-    	String messages = "";
-    	bagView.infoInputPane.bagInfoInputPane.enableForms(bag, true);
-    	bagView.clearBagHandler.clearExistingBag(messages);
+    	bagView.infoInputPane.bagInfoInputPane.enableForms(true);
+    	bagView.clearBagHandler.clearExistingBag();
 
 		try {
 	    	bagView.clearBagHandler.newDefaultBag(file);
+	    	ApplicationContextUtil.addConsoleMessage("Opened the bag " + file.getAbsolutePath());
 		} catch (Exception ex) {
-			log.error("openExistingBag DefaultBag: " + ex.getMessage());
-        	messages +=  "Failed to create bag: " + ex.getMessage() + "\n";
+        	ApplicationContextUtil.addConsoleMessage("Failed to create bag: " + ex.getMessage());
     	    //showWarningErrorDialog("Warning - file not opened", "Error trying to open file: " + file + "\n" + ex.getMessage());
     	    return;
 		}
-		bag = bagView.getBag();
-		bagView.enableSettings(true);
+		DefaultBag bag = bagView.getBag();
         bagView.infoInputPane.setBagVersion(bag.getVersion());
+        bagView.infoInputPane.setProfile(bag.getProfile().getName());
         String fileName = file.getName();
         fileName = file.getAbsolutePath();
         bagView.infoInputPane.setBagName(fileName);
@@ -115,82 +109,32 @@ public class OpenBagHandler extends AbstractAction {
 	    bagView.infoInputPane.serializeValue.invalidate();
 
 	    if (bag.isHoley()) {
-	    	bagView.infoInputPane.holeyCheckbox.setSelected(true);
-	    	bagView.infoInputPane.holeyValue.setText("true");
-	    	bagView.infoInputPane.holeyValue.invalidate();
+	    	bagView.infoInputPane.setHoley("true");
+	    } else {
+	    	bagView.infoInputPane.setHoley("false");
 	    }
+	    bagView.infoInputPane.holeyValue.invalidate();
 
-	    bag.isClear(false);
-        bag.getInfo().setBag(bag);
-    	bag.copyBagToForm();
-	    if (!bag.getInfo().getLcProject().trim().isEmpty()){
-	    	
-    		String name = bag.getInfo().getLcProject().trim();
-    		Profile profile = bagView.bagProject.userProfiles.get(name);
-    		
-    		if (profile == null) {
-        		profile = new Profile();
-        		profile.setName(name);
-    		}
-    		
-    		if (!bagView.bagProject.ProfileExists(name)) {
-    			bagView.bagProject.addProfile(profile);
-    		}
-    		
-    		messages += bagView.bagProject.updateProfile(name);
-    		bag.isNoProject(false);
-    		
-    	} else {
-    		messages += bagView.bagProject.updateProfile(bagView.getPropertyMessage("bag.project.noproject"));
-    		bag.isNoProject(true);
-    	}
-	    DefaultBagInfo bagInfo = bag.getInfo();
-		bagInfo.createExistingFieldMap(true);
-		bag.setInfo(bagInfo);
-		Profile proj = bagView.getBag().getProfile();
-		String projName = "";
-        if (proj == null) {
-        	projName = bagView.getPropertyMessage("bag.project.noproject");
-        } else {
-        	projName = proj.getName();
-        }
-		
-    	if (bagInfo.getBagSize() != null && bagInfo.getBagSize().isEmpty()) {
-        	bag.setSize(bag.getDataSize());
-    	} 
-    	
-    	bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);
-    	bag.copyBagToForm();
-//	    if (bag.getProject() != null && bag.getProject().getIsDefault()) {
-//	    	bagView.infoInputPane.defaultProject.setSelected(true);
-//	    } else {
-//	    	bagView.infoInputPane.defaultProject.setSelected(false);
-//	    }
-		messages = bagView.updateBaggerRules();
+		bagView.updateBaggerRules();
 		bagView.setBagRootPath(file);
-    	bag.setRootDir(bagView.getBagRootPath());
 		File rootSrc = new File(file, bag.getDataDirectory());
-    	if (bag.getBag().getFetchTxt() != null) {
-    		bagView.bagPayloadTree = new BagTree(bagView, bag.getFetch().getBaseURL(), true);
-    		rootSrc = new File(file, bag.getBag().getFetchTxt().getFilepath());
+		String path = null;
+    	if (bag.getFetchTxt() != null) {
+    		path = bag.getFetch().getBaseURL();
+    		rootSrc = new File(file, bag.getFetchTxt().getFilepath());
     	} else {
-    		bagView.bagPayloadTree = new BagTree(bagView, AbstractBagConstants.DATA_DIRECTORY, true);
+    		path = AbstractBagConstants.DATA_DIRECTORY;
     		rootSrc = new File(file, bag.getDataDirectory());
     	}
-    	bagView.bagPayloadTree.populateNodes(bag, rootSrc, true);
+    	bagView.bagPayloadTree.populateNodes(bag, path, rootSrc, true);
     	bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
     	bagView.updateManifestPane();
     	bagView.enableBagSettings(true);
-		bag.isSerialized(true);
-        bag.isNewbag(false);
 		String msgs = bag.validateMetadata();
 		if (msgs != null) {
-			if (messages != null) messages += msgs;
-			else messages = msgs;
+			ApplicationContextUtil.addConsoleMessage(msgs);
 		}
-		bagView.setBag(bag);
 		bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
-		bagView.compositePane.updateCompositePaneTabs(bag, messages);
 		bagView.updateOpenBag();
 		bagView.statusBarEnd();
     }

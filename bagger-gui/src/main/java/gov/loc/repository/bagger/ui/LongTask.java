@@ -4,22 +4,25 @@ import java.text.MessageFormat;
 
 import javax.swing.ProgressMonitor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import gov.loc.repository.bagit.ProgressListener;
 
 public class LongTask implements ProgressListener {
-    public Long lengthOfTask;
-    public Long current = 0L;
-    public boolean done = false;
-    public boolean canceled = false;
-    public String statMessage;
-    public Progress progress;
+	
+	private static final Log log = LogFactory.getLog(LongTask.class);
+	
+    private boolean done = false;
+    private Progress progress;
     private ProgressMonitor progressMonitor;
+    
+    private String activityMonitored;
 
     public LongTask() {
         //Compute length of task...
         //In a real program, this would figure out
         //the number of bytes to read or whatever.
-    	lengthOfTask = 1L;
     }
     
     public void setMonitor(ProgressMonitor monitor) {
@@ -36,75 +39,55 @@ public class LongTask implements ProgressListener {
     public void go() {
     	final SwingWorker worker = new SwingWorker(this) {
             public Object construct() {
-                current = 0L;
                 done = false;
-                canceled = false;
-                statMessage = null;
                 longTask.progress.execute();
                 return new Object();
+            }
+            
+            public void finished() {
+            	// update UI
             }
         };
         worker.start();
     }
 
-    /**
-     * Called from ProgressBarDemo to find out how much work needs
-     * to be done.
-     */
-    public Long getLengthOfTask() {
-        return lengthOfTask;
+
+    public boolean hasUserTriedToCancel() {
+    	return progressMonitor.isCanceled();
     }
 
-
-    public void setLengthOfTask(Long lengthOfTask) {
-        this.lengthOfTask = lengthOfTask;
-    }
-
-    /**
-     * Called from ProgressBarDemo to find out how much has been done.
-     */
-    public Long getCurrent() {
-        return current;
-    }
-
-    public void stop() {
-        canceled = true;
-        statMessage = null;
-    }
-
-    /**
+	/**
      * Called from ProgressBarDemo to find out if the task has completed.
      */
     public boolean isDone() {
         return done;
     }
-
-    /**
-     * Returns the most recent status message, or null
-     * if there is no current status message.
-     */
-    public String getMessage() {
-        return statMessage;
+    
+    public void done() {
+    	this.done = true;
+    	progressMonitor.close();
     }
-/*
-	@Override
-	public boolean performCancel() {
-		return canceled;
+
+    // should be thread-safe
+	public synchronized void reportProgress(String activity, Object item, Long count, Long total) {
+		if (count == null || total == null) {
+			log.error("reportProgress received null info: count=" + count + ", total=" + total);
+		} else {
+			if (activityMonitored == null || activityMonitored.equals(activity)) {
+				String message = MessageFormat.format("{0} ({2} of {3}) {1} ", activity, item, count, total);
+				this.progressMonitor.setNote(message);
+				this.progressMonitor.setMaximum(total.intValue());
+				this.progressMonitor.setProgress(count.intValue());
+			}
+		}
 	}
-*/
-    
-    
-	public void reportProgress(String activity, Object item, Long count, Long total) {
-		current = count;
-		lengthOfTask = total;
-		if (count == null)
-			count = 1L;
-		if (total == null)
-			total = 1L;
-		String message = MessageFormat.format("{0} {1} ({2} of {3})", activity, item, count, total);
-		statMessage = message;
-		//System.out.println("LongTask.reportProgress: " + message);
-		this.progressMonitor.setNote(message);
-		this.progressMonitor.setMaximum(total.intValue());
+
+	public String getActivityMonitored() {
+		return activityMonitored;
 	}
+
+	public void setActivityMonitored(String activityMonitored) {
+		this.activityMonitored = activityMonitored;
+	}
+	
 }

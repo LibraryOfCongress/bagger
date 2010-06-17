@@ -6,8 +6,9 @@
   <bean id="bagger" class="gov.loc.repository.bagger.domain.JSonBagger"
     lazy-init="true">
   </bean>
-
-  <bean id="bag" class="gov.loc.repository.bagger.bag.impl.DefaultBag">
+  
+  <bean id="profiles" class="gov.loc.repository.bagger.profile.BaggerProfileStore">
+  	<constructor-arg ref="bagger"/>
   </bean>
 
 </beans>

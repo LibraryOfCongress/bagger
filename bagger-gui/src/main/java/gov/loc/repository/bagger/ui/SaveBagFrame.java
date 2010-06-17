@@ -57,7 +57,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	private static final Log log = LogFactory.getLog(SaveBagFrame.class);
 	private static final long serialVersionUID = 1L;
 	BagView bagView;
-	DefaultBag bag = null;
 	File bagFile;
 	String bagFileName = "";
 	private Dimension preferredDimension = new Dimension(600, 400);
@@ -86,7 +85,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         super(title);
 		this.bagView = bagView;
 		if (bagView != null) {
-			bag = bagView.getBag();
 	        getContentPane().removeAll();
 	        savePanel = createComponents();
 		} else {
@@ -174,7 +172,10 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         browseButton.setEnabled(true);
         browseButton.setToolTipText(getMessage("bag.button.browse.help"));
     	String fileName = "";
-    	if (bag != null) fileName = bag.getName();
+    	DefaultBag bag = bagView.getBag();
+    	if (bag != null) {
+    		fileName = bag.getName();
+    	}
     	bagNameField = new JTextField(fileName);
         bagNameField.setCaretPosition(fileName.length());
         bagNameField.setEditable(false);
@@ -310,13 +311,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         isVerifyCheckbox.addActionListener(new VerifyHandler());
         isVerifyCheckbox.setToolTipText(getMessage("bag.isverify.help"));
 
-//    	okButton = new JButton("Save");
-//    	okButton.addActionListener(new OkSaveBagHandler());
-//        okButton.setEnabled(true);
-//
-//    	cancelButton = new JButton("Cancel");
-//    	cancelButton.addActionListener(new CancelSaveBagHandler());
-//    	cancelButton.setEnabled(true);
         
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
@@ -397,13 +391,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
         layout.setConstraints(isVerifyCheckbox, glbc);
     	panel.add(isVerifyCheckbox);
-//        row++;
-//        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-//        layout.setConstraints(cancelButton, glbc);
-//    	panel.add(cancelButton);
-//        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.NONE, GridBagConstraints.CENTER); 
-//        layout.setConstraints(okButton, glbc);
-//    	panel.add(okButton);
     	
     	GuiStandardUtils.attachDialogBorder(contentPane);
 		pageControl.add(panel);
@@ -417,7 +404,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     }
     
     public void setBag(DefaultBag bag) {
-    	this.bag = bag;
     	bagNameField.setText(bag.getName());
     	short mode = bag.getSerialMode();
     	if (mode == DefaultBag.NO_MODE) {
@@ -501,6 +487,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	    	fs.addChoosableFileFilter(bagView.infoInputPane.zipFilter);
 	        fs.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
 	        fs.setDialogTitle("Save Bag As");
+	        DefaultBag bag = bagView.getBag();
 	    	fs.setCurrentDirectory(bag.getRootDir());
 	    	if (bag.getName() != null && !bag.getName().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
 	    		String selectedName = bag.getName();
@@ -528,9 +515,9 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	            bagFile = file;
 	            bagFileName = bagFile.getAbsolutePath();
 	            String name = bagFileName; //bagFile.getName();
-	            bagView.infoInputPane.bagNameField.setText(name);
-	            bagView.infoInputPane.bagNameField.setCaretPosition(name.length());
-	        	bagView.infoInputPane.bagNameField.setEnabled(true);
+	            bagView.infoInputPane.setBagName(name);
+//	            bagView.infoInputPane.bagNameField.setCaretPosition(name.length());
+//	        	bagView.infoInputPane.bagNameField.setEnabled(true);
 	            bagNameField.setText(bagFileName);
 	            bagNameField.setCaretPosition(bagFileName.length());
 	            bagNameField.invalidate();
@@ -546,25 +533,20 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     			bagView.showWarningErrorDialog("Error - bag not saved", "The bag must have a file name.");
     			return;
 			}
-			if (bag.isHoley()) {
+			if (bagView.getBag().isHoley()) {
 				if (urlField.getText().trim().isEmpty()) {
         			bagView.showWarningErrorDialog("Error - bag not saved", "A holey bag must have a URL value.");
         			return;
 				} else {
 					bagView.getBag().getFetch().setBaseURL(urlField.getText().trim());
 				}
-				bagView.infoInputPane.holeyCheckbox.setSelected(true);
 				bagView.infoInputPane.holeyValue.setText("true");
 			} else {
-				bagView.infoInputPane.holeyCheckbox.setSelected(false);
 				bagView.infoInputPane.holeyValue.setText("false");
 			}
-			bag.isValidateOnSave(bagView.getBag().isValidateOnSave());
-			bagView.saveBagHandler.setValidateOnSave(bagView.getBag().isValidateOnSave());
-			bagView.setBag(bag);
+//			bagView.saveBagHandler.setValidateOnSave(bagView.getBag().isValidateOnSave());
 			setVisible(false);
             bagView.getBag().setName(bagFileName);
-            bagView.infoInputPane.bagNameField.invalidate();
 			bagView.saveBagHandler.save(bagFile);
         }
     }
@@ -649,13 +631,13 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     		// Determine status
     		boolean isSelected = cb.isSelected();
     		if (isSelected) {
-    			bag.isHoley(true);
+    			bagView.getBag().isHoley(true);
     			bagView.infoInputPane.serializeValue.setText("true");
     			urlLabel.setEnabled(true);
     			urlField.setEnabled(true);
     			urlField.requestFocus();
     		} else {
-    			bag.isHoley(false);
+    			bagView.getBag().isHoley(false);
     			bagView.infoInputPane.serializeValue.setText("false");
     			urlLabel.setEnabled(false);
     			urlField.setEnabled(false);

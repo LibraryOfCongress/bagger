@@ -1,27 +1,27 @@
 
 package gov.loc.repository.bagger.ui.handlers;
 
-import gov.loc.repository.bagger.bag.BaggerProfile;
+import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.ui.BagTree;
+import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 import gov.loc.repository.bagger.ui.BagView;
-import gov.loc.repository.bagger.ui.LongTask;
 import gov.loc.repository.bagger.ui.NewBagInPlaceFrame;
 import gov.loc.repository.bagger.ui.Progress;
-import gov.loc.repository.bagit.Bag;
-import gov.loc.repository.bagit.BagFile;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class CreateBagInPlaceHandler extends AbstractAction implements Progress {
    	private static final long serialVersionUID = 1L;
-	BagView bagView;
-	DefaultBag bag;
+   	private static final Log log = LogFactory.getLog(StartNewBagHandler.class);
+	private BagView bagView;
 
 	public CreateBagInPlaceHandler(BagView bagView) {
 		super();
@@ -29,17 +29,9 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		bag = bagView.getBag();
 		createBagInPlace();
 	}
 
-	public void setBagView(BagView bagView) {
-		this.bag = bagView.getBag();
-	}
-
-	public void setTask(LongTask task) {
-	//	this.task = task;
-	}
 
 	public void execute() {
 		bagView.statusBarEnd();
@@ -47,59 +39,38 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
 
     public void createBagInPlace() {
     	NewBagInPlaceFrame newBagInPlaceFrame = new NewBagInPlaceFrame(bagView, bagView.getPropertyMessage("bag.frame.newbaginplace"));
-        newBagInPlaceFrame.setBag(bag);
+        newBagInPlaceFrame.setBag(bagView.getBag());
         newBagInPlaceFrame.setVisible(true);
     }
 
-    public void createPreBag(File data) {
-    	String messages = "";
-    	bagView.clearBagHandler.clearExistingBag(messages);
+    public void createPreBag(File dataFile, String bagItVersion, final String profileName) {
+    	log.info("Creating a new bag in place with data: " + dataFile.getName()
+    			+ ", version: " + bagItVersion + ", profile: " + profileName);
+    	bagView.clearBagHandler.clearExistingBag();
     	try {
-    		bagView.getBag().createPreBag(data, bagView.infoInputPane.getBagVersion());
+    		bagView.getBag().createPreBag(dataFile, bagItVersion);
     	} catch (Exception e) {
     	    bagView.showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
     		return;
     	}
-    	bag = bagView.getBag();
-        bag.getInfo().setBag(bag);
-    	//bag.getBag().addFileToPayload(data);
-    	//bagView.bagPayloadTree.addNodes(data, false);
+    	DefaultBag bag = bagView.getBag();
     	
-
-    	File bagDir = data.getParentFile();
-    	String bagFileName = data.getName();
-    	bag.isClear(false);
+    	String bagFileName = dataFile.getName();
         bag.setName(bagFileName);
         bagView.infoInputPane.setBagName(bagFileName);
-        File bagFile = new File(bagDir, bagFileName);
-        bagView.setBag(bag);
-        bagView.saveBagHandler.save(bagFile);
-        bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
-
-       
-        bagView.compositePane.updateCompositePaneTabs(bag, bagView.getPropertyMessage("bag.message.filesadded"));
-        bagView.updateManifestPane();
-        bagView.enableBagSettings(true);
-		bag.isSerialized(true);
-		String msgs = bag.validateMetadata();
-		if (msgs != null) {
-			if (messages != null) messages += msgs;
-			else messages = msgs;
-		}
-		bag.getInfo().setBag(bag);
-        Bag b = bag.getBag();
-        bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
-        Collection<BagFile> tags = b.getTags();
-        for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
-        	BagFile bf = it.next();
-        	bagView.bagTagFileTree.addNode(bf.getFilepath());
-        }
-        bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
-        bag.isNewbag(true);
-        bagView.setBag(bag);
-        bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
-        bagView.compositePane.updateCompositePaneTabs(bag, messages);
-        bagView.updateBagInPlace();
-        bagView.statusBarEnd();
+        
+        setProfile(profileName);
+        
+        bagView.saveBagHandler.save(dataFile);
     }
+    
+    private void setProfile(String selected) {
+        Profile profile = bagView.getProfileStore().getProfile(selected);
+		log.info("bagProject: " + profile.getName());
+		
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(DefaultBagInfo.FIELD_LC_PROJECT, profile.getName());
+		bagView.getBag().updateBagInfo(map);
+    }
+
 }

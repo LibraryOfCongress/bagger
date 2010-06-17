@@ -16,6 +16,7 @@
 package gov.loc.repository.bagger.ui;
 
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.util.LayoutUtil;
 import gov.loc.repository.bagit.BagFactory.Version;
 
 import java.awt.BorderLayout;
@@ -54,18 +55,16 @@ import org.springframework.richclient.util.GuiStandardUtils;
 public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 	private static final Log log = LogFactory.getLog(NewBagFrame.class);
 	private static final long serialVersionUID = 1L;
-	BagView bagView;
-	DefaultBag bag = null;
+	private BagView bagView;
+	private DefaultBag bag = null;
 	private Dimension preferredDimension = new Dimension(400, 230);
-	JPanel createPanel;
-	JTextField bagNameField;
-	File bagFile;
-	String bagFileName = "";
-	JButton saveAsButton;
-	JButton okButton;
-	JButton cancelButton;
-	JComboBox bagVersionList;
-	String bagVersion;
+	private JPanel createPanel;
+	private JTextField bagNameField;
+	private File bagFile;
+	private String bagFileName = "";
+	private JButton saveAsButton;
+	private JComboBox bagVersionList;
+	private JComboBox profileList;
 
 	public NewBagInPlaceFrame(BagView bagView, String title) {
         super(title);
@@ -98,7 +97,28 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     	titlePaneContainer.add(titlePane.getControl());
     	titlePaneContainer.add(new JSeparator(), BorderLayout.SOUTH);
     	pageControl.add(titlePaneContainer, BorderLayout.NORTH);
-
+    	
+    	JPanel contentPanel = new JPanel(new GridBagLayout());
+        contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        
+        int row = 0;
+        layoutSelectDataContent(contentPanel, row++);
+        layoutBagVersionContent(contentPanel, row++);
+        layoutProfileSelectionContent(contentPanel, row++);
+        layoutSpacer(contentPanel, row++);
+        
+        GuiStandardUtils.attachDialogBorder(contentPanel);
+		pageControl.add(contentPanel);
+		JComponent buttonBar = createButtonBar();
+		pageControl.add(buttonBar,BorderLayout.SOUTH);
+	
+		this.pack();
+		return pageControl;
+        
+    }
+    
+	private void layoutSelectDataContent(JPanel contentPanel, int row) {
+		GridBagConstraints glbc = new GridBagConstraints();
     	JLabel location = new JLabel("Select Data:");
     	saveAsButton = new JButton(bagView.getPropertyMessage("bag.button.browse"));
     	saveAsButton.addActionListener(new BrowseFileHandler());
@@ -112,7 +132,23 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
         bagNameField.setEditable(false);
         bagNameField.setEnabled(false);
 
-    	//contents
+        glbc = LayoutUtil.buildGridBagConstraints(0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        contentPanel.add(location, glbc);
+        
+        glbc = LayoutUtil.buildGridBagConstraints(2, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.EAST); 
+        glbc.ipadx=5;
+        glbc.ipadx=0;
+        contentPanel.add(saveAsButton, glbc);
+        
+        glbc = LayoutUtil.buildGridBagConstraints(1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        glbc.ipadx=5;
+        glbc.ipadx=0;
+        contentPanel.add(bagNameField, glbc);
+    }
+	
+	private void layoutBagVersionContent(JPanel contentPanel, int row) {
+		GridBagConstraints glbc = new GridBagConstraints();
+		
 		JLabel bagVersionLabel = new JLabel(bagView.getPropertyMessage("bag.label.version"));
         bagVersionLabel.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
         ArrayList<String> versionModel = new ArrayList<String>();
@@ -124,60 +160,45 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
         bagVersionList = new JComboBox(versionModel.toArray());
         bagVersionList.setName(bagView.getPropertyMessage("bag.label.versionlist"));
         bagVersionList.setSelectedItem(Version.V0_96.versionString);
-        bagVersion = Version.V0_96.versionString;
-        bagVersionList.addActionListener(new VersionListHandler());
         bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
         
-    	GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints glbc = new GridBagConstraints();
-        JPanel panel = new JPanel(layout);
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-        int row = 0;
-        
-        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(location, glbc);
-        panel.add(location);
-        
-        buildConstraints(glbc, 2, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.EAST); 
-        glbc.ipadx=5;
-        layout.setConstraints(saveAsButton, glbc);
-        glbc.ipadx=0;
-        panel.add(saveAsButton);
-        
-        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-        glbc.ipadx=5;
-        layout.setConstraints(bagNameField, glbc);
-        glbc.ipadx=0;
-        panel.add(bagNameField);
-        
-        row++;
-        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(bagVersionLabel, glbc);
-        panel.add(bagVersionLabel);
-        buildConstraints(glbc, 1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
-        layout.setConstraints(bagVersionList, glbc);
-        panel.add(bagVersionList);
-        
-        row++;
-        
-        buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        JLabel spacerLabel = new JLabel("");
-        layout.setConstraints(spacerLabel, glbc);
-        panel.add(spacerLabel);
-        
-        
-        GuiStandardUtils.attachDialogBorder(panel);
-		pageControl.add(panel);
-		JComponent buttonBar = createButtonBar();
-		pageControl.add(buttonBar,BorderLayout.SOUTH);
+		
+        glbc = LayoutUtil.buildGridBagConstraints(0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        contentPanel.add(bagVersionLabel, glbc);
+        glbc = LayoutUtil.buildGridBagConstraints(1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
+        contentPanel.add(bagVersionList, glbc);
+	}
 	
-		this.pack();
-		return pageControl;
-        
-    }
-    
-    protected JComponent createButtonBar() {
+	private void layoutProfileSelectionContent(JPanel contentPane, int row) {
+		// content
+		// profile selection
+		JLabel bagProfileLabel = new JLabel(bagView.getPropertyMessage("Select Profile:"));
+		bagProfileLabel.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
+       
+        profileList = new JComboBox(bagView.getProfileStore().getProfileNames());
+        profileList.setName(bagView.getPropertyMessage("bag.label.projectlist"));
+        profileList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
+        profileList.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
+		
+        GridBagConstraints glbc = new GridBagConstraints();
+
+        JLabel spacerLabel = new JLabel();
+        glbc = LayoutUtil.buildGridBagConstraints(0, row, 1, 1, 5, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        contentPane.add(bagProfileLabel, glbc);
+        glbc = LayoutUtil.buildGridBagConstraints(1, row, 1, 1, 40, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
+        contentPane.add(profileList, glbc);
+        glbc = LayoutUtil.buildGridBagConstraints(2, row, 1, 1, 40, 50, GridBagConstraints.NONE, GridBagConstraints.EAST);
+        contentPane.add(spacerLabel, glbc);
+	}
+	
+	private void layoutSpacer(JPanel contentPanel, int row) {
+		GridBagConstraints glbc = new GridBagConstraints();
+		glbc = LayoutUtil.buildGridBagConstraints(0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
+        JLabel spacerLabel = new JLabel("");
+        contentPanel.add(spacerLabel, glbc);
+	}
+
+	protected JComponent createButtonBar() {
 		CommandGroup dialogCommandGroup = CommandGroup.createCommandGroup(null, getCommandGroupMembers());
 		JComponent buttonBar = dialogCommandGroup.createButtonBar();
 		GuiStandardUtils.attachDialogBorder(buttonBar);
@@ -206,13 +227,6 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 				new CancelNewBagHandler().actionPerformed(null);
 			}
 		};
-	}
-	
-	/**
-	 * Select the appropriate close logic.
-	 */
-	private void executeCloseAction() {
-		
 	}
 	
 	protected String getFinishCommandId() {
@@ -296,8 +310,9 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			log.info("BagVersionFrame.OkNewBagHandler");
 			setVisible(false);
-	        bagView.infoInputPane.bagVersionValue.setText(bagVersion);
-			bagView.createBagInPlaceHandler.createPreBag(bagFile);
+			bagView.createBagInPlaceHandler.createPreBag(bagFile, 
+					(String)bagVersionList.getSelectedItem(),
+					(String)profileList.getSelectedItem());
         }
     }
 
@@ -307,32 +322,6 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			setVisible(false);
         }
-    }
-
-    private class VersionListHandler extends AbstractAction {
-    	private static final long serialVersionUID = 75893358194076314L;
-    	public void actionPerformed(ActionEvent e) {
-        	JComboBox jlist = (JComboBox)e.getSource();
-        	String version = (String) jlist.getSelectedItem();
-        	bagVersion = version;
-        	bagView.infoInputPane.bagVersionValue.setText(version);
-    	}
-    }
-
-    private String getMessage(String property) {
-    	return bagView.getPropertyMessage(property);
-    }
-    
-    
-    private void buildConstraints(GridBagConstraints gbc,int x, int y, int w, int h, int wx, int wy, int fill, int anchor) {
-    	gbc.gridx = x; // start cell in a row
-    	gbc.gridy = y; // start cell in a column
-    	gbc.gridwidth = w; // how many column does the control occupy in the row
-    	gbc.gridheight = h; // how many column does the control occupy in the column
-    	gbc.weightx = wx; // relative horizontal size
-    	gbc.weighty = wy; // relative vertical size
-    	gbc.fill = fill; // the way how the control fills cells
-    	gbc.anchor = anchor; // alignment
     }
 
 }

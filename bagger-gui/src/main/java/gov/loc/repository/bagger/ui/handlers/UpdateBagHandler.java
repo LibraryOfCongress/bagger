@@ -10,8 +10,7 @@ import javax.swing.AbstractAction;
 
 public class UpdateBagHandler extends AbstractAction {
    	private static final long serialVersionUID = 1L;
-	BagView bagView;
-	DefaultBag bag;
+	private BagView bagView;
 
 	public UpdateBagHandler(BagView bagView) {
 		super();
@@ -23,14 +22,10 @@ public class UpdateBagHandler extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		this.bag = bagView.getBag();
-		updateBag(this.bag);
+		updateBag(bagView.getBag());
 	}
 
 	public void updateBag(DefaultBag bag) {
-        String messages = "";
-		messages = bagView.infoInputPane.bagInfoInputPane.updateForms(bag);
-        messages += bagView.bagProject.updateProfile();
-        bagView.updateBag();
+		bagView.infoInputPane.bagInfoInputPane.updateForms(bag);
 	}
 }

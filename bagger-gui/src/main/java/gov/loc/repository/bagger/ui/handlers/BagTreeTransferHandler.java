@@ -1,16 +1,12 @@
 package gov.loc.repository.bagger.ui.handlers;
 
-import gov.loc.repository.bagger.ui.BagView;
-
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.swing.JComponent;
 import javax.swing.JTree;
@@ -31,13 +27,11 @@ public class BagTreeTransferHandler extends TransferHandler {
     private static boolean debugImport = false;
 	DataFlavor nodesFlavor;
 	DataFlavor[] flavors = new DataFlavor[1];
-    private BagView bagView;
     private boolean isPayload;
 	private DefaultMutableTreeNode[] nodesToRemove;
 
-    public BagTreeTransferHandler(BagView bagView, boolean isPayload) {
+    public BagTreeTransferHandler(boolean isPayload) {
     	super();
-		this.bagView = bagView;
     	this.isPayload = isPayload;
 		try {
 			String mimeType = DataFlavor.javaJVMLocalObjectMimeType + ";class=\"" +	javax.swing.tree.DefaultMutableTreeNode[].class.getName() +	"\"";
@@ -97,120 +91,6 @@ public class BagTreeTransferHandler extends TransferHandler {
     	return false;
     }
 
-    public boolean importData(JComponent comp, Transferable t) {
-    	DataFlavor[] transferFlavors = t.getTransferDataFlavors();
-    	for (int i = 0; i < transferFlavors.length; i++) {
-    		// Drop from Windows Explorer
-    		if (DataFlavor.javaFileListFlavor.equals(transferFlavors[i])) {
-    			display("importData transferFlavors: " + transferFlavors[i]);
-    			try {
-    				List<File> fileList = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
-    				if (fileList != null) {
-    					display("importData size: " + fileList.size());
-    					if (isPayload) {
-        					bagView.dropBagPayloadData(fileList);
-    					} else {
-        					bagView.dropBagTagFile(fileList);
-    					}
-    				} else if (fileList.get(0) instanceof File) {
-    					log.error("importData Unknown object in list: " + fileList.get(0));
-    				} else {
-    					log.error("importData fileList NULL");
-    				}
-    			} catch (UnsupportedFlavorException e) {
-    				log.error(e.toString());
-    			} catch (IOException e) {
-    				log.error(e.toString());
-    			}
-    			return true;
-    		}
-
-    		if (DataFlavor.stringFlavor.equals(transferFlavors[i])) {
-    			Object data;
-    			try {
-    				data = t.getTransferData(DataFlavor.stringFlavor);
-    			} catch (UnsupportedFlavorException e) {
-    				continue;
-    			} catch (IOException e) {
-    				continue;
-    			}
-    			if (data instanceof String) {
-    				display("importData importing transferFlavors: " + transferFlavors[i]);
-    				String path = getPathString((String) data);
-    				display("importData path: " + path);
-    				//mainInstance.downloadFile(path);
-    				return true;
-    			}
-    		}
-
-    		if (uriListFlavor.equals(transferFlavors[i])) {
-    			Object data;
-    			try {
-    				data = t.getTransferData(uriListFlavor);
-    			} catch (UnsupportedFlavorException e) {
-    				continue;
-    			} catch (IOException e) {
-    				continue;
-    			}
-    			if (data instanceof String) {
-    				display("importData importing transferFlavors: " + transferFlavors[i]);
-    				String path = getPathString((String) data);
-    				display("importData path: " + path);
-    				//mainInstance.downloadFile(path);
-    				return true;
-    			}
-    		}
-    		if (debugImport) {
-    			log.error("importData [" + i + "] unknown import: " + transferFlavors[i]);
-    		}
-    	}
-    	// This is the second best option since it works incorrectly on Max OS X
-    	// making url like this [file://localhost/users/work/app.jad]
-    	for (int i = 0; i < transferFlavors.length; i++) {
-    		Class representationclass = transferFlavors[i].getRepresentationClass();
-    		// URL from Explorer or Firefox, KDE
-    		if ((representationclass != null) && URL.class.isAssignableFrom(representationclass)) {
-    			display("importData importing transferFlavors: " + transferFlavors[i]);
-    			try {
-    				URL jadUrl = (URL) t.getTransferData(transferFlavors[i]);
-    				String urlString = jadUrl.toExternalForm();
-    				display("importData urlString: " + urlString);
-    				//mainInstance.downloadFile(urlString);
-    			} catch (UnsupportedFlavorException e) {
-    				log.error(e.toString());
-    			} catch (IOException e) {
-    				log.error(e.toString());
-    			}
-    			return true;
-    		}
-    	}
-    	return false;
-    }
-
-	private boolean haveCompleteNode(JTree tree) {
-		int[] selRows = tree.getSelectionRows();
-		if (selRows == null) return false;
-		TreePath path = tree.getPathForRow(selRows[0]);
-		DefaultMutableTreeNode first = (DefaultMutableTreeNode)path.getLastPathComponent();
-		int childCount = first.getChildCount();
-		// first has children and no children are selected.
-		if(childCount > 0 && selRows.length == 1)
-			return false;
-		// first may have children.
-		for(int i = 1; i < selRows.length; i++) {
-			path = tree.getPathForRow(selRows[i]);
-			DefaultMutableTreeNode next = (DefaultMutableTreeNode)path.getLastPathComponent();
-			if(first.isNodeChild(next)) {
-				// Found a child of first.
-				if(childCount > selRows.length-1) {
-					// Not all children of first are selected.
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
 	protected Transferable createTransferable(JComponent c) {
 		JTree tree = (JTree)c;
 		TreePath[] paths = tree.getSelectionPaths();
@@ -265,17 +145,6 @@ public class BagTreeTransferHandler extends TransferHandler {
 			}
 //		}
 	}
-
-    private String getPathString(String path) {
-    	if (path == null) {
-    		return null;
-    	}
-    	StringTokenizer st = new StringTokenizer(path.trim(), "\n\r");
-    	if (st.hasMoreTokens()) {
-    		return st.nextToken();
-    	}
-    	return path;
-    }
 
     public static String getCanonicalFileURL(File file) {
     	String path = file.getAbsoluteFile().getPath();

@@ -5,28 +5,23 @@ import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.form.AbstractForm;
 
-public class OrganizationProfileForm extends AbstractForm implements PropertyChangeListener, FocusListener {
+public class OrganizationProfileForm extends AbstractForm implements FocusListener {
     public static final String PROFILE_FORM_PAGE = "profilePage";
 
     private JComponent form;
     private JComponent contactName;
     private JComponent field;
     private BagView bagView;
-    private Dimension dimension = new Dimension(400, 300);
 
     public OrganizationProfileForm(FormModel formModel, BagView bagView) {
         super(formModel, PROFILE_FORM_PAGE);
@@ -36,8 +31,6 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
     protected JComponent createFormControl() {
     	form = new JPanel();
 		form.setLayout(new BorderLayout());
-		//JPanel buttonPanel = createButtonPanel(true);
-		//form.add(buttonPanel, BorderLayout.NORTH);
         JComponent formFields = createFormFields();
         form.add(formFields, BorderLayout.CENTER);
 
@@ -48,13 +41,11 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
         JComponent fieldForm;
         ImageIcon requiredIcon = bagView.getPropertyImage("bag.required.image");
         BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory(), requiredIcon);
-        JTextField nameTextField = new JTextField();
-        int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight();
         int rowCount = 0;
 
         formBuilder.row();
         rowCount++;
-        JComponent orgLabel = formBuilder.addLabel("Send from Organization")[0];
+        formBuilder.addSeparator("Send from Organization");
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("sourceOrganization")[1];
@@ -76,8 +67,11 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
         
         formBuilder.row();
         rowCount++;
-        JComponent contactLabel = formBuilder.addLabel("Send from Contact")[0];
+        formBuilder.addSeparator("Send from Contact");
         formBuilder.row();
+        
+        
+        
         rowCount++;
         this.contactName = formBuilder.add("srcContactName")[1];
         
@@ -104,7 +98,7 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
         this.field.addFocusListener(this);
         formBuilder.row();
         rowCount++;
-        contactLabel = formBuilder.addLabel("Send to Contact")[0];
+        formBuilder.addSeparator("Send to Contact");
         formBuilder.row();
         rowCount++;
         this.field = formBuilder.add("toContactName")[1];
@@ -135,73 +129,10 @@ public class OrganizationProfileForm extends AbstractForm implements PropertyCha
         fieldForm = formBuilder.getForm();
         rowCount++;
         rowCount++;
-        int height = 2 * fieldHeight * rowCount;
-        dimension = new Dimension(400, height);
-        fieldForm.setPreferredSize(dimension);
 
         return fieldForm;
     }
-/* 
-    private JPanel createButtonPanel(boolean enabled) {
-    	JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 
-    	JButton saveButton = new JButton(bagView.getPropertyMessage("bag.button.field.save"));
-    	saveButton.addActionListener(new SaveFieldHandler());
-    	saveButton.setOpaque(true);
-    	saveButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.save.help"));
-    	saveButton.setEnabled(enabled);
-    	buttonPanel.add(saveButton);
-    	
-    	JButton loadDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.load"));
-    	loadDefaultsButton.addActionListener(new LoadFieldHandler());
-    	loadDefaultsButton.setOpaque(true);
-    	loadDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.load.help"));
-    	loadDefaultsButton.setEnabled(enabled);
-    	buttonPanel.add(loadDefaultsButton);
-
-    	JButton clearDefaultsButton = new JButton(bagView.getPropertyMessage("bag.button.field.clear"));
-    	clearDefaultsButton.addActionListener(new ClearFieldHandler());
-    	clearDefaultsButton.setOpaque(true);
-    	clearDefaultsButton.setToolTipText(bagView.getPropertyMessage("bag.button.field.clear.help"));
-    	clearDefaultsButton.setEnabled(enabled);
-    	buttonPanel.add(clearDefaultsButton);
-
-    	return buttonPanel;
-    }
-    
-    private class SaveFieldHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-        	bagView.infoInputPane.updateBagHandler.updateBag(bagView.getBag());
-    		bagView.bagProject.saveProfiles();
-    		bagView.bagInfoInputPane.setSelectedIndex(1);
-       	}
-    }
-
-    private class LoadFieldHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-    		bagView.bagProject.loadProfiles();
-    		bagView.bagInfoInputPane.setSelectedIndex(1);
-       	}
-    }
-
-    private class ClearFieldHandler extends AbstractAction {
-       	private static final long serialVersionUID = 1L;
-
-    	public void actionPerformed(ActionEvent e) {
-    		bagView.bagProject.clearProfiles();
-    		bagView.bagInfoInputPane.setSelectedIndex(1);
-       	}
-    }
-*/
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (bagView != null && !this.hasErrors()) {
-        	bagView.infoInputPane.updatePropButton.setEnabled(true);
-        }
-    }
 
     public boolean requestFocusInWindow() {
         return contactName.requestFocusInWindow();

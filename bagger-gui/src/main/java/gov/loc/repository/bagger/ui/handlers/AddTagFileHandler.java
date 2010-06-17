@@ -2,8 +2,10 @@
 package gov.loc.repository.bagger.ui.handlers;
 
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.model.Status;
 import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 
@@ -20,7 +22,6 @@ import javax.swing.JFrame;
 public class AddTagFileHandler extends AbstractAction {
    	private static final long serialVersionUID = 1L;
 	BagView bagView;
-	DefaultBag bag;
 
 	public AddTagFileHandler(BagView bagView) {
 		super();
@@ -28,7 +29,6 @@ public class AddTagFileHandler extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		bag = bagView.getBag();
 		addTagFile();
 	}
 
@@ -43,25 +43,22 @@ public class AddTagFileHandler extends AbstractAction {
     	int option = fo.showOpenDialog(frame);
 
         if (option == JFileChooser.APPROVE_OPTION) {
+        	DefaultBag bag = bagView.getBag();
             File file = fo.getSelectedFile();
             bag.addTagFile(file);
             bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
-            Bag b = bag.getBag();
-            Collection<BagFile> tags = b.getTags();
+            Collection<BagFile> tags = bag.getTags();
             for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
             	BagFile bf = it.next();
             	bagView.bagTagFileTree.addNode(bf.getFilepath());
             }
-    		bag.isCompleteChecked(false);
-            bag.isValidChecked(false);
-            bagView.setBag(bag);
-            bagView.compositePane.updateCompositePaneTabs(bag, "Tag file added.");
             bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
+            ApplicationContextUtil.addConsoleMessage("Tag file added: " + file.getAbsolutePath());
         }
     }
 
     public void addTagFiles(List<File> files) {
-    	bag = bagView.getBag();
+    	DefaultBag bag = bagView.getBag();
     	if (bagView.bagTagFileTree.isEnabled()) {
     		if (files != null) {
     			for (int i=0; i < files.size(); i++) {
@@ -69,18 +66,14 @@ public class AddTagFileHandler extends AbstractAction {
     	            bag.addTagFile(files.get(i));
     			}
     			bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
-	            Bag b = bag.getBag();
-	            Collection<BagFile> tags = b.getTags();
+	            Collection<BagFile> tags = bag.getTags();
 	            for (Iterator<BagFile> it=tags.iterator(); it.hasNext(); ) {
 	            	BagFile bf = it.next();
 	            	bagView.bagTagFileTree.addNode(bf.getFilepath());
 	            }
 	            bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
     		}
-    		bag.isCompleteChecked(false);
-            bag.isValidChecked(false);
-            bagView.setBag(bag);
-            bagView.compositePane.updateCompositePaneTabs(bag, "Tag files changed.");
+            ApplicationContextUtil.addConsoleMessage("Tag files changed.");
     	}
     }
 }

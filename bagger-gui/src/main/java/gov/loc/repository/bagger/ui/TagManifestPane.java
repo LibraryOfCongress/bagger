@@ -1,25 +1,24 @@
 
 package gov.loc.repository.bagger.ui;
 
-import java.awt.Dimension;
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagit.BagFile;
+
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagit.Bag;
-import gov.loc.repository.bagit.BagFile;
 
 public class TagManifestPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
@@ -27,7 +26,6 @@ public class TagManifestPane extends JTabbedPane {
 	public static final String TAGMANIFEST_PANE = "tagManifestPane";
     private String messages = new String();
     private BagView parentView;
-    private Bag bag;
     private DefaultBag defaultBag;
     private BagTextPane dataPane;
     private JScrollPane dataScrollPane;
@@ -41,7 +39,6 @@ public class TagManifestPane extends JTabbedPane {
         super();
         this.parentView = bagView;
         this.defaultBag = bagView.getBag();
-        this.bag = defaultBag.getBag();
         populateBagPane();
     }
 
@@ -64,7 +61,6 @@ public class TagManifestPane extends JTabbedPane {
 
     public void setBag(DefaultBag bag) {
     	this.defaultBag = bag;
-        this.bag = defaultBag.getBag();
     }
 
     public DefaultBag getBag() {
@@ -80,7 +76,7 @@ public class TagManifestPane extends JTabbedPane {
     }
 
     public void populateBagPane() {
-    	Collection<BagFile> list = bag.getTags();
+    	Collection<BagFile> list = defaultBag.getTags();
     	manifestPaneList = new ArrayList<BagTextPane>();
     	manifestScrollPaneList = new ArrayList<JScrollPane>();
     	log.info("TagManifestPane.populateBagPane getTags: " + list.size());

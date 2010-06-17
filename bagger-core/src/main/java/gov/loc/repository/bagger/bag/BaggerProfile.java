@@ -1,13 +1,6 @@
 package gov.loc.repository.bagger.bag;
 
-import java.util.HashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import gov.loc.repository.bagger.Contact;
-import gov.loc.repository.bagger.Organization;
-import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 
 /**
  * Simple JavaBean domain object representing an organization.
@@ -21,44 +14,18 @@ import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
  * @author Jon Steinbach
  */
 public class BaggerProfile {
-	private static final Log log = LogFactory.getLog(BaggerProfile.class);
-
-	private HashMap<String, BagInfoField> fieldMap = new HashMap<String, BagInfoField>();
-	private BaggerOrganization sourceOrganization = new BaggerOrganization();
+	private BaggerSourceOrganization sourceOrganization = new BaggerSourceOrganization();
 	private Contact toContact = new Contact(true);
 	
-	public BaggerOrganization getOrganization() {
+	public BaggerSourceOrganization getOrganization() {
 		return this.sourceOrganization;
 	}
 	
-	public void setOrganization(BaggerOrganization organization) {
+	public void setOrganization(BaggerSourceOrganization organization) {
 		this.sourceOrganization = organization;
 	}
 
-	public HashMap<String, BagInfoField> getProfileMap() {
-		return this.fieldMap;
-	}
 	
-	public void setProfileMap(HashMap<String, BagInfoField> fieldMap) {
-		this.fieldMap = fieldMap;
-	}
-	
-	public void addField(String key, String value, boolean required, boolean enabled, boolean prof) {
-		BagInfoField field = new BagInfoField();
-		field.isRequired(required);
-		field.isEnabled(enabled);
-		field.isEditable(enabled);
-		field.isProfile(prof);
-		field.setLabel(key);
-		field.setName(key);
-		field.setValue(value);
-		fieldMap.put(field.getLabel(), field);
-	}
-	
-	public void removeField(String key) {
-		this.fieldMap.remove(key);
-	}
-
 	public Contact getSourceContact() {
 		return this.sourceOrganization.getContact();
 	}
@@ -76,11 +43,11 @@ public class BaggerProfile {
 	}
 
 	public String getSourceOrganization() {
-		return this.sourceOrganization.getSourceOrganization();
+		return this.sourceOrganization.getOrganizationName();
 	}
 
 	public void setSourceOrganization(String name) {
-		this.sourceOrganization.setSourceOrganization(name);
+		this.sourceOrganization.setOrganizationName(name);
 	}
 
 	public String getOrganizationAddress() {

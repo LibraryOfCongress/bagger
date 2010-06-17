@@ -54,8 +54,7 @@ public class BagTableFormBuilder extends TableFormBuilder {
     }
 
     public JComponent[] addTextArea(String fieldName, boolean isRequired, String label, JComponent checkbox, String attributes) {
-//        JComponent textArea = createTextArea(fieldName);
-    	JComponent textArea = new NoTabTextArea(5, 40);
+    	JComponent textArea = new NoTabTextArea(3, 40);
         String labelAttributes = getLabelAttributes();
         if (labelAttributes == null) {
             labelAttributes = VALIGN_TOP;

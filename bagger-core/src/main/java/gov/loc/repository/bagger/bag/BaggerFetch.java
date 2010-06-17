@@ -3,8 +3,6 @@ package gov.loc.repository.bagger.bag;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-
 /**
  * @author Jon Steinbach
  */
@@ -16,17 +14,11 @@ public class BaggerFetch {
 	private String baseURL;
 	private String userName;
 	private String userPassword;
-	private DefaultBag bag;
 
 	public BaggerFetch() {
 		log.debug("BaggerFetch");
 	}
 
-	public BaggerFetch(DefaultBag bag) {
-		this.bag = bag;
-		log.debug("BaggerFetch");
-	}
-		
 	public void setBaseURL(String url) {
 		this.baseURL = url;
 	}

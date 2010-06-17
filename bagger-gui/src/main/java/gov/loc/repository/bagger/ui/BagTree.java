@@ -16,10 +16,6 @@ import java.util.Vector;
 import javax.swing.DropMode;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -41,7 +37,6 @@ public class BagTree extends JTree {
 	private String basePath;
 	private DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(AbstractBagConstants.DATA_DIRECTORY);
 	private ArrayList<DefaultMutableTreeNode> srcNodes = new ArrayList<DefaultMutableTreeNode>();
-	List<TreeSelectionListener> selectionListeners = new ArrayList<TreeSelectionListener>();
 	
 	public BagTree(BagView bagView, String path, boolean isPayload) {
 		super();
@@ -49,12 +44,13 @@ public class BagTree extends JTree {
 		basePath = path;
 		parentNode = new DefaultMutableTreeNode(basePath);
 		initialize();
+//        initListeners();
         JTextField nameTextField = new JTextField();
         int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight() + 5;
         BAGTREE_ROW_MODIFIER = fieldHeight;
         this.setDragEnabled(true);
         this.setDropMode(DropMode.ON_OR_INSERT);
-        this.setTransferHandler(new BagTreeTransferHandler(bagView, isPayload));
+        this.setTransferHandler(new BagTreeTransferHandler(isPayload));
         this.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
         bagView.registerTreeListener(path,this);
 	}
@@ -69,14 +65,15 @@ public class BagTree extends JTree {
         //getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE);
 		setLargeModel(true);
         setPreferredSize(getTreeSize());
-        initListeners();
 		requestFocus();
 		setScrollsOnExpand(true);		
 	}
 	
-	public void populateNodes(DefaultBag bag, File rootSrc, boolean isParent) {
+	public void populateNodes(DefaultBag bag, String path, File rootSrc, boolean isParent) {
+		basePath = path;
+		
 		log.debug("BagTree.populateNodes");
-		if (bag.getBag().getPayload() != null && rootSrc.listFiles() != null) {
+		if (bag.getPayload() != null && rootSrc.listFiles() != null) {
 			addNodes(rootSrc, isParent);
 		} else {
 			log.debug("BagTree.populateNodes listFiles NULL:" );
@@ -233,49 +230,21 @@ public class BagTree extends JTree {
     	return new Dimension(BAGTREE_WIDTH, BAGTREE_HEIGHT);
     }
 
-	private void initListeners() {
-//        addTreeCheckingListener(new TreeCheckingListener() {
-//            public void valueChanged(TreeCheckingEvent e) {
-//            	TreePath epath = new TreePath(e.getLeadingPath().getLastPathComponent());
-//                //log.info("BagTree.addTreeCheckingListener valueChanged: " + e.getLeadingPath().getLastPathComponent());
-//            	if (!e.isChecked()) {
-//            		//log.info("BagTree.addTreeCheckingListener remove: " + (e.getLeadingPath().getLastPathComponent()));
-//            	}
-//                scrollPathToVisible(epath);
-//                makeVisible(epath);
-//            }
-//        });	
-        addTreeSelectionListener(new TreeSelectionListener() {
-        	public void valueChanged(TreeSelectionEvent e) {
-        		DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-        		if (node == null) return;
-        		for(TreeSelectionListener listener:selectionListeners)
-        		{
-        			listener.valueChanged(e);
-        		}
-        		//Object nodeInfo = node.getUserObject();
-        	}
-        });
-        addTreeExpansionListener(new TreeExpansionListener() {
-        	public void treeExpanded(TreeExpansionEvent e) {
-                int rows = BAGTREE_ROW_MODIFIER * getRowCount();
-                //log.info("BagTree rows: " + rows);
-                setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
-                invalidate();
-        	}
-        	public void treeCollapsed(TreeExpansionEvent e) {
-                int rows = BAGTREE_ROW_MODIFIER * getRowCount();
-                //log.info("BagTree rows: " + rows);
-                setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
-                invalidate();
-        	}
-        });
-	}
-	
-	public void addSelectionListener(TreeSelectionListener tsl)
-	{
-		//selectionListeners.add(tsl);
-		initListeners();
-	}
-	
+//	private void initListeners() {
+//        addTreeExpansionListener(new TreeExpansionListener() {
+//        	public void treeExpanded(TreeExpansionEvent e) {
+//                int rows = BAGTREE_ROW_MODIFIER * getRowCount();
+//                //log.info("BagTree rows: " + rows);
+//                setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+//                invalidate();
+//        	}
+//        	public void treeCollapsed(TreeExpansionEvent e) {
+//                int rows = BAGTREE_ROW_MODIFIER * getRowCount();
+//                //log.info("BagTree rows: " + rows);
+//                setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+//                invalidate();
+//        	}
+//        });
+//	}
+    
 }

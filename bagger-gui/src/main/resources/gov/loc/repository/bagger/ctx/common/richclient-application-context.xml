@@ -251,7 +251,7 @@
     <property name="viewProperties">
       <map>
         <entry key="bagger" value-ref="bagger" />
-        <entry key="bag" value-ref="bag" />
+        <entry key="profileStore" value-ref="profiles" />
       </map>
     </property>
   </bean>
@@ -271,10 +271,6 @@
     <property name="floatEnabled" value="true" />
     <property name="maximizeEnabled" value="true"/>
    </bean>
-
-  <bean id="newProfileWizard" class="gov.loc.repository.bagger.ui.NewProfileWizard">
-  </bean>
-  
 
   <!--  
   <bean id="exceptionHandlingView" class="org.springframework.richclient.application.support.DefaultViewDescriptor">

@@ -13,6 +13,7 @@ public class CreateBagInPlaceExecutor extends AbstractActionCommandExecutor {
 
 	public CreateBagInPlaceExecutor(BagView bagView) {
 		super();
+		setEnabled(true);
 		this.bagView = bagView;
 	}
 

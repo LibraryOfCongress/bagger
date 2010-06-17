@@ -4,9 +4,7 @@ package gov.loc.repository.bagger.bag;
 import gov.loc.repository.bagger.ProfileField;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +25,7 @@ public class BagInfoField {
 	private String value = "";
 	private List<String> elements = new ArrayList<String>();
 	private int componentType = TEXTFIELD_COMPONENT;
-	private boolean isEnabled = false;
+	private boolean isEnabled = true;
 	private boolean isRequired = false;
 	private boolean isRequiredvalue = false;
 	private boolean isEditable = true;
