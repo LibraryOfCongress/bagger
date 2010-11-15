@@ -1,43 +1,93 @@
-                              README
+Bagger README.txt
 
-                    Bagger, Stand-Alone Edition
-                             Version 2.0
+1. Introduction
 
+The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit-05). The Bagger application is a graphical user interface to the BIL (BagIt Library, http://sourceforge.net/projects/loc-xferutils) command line driver which is an implementation of tools conforming to the BagIt specification.  
 
-The Bagger Stand-Alone Edition is intended for users with no or 
-limited Internet web access.
-
-It contains the Bagger signed executable jar file as well as an
-embedded Java 1.6 JRE runtime library.  This edition contains
-executable versions of Bagger as well as the Java JRE so that
-users within administrative privileges to install programs can
-run Bagger.
+Bagger differs from BIL by providing graphical user interface for file and data manipulation features as well as a visual view of the bag contents, bag state and options.  In addition Bagger provides a project profile capability.  Users can create customized bag-info.txt data with project specific properties that the user defines.  These project profiles can be edited manually and shared with other users.
 
 
-======================================================================
-   Executing Bagger with access to the Library of Congress Web site
-======================================================================
+2. Project Profile
 
-In order to access the Bagger application via the web, access the
-Library of Congress Repository Development Center website:
+Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specification.  When using Bagger to manage bags for a project or collection, it can be helpful to have a template of bag-info.txt fields and values that are filled out similarly for each bag in that project or collection.  Profiles let users define a collection of bag metadata fields and default field values to be used with each bag in a consistent way.  Users can select a project profile when creating a bag, and that profile will determine the initial fields and values in the bag-info.txt file, and the profile used is identified by the LC-Project field. 
 
-    http://baggerqa.rdc.lctl.gov/
+User can create custom project profiles using a simple JSON-based format. Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger. On Windows, it is C:\"Documents and Settings"\<user>\bagger. On unix-like operating system, it is ~/bagger.
 
------------------------------------------------------------------------
-   Running the stand-alone version of Bagger on Windows
------------------------------------------------------------------------
+Here is a sample profile:
 
-To run the Bagger application, go to the folder bagger_stndalone_win. 
-Double click on the file bagger_stndalone.bat, or select 
-Start->Run->Browse... then navigate to the bagger_stndalone.bat file
-and select Open and then Ok in the Run dialog window.
+{
+    "name" : "Sample Profile",
+    "Send-To" : {
+        "name" : {
+            "value" : "John Smith",
+            "isReadOnly" : true 
+        },
+        "phone" : {
+            "value" : "202-707-0000",
+            "isReadOnly" : true 
+        },
+        "email" : {
+            "value" : "xyz@loc.gov",
+            "isReadOnly" : true 
+        } 
+    },
+    "Send-From" : {
+        "name" : {
+            "value" : "Mary Smith",
+            "isReadOnly" : false 
+        },
+        "phone" : {
+            "value" : "111-222-3333",
+            "isReadOnly" : false 
+        },
+        "email" : {
+            "value" : "mary@abc.org",
+            "isReadOnly" : false 
+        } 
+    },
+    "Organization": {
+        "Organization-Address": {
+            "fieldRequired": false,
+            "fieldType": "TF",
+            "isReadOnly": false,
+            "value": "123 Main St, Little Town, MD 20850"
+        },
+        "Source-Organization": {
+            "fieldRequired": false,
+            "fieldType": "TF",
+            "isReadOnly": false,
+            "value": "ABC"
+        }
+    },
+    "Custom-info": {
+		"My-First-Field": {
+            "fieldRequired": true,
+            "fieldType": "TF",
+            "isReadOnly": false,
+            "value": "22"
+        },
+        "My-Second-Field": {
+            "fieldRequired": false,
+            "fieldType": "LF",
+            "isReadOnly": false,
+            "valueList" : ["value1", "value2"]
+        }
+    }
+}
 
-To create a shortcut on your desktop, select the bagger_stndalone.bat
-file and select the right mouse button.  Select Send to->Desktop (create shortcut)
 
------------------------------------------------------------------------
+The meanings of some field properties are explained here:
 
-Bagger is a product of The United States Library of Congress
+* "fieldRequired": true/false, where false is default if not present                
+* "fieldType": "TF" or "LF", where TF stands for text field, LF stands for list field
+* "isReadOnly": true/false, where false is default if not present
+* "value": default value when fieldType is TF
+* "valueList": default value list when fieldType is LF
 
-101 Independence Ave SE, Washington, DC 20540, U.S.A.
+The Project Profile format is subject to change in the future releases.
+
+
+3. Running the stand-alone version of Bagger on Windows
+
+You need to have Java SE Runtime Environment 6 or later version installed on the Windows system. To run the Bagger application, go to the folder bagger_stndalone_win. Double click on the file bagger_stndalone.bat, or select Start->Run->Browse... then navigate to the bagger_stndalone.bat file and select Open and then Ok in the Run dialog window. To create a shortcut on your desktop, select the bagger_stndalone.bat file and select the right mouse button.  Select Send to->Desktop (create shortcut)
 
