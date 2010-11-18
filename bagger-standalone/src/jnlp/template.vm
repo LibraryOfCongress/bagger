@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp
+    spec="1.0+"
+    codebase="http://spring-rich-c.sourceforge.net/spring-richclient-samples/spring-richclient-petclinic/spring-richclient-petclinic-standalone/jnlp"
+    href="$outputFile">
+  <information>
+    <title>Bagger</title>
+    <vendor>The Spring Framework</vendor>
+    <homepage href="http://spring-rich-c.sf.net"/>
+    <description kind="one-line">Bagger</description>
+    <description kind="short">Bagger</description>
+    <description kind="tooltip">Bagger</description>
+  </information>
+  <security>
+    <all-permissions/>
+  </security>
+  <resources>
+    <j2se version="1.5+"/>
+    $dependencies
+  </resources>
+  <application-desc main-class="$mainClass"/>
+</jnlp>

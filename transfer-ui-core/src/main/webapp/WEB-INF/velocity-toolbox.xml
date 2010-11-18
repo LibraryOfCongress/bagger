@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<toolbox>
-  <tool>
-     <key>tiles</key>
-     <scope>request</scope>
-     <class>org.apache.velocity.tools.struts.TilesTool</class>
-  </tool>
-</toolbox>

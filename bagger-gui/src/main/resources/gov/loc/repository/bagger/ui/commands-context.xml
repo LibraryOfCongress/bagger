@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="windowCommandManager"
+    class="org.springframework.richclient.application.support.ApplicationWindowCommandManager">
+    <property name="sharedCommandIds">
+      <list>
+        <value>deleteCommand</value>
+        <value>saveAsCommand</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="menuBar" class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <ref bean="fileMenu" />
+<!--         <ref bean="editMenu" /> -->
+<!--         <ref bean="windowMenu" /> -->
+        <ref bean="helpMenu" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="toolBar" class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <ref bean="newMenu" />
+        <value>saveAsCommand</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="fileMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <ref bean="newMenu" />
+        <value>saveAsCommand</value>
+<!--
+        <value>separator</value>
+        <ref bean="loginCommand" />
+        <ref bean="logoutCommand" />
+        <value>separator</value>
+ -->
+        <bean class="org.springframework.richclient.command.support.ExitCommand" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="newMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <ref bean="newProfileCommand" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="newProfileCommand" class="org.springframework.richclient.command.TargetableActionCommand">
+    <property name="commandExecutor" ref="newProfileWizard" />
+  </bean>
+
+  <bean id="editMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <value>deleteCommand</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="windowMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <bean class="org.springframework.richclient.command.support.NewWindowCommand" />
+        <value>separator</value>
+        <bean class="org.springframework.richclient.command.support.ShowViewMenu" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="helpMenu" class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <ref bean="helpContentsCommand" />
+        <value>separator</value>
+        <ref bean="aboutCommand" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="helpContentsCommand" class="org.springframework.richclient.command.support.HelpContentsCommand" />
+
+  <bean id="aboutCommand" class="org.springframework.richclient.command.support.AboutCommand">
+    <property name="aboutTextPath" value="gov/loc/repository/bagger/about.txt" />
+  </bean>
+  
+  <bean id="loginCommand" class="org.springframework.richclient.security.LoginCommand">
+    <property name="closeOnCancel" value="false" />
+  </bean>
+
+  <bean id="logoutCommand" class="org.springframework.richclient.security.LogoutCommand" />
+
+</beans>

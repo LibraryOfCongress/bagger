@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>loc-repository</groupId>
+    <artifactId>bagger</artifactId>
+    <version>1.2</version>
+  </parent>
+
+  <artifactId>bagger-gui</artifactId>
+  <packaging>jar</packaging>
+  <name>Spring richclient bagger GUI</name>
+  <description>
+    The GUI presentation layer which resides in client and standalone, but NOT in the server.
+  </description>
+
+  <dependencies>
+    <!-- Internal -->
+    <dependency>
+      <groupId>gov.loc.repository.bagit</groupId>
+      <artifactId>bagit</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.loc.repository.bagger</groupId>
+      <artifactId>bagger-common</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.loc.repository.bagger</groupId>
+      <artifactId>bagger-core</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.loc.repository.bagger</groupId>
+      <artifactId>bagger-business</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ravnaandtines.ftp</groupId>
+      <artifactId>bagger-ftpclient</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <!-- Spring rich -->
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-resources</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-core</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-binding</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-form</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-support</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-jdk5</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-jdk6</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.richclient</groupId>
+      <artifactId>spring-richclient-sandbox</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <!-- Lang -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <scope>runtime</scope>
+      <version>2.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <scope>runtime</scope>
+      <version>3.1</version>
+    </dependency>
+
+    <!-- Logging -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging-api</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+    </dependency>
+
+    <!-- Dependency injection -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>2.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>2.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>2.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>2.5.1</version>
+    </dependency>
+
+    <!-- Security -->
+    <dependency>
+      <groupId>org.acegisecurity</groupId>
+      <artifactId>acegi-security</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+
+    <!-- Components -->
+    <dependency>
+      <groupId>org.aopalliance</groupId>
+      <artifactId>aopalliance</artifactId>
+      <scope>runtime</scope>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>forms</artifactId>
+      <version>1.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>looks</artifactId>
+      <scope>runtime</scope>
+      <version>2.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs</groupId>
+      <artifactId>swingx</artifactId>
+      <version>0.9.1</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.nachocalendar</groupId>
+      <artifactId>nachocalendar</artifactId>
+      <version>0.23</version>
+    </dependency>
+
+    <!-- Validation with Hibernate validator -->
+    <dependency>
+      <groupId>javax.persistence</groupId>
+      <artifactId>persistence-api</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-annotations</artifactId>
+      <version>3.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-commons-annotations</artifactId>
+      <version>3.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+
+    <!-- Utils -->
+    <dependency>
+      <groupId>it.cnr.imaa.essi.lablib.gui.checkboxtree</groupId>
+      <artifactId>lablib-checkboxtree</artifactId>
+      <version>2.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.help</groupId>
+      <artifactId>jhelp</artifactId>
+      <version>2.0</version>
+    </dependency>
+  </dependencies>
+
+</project>
