@@ -1,0 +1,58 @@
+?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+  <mapID target="toplevelfolder" url="main/artmain.htm"/>
+  <mapID target="schemabrowsertoplevelfolder" url="main/schema-browser-subsystem/schemabrowsertoplevel.htm"/>
+  <mapID target="schemabrowserfilemenufolder" url="main/schema-browser-subsystem/menubar/schemabrowserfilemenu.htm"/>
+  <mapID target="file" url="main/schema-browser-subsystem/file.htm"/>
+  <mapID target="load" url="main/schema-browser-subsystem/load.htm"/>
+  <mapID target="loadwizard" url="main/schema-browser-subsystem/loadwizard.htm"/>
+  <mapID target="properties" url="main/schema-browser-subsystem/properties.htm"/>
+  <mapID target="new" url="main/schema-browser-subsystem/new.htm"/>
+  <mapID target="schemawizard" url="main/schema-browser-subsystem/schemawizard.htm"/>
+  <mapID target="exit" url="main/schema-browser-subsystem/exit.htm"/>
+  <mapID target="edit" url="main/schema-browser-subsystem/edit.htm"/>
+  <mapID target="delete" url="main/schema-browser-subsystem/delete.htm"/>
+  <mapID target="help" url="main/help.htm"/>
+  <mapID target="helpcontents" url="main/helpcontents.htm"/>
+  <mapID target="helpabout" url="main/helpabout.htm"/>
+  <mapID target="schemanavigatorfolder" url="main/schema-browser-subsystem/schemanavigator.htm"/>
+  <mapID target="rightmousefunctions" url="main/schema-browser-subsystem/rightmousefunctions.htm"/>
+  <mapID target="querynavsubsystemfolder" url="main/query-navigator-subsystem/querynavmain/querynav.htm"/>
+  <mapID target="reportoption" url="main/report-subsystem/reportoption.htm"/>
+  <mapID target="graphsubsystemfolder" url="main/graph-subsystem/graphfolder.htm"/>
+  <mapID target="graphoption" url="main/graph-subsystem/graphoption.htm"/>
+  <mapID target="reportsubsystemfolder" url="main/report-subsystem/reportfolder.htm"/>
+  <mapID target="shutdownfolder" url="main/shutdown/shutdown.htm"/>
+  <mapID target="startupfolder" url="main/startup/startup.htm"/>
+
+  <mapID target="NewGroup" url="main/query-navigator-subsystem/querynavmain/New/NewGroup.htm" />
+  <mapID target="NewQuery" url="main/query-navigator-subsystem/querynavmain/New/NewQuery.htm" />
+  <mapID target="entities" url="main/query-navigator-subsystem/querynavmain/New/entities.htm" />
+  <mapID target="AddFx" url="main/query-navigator-subsystem/querynavmain/New/AddFx.htm" />
+  <mapID target="Criteria" url="main/query-navigator-subsystem/querynavmain/New/Criteria.htm" />
+  <mapID target="GroupBy" url="main/query-navigator-subsystem/querynavmain/New/GroupBy.htm" />
+  <mapID target="SortBy" url="main/query-navigator-subsystem/querynavmain/New/SortBy.htm" />
+
+  <mapID target="Run" url="main/query-navigator-subsystem/querynavmain/Run/Run.htm" />
+  <mapID target="ResultsObjectProperties" url="main/query-navigator-subsystem/querynavmain/Run/ResultsObjectProperties.htm" />
+  <mapID target="ColumnManipulation" url="main/query-navigator-subsystem/querynavmain/Run/ColumnManipulation.htm" />
+
+  <mapID target="QueryDelete" url="main/query-navigator-subsystem/querynavmain/QueryDelete/QueryDelete.htm" />
+  <mapID target="QueryRename" url="main/query-navigator-subsystem/querynavmain/QueryRename/QueryRename.htm" />
+ 
+  <mapID target="Edit" url="main/query-navigator-subsystem/querynavmain/MenuBar/Edit.htm" />
+  <mapID target="Exit" url="main/query-navigator-subsystem/querynavmain/MenuBar/Exit.htm" />
+  <mapID target="File" url="main/query-navigator-subsystem/querynavmain/MenuBar/File.htm" />
+  <mapID target="Load" url="main/query-navigator-subsystem/querynavmain/MenuBar/Load.htm" />
+  <mapID target="New" url="main/query-navigator-subsystem/querynavmain/MenuBar/New.htm" />
+  <mapID target="Properties" url="main/query-navigator-subsystem/querynavmain/MenuBar/Properties.htm" />
+  <mapID target="SaveAs" url="main/query-navigator-subsystem/querynavmain/MenuBar/SaveAs.htm" />
+  <mapID target="Help" url="main/query-navigator-subsystem/querynavmain/MenuBar/Help.htm" />
+  <mapID target="Tools" url="main/query-navigator-subsystem/querynavmain/MenuBar/Tools.htm" />
+  <mapID target="Window" url="main/query-navigator-subsystem/querynavmain/MenuBar/Window.htm" />
+  
+</map>

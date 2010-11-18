@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<title>Bagger Application - Repository Development Center (Library of Congress)</title>
+		<link rel="stylesheet" type="text/css" media="print" href="../css/deposit_print.css" />
+		<link rel="stylesheet" type="text/css" href="../css/deposit.css" />
+	</head>
+<body>
+<div id="container"><a id="skip" href="#skip_menu">skip navigation</a>
+  <div id="header">
+    <ul>
+      <li id="logo"><a href="../index.html"><img src="../images/bagger_logo.jpg" alt="" /></a></li>
+      <li id="welcome"></li>
+      <li id="contact"><img src="../images/mail.gif" alt="" /><a href="mailto:lesliej@loc.gov">Contact</a></li>
+    </ul>
+  </div>
+
+  <div id="page_head"><h1><a href="index.html">Bagger User Guide</a>: Making Bags</h1></div>
+  <div id="navlist">
+    <a name="newbag"></a>
+      <div id="page_head"><h2>Creating a new bag</h2></div>
+      <div id="content">
+	<p>
+	To create a new bag from scratch the user first selects the ‘Create New Bag’ button from the Bag Content Control buttons at the top of the application.  This creates an empty bag with blank values for the Details input form and resets and previously selected buttons and options to their default values.  The user does not yet need to enter a bag name since the bag does not yet exist on disk.  This name is set when the user is ready to save the bag.
+	</p>
+	<p>
+	<ul>Basic flow:<br/>
+	   <li>1. User selects to create a new bag.<br/></li>
+	   <li>2. User selects a bag version.<br/></li>
+	   <li>3. Application clears any displayed information from previous bag and creates a new bag.<br/></li>
+	</ul>
+	</p>
+	<p>
+	Notice that now the new bag has enabled the ‘Add Data’ button. The user can now begin to add data files to the bag.
+	</p>
+	</div>
+
+<p>
+<img src="images/bagger_newbag_version.jpg" alt="Select new bag version" />
+</p>
+<p>
+<img src="images/bagger_newbag_empty.jpg" alt="Newly created empty bag" />
+</p>
+
+<a name="existingbag"></a>
+      <div id="page_head"><h2>Open an existing bag on disk</h2></div>
+      <div id="content">
+	<p>
+	The Bagger Application can also load an existing bag folder or serialized file.  This could be done to check whether the folder contains a valid bag or to add more data or more information to an existing bag.
+	Start by selecting the ‘Open Existing Bag’ button from the Bag Content Control buttons at the top of the application.  This displays a directory and file chooser dialog window.  Select the desired bag from the file chooser dialog and then select the Open button.  This will load the directory or file and create a bag if one exists.
+	</p>
+	<ul>Basic flow:<br/>
+	   <li>1. User selects to open an existing bag.<br/></li>
+	   <li>2. User selects a bag on disk. (User provides file/directory using a File/Directory picker. User should have option to limit display of files by serialization format.)<br/></li>
+	   <li>3. Application creates the bag.<br/></li>
+	   <li>4. Application clears any displayed information from the previous bag and displays information from new bag.<br/></li>
+	</ul>
+	<p>
+	Note:  You do not need to close the current bag you are working on.  It will start a new bag in its place, but if you have not already saved the current bag it will be overwritten with the new bag.
+	</p>
+	<p>
+	The existing bag has been loaded and its data contents are now displayed in the data hierarchy file tree.  Notice that all the buttons are now enabled: the Add Data, Save Bag, Save Bag As, Validate Bag and Update Bag buttons are all enabled.  You may now validate this bag, or add additional data, or edit the Details information and update it.  Also notice that the Serialized Bag Type is back to being ‘none’.
+	</p>
+	<p>
+	Note:  Since the existing bag has no concept of Profiles, the Send to org and Send to contact information for the loaded Bag will overwrite whatever was loaded for the currently selected project, however the Send from contact is not changed since this is not part of the bag.
+	</p>
+	</div>
+
+<p>
+<img src="images/bagger_existingbag_dialog.jpg" alt="Open existing bag dialog" />
+</p>
+<p>
+<img src="images/bagger_existingbag_browse.jpg" alt="Browse to select the existing bag file" />
+</p>
+<p>
+<img src="images/bagger_existingbag_display.jpg" alt="Display the existing bag" />
+</p>
+
+    <a name="baginplace"></a>
+      <div id="page_head"><h2>Creating a bag-in-place</h2></div>
+      <div id="content">
+	<ul>Basic flow:<br/>
+	   <li>1. User selects to create a bag-in-place.<br/></li>
+	   <li>2. User selects a directory on disk. (User provides file/directory using a File/Directory picker. User should have option to limit display of files by serialization format.)<br/></li>
+	   <li>3. User selects a version and whether to retain the base directory.<br/></li>
+	   <li>4. Application creates the bag, including moving the directory/files as necessary to create the bag structure, completing the bag, and writes to disk.<br/></li>
+	   <li>5. Application clears any displayed information from the previous bag and displays information from new bag.<br/></li>
+	</ul>
+	</div>
+
+<p>
+<img src="images/bagger_baginplace_version.jpg" alt="Bag in place dialog" />
+</p>
+<p>
+<img src="images/bagger_baginplace_browse.jpg" alt="Bag in place browse" />
+</p>
+<p>
+<img src="images/bagger_baginplace_ok.jpg" alt="Bag in place continue" />
+</p>
+<p>
+<img src="images/bagger_baginplace_writing.jpg" alt="Bag in place writing in progress" />
+</p>
+<p>
+<img src="images/bagger_baginplace_saved.jpg" alt="Bag in place saved bag" />
+</p>
+
+	<div id="content">
+	<ul>Notes:
+	    <li>* The directory that is bagged in place may be:</li>
+	    <ul>
+	          <li>o A set of files/directories in the basic structure of bag a bag (i.e., it has a data directory with content), but is not complete.<br/></li>
+	          <li>o A directory containing a set of files/directories.<br/></li>
+	    </ul>
+	</ul>
+	</div>
+  </div>
+
+  <div id="footer">
+    <ul id="footlist">
+      <li><a href="http://www.loc.gov/index.html">Library of Congress</a>&nbsp;|</li>
+      <li><a href="https://beryllium.rdc.lctl.gov/rdc/wiki/Main_Page">About Repository Development Center</a></li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

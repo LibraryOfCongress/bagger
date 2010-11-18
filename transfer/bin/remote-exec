@@ -1,3 +1,0 @@
-#!/bin/sh
-
-ssh $REMOTE_HOST `basename $0` $*

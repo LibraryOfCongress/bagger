@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ndnp:batch xmlns:ndnp="http://www.loc.gov/ndnp" name="loc_batch1">
-    <ndnp:encyclopediaEntry>encyclopedia/encyclopedia.xml</ndnp:encyclopediaEntry>
-    <ndnp:newspaperTitle lccn="75425165">newspapertitle/newspapertitle_1.xml</ndnp:newspaperTitle>
-    <ndnp:issue lccn="sn83027091" issueDate="1903-04-11" editionOrder="1">issue/issue_1.xml</ndnp:issue>
-    <ndnp:reel reelNumber="100493238">reel/reel_1.xml</ndnp:reel>
-</ndnp:batch>

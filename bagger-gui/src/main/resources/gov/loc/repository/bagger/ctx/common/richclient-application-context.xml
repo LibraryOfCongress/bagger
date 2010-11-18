@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="application" class="org.springframework.richclient.application.Application">
+    <constructor-arg index="0" ref="applicationDescriptor" />
+    <constructor-arg index="1" ref="baggerLifecycleAdvisor" />
+  </bean>
+
+  <bean id="applicationDescriptor" class="org.springframework.richclient.application.support.DefaultApplicationDescriptor"> 
+    <property name="version" value="1.7" />
+    <property name="buildId" value="BagIt 3.0" />
+  </bean>
+
+  <bean id="baggerLifecycleAdvisor" class="gov.loc.repository.bagger.BaggerLifecycleAdvisor"> 
+    <property name="windowCommandBarDefinitions"
+      value="gov/loc/repository/bagger/ui/commands-context.xml" />
+    <property name="startingPageId" value="bagView" />
+    <property name="registerableExceptionHandler" ref="exceptionHandler" />
+    <property name="menubarBeanName" value="menuBar" />
+    <property name="windowCommandManagerBeanName" value="windowCommandManager" />
+  </bean>
+
+  <bean id="exceptionHandler"
+    class="org.springframework.richclient.exceptionhandling.delegation.DelegatingExceptionHandler">
+    <property name="delegateList">
+      <list>
+        <bean class="org.springframework.richclient.exceptionhandling.delegation.SimpleExceptionHandlerDelegate">
+          <property name="throwableClassList">
+            <list>
+              <value type="java.lang.Class">org.acegisecurity.AuthenticationException</value>
+              <value type="java.lang.Class">org.acegisecurity.AccessDeniedException</value>
+            </list>
+          </property>
+          <property name="exceptionHandler">
+            <bean class="org.springframework.richclient.exceptionhandling.MessagesDialogExceptionHandler">
+              <property name="logLevel" value="WARN" />
+              <property name="shutdownPolicy" value="NONE" />
+            </bean>
+          </property>
+        </bean>
+        <bean
+          class="org.springframework.richclient.exceptionhandling.delegation.SimpleExceptionHandlerDelegate">
+          <property name="throwableClass">
+            <value type="java.lang.Class">org.hibernate.validator.InvalidStateException</value>
+          </property>
+          <property name="exceptionHandler">
+            <bean
+              class="org.springframework.richclient.exceptionhandling.HibernateValidatorDialogExceptionHandler">
+              <property name="logLevel" value="INFO" />
+              <property name="shutdownPolicy" value="NONE" />
+            </bean>
+          </property>
+        </bean>
+        <bean
+          class="org.springframework.richclient.exceptionhandling.delegation.SimpleExceptionHandlerDelegate">
+          <property name="throwableClass" value="java.lang.Error" />
+          <property name="exceptionHandler">
+            <bean class="org.springframework.richclient.exceptionhandling.MessagesDialogExceptionHandler">
+              <property name="logLevel" value="FATAL" />
+              <property name="shutdownPolicy" value="OBLIGATE" />
+            </bean>
+          </property>
+        </bean>
+        <!-- The order is important: if Throwable would be first then the others would be ignored -->
+        <bean
+          class="org.springframework.richclient.exceptionhandling.delegation.SimpleExceptionHandlerDelegate">
+          <property name="throwableClass" value="java.lang.Throwable" />
+          <property name="exceptionHandler">
+            <bean class="org.springframework.richclient.exceptionhandling.MessagesDialogExceptionHandler">
+              <property name="logLevel" value="ERROR" />
+              <property name="shutdownPolicy" value="ASK" />
+            </bean>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <!--
+    Bean: serviceLocator
+    Usage: Platform required
+    Description: This defines the singleton application service locator instance.
+    This is a trivial singleton object providing access to the configured
+    services, as specified on the applicationServices property.
+  -->
+  <bean id="serviceLocator" class="org.springframework.richclient.application.ApplicationServicesLocator">
+    <property name="applicationServices" ref="applicationServices" />
+  </bean>
+
+  <!--
+    Bean: applicationServices
+    Usage: Platform required (unless you set this up programmatically)
+    Description: This configures the application services available to the platform.
+    There are specific setter methods for all the standard services, see the
+    javadoc on the DefaultApplicationServices class for more details.
+    NOTE: The use of bean ids (idref) is preferred over using direct bean
+    references to avoid startup problems with circular references.
+  -->
+  <bean id="applicationServices"
+    class="org.springframework.richclient.application.support.DefaultApplicationServices">
+    <property name="applicationObjectConfigurerId">
+      <idref bean="applicationObjectConfigurer" />
+    </property>
+    <property name="binderSelectionStrategyId">
+      <idref bean="binderSelectionStrategy" />
+    </property>
+    <property name="formComponentInterceptorFactoryId">
+      <idref bean="formComponentInterceptorFactory" />
+    </property>
+    <property name="imageSourceId">
+      <idref bean="imageSource" />
+    </property>
+    <property name="messageSourceId">
+      <idref bean="messageSource"/>
+    </property>
+    <property name="rulesSourceId">
+      <idref bean="rulesSource" />
+    </property>
+  </bean>
+
+  <bean id="applicationObjectConfigurer" depends-on="serviceLocator"
+    class="org.springframework.richclient.application.config.DefaultApplicationObjectConfigurer">
+  </bean>
+
+  <bean id="applicationEventMulticaster"
+    class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
+
+  <bean id="binderSelectionStrategy"
+    class="org.springframework.richclient.form.binding.swing.SwingBinderSelectionStrategy">
+    <property name="bindersForPropertyTypes">
+      <map>
+        <!--
+          <entry>
+          <key>
+          <value type="java.lang.Class">java.util.Date</value>
+          </key>
+          <bean
+          class="gov.loc.repository.bagger.ui.binder.CustomDatePickerBinder"/>
+          </entry>
+         -->
+        <entry>
+          <key>
+            <value type="java.lang.Class">java.util.Date</value>
+          </key>
+          <bean class="org.springframework.richclient.form.binding.swing.date.NachoCalendarDateFieldBinder" />
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="lookAndFeelConfigurer"
+    class="org.springframework.richclient.application.config.JGoodiesLooksConfigurer">
+    <property name="popupDropShadowEnabled" value="false" />
+    <property name="theme">
+      <bean class="com.jgoodies.looks.plastic.theme.ExperienceBlue" />
+    </property>
+  </bean>
+<!-- 
+  <bean name="statusBar" class="org.springframework.richclient.application.statusbar.support.DefaultStatusBar" 
+		depends-on="lookAndFeelConfigurer">
+		<property name="cancelEnabled" value="true" />
+		<property name="statusBarItems">
+			<list>
+				<ref bean="resizeStatusBarItem" />
+			</list> 
+		</property> 
+  </bean>
+ -->
+
+  <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="basenames">
+      <list>
+        <value>gov.loc.repository.bagger.ui.messages</value>
+        <value>org.springframework.richclient.application.messages</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="imageResourcesFactory" class="org.springframework.context.support.ResourceMapFactoryBean">
+    <property name="locations">
+      <list>
+        <value>classpath:org/springframework/richclient/image/images.properties</value>
+        <value>classpath:gov/loc/repository/bagger/ui/images.properties</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="imageSource" class="org.springframework.richclient.image.DefaultImageSource">
+    <constructor-arg index="0" ref="imageResourcesFactory" />
+    <property name="brokenImageIndicator" value="/org/springframework/richclient/images/alert/error_obj.gif" />
+  </bean>
+
+  <bean id="formComponentInterceptorFactory"
+    class="org.springframework.richclient.form.builder.support.ChainedInterceptorFactory">
+    <property name="interceptorFactories">
+      <list>
+        <bean class="org.springframework.richclient.form.builder.support.ColorValidationInterceptorFactory">
+          <property name="errorColor" value="255,245,245" />
+        </bean>
+        <bean class="org.springframework.richclient.form.builder.support.OverlayValidationInterceptorFactory" />
+        <bean class="org.springframework.richclient.text.TextComponentPopupInterceptorFactory" />
+        <bean class="org.springframework.richclient.list.ComboBoxAutoCompletionInterceptorFactory" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="rulesSource"
+    class="gov.loc.repository.bagger.domain.BaggerValidationRulesSource" />
+
+  <bean id="bagView" class="org.springframework.richclient.application.support.DefaultViewDescriptor">
+    <property name="viewClass" value="gov.loc.repository.bagger.ui.BagView" />
+    <property name="viewProperties">
+      <map>
+        <entry key="bagger" value-ref="bagger" />
+        <entry key="bag" value-ref="bag" />
+      </map>
+    </property>
+  </bean>
+
+  <bean id="newProfileWizard" class="gov.loc.repository.bagger.ui.NewProfileWizard">
+  </bean>
+
+  <bean id="exceptionHandlingView" class="org.springframework.richclient.application.support.DefaultViewDescriptor">
+    <property name="viewClass" value="gov.loc.repository.bagger.exceptionhandling.ExceptionHandlingView" />
+  </bean>
+
+  <bean id="setupWizard" class="org.springframework.richclient.application.setup.SetupWizard">
+    <property name="licenseTextLocation" value="/gov/loc/repository/bagger/license.txt" />
+  </bean>
+</beans>
