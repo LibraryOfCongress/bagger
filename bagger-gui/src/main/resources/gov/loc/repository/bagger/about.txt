@@ -1,0 +1,39 @@
+<table>
+<tr>
+<td><img src="image:about.main" border="0" alt=""></td>
+<td valign="top">
+<b>Bagger Application</b>
+<p>
+Version: 2.0
+<p>
+<b>Bag It Library</b>
+<p>
+Version: 3.4
+<p>
+<b>Java SE Development Kit (JDK)</b>
+<p>
+Version: 1.6
+<p>
+Update: 16
+<p>
+</td>
+</tr>
+</table>
+<p>
+<center>
+<p>
+<b>Powered By</b>
+<p>
+<a href="http://www.springframework.org"><img src="image:about.spring" border="0" alt=""></a>
+<p>
+and more!
+</center>
+<p>
+<table>
+<tr>
+<td><img src="image:about.main" border="0" alt=""></td>
+<td valign="top">
+<p>
+</td>
+</tr>
+</table>

@@ -1,1 +1,0 @@
-This is a placeholder so the MkDirFileSystemCreator can find the directory.

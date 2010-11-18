@@ -1,3 +1,0 @@
-#foreach ($variableBean in $taskInstanceBean.taskBean.variableBeanList)
-	#variable($variableBean $taskInstanceBean)
-#end

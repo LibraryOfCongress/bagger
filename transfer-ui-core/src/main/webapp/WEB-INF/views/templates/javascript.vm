@@ -1,3 +1,0 @@
-<script type="text/javascript" src="${contextPath}/javascript/jquery-1.2.6.min.js"></script>
-<script type="text/javascript" src="${contextPath}/javascript/jquery.tablesorter.min.js"></script>
-<script type="text/javascript" src="${contextPath}/javascript/jquery.tablesorter.pager.js"></script>
