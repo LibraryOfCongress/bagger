@@ -1,4 +1,0 @@
-06e19def8e5afba75b172acbfdc93af5  db/inventory-core.sql
-6a9494a2e8d4593bbecc05c5a39ce24e  db/inventory-ndnp.sql
-463b85efc4a70d675e6bcc06d0df7292  db/inventory-webcapture.sql
-c01b70da81c7a48ee893b7030e04a04b  db/transport.sql

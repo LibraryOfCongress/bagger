@@ -1,0 +1,48 @@
+<table>
+<tr>
+<td><img src="image:about.main" border="0" alt=""></td>
+<td valign="top">
+<b>Bagger Spring Rich Client Application</b><br>
+<p>
+Version: 1.0<br>
+Build id: 20080930001
+<p>
+<a href="http://www.apache.org/licenses/LICENSE-2.0">&copy; Copyright 2008</a> the original author or authors.
+</td>
+</tr>
+</table>
+<p>
+<center>
+<p>
+<b>Powered By</b>
+<p>
+<a href="http://www.springframework.org"><img src="image:about.spring" border="0" alt=""></a>
+<p>
+<a href="http://hsqldb.sourceforge.net/"><img src="image:about.hsql" border="0" alt=""></a>
+<p>
+<a href="http://www.jgoodies.com/"><img src="image:about.jgoodies" border="0" alt=""></a>
+<p>
+<a href="http://www.junit.org/"><img src="image:about.junit" border="0" alt=""></a>
+<p>
+<a href="http://www.caucho.com/hessian/index.xtp"><img src="image:about.caucho" border="0" alt=""></a>
+<p>
+.
+<p>
+.
+<p>
+and more!
+</center>
+<p>
+<table>
+<tr>
+<td><img src="image:about.main" border="0" alt=""></td>
+<td valign="top">
+<b>Bagger Spring Rich Client Application</b><br>
+<p>
+Version: 0.1<br>
+Build id: 20080808001
+<p>
+<a href="http://www.apache.org/licenses/LICENSE-2.0">&copy; Copyright 2008</a> the original author or authors.
+</td>
+</tr>
+</table>
