@@ -91,3 +91,19 @@ The Project Profile format is subject to change in the future releases.
 
 You need to have Java SE Runtime Environment 6 or later version installed on the Windows system. To run the Bagger application, go to the folder bagger_stndalone_win. Double click on the file bagger_stndalone.bat, or select Start->Run->Browse... then navigate to the bagger_stndalone.bat file and select Open and then Ok in the Run dialog window. To create a shortcut on your desktop, select the bagger_stndalone.bat file and select the right mouse button.  Select Send to->Desktop (create shortcut)
 
+4. Setting JAVA_HOME
+
+The Bagger Application needs to access the Java Runtime Environment (i.e. JRE 6) on the user's machine.
+The JAVA_HOME environmnet variable needs to be set in the bagger_stndalone.bat (i.e. Windows) or bagger_stndalone.sh (UNIX/LINUX) file as follows:
+
+WINDOWS (File name has space)
+SET JAVA_HOME="C:\Program Files\Java\jre1.6.0_07\bin"
+%JAVA_HOME%\java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
+
+WINDOWS
+SET JAVA_HOME=C:\jdk1.6.0_16\bin
+%JAVA_HOME%\java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
+
+UNIX/LINUX
+JAVA_HOME = /usr/java/jre/bin
+$JAVA_HOME/java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
