@@ -46,33 +46,6 @@
     class="org.springframework.richclient.exceptionhandling.delegation.DelegatingExceptionHandler">
     <property name="delegateList">
       <list>
-        <bean class="org.springframework.richclient.exceptionhandling.delegation.SimpleExceptionHandlerDelegate">
-          <property name="throwableClassList">
-            <list>
-              <value type="java.lang.Class">org.acegisecurity.AuthenticationException</value>
-              <value type="java.lang.Class">org.acegisecurity.AccessDeniedException</value>
-            </list>
-          </property>
-          <property name="exceptionHandler">
-            <bean class="org.springframework.richclient.exceptionhandling.MessagesDialogExceptionHandler">
-              <property name="logLevel" value="WARN" />
-              <property name="shutdownPolicy" value="NONE" />
-            </bean>
-          </property>
-        </bean>
-        <bean
-          class="org.springframework.richclient.exceptionhandling.delegation.SimpleExceptionHandlerDelegate">
-          <property name="throwableClass">
-            <value type="java.lang.Class">org.hibernate.validator.InvalidStateException</value>
-          </property>
-          <property name="exceptionHandler">
-            <bean
-              class="org.springframework.richclient.exceptionhandling.HibernateValidatorDialogExceptionHandler">
-              <property name="logLevel" value="INFO" />
-              <property name="shutdownPolicy" value="NONE" />
-            </bean>
-          </property>
-        </bean>
         <bean
           class="org.springframework.richclient.exceptionhandling.delegation.SimpleExceptionHandlerDelegate">
           <property name="throwableClass" value="java.lang.Error" />

@@ -37,11 +37,9 @@ public class BaggerStandalone {
 
         String businessLayerContextPath = rootContextDirectoryClassPath + "/common/business-layer-context.xml";
 
-        String securityContextPath = rootContextDirectoryClassPath + "/standalone/security-context.xml";
-
         try {
         	new ApplicationLauncher(startupContextPath, new String[] { richclientApplicationContextPath,
-            		businessLayerContextPath, securityContextPath });
+            		businessLayerContextPath });
         } catch (IllegalStateException ex1) {
             LogFactory.getLog(BaggerStandalone.class).error("IllegalStateException during startup", ex1);
             JOptionPane.showMessageDialog(new JFrame(), "An illegal state error occured.\n", "Bagger startup error!", JOptionPane.ERROR_MESSAGE);
