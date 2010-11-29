@@ -94,16 +94,20 @@ You need to have Java SE Runtime Environment 6 or later version installed on the
 4. Setting JAVA_HOME
 
 The Bagger Application needs to access the Java Runtime Environment (i.e. JRE 6) on the user's machine.
+
 The JAVA_HOME environmnet variable needs to be set in the bagger_stndalone.bat (i.e. Windows) or bagger_stndalone.sh (UNIX/LINUX) file as follows:
 
-WINDOWS (File name has space)
+i) WINDOWS (File name has space)
+
 SET JAVA_HOME="C:\Program Files\Java\jre1.6.0_07\bin"
 %JAVA_HOME%\java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
 
-WINDOWS
+ii) WINDOWS
+
 SET JAVA_HOME=C:\jdk1.6.0_16\bin
 %JAVA_HOME%\java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
 
-UNIX/LINUX
+iii) UNIX/LINUX
+
 JAVA_HOME = /usr/java/jre/bin
 $JAVA_HOME/java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
