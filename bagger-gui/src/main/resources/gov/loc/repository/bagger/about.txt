@@ -2,38 +2,25 @@
 <tr>
 <td><img src="image:about.main" border="0" alt=""></td>
 <td valign="top">
+<p>
+<b>Description</b>
+<p>
+The Bagger application creates and deposits bags. <br> Using the BagIt specification. <br>
+<br>
+<p>
 <b>Bagger Application</b>
 <p>
-Version: 2.0
+Version: 2.1.1 <br>
+<br>
 <p>
 <b>Bag It Library</b>
 <p>
-Version: 3.4
+Version: 3.4 <br>
+<br>
 <p>
-<b>Java SE Development Kit (JDK)</b>
+<b>Distribution Site</b>
 <p>
-Version: 1.6
-<p>
-Update: 16
-<p>
-</td>
-</tr>
-</table>
-<p>
-<center>
-<p>
-<b>Powered By</b>
-<p>
-<a href="http://www.springframework.org"><img src="image:about.spring" border="0" alt=""></a>
-<p>
-and more!
-</center>
-<p>
-<table>
-<tr>
-<td><img src="image:about.main" border="0" alt=""></td>
-<td valign="top">
-<p>
+<a href="http://sourceforge.net/projects/loc-xferutils/">http://sourceforge.net/projects/loc-xferutils/</a>
 </td>
 </tr>
 </table>
