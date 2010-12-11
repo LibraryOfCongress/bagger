@@ -12,8 +12,10 @@
 <beans>
 -->  
   <bean id="application" class="org.springframework.richclient.application.Application">
+<!--
     <constructor-arg index="0" ref="applicationDescriptor" />
-    <constructor-arg index="1" ref="baggerLifecycleAdvisor" />
+-->
+    <constructor-arg index="0" ref="baggerLifecycleAdvisor" />
   </bean>
 
   <bean id="applicationDescriptor" class="org.springframework.richclient.application.support.DefaultApplicationDescriptor"> 
