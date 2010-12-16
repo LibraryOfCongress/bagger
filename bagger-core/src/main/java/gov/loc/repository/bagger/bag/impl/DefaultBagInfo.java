@@ -314,7 +314,8 @@ public class DefaultBagInfo {
 		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
 			String key = (String) iter.next();
 			String value = (String) map.get(key);
-			fieldMap.get(key).setValue(value);
+			if (fieldMap.get(key) != null)
+				fieldMap.get(key).setValue(value);
 		}
 	}
 	
