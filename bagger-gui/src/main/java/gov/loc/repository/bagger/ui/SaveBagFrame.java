@@ -76,7 +76,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
 	JCheckBox holeyCheckbox;
 	JCheckBox isTagCheckbox;
-	JCheckBox isVerifyCheckbox;
 	JCheckBox isPayloadCheckbox;
     JComboBox tagAlgorithmList;
     JComboBox payAlgorithmList;
@@ -300,17 +299,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         payAlgorithmList.setSelectedItem(bag.getPayloadManifestAlgorithm());
         payAlgorithmList.addActionListener(new PayAlgorithmListHandler());
         payAlgorithmList.setToolTipText(getMessage("bag.payalgorithmlist.help"));
-
-    	// TODO: Add verify after write label
-        JLabel verifyLabel = new JLabel(getMessage("bag.isverify"));
-        verifyLabel.setToolTipText(getMessage("bag.isverify.help"));
-    	// TODO: Add verify checkbox
-        isVerifyCheckbox = new JCheckBox();
-        isVerifyCheckbox.setBorder(border);
-        isVerifyCheckbox.setSelected(bag.isValidateOnSave());
-        isVerifyCheckbox.addActionListener(new VerifyHandler());
-        isVerifyCheckbox.setToolTipText(getMessage("bag.isverify.help"));
-
         
     	GridBagLayout layout = new GridBagLayout();
         GridBagConstraints glbc = new GridBagConstraints();
@@ -386,11 +374,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     	panel.add(payAlgorithmList);
         row++;
         buildConstraints(glbc, 0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST); 
-        layout.setConstraints(verifyLabel, glbc);
-    	panel.add(verifyLabel);
         buildConstraints(glbc, 1, row, 2, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER); 
-        layout.setConstraints(isVerifyCheckbox, glbc);
-    	panel.add(isVerifyCheckbox);
     	
     	GuiStandardUtils.attachDialogBorder(contentPane);
 		pageControl.add(panel);
@@ -604,21 +588,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String alg = (String) jlist.getSelectedItem();
         	bagView.getBag().setPayloadManifestAlgorithm(alg);
-    	}
-    }
-
-    private class VerifyHandler extends AbstractAction {
-    	private static final long serialVersionUID = 75893358194076314L;
-    	public void actionPerformed(ActionEvent e) {
-    		JCheckBox cb = (JCheckBox)e.getSource();
-                
-    		// Determine status
-    		boolean isSelected = cb.isSelected();
-    		if (isSelected) {
-    			bagView.getBag().isValidateOnSave(true);
-    		} else {
-    			bagView.getBag().isValidateOnSave(false);
-    		}
     	}
     }
     
