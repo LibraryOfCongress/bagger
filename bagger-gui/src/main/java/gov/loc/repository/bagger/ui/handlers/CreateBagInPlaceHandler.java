@@ -44,8 +44,9 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     }
 
     public void createPreBag(File dataFile, String bagItVersion, final String profileName) {
-    	log.info("Creating a new bag in place with data: " + dataFile.getName()
-    			+ ", version: " + bagItVersion + ", profile: " + profileName);
+    	if (((dataFile != null) && (bagItVersion != null)) && (profileName !=null))
+    		log.info("Creating a new bag in place with data: " + dataFile.getName()
+    				+ ", version: " + bagItVersion + ", profile: " + profileName);
     	bagView.clearBagHandler.clearExistingBag();
     	try {
     		bagView.getBag().createPreBag(dataFile, bagItVersion);
