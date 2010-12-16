@@ -12,15 +12,7 @@
 <beans>
 -->  
   <bean id="application" class="org.springframework.richclient.application.Application">
-<!--
-    <constructor-arg index="0" ref="applicationDescriptor" />
--->
     <constructor-arg index="0" ref="baggerLifecycleAdvisor" />
-  </bean>
-
-  <bean id="applicationDescriptor" class="org.springframework.richclient.application.support.DefaultApplicationDescriptor"> 
-    <property name="version" value="2.0" />
-    <property name="buildId" value="BagIt 3.4" />
   </bean>
 
   <bean id="baggerLifecycleAdvisor" class="gov.loc.repository.bagger.BaggerLifecycleAdvisor"> 
