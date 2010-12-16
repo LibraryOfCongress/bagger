@@ -90,7 +90,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 	public ProgressMonitor progressMonitor;
     public LongTask task;
     public Cancellable longRunningProcess = null;
-    private Timer timer;
+    private final Timer timer = new Timer(ONE_SECOND/10, null);
 
 	private Bagger bagger;
     private DefaultBag bag;
@@ -667,9 +667,14 @@ public class BagView extends AbstractView implements ApplicationListener {
             if (task.hasUserTriedToCancel() || task.isDone()) {
             	// we are done
                 progressMonitor.close();
-                Toolkit.getDefaultToolkit().beep();
-                timer.stop();
+                Toolkit.getDefaultToolkit().beep();                
+                timer.stop();                
                 log.info("Stopped the timer");
+                // getting an array of Action Listeners from Timer Listener (will have only one element)
+                ActionListener[] als = (ActionListener[])(timer.getListeners(ActionListener.class));
+                // Removing Action Listener from timer
+				if (als.length > 0) 
+					timer.removeActionListener(als[0]);
                 if (longRunningProcess != null && !task.isDone()) {
                 	log.info("Trying to cancel the long running process: " + longRunningProcess);
                 	longRunningProcess.cancel();
@@ -684,13 +689,13 @@ public class BagView extends AbstractView implements ApplicationListener {
         task.setActivityMonitored(activityMonitored);
         task.setProgress(progress);
 
-        timer = new Timer(ONE_SECOND/10, new TimerListener());
+        timer.addActionListener(new TimerListener());
 
         progressMonitor = new ProgressMonitor(this.getControl(),
         		message, "Preparing the operation...", 0, 1);
         progressMonitor.setMillisToDecideToPopup(ONE_SECOND);
         task.setMonitor(progressMonitor);
-
+        
         task.go();
         timer.start();
     }
