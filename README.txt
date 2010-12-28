@@ -13,78 +13,58 @@ Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specifi
 
 User can create custom project profiles using a simple JSON-based format. Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger. On Windows, it is C:\"Documents and Settings"\<user>\bagger. On unix-like operating system, it is ~/bagger.
 
-Here is a sample profile:
+To support the use of profiles for bag-info.txt editing in the Bagger and in the various Transfer webapps, the following describes a  JSON serialization of a profile:
 
 {
-    "name" : "Sample Profile",
-    "Send-To" : {
-        "name" : {
-            "value" : "John Smith",
-            "isReadOnly" : true 
-        },
-        "phone" : {
-            "value" : "202-707-0000",
-            "isReadOnly" : true 
-        },
-        "email" : {
-            "value" : "xyz@loc.gov",
-            "isReadOnly" : true 
-        } 
-    },
-    "Send-From" : {
-        "name" : {
-            "value" : "Mary Smith",
-            "isReadOnly" : false 
-        },
-        "phone" : {
-            "value" : "111-222-3333",
-            "isReadOnly" : false 
-        },
-        "email" : {
-            "value" : "mary@abc.org",
-            "isReadOnly" : false 
-        } 
-    },
-    "Organization": {
-        "Organization-Address": {
-            "fieldRequired": false,
-            "fieldType": "TF",
-            "isReadOnly": false,
-            "value": "123 Main St, Little Town, MD 20850"
-        },
-        "Source-Organization": {
-            "fieldRequired": false,
-            "fieldType": "TF",
-            "isReadOnly": false,
-            "value": "ABC"
-        }
-    },
-    "Custom-info": {
-		"My-First-Field": {
-            "fieldRequired": true,
-            "fieldType": "TF",
-            "isReadOnly": false,
-            "value": "22"
-        },
-        "My-Second-Field": {
-            "fieldRequired": false,
-            "fieldType": "LF",
-            "isReadOnly": false,
-            "valueList" : ["value1", "value2"]
-        }
-    }
+   "<field name>" : {
+                         "fieldRequired" : <true/false, where false is default if not present>,                
+                         "requiredValue" : "<some value>",
+                         "defaultValue"  : "<some value>",
+                         "valueList"     : ["<some value>",<list of other values...>]
+                     },
+   <repeat for other fields...>
 }
-
 
 The meanings of some field properties are explained here:
 
 * "fieldRequired": true/false, where false is default if not present                
-* "fieldType": "TF" or "LF", where TF stands for text field, LF stands for list field
-* "isReadOnly": true/false, where false is default if not present
-* "value": default value when fieldType is TF
-* "valueList": default value list when fieldType is LF
+* "requiredValue": some value if fieldRequired is true
+* "defaultValue": default value
+* "valueList": some value or a list of values
 
 The Project Profile format is subject to change in the future releases.
+
+
+Here is a sample profile (please ignore the comments (//) when creating a JSON profile, it is only for explaining the fields):
+
+{
+   //Source-organization is required and may have any value
+   "Source-organization" : {
+                             "fieldRequired" : true
+                           },
+
+   //Organization-address is not required and may have any value
+   "Organization-address" : {},
+
+   //Contact-name is not required and default is Justin Littman
+   "Contact-name" : {
+                      "defaultValue" : "Justin Littman"
+                    },
+
+   //Content-type is not required, but if a value is provided it must be selected from list
+   "Content-type" : {
+                      "valueList" :["audio","textual","web capture"]
+                    },
+
+   //Content-process is required, has a default value of born digital, and must be selected from list
+   "Content-process" : {
+                         "fieldRequired" : true,
+                         "defaultValue" : "born digital",
+                         "valueList" : ["born digital","conversion","web capture"]
+                        }
+}
+
+The file should be named <profile name>-profile.json. For example, wdl-profile.json.
 
 
 3. Bagger Build Process
