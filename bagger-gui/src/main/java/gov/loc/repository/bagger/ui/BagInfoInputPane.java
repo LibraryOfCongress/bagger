@@ -26,7 +26,7 @@ public class BagInfoInputPane extends JTabbedPane {
 	private BagView bagView;
 	private DefaultBag defaultBag;
 	private BaggerProfile bagProfile;
-    private OrganizationInfoForm bagInfoForm = null;
+    private BagInfoForm bagInfoForm = null;
     private OrganizationProfileForm profileForm = null;
     private HierarchicalFormModel infoFormModel = null;
     private HierarchicalFormModel profileFormModel = null;
@@ -86,7 +86,7 @@ public class BagInfoInputPane extends JTabbedPane {
         profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), bagView);
     	
     	infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
-        bagInfoForm = new OrganizationInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), bagView, bagInfo.getFieldMap(), enabled);
+        bagInfoForm = new BagInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), bagView, bagInfo.getFieldMap(), enabled);
        
         createTabbedUiComponentsWithForms();
     }
@@ -100,7 +100,6 @@ public class BagInfoInputPane extends JTabbedPane {
         bagInfoForm.getControl().setToolTipText(bagView.getPropertyMessage("infoinputpane.tab.details.help"));
         addTab(bagView.getPropertyMessage("infoInputPane.tab.details"), bagInfoForm.getControl());
         profileForm.getControl().setToolTipText("Profile Form");
-        addTab(bagView.getPropertyMessage("infoInputPane.tab.profile"), profileForm.getControl());
     }
 
     public String verifyForms(DefaultBag bag) {
