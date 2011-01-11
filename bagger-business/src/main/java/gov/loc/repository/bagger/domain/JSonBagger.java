@@ -154,7 +154,7 @@ public class JSonBagger implements Bagger {
 		{
 			try {
 				FileReader reader = new FileReader(file);
-				Profile profile = loadProfile(reader);
+				Profile profile = loadProfile(reader,file.getName());
 				profilesToReturn.add(profile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -173,16 +173,16 @@ public class JSonBagger implements Bagger {
 		return profilesToReturn;
 	}
 	
-	private Profile loadProfile(FileReader reader) throws JSONException {
+	private Profile loadProfile(FileReader reader, String jsonFileName) throws JSONException {
 		JSONTokener tokenizer = new JSONTokener(reader);
-		JSONObject jsonObject = null;
+		JSONObject jsonObject = null;		
 		try {
 			jsonObject = new JSONObject(tokenizer);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Profile profile = Profile.createProfile(jsonObject);
+		Profile profile = Profile.createProfile(jsonObject, getprofileName(jsonFileName));
 		return profile;
 	}
 	
@@ -208,11 +208,20 @@ public class JSonBagger implements Bagger {
 		}
 	}
 	
+    /**
+     * Returns Profile Name from a JSON File Name.
+     * @param jsonFileName A JSON file name
+     */
+	private String getprofileName(String jsonFileName)
+	{
+		return jsonFileName.substring(0, jsonFileName.indexOf("-profile.json"));
+	}		
+	
 	private String getJsonFileName(String name)
 	{
 		return name+"-profile.json";
 	}
-
+	
 	public void removeProfile(Profile profile) {
 		String homeDir = System.getProperty("user.home");
     	String profilesPath = homeDir+File.separator+"bagger";
