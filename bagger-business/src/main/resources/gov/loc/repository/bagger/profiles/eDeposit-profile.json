@@ -1,11 +1,7 @@
 {
-   "name" : "eDeposit",
-    "Standard-info" : {
         "Publisher" : {
-            "fieldRequired" : true,
-            "fieldType" : "TF" 
-        } 
-    }
+            "fieldRequired" : true
+        }
 }
                      
                      

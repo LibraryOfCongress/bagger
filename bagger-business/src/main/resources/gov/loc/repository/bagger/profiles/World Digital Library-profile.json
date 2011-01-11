@@ -1,57 +1,39 @@
 {
-    "name" : "World Digital Library",
-    "Send-To" : {
-        "name" : {
-            "value" : "Sandy Bostian",
-            "isReadOnly" : true 
+    "Send-To-Name" : {
+            "requiredValue" : "Sandy Bostian"
         },
-        "phone" : {
-            "value" : "+1.202.707.2342",
-            "isReadOnly" : true 
+    "Send-To-Phone" : {
+            "requiredValue" : "+1.202.707.2342"
         },
-        "email" : {
-            "value" : "sbos@loc.gov",
-            "isReadOnly" : true 
-        } 
-    },
-    "Standard-info" : {
-        "External-Identifier" : {
+    "Send-To-Email" : {
+            "requiredValue" : "sbos@loc.gov"
+        },
+    "External-Identifier" : {
+            "fieldRequired" : true
+        },
+    "Media-Identifiers" : {
+            "fieldRequired" : false
+        },
+    "Number-Of-Media-Shipped" : {
+            "fieldRequired" : false            
+        },
+    "Additional-Equipment" : {
+            "fieldRequired" : false
+        },
+    "Ship-Date" : {
+            "fieldRequired" : false,
+        },
+    "Ship-Method" : {
+            "fieldRequired" : false
+        },
+    "Ship-Tracking-Number" : {
+            "fieldRequired" : false
+        },
+    "Ship-Media" : {
+            "fieldRequired" : false
+        },
+    "Ship-To-Address" : {
             "fieldRequired" : true,
-            "fieldType" : "TF" 
-        },
-        "Media-Identifiers" : {
-            "fieldRequired" : false,
-            "fieldType" : "TF" 
-        },
-        "Number-Of-Media-Shipped" : {
-            "fieldRequired" : false,
-            "fieldType" : "TF" 
-        },
-        "Additional-Equipment" : {
-            "fieldRequired" : false,
-            "fieldType" : "TF" 
-        },
-        "Ship-Date" : {
-            "fieldRequired" : false,
-            "fieldType" : "TF" 
-        },
-        "Ship-Method" : {
-            "fieldRequired" : false,
-            "fieldType" : "TF" 
-        },
-        "Ship-Tracking-Number" : {
-            "fieldRequired" : false,
-            "fieldType" : "TF" 
-        },
-        "Ship-Media" : {
-            "fieldRequired" : false,
-            "fieldType" : "TF" 
-        },
-        "Ship-To-Address" : {
-            "fieldRequired" : true,
-            "value" : "World Digital Library, Library of Congress, 101 Independence Ave, SE, Washington, DC 20540 USA",
-            "fieldType" : "TA" ,
-            "isReadOnly" : true 
+            "requiredValue" : "World Digital Library, Library of Congress, 101 Independence Ave, SE, Washington, DC 20540 USA"
         } 
-    }
 }

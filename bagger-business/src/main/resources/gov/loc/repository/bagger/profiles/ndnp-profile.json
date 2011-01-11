@@ -1,9 +1,5 @@
 {
-    "name" : "ndnp",
-    "Standard-info" : {
-        "Awardee-Phase" : {
-            "fieldRequired" : true,
-            "fieldType" : "TF" 
+    "Awardee-Phase" : {
+            "fieldRequired" : true
         } 
-    }
 }
