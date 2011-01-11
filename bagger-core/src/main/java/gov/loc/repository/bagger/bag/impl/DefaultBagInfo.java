@@ -216,8 +216,10 @@ public class DefaultBagInfo {
 							field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
 						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
 							field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
-						} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
+						} else if (!(projectProfile.getElements().isEmpty())) {
 							field.setComponentType(BagInfoField.LIST_COMPONENT);
+							// Set default value selected from value list
+							field.setDefaultValue(projectProfile.getDeafaultValue());
 						}
 						fieldMap.put(field.getLabel(), field);
 					}
