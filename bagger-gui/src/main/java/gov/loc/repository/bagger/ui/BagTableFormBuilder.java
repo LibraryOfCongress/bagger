@@ -42,13 +42,20 @@ public class BagTableFormBuilder extends TableFormBuilder {
         return addBinding(fieldName, isRequired, label, textField, textField, checkbox, attributes, getLabelAttributes());
     }
 
-    public JComponent[] addList(String fieldName, boolean isRequired, String label, Collection<String> elements, JComponent checkbox, String attributes) {
+    public JComponent[] addList(String fieldName, boolean isRequired, String label, Collection<String> elements, String defaultValue, JComponent checkbox, String attributes) {
     	ArrayList<String> listModel = new ArrayList<String>();
 		for (Iterator<String> iter = elements.iterator(); iter.hasNext();) {
 			String item = (String) iter.next();
 			listModel.add(item);
 		}
-		JComponent list = new JComboBox(listModel.toArray());
+		
+		// Set default value selected from value list
+		JComboBox dropDownTextField = new JComboBox(listModel.toArray());
+		dropDownTextField.setSelectedItem(defaultValue);
+		Object obj = dropDownTextField.getSelectedItem();
+		dropDownTextField.setSelectedItem(obj);
+		JComponent list = dropDownTextField;
+		
         JComponent wrappedComponent = list;
         return addBinding(fieldName, isRequired, label, list, wrappedComponent, checkbox, attributes, getLabelAttributes());
     }
