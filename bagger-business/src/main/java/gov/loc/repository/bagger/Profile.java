@@ -77,11 +77,10 @@ public class Profile {
 		return sb.toString();
 	}
 	
-	public static Profile createProfile(JSONObject profileJson) throws JSONException
+	public static Profile createProfile(JSONObject profileJson, String profileName) throws JSONException
 	{
 		Profile profile = new Profile();
-		String name = (String)profileJson.get(Profile.FIELD_NAME);
-		profile.setName(name);
+		profile.setName(profileName);
 		
 		JSONObject organizationJson = null;
 		if(profileJson.has(Profile.FIELD_ORGANIZATION))
@@ -109,12 +108,9 @@ public class Profile {
 		   customInfoJson = (JSONObject)profileJson.get(Profile.FIELD_CUSTOM_INFO);
 		HashMap<String, ProfileField> fields = getFields(customInfoJson);
 		profile.setCustomFields(fields);
-		
-		JSONObject standardInfosJson = null;
-		if(profileJson.has(Profile.FIELD_STANDARD_INFO))
-			standardInfosJson = (JSONObject)profileJson.get(Profile.FIELD_STANDARD_INFO);
-		HashMap<String, ProfileField> standardFields = getFields(standardInfosJson);
-		profile.setStandardFields(standardFields);
+				
+		HashMap<String, ProfileField> profileFields = getFields(profileJson);
+		profile.setStandardFields(profileFields);
 		
 		return profile;
 	}

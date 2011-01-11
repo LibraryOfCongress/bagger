@@ -13,16 +13,18 @@ public class ProfileField {
 
 	private String fieldName = "";
 	private String fieldValue = "";
-	private String fieldType = "TF";
+	private String fieldType = "";
 	private boolean isReadOnly = false;
+	private String defaultValue = "";
 	private List<String> elements = new ArrayList<String>();
 	private boolean isRequired;
 	private boolean isValueRequired;
 	
-	final static String FIELD_VALUE = "value";
+	final static String FIELD_REQUIRED_VALUE = "requiredValue";
 	final static String FIELD_REQUIRED = "fieldRequired";
 	final static String FIELD_TYPE ="fieldType";
 	final static String FIELD_READ_ONLY ="isReadOnly";
+	final static String FIELD_DEFAULT_VALUE="defaultValue";
 	final static String FIELD_VALUE_LIST="valueList";
  
 	public void setFieldName(String s) {
@@ -49,6 +51,24 @@ public class ProfileField {
 		return this.fieldValue;
 	}
 
+    /**
+     * Sets the Default Value of the Drop Down List
+     *
+     * @param key   Default value string.
+     */	
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+	
+    /**
+     * Returns the Default Value for the Drop Down List
+     *
+     * @return  Default value string.
+     */	
+	public String getDeafaultValue() {
+		return this.defaultValue;
+	}	
+	
 	public void setElements(List<String> s) {
 		this.elements = s;
 	}
@@ -100,9 +120,9 @@ public class ProfileField {
 				profileField.setFieldType(fieldType);
 			}
 
-			if(profileFieldJson.has(FIELD_VALUE))
+			if(profileFieldJson.has(FIELD_REQUIRED_VALUE))
 			{
-				String fieldValue =   (String)profileFieldJson.get(FIELD_VALUE);
+				String fieldValue =   (String)profileFieldJson.get(FIELD_REQUIRED_VALUE);
 				profileField.setFieldValue(fieldValue);
 			}
 
@@ -122,6 +142,12 @@ public class ProfileField {
 					valueList.add(value);
 				}
 				profileField.setElements(valueList);
+			}
+			// Default value selected from value list
+			if(profileFieldJson.has(FIELD_DEFAULT_VALUE))
+			{
+				String defaultValue =   (String)profileFieldJson.get(FIELD_DEFAULT_VALUE);
+				profileField.setDefaultValue(defaultValue);
 			}
 
 			if(profileFieldJson.has(FIELD_REQUIRED))
@@ -145,7 +171,7 @@ public class ProfileField {
 	{
 		StringWriter writer = new StringWriter();
 		JSONWriter profileWriter = new JSONWriter(writer);
-		 profileWriter.object().key(FIELD_VALUE).value(this.getFieldValue());
+		 profileWriter.object().key(FIELD_REQUIRED_VALUE).value(this.getFieldValue());
 		 profileWriter.key(FIELD_REQUIRED).value(getIsRequired());
 		 profileWriter.key(FIELD_TYPE).value(getFieldType());
 		 profileWriter.key(FIELD_READ_ONLY).value(isReadOnly());
