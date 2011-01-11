@@ -24,6 +24,7 @@ public class BagInfoField {
 	private String label = "";
 	private String value = "";
 	private List<String> elements = new ArrayList<String>();
+	private String defaultValue = "";
 	private int componentType = TEXTFIELD_COMPONENT;
 	private boolean isEnabled = true;
 	private boolean isRequired = false;
@@ -90,6 +91,15 @@ public class BagInfoField {
     	return this.elements;
     }
 
+    /**
+     * Sets the Default Value of the Drop Down List
+     *
+     * @param key   Default value string.
+     */	
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}    
+    
     public void setComponentType(int type) {
     	this.componentType = type;
     }
@@ -98,6 +108,15 @@ public class BagInfoField {
     	return this.componentType;
     }
 
+    /**
+     * Returns the Default Value for the Drop Down List
+     *
+     * @return  Default value string.
+     */	
+	public String getDeafaultValue() {
+		return this.defaultValue;
+	}   
+    
     public void isEditable(boolean b) {
     	this.isEditable = b;
     }
