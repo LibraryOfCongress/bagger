@@ -17,7 +17,6 @@ public class BagInfoField {
 	public static final int LIST_COMPONENT = 3;
 	public static final String TEXTFIELD_CODE = "TF";
 	public static final String TEXTAREA_CODE = "TA";
-	public static final String LIST_CODE = "LF";
 	public static final int MAX_VALUE = 32;
 
 	private String name = "";
@@ -54,7 +53,10 @@ public class BagInfoField {
 			this.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
 		} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
 			this.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
-		} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.LIST_CODE)) {
+		}	else if (!(projectProfile.getElements().isEmpty())) {
+			this.setComponentType(BagInfoField.LIST_COMPONENT);
+			// Set default value selected from value list
+			this.setDefaultValue(projectProfile.getDeafaultValue());
 			this.setComponentType(BagInfoField.LIST_COMPONENT);
 		}
     }
