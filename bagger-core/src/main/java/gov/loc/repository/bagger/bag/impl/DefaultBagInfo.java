@@ -27,7 +27,7 @@ public class DefaultBagInfo {
 
 	private static final Log log = LogFactory.getLog(DefaultBagInfo.class);
 	
-	public static final String FIELD_LC_PROJECT = "LC-Project";
+	public static final String FIELD_LC_PROJECT = "Profile Name";
 	
 	private static final String[] ORGANIZATION_CONTACT_FIELDS = {BagInfoTxtImpl.FIELD_SOURCE_ORGANIZATION, 
 		BagInfoTxtImpl.FIELD_ORGANIZATION_ADDRESS, BagInfoTxtImpl.FIELD_CONTACT_NAME, 
