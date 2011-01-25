@@ -132,7 +132,7 @@ public class BagInfoForm extends AbstractForm implements FocusListener {
 	                	break;
 	                case BagInfoField.LIST_COMPONENT:
 	                	List<String> elements = field.getElements();
-	                    JComponent[] llist = formBuilder.addList(field.getName(), field.isRequired(), field.getLabel(), elements, field.getDeafaultValue(), removeButton, "");
+	                    JComponent[] llist = formBuilder.addList(field.getName(), field.isRequired(), field.getLabel(), elements, field.getValue(), removeButton, "");
 	                	JComponent lcomp = llist[index];
 	                	lcomp.setEnabled(field.isEnabled());
 	                	lcomp.addFocusListener(this);
