@@ -15,7 +15,6 @@ public class ProfileField {
 	private String fieldValue = "";
 	private String fieldType = "";
 	private boolean isReadOnly = false;
-	private String defaultValue = "";
 	private List<String> elements = new ArrayList<String>();
 	private boolean isRequired;
 	private boolean isValueRequired;
@@ -50,24 +49,6 @@ public class ProfileField {
 	public String getFieldValue() {
 		return this.fieldValue;
 	}
-
-    /**
-     * Sets the Default Value of the Drop Down List
-     *
-     * @param key   Default value string.
-     */	
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
-	
-    /**
-     * Returns the Default Value for the Drop Down List
-     *
-     * @return  Default value string.
-     */	
-	public String getDeafaultValue() {
-		return this.defaultValue;
-	}	
 	
 	public void setElements(List<String> s) {
 		this.elements = s;
@@ -142,12 +123,13 @@ public class ProfileField {
 					valueList.add(value);
 				}
 				profileField.setElements(valueList);
+				profileField.setFieldValue(valueList.get(0));
 			}
 			// Default value selected from value list
 			if(profileFieldJson.has(FIELD_DEFAULT_VALUE))
 			{
-				String defaultValue =   (String)profileFieldJson.get(FIELD_DEFAULT_VALUE);
-				profileField.setDefaultValue(defaultValue);
+				String defaultValue = (String)profileFieldJson.get(FIELD_DEFAULT_VALUE);
+				profileField.setFieldValue(defaultValue);
 			}
 
 			if(profileFieldJson.has(FIELD_REQUIRED))
