@@ -23,7 +23,6 @@ public class BagInfoField {
 	private String label = "";
 	private String value = "";
 	private List<String> elements = new ArrayList<String>();
-	private String defaultValue = "";
 	private int componentType = TEXTFIELD_COMPONENT;
 	private boolean isEnabled = true;
 	private boolean isRequired = false;
@@ -54,9 +53,6 @@ public class BagInfoField {
 		} else if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTAREA_CODE)) {
 			this.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
 		}	else if (!(projectProfile.getElements().isEmpty())) {
-			this.setComponentType(BagInfoField.LIST_COMPONENT);
-			// Set default value selected from value list
-			this.setDefaultValue(projectProfile.getDeafaultValue());
 			this.setComponentType(BagInfoField.LIST_COMPONENT);
 		}
     }
@@ -92,16 +88,7 @@ public class BagInfoField {
     public List<String> getElements() {
     	return this.elements;
     }
-
-    /**
-     * Sets the Default Value of the Drop Down List
-     *
-     * @param key   Default value string.
-     */	
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}    
-    
+        
     public void setComponentType(int type) {
     	this.componentType = type;
     }
@@ -109,15 +96,6 @@ public class BagInfoField {
     public int getComponentType() {
     	return this.componentType;
     }
-
-    /**
-     * Returns the Default Value for the Drop Down List
-     *
-     * @return  Default value string.
-     */	
-	public String getDeafaultValue() {
-		return this.defaultValue;
-	}   
     
     public void isEditable(boolean b) {
     	this.isEditable = b;
