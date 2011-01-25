@@ -187,8 +187,6 @@ public class DefaultBagInfo {
 						field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
 					}	else if (!(projectProfile.getElements().isEmpty())) {
 						field.setComponentType(BagInfoField.LIST_COMPONENT);
-						// Set default value selected from value list
-						field.setDefaultValue(projectProfile.getDeafaultValue());
 					}
 				}
 			}
@@ -220,8 +218,6 @@ public class DefaultBagInfo {
 							field.setComponentType(BagInfoField.TEXTAREA_COMPONENT);
 						} else if (!(projectProfile.getElements().isEmpty())) {
 							field.setComponentType(BagInfoField.LIST_COMPONENT);
-							// Set default value selected from value list
-							field.setDefaultValue(projectProfile.getDeafaultValue());
 						}
 						fieldMap.put(field.getLabel(), field);
 					}
