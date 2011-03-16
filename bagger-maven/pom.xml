@@ -46,9 +46,9 @@
   <dependencyManagement>
     <dependencies>
     <dependency>
-      <groupId>loc-repository</groupId>
+      <groupId>gov.loc</groupId>
       <artifactId>bagit</artifactId>
-      <version>3.4</version>
+      <version>3.9</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

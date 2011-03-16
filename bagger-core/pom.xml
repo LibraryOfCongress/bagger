@@ -17,7 +17,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>loc-repository</groupId>
+      <groupId>gov.loc</groupId>
       <artifactId>bagit</artifactId>
     </dependency>
     <dependency>
