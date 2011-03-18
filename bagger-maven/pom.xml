@@ -4,8 +4,8 @@
   <artifactId>bagger-maven</artifactId>
   <packaging>pom</packaging>
   <name>BagIt Bagger</name>
-  <version>2.1-SNAPSHOT</version>
-  <description>Bagger application runnable in standalone form.</description>
+  <version>2.1.1</version>
+  <description>Bagger application runnable in form.</description>
 	<properties>
 		<spring.version>2.5.1</spring.version>
 		<richclient.version>1.0.0</richclient.version>
@@ -28,7 +28,7 @@
     <module>../bagger-core</module>
     <module>../bagger-business</module>
     <module>../bagger-gui</module>
-    <module>../bagger-standalone</module>
+    <module>../bagger</module>
   </modules>
 
   <dependencies>
