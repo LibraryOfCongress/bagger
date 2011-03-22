@@ -5,14 +5,14 @@
   <parent>
     <groupId>loc-repository</groupId>
     <artifactId>bagger-maven</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>bagger-gui</artifactId>
   <packaging>jar</packaging>
   <name>Spring richclient bagger GUI</name>
   <description>
-    The GUI presentation layer which resides in client and standalone, but NOT in the server.
+    The GUI presentation layer which resides in client, but NOT in the server.
   </description>
 
   <dependencies>
@@ -72,6 +72,10 @@
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-vldocking</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.vlsolutions.swing</groupId>
+      <artifactId>docking</artifactId>
     </dependency>
 
     <!-- Dependency injection -->

@@ -5,12 +5,12 @@
   <parent>
     <groupId>loc-repository</groupId>
     <artifactId>bagger-maven</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>bagger-common</artifactId>
   <packaging>jar</packaging>
   <name>Spring richclient bagger common</name>
-  <description>The model and server interfaces which reside on client, server and standalone. </description>
+  <description>The model and server interfaces which reside on client and server. </description>
 
 </project>
