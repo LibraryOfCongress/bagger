@@ -15,7 +15,7 @@
    </security>
    <resources>
       <j2se version="1.6+" initial-heap-size="512m" />
-      <jar href="http://baggertest.rdc.lctl.gov/bagger/bagger.jar?format=raw"/>
+      <jar href="http://baggertest.rdc.lctl.gov/bagger/bagger-2.1.1.jar?format=raw"/>
    </resources>
    <application-desc main-class="gov.loc.repository.bagger.BaggerApplication"/>
 </jnlp> 

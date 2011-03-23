@@ -14,7 +14,7 @@
    </security>
    <resources>
       <j2se version="1.6+"/>
-      <jar href="http://baggerqa.rdc.lctl.gov/bagger.jar?format=raw"/>
+      <jar href="http://baggerqa.rdc.lctl.gov/bagger-2.1.1.jar?format=raw"/>
    </resources>
    <application-desc main-class="gov.loc.repository.bagger.BaggerApplication"/>
 </jnlp> 
