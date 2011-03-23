@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0+" codebase="http://baggerqa.rdc.lctl.gov/" href="bagger-qa.jnlp?format=raw">
    <information> 
       <title>Bagger App</title> 
@@ -16,5 +16,5 @@
       <j2se version="1.6+"/>
       <jar href="http://baggerqa.rdc.lctl.gov/bagger.jar?format=raw"/>
    </resources>
-   <application-desc main-class="gov.loc.repository.bagger.BaggerStandalone"/>
+   <application-desc main-class="gov.loc.repository.bagger.BaggerApplication"/>
 </jnlp> 

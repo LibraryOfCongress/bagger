@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <jnlp spec="1.0+" codebase="http://baggertest.rdc.lctl.gov/bagger/" href="bagger.jnlp?format=raw">
    <information> 
@@ -17,5 +17,5 @@
       <j2se version="1.6+" initial-heap-size="512m" />
       <jar href="http://baggertest.rdc.lctl.gov/bagger/bagger.jar?format=raw"/>
    </resources>
-   <application-desc main-class="gov.loc.repository.bagger.BaggerStandalone"/>
+   <application-desc main-class="gov.loc.repository.bagger.BaggerApplication"/>
 </jnlp> 
