@@ -2,16 +2,23 @@ Bagger README.txt
 
 1. Introduction
 
-The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit-05). The Bagger application is a graphical user interface to the BIL (BagIt Library, http://sourceforge.net/projects/loc-xferutils) command line driver which is an implementation of tools conforming to the BagIt specification.  
+The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit-05). 
+The Bagger application is a graphical user interface to the BIL (BagIt Library, http://sourceforge.net/projects/loc-xferutils) command line driver which is an implementation of tools conforming to the BagIt specification.  
 
-Bagger differs from BIL by providing graphical user interface for file and data manipulation features as well as a visual view of the bag contents, bag state and options.  In addition Bagger provides a project profile capability.  Users can create customized bag-info.txt data with project specific properties that the user defines.  These project profiles can be edited manually and shared with other users.
+Bagger differs from BIL by providing graphical user interface for file and data manipulation features as well as a visual view of the bag contents, bag state and options.
+In addition Bagger provides a project profile capability.  Users can create customized bag-info.txt data with project specific properties that the user defines.
+These project profiles can be edited manually and shared with other users.
 
 
 2. Project Profile
 
-Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specification.  When using Bagger to manage bags for a project or collection, it can be helpful to have a template of bag-info.txt fields and values that are filled out similarly for each bag in that project or collection.  Profiles let users define a collection of bag metadata fields and default field values to be used with each bag in a consistent way.  Users can select a project profile when creating a bag, and that profile will determine the initial fields and values in the bag-info.txt file, and the profile used is identified by the LC-Project field. 
+Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specification.  When using Bagger to manage bags for a project or collection, 
+it can be helpful to have a template of bag-info.txt fields and values that are filled out similarly for each bag in that project or collection.
+Profiles let users define a collection of bag metadata fields and default field values to be used with each bag in a consistent way.  
+Users can select a project profile when creating a bag, and that profile will determine the initial fields and values in the bag-info.txt file, and the profile used is identified by the LC-Project field. 
 
-User can create custom project profiles using a simple JSON-based format. Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger. On Windows, it is C:\"Documents and Settings"\<user>\bagger. On unix-like operating system, it is ~/bagger.
+User can create custom project profiles using a simple JSON-based format. Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger. 
+On Windows, it is C:\"Documents and Settings"\<user>\bagger. On unix-like operating system, it is ~/bagger.
 
 Here is a sample profile:
 
@@ -89,7 +96,9 @@ The Project Profile format is subject to change in the future releases.
 
 3. Running Bagger on Windows
 
-You need to have Java SE Runtime Environment 6 or later version installed on the Windows system. To run the Bagger application, go to the folder bagger2.1.1. Double click on the file bagger.bat, or select Start->Run->Browse... then navigate to the bagger.bat file and select Open and then Ok in the Run dialog window. To create a shortcut on your desktop, select the bagger.bat file and select the right mouse button.  Select Send to->Desktop (create shortcut)
+You need to have Java SE Runtime Environment 6 or later version installed on the Windows system. To run the Bagger application, go to the folder bagger2.1.1. 
+Double click on the file bagger.bat, or select Start->Run->Browse... then navigate to the bagger.bat file and select Open and then Ok in the Run dialog window. 
+To create a shortcut on your desktop, select the bagger.bat file and select the right mouse button.  Select Send to->Desktop (create shortcut)
 
 4. Running Bagger in Unix/Linux
 
@@ -98,20 +107,20 @@ You need to have Java SE Runtime Environment 6 or later version installed on the
 5. Setting JAVA_HOME
 
 The Bagger Application needs to access the Java Runtime Environment (i.e. JRE 6) on the user's machine.
-
-The JAVA_HOME environmnet variable needs to be set in the bagger_stndalone.bat (i.e. Windows) or bagger_stndalone.sh (UNIX/LINUX) file as follows:
+If Java Runtime 6 is not installed or it is not set in the System Path then the JAVA_HOME environmnet variable needs to be set in the bagger_stndalone.bat (i.e. Windows) or bagger_stndalone.sh (UNIX/LINUX) file
+something similar as follows:
 
 i) WINDOWS (File Path has space)
 
 SET JAVA_HOME="C:\Program Files\Java\jre1.6.0_07\bin"
-%JAVA_HOME%\java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
 
-ii) WINDOWS
+ii) WINDOWS (File Path with no spaces)
 
 SET JAVA_HOME=C:\jdk1.6.0_16\bin
-%JAVA_HOME%\java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
 
 iii) UNIX/LINUX
 
 JAVA_HOME = /usr/java/jre/bin
-$JAVA_HOME/java.exe -jar bagger.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger.jar
+$JAVA_HOME/java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
