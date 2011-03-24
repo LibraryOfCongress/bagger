@@ -7,9 +7,8 @@ function error_msg(){
  echo
  echo "TO SET JAVA FOR THE BAGGER APPLICATION PLEASE LOOK AT SECTION '5' IN THE INCLUDED README.TXT FILE"
  echo
- echo "Press any key to continue . . ."
- read -p "$*"
+ read -p "Press any key to continue . . ." -n1 -s
  exit 1
 }
 
-java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar 2>/dev/null || error_msg
+java -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar 2>/dev/null || error_msg

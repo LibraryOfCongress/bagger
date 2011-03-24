@@ -1,6 +1,7 @@
 @ECHO OFF
+
 java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
-echo %ERRORLEVEL%
+
 IF %ERRORLEVEL% GTR 0 GOTO MSG
 GOTO END
 
