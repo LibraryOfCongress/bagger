@@ -1,3 +1,16 @@
-#WINDOWS (File Path has space)
-SET JAVA_HOME="C:\Program Files\Java\jre6\bin"
-%JAVA_HOME%\java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
+@ECHO OFF
+java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
+echo %ERRORLEVEL%
+IF %ERRORLEVEL% GTR 0 GOTO MSG
+GOTO END
+
+:MSG
+ECHO.
+ECHO.
+ECHO PLEASE CHECK IF JAVA 1.6 IS INSTALLED OR IT IS IN THE SYSTEM PATH
+ECHO.
+ECHO TO SET JAVA FOR THE BAGGER APPLICATION PLEASE LOOK AT SECTION '5' IN THE INCLUDED README.TXT FILE
+ECHO.
+PAUSE
+
+:END
