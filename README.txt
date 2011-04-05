@@ -126,15 +126,17 @@ The Bagger application starts with a splash banner page.
 4. Running Bagger in Linux/Ubuntu
    ==============================
 
-You need to have Java SE Runtime Environment 6, but not above 1.6.0.20 installed on the Linux/Ubuntu system. 
+You need to have Java SE Runtime Environment 6, but not above 1.6.0.22 (i.e. do not use 1.6.0.23+) installed on the Linux/Ubuntu system. 
 After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, execute the bagger.sh file in the bagger_distribution folder (i.e. ./bagger.sh). 
 The Bagger application starts with a splash banner page.
 
 5. Setting JAVA_HOME
    =================
 
-The Bagger Application needs to access the Java Runtime Environment (i.e. JRE 6) on the user's machine.  For Linux/Ubuntu the JRE cannot be above 1.6.0.20.
-If Java Runtime 6 is not installed or it is not set in the System Path then alternatively the JAVA_HOME environmnet variable needs to be set in the bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger_distribution folder as follows:
+The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems the Java Runtime Environment cannot be above 1.6.0.22 (i.e. do not use 1.6.0.23+).
+There exists a known rendering issue with the Java Runtime Environment version above 1.6.0.22 when used in Linux/Ubuntu systems (i.e. sun.awt.X11.XException).  
+If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environmnet variable needs to be set in the 
+bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger_distribution folder as follows:
 
 i) WINDOWS (File Path has space)
    -----------------------------
@@ -154,13 +156,16 @@ iii) Linux/Ubuntu
 JAVA_HOME = /usr/java/jre/bin
 $JAVA_HOME/java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
 
-Note: The above steps could be avoided if the Java SE Runtime Environment 6 is set in the System Path and are also just examples, where the path or name of the JRE folder could be different.
+Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
 
 5.  Exceptions
     ==========
 
-There are two common causes for the bagger application to fail and they are:
+There are a few common causes for the bagger application to fail which are:
 
-i)  Incorrect version of the Java Run Time Environment or if no System Path is set for Java.
-ii) If the bagger folders in the user's home folder contains profile files using older JSON format.
-    The fix is to delete the profiles in the bagger folder and rerun the bagger application.
+i)   Incorrect version of the Java Run Time Environment or if no System Path is set for Java.
+     The fix is to use the correct Java Runtime Environment (i.e. 1.6+ in Windows and 1.6.0.22 or below in Linux/Ubuntu)
+ii)  The bagger folder in the user's home folder contains profile files using older JSON format.
+     The fix is to delete the old profiles in the bagger folder and rerun the bagger application.
+iii) In a Linux/Ubuntu system the Java Runtime Environment throws a sun.awt.X11.XException rendering exception (i.e. a known issue) when the Java Runtime Environment version is above 1.6.0.22.
+     The fix is to not use the Java Runtime environment above 1.6.0.22 on a Linux/Ubuntu system (i.e. do not use 1.6.0.23+).
