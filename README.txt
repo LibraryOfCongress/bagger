@@ -10,8 +10,12 @@ Bagger differs from BIL by providing graphical user interface for file and data 
 In addition Bagger provides a project profile capability.  Users can create customized bag-info.txt data with project specific properties that the user defines.
 These project profiles can be edited manually and shared with other users.
 
+2. License
+   =======
 
-2. Project Profile
+License and other releated information are listed in the LICENSE.txt and NOTICE.txt files included the bagger_distribution folder.
+
+3. Project Profile
    ===============
 
 Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specification.  When using Bagger to manage bags for a project or collection,
@@ -77,41 +81,38 @@ Here is a sample profile (please ignore the comments (//) when creating a JSON p
 The file should be named <profile name>-profile.json. For example, wdl-profile.json.
 
 
-3. Bagger Build Process
+4. Bagger Build Process
    ====================
 
-To build the bagger application Maven 2.2.1+ and Java 1.6+ are required.
+To build the Bagger application Maven 2.2.1+ and Java 1.6+ are required.
 
 
-i)   To build the bagger application jar file execute the following steps from the top level folder of the distribution:
+i)   To build the Bagger application jar file, execute the following steps from the top level folder of the distribution:
 
      cd bagger-maven
      mvn clean install
-
-ii)  Create an executable jar from the Bagger application.
-
-     cd bagger
-     mvn clean package
      cd ../bagger_distribution
      cp bagger_package/target/bagger-package-2.1.1-SNAPSHOT.jar bagger-2.1.1.jar
 
-The built bagger application jar file gets copied to the bagger_distribution folder, where it could be executed from the bagger.bat (i.e. Windows) or bagger.sh (i.e. Linux/Ubuntu) scripts.
-The resulting bagger-2.1.1.jar copued to the bagger_distribution folder is the bagger application.
+The built Bagger application jar file gets copied to the bagger_distribution folder, where it could be executed from the bagger.bat (i.e. Windows) or bagger.sh (i.e. Linux/Ubuntu) scripts.
+The resulting bagger-2.1.1.jar copied to the bagger_distribution folder is the bagger application.
 For more information on how to configure the bagger bat/shell script please read the README.txt file in the bagger_distribution folder.
 
-iii) Create a Signed executable jar
+ii) Create a Signed Bagger executable jar
 
-If the bagger application is started by Java Web Start (i.e. from a web server container) then the bagger jar jar created in step ii) needs to be signed as follows (i.e. using jarsigner) :
+If the bagger application is started by Java Web Start (i.e. from a web server container) then the bagger jar created in step ii) needs to be signed as follows (i.e. using jarsigner) :
 
-     jarsigner -keystore bagger.ks -storepass bagger-rdc -keypass bagger-rdc -signedjar bagger-2.1.1-signed.jar bagger-2.1.1.jar rdc
+     jarsigner -keystore bagger.ks -storepass bagger-dist -keypass bagger-dist -signedjar bagger-2.1.1-signed.jar bagger-2.1.1.jar rdc
 
 The signed bagger jar created can be placed in a web server container and executed by Java Web Start.
 When exectuting the above command, the bagger.ks (keystore files) and the original bagger jar file (i.e. bagger-2.1.1.jar) need to be in the same folder.
 The bagger.ks keystore file (i.e. keystore file could be named anything) or any other keystore does not exist, it can be created as follows (i.e. using keytool) : 
 
-     keytool -genkeypair -dname "cn=Bagger, ou=RDC, o=Library of Congress, c=US" -alias rdc -keypass bagger-rdc -keystore bagger.ks -storepass bagger-rdc
+     keytool -genkeypair -dname "cn=Bagger, ou=DIST, o=Bagger Distribution, c=US" -alias dist -keypass bagger-dist -keystore bagger.ks -storepass bagger-dist
 
-4.   Maven POM.XML file location
+Note:  The above commands were executed in a Unix/Linux environment and with minor changes can be executed in a Windows environment.
+
+5.   Maven POM.XML file location
      ===========================
   
      A Maven POM.XML file is used to build each Bagger module.
@@ -124,14 +125,14 @@ ii)  Bagger-business module - At bagger-business/pom.xml
 
 iii) Bagger-common module - At bagger-common/pom.xml
 
-iv) Bagger-core module - At bagger-core/pom.xml
+iv)  Bagger-core module - At bagger-core/pom.xml
 
-v)  Bagger-gui module - At bagger-gui/pom.xml
+v)   Bagger-gui module - At bagger-gui/pom.xml
 
 vi)  Bagger-package module - At bagger-package/pom.xml
 
 
-3. Running Bagger on Windows
+6. Running Bagger on Windows
    =========================
 
 You need to have Java SE Runtime Environment 6 or later version installed on the Windows system. 
@@ -140,14 +141,14 @@ To create a shortcut on your desktop, select the bagger.bat file and select the 
 The Bagger application starts with a splash banner page.  
 
 
-4. Running Bagger in Linux/Ubuntu
+7. Running Bagger in Linux/Ubuntu
    ==============================
 
 You need to have Java SE Runtime Environment 6, but not above 1.6.0.22 (i.e. do not use 1.6.0.23+) installed on the Linux/Ubuntu system. 
 After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, execute the bagger.sh file in the bagger_distribution folder (i.e. ./bagger.sh). 
 The Bagger application starts with a splash banner page.
 
-5. Setting JAVA_HOME
+8. Setting JAVA_HOME
    =================
 
 The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems the Java Runtime Environment cannot be above 1.6.0.22 (i.e. do not use 1.6.0.23+).
@@ -175,7 +176,7 @@ $JAVA_HOME/java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
 
 Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
 
-5.  Exceptions
+9.  Exceptions
     ==========
 
 There are a few common causes for the bagger application to fail which are:

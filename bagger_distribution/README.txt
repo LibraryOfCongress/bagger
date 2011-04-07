@@ -1,4 +1,4 @@
-Baggers README.txt
+Bagger README.txt
 
 1. Introduction
    ============
@@ -11,7 +11,13 @@ In addition Bagger provides a project profile capability.  Users can create cust
 These project profiles can be edited manually and shared with other users.
 
 
-2. Project Profile
+2. License
+   =======
+
+License and other releated information are listed in the included LICENSE.txt and NOTICE.txt files.
+
+
+3. Project Profile
    ===============
 
 Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specification.  When using Bagger to manage bags for a project or collection,
@@ -76,29 +82,30 @@ Here is a sample profile (please ignore the comments (//) when creating a JSON p
 The file should be named <profile name>-profile.json. For example, wdl-profile.json.
 
 
-3. Running Bagger on Windows
+4. Running Bagger on Windows
    =========================
 
 You need to have Java SE Runtime Environment 6 or later version installed on the Windows system. 
-After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, double-click on the bagger.bat file in the bagger_distribution folder.
+After unpacking the zip file, find the directory bagger-2.1.1. To start the Bagger application, double-click on the bagger.bat file in the bagger-2.1.1 folder.
 To create a shortcut on your desktop, select the bagger.bat file and select the right mouse button.  Select Send to->Desktop, creates the shortcut.
 The Bagger application starts with a splash banner page.  
 
 
-4. Running Bagger in Linux/Ubuntu
-   ==============================
+5. Running Bagger in Linux/Ubuntu
+  ==============================
 
 You need to have Java SE Runtime Environment 6, but not above 1.6.0.22 (i.e. do not use 1.6.0.23+) installed on the Linux/Ubuntu system. 
-After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, execute the bagger.sh file in the bagger_distribution folder (i.e. ./bagger.sh). 
+After unpacking the zip file, find the directory bagger-2.1.1. To start the Bagger application, execute the bagger.sh file in the bagger-2.1.1 folder (i.e. ./bagger.sh). 
 The Bagger application starts with a splash banner page.
 
-5. Setting JAVA_HOME
+
+6. Setting JAVA_HOME
    =================
 
 The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems the Java Runtime Environment cannot be above 1.6.0.22 (i.e. do not use 1.6.0.23+).
 There exists a known rendering issue with the Java Runtime Environment version above 1.6.0.22 when used in Linux/Ubuntu systems (i.e. sun.awt.X11.XException).  
 If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environmnet variable needs to be set in the 
-bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger_distribution folder as follows:
+bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger-2.1.1 folder as follows:
 
 i) WINDOWS (File Path has space)
    -----------------------------
@@ -120,7 +127,8 @@ $JAVA_HOME/java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
 
 Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
 
-5.  Exceptions
+
+7.  Exceptions
     ==========
 
 There are a few common causes for the bagger application to fail which are:
