@@ -80,22 +80,39 @@ The file should be named <profile name>-profile.json. For example, wdl-profile.j
 3. Bagger Build Process
    ====================
 
-Bagger Build Script
+To build the bagger application Maven 2.2.1+ and Java 1.6+ are required.
 
 
-i)   To build each module perform actions in this order:
+i)   To build the bagger application jar file execute the following steps from the top level folder of the distribution:
 
      cd bagger-maven
      mvn clean install
 
-ii)  Create a signed executable jar from Bagger modules.
+ii)  Create an executable jar from the Bagger application.
 
      cd bagger
      mvn clean package
+     cd ../bagger_distribution
+     cp bagger_package/target/bagger-package-2.1.1-SNAPSHOT.jar bagger-2.1.1.jar
 
-     The resulting bagger.jar is the bagger application
+The built bagger application jar file gets copied to the bagger_distribution folder, where it could be executed from the bagger.bat (i.e. Windows) or bagger.sh (i.e. Linux/Ubuntu) scripts.
+The resulting bagger-2.1.1.jar copued to the bagger_distribution folder is the bagger application.
+For more information on how to configure the bagger bat/shell script please read the README.txt file in the bagger_distribution folder.
+
+iii) Create a Signed executable jar
+
+If the bagger application is started by Java Web Start (i.e. from a web server container) then the bagger jar jar created in step ii) needs to be signed as follows (i.e. using jarsigner) :
+
+     jarsigner -keystore bagger.ks -storepass bagger-rdc -keypass bagger-rdc -signedjar bagger-2.1.1-signed.jar bagger-2.1.1.jar rdc
+
+The signed bagger jar created can be placed in a web server container and executed by Java Web Start.
+When exectuting the above command, the bagger.ks (keystore files) and the original bagger jar file (i.e. bagger-2.1.1.jar) need to be in the same folder.
+The bagger.ks keystore file (i.e. keystore file could be named anything) or any other keystore does not exist, it can be created as follows (i.e. using keytool) : 
+
+     keytool -genkeypair -dname "cn=Bagger, ou=RDC, o=Library of Congress, c=US" -alias rdc -keypass bagger-rdc -keystore bagger.ks -storepass bagger-rdc
 
 4.   Maven POM.XML file location
+     ===========================
   
      A Maven POM.XML file is used to build each Bagger module.
     
