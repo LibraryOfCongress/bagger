@@ -4,7 +4,7 @@
   <artifactId>bagger-maven</artifactId>
   <packaging>pom</packaging>
   <name>BagIt Bagger</name>
-  <version>2.1.1-SNAPSHOT</version>
+  <version>2.1.2-SNAPSHOT</version>
   <description>Bagger application runnable in form.</description>
 	<properties>
 		<spring.version>2.5.1</spring.version>
@@ -48,7 +48,7 @@
     <dependency>
       <groupId>gov.loc</groupId>
       <artifactId>bagit</artifactId>
-      <version>3.9</version>
+      <version>3.13</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

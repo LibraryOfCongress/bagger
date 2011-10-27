@@ -10,12 +10,12 @@ The Bagger application creates and deposits bags. <br> Using the BagIt specifica
 <p>
 <b>Bagger Application</b>
 <p>
-Version: 2.1.1 <br>
+Version: 2.1.2 <br>
 <br>
 <p>
 <b>Bag It Library</b>
 <p>
-Version: 3.4 <br>
+Version: 3.13 <br>
 <br>
 <p>
 <b>Distribution Site</b>

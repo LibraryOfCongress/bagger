@@ -10,9 +10,18 @@
         xsi:schemaLocation="http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"> 
 <beans>
--->  
+-->
+
+  <!--
+    Bean: application
+    Usage: Platform required
+    Description: This defines the singleton application instance to be used.
+    Note that, currently, this object is not pluggable.  You must use the
+    class specified below and configure it as needed.
+  -->
   <bean id="application" class="org.springframework.richclient.application.Application">
-    <constructor-arg index="0" ref="baggerLifecycleAdvisor" />
+    <constructor-arg index="0" ref="applicationDescriptor" />
+    <constructor-arg index="1" ref="baggerLifecycleAdvisor" />
   </bean>
 
   <bean id="baggerLifecycleAdvisor" class="gov.loc.repository.bagger.BaggerLifecycleAdvisor"> 
@@ -24,6 +33,19 @@
     <property name="toolbarBeanName" value="toolBar" />
     <property name="windowCommandManagerBeanName" value="windowCommandManager" />
   </bean>
+  
+   <!--
+    Bean: applicationDescriptor
+    Usage: platform required
+    Description: This defines the Application metadata to be used by the
+    Application.  Note the reference to this bean in the constructor
+    args in the application bean.
+  -->
+  <bean id="applicationDescriptor"
+    class="org.springframework.richclient.application.support.DefaultApplicationDescriptor">
+    <property name="version" value="0.1" />
+    <property name="buildId" value="20080616" />
+  </bean> 
   
   <bean id="proxyPage" 
           class="org.springframework.richclient.application.docking.vldocking.VLDockingPageDescriptor">
