@@ -486,7 +486,7 @@ public class DefaultBag {
 
 				HolePuncher puncher = new HolePuncherImpl(new BagFactory());
 				bilBag = puncher.makeHoley(bilBag,
-						this.getFetch().getBaseURL(), true, true, true);
+						this.getFetch().getBaseURL(), true, true, false);
 				// makeHoley deletes baginfo so put back
 				bilBag.putBagFile(bagInfoTxt);
 				if (manifests != null) {
