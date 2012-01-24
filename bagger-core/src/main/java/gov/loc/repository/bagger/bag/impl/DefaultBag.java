@@ -625,10 +625,10 @@ public class DefaultBag {
 				bagName += "." + ZIP_LABEL;
 			}
 			bagFile = new File(parentDir, bagName);
-			long zipSize = this.getSize() / MB;
+			/*long zipSize = this.getSize() / MB;
 			if (zipSize > 100) {
 				messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
-			}
+			}*/
 		} else if (this.serialMode == TAR_MODE) {
 			String s = bagName;
 			int i = s.lastIndexOf('.');
@@ -640,10 +640,10 @@ public class DefaultBag {
 				bagName += "." + TAR_LABEL;
 			}
 			bagFile = new File(parentDir, bagName);
-			long zipSize = this.getSize() / MB;
+			/*long zipSize = this.getSize() / MB;
 			if (zipSize > 100) {
 				messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
-			}
+			}*/
 		} else if (this.serialMode == TAR_GZ_MODE) {
 			String s = bagName;
 			int i = s.lastIndexOf('.');
@@ -655,10 +655,10 @@ public class DefaultBag {
 				bagName += "." + TAR_GZ_LABEL;
 			}
 			bagFile = new File(parentDir, bagName);
-			long zipSize = this.getSize() / MB;
+			/*long zipSize = this.getSize() / MB;
 			if (zipSize > 100) {
 				messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
-			}
+			}*/
 		} else if (this.serialMode == TAR_BZ2_MODE) {
 			String s = bagName;
 			int i = s.lastIndexOf('.');
@@ -670,10 +670,10 @@ public class DefaultBag {
 				bagName += "." + TAR_BZ2_LABEL;
 			}
 			bagFile = new File(parentDir, bagName);
-			long zipSize = this.getSize() / MB;
+			/*long zipSize = this.getSize() / MB;
 			if (zipSize > 100) {
 				messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
-			}
+			}*/
 		}
 		setBagFile(bagFile);
 		
