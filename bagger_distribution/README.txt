@@ -27,9 +27,9 @@ Users can select a project profile when creating a bag, and that profile will de
 
 Users can create custom project profiles using a simple JSON-based format.  When the bagger application is first started the bagger folder gets created in the user's home folder and contains some default profiles.
 Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger.  
-On Windows, it is C:\"Documents and Settings"\<user>\bagger.  On unix-like operating system, it is ~/bagger.
+On Windows, it is C:\"Documents and Settings"\<user>\bagger.  On unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.
 
-To support the use of profiles for bag-info.txt editing in the Bagger and in the various Transfer webapps, the following describes a  JSON serialization of a profile:
+To support the use of profiles for bag-info.txt editing in the Bagger application and in the various Transfer webapps, the following describes a  JSON serialization of a profile:
 
 {
    "<field name>" : {
@@ -46,7 +46,7 @@ The meanings of some field properties are explained here:
 * "fieldRequired": true/false, where false is default if not present                
 * "requiredValue": some value if fieldRequired is true
 * "defaultValue": default value
-* "valueList": some value or a list of values
+* "valueList": some value or a list of values and is stored in a drop down list of field values in the Bag-Info tab form in Bagger
 
 The Project Profile format is subject to change in the future releases.
 
@@ -71,7 +71,7 @@ Here is a sample profile (please ignore the comments (//) when creating a JSON p
                       "valueList" :["audio","textual","web capture"]
                     },
 
-   //Content-process is required, has a default value of born digital, and must be selected from list
+   //Content-process is required, has a default value of born digital, and must be selected from list of field values in the Bag-Info tab form in Bagger
    "Content-process" : {
                          "fieldRequired" : true,
                          "defaultValue" : "born digital",
@@ -86,7 +86,7 @@ The file should be named <profile name>-profile.json. For example, wdl-profile.j
    =========================
 
 You need to have Java SE Runtime Environment 6 or later version installed on the Windows system. 
-After unpacking the zip file, find the directory bagger-2.1.1. To start the Bagger application, double-click on the bagger.bat file in the bagger-2.1.1 folder.
+After unpacking the zip file, find the directory bagger-2.1.2. To start the Bagger application, double-click on the bagger.bat file in the bagger-2.1.2 folder.
 To create a shortcut on your desktop, select the bagger.bat file and select the right mouse button.  Select Send to->Desktop, creates the shortcut.
 The Bagger application starts with a splash banner page.  
 
@@ -95,7 +95,7 @@ The Bagger application starts with a splash banner page.
   ==============================
 
 You need to have Java SE Runtime Environment 6, but not above 1.6.0.22 (i.e. do not use 1.6.0.23+) installed on the Linux/Ubuntu system. 
-After unpacking the zip file, find the directory bagger-2.1.1. To start the Bagger application, execute the bagger.sh file in the bagger-2.1.1 folder (i.e. ./bagger.sh). 
+After unpacking the zip file, find the directory bagger-2.1.2. To start the Bagger application, execute the bagger.sh file in the bagger-2.1.2 folder (i.e. ./bagger.sh). 
 The Bagger application starts with a splash banner page.
 
 
@@ -105,25 +105,25 @@ The Bagger application starts with a splash banner page.
 The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems the Java Runtime Environment cannot be above 1.6.0.22 (i.e. do not use 1.6.0.23+).
 There exists a known rendering issue with the Java Runtime Environment version above 1.6.0.22 when used in Linux/Ubuntu systems (i.e. sun.awt.X11.XException).  
 If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environmnet variable needs to be set in the 
-bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger-2.1.1 folder as follows:
+bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger-2.1.2 folder as follows:
 
 i) WINDOWS (File Path has space)
    -----------------------------
 
 SET JAVA_HOME="C:\Program Files\Java\jre6\bin"
-%JAVA_HOME%\java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath bagger-2.1.2.jar
 
 ii) WINDOWS (File Path with no spaces)
     ----------------------------------
 
 SET JAVA_HOME=C:\jre6\bin
-%JAVA_HOME%\java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath bagger-2.1.2.jar
 
 iii) Linux/Ubuntu
      ------------
 
 JAVA_HOME = /usr/java/jre/bin
-$JAVA_HOME/java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
+$JAVA_HOME/java.exe -jar bagger-2.1.2.jar -Xms512m -classpath bagger-2.1.2.jar
 
 Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
 
