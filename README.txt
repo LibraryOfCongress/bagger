@@ -25,7 +25,7 @@ Users can select a project profile when creating a bag, and that profile will de
 
 User can create custom project profiles using a simple JSON-based format. When the bagger application is first started the bagger folder gets created in the user's home folder and contains some default profiles.
 Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger.
-On Windows, it is C:\"Documents and Settings"\<user>\bagger. On unix-like operating system, it is ~/bagger.
+On Windows, it is C:\"Documents and Settings"\<user>\bagger. On unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.
 
 To support the use of profiles for bag-info.txt editing in the Bagger and in the various Transfer webapps, the following describes a  JSON serialization of a profile:
 
@@ -44,7 +44,7 @@ The meanings of some field properties are explained here:
 * "fieldRequired": true/false, where false is default if not present                
 * "requiredValue": some value if fieldRequired is true
 * "defaultValue": default value
-* "valueList": some value or a list of values
+* "valueList": some value or a list of values and is stored in a drop down list of field values in the Bag-Info tab form in Bagger
 
 The Project Profile format is subject to change in the future releases.
 
@@ -70,7 +70,7 @@ Here is a sample profile (please ignore the comments (//) when creating a JSON p
                       "valueList" :["audio","textual","web capture"]
                     },
 
-   //Content-process is required, has a default value of born digital, and must be selected from list
+   //Content-process is required, has a default value of born digital, and must be selected from list of field values in the Bag-Info tab form in Bagger
    "Content-process" : {
                          "fieldRequired" : true,
                          "defaultValue" : "born digital",
@@ -92,20 +92,20 @@ i)   To build the Bagger application jar file, execute the following steps from 
      cd bagger-maven
      mvn clean install
      cd ../bagger_distribution
-     cp bagger_package/target/bagger-package-2.1.1-SNAPSHOT.jar bagger-2.1.1.jar
+     cp bagger_package/target/bagger-package-2.1.2-SNAPSHOT.jar bagger-2.1.2.jar
 
 The built Bagger application jar file gets copied to the bagger_distribution folder, where it could be executed from the bagger.bat (i.e. Windows) or bagger.sh (i.e. Linux/Ubuntu) scripts.
-The resulting bagger-2.1.1.jar copied to the bagger_distribution folder is the bagger application.
+The resulting bagger-2.1.2.jar copied to the bagger_distribution folder is the bagger application.
 For more information on how to configure the bagger bat/shell script please read the README.txt file in the bagger_distribution folder.
 
 ii) Create a Signed Bagger executable jar
 
 If the bagger application is started by Java Web Start (i.e. from a web server container) then the bagger jar created in step ii) needs to be signed as follows (i.e. using jarsigner) :
 
-     jarsigner -keystore bagger.ks -storepass bagger-dist -keypass bagger-dist -signedjar bagger-2.1.1-signed.jar bagger-2.1.1.jar rdc
+     jarsigner -keystore bagger.ks -storepass bagger-dist -keypass bagger-dist -signedjar bagger-2.1.2-signed.jar bagger-2.1.2.jar rdc
 
 The signed bagger jar created can be placed in a web server container and executed by Java Web Start.
-When exectuting the above command, the bagger.ks (keystore files) and the original bagger jar file (i.e. bagger-2.1.1.jar) need to be in the same folder.
+When exectuting the above command, the bagger.ks (keystore files) and the original bagger jar file (i.e. bagger-2.1.2.jar) need to be in the same folder.
 The bagger.ks keystore file (i.e. keystore file could be named anything) or any other keystore does not exist, it can be created as follows (i.e. using keytool) : 
 
      keytool -genkeypair -dname "cn=Bagger, ou=DIST, o=Bagger Distribution, c=US" -alias dist -keypass bagger-dist -keystore bagger.ks -storepass bagger-dist
@@ -160,19 +160,19 @@ i) WINDOWS (File Path has space)
    -----------------------------
 
 SET JAVA_HOME="C:\Program Files\Java\jre6\bin"
-%JAVA_HOME%\java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath bagger-2.1.2.jar
 
 ii) WINDOWS (File Path with no spaces)
     ----------------------------------
 
 SET JAVA_HOME=C:\jre6\bin
-%JAVA_HOME%\java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath bagger-2.1.2.jar
 
 iii) Linux/Ubuntu
      ------------
 
 JAVA_HOME = /usr/java/jre/bin
-$JAVA_HOME/java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
+$JAVA_HOME/java.exe -jar bagger-2.1.2.jar -Xms512m -classpath bagger-2.1.2.jar
 
 Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
 
