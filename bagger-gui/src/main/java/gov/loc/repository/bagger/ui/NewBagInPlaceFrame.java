@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -65,6 +66,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 	private JButton saveAsButton;
 	private JComboBox bagVersionList;
 	private JComboBox profileList;
+	private JCheckBox addKeepFilesToEmptyFoldersCheckBox;
 
 	public NewBagInPlaceFrame(BagView bagView, String title) {
         super(title);
@@ -105,6 +107,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
         layoutSelectDataContent(contentPanel, row++);
         layoutBagVersionContent(contentPanel, row++);
         layoutProfileSelectionContent(contentPanel, row++);
+        layoutAddKeepFilesToEmptyCheckBox(contentPanel, row++);
         layoutSpacer(contentPanel, row++);
         
         GuiStandardUtils.attachDialogBorder(contentPanel);
@@ -189,6 +192,52 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
         contentPane.add(profileList, glbc);
         glbc = LayoutUtil.buildGridBagConstraints(2, row, 1, 1, 40, 50, GridBagConstraints.NONE, GridBagConstraints.EAST);
         contentPane.add(spacerLabel, glbc);
+	}
+
+    /*
+     *  The actionPerformed method in this class
+     *  is called each time the ".keep Files in Empty Folder(s):" Check Box
+     *  is Selected
+     */   
+	private class AddKeepFilesToEmptyFoldersHandler extends AbstractAction {	       	
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {			
+
+			JCheckBox cb = (JCheckBox)e.getSource();
+
+			// Determine status
+			boolean isSelected = cb.isSelected();
+			if (isSelected) {
+				bagView.getBag().isAddKeepFilesToEmptyFolders(true);
+				bagView.infoInputPane.serializeValue.setText("true");
+			} else {
+				bagView.getBag().isAddKeepFilesToEmptyFolders(false);
+			}
+		}
+	}
+	
+	/*
+     *  Setting and displaying the ".keep Files in Empty Folder(s):" Check Box 
+     *  on the Create Bag In Place Pane
+     */
+	private void layoutAddKeepFilesToEmptyCheckBox(JPanel contentPane, int row) {
+		// Delete Empty Folder(s)
+		JLabel addKeepFilesToEmptyFoldersCheckBoxLabel = new JLabel(bagView.getPropertyMessage("bag.label.addkeepfilestoemptyfolders"));
+		addKeepFilesToEmptyFoldersCheckBoxLabel.setToolTipText(bagView.getPropertyMessage("bag.addkeepfilestoemptyfolders.help"));
+       addKeepFilesToEmptyFoldersCheckBox = new JCheckBox(bagView.getPropertyMessage(""));
+       addKeepFilesToEmptyFoldersCheckBox.setSelected(bag.isAddKeepFilesToEmptyFolders());
+       addKeepFilesToEmptyFoldersCheckBox.addActionListener(new AddKeepFilesToEmptyFoldersHandler());
+       
+       GridBagConstraints glbc = new GridBagConstraints();
+
+       JLabel spacerLabel = new JLabel();
+       glbc = LayoutUtil.buildGridBagConstraints(0, row, 1, 1, 5, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+       contentPane.add(addKeepFilesToEmptyFoldersCheckBoxLabel, glbc);
+       glbc = LayoutUtil.buildGridBagConstraints(1, row, 1, 1, 40, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
+       contentPane.add(addKeepFilesToEmptyFoldersCheckBox, glbc);
+       glbc = LayoutUtil.buildGridBagConstraints(2, row, 1, 1, 40, 50, GridBagConstraints.NONE, GridBagConstraints.EAST);
+       contentPane.add(spacerLabel, glbc);
 	}
 	
 	private void layoutSpacer(JPanel contentPanel, int row) {
@@ -304,15 +353,27 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
         }
     }
 
+    /*
+     *  The actionPerformed method in this class
+     *  is called each time the "OK" button is clicked.
+     *  The Create Bag In Place is created based on the 
+     *  ".keep Files in Empty Folder(s):" Check Box being selected
+     */
     private class OkNewBagHandler extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
 			log.info("BagVersionFrame.OkNewBagHandler");
-			setVisible(false);
-			bagView.createBagInPlaceHandler.createPreBag(bagFile, 
+			setVisible(false);			
+			if (bagView.getBag().isAddKeepFilesToEmptyFolders()) {
+				bagView.createBagInPlaceHandler.createPreBagAddKeepFilesToEmptyFolders(bagFile,
+					    (String)bagVersionList.getSelectedItem(),
+					    (String)profileList.getSelectedItem());					
+			} else {							
+				bagView.createBagInPlaceHandler.createPreBag(bagFile, 
 					(String)bagVersionList.getSelectedItem(),
 					(String)profileList.getSelectedItem());
+			}
         }
     }
 

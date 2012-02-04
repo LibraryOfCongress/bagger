@@ -60,6 +60,7 @@ public class DefaultBag {
 	// Bag option flags
 	private boolean isHoley = false;
 	private boolean isSerial = true;
+	private boolean isAddKeepFilesToEmptyFolders = false;
 
 	// bag building (saving) options
 	private boolean isBuildTagManifest = true;
@@ -182,6 +183,23 @@ public class DefaultBag {
 			bilBag = bag;
 		}
 	}
+	
+	/*
+     * Makes BIL API call to create Bag in place and 
+     * adding .keep files in empty Pay load folders 
+    */
+	public void createPreBagAddKeepFilesToEmptyFolders(File data, String version) {
+		BagFactory bagFactory = new BagFactory();
+		PreBag preBag = bagFactory.createPreBag(data);
+		if (version == null) {
+			Bag bag = preBag.makeBagInPlace(BagFactory.LATEST, false, true);
+			bilBag = bag;
+		} else {
+			Bag bag = preBag.makeBagInPlace(Version.valueOfString(version),
+					false, true);
+			bilBag = bag;
+		}
+	}	
 
 	public File getBagFile() {
 		return bagFile;
@@ -298,6 +316,22 @@ public class DefaultBag {
 		return this.payloadManifestAlgorithm;
 	}
 
+	/*
+     *  Setter Method 
+     *  for the passed value associated with the ".keep Files in Empty Folder(s):" Check Box 
+    */	
+	public void isAddKeepFilesToEmptyFolders(boolean b) {
+		this.isAddKeepFilesToEmptyFolders = b;
+	}
+
+	/*
+     *  Getter Method 
+     *  for the value return value associated with the "Add .keep Files To Empty Folder" Check Box 
+    */
+	public boolean isAddKeepFilesToEmptyFolders() {
+		return this.isAddKeepFilesToEmptyFolders;
+	}	
+	
 	public void isValidateOnSave(boolean b) {
 		this.isValidateOnSave = b;
 	}

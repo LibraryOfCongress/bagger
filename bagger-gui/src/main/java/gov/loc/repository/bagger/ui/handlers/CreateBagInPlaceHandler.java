@@ -65,6 +65,32 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
         bagView.saveBagHandler.save(dataFile);
     }
     
+	/*
+     * Prepares the call to Create Bag in Place and 
+     * adding .keep files in Empty Pay load Folder(s) 
+    */
+    public void createPreBagAddKeepFilesToEmptyFolders(File dataFile, String bagItVersion, final String profileName) {
+    	if (((dataFile != null) && (bagItVersion != null)) && (profileName !=null))
+    		log.info("Creating a new bag in place with data: " + dataFile.getName()
+    				+ ", version: " + bagItVersion + ", profile: " + profileName);
+    	bagView.clearBagHandler.clearExistingBag();
+    	try {
+    		bagView.getBag().createPreBagAddKeepFilesToEmptyFolders(dataFile, bagItVersion);
+    	} catch (Exception e) {
+    	    bagView.showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
+    		return;
+    	}
+    	DefaultBag bag = bagView.getBag();
+    	
+    	String bagFileName = dataFile.getName();
+        bag.setName(bagFileName);
+        bagView.infoInputPane.setBagName(bagFileName);
+        
+        setProfile(profileName);
+        
+        bagView.saveBagHandler.save(dataFile);
+    }    
+    
     private void setProfile(String selected) {
         Profile profile = bagView.getProfileStore().getProfile(selected);
 		log.info("bagProject: " + profile.getName());
