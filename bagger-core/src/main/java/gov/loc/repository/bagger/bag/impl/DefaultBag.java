@@ -54,8 +54,9 @@ public class DefaultBag {
 	public static final String NO_LABEL = "none";
 	public static final String ZIP_LABEL = "zip";
 	public static final String TAR_LABEL = "tar";
-	public static final String TAR_GZ_LABEL = "tar gz";
-	public static final String TAR_BZ2_LABEL = "tar bz2";
+	public static final String GZ_LABEL = "gz";
+	public static final String TAR_GZ_LABEL = "tar.gz";
+	public static final String TAR_BZ2_LABEL = "tar.bz2";
 
 	// Bag option flags
 	private boolean isHoley = false;
