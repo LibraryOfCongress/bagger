@@ -1,4 +1,5 @@
-Bagger README.txt
+Bagger 2.1.2 README.txt
+=======================
 
 1. Introduction
    ============
@@ -79,6 +80,12 @@ Here is a sample profile (please ignore the comments (//) when creating a JSON p
 }
 
 The file should be named <profile name>-profile.json. For example, wdl-profile.json.
+
+3.1 WDL Profile
+    -----------
+
+With this release of Bagger 2.1.2 a Profile for the World Digital Library (WDL) has been included.  
+The included WDL profile is at ..\bagger_distribution\profiles\wdl-profile.json
 
 
 4. Bagger Build Process

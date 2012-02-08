@@ -1,0 +1,34 @@
+{
+    "Sender-Contact" : {
+            "fieldRequired" : true,
+        },
+    "Sender-Phone" : {
+            "fieldRequired" : false
+        },
+    "Sender-Email" : {
+            "fieldRequired" : true
+        },
+    "Sender-Institution" : {
+            "fieldRequired" : true,
+        }, 
+    "Sender-Address" : {
+            "fieldRequired" : false,
+        }, 
+    "Recipient-Name" : {
+            "requiredValue" : "Sandy Bostian"
+        },
+    "Recipient-Phone" : {
+            "requiredValue" : "+1.202.707.2342"
+        },
+    "Recipient-Email" : {
+            "requiredValue" : "sbos@loc.gov"
+        },
+    "Recipient-Address" : {
+            "fieldRequired" : false,
+            "requiredValue" : "World Digital Library, Library of Congress, 101 Independence Ave, SE, Washington, DC 20540 USA"
+        }, 
+    "Type-of-Transfer" : {
+                         "fieldRequired" : true,
+                         "valueList" : ["Hard Drive","CD/DVD","Network"]
+        } 
+}
