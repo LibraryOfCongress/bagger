@@ -30,7 +30,12 @@ public class ClearBagHandler extends AbstractAction {
 	}
 
     public void closeExistingBag() {
-    	confirmCloseBag();
+    	// Closes Bag without popping up the Save Dialog Box for a Holey and Serialized Bag 
+    	// For all other types of Bags the Save Dialog Box pops up
+    	if (bagView.getBag().isHoley() || bagView.getBag().isSerial())
+        	clearExistingBag();
+    	else    		    	
+    		confirmCloseBag();
 	    if (isConfirmSaveFlag()){
         	bagView.saveBagHandler.setClearAfterSaving(true);
     		bagView.saveBagAsHandler.openSaveBagAsFrame();

@@ -613,8 +613,8 @@ public class BagView extends AbstractView implements ApplicationListener {
 		saveBagAsExecutor.setEnabled(true);
 		bagButtonPanel.invalidate();
 		clearExecutor.setEnabled(true);
-		validateExecutor.setEnabled(true);
-		completeExecutor.setEnabled(true);
+        setCompleteExecutor();  // Disables the Is Complete Bag Button for Holey Bags  
+        setValidateExecutor();  // Disables the Validate Bag Button for Holey Bags
 		topButtonPanel.invalidate();
     }
     
@@ -770,5 +770,41 @@ public class BagView extends AbstractView implements ApplicationListener {
 	public String getPropertyMessage(String propertyName) {
 		return getMessage(propertyName);
 	}
+	
+	/*
+	 * Returns true if the Fetch.txt file exists.
+	 * This would be true in the case of a Holey Bag
+	 * Returns false for all other types of Bags
+	 */
+    private boolean checkFetchTxtFile() {
+    	if (bag.getFetchTxt() != null)
+    		return true;
+    	else 
+    		return false;    	
+    }
+
+    /*
+     * Disables the Is Complete Bag Button if Fetch.txt file exists.
+     * This is true in the case of a Holey Bag
+     * The Validate Button is enabled for all other types of Bags
+     */
+    private void setCompleteExecutor() {
+    	if (checkFetchTxtFile())
+    		completeExecutor.setEnabled(false);
+    	else
+    		completeExecutor.setEnabled(true);    		
+    }
+    
+    /*
+     * Disables the Validate Bag Button if Fetch.txt file exists.
+     * This is true in the case of a Holey Bag
+     * The Validate Button is enabled for all other types of Bags
+     */
+    private void setValidateExecutor() {
+    	if (checkFetchTxtFile())
+    		validateExecutor.setEnabled(false);
+    	else
+    		validateExecutor.setEnabled(true);    		
+    }	
     
 }
