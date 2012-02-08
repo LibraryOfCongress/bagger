@@ -99,7 +99,7 @@ i)   To build the Bagger application jar file, execute the following steps from 
      cd bagger-maven
      mvn clean install
      cd ../bagger_distribution
-     cp bagger_package/target/bagger-package-2.1.2-SNAPSHOT.jar bagger-2.1.2.jar
+     cp ../bagger-package/target/bagger-package-2.1.2-SNAPSHOT.jar bagger-2.1.2.jar
 
 The built Bagger application jar file gets copied to the bagger_distribution folder, where it could be executed from the bagger.bat (i.e. Windows) or bagger.sh (i.e. Linux/Ubuntu) scripts.
 The resulting bagger-2.1.2.jar copied to the bagger_distribution folder is the bagger application.
