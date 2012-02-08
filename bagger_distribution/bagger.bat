@@ -1,6 +1,6 @@
 @ECHO OFF
 
-java.exe -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar
+java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
 
 IF %ERRORLEVEL% GTR 0 GOTO MSG
 GOTO END

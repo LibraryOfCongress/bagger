@@ -11,4 +11,4 @@ function error_msg(){
  exit 1
 }
 
-java -jar bagger-2.1.1.jar -Xms512m -classpath bagger-2.1.1.jar 2>/dev/null || error_msg
+java -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar 2>/dev/null || error_msg

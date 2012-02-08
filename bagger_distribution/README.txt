@@ -117,22 +117,22 @@ i) WINDOWS (File Path has space)
    -----------------------------
 
 SET JAVA_HOME="C:\Program Files\Java\jre6\bin"
-%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath bagger-2.1.2.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
 
 ii) WINDOWS (File Path with no spaces)
     ----------------------------------
 
 SET JAVA_HOME=C:\jre6\bin
-%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath bagger-2.1.2.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
 
 iii) Linux/Ubuntu
      ------------
 
 JAVA_HOME = /usr/java/jre/bin
-$JAVA_HOME/java.exe -jar bagger-2.1.2.jar -Xms512m -classpath bagger-2.1.2.jar
+$JAVA_HOME/java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
 
 Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
-
+-----
 
 7.  Exceptions
     ==========
