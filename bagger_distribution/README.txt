@@ -1,7 +1,16 @@
 Bagger 2.1.2 README.txt
 =======================
 
-1. Introduction
+1. New Features
+   ============
+
+i)   Capability to add .keep files to empty folders during Create Bag In Place (i.e. Check Box on Create Bag In Place dialog box).
+
+ii)  Prevent Holey bags to be validated.  Since they have the Fetch.txt file, they should not be validated before all the contents are retrived.
+
+iii) Upgraded from Bagit Libratry (BIL) from 3.9 to 3.13 (i.e. using BIL for API calls)
+
+2. Introduction
    ============
 
 The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit-05). 
@@ -12,13 +21,13 @@ In addition Bagger provides a project profile capability.  Users can create cust
 These project profiles can be edited manually and shared with other users.
 
 
-2. License
+3. License
    =======
 
 License and other releated information are listed in the included LICENSE.txt and NOTICE.txt files.
 
 
-3. Project Profile
+4. Project Profile
    ===============
 
 Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specification.  When using Bagger to manage bags for a project or collection,
@@ -29,6 +38,8 @@ Users can select a project profile when creating a bag, and that profile will de
 Users can create custom project profiles using a simple JSON-based format.  When the bagger application is first started the bagger folder gets created in the user's home folder and contains some default profiles.
 Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger.  
 On Windows, it is C:\"Documents and Settings"\<user>\bagger.  On unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.
+
+Also when using a new Bagger version please remove the bagger folder created by the previous Bagger version.  This will insure that the new/updated profiles are saved in the bagger folder whenever bagger is started.
 
 To support the use of profiles for bag-info.txt editing in the Bagger application and in the various Transfer webapps, the following describes a  JSON serialization of a profile:
 
@@ -82,22 +93,22 @@ Here is a sample profile (please ignore the comments (//) when creating a JSON p
 
 The file should be named <profile name>-profile.json. For example, wdl-profile.json.
 
-3.1 WDL Profile
+4.1 WDL Profile
     -----------
 
 With this release of Bagger 2.1.2 a Profile for the World Digital Library (WDL) has been included.  
 The included WDL profile is at profiles\wdl-profile.json
 
-4. Running Bagger on Windows
+5. Running Bagger on Windows
    =========================
 
-You need to have Java SE Runtime Environment 6 or later version installed on the Windows system. 
+You need to have Java SE Runtime Environment 6 installed on the Windows system. 
 After unpacking the zip file, find the directory bagger-2.1.2. To start the Bagger application, double-click on the bagger.bat file in the bagger-2.1.2 folder.
 To create a shortcut on your desktop, select the bagger.bat file and select the right mouse button.  Select Send to->Desktop, creates the shortcut.
 The Bagger application starts with a splash banner page.  
 
 
-5. Running Bagger in Linux/Ubuntu
+6. Running Bagger in Linux/Ubuntu
   ==============================
 
 You need to have Java SE Runtime Environment 6, but not above 1.6.0.22 (i.e. do not use 1.6.0.23+) installed on the Linux/Ubuntu system. 
@@ -105,7 +116,7 @@ After unpacking the zip file, find the directory bagger-2.1.2. To start the Bagg
 The Bagger application starts with a splash banner page.
 
 
-6. Setting JAVA_HOME
+7. Setting JAVA_HOME
    =================
 
 The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems the Java Runtime Environment cannot be above 1.6.0.22 (i.e. do not use 1.6.0.23+).
@@ -134,13 +145,13 @@ $JAVA_HOME/java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1
 Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
 -----
 
-7.  Exceptions
+8.  Exceptions
     ==========
 
 There are a few common causes for the bagger application to fail which are:
 
 i)   Using the incorrect version of the Java Run Time Environment or if no System Path is set for Java.
-     The fix is to use the correct Java Runtime Environment (i.e. 1.6+ in Windows and 1.6.0.22 or below in Linux/Ubuntu)
+     The fix is to use the correct Java Runtime Environment (i.e. 1.6.xx in Windows and 1.6.0.22 or below in Linux/Ubuntu)
 ii)  If the bagger folder in the user's home folder contains profile files using older JSON format.
      The fix is to delete the old profiles in the bagger folder and rerun the bagger application.
 iii) In a Linux/Ubuntu system the Java Runtime Environment throws a sun.awt.X11.XException rendering exception (i.e. a known issue) when the Java Runtime Environment version is above 1.6.0.22.

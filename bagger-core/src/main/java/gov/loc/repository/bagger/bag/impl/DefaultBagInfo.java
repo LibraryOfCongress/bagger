@@ -89,9 +89,6 @@ public class DefaultBagInfo {
 		}
 
 		for (String key : bagInfoTxt.keySet()) {
-			if (isOrganizationContactField(key))
-				continue;
-			else {
 				BagInfoField infoField = new BagInfoField();
 				infoField.setLabel(key);
 				infoField.setName(key);
@@ -99,7 +96,6 @@ public class DefaultBagInfo {
 				infoField.isEditable(true);
 				infoField.isEnabled(true);
 				fieldMap.put(key, infoField);
-			}
 		}
 		
 	}

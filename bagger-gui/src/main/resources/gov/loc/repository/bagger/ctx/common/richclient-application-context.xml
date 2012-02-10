@@ -43,8 +43,10 @@
   -->
   <bean id="applicationDescriptor"
     class="org.springframework.richclient.application.support.DefaultApplicationDescriptor">
+    <!--
     <property name="version" value="0.1" />
     <property name="buildId" value="20080616" />
+    -->
   </bean> 
   
   <bean id="proxyPage" 
