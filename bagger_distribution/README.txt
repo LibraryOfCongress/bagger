@@ -97,7 +97,7 @@ The file should be named <profile name>-profile.json. For example, wdl-profile.j
     -----------
 
 With this release of Bagger 2.1.2 a Profile for the World Digital Library (WDL) has been included.  
-The included WDL profile is at profiles\wdl-profile.json
+The included WDL profile is at bagger-2.1.2\profiles\wdl-profile.json (i.e. after extracting the bagger-2.1.2.zip file)
 
 5. Running Bagger on Windows
    =========================
