@@ -585,8 +585,8 @@ public class BagView extends AbstractView implements ApplicationListener {
         saveBagAsExecutor.setEnabled(true);
         bagButtonPanel.invalidate();
         clearExecutor.setEnabled(true);
-        completeExecutor.setEnabled(true);
-        validateExecutor.setEnabled(true);
+        setCompleteExecutor();  // Disables the Is Complete Bag Button for Holey Bags  
+        setValidateExecutor();  // Disables the Validate Bag Button for Holey Bags
         topButtonPanel.invalidate();
     }
     
