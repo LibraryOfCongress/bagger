@@ -39,7 +39,8 @@ Users can create custom project profiles using a simple JSON-based format.  When
 Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger.  
 On Windows, it is C:\"Documents and Settings"\<user>\bagger.  On unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.
 
-Also when using a new Bagger version please remove the bagger folder created by the previous Bagger version.  This will insure that the new/updated profiles are saved in the bagger folder whenever bagger is started.
+Also when using a new Bagger version please remove the bagger folder created by the previous Bagger version in the user's home folder.  
+This will insure that the new/updated profiles are created in the bagger folder after the new bagger version is started.
 
 To support the use of profiles for bag-info.txt editing in the Bagger application and in the various Transfer webapps, the following describes a  JSON serialization of a profile:
 
@@ -58,7 +59,7 @@ The meanings of some field properties are explained here:
 * "fieldRequired": true/false, where false is default if not present                
 * "requiredValue": some value if fieldRequired is true
 * "defaultValue": default value
-* "valueList": some value or a list of values and is stored in a drop down list of field values in the Bag-Info tab form in Bagger
+* "valueList": field value or a list of field values that are stored in a drop down list, which is displayed in the Bag-Info tab form in Bagger
 
 The Project Profile format is subject to change in the future releases.
 
@@ -91,7 +92,8 @@ Here is a sample profile (please ignore the comments (//) when creating a JSON p
                         }
 }
 
-The file should be named <profile name>-profile.json. For example, wdl-profile.json.
+The file should be named <profile name>-profile.json. For example, wdl-profile.json.  
+The items in the profile file (i.e. JSON file) are listed in the Bag-Info tab of Bagger.
 
 4.1 WDL Profile
     -----------
