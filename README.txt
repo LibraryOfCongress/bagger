@@ -4,9 +4,11 @@ Bagger 2.1.3 README.txt
 1. New Features
    ============
 
-i) Upgraded from Bagit Library (BIL) from 3.13 to 4.4 (i.e. using BIL for API calls).
+i)   Upgraded from Bagit Library (BIL) from 3.13 to 4.4 (i.e. using BIL for API calls).
 
-ii) Due to Bagit Library (BIL) upgrade to 4.4, we had to remove tar format options (i.e. like tar, tar.gz, and tar.bz2) for bags from bagger.  This was done because the different tar formats for bags were removed from Bagit Library (BIL) starting from version 4.0.  
+ii) Due to the Bagit Library (BIL) upgrade from 3.13 to 4.4, bagger 2.1.3 can now preserve dates and times of bagged items.
+
+iii) Due to Bagit Library (BIL) upgrade to 4.4, we had to remove tar format options (i.e. like tar, tar.gz, and tar.bz2) for bags from bagger.  This was done because the different tar formats for bags were removed from Bagit Library (BIL) starting from version 4.0.  
 
 2. Introduction
    ============
