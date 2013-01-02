@@ -217,6 +217,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         zipButton.addActionListener(serializeListener);
         zipButton.setToolTipText(getMessage("bag.serializetype.zip.help"));
 
+        /*
         tarButton = new JRadioButton(getMessage("bag.serializetype.tar"));
         tarButton.setEnabled(true);
         tarButton.addActionListener(serializeListener);
@@ -231,35 +232,36 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         tarBz2Button.setEnabled(true);
         tarBz2Button.addActionListener(serializeListener);
         tarBz2Button.setToolTipText(getMessage("bag.serializetype.tarbz2.help"));
+        */
 
         short mode = bag.getSerialMode();
     	if (mode == DefaultBag.NO_MODE) {
     		this.noneButton.setEnabled(true);
     	} else if (mode == DefaultBag.ZIP_MODE) {
     		this.zipButton.setEnabled(true);
-    	} else if (mode == DefaultBag.TAR_MODE) {
+    	} /*else if (mode == DefaultBag.TAR_MODE) {
     		this.tarButton.setEnabled(true);
     	} else if (mode == DefaultBag.TAR_GZ_MODE) {
     		this.tarGzButton.setEnabled(true);
     	} else if (mode == DefaultBag.TAR_BZ2_MODE) {
     		this.tarBz2Button.setEnabled(true);
-    	} else {
+    	} */else {
     		this.noneButton.setEnabled(true);
     	}
         
         ButtonGroup serializeGroup = new ButtonGroup();
         serializeGroup.add(noneButton);
         serializeGroup.add(zipButton);
-        serializeGroup.add(tarButton);
-        serializeGroup.add(tarGzButton);
-        serializeGroup.add(tarBz2Button);
+        //serializeGroup.add(tarButton);
+        //serializeGroup.add(tarGzButton);
+        //serializeGroup.add(tarBz2Button);
         serializeGroupPanel = new JPanel(new FlowLayout());
         serializeGroupPanel.add(serializeLabel);
         serializeGroupPanel.add(noneButton);
         serializeGroupPanel.add(zipButton);
-        serializeGroupPanel.add(tarButton);
-        serializeGroupPanel.add(tarGzButton);
-        serializeGroupPanel.add(tarBz2Button);
+        //serializeGroupPanel.add(tarButton);
+        //serializeGroupPanel.add(tarGzButton);
+        //serializeGroupPanel.add(tarBz2Button);
         serializeGroupPanel.setBorder(border);
         serializeGroupPanel.setEnabled(true);
         serializeGroupPanel.setToolTipText(bagView.getPropertyMessage("bag.serializetype.help"));
@@ -398,7 +400,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     		zipButton.setEnabled(true);
     		zipButton.setSelected(true);
     		bagView.infoInputPane.serializeValue.setText(DefaultBag.ZIP_LABEL);
-    	} else if (mode == DefaultBag.TAR_MODE) {
+    	} /*else if (mode == DefaultBag.TAR_MODE) {
     		tarButton.setEnabled(true);
     		tarButton.setSelected(true);
     		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_LABEL);
@@ -410,7 +412,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     		tarBz2Button.setEnabled(true);
     		tarBz2Button.setSelected(true);
     		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_BZ2_LABEL);
-    	} else {
+    	} */else {
     		noneButton.setEnabled(true);
     		noneButton.setSelected(true);
     		bagView.infoInputPane.serializeValue.setText(DefaultBag.NO_LABEL);
@@ -437,7 +439,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
             		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.ZIP_MODE);
             		bagView.infoInputPane.serializeValue.setText(DefaultBag.ZIP_LABEL);
-            	} else if (cb == tarButton) {
+            	} /*else if (cb == tarButton) {
             		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.TAR_MODE);
             		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_LABEL);
@@ -449,7 +451,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
             		bagView.getBag().isSerial(true);
             		bagView.getBag().setSerialMode(DefaultBag.TAR_BZ2_MODE);
             		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_BZ2_LABEL);
-            	} else {
+            	} */else {
             		bagView.getBag().isSerial(false);
             		bagView.getBag().setSerialMode(DefaultBag.NO_MODE);
             		bagView.infoInputPane.serializeValue.setText(DefaultBag.NO_LABEL);
@@ -469,7 +471,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	    	fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
 	    	fs.addChoosableFileFilter(bagView.infoInputPane.noFilter);
 	    	fs.addChoosableFileFilter(bagView.infoInputPane.zipFilter);
-	        fs.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
+	        //fs.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
 	        fs.setDialogTitle("Save Bag As");
 	        DefaultBag bag = bagView.getBag();
 	    	fs.setCurrentDirectory(bag.getRootDir());
@@ -479,12 +481,12 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	    			selectedName += "."+DefaultBag.ZIP_LABEL;
 	    			fs.setFileFilter(bagView.infoInputPane.zipFilter);
 	    		}
-	    		else if (bag.getSerialMode() == DefaultBag.TAR_MODE ||
+	    		/*else if (bag.getSerialMode() == DefaultBag.TAR_MODE ||
 	    				bag.getSerialMode() == DefaultBag.TAR_GZ_MODE ||
 	    				bag.getSerialMode() == DefaultBag.TAR_BZ2_MODE) {
 	    			selectedName += "."+DefaultBag.TAR_LABEL;
 	    			fs.setFileFilter(bagView.infoInputPane.tarFilter);
-	    		}
+	    		} */
 	    		else {
 	    			fs.setFileFilter(bagView.infoInputPane.noFilter);
 	    		}

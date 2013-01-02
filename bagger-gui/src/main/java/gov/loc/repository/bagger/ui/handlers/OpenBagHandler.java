@@ -37,7 +37,7 @@ public class OpenBagHandler extends AbstractAction {
 		fo.setDialogType(JFileChooser.OPEN_DIALOG);
     	fo.addChoosableFileFilter(bagView.infoInputPane.noFilter);
     	fo.addChoosableFileFilter(bagView.infoInputPane.zipFilter);
-        fo.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
+        //fo.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
 		fo.setFileFilter(bagView.infoInputPane.noFilter);
 	    fo.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 	    if (bagView.getBagRootPath() != null) fo.setCurrentDirectory(bagView.getBagRootPath().getParentFile());
@@ -74,7 +74,7 @@ public class OpenBagHandler extends AbstractAction {
 	    int i = s.lastIndexOf('.');
 	    if (i > 0 && i < s.length() - 1) {
 	    	String sub = s.substring(i + 1).toLowerCase();
-	    	if (sub.contains("gz")) {
+	    	/*if (sub.contains("gz")) {
 	    		bagView.infoInputPane.serializeValue.setText(DefaultBag.TAR_GZ_LABEL);
 	    		//bagView.infoInputPane.tarGzButton.setSelected(true);
 	    		bag.setSerialMode(DefaultBag.TAR_GZ_MODE);
@@ -89,7 +89,8 @@ public class OpenBagHandler extends AbstractAction {
 	    		//bagView.infoInputPane.tarButton.setSelected(true);
 	    		bag.setSerialMode(DefaultBag.TAR_MODE);
 	    		bag.isSerial(true);
-	    	} else if (sub.contains(DefaultBag.ZIP_LABEL)) {
+	    	} else if (sub.contains(DefaultBag.ZIP_LABEL)) {*/
+	    		if (sub.contains(DefaultBag.ZIP_LABEL)) {
 	    		bagView.infoInputPane.serializeValue.setText(DefaultBag.ZIP_LABEL);
 	    		//bagView.infoInputPane.zipButton.setSelected(true);
 	    		bag.setSerialMode(DefaultBag.ZIP_MODE);

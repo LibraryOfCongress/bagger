@@ -1,14 +1,12 @@
-Bagger 2.1.2 README.txt
+Bagger 2.1.3 README.txt
 =======================
 
 1. New Features
    ============
 
-i)   Capability to add .keep files to empty folders during Create Bag In Place (i.e. Check Box on Create Bag In Place dialog box).
+i) Upgraded from Bagit Library (BIL) from 3.13 to 4.4 (i.e. using BIL for API calls).
 
-ii)  Prevent Holey bags to be validated.  Since they have the Fetch.txt file, they should not be validated before all the contents are retrived.
-
-iii) Upgraded from Bagit Libratry (BIL) from 3.9 to 3.13 (i.e. using BIL for API calls)
+ii) Due to Bagit Library (BIL) upgrade to 4.4, we had to remove tar format options (i.e. like tar, tar.gz, and tar.bz2) for bags from bagger.  This was done because the different tar formats for bags were removed from Bagit Library (BIL) starting from version 4.0.  
 
 2. Introduction
    ============
@@ -97,8 +95,8 @@ The items in the profile file (i.e. JSON file) are listed in the Bag-Info tab of
 4.1 WDL Profile
     -----------
 
-With this release of Bagger 2.1.2 a Profile for the World Digital Library (WDL) has been included.  
-The included WDL profile is at bagger-2.1.2_src\bagger_distribution\profiles\wdl-profile.json (i.e. after extracting the bagger-2.1.2_src.zip file)
+With this release of Bagger 2.1.3 a Profile for the World Digital Library (WDL) has been included.  
+The included WDL profile is at bagger-2.1.3_src\bagger_distribution\profiles\wdl-profile.json (i.e. after extracting the bagger-2.1.3_src.zip file)
 
 
 5. Bagger Build Process
@@ -112,20 +110,20 @@ i)   To build the Bagger application jar file, execute the following steps from 
      cd bagger-maven
      mvn clean install
      cd ../bagger_distribution
-     cp ../bagger-package/target/bagger-package-2.1.2-SNAPSHOT.jar bagger-2.1.2.jar
+     cp ../bagger-package/target/bagger-package-2.1.3-SNAPSHOT.jar bagger-2.1.3.jar
 
 The built Bagger application jar file gets copied to the bagger_distribution folder, where it could be executed from the bagger.bat (i.e. Windows) or bagger.sh (i.e. Linux/Ubuntu) scripts.
-The resulting bagger-2.1.2.jar copied to the bagger_distribution folder is the bagger application.
+The resulting bagger-2.1.3.jar copied to the bagger_distribution folder is the bagger application.
 For more information on how to configure the bagger bat/shell script please read the README.txt file in the bagger_distribution folder.
 
 ii) Create a Signed Bagger executable jar
 
 If the bagger application is started by Java Web Start (i.e. from a web server container) then the bagger jar created in step ii) needs to be signed as follows (i.e. using jarsigner) :
 
-     jarsigner -keystore bagger.ks -storepass bagger-dist -keypass bagger-dist -signedjar bagger-2.1.2-signed.jar bagger-2.1.2.jar rdc
+     jarsigner -keystore bagger.ks -storepass bagger-dist -keypass bagger-dist -signedjar bagger-2.1.3-signed.jar bagger-2.1.3.jar rdc
 
 The signed bagger jar created can be placed in a web server container and executed by Java Web Start.
-When exectuting the above command, the bagger.ks (keystore files) and the original bagger jar file (i.e. bagger-2.1.2.jar) need to be in the same folder.
+When exectuting the above command, the bagger.ks (keystore files) and the original bagger jar file (i.e. bagger-2.1.3.jar) need to be in the same folder.
 The bagger.ks keystore file (i.e. keystore file could be named anything) or any other keystore does not exist, it can be created as follows (i.e. using keytool) : 
 
      keytool -genkeypair -dname "cn=Bagger, ou=DIST, o=Bagger Distribution, c=US" -alias dist -keypass bagger-dist -keystore bagger.ks -storepass bagger-dist
@@ -164,35 +162,34 @@ The Bagger application starts with a splash banner page.
 8. Running Bagger in Linux/Ubuntu
    ==============================
 
-You need to have Java SE Runtime Environment 6, but not above 1.6.0.22 (i.e. do not use 1.6.0.23+) installed on the Linux/Ubuntu system. 
+You need to have OpenJDK Runtime Environment 6 installed on the Linux/Ubuntu system (preferably the latest release). 
 After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, execute the bagger.sh file in the bagger_distribution folder (i.e. ./bagger.sh). 
 The Bagger application starts with a splash banner page.
 
 9. Setting JAVA_HOME
    =================
 
-The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems the Java Runtime Environment cannot be above 1.6.0.22 (i.e. do not use 1.6.0.23+).
-There exists a known rendering issue with the Java Runtime Environment version above 1.6.0.22 when used in Linux/Ubuntu systems (i.e. sun.awt.X11.XException).  
-If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environmnet variable needs to be set in the 
-bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger_distribution folder as follows:
+The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems use OpenJDK Runtime Environment 6 (preferably the latest release).
+
+If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environmnet variable needs to be set in the bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger_distribution folder as follows:
 
 i) WINDOWS (File Path has space)
    -----------------------------
 
 SET JAVA_HOME="C:\Program Files\Java\jre6\bin"
-%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.3.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.3.jar
 
 ii) WINDOWS (File Path with no spaces)
     ----------------------------------
 
 SET JAVA_HOME=C:\jre6\bin
-%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.3.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.3.jar
 
 iii) Linux/Ubuntu
      ------------
 
 JAVA_HOME = /usr/java/jre/bin
-$JAVA_HOME/java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
+$JAVA_HOME/java.exe -jar bagger-2.1.3.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.3.jar
 
 Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
 
@@ -202,8 +199,6 @@ Note: The above steps are just examples and could be avoided if the Java Runtime
 There are a few common causes for the bagger application to fail which are:
 
 i)   Incorrect version of the Java Run Time Environment or if no System Path is set for Java.
-     The fix is to use the correct Java Runtime Environment (i.e. 1.6.xx in Windows and 1.6.0.22 or below in Linux/Ubuntu)
+     The fix is to use the correct Java Runtime Environment (i.e. 1.6.xx in Windows and OpenJDK 6 in Linux/Ubuntu)
 ii)  The bagger folder in the user's home folder contains profile files using older JSON format.
      The fix is to delete the old profiles in the bagger folder and rerun the bagger application.
-iii) In a Linux/Ubuntu system the Java Runtime Environment throws a sun.awt.X11.XException rendering exception (i.e. a known issue) when the Java Runtime Environment version is above 1.6.0.22.
-     The fix is to not use the Java Runtime environment above 1.6.0.22 on a Linux/Ubuntu system (i.e. do not use 1.6.0.23+).

@@ -1,14 +1,12 @@
-Bagger 2.1.2 README.txt
+Bagger 2.1.3 README.txt
 =======================
 
 1. New Features
    ============
 
-i)   Capability to add .keep files to empty folders during Create Bag In Place (i.e. Check Box on Create Bag In Place dialog box).
+i) Upgraded from Bagit Library (BIL) from 3.13 to 4.4 (i.e. using BIL for API calls).
 
-ii)  Prevent Holey bags to be validated.  Since they have the Fetch.txt file, they should not be validated before all the contents are retrived.
-
-iii) Upgraded from Bagit Libratry (BIL) from 3.9 to 3.13 (i.e. using BIL for API calls)
+ii) Due to Bagit Library (BIL) upgrade to 4.4, we had to remove tar format options (i.e. like tar, tar.gz, and tar.bz2) for bags from bagger.  This was done because the different tar formats for bags were removed from Bagit Library (BIL) starting from version 4.0.
 
 2. Introduction
    ============
@@ -98,51 +96,50 @@ The items in the profile file (i.e. JSON file) are listed in the Bag-Info tab of
 4.1 WDL Profile
     -----------
 
-With this release of Bagger 2.1.2 a Profile for the World Digital Library (WDL) has been included.  
-The included WDL profile is at bagger-2.1.2\profiles\wdl-profile.json (i.e. after extracting the bagger-2.1.2.zip file)
+With this release of Bagger 2.1.3 a Profile for the World Digital Library (WDL) has been included.  
+The included WDL profile is at bagger-2.1.3\profiles\wdl-profile.json (i.e. after extracting the bagger-2.1.3.zip file)
 
 5. Running Bagger on Windows
    =========================
 
 You need to have Java SE Runtime Environment 6 installed on the Windows system. 
-After unpacking the zip file, find the directory bagger-2.1.2. To start the Bagger application, double-click on the bagger.bat file in the bagger-2.1.2 folder.
+After unpacking the zip file, find the directory bagger-2.1.3. To start the Bagger application, double-click on the bagger.bat file in the bagger-2.1.3 folder.
 To create a shortcut on your desktop, select the bagger.bat file and select the right mouse button.  Select Send to->Desktop, creates the shortcut.
 The Bagger application starts with a splash banner page.  
 
 
 6. Running Bagger in Linux/Ubuntu
-  ==============================
+   ==============================
 
-You need to have Java SE Runtime Environment 6, but not above 1.6.0.22 (i.e. do not use 1.6.0.23+) installed on the Linux/Ubuntu system. 
-After unpacking the zip file, find the directory bagger-2.1.2. To start the Bagger application, execute the bagger.sh file in the bagger-2.1.2 folder (i.e. ./bagger.sh). 
+You need to have OpenJDK Runtime Environment 6 installed on the Linux/Ubuntu system (preferably the latest release).
+After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, execute the bagger.sh file in the bagger_distribution folder (i.e. ./bagger.sh).
 The Bagger application starts with a splash banner page.
 
 
 7. Setting JAVA_HOME
    =================
 
-The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems the Java Runtime Environment cannot be above 1.6.0.22 (i.e. do not use 1.6.0.23+).
-There exists a known rendering issue with the Java Runtime Environment version above 1.6.0.22 when used in Linux/Ubuntu systems (i.e. sun.awt.X11.XException).  
-If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environmnet variable needs to be set in the 
-bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger-2.1.2 folder as follows:
+The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems use OpenJDK Runtime Environment 6 (preferably the latest release).
+
+If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environmnet variable needs to be set in the bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger-2.1.3 folder as follows:
 
 i) WINDOWS (File Path has space)
    -----------------------------
 
 SET JAVA_HOME="C:\Program Files\Java\jre6\bin"
-%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.3.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.3.jar
 
 ii) WINDOWS (File Path with no spaces)
     ----------------------------------
 
 SET JAVA_HOME=C:\jre6\bin
-%JAVA_HOME%\java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
+%JAVA_HOME%\java.exe -jar bagger-2.1.3.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.3.jar
 
 iii) Linux/Ubuntu
      ------------
 
 JAVA_HOME = /usr/java/jre/bin
-$JAVA_HOME/java.exe -jar bagger-2.1.2.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.2.jar
+$JAVA_HOME/java.exe -jar bagger-2.1.3.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.3.jar
 
 Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
 -----
@@ -153,8 +150,6 @@ Note: The above steps are just examples and could be avoided if the Java Runtime
 There are a few common causes for the bagger application to fail which are:
 
 i)   Using the incorrect version of the Java Run Time Environment or if no System Path is set for Java.
-     The fix is to use the correct Java Runtime Environment (i.e. 1.6.xx in Windows and 1.6.0.22 or below in Linux/Ubuntu)
+     The fix is to use the correct Java Runtime Environment (i.e. 1.6.xx in Windows and OpenJDK 6 in Linux/Ubuntu)
 ii)  If the bagger folder in the user's home folder contains profile files using older JSON format.
      The fix is to delete the old profiles in the bagger folder and rerun the bagger application.
-iii) In a Linux/Ubuntu system the Java Runtime Environment throws a sun.awt.X11.XException rendering exception (i.e. a known issue) when the Java Runtime Environment version is above 1.6.0.22.
-     The fix is to not use the Java Runtime environment above 1.6.0.22 on a Linux/Ubuntu system (i.e. do not use 1.6.0.23+).

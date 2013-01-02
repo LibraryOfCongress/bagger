@@ -8,9 +8,9 @@ import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.writer.Writer;
 import gov.loc.repository.bagit.writer.impl.FileSystemWriter;
-import gov.loc.repository.bagit.writer.impl.TarBz2Writer;
-import gov.loc.repository.bagit.writer.impl.TarGzWriter;
-import gov.loc.repository.bagit.writer.impl.TarWriter;
+//import gov.loc.repository.bagit.writer.impl.TarBz2Writer;
+//import gov.loc.repository.bagit.writer.impl.TarGzWriter;
+//import gov.loc.repository.bagit.writer.impl.TarWriter;
 import gov.loc.repository.bagit.writer.impl.ZipWriter;
 
 import java.awt.event.ActionEvent;
@@ -62,13 +62,13 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 				bagWriter = new FileSystemWriter(bagFactory);
 			} else if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
 				bagWriter = new ZipWriter(bagFactory);
-			} else if (mode == DefaultBag.TAR_MODE) {
+			} /*else if (mode == DefaultBag.TAR_MODE) {
 				bagWriter = new TarWriter(bagFactory);
 			} else if (mode == DefaultBag.TAR_GZ_MODE) {
 				bagWriter = new TarGzWriter(bagFactory);
 			} else if (mode == DefaultBag.TAR_BZ2_MODE) {
 				bagWriter = new TarBz2Writer(bagFactory);
-			}
+			}*/
 			bagWriter.addProgressListener(bagView.task);
 			bagView.longRunningProcess = bagWriter;
 			messages = bag.write(bagWriter);
@@ -188,7 +188,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
     	fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
     	fs.addChoosableFileFilter(bagView.infoInputPane.noFilter);
     	fs.addChoosableFileFilter(bagView.infoInputPane.zipFilter);
-        fs.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
+        //fs.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
         fs.setDialogTitle("Save Bag As");
     	fs.setCurrentDirectory(bag.getRootDir());
     	if (bag.getName() != null && !bag.getName().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
@@ -197,10 +197,10 @@ public class SaveBagHandler extends AbstractAction implements Progress {
     			selectedName += "."+DefaultBag.ZIP_LABEL;
     			fs.setFileFilter(bagView.infoInputPane.zipFilter);
     		}
-    		else if (bag.getSerialMode() == DefaultBag.TAR_MODE) {
+    		/*else if (bag.getSerialMode() == DefaultBag.TAR_MODE) {
     			selectedName += "."+DefaultBag.TAR_LABEL;
     			fs.setFileFilter(bagView.infoInputPane.tarFilter);
-    		}
+    		}*/
     		else {
     			fs.setFileFilter(bagView.infoInputPane.noFilter);
     		}

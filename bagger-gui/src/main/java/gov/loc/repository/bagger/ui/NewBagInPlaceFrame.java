@@ -325,12 +325,12 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 	    			selectedName += "."+DefaultBag.ZIP_LABEL;
 	    			fs.setFileFilter(bagView.infoInputPane.zipFilter);
 	    		}
-	    		else if (bag.getSerialMode() == DefaultBag.TAR_MODE ||
+	    		/*else if (bag.getSerialMode() == DefaultBag.TAR_MODE ||
 	    				bag.getSerialMode() == DefaultBag.TAR_GZ_MODE ||
 	    				bag.getSerialMode() == DefaultBag.TAR_BZ2_MODE) {
 	    			selectedName += "."+DefaultBag.TAR_LABEL;
 	    			fs.setFileFilter(bagView.infoInputPane.tarFilter);
-	    		}
+	    		}*/
 	    		else {
 	    			fs.setFileFilter(bagView.infoInputPane.noFilter);
 	    		}
