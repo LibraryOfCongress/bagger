@@ -6,9 +6,11 @@ Bagger 2.1.3 README.txt
 
 i)   Upgraded from Bagit Library (BIL) from 3.13 to 4.4 (i.e. using BIL for API calls).
 
-ii) Due to the Bagit Library (BIL) upgrade from 3.13 to 4.4, bagger 2.1.3 can now preserve dates and times of bagged items.
+ii)  Due to the Bagit Library (BIL) upgrade from 3.13 to 4.4, Bagger 2.1.3 can now preserve dates and times of bagged items.
 
-iii) Due to Bagit Library (BIL) upgrade to 4.4, we had to remove tar format options (i.e. like tar, tar.gz, and tar.bz2) for bags from bagger.  This was done because the different tar formats for bags were removed from Bagit Library (BIL) starting from version 4.0.  
+iii) Due to the Bagit Library (BIL) upgrade to version 4.4, we had to remove tar format options (i.e. like tar, tar.gz, and tar.bz2) for bags from Bagger 2.1.3.  This was done because tar formats for bags were removed from Bagit Library (BIL), starting from version 4.0.  
+
+Note: If a project requires bags to be converted into tar formats then continue to use Bagger 2.1.2 which uses Bagit Library (BIL) 3.13 which supports tar formats for bags. 
 
 2. Introduction
    ============
@@ -16,14 +18,14 @@ iii) Due to Bagit Library (BIL) upgrade to 4.4, we had to remove tar format opti
 The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit-05).
 The Bagger application is a graphical user interface to the BIL (BagIt Library, http://sourceforge.net/projects/loc-xferutils) command line driver which is an implementation of tools conforming to the BagIt specification.  
 
-Bagger differs from BIL by providing graphical user interface for file and data manipulation features as well as a visual view of the bag contents, bag state and options.
-In addition Bagger provides a project profile capability.  Users can create customized bag-info.txt data with project specific properties that the user defines.
+Bagger differs from BIL by providing graphical user interface for file and data manipulation features as well as a visual view of the bag contents, bag state and options.  In addition Bagger provides a project profile capability.  Users can create customized bag-info.txt data with project specific properties that the user defines.
+
 These project profiles can be edited manually and shared with other users.
 
 3. License
    =======
 
-License and other releated information are listed in the LICENSE.txt and NOTICE.txt files included the bagger_distribution folder.
+License and other related information are listed in the LICENSE.txt and NOTICE.txt files included the bagger_distribution folder.
 
 4. Project Profile
    ===============
@@ -35,12 +37,12 @@ Users can select a project profile when creating a bag, and that profile will de
 
 User can create custom project profiles using a simple JSON-based format. When the bagger application is first started the bagger folder gets created in the user's home folder and contains some default profiles.
 Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger.
-On Windows, it is C:\"Documents and Settings"\<user>\bagger. On unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.  
+On Windows, it is C:\"Documents and Settings"\<user>\bagger. On Unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.  
 
 Also when using a new Bagger version please remove the bagger folder created by the previous Bagger version in the user's home folder.  
 This will insure that the new/updated profiles are created in the bagger folder after the new bagger version is started.
 
-To support the use of profiles for bag-info.txt editing in the Bagger and in the various Transfer webapps, the following describes a  JSON serialization of a profile:
+To support the use of profiles for bag-info.txt editing in the Bagger and in the various Transfer webapps, the following describes a JSON serialization of a profile:
 
 {
    "<field name>" : {
@@ -125,7 +127,7 @@ If the bagger application is started by Java Web Start (i.e. from a web server c
      jarsigner -keystore bagger.ks -storepass bagger-dist -keypass bagger-dist -signedjar bagger-2.1.3-signed.jar bagger-2.1.3.jar rdc
 
 The signed bagger jar created can be placed in a web server container and executed by Java Web Start.
-When exectuting the above command, the bagger.ks (keystore files) and the original bagger jar file (i.e. bagger-2.1.3.jar) need to be in the same folder.
+When executing the above command, the bagger.ks (keystore files) and the original bagger jar file (i.e. bagger-2.1.3.jar) need to be in the same folder.
 The bagger.ks keystore file (i.e. keystore file could be named anything) or any other keystore does not exist, it can be created as follows (i.e. using keytool) : 
 
      keytool -genkeypair -dname "cn=Bagger, ou=DIST, o=Bagger Distribution, c=US" -alias dist -keypass bagger-dist -keystore bagger.ks -storepass bagger-dist
@@ -157,6 +159,7 @@ vi)  Bagger-package module - At bagger-package/pom.xml
 
 You need to have Java SE Runtime Environment 6 installed on the Windows system. 
 After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, double-click on the bagger.bat file in the bagger_distribution folder.
+
 To create a shortcut on your desktop, select the bagger.bat file and select the right mouse button.  Select Send to->Desktop, creates the shortcut.
 The Bagger application starts with a splash banner page.  
 
@@ -164,16 +167,16 @@ The Bagger application starts with a splash banner page.
 8. Running Bagger in Linux/Ubuntu
    ==============================
 
-You need to have OpenJDK Runtime Environment 6 installed on the Linux/Ubuntu system (preferably the latest release). 
-After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, execute the bagger.sh file in the bagger_distribution folder (i.e. ./bagger.sh). 
-The Bagger application starts with a splash banner page.
+You need to have OpenJDK Runtime Environment 6 installed on the Linux/Ubuntu system (preferably the latest release).
+
+After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, execute the bagger.sh file in the bagger_distribution folder (i.e. ./bagger.sh).  The Bagger application starts with a splash banner page.
 
 9. Setting JAVA_HOME
    =================
 
-The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu sytems use OpenJDK Runtime Environment 6 (preferably the latest release).
+The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu systems use OpenJDK Runtime Environment 6 (preferably the latest release).
 
-If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environmnet variable needs to be set in the bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files prvovided in the bagger_distribution folder as follows:
+If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environment variable needs to be set in the bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files provided in the bagger_distribution folder as follows:
 
 i) WINDOWS (File Path has space)
    -----------------------------
@@ -202,5 +205,6 @@ There are a few common causes for the bagger application to fail which are:
 
 i)   Incorrect version of the Java Run Time Environment or if no System Path is set for Java.
      The fix is to use the correct Java Runtime Environment (i.e. 1.6.xx in Windows and OpenJDK 6 in Linux/Ubuntu)
+
 ii)  The bagger folder in the user's home folder contains profile files using older JSON format.
      The fix is to delete the old profiles in the bagger folder and rerun the bagger application.
