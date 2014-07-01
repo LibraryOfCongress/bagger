@@ -15,9 +15,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+	<version>3.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>
     </plugins>
@@ -30,7 +31,20 @@
     <module>../bagger-gui</module>
     <module>../bagger-package</module>
   </modules>
-
+  <repositories>
+   <repository>
+     <id>rdc-artifactory</id>
+     <name>RDC artifactory repository</name>
+     <url>http://argon.rdc.lctl.gov:8081/artifactory/repo</url>
+   </repository>
+  </repositories>
+	<pluginRepositories>
+	 <pluginRepository>
+	  <id>rdc-artifactory</id>
+	  <name>RDC artifactory repository</name>
+	  <url>http://argon.rdc.lctl.gov:8081/artifactory/repo</url>
+	 </pluginRepository>
+	</pluginRepositories>
   <dependencies>
     <dependency>
       <groupId>commons-logging</groupId>
@@ -123,83 +137,4 @@
     
     </dependencies>
   </dependencyManagement>
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots />
-      <id>rdc-snapshots</id>
-      <name>RDC snapshots</name>
-      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
-    </repository>
-    <repository>
-      <releases />
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>rdc-releases</id>
-      <name>RDC releases</name>
-      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-releases/</url>
-    </repository>
-    <repository>
-      <releases />
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>local-releases</id>
-      <name>Local releases</name>
-      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/local-releases/</url>
-    </repository>
-    <repository>
-      <releases />
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>proxy-releases</id>
-      <name>Proxy releases</name>
-      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-releases/</url>
-    </repository>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots />
-      <id>proxy-snapshots</id>
-      <name>Proxy snapshots</name>
-      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-snapshots/</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <releases />
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>proxy-releases</id>
-      <name>Proxy releases</name>
-      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-releases/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots />
-      <id>proxy-snapshots</id>
-      <name>Proxy snapshots</name>
-      <url>http://archiva.rdc.lctl.gov:8080/archiva/repository/proxy-snapshots/</url>
-    </pluginRepository>
-  </pluginRepositories>
-  
- <distributionManagement>
-    <repository>
-      <id>rdc-releases</id>
-      <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-releases/</url>
-     </repository>
-    <snapshotRepository>
-      <id>rdc-snapshots</id>
-      <url>dav:http://archiva.rdc.lctl.gov:8080/archiva/repository/rdc-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>   
-
 </project>
