@@ -39,7 +39,8 @@ public class Organization {
 		return this.address;
 	}
 	
-	public String toString() {
+	@Override
+  public String toString() {
 		return toString(false);
 	}
 	

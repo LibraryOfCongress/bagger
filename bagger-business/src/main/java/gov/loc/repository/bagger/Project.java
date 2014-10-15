@@ -29,7 +29,8 @@ public class Project {
 		return this.isDefault;
 	}
 	
-	public String toString() {
+	@Override
+  public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Id: ");
 		sb.append(this.getId());

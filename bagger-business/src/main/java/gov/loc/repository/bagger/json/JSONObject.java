@@ -100,6 +100,7 @@ public class JSONObject {
          * so the clone method returns itself.
          * @return     NULL.
          */
+        @Override
         protected final Object clone() {
             return this;
         }
@@ -111,6 +112,7 @@ public class JSONObject {
          * @return true if the object parameter is the JSONObject.NULL object
          *  or null.
          */
+        @Override
         public boolean equals(Object object) {
             return object == null || object == this;
         }
@@ -120,6 +122,7 @@ public class JSONObject {
          * Get the "null" string value.
          * @return The string "null".
          */
+        @Override
         public String toString() {
             return "null";
         }
@@ -1277,6 +1280,7 @@ public class JSONObject {
      *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
      *  with <code>}</code>&nbsp;<small>(right brace)</small>.
      */
+    @Override
     public String toString() {
         try {
             Iterator     keys = keys();

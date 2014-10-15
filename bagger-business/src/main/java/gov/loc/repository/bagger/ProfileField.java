@@ -74,7 +74,8 @@ public class ProfileField {
 		return this.isValueRequired;
 	}
 
-	public String toString() {
+	@Override
+  public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.fieldName + '=' + this.fieldValue);
 		sb.append('\n');

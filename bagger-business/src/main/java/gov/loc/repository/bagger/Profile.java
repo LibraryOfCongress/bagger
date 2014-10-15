@@ -72,7 +72,8 @@ public class Profile {
 		return customFields;
 	}
 	
-	public String toString() {
+	@Override
+  public String toString() {
 		StringBuffer sb = new StringBuffer();
 		return sb.toString();
 	}

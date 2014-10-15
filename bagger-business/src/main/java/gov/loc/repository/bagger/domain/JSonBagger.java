@@ -24,9 +24,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Provides JSONBagger business object.
  *
@@ -38,7 +35,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JSonBagger implements Bagger {
 
-    private final Log logger = LogFactory.getLog(getClass());
 	private File profilesFolder;
     
     public JSonBagger()
@@ -51,11 +47,11 @@ public class JSonBagger implements Bagger {
     }
     
   
-    public void copyDefautprofilesToUserFolder(String baggerJarPath, File profilesFolder)
+    public void copyDefautprofilesToUserFolder(String baggerJarPath, File folder)
 	{
-    	if(!profilesFolder.exists())
+    	if(!folder.exists())
     	{
-    		profilesFolder.mkdirs();
+    		folder.mkdirs();
     	}
 
     	if(baggerJarPath != null && !baggerJarPath.endsWith(".jar")){
@@ -78,12 +74,14 @@ public class JSonBagger implements Bagger {
     			File [] files = directory.listFiles();
     			for(File file : files)
     			{
+    			  FileInputStream fileInputStream = null;
+    			  
     				try {
-    					FileInputStream fileInputStream = new FileInputStream(file);
+    					fileInputStream = new FileInputStream(file);
 
     					String entryName = file.getName();
     					String fileName = entryName.substring(entryName.lastIndexOf("/")+1, entryName.length());
-    					File outFile = new File(profilesFolder +File.separator+ fileName);
+    					File outFile = new File(folder +File.separator+ fileName);
     					FileOutputStream os = new FileOutputStream(outFile);
     					int content = fileInputStream.read();
     					while(content != -1)
@@ -93,9 +91,6 @@ public class JSonBagger implements Bagger {
     					}
     					os.flush();
     					os.close();
-    					
-
-
 
     				} catch (FileNotFoundException e) {
     					// TODO Auto-generated catch block
@@ -103,6 +98,14 @@ public class JSonBagger implements Bagger {
     				} catch (IOException e) {
     					// TODO Auto-generated catch block
     					e.printStackTrace();
+    				} finally {
+    				  if(fileInputStream != null){
+    				    try {
+                  fileInputStream.close();
+                }
+                catch (IOException e) {
+                }
+    				  }
     				}
 
     			}
@@ -112,18 +115,20 @@ public class JSonBagger implements Bagger {
     	}
     	else
     	{
+    	  java.util.jar.JarFile jf = null;
+    	  
     		try {
     			baggerJarPath = URLDecoder.decode(baggerJarPath, "UTF-8");
-    			java.util.jar.JarFile jf = new java.util.jar.JarFile(baggerJarPath);
+    			jf = new java.util.jar.JarFile(baggerJarPath);
     			Enumeration<JarEntry> resources = jf.entries();
     			while ( resources.hasMoreElements() ) {
-    				java.util.jar.JarEntry je = (java.util.jar.JarEntry) resources.nextElement();
+    				java.util.jar.JarEntry je = resources.nextElement();
     				if ( je.getName().matches(".*\\.json") ) {
     					try {
     						InputStream is = jf.getInputStream(je);
     						String entryName = je.getName();
     						String fileName = entryName.substring(entryName.lastIndexOf("/")+1, entryName.length());
-    						File file = new File(profilesFolder +File.separator+ fileName);
+    						File file = new File(folder +File.separator+ fileName);
     						FileOutputStream os = new FileOutputStream(file);
     						int content = is.read();
     						while(content != -1)
@@ -141,13 +146,24 @@ public class JSonBagger implements Bagger {
     		} catch (java.io.IOException e) {
     			e.printStackTrace();
     		}
+    		finally {
+    		  if(jf != null){
+    		    try {
+              jf.close();
+            }
+            catch (IOException e) {
+            }
+    		  }
+    		}
     	}
 	}
     
-	public void loadProfile(String profileName) {	
+	@Override
+  public void loadProfile(String profileName) {	
 	}
 
-	public List<Profile> loadProfiles() {
+	@Override
+  public List<Profile> loadProfiles() {
 		File[] profilesFiles  = profilesFolder.listFiles();
 		List<Profile>  profilesToReturn = new ArrayList<Profile>();
 		for(File file:profilesFiles)
@@ -186,7 +202,8 @@ public class JSonBagger implements Bagger {
 		return profile;
 	}
 	
-	public void saveProfile(Profile profile) {
+	@Override
+  public void saveProfile(Profile profile) {
 		if(profile.getName().equals("<no profile>"))
 			return;
 		try {
@@ -222,7 +239,8 @@ public class JSonBagger implements Bagger {
 		return name+"-profile.json";
 	}
 	
-	public void removeProfile(Profile profile) {
+	@Override
+  public void removeProfile(Profile profile) {
 		String homeDir = System.getProperty("user.home");
     	String profilesPath = homeDir+File.separator+"bagger";
     	profilesFolder = new File(profilesPath);
