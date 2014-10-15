@@ -1,0 +1,76 @@
+apply plugin: 'eclipse'
+
+eclipse.classpath.file.withXml { xml ->
+  def node = xml.asNode()
+
+  Set<String> projectNames = new HashSet<>()
+  findProjectDependencies(project).each { projectNames.add(it.name) }
+
+  //modify eclipse classpath so that we don't export test dependencies
+  (configurations.testCompile - configurations.compile).each { dependency ->
+    Node toRemove = node.find {it.@path == "${dependency.path.replace('\\', '/')}"}
+    if ( toRemove != null ){
+      node.remove(toRemove)
+    }
+
+    //remove the path from the dependency name and drop the .jar ending
+    String dep = dependency.path.tokenize('/')[-1] - ".jar"
+
+    //don't add the project jars to the classpath
+    if ( !projectNames.contains(dep) ) {
+      node.appendNode( 'classpathentry', [ kind: 'lib', path: "$dependency.path"])
+    }
+  }
+
+  //make resources lib instead of src kind
+  Node resources = node.find {it.@path == "src/main/resources"}
+  if(resources != null){
+    resources.attributes().put("kind", "lib")
+    resources.attributes().put("exported", "true")
+  }
+  resources = node.find {it.@path == "src/test/resources"}
+  if(resources != null){
+    resources.attributes().put("kind", "lib")
+    resources.attributes().put("exported", "false")
+  }
+}
+
+eclipse.project.file.withXml { provider ->
+  ignoreDerivedResources(provider.asNode())
+}
+
+def ignoreDerivedResources(projectDescription, directories = ["build", "target", "test-output"]) {
+  def count = directories.count { file(it).exists() }
+  if (count > 0) {
+    def filter = projectDescription
+      .appendNode("filteredResources")
+      .appendNode("filter")
+    filter.appendNode("id", System.currentTimeMillis().toString().trim())
+    filter.appendNode("type", "26")
+    filter.appendNode("name")
+    def matcher = filter.appendNode("matcher")
+    matcher.appendNode("id", "org.eclipse.ui.ide.orFilterMatcher")
+    def arguments = matcher.appendNode("arguments")
+    directories.each {
+      if (file(it).exists()) {
+        def dirMatcher = arguments.appendNode("matcher")
+        dirMatcher.appendNode("id", "org.eclipse.ui.ide.multiFilter")
+        dirMatcher.appendNode("arguments", "1.0-projectRelativePath-matches-false-false-${it}")
+      }
+    }
+  }
+}
+
+//find all inter-project dependencies including parent project
+def Set<Project> findProjectDependencies(Project parent){
+  Set<Project> projects = new HashSet<>()
+  projects.add(parent)
+
+  parent.configurations.testRuntime.getAllDependencies().withType(ProjectDependency).each {
+    Project p = it.getDependencyProject()
+    projects.add(p)
+    projects.addAll(findProjectDependencies(p))
+  }
+
+  return projects
+}

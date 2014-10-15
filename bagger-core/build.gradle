@@ -1,0 +1,9 @@
+
+description = 'Spring richclient bagger'
+dependencies {
+    compile group: 'gov.loc', name: 'bagit', version:'4.4'
+  compile project(':bagger-business')
+    compile group: 'org.springframework', name: 'spring-core', version:'2.5.1'
+    compile group: 'org.springframework', name: 'spring-beans', version:'2.5.1'
+    compile group: 'org.springframework', name: 'spring-context', version:'2.5.1'
+}

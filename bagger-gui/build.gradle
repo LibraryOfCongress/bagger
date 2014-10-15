@@ -1,0 +1,54 @@
+apply plugin: "application"
+
+mainClassName = "gov.loc.repository.bagger.BaggerApplication"
+
+description = """Spring richclient bagger GUI"""
+
+jar.baseName="bagger"
+
+dependencies {
+    compile group: 'gov.loc', name: 'bagit', version:'4.4'
+    compile project(':bagger-common')
+    compile project(':bagger-core')
+    compile project(':bagger-business')
+    compile group: 'org.springframework.richclient', name: 'spring-richclient-resources', version:'1.0.0'
+    compile group: 'org.springframework.richclient', name: 'spring-richclient-core', version:'1.0.0'
+    compile group: 'org.springframework.richclient', name: 'spring-richclient-binding', version:'1.0.0'
+    compile group: 'org.springframework.richclient', name: 'spring-richclient-form', version:'1.0.0'
+    compile group: 'org.springframework.richclient', name: 'spring-richclient-support', version:'1.0.0'
+    compile group: 'org.springframework.richclient', name: 'spring-richclient-jdk5', version:'1.0.0'
+    compile group: 'org.springframework.richclient', name: 'spring-richclient-jdk6', version:'1.0.0'
+    compile group: 'org.springframework.richclient', name: 'spring-richclient-sandbox', version:'1.0.0'
+    compile group: 'org.springframework.richclient', name: 'spring-richclient-vldocking', version:'1.1.0'
+    compile group: 'com.vlsolutions.swing', name: 'docking', version:'2.1.4'
+    compile group: 'org.springframework', name: 'spring-core', version:'2.5.1'
+    compile group: 'org.springframework', name: 'spring-beans', version:'2.5.1'
+    compile group: 'org.springframework', name: 'spring-context', version:'2.5.1'
+    compile group: 'com.jgoodies', name: 'forms', version:'1.0.7'
+    compile group: 'net.sf.nachocalendar', name: 'nachocalendar', version:'0.23'
+    compile group: 'commons-logging', name: 'commons-logging', version:'1.1.1'
+    compile group: 'log4j', name: 'log4j', version:'1.2.14'
+    runtime group: 'com.jgoodies', name: 'looks', version:'2.0.4'
+}
+
+//include the docs and licenses into the distributable zip
+distZip {
+  String baseZipDirectory = archiveName - ("." + extension)
+
+  //include the various user guides
+  into("${baseZipDirectory}/doc") {
+    from "${rootDir.path}/bagger_distribution"
+    include "*.doc"
+    include "*.txt"
+  }
+}
+
+jar.doLast {
+  ant.signjar(destDir: jar.destinationDir,
+    jar: jar.archivePath, 
+    alias:"rdc",
+    //storetype:pkcs12, 
+    keystore:"${rootDir.path}/scripts/bagger.ks",
+    storepass:"bagger-rdc", 
+    preservelastmodified:"true") 
+}
