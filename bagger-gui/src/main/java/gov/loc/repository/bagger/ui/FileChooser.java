@@ -39,18 +39,21 @@ public class FileChooser extends JFrame implements ActionListener {
 		contentPane.add(mbar, "North");
   }
 
+  @Override
   public void actionPerformed(ActionEvent evt) {
 	  Object source = evt.getSource();
 	  if (source == openItem) {
 		  JFileChooser chooser = new JFileChooser();
 		  chooser.setCurrentDirectory(new File("."));
 		  chooser.setFileFilter(new FileFilter() {
-			  public boolean accept(File f) {
+			  @Override
+        public boolean accept(File f) {
 				  return f.getName().toLowerCase().endsWith(".zip")
 				  	|| f.isDirectory();
 			  }
 
-			  public String getDescription() {
+			  @Override
+        public String getDescription() {
 				  return "ZIP Files";
 			  }
 		  });

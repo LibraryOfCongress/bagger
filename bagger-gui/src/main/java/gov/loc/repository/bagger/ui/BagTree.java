@@ -178,7 +178,7 @@ public class BagTree extends JTree {
 		Vector<String> files = new Vector<String>();
 		// Make two passes, one for Dirs and one for Files. This is #1.
 		for (int i = 0; i < ol.size(); i++) {
-			String thisObject = (String) ol.elementAt(i);
+			String thisObject = ol.elementAt(i);
 			String newPath;
 			if (curPath.equals("."))
 				newPath = thisObject;

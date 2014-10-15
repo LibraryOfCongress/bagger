@@ -15,7 +15,6 @@
  */
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.ui.util.LayoutUtil;
 import gov.loc.repository.bagit.BagFactory.Version;
 
@@ -26,9 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -177,7 +173,8 @@ public class NewBagFrame extends JFrame implements ActionListener {
 	 */
 	private void initStandardCommands() {
 		finishCommand = new ActionCommand(getFinishCommandId()) {
-			public void doExecuteCommand() {
+			@Override
+      public void doExecuteCommand() {
 				
 				log.info("BagVersionFrame.OkNewBagHandler");
 				NewBagFrame.this.setVisible(false);
@@ -188,7 +185,8 @@ public class NewBagFrame extends JFrame implements ActionListener {
 
 
 		cancelCommand = new ActionCommand(getCancelCommandId()) {
-			public void doExecuteCommand() {
+			@Override
+      public void doExecuteCommand() {
 				NewBagFrame.this.setVisible(false);
 			}
 		};
@@ -211,6 +209,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
 
 	private ActionCommand cancelCommand;
 
+    @Override
     public void actionPerformed(ActionEvent e) {
     	invalidate();
     	repaint();

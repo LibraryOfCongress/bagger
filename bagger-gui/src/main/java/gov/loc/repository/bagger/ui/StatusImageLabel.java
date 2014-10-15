@@ -24,7 +24,8 @@ public class StatusImageLabel extends JLabel implements PropertyChangeListener {
 		model.addPropertyChangeListener(this);
 	}
 	
-	public void propertyChange(PropertyChangeEvent evt) {
+	@Override
+  public void propertyChange(PropertyChangeEvent evt) {
 		Status newValue = (Status)evt.getNewValue();
 		changeIcon(newValue);
 	}

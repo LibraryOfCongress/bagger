@@ -17,7 +17,8 @@ public class CreateBagInPlaceExecutor extends AbstractActionCommandExecutor {
 		this.bagView = bagView;
 	}
 
-	public void execute() {
+	@Override
+  public void execute() {
 		bagView.createBagInPlaceHandler.createBagInPlace();
 	}
 

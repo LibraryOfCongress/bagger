@@ -2,11 +2,9 @@
 package gov.loc.repository.bagger.ui.handlers;
 
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.model.Status;
 import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
-import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagFile;
 
 import java.awt.event.ActionEvent;
@@ -28,7 +26,8 @@ public class AddTagFileHandler extends AbstractAction {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		addTagFile();
 	}
 

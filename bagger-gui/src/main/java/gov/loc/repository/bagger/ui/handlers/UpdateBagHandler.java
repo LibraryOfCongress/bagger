@@ -21,7 +21,8 @@ public class UpdateBagHandler extends AbstractAction {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		updateBag(bagView.getBag());
 	}
 

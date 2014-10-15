@@ -45,7 +45,8 @@ public class TagManifestPane extends JTabbedPane {
     private void init() {
     	this.setPreferredSize(preferredDimension);
         ChangeListener changeListener = new ChangeListener() {
-        	public void stateChanged(ChangeEvent changeEvent) {
+        	@Override
+          public void stateChanged(ChangeEvent changeEvent) {
         		JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
                 int count = sourceTabbedPane.getTabCount();
                 int selected = sourceTabbedPane.getSelectedIndex();

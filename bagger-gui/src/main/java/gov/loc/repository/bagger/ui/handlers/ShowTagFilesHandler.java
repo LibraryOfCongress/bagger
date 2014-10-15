@@ -24,7 +24,8 @@ public class ShowTagFilesHandler extends AbstractAction {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
    		showTagFiles();
 	}
 

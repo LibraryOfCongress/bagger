@@ -17,7 +17,8 @@ public class StartExecutor extends AbstractActionCommandExecutor {
 		this.bagView = bagView;
 	}
 
-	public void execute() {
+	@Override
+  public void execute() {
 		bagView.startNewBagHandler.newBag();
 	}
 

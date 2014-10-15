@@ -42,7 +42,8 @@ public class BagInfoInputPane extends JTabbedPane {
         ActionMap am = this.getActionMap();
         am.put("tabNext", new AbstractAction("tabNext") {
         	private static final long serialVersionUID = 1L;
-        	public void actionPerformed(ActionEvent evt) {
+        	@Override
+          public void actionPerformed(ActionEvent evt) {
         		try {
                     int selected = getSelectedIndex();
                     int count = getComponentCount();
@@ -157,6 +158,7 @@ public class BagInfoInputPane extends JTabbedPane {
         bag.updateBagInfo(map);
     }
     
+    @Override
     public void requestFocus() {
     	bagInfoForm.getControl().requestFocus();
     }

@@ -116,6 +116,7 @@ public class ConsolePane extends JPanel {
         
     }
     
+    @Override
     public boolean requestFocusInWindow() {
         return this.requestFocusInWindow();
     }

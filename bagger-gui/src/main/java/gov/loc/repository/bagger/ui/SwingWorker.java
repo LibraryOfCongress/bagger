@@ -100,10 +100,12 @@ public abstract class SwingWorker {
      */
     public SwingWorker() {
         final Runnable doFinished = new Runnable() {
-           public void run() { finished(); }
+           @Override
+          public void run() { finished(); }
         };
 
         Runnable doConstruct = new Runnable() {
+            @Override
             public void run() {
                 try {
                     setValue(construct());
@@ -123,10 +125,12 @@ public abstract class SwingWorker {
     public SwingWorker(LongTask longTask) {
     	this.longTask = longTask;
         final Runnable doFinished = new Runnable() {
-           public void run() { finished(); }
+           @Override
+          public void run() { finished(); }
         };
 
         Runnable doConstruct = new Runnable() {
+            @Override
             public void run() {
                 try {
                     setValue(construct());

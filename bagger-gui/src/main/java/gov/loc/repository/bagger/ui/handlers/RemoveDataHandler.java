@@ -28,7 +28,8 @@ public class RemoveDataHandler extends AbstractAction {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		removeData();
 	}
 
@@ -64,7 +65,7 @@ public class RemoveDataHandler extends AbstractAction {
     						model.removeNodeFromParent((MutableTreeNode)node);
     					} else {
     						DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(node);
-    						model.removeNodeFromParent((MutableTreeNode)aNode);
+    						model.removeNodeFromParent(aNode);
     					}
     				} catch (Exception e) {
     					try {
@@ -73,7 +74,7 @@ public class RemoveDataHandler extends AbstractAction {
     							model.removeNodeFromParent((MutableTreeNode)node);
     						} else {
     							DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(node);
-    							model.removeNodeFromParent((MutableTreeNode)aNode);
+    							model.removeNodeFromParent(aNode);
     						}
     					} catch (Exception ex) {
     						message = "Error trying to remove: " + fileName + "\n";

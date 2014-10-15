@@ -18,7 +18,8 @@ public class ProfilesView extends AbstractView{
         return bagViewPanel;
 	}
 	
-	 protected void registerLocalCommandExecutors(PageComponentContext context) {
+	 @Override
+  protected void registerLocalCommandExecutors(PageComponentContext context) {
 	    	context.register("startCommand", BagView.instance.startExecutor);
 	    	context.register("openCommand", BagView.instance.openExecutor);
 	    	context.register("createBagInPlaceCommand", BagView.instance.createBagInPlaceExecutor);

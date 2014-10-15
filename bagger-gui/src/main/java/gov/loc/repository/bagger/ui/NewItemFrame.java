@@ -100,6 +100,7 @@ public class NewItemFrame extends JFrame implements ActionListener {
     	return panel;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
     	invalidate();
     	repaint();
@@ -108,7 +109,8 @@ public class NewItemFrame extends JFrame implements ActionListener {
     private class OkAddFieldHandler extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
     		String name = itemName.getText().trim();
     		boolean b = false;
     		for (int i=0; i < itemList.getItemCount(); i++) {
@@ -133,7 +135,8 @@ public class NewItemFrame extends JFrame implements ActionListener {
     private class CancelAddFieldHandler extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 			setVisible(false);
         }
     }

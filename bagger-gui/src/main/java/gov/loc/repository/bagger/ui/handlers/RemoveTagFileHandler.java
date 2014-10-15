@@ -2,11 +2,8 @@
 package gov.loc.repository.bagger.ui.handlers;
 
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.model.Status;
 import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
-import gov.loc.repository.bagit.Bag;
-
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -24,7 +21,8 @@ public class RemoveTagFileHandler extends AbstractAction {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		removeTagFile();
 	}
 
@@ -48,7 +46,7 @@ public class RemoveTagFileHandler extends AbstractAction {
                     		bag.removeBagFile((String)node);
                     		ApplicationContextUtil.addConsoleMessage("Tag file removed: " + node.toString());
             				DefaultMutableTreeNode aNode = new DefaultMutableTreeNode(node);
-            				model.removeNodeFromParent((MutableTreeNode)aNode);
+            				model.removeNodeFromParent(aNode);
             			}
             		}
     			} catch (Exception e) {

@@ -16,7 +16,8 @@ public class SaveBagAsExecutor extends AbstractActionCommandExecutor {
 		this.bagView = bagView;
 	}
 
-	public void execute() {
+	@Override
+  public void execute() {
 		bagView.saveBagAsHandler.openSaveBagAsFrame();
 	}
 

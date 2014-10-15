@@ -21,7 +21,8 @@ public class ConsoleView extends AbstractView {
 		return consolePane;
 	}
 
-	protected void registerLocalCommandExecutors(PageComponentContext context) {
+	@Override
+  protected void registerLocalCommandExecutors(PageComponentContext context) {
 		context.register("startCommand", BagView.instance.startExecutor);
 		context.register("openCommand", BagView.instance.openExecutor);
 		context.register("createBagInPlaceCommand",

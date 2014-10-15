@@ -38,12 +38,14 @@ public class LongTask implements ProgressListener {
      */
     public void go() {
     	final SwingWorker worker = new SwingWorker(this) {
+            @Override
             public Object construct() {
                 done = false;
                 longTask.progress.execute();
                 return new Object();
             }
             
+            @Override
             public void finished() {
             	// update UI
             }
@@ -69,7 +71,8 @@ public class LongTask implements ProgressListener {
     }
 
     // should be thread-safe
-	public synchronized void reportProgress(String activity, Object item, Long count, Long total) {
+	@Override
+  public synchronized void reportProgress(String activity, Object item, Long count, Long total) {
 		if (count == null || total == null) {
 			log.error("reportProgress received null info: count=" + count + ", total=" + total);
 		} else {

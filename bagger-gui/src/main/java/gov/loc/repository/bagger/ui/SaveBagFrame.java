@@ -113,7 +113,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 	 */
 	private void initStandardCommands() {
 		finishCommand = new ActionCommand(getFinishCommandId()) {
-			public void doExecuteCommand() {
+			@Override
+      public void doExecuteCommand() {
 				
 				new OkSaveBagHandler().actionPerformed(null);
 
@@ -123,7 +124,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
 		cancelCommand = new ActionCommand(getCancelCommandId()) {
 
-			public void doExecuteCommand() {
+			@Override
+      public void doExecuteCommand() {
 				new CancelSaveBagHandler().actionPerformed(null);
 			}
 		};
@@ -420,6 +422,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     	savePanel.invalidate();
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
     	invalidate();
     	repaint();
@@ -427,7 +430,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
     public class SerializeBagHandler extends AbstractAction {
     	private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 			JRadioButton cb = (JRadioButton)e.getSource();
             boolean isSel = cb.isSelected();
             if (isSel) {
@@ -463,7 +467,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     private class SaveBagAsHandler extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 	        File selectFile = new File(File.separator+".");
 	        JFrame frame = new JFrame();
 	        JFileChooser fs = new JFileChooser(selectFile);
@@ -514,7 +519,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     private class OkSaveBagHandler extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 			if (bagNameField.getText().trim().isEmpty() || bagNameField.getText().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
     			bagView.showWarningErrorDialog("Error - bag not saved", "The bag must have a file name.");
     			return;
@@ -540,14 +546,16 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     private class CancelSaveBagHandler extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 			setVisible(false);
         }
     }
 
     private class TagManifestHandler extends AbstractAction {
     	private static final long serialVersionUID = 75893358194076314L;
-    	public void actionPerformed(ActionEvent e) {
+    	@Override
+      public void actionPerformed(ActionEvent e) {
     		JCheckBox cb = (JCheckBox)e.getSource();
                 
     		// Determine status
@@ -562,7 +570,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     
     private class TagAlgorithmListHandler extends AbstractAction {
     	private static final long serialVersionUID = 75893358194076314L;
-    	public void actionPerformed(ActionEvent e) {
+    	@Override
+      public void actionPerformed(ActionEvent e) {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String alg = (String) jlist.getSelectedItem();
         	bagView.getBag().setTagManifestAlgorithm(alg);
@@ -571,7 +580,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     
     private class PayloadManifestHandler extends AbstractAction {
     	private static final long serialVersionUID = 75893358194076314L;
-    	public void actionPerformed(ActionEvent e) {
+    	@Override
+      public void actionPerformed(ActionEvent e) {
     		JCheckBox cb = (JCheckBox)e.getSource();
                 
     		// Determine status
@@ -586,7 +596,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
     private class PayAlgorithmListHandler extends AbstractAction {
     	private static final long serialVersionUID = 75893358194076314L;
-    	public void actionPerformed(ActionEvent e) {
+    	@Override
+      public void actionPerformed(ActionEvent e) {
         	JComboBox jlist = (JComboBox)e.getSource();
         	String alg = (String) jlist.getSelectedItem();
         	bagView.getBag().setPayloadManifestAlgorithm(alg);
@@ -596,7 +607,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     private class HoleyBagHandler extends AbstractAction {
        	private static final long serialVersionUID = 1L;
 
-    	public void actionPerformed(ActionEvent e) {
+    	@Override
+      public void actionPerformed(ActionEvent e) {
     		JCheckBox cb = (JCheckBox)e.getSource();
 
     		// Determine status

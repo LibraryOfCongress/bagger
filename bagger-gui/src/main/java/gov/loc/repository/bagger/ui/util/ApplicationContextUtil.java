@@ -54,7 +54,6 @@ public class ApplicationContextUtil {
 		getConsoleView().addConsoleMessages(message);
 	}
 
-	@SuppressWarnings("unchecked")
 	private static Object getService(Class serviceType) {
 		return getApplicationServices().getService(serviceType);
 	}

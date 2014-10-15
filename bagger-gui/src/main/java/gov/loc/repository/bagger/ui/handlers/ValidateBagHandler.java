@@ -24,7 +24,8 @@ public class ValidateBagHandler extends AbstractAction implements Progress {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		validateBag();
 	}
 
@@ -32,7 +33,8 @@ public class ValidateBagHandler extends AbstractAction implements Progress {
     	bagView.statusBarBegin(this, "Validating bag...", "verifying file checksum");
     }
 
-	public void execute() {
+	@Override
+  public void execute() {
 		DefaultBag bag = bagView.getBag();
         try {
     		CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
@@ -53,7 +55,8 @@ public class ValidateBagHandler extends AbstractAction implements Progress {
     	    }
     	    
     	    SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
+				@Override
+        public void run() {
 					ApplicationContextUtil.addConsoleMessage(messages);
 				}
     	    });

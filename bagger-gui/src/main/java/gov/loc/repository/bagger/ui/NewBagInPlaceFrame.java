@@ -202,7 +202,8 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 	private class AddKeepFilesToEmptyFoldersHandler extends AbstractAction {	       	
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {			
+		@Override
+    public void actionPerformed(ActionEvent e) {			
 
 			JCheckBox cb = (JCheckBox)e.getSource();
 
@@ -263,7 +264,8 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 	 */
 	private void initStandardCommands() {
 		finishCommand = new ActionCommand(getFinishCommandId()) {
-			public void doExecuteCommand() {
+			@Override
+      public void doExecuteCommand() {
 				
 				new OkNewBagHandler().actionPerformed(null);
 
@@ -272,7 +274,8 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 
 
 		cancelCommand = new ActionCommand(getCancelCommandId()) {
-			public void doExecuteCommand() {
+			@Override
+      public void doExecuteCommand() {
 				new CancelNewBagHandler().actionPerformed(null);
 			}
 		};
@@ -299,6 +302,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     	createPanel.invalidate();
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
     	invalidate();
     	repaint();
@@ -307,7 +311,8 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     private class BrowseFileHandler extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 			bag = bagView.getBag();
 			File selectFile = new File(File.separator+".");
 	        JFrame frame = new JFrame();
@@ -362,7 +367,8 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     private class OkNewBagHandler extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 			log.info("BagVersionFrame.OkNewBagHandler");
 			setVisible(false);			
 			if (bagView.getBag().isAddKeepFilesToEmptyFolders()) {
@@ -380,7 +386,8 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     private class CancelNewBagHandler extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 			setVisible(false);
         }
     }

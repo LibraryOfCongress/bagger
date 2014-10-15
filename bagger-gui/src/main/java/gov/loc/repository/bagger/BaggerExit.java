@@ -20,6 +20,7 @@ public class BaggerExit extends ExitCommand
      *
      * @see Application#close()
      */
+    @Override
     public void doExecuteCommand() {
 		super.doExecuteCommand();
 		log.debug("BaggerExit.doExecuteCommand");

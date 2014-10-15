@@ -87,7 +87,8 @@ public class AddFieldPanel extends JPanel {
 	private class StandardFieldCheckBoxAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 			JCheckBox checkbox = (JCheckBox) e.getSource();
 			boolean standardFieldSelected = checkbox.isSelected();
 			if (standardFieldSelected) {
@@ -131,7 +132,8 @@ public class AddFieldPanel extends JPanel {
 	}
 	
 	
-	public void setEnabled(boolean enabled) {
+	@Override
+  public void setEnabled(boolean enabled) {
 		Component[] components = getComponents();
 		for (int i = 0; i < components.length; i++) {
 			components[i].setEnabled(enabled);
@@ -142,7 +144,8 @@ public class AddFieldPanel extends JPanel {
 	private class AddFieldAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+    public void actionPerformed(ActionEvent e) {
 			BagView bagView = ApplicationContextUtil.getBagView();
 			
 			BagInfoField field = createBagInfoField();

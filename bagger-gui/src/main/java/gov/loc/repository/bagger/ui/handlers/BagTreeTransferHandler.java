@@ -47,10 +47,12 @@ public class BagTreeTransferHandler extends TransferHandler {
     	log.info(msg);
     }
 
+    @Override
     public int getSourceActions(JComponent c) {
     	return TransferHandler.COPY;
     }
 
+    @Override
     public boolean canImport(JComponent comp, DataFlavor transferFlavors[]) {
     	for (int i = 0; i < transferFlavors.length; i++) {
     		Class representationclass = transferFlavors[i].getRepresentationClass();
@@ -91,7 +93,8 @@ public class BagTreeTransferHandler extends TransferHandler {
     	return false;
     }
 
-	protected Transferable createTransferable(JComponent c) {
+	@Override
+  protected Transferable createTransferable(JComponent c) {
 		JTree tree = (JTree)c;
 		TreePath[] paths = tree.getSelectionPaths();
 		if(paths != null) {
@@ -129,7 +132,8 @@ public class BagTreeTransferHandler extends TransferHandler {
 		return new DefaultMutableTreeNode(node);
 	}
 
-	protected void exportDone(JComponent source, Transferable data, int action) {
+	@Override
+  protected void exportDone(JComponent source, Transferable data, int action) {
 //		if((action & MOVE) == MOVE) {
 			JTree tree = (JTree)source;
 			DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
@@ -169,17 +173,20 @@ public class BagTreeTransferHandler extends TransferHandler {
 			this.nodes = nodes;
 		}
 
-		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+		@Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
 			if(!isDataFlavorSupported(flavor))
 				throw new UnsupportedFlavorException(flavor);
 			return nodes;
 		}
 
-		public DataFlavor[] getTransferDataFlavors() {
+		@Override
+    public DataFlavor[] getTransferDataFlavors() {
 			return flavors;
 		}
 
-		public boolean isDataFlavorSupported(DataFlavor flavor) {
+		@Override
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
 			return nodesFlavor.equals(flavor);
 		}
 	}

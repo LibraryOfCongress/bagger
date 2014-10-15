@@ -28,12 +28,14 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		createBagInPlace();
 	}
 
 
-	public void execute() {
+	@Override
+  public void execute() {
 		bagView.statusBarEnd();
 	}
 

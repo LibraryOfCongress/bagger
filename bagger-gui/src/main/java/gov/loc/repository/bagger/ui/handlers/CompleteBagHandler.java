@@ -22,7 +22,8 @@ public class CompleteBagHandler extends AbstractAction implements Progress {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		completeBag();
 	}
 
@@ -30,7 +31,8 @@ public class CompleteBagHandler extends AbstractAction implements Progress {
     	bagView.statusBarBegin(this, "Checking if complete...", null);
     }
 
-	public void execute() {
+	@Override
+  public void execute() {
 		DefaultBag bag = bagView.getBag();
         try {
             CompleteVerifierImpl completeVerifier = new CompleteVerifierImpl();
@@ -47,7 +49,8 @@ public class CompleteBagHandler extends AbstractAction implements Progress {
     	    }
     	    
     	    SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
+				@Override
+        public void run() {
 					ApplicationContextUtil.addConsoleMessage(messages);
 				}});
         	

@@ -634,6 +634,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         bagTagFileTreePanel.refresh(bagTagFileTree);
     }
 
+    @Override
     protected void registerLocalCommandExecutors(PageComponentContext context) {
     	context.register("startCommand", startExecutor);
     	context.register("openCommand", openExecutor);
@@ -646,6 +647,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     	context.register("saveBagAsCommand", saveBagAsExecutor);
     }
 
+    @Override
     public void onApplicationEvent(ApplicationEvent e) {
     	log.info("BagView.onApplicationEvent: " + e);
         if (e instanceof LifecycleApplicationEvent) {
@@ -662,6 +664,7 @@ public class BagView extends AbstractView implements ApplicationListener {
      * is called each time the Timer "goes off".
      */
     class TimerListener implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent evt) {
             // check if task is completed or user has clicked cancel button
             if (task.hasUserTriedToCancel() || task.isDone()) {
@@ -671,7 +674,7 @@ public class BagView extends AbstractView implements ApplicationListener {
                 timer.stop();                
                 log.info("Stopped the timer");
                 // getting an array of Action Listeners from Timer Listener (will have only one element)
-                ActionListener[] als = (ActionListener[])(timer.getListeners(ActionListener.class));
+                ActionListener[] als = (timer.getListeners(ActionListener.class));
                 // Removing Action Listener from timer
 				if (als.length > 0) 
 					timer.removeActionListener(als[0]);
@@ -711,7 +714,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	{
     		tree.addTreeSelectionListener(new TreeSelectionListener() {
 
-    			public void valueChanged(TreeSelectionEvent e) {
+    			@Override
+          public void valueChanged(TreeSelectionEvent e) {
 
     				TreePath[] paths = tree.getSelectionPaths();
     				if(paths == null || paths.length == 0)
@@ -734,7 +738,8 @@ public class BagView extends AbstractView implements ApplicationListener {
     	{
     		tree.addTreeSelectionListener(new TreeSelectionListener() {
 
-    			public void valueChanged(TreeSelectionEvent e) {
+    			@Override
+          public void valueChanged(TreeSelectionEvent e) {
 
     				TreePath[] paths = tree.getSelectionPaths();
     				if(paths == null || paths.length == 0)
@@ -779,8 +784,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     private boolean checkFetchTxtFile() {
     	if (bag.getFetchTxt() != null)
     		return true;
-    	else 
-    		return false;    	
+      return false;    	
     }
 
     /*

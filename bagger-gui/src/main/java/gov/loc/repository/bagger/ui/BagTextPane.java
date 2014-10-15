@@ -75,6 +75,7 @@ public class BagTextPane extends JTextPane {
         StyleConstants.setComponent(labelStyle, label);
     }
 
+    @Override
     public boolean requestFocusInWindow() {
         return this.requestFocusInWindow();
     }

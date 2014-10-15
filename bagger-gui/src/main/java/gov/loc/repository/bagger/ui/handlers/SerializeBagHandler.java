@@ -1,14 +1,6 @@
 
 package gov.loc.repository.bagger.ui.handlers;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.ui.BagView;
-
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JRadioButton;
-
 public class SerializeBagHandler{// extends AbstractAction {
 //   	private static final long serialVersionUID = 1L;
 //	BagView bagView;

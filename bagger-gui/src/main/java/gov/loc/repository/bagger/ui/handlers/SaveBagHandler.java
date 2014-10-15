@@ -39,7 +39,8 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		DefaultBag bag = bagView.getBag();
 		bagView.infoInputPane.updateBagHandler.updateBag(bag);
 		if (bagView.getBagRootPath().exists()) {
@@ -51,7 +52,8 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 	}
 
 
-	public void execute() {
+	@Override
+  public void execute() {
 		DefaultBag bag = bagView.getBag();
 		
 		Writer bagWriter = null;
@@ -81,7 +83,8 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 				
 			SwingUtilities.invokeLater(new Runnable() {
 
-				public void run() {
+				@Override
+        public void run() {
 					DefaultBag bag = bagView.getBag();
 					if (bag.isSerialized()) {
 						if (clearAfterSaving) {
@@ -137,7 +140,8 @@ public class SaveBagHandler extends AbstractAction implements Progress {
     public void confirmWriteBag() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
 	    	boolean isCancel = true;
-	        protected void onConfirm() {
+	        @Override
+          protected void onConfirm() {
 	        	DefaultBag bag = bagView.getBag();
 	        	if (bag.getSize() > DefaultBag.MAX_SIZE) {
 	        		confirmAcceptBagSize();
@@ -146,7 +150,8 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 		        	saveBag(bagView.getBagRootPath());
 	        	}
 	        }
-	        protected void onCancel() {
+	        @Override
+          protected void onCancel() {
         		super.onCancel();
 	        	if (isCancel) {
 	        		cancelWriteBag();
@@ -167,7 +172,8 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 
     public void confirmAcceptBagSize() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
-	        protected void onConfirm() {
+	        @Override
+          protected void onConfirm() {
 	        	bagView.setBagRootPath(tmpRootPath);
 	        	saveBag(bagView.getBagRootPath());
 	        }

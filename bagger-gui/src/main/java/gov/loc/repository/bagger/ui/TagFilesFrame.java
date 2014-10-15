@@ -37,6 +37,7 @@ public class TagFilesFrame extends JFrame implements ActionListener {
     	pack();
     }
     
+    @Override
     public void actionPerformed(ActionEvent e) {
     	invalidate();
     	repaint();

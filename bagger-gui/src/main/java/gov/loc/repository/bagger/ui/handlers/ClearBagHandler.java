@@ -25,7 +25,8 @@ public class ClearBagHandler extends AbstractAction {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		closeExistingBag();
 	}
 
@@ -47,10 +48,12 @@ public class ClearBagHandler extends AbstractAction {
 
     private void confirmCloseBag() {
 	    ConfirmationDialog dialog = new ConfirmationDialog() {
-	        protected void onConfirm() {
+	        @Override
+          protected void onConfirm() {
 	        	setConfirmSaveFlag(true);
 	        }
-	        protected void onCancel() {
+	        @Override
+          protected void onCancel() {
         		super.onCancel();
 	        	clearExistingBag();
 	        }

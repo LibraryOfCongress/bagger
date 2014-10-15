@@ -29,7 +29,8 @@ public class BagTableFormBuilder extends TableFormBuilder {
 
 	private ComponentFactory componentFactory;
 
-	protected ComponentFactory getComponentFactory() {
+	@Override
+  protected ComponentFactory getComponentFactory() {
 		if (componentFactory == null) {
 			componentFactory = (ComponentFactory) ApplicationServicesLocator.services().getService(
 					ComponentFactory.class);
@@ -45,7 +46,7 @@ public class BagTableFormBuilder extends TableFormBuilder {
     public JComponent[] addList(String fieldName, boolean isRequired, String label, Collection<String> elements, String defaultValue, JComponent checkbox, String attributes) {
     	ArrayList<String> listModel = new ArrayList<String>();
 		for (Iterator<String> iter = elements.iterator(); iter.hasNext();) {
-			String item = (String) iter.next();
+			String item = iter.next();
 			listModel.add(item);
 		}
 		

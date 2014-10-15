@@ -2,8 +2,6 @@
 package gov.loc.repository.bagger;
 
 import java.awt.Dimension;
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.richclient.application.ApplicationWindow;
@@ -30,6 +28,7 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor
      * startup and only once. (note: for this to happen only once, a state should be preserved, which is not
      * the case with this sample)
      */
+    @Override
     public void onPreStartup()
     {
     	log.debug("BaggerLifeCycleAdvisor.onPreStartup");
@@ -58,6 +57,7 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor
     /**
      * Additional window configuration before it is created.
      */
+    @Override
     public void onPreWindowOpen(ApplicationWindowConfigurer configurer)
     {
         super.onPreWindowOpen(configurer);
@@ -69,6 +69,7 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor
     /**
      * When commands are created, lookup the login command and execute it.
      */
+    @Override
     public void onCommandsCreated(ApplicationWindow window)
     {
         //ActionCommand command = (ActionCommand) window.getCommandManager().getCommand("loginCommand", ActionCommand.class);

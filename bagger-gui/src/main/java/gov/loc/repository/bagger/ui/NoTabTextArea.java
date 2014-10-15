@@ -12,6 +12,7 @@ public class NoTabTextArea extends JTextArea {
 //    	this.setFocusTraversalKeysEnabled(false);
     }
 
+    @Override
     protected void processComponentKeyEvent( KeyEvent e ) {
     	if ( e.getID() == KeyEvent.KEY_PRESSED &&
     			e.getKeyCode() == KeyEvent.VK_TAB ) {

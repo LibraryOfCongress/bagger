@@ -57,6 +57,7 @@ public class BagInfoForm extends AbstractForm implements FocusListener {
     	this.bagView = bagView;
     }
 
+    @Override
     protected JComponent createFormControl() {
     	// add field panel
     	JPanel contentPanel = new JPanel(new GridBagLayout());
@@ -88,7 +89,7 @@ public class BagInfoForm extends AbstractForm implements FocusListener {
 			Set<String> keys = fieldMap.keySet();
 			if (keys != null) {
 				for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-					String key = (String) iter.next();
+					String key = iter.next();
 	            	BagInfoField field = fieldMap.get(key);
 	                formBuilder.row();
 	                rowCount++;
@@ -155,9 +156,11 @@ public class BagInfoForm extends AbstractForm implements FocusListener {
     }
 
 
+    @Override
     public void focusGained(FocusEvent evt) {
     }
     
+    @Override
     public void focusLost(FocusEvent evt) {
     	DefaultBag defaultBag = bagView.getBag();
     	bagView.infoInputPane.updateBagHandler.updateBag(defaultBag);
@@ -168,7 +171,8 @@ public class BagInfoForm extends AbstractForm implements FocusListener {
     private class RemoveFieldHandler extends AbstractAction {
        	private static final long serialVersionUID = 1L;
 
-    	public void actionPerformed(ActionEvent e) {
+    	@Override
+      public void actionPerformed(ActionEvent e) {
     		try {
         		Component selected = (Component) e.getSource();
         		String key = "";
@@ -212,7 +216,7 @@ public class BagInfoForm extends AbstractForm implements FocusListener {
 		Set<String> keys = fieldMap.keySet();
 		if (keys != null) {
 			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-				String keySet = (String) iter.next();
+				String keySet = iter.next();
 				if (keySet.equalsIgnoreCase(key)) {
 					field = fieldMap.get(key);
 					return field;

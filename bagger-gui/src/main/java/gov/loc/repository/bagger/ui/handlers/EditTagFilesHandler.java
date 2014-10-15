@@ -18,7 +18,8 @@ public class EditTagFilesHandler extends AbstractAction {
 		this.bagView = bagView;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+  public void actionPerformed(ActionEvent e) {
 		this.bag = bagView.getBag();
 	}
 }

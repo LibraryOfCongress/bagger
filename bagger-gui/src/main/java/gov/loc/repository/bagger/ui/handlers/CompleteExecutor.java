@@ -16,7 +16,8 @@ public class CompleteExecutor extends AbstractActionCommandExecutor {
 		this.bagView = bagView;
 	}
 
-	public void execute() {
+	@Override
+  public void execute() {
 		bagView.completeBagHandler.completeBag();
 	}
 
