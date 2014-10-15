@@ -56,7 +56,7 @@ public class BaggerProfileStore {
     public Profile getDefaultProfile() {
     	Set<String> profileKeys = userProfiles.keySet();
     	for (Iterator<String> iter = profileKeys.iterator(); iter.hasNext();) {
-			String key = (String) iter.next();
+			String key = iter.next();
 			Profile bagProfile = userProfiles.get(key);
     		if (bagProfile.getIsDefault()) {
         		return bagProfile;

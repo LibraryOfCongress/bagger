@@ -11,6 +11,7 @@ import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +23,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class DefaultBagInfo {
+public class DefaultBagInfo implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private static final Log log = LogFactory.getLog(DefaultBagInfo.class);
@@ -104,7 +105,7 @@ public class DefaultBagInfo {
 		if (fieldMap != null) {
 			Set<String> keys = fieldMap.keySet();
 			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-				String label = (String) iter.next();
+				String label = iter.next();
 				BagInfoField field = fieldMap.get(label);
 				String key = field.getLabel();
 				String value = bagInfoTxt.get(key);
@@ -308,8 +309,8 @@ public class DefaultBagInfo {
 	public void update(Map<String, String> map) {
 		Set<String> keys = map.keySet();
 		for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-			String key = (String) iter.next();
-			String value = (String) map.get(key);
+			String key = iter.next();
+			String value = map.get(key);
 			if (fieldMap.get(key) != null)
 				fieldMap.get(key).setValue(value);
 		}

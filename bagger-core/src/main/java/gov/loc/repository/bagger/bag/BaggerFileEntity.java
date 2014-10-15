@@ -63,7 +63,8 @@ public class BaggerFileEntity {
 		}
 	}
 	
-	public String toString() {
+	@Override
+  public String toString() {
 		return this.getNormalizedName();
 	}
 	
@@ -95,8 +96,8 @@ public class BaggerFileEntity {
 		// TODO given the bag location, create the location the src file will exist
 		// within the bag data directory, e.g. strip off parent of src and replace
 		// it with the bag data dir
-		File bagSrc = src;
-		File f = new File(bagDir, bagSrc.getPath());
+		File localBagSrc = src;
+		File f = new File(bagDir, localBagSrc.getPath());
 		this.bagSrc = f;
 	}
 

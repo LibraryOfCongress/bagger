@@ -102,12 +102,12 @@ public class DefaultBag {
 		log.info(this.getClass().getName() + ": " + s);
 	}
 
-	private void init(File rootDir) {
-		boolean newBag = rootDir == null;
+	private void init(File dir) {
+		boolean newBag = dir == null;
 		resetStatus();
-		this.rootDir = rootDir;
+		this.rootDir = dir;
 
-		display("DefaultBag.init file: " + rootDir + ", version: "
+		display("DefaultBag.init file: " + dir + ", version: "
 				+ versionString);
 		BagFactory bagFactory = new BagFactory();
 		if (!newBag) {
@@ -128,9 +128,9 @@ public class DefaultBag {
 			String url = getBaseUrl(fetchTxt);
 			if (url != null && !url.isEmpty()) {
 				isHoley(true);
-				BaggerFetch fetch = this.getFetch();
-				fetch.setBaseURL(url);
-				this.fetch = fetch;
+				BaggerFetch localFetch = this.getFetch();
+				localFetch.setBaseURL(url);
+				this.fetch = localFetch;
 			} else {
 				isHoley(false);
 			}
@@ -144,8 +144,8 @@ public class DefaultBag {
 		// set profile
 		String lcProject = bilBag.getBagInfoTxt().get(DefaultBagInfo.FIELD_LC_PROJECT);
 		if (lcProject != null && !lcProject.isEmpty()){
-    		Profile profile = BaggerProfileStore.getInstance().getProfile(lcProject);
-    		setProfile(profile, newBag);
+    		Profile localProfile = BaggerProfileStore.getInstance().getProfile(lcProject);
+    		setProfile(localProfile, newBag);
     	} else {
     		clearProfile();
     	}
@@ -158,7 +158,7 @@ public class DefaultBag {
 			/* */
 			Set<String> keys = bagInfoTxt.keySet();
 			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-				String key = (String) iter.next();
+				String key = iter.next();
 				bagInfoTxt.remove(key);
 			}
 			/* */
@@ -424,9 +424,9 @@ public class DefaultBag {
 			return list;
 		if (fetchTxt != null) {
 			for (int i = 0; i < fetchTxt.size(); i++) {
-				FilenameSizeUrl fetch = fetchTxt.get(i);
-				String s = fetch.getFilename();
-				display("DefaultBag.getFetchPayload: " + fetch.toString());
+				FilenameSizeUrl localFetch = fetchTxt.get(i);
+				String s = localFetch.getFilename();
+				display("DefaultBag.getFetchPayload: " + localFetch.toString());
 				list.add(s);
 			}
 		}
@@ -631,14 +631,14 @@ public class DefaultBag {
 
 	private String fileStripSuffix(String filename) {
 		StringTokenizer st = new StringTokenizer(filename, ".");
-		String name = st.nextToken();
-		return name;
+		String nextName = st.nextToken();
+		return nextName;
 	}
 
 	private String writeBag(Writer bw) {
 		String messages = null;
 		String bagName = "";
-		File bagFile = null;
+		File localBagFile = null;
 		File parentDir = null;
 		bagName = fileStripSuffix(getRootDir().getName());
 		parentDir = getRootDir().getParentFile();
@@ -647,7 +647,7 @@ public class DefaultBag {
 		
 		this.setName(bagName);
 		if (this.serialMode == NO_MODE) {
-			bagFile = new File(parentDir, this.getName());
+			localBagFile = new File(parentDir, this.getName());
 		} else if (this.serialMode == ZIP_MODE) {
 			String s = bagName;
 			int i = s.lastIndexOf('.');
@@ -659,7 +659,7 @@ public class DefaultBag {
 			} else {
 				bagName += "." + ZIP_LABEL;
 			}
-			bagFile = new File(parentDir, bagName);
+			localBagFile = new File(parentDir, bagName);
 			/*long zipSize = this.getSize() / MB;
 			if (zipSize > 100) {
 				messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
@@ -674,7 +674,7 @@ public class DefaultBag {
 			} else {
 				bagName += "." + TAR_LABEL;
 			}
-			bagFile = new File(parentDir, bagName);
+			localBagFile = new File(parentDir, bagName);
 			/*long zipSize = this.getSize() / MB;
 			if (zipSize > 100) {
 				messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
@@ -689,7 +689,7 @@ public class DefaultBag {
 			} else {
 				bagName += "." + TAR_GZ_LABEL;
 			}
-			bagFile = new File(parentDir, bagName);
+			localBagFile = new File(parentDir, bagName);
 			/*long zipSize = this.getSize() / MB;
 			if (zipSize > 100) {
 				messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
@@ -704,18 +704,18 @@ public class DefaultBag {
 			} else {
 				bagName += "." + TAR_BZ2_LABEL;
 			}
-			bagFile = new File(parentDir, bagName);
+			localBagFile = new File(parentDir, bagName);
 			/*long zipSize = this.getSize() / MB;
 			if (zipSize > 100) {
 				messages = "WARNING: You may not be able to network transfer files > 100 MB!\n";
 			}*/
 		}
-		setBagFile(bagFile);
+		setBagFile(localBagFile);
 		
 		log.info("Bag-Info to write: " + bilBag.getBagInfoTxt());
 		
 		this.isSerialized(false);
-		Bag newBag = bw.write(bilBag, bagFile);
+		Bag newBag = bw.write(bilBag, localBagFile);
 		if (newBag != null) {
 			bilBag = newBag;
 			// write successful
@@ -734,7 +734,7 @@ public class DefaultBag {
 		if (fieldMap != null) {
 			Set<String> keys = fieldMap.keySet();
 			for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-				String label = (String) iter.next();
+				String label = iter.next();
 				BagInfoField field = fieldMap.get(label);
 				if (field.isRequired()) {
 					rulesList.add(field.getLabel());
