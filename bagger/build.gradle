@@ -43,12 +43,19 @@ distZip {
   }
 }
 
-jar.doLast {
-  ant.signjar(destDir: jar.destinationDir,
-    jar: jar.archivePath, 
-    alias:"rdc",
-    //storetype:pkcs12, 
-    keystore:"${rootDir.path}/scripts/bagger.ks",
-    storepass:"bagger-rdc", 
-    preservelastmodified:"true") 
+task srcZip(type: Zip) {
+  classifier = 'src'
+  from rootDir
+  include 'bagger-business/**'
+  include 'bagger-common/**'
+  include 'bagger-core/**'
+  include 'bagger-maven/**'
+  include 'bagger-package/**'
+  include 'bagger_distribution/**'
+  include 'README.txt'
+  include 'build.gradle'
+  include 'eclipse.gradle'
+  include 'settings.gradle'
 }
+
+tasks.distZip.dependsOn srcZip
