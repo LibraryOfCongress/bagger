@@ -53,7 +53,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     	try {
     		bagView.getBag().createPreBag(dataFile, bagItVersion);
     	} catch (Exception e) {
-    	    bagView.showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
+    	    bagView.showWarningErrorDialog("Error - bagging in place", e.getMessage());
     		return;
     	}
     	DefaultBag bag = bagView.getBag();
