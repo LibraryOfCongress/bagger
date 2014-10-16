@@ -2,7 +2,7 @@
 description = 'Spring richclient bagger business'
 dependencies {
   compile project(':bagger-common')
-    compile group: 'org.springframework', name: 'spring-core', version:'2.5.1'
-    compile group: 'org.springframework', name: 'spring-beans', version:'2.5.1'
-    compile group: 'org.springframework', name: 'spring-context', version:'2.5.1'
+    compile 'org.springframework:spring-core:2.5.1'
+      'org.springframework:spring-beans:2.5.1'
+      'org.springframework:spring-context:2.5.1'
 }
