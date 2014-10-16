@@ -39,6 +39,12 @@ distZip {
     include "*.doc"
     include "*.txt"
   }
+  
+  //include the keystore used for signing jars
+  into("${baseZipDirectory}/keystore") {
+    from "${rootDir.path}/scripts"
+    include "bagger.ks"
+  }
 }
 
 task srcZip(type: Zip) {
