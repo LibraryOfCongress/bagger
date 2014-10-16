@@ -1,14 +1,10 @@
-Bagger 2.1.3 README.txt
+Bagger 2.1.4.BETA README.txt
 =======================
 
 1. New Features
    ============
 
-i)   Upgraded from Bagit Library (BIL) from 3.13 to 4.4 (i.e. using BIL for API calls).
-
-ii)  Due to the Bagit Library (BIL) upgrade from 3.13 to 4.4, Bagger 2.1.3 can now preserve dates and times of bagged items.
-
-iii) Due to the Bagit Library (BIL) upgrade to version 4.4, we had to remove tar format options (i.e. like tar, tar.gz, and tar.bz2) for bags from Bagger 2.1.3.  This was done because tar formats for bags were removed from Bagit Library (BIL), starting from version 4.0.
+i)   Changed from build system MAVEN to GRADLE. Due to this a new packaging format is used. See details below.
           
 Note: If a project requires bags to be converted into tar formats then continue to use Bagger 2.1.2 which uses Bagit Library (BIL) 3.13 which supports tar formats for bags.
 
@@ -119,35 +115,27 @@ The Bagger application starts with a splash banner page.
    ==============================
 
 You need to have OpenJDK Runtime Environment 6 installed on the Linux/Ubuntu system (preferably the latest release).
-After unpacking the zip file, find the directory bagger_distribution. To start the Bagger application, execute the bagger.sh file in the bagger_distribution folder (i.e. ./bagger.sh).  The Bagger application starts with a splash banner page.
+After unpacking the zip file, find the directory bagger-2.1.4.BETA. To start the Bagger application, execute the bagger file in the bagger-2.1.4.BETA folder (i.e. ./bagger).  The Bagger application starts with a splash banner page.
 
 
 7. Setting JAVA_HOME
    =================
 
-The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 6) on the user's machine.  For Linux/Ubuntu systems use OpenJDK Runtime Environment 6 (preferably the latest release).
+The Bagger Application needs to access the Java Runtime Environment (i.e. Java Runtime Environment 7) on the user's machine.  For Linux/Ubuntu systems use OpenJDK Runtime Environment 7 (preferably the latest release).
 
-If Java Runtime 6 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environment variable needs to be set in the bagger.bat (i.e. Windows) or bagger.sh (Linux/Ubuntu) files provided in the bagger-2.1.3 folder as follows:
+If Java Runtime 7 is not installed or it is not set in the System Path, then alternatively the JAVA_HOME environment variable needs to be set in the bagger.bat (i.e. Windows) or bagger (Linux/Unix) files provided in the bagger-2.1.4.BETA folder as follows:
 
 i) WINDOWS (File Path has space)
    -----------------------------
+Add the following line to the top of the bagger.bat file
+  SET JAVA_HOME="C:\Program Files\Java\jre7\bin"
 
-SET JAVA_HOME="C:\Program Files\Java\jre6\bin"
-%JAVA_HOME%\java.exe -jar bagger-2.1.3.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.3.jar
-
-ii) WINDOWS (File Path with no spaces)
-    ----------------------------------
-
-SET JAVA_HOME=C:\jre6\bin
-%JAVA_HOME%\java.exe -jar bagger-2.1.3.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.3.jar
-
-iii) Linux/Ubuntu
+ii) Linux/Ubuntu
      ------------
+Add the following line to the second line of the bagger file
+  JAVA_HOME = /usr/java/jre/bin
 
-JAVA_HOME = /usr/java/jre/bin
-$JAVA_HOME/java.exe -jar bagger-2.1.3.jar -Xms512m -classpath spring-beans-2.5.1.jar;bagger-2.1.3.jar
-
-Note: The above steps are just examples and could be avoided if the Java Runtime Environment 6 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
+Note: The above steps are just examples and could be avoided if the Java Runtime Environment 7 is set in the System Path, where the path or name of the Java Runtime Environment folder could be different.
 -----
 
 8.  Exceptions
@@ -156,7 +144,7 @@ Note: The above steps are just examples and could be avoided if the Java Runtime
 There are a few common causes for the bagger application to fail which are:
 
 i)   Using the incorrect version of the Java Run Time Environment or if no System Path is set for Java.
-     The fix is to use the correct Java Runtime Environment (i.e. 1.6.xx in Windows and OpenJDK 6 in Linux/Ubuntu)
+     The fix is to use the correct Java Runtime Environment (i.e. 1.7.xx in Windows and OpenJDK 7 in Linux/Unix)
 
 ii)  If the bagger folder in the user's home folder contains profile files using older JSON format.
      The fix is to delete the old profiles in the bagger folder and rerun the bagger application.
