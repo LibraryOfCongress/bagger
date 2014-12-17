@@ -49,9 +49,20 @@ distZip {
 
 startScripts << {
   String scriptText = windowsScript.text.replace("set JAVA_EXE=java.exe", "set JAVA_EXE=C:/Progra~2/Java/jre7/bin/java.exe")
-  println scriptText
   windowsScript.text = scriptText
 }
+
+task updateVersion << {
+  File about = new File(project.projectDir, "src/main/resources/gov/loc/repository/bagger/about.txt")
+  String updatedAbout = about.text.replaceAll("Version:.*", "Version: ${project.version}")
+  about.text = updatedAbout
+  
+  File messageProperties = new File(project.projectDir, "src/main/resources/gov/loc/repository/bagger/ui/messages.properties")
+  String updatedMessageProperties = messageProperties.text.replaceAll("applicationDescriptor\\.title=.*","applicationDescriptor.title=Bagger ${project.version}")
+  messageProperties.text = updatedMessageProperties
+}
+
+tasks.processResources.dependsOn updateVersion
 
 task srcZip(type: Zip) {
   classifier = 'src'
