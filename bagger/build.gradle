@@ -47,6 +47,12 @@ distZip {
   }
 }
 
+startScripts << {
+  String scriptText = windowsScript.text.replace("set JAVA_EXE=java.exe", "set JAVA_EXE=C:/Progra~2/Java/jre7/bin/java.exe")
+  println scriptText
+  windowsScript.text = scriptText
+}
+
 task srcZip(type: Zip) {
   classifier = 'src'
   from rootDir
