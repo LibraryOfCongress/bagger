@@ -14,7 +14,7 @@ These project profiles can be edited manually and shared with other users.
 2. License
    =======
 
-License and other related information are listed in the LICENSE.txt and NOTICE.txt files included the bagger_distribution folder.
+License and other related information are listed in the LICENSE.txt file included with Bagger.
 
 3. Project Profile
    ===============
@@ -84,12 +84,6 @@ Here is a sample profile (please ignore the comments (//) when creating a JSON p
 
 The file should be named <profile name>-profile.json. For example, wdl-profile.json.
 The items in the profile file (i.e. JSON file) are listed in the Bag-Info tab of Bagger.
-
-3.1 WDL Profile
-    -----------
-
-With this release of Bagger 2.1.3 a Profile for the World Digital Library (WDL) has been included.  
-The included WDL profile is at bagger-2.1.3_src\bagger_distribution\profiles\wdl-profile.json (i.e. after extracting the bagger-2.1.3_src.zip file)
 
 
 4. Bagger Build Process
