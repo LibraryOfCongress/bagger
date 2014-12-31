@@ -3,15 +3,12 @@ package gov.loc.repository.bagger.bag;
 
 import gov.loc.repository.bagger.ProfileField;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-public class BagInfoField {
+public class BagInfoField implements Serializable{
 	private static final long serialVersionUID = 1L;
-	private static final Log logger = LogFactory.getLog(BagInfoField.class);
 	public static final int TEXTFIELD_COMPONENT = 1;
 	public static final int TEXTAREA_COMPONENT = 2;
 	public static final int LIST_COMPONENT = 3;
@@ -137,12 +134,13 @@ public class BagInfoField {
     	return this.isProfile;
     }
     
-    public void buildElements(List<String> elements) {
+    public void buildElements(List<String> elementList) {
 		
-		this.elements = elements;
+		this.elements = elementList;
     }
     
    
+    @Override
     public String toString() {
     	StringBuffer sb = new StringBuffer();
     	sb.append("\n");

@@ -1,0 +1,26 @@
+subprojects{
+  apply plugin: 'java'
+  apply plugin: 'maven'
+  apply from: '../eclipse.gradle'
+
+  group = 'loc-repository'
+
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+
+  repositories {
+    maven{ url "http://argon.rdc.lctl.gov:8081/artifactory/repo" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+    mavenCentral()
+  }
+
+//sign all the bagger jars
+  jar.doLast {
+    ant.signjar(destDir: jar.destinationDir,
+      jar: jar.archivePath, 
+      alias:"rdc",
+      keystore:"${rootDir.path}/scripts/bagger.ks",
+      storepass:"bagger-rdc", 
+      preservelastmodified:"true") 
+  }
+}

@@ -72,7 +72,8 @@ public class Profile {
 		return customFields;
 	}
 	
-	public String toString() {
+	@Override
+  public String toString() {
 		StringBuffer sb = new StringBuffer();
 		return sb.toString();
 	}
@@ -156,13 +157,13 @@ public class Profile {
 		String orgStringer = getOrganization().serialize();
 		String fromContact = getSendFromContact().serialize();
 		String toContact = getSendToContact().serialize();
-		String customFields = seralizeFields(this.getCustomFields().values());
-		String standardFields = seralizeFields(this.getStandardFields().values());
+		String localCustomFields = seralizeFields(this.getCustomFields().values());
+		String localStandardFields = seralizeFields(this.getStandardFields().values());
 		writer.key(FIELD_ORGANIZATION).value(new JSONObject(new JSONTokener(orgStringer.toString())));
 		writer.key(FIELD_SENDFROM).value(new JSONObject(new JSONTokener(fromContact.toString())));
 		writer.key(FIELD_SENDTO).value(new JSONObject(new JSONTokener(toContact)));
-		writer.key(FIELD_CUSTOM_INFO).value(new JSONObject(new JSONTokener(customFields)));
-		writer.key(FIELD_STANDARD_INFO).value(new JSONObject(new JSONTokener(standardFields)));
+		writer.key(FIELD_CUSTOM_INFO).value(new JSONObject(new JSONTokener(localCustomFields)));
+		writer.key(FIELD_STANDARD_INFO).value(new JSONObject(new JSONTokener(localStandardFields)));
 		writer.endObject();
 	}
 	

@@ -74,11 +74,25 @@ public class FileUtililties {
 	}
 
 	public static void copyAFile(File source, File target) throws IOException { 
-		FileChannel sourceChannel = new FileInputStream(source).getChannel();
-		FileChannel targetChannel = new FileInputStream(target).getChannel();
-		sourceChannel.transferTo(0, sourceChannel.size(), targetChannel);
-		sourceChannel.close();
-		targetChannel.close();
+	  FileInputStream sourceInputStream = null;
+	  FileInputStream targetInputStream = null;
+	  try{
+	    sourceInputStream = new FileInputStream(source);
+	    targetInputStream = new FileInputStream(target);
+	    FileChannel sourceChannel = sourceInputStream.getChannel();
+	    FileChannel targetChannel = targetInputStream.getChannel();
+	    sourceChannel.transferTo(0, sourceChannel.size(), targetChannel);
+	    sourceChannel.close();
+	    targetChannel.close();
+	  }
+	  finally{
+	    if(sourceInputStream != null){
+	      sourceInputStream.close();
+	    }
+	    if(targetInputStream != null){
+	      targetInputStream.close();
+	    }
+	  }
 	}
   
   /**
@@ -139,7 +153,7 @@ public class FileUtililties {
   			throw wrapper;
   		} finally { //Ensure that the files are closed (if they were open).
   			if (fin != null) { fin.close(); }
-  			if (fout != null) { fin.close(); }
+  			if (fout != null) { fout.close(); }
   		}
   	}
   }

@@ -23,8 +23,9 @@ package gov.loc.repository.bagger.util;
     * generic type.
     *
     * @author david
+   * @param <T>
     */
-   public class FlatteningIterator implements Iterator
+   public class FlatteningIterator implements Iterator<Object>
    {
        // Marker object. This is never exposed outside this class, so can be guaranteed
        // to be != anything else. We use it to indicate an absense of any other object.
@@ -41,7 +42,8 @@ package gov.loc.repository.bagger.util;
        public FlatteningIterator(Object... objects){
            this.iterators.push(Arrays.asList(objects).iterator());}
 
-       public void remove(){
+       @Override
+      public void remove(){
            /* Not implemented */}
 
        private void moveToNext(){
@@ -50,38 +52,38 @@ package gov.loc.repository.bagger.util;
                    iterators.pop();
                    moveToNext();}
                    else{
-                       final Object next = iterators.peek().next();
-                       if (next instanceof Iterator){
-                         iterators.push((Iterator<?>)next);
+                       final Object nextInInteration = iterators.peek().next();
+                       if (nextInInteration instanceof Iterator){
+                         iterators.push((Iterator<?>)nextInInteration);
                          moveToNext();}
-                       else if (next instanceof Iterable){
-                          iterators.push(((Iterable)next).iterator());
+                       else if (nextInInteration instanceof Iterable){
+                          iterators.push(((Iterable<?>)nextInInteration).iterator());
                           moveToNext();}
-                       else if (next instanceof Array){
-                           iterators.push(Arrays.asList((Array)next).iterator());
+                       else if (nextInInteration instanceof Array){
+                           iterators.push(Arrays.asList((Array)nextInInteration).iterator());
                            moveToNext();}
-                       else this.next = next;}}}
+                       else this.next = nextInInteration;}}}
 
        /**
         * Returns the next element in our iteration, throwing a NoSuchElementException
         * if none is found.
         */
-       public Object next() throws NoSuchElementException {
+       @Override
+      public Object next() throws NoSuchElementException {
            moveToNext();
 
            if (this.next == blank) throw new NoSuchElementException();
-           else{
-               Object next = this.next;
-               this.next = blank;
-               return next;
-           }}
+          Object nextCopy = this.next;
+           this.next = blank;
+           return nextCopy;}
 
        /**
         * Returns if there are any objects left to iterate over. This method
         * can change the internal state of the object when it is called, but repeated
         * calls to it will not have any additional side effects.
         */
-       public boolean hasNext(){
+       @Override
+      public boolean hasNext(){
            moveToNext();
            return (this.next != blank);}
    }

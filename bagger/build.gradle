@@ -1,0 +1,82 @@
+apply plugin: "application"
+
+mainClassName = "gov.loc.repository.bagger.BaggerApplication"
+
+description = """Spring richclient bagger GUI"""
+
+jar.baseName="bagger"
+
+dependencies {
+     compile 'gov.loc:bagit:4.4',
+       project(':bagger-common'),
+       project(':bagger-core'),
+       project(':bagger-business'),
+       'org.springframework.richclient:spring-richclient-resources:1.0.0',
+       'org.springframework.richclient:spring-richclient-core:1.0.0',
+       'org.springframework.richclient:spring-richclient-binding:1.0.0',
+       'org.springframework.richclient:spring-richclient-form:1.0.0',
+       'org.springframework.richclient:spring-richclient-support:1.0.0',
+       'org.springframework.richclient:spring-richclient-jdk5:1.0.0',
+       'org.springframework.richclient:spring-richclient-jdk6:1.0.0',
+       'org.springframework.richclient:spring-richclient-sandbox:1.0.0',
+       'org.springframework.richclient:spring-richclient-vldocking:1.1.0',
+       'com.vlsolutions.swing:docking:2.1.4',
+       'com.jgoodies:forms:1.0.7',
+       'net.sf.nachocalendar:nachocalendar:0.23',
+       'commons-logging:commons-logging:1.1.1',
+       'log4j:log4j:1.2.14'
+     
+    runtime 'com.jgoodies:looks:2.0.4'
+}
+
+//include the docs and licenses into the distributable zip
+distZip {
+  String baseZipDirectory = archiveName - ("." + extension)
+
+  //include the various user guides
+  into("${baseZipDirectory}/doc") {
+    from "${rootDir.path}/bagger_distribution"
+    include "*.doc"
+    include "*.txt"
+  }
+  
+  //include the keystore used for signing jars
+  into("${baseZipDirectory}/keystore") {
+    from "${rootDir.path}/scripts"
+    include "bagger.ks"
+  }
+}
+
+startScripts << {
+  String scriptText = windowsScript.text.replace("set JAVA_EXE=java.exe", "set JAVA_EXE=C:/Progra~2/Java/jre7/bin/java.exe")
+  windowsScript.text = scriptText
+}
+
+task updateVersion << {
+  File about = new File(project.projectDir, "src/main/resources/gov/loc/repository/bagger/about.txt")
+  String updatedAbout = about.text.replaceAll("Version:.*", "Version: ${project.version}")
+  about.text = updatedAbout
+  
+  File messageProperties = new File(project.projectDir, "src/main/resources/gov/loc/repository/bagger/ui/messages.properties")
+  String updatedMessageProperties = messageProperties.text.replaceAll("applicationDescriptor\\.title=.*","applicationDescriptor.title=Bagger ${project.version}")
+  messageProperties.text = updatedMessageProperties
+}
+
+tasks.processResources.dependsOn updateVersion
+
+task srcZip(type: Zip) {
+  classifier = 'src'
+  from rootDir
+  include 'bagger-business/**'
+  include 'bagger-common/**'
+  include 'bagger-core/**'
+  include 'bagger-maven/**'
+  include 'bagger-package/**'
+  include 'bagger_distribution/**'
+  include 'README.txt'
+  include 'build.gradle'
+  include 'eclipse.gradle'
+  include 'settings.gradle'
+}
+
+tasks.distZip.dependsOn srcZip

@@ -74,7 +74,8 @@ public class Contact {
 		this.email = email;
 	}
 	
-	public String toString() {
+	@Override
+  public String toString() {
 		StringBuffer sb = new StringBuffer();
 //		sb.append(this.getContactName());
 //		sb.append('\n');

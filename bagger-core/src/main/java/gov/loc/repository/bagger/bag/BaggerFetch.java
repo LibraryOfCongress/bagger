@@ -1,12 +1,14 @@
 package gov.loc.repository.bagger.bag;
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Jon Steinbach
  */
-public class BaggerFetch {
+public class BaggerFetch implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private static final Log log = LogFactory.getLog(BaggerFetch.class);

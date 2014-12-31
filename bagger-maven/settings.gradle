@@ -1,0 +1,12 @@
+rootProject.name = 'bagger-maven'
+include ':bagger-common'
+include ':bagger-core'
+include ':bagger-business'
+include ':bagger-gui'
+include ':bagger-package'
+
+project(':bagger-common').projectDir = "$rootDir/../bagger-common" as File
+project(':bagger-core').projectDir = "$rootDir/../bagger-core" as File
+project(':bagger-business').projectDir = "$rootDir/../bagger-business" as File
+project(':bagger-gui').projectDir = "$rootDir/../bagger-gui" as File
+project(':bagger-package').projectDir = "$rootDir/../bagger-package" as File

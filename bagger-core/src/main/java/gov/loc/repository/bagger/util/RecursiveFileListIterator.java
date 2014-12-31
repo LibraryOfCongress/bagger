@@ -15,7 +15,8 @@ import java.util.Iterator;
    {
        private final FlatteningIterator flatteningIterator;
 
-       public void remove() { }
+       @Override
+      public void remove() { }
 
        public RecursiveFileListIterator(File file, FileFilter filter){
            this.flatteningIterator = new FlatteningIterator(new FileIterator(file, filter)); }
@@ -24,10 +25,12 @@ import java.util.Iterator;
            this(file, null);}
 
 
-       public boolean hasNext(){
+       @Override
+      public boolean hasNext(){
            return flatteningIterator.hasNext();}
 
-       public File next(){
+       @Override
+      public File next(){
            return (File)flatteningIterator.next();}
 
 
@@ -50,20 +53,25 @@ import java.util.Iterator;
         	   this.filter = filter;
            }
 
-           public void remove() { }
+           @Override
+          public void remove() { }
 
-           public Object next() {
+           @Override
+          public Object next() {
                File next = this.files.next();
 
-               if (next.isDirectory()) return new FileIterator(next, this.filter);
-               else return next;
+               if (next.isDirectory()){
+                 return new FileIterator(next, this.filter);
+               }
+              return next;
            }
 
-           public boolean hasNext() {
-        	   if (this.files != null)
+           @Override
+          public boolean hasNext() {
+        	   if (this.files != null){
         		   return this.files.hasNext();
-        	   else
-        		   return false;
+        	   }
+        		 return false;
            }
        }
 }
