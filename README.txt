@@ -5,7 +5,8 @@ Bagger README.txt
    ============
 
 The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit-05).
-The Bagger application is a graphical user interface to the BIL (BagIt Library, http://sourceforge.net/projects/loc-xferutils) command line driver which is an implementation of tools conforming to the BagIt specification.  
+
+The Bagger application is a graphical user interface to the BagIt specification. The latest Bagger release is available on GitHub (currently https://github.com/LibraryOfCongress/bagger/releases/tag/v2.2)
 
 Bagger differs from BIL by providing graphical user interface for file and data manipulation features as well as a visual view of the bag contents, bag state and options.  In addition Bagger provides a project profile capability.  Users can create customized bag-info.txt data with project specific properties that the user defines.
 
