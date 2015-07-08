@@ -9,8 +9,8 @@ subprojects{
   targetCompatibility = 1.7
 
   repositories {
-    maven{ url "http://argon.rdc.lctl.gov:8081/artifactory/repo" }
-    maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "http://spring-rich-c.sourceforge.net/maven2repository" }
+    jcenter()
     mavenCentral()
   }
 
