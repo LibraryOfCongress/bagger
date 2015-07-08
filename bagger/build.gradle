@@ -45,6 +45,11 @@ distZip {
     from "${rootDir.path}/scripts"
     include "bagger.ks"
   }
+
+  into("${baseZipDirectory}/bin") {
+    from "${rootDir.path}/scripts"
+    include "discoverJavaVersions.py"
+  }
 }
 
 startScripts << {
