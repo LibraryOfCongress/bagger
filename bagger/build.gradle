@@ -54,7 +54,7 @@ startScripts << {
 
 task updateVersion << {
   File about = new File(project.projectDir, "src/main/resources/gov/loc/repository/bagger/about.txt")
-  String updatedAbout = about.text.replaceAll("Version:.*", "Version: ${project.version}")
+  String updatedAbout = about.text.replaceAll("Version: unspecified", "Version: ${project.version}")
   about.text = updatedAbout
   
   File messageProperties = new File(project.projectDir, "src/main/resources/gov/loc/repository/bagger/ui/messages.properties")
