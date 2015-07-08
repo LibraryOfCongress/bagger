@@ -52,9 +52,15 @@ distZip {
   }
 }
 
-startScripts << {
-  String scriptText = windowsScript.text.replace("set JAVA_EXE=java.exe", "set JAVA_EXE=C:/Progra~2/Java/jre7/bin/java.exe")
-  windowsScript.text = scriptText
+startScripts {
+  if(project.version == "unspecified"){
+    applicationDefaultJvmArgs += ["-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n"]
+  }
+  
+  doLast{
+    String scriptText = windowsScript.text.replace("set JAVA_EXE=java.exe", "set JAVA_EXE=C:/Progra~2/Java/jre7/bin/java.exe")
+    windowsScript.text = scriptText
+  }
 }
 
 task updateVersion << {

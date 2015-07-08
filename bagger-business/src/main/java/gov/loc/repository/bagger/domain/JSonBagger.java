@@ -8,20 +8,15 @@ import gov.loc.repository.bagger.json.JSONTokener;
 import gov.loc.repository.bagger.json.JSONWriter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.JarEntry;
 
 /**
  * Provides JSONBagger business object.
@@ -30,11 +25,13 @@ import java.util.jar.JarEntry;
  *
  * Leverages saving and loading profiles in JSON format.
  *
- * @author Praveen Bokka
  */
 public class JSonBagger implements Bagger {
 
   private File profilesFolder;
+  
+  private static final String RESOURCE_DIR = "gov/loc/repository/bagger/profiles";
+  private static final String[] DEFAULT_PROFILES = new String[]{"eDeposit-profile.json", "ndiipp-profile.json", "ndnp-profile.json", "other-project-profile.json"};
 
   public JSonBagger() {
     String homeDir = System.getProperty("user.home");
@@ -48,106 +45,36 @@ public class JSonBagger implements Bagger {
     if (!folder.exists()) {
       folder.mkdirs();
     }
-
-    if (baggerJarPath != null && !baggerJarPath.endsWith(".jar")) {
-
-      String name = new String("gov.loc.repository.bagger.profiles");
-      if (!name.startsWith("/")) {
-        name = "/" + name;
-      }
-      name = name.replace('.', '/');
-
-      // Get a File object for the package
-      URL url = JSonBagger.class.getResource(name);
-      File directory = new File(url.getFile());
-      // New code
-      // ======
-      if (directory.exists()) {
-        // Get the list of the files contained in the package
-        File[] files = directory.listFiles();
-        for (File file : files) {
-          FileInputStream fileInputStream = null;
-
-          try {
-            fileInputStream = new FileInputStream(file);
-
-            String entryName = file.getName();
-            String fileName = entryName.substring(entryName.lastIndexOf("/") + 1, entryName.length());
-            File outFile = new File(folder + File.separator + fileName);
-            FileOutputStream os = new FileOutputStream(outFile);
-            int content = fileInputStream.read();
-            while (content != -1) {
-              os.write(content);
-              content = fileInputStream.read();
-            }
-            os.flush();
-            os.close();
-
-          }
-          catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-          catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-          finally {
-            if (fileInputStream != null) {
-              try {
-                fileInputStream.close();
-              }
-              catch (IOException e) {
-              }
-            }
-          }
-
-        }
-        return;
-
-      }
-    }
-    else {
-      java.util.jar.JarFile jf = null;
-
-      try {
-        baggerJarPath = URLDecoder.decode(baggerJarPath, "UTF-8");
-        jf = new java.util.jar.JarFile(baggerJarPath);
-        Enumeration<JarEntry> resources = jf.entries();
-        while (resources.hasMoreElements()) {
-          java.util.jar.JarEntry je = resources.nextElement();
-          if (je.getName().matches(".*\\.json")) {
-            try {
-              InputStream is = jf.getInputStream(je);
-              String entryName = je.getName();
-              String fileName = entryName.substring(entryName.lastIndexOf("/") + 1, entryName.length());
-              File file = new File(folder + File.separator + fileName);
-              FileOutputStream os = new FileOutputStream(file);
-              int content = is.read();
-              while (content != -1) {
-                os.write(content);
-                content = is.read();
-              }
-              os.flush();
-              os.close();
-            }
-            catch (IOException e) {
-              e.printStackTrace();
-            }
-          }
+    
+    for(String profile : DEFAULT_PROFILES){
+      InputStream inputStream = null;
+      
+      try{
+        inputStream = this.getClass().getClassLoader().getResourceAsStream(RESOURCE_DIR + File.separator + profile);
+        File target = new File(folder, profile);
+        if(!target.exists()){
+          Files.copy(inputStream, target.toPath());
         }
       }
-      catch (java.io.IOException e) {
+      catch(Exception e){
         e.printStackTrace();
+        break;
       }
-      finally {
-        if (jf != null) {
-          try {
-            jf.close();
-          }
-          catch (IOException e) {
-          }
-        }
+      finally{
+        closeStream(inputStream);
+      }
+      
+    }
+    
+  }
+  
+  private void closeStream(InputStream stream){
+    if(stream != null){
+      try {
+        stream.close();
+      }
+      catch (IOException e) {
+        e.printStackTrace();
       }
     }
   }

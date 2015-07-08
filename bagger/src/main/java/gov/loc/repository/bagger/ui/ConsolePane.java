@@ -114,11 +114,6 @@ public class ConsolePane extends JPanel {
 
   }
 
-  @Override
-  public boolean requestFocusInWindow() {
-    return this.requestFocusInWindow();
-  }
-
   public void addConsoleMessages(String message) {
     if (message != null && message.trim().length() != 0) {
       Document consoleMessageDoc = serializedArea.getDocument();
@@ -130,6 +125,7 @@ public class ConsolePane extends JPanel {
           consoleMessageDoc.remove(0, consoleMessageDoc.getLength() - MAX_CONSOLE_MESSAGE_LENGTH);
         }
         catch (BadLocationException e) {
+          log.error(e);
           throw new RuntimeException(e);
         }
       }
