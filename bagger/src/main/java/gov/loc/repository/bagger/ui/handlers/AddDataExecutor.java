@@ -6,18 +6,18 @@ import gov.loc.repository.bagger.ui.BagView;
 import org.springframework.richclient.command.support.AbstractActionCommandExecutor;
 
 public class AddDataExecutor extends AbstractActionCommandExecutor {
-   	private static final long serialVersionUID = 1L;
-	BagView bagView;
-	DefaultBag bag;
+  private static final long serialVersionUID = 1L;
+  BagView bagView;
+  DefaultBag bag;
 
-	public AddDataExecutor(BagView bagView) {
-		super();
-		this.bagView = bagView;
-	}
+  public AddDataExecutor(BagView bagView) {
+    super();
+    this.bagView = bagView;
+  }
 
-	@Override
+  @Override
   public void execute() {
-		bagView.addDataHandler.addData();
-	}
+    bagView.addDataHandler.addData();
+  }
 
 }

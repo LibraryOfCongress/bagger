@@ -1,39 +1,39 @@
 package gov.loc.repository.bagger.model;
 
 public class BagStatus {
-	
-	private static BagStatus instance = new BagStatus();
 
-	private StatusModel validationStatus = new StatusModel();
-	private StatusModel completenessStatus = new StatusModel();
-	private StatusModel profileComplianceStatus = new StatusModel();
-	
-	public StatusModel getValidationStatus() {
-		return validationStatus;
-	}
+  private static BagStatus instance = new BagStatus();
 
-	public void setValidationStatus(StatusModel validationStatus) {
-		this.validationStatus = validationStatus;
-	}
+  private StatusModel validationStatus = new StatusModel();
+  private StatusModel completenessStatus = new StatusModel();
+  private StatusModel profileComplianceStatus = new StatusModel();
 
-	public StatusModel getCompletenessStatus() {
-		return completenessStatus;
-	}
+  public StatusModel getValidationStatus() {
+    return validationStatus;
+  }
 
-	public void setCompletenessStatus(StatusModel completenessStatus) {
-		this.completenessStatus = completenessStatus;
-	}
+  public void setValidationStatus(StatusModel validationStatus) {
+    this.validationStatus = validationStatus;
+  }
 
-	public StatusModel getProfileComplianceStatus() {
-		return profileComplianceStatus;
-	}
+  public StatusModel getCompletenessStatus() {
+    return completenessStatus;
+  }
 
-	public void setProfileComplianceStatus(StatusModel profileComplianceStatus) {
-		this.profileComplianceStatus = profileComplianceStatus;
-	}
+  public void setCompletenessStatus(StatusModel completenessStatus) {
+    this.completenessStatus = completenessStatus;
+  }
 
-	public static BagStatus getInstance() {
-		return instance;
-	}
-	
+  public StatusModel getProfileComplianceStatus() {
+    return profileComplianceStatus;
+  }
+
+  public void setProfileComplianceStatus(StatusModel profileComplianceStatus) {
+    this.profileComplianceStatus = profileComplianceStatus;
+  }
+
+  public static BagStatus getInstance() {
+    return instance;
+  }
+
 }

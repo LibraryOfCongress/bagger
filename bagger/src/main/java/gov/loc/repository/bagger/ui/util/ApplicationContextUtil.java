@@ -15,46 +15,45 @@ import org.springframework.richclient.application.ApplicationServicesLocator;
 import org.springframework.richclient.image.ImageSource;
 
 public class ApplicationContextUtil {
-	
-	static {
-		UIManager.put("FileChooser.readOnly", Boolean.TRUE);
-	}
 
-	public static String getMessage(String propertyName) {
-		return Application.instance().getApplicationContext().getMessage(
-				propertyName, null, propertyName, Locale.getDefault());
-	}
+  static {
+    UIManager.put("FileChooser.readOnly", Boolean.TRUE);
+  }
 
-	public static Image getImage(String imageName) {
-		ImageSource source = (ImageSource) getService(ImageSource.class);
-		return source.getImage(imageName);
-	}
+  public static String getMessage(String propertyName) {
+    return Application.instance().getApplicationContext().getMessage(propertyName, null, propertyName, Locale.getDefault());
+  }
 
-	public static BagView getBagView() {
-		return BagView.getInstance();
-	}
+  public static Image getImage(String imageName) {
+    ImageSource source = (ImageSource) getService(ImageSource.class);
+    return source.getImage(imageName);
+  }
 
-	public static ConsoleView getConsoleView() {
-		return ConsoleView.getInstance();
-	}
+  public static BagView getBagView() {
+    return BagView.getInstance();
+  }
 
-	public static DefaultBag getCurrentBag() {
-		return getBagView().getBag();
-	}
+  public static ConsoleView getConsoleView() {
+    return ConsoleView.getInstance();
+  }
 
-	private static ApplicationServices getApplicationServices() {
-		return ApplicationServicesLocator.services();
-	}
+  public static DefaultBag getCurrentBag() {
+    return getBagView().getBag();
+  }
 
-	public static void addConsoleMessageByProperty(String messagePropertyName) {
-		getConsoleView().addConsoleMessages(getMessage(messagePropertyName));
-	}
-	
-	public static void addConsoleMessage(String message) {
-		getConsoleView().addConsoleMessages(message);
-	}
+  private static ApplicationServices getApplicationServices() {
+    return ApplicationServicesLocator.services();
+  }
 
-	private static Object getService(Class serviceType) {
-		return getApplicationServices().getService(serviceType);
-	}
+  public static void addConsoleMessageByProperty(String messagePropertyName) {
+    getConsoleView().addConsoleMessages(getMessage(messagePropertyName));
+  }
+
+  public static void addConsoleMessage(String message) {
+    getConsoleView().addConsoleMessages(message);
+  }
+
+  private static Object getService(Class serviceType) {
+    return getApplicationServices().getService(serviceType);
+  }
 }

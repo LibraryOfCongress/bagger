@@ -8,41 +8,41 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @author Jon Steinbach
  */
-public class BaggerFetch implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class BaggerFetch implements Serializable {
+  private static final long serialVersionUID = 1L;
 
-	private static final Log log = LogFactory.getLog(BaggerFetch.class);
+  private static final Log log = LogFactory.getLog(BaggerFetch.class);
 
-	private String baseURL;
-	private String userName;
-	private String userPassword;
+  private String baseURL;
+  private String userName;
+  private String userPassword;
 
-	public BaggerFetch() {
-		log.debug("BaggerFetch");
-	}
+  public BaggerFetch() {
+    log.debug("BaggerFetch");
+  }
 
-	public void setBaseURL(String url) {
-		this.baseURL = url;
-	}
-	
-	public String getBaseURL() {
-		return this.baseURL;
-	}
-	
-	public void setUserName(String username) {
-		this.userName = username;
-	}
-	
-	public String getUserName() {
-		return this.userName;
-	}
-	
-	public void setUserPassword(String password) {
-		this.userPassword = password;
-	}
-	
-	public String getUserPassword() {
-		return this.userPassword;
-	}
-	
+  public void setBaseURL(String url) {
+    this.baseURL = url;
+  }
+
+  public String getBaseURL() {
+    return this.baseURL;
+  }
+
+  public void setUserName(String username) {
+    this.userName = username;
+  }
+
+  public String getUserName() {
+    return this.userName;
+  }
+
+  public void setUserPassword(String password) {
+    this.userPassword = password;
+  }
+
+  public String getUserPassword() {
+    return this.userPassword;
+  }
+
 }

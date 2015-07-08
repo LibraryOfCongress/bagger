@@ -24,23 +24,23 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 public class TagFilesFrame extends JFrame implements ActionListener {
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public TagFilesFrame(Frame parent, String title) {
-        super(title);
-    }
+  public TagFilesFrame(Frame parent, String title) {
+    super(title);
+  }
 
-    public void addComponents(JTabbedPane tabs) {
-    	getContentPane().removeAll();
-    	getContentPane().add(tabs, BorderLayout.CENTER);
-    	setPreferredSize(tabs.getPreferredSize());
-    	pack();
-    }
-    
-    @Override
-    public void actionPerformed(ActionEvent e) {
-    	invalidate();
-    	repaint();
-    }
+  public void addComponents(JTabbedPane tabs) {
+    getContentPane().removeAll();
+    getContentPane().add(tabs, BorderLayout.CENTER);
+    setPreferredSize(tabs.getPreferredSize());
+    pack();
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    invalidate();
+    repaint();
+  }
 
 }
