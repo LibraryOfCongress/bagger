@@ -1,3 +1,7 @@
+plugins {
+  id "de.undercouch.download" version "1.2"
+}
+
 apply plugin: "application"
 
 mainClassName = "gov.loc.repository.bagger.BaggerApplication"
@@ -11,15 +15,7 @@ dependencies {
        project(':bagger-common'),
        project(':bagger-core'),
        project(':bagger-business'),
-       'org.springframework.richclient:spring-richclient-resources:1.0.0',
-       'org.springframework.richclient:spring-richclient-core:1.0.0',
-       'org.springframework.richclient:spring-richclient-binding:1.0.0',
-       'org.springframework.richclient:spring-richclient-form:1.0.0',
-       'org.springframework.richclient:spring-richclient-support:1.0.0',
        'org.springframework.richclient:spring-richclient-jdk5:1.0.0',
-       'org.springframework.richclient:spring-richclient-jdk6:1.0.0',
-       'org.springframework.richclient:spring-richclient-sandbox:1.0.0',
-       'org.springframework.richclient:spring-richclient-docking:1.0.0',
        'com.vlsolutions:vldocking:2.1.4',
        'com.jgoodies:forms:1.0.7',
        'net.sf.nachocalendar:nachocalendar:0.23',
@@ -91,3 +87,33 @@ task srcZip(type: Zip) {
 }
 
 tasks.distZip.dependsOn srcZip
+
+//an ugly hack cause this project is basically dead...
+task resolveSpringRichClientDependencies() {
+  description "downloads the gz release of spring rich client and adds the needed dependencies into the build"
+  doLast{
+    File richClientFile = new File("${buildDir}", "downloads/spring-richclient-1.1.0-release.tar.gz")
+    
+    if(!richClientFile.exists()){
+      download {
+          src 'http://sourceforge.net/projects/spring-rich-c/files/spring-rich-c/1.1.0/spring-richclient-1.1.0-release.tar.gz'
+          dest richClientFile
+      }
+    }
+    copy { //un-gzip it
+      from tarTree(richClientFile)
+      into "${buildDir}/downloads"
+    }
+    
+    String baseJarDir = "${buildDir}/downloads/spring-richclient-1.1.0/lib"
+    def jarFiles = files("${baseJarDir}/spring-richclient-resources-1.1.0.jar", 
+      "${baseJarDir}/spring-richclient-core-1.1.0.jar", 
+      "${baseJarDir}/spring-richclient-jdk6-1.1.0.jar",
+      "${baseJarDir}/spring-richclient-vldocking-1.1.0.jar",
+      "${baseJarDir}/swingx-0.9.3.jar")
+    
+    project.dependencies.add("compile", jarFiles)
+  }
+}
+
+tasks.compileJava.dependsOn resolveSpringRichClientDependencies
