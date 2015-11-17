@@ -30,11 +30,15 @@ public class JSonBagger implements Bagger {
 
   private File profilesFolder;
   
+  private static final String BAGGER_PROFILES_HOME_PROPERTY = "BAGGER_PROFILES_HOME";
   private static final String RESOURCE_DIR = "gov/loc/repository/bagger/profiles";
   private static final String[] DEFAULT_PROFILES = new String[]{"eDeposit-profile.json", "ndiipp-profile.json", "ndnp-profile.json", "other-project-profile.json"};
 
   public JSonBagger() {
     String homeDir = System.getProperty("user.home");
+    if(System.getProperties().containsKey(BAGGER_PROFILES_HOME_PROPERTY)){
+      homeDir = System.getProperty(BAGGER_PROFILES_HOME_PROPERTY);
+    }
     String profilesPath = homeDir + File.separator + "bagger";
     profilesFolder = new File(profilesPath);
     String baggerJarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
