@@ -1,5 +1,5 @@
 plugins {
-  id "de.undercouch.download" version "1.2"
+  id "de.undercouch.download" version "2.0.0"
 }
 
 apply plugin: "application"
