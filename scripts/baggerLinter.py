@@ -21,7 +21,12 @@ import sys
 class MyFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter):
     pass
 
-def createModifiedManifest(hash_algorithm, manifest, regexes):
+def getHashAlgorithm(file):
+    hash_algorithm = os.path.splitext(file)[0].split('-')[1]
+    return hash_algorithm
+
+def createModifiedManifest(manifest, regexes):
+    hash_algorithm = getHashAlgorithm(manifest)
     original_manifest_file = open(manifest, 'r')
     modified_manifest_name = 'manifest-' + hash_algorithm + '.txt.tmp'
     modified_manifest_file = open(modified_manifest_name, 'w')
@@ -41,7 +46,8 @@ def createModifiedManifest(hash_algorithm, manifest, regexes):
     
     return modified_manifest_name, modified
 
-def calculateHash(hash_algorithm, file):
+def calculateHash(file):
+    hash_algorithm = getHashAlgorithm(file)
     file_handle = open(file, 'r')
     hasher = hashlib.new(hash_algorithm)
     buf = file_handle.read()
@@ -51,21 +57,23 @@ def calculateHash(hash_algorithm, file):
     
     return hash
 
-def createModifiedTagmanifest(hash_algorithm, updated_manifest_hash):
-    original_tagmanifest_name = "tagmanifest-" + hash_algorithm + ".txt"
-    original_tagmanifest = open(original_tagmanifest_name)
-    modified_tagmanifest_name = "tagmanifest-" + hash_algorithm + ".txt.tmp"
-    modified_tagmanifest = open(modified_tagmanifest_name, "w")
-    for line in original_tagmanifest:
-        if "manifest" in line:
-            modified_tagmanifest.write(updated_manifest_hash + " " + original_tagmanifest_name + os.linesep)
-        else:
-            modified_tagmanifest.write(line)
-            
-    original_tagmanifest.close()
-    modified_tagmanifest.close()
-    
-    return modified_tagmanifest_name
+def updateTagmanifest(updated_manifest_hash):
+    for file in os.listdir('.'):
+        if fnmatch.fnmatch(file, 'tagmanifest-*.txt'):
+            hash_algorithm = getHashAlgorithm(file)
+            original_tagmanifest = open(file)
+            modified_tagmanifest_name = "tagmanifest-" + hash_algorithm + ".txt.tmp"
+            modified_tagmanifest = open(modified_tagmanifest_name, "w")
+            for line in original_tagmanifest:
+                if "manifest" in line:
+                    modified_tagmanifest.write(updated_manifest_hash + " " + file + os.linesep)
+                    found_file_to_update = True
+                else:
+                    modified_tagmanifest.write(line)
+                    
+            original_tagmanifest.close()
+            modified_tagmanifest.close()
+            shutil.move(modified_tagmanifest_name, file)
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.strip(), formatter_class=MyFormatter)
@@ -77,14 +85,11 @@ def main():
     for file in os.listdir('.'):
         if fnmatch.fnmatch(file, 'manifest-*.txt'):
             found_manifest_file = True
-            hash_algorithm = os.path.splitext(file)[0].split('-')[1]
-            
-            new_manifest_file, differs = createModifiedManifest(hash_algorithm, file, args.regexes)
+            new_manifest_file, differs = createModifiedManifest(file, args.regexes)
             if differs and not args.dryrun:
                 shutil.move(new_manifest_file, file)
-                hash = calculateHash(hash_algorithm, file)
-                new_tagmanifest_file = createModifiedTagmanifest(hash_algorithm, hash)
-                shutil.move(new_tagmanifest_file, "tagmanifest-"+ hash_algorithm + ".txt")
+                hash = calculateHash(file)
+                updateTagmanifest(hash)
             else:
                 os.remove(new_manifest_file)
     
