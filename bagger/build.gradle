@@ -45,6 +45,7 @@ distZip {
   into("${baseZipDirectory}/bin") {
     from "${rootDir.path}/scripts"
     include "discoverJavaVersions.py"
+    include "baggerLinter.py"
   }
 }
 
