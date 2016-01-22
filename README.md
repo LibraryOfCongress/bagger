@@ -23,7 +23,9 @@ Profile files should be named <profile name>-profile.json and stored in the bagg
 
 On Windows, it is C:\"Documents and Settings"\<user>\bagger. On Unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.
 Since release #12 you can now change where bagger looks for profiles by setting the system property `BAGGER_PROFILES_HOME`. This can be set using environment variable BAGGER_OPTS like this in bash:
-    export BAGGER_OPTS="-DBAGGER_PROFILES_HOME=/tmp"
+``` bash
+export BAGGER_OPTS="-DBAGGER_PROFILES_HOME=/tmp"
+```
 
 Also when using a new Bagger version please remove the bagger folder created by the previous Bagger version in the user's home folder.  
 This will insure that the new/updated profiles are created in the bagger folder after the new bagger version is started.
