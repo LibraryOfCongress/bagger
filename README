@@ -103,7 +103,7 @@ To start the Bagger application, execute the bagger shell script in the bin fold
 There are a few common causes for the bagger application to fail which are:
 
 i)   Incorrect version of the Java Run Time Environment or if no System Path is set for Java.
-     The fix is to use the correct Java Runtime Environment (i.e. 1.6.xx in Windows and OpenJDK 6 in Linux/Ubuntu)
+     The fix is to use the correct Java Runtime Environment (i.e. 1.7.xx in Windows and OpenJDK 7 in Linux/Ubuntu)
 
 ii)  The bagger folder in the user's home folder contains profile files using older JSON format.
      The fix is to delete the old profiles in the bagger folder and rerun the bagger application.
