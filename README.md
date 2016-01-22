@@ -80,7 +80,8 @@ Here is a sample profile (please ignore the comments (//) when creating a JSON p
                          "defaultValue" : "born digital",
                          "valueList" : ["born digital","conversion","web capture"]
                         }
-}```
+}
+```
 
 The file should be named <profile name>-profile.json. For example, wdl-profile.json.
 The items in the profile file (i.e. JSON file) are listed in the Bag-Info tab of Bagger.
