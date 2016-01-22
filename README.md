@@ -5,7 +5,7 @@ The Bagger application was created for the U.S. Library of Congress as a tool to
 
 The Bagger application is a graphical user interface to the BagIt specification. The latest Bagger release is available on GitHub at https://github.com/LibraryOfCongress/bagger/releases/latest
 
-Bagger differs from BIL by providing graphical user interface for file and data manipulation features as well as a visual view of the bag contents, bag state and options.  In addition Bagger provides a project profile capability.  Users can create customized bag-info.txt data with project specific properties that the user defines.
+Bagger differs from the [java Bagit Library](https://github.com/LibraryOfCongress/bagit-java) by providing graphical user interface for file and data manipulation features as well as a visual view of the bag contents, bag state and options.  In addition Bagger provides a project profile capability.  Users can create customized bag-info.txt data with project specific properties that the user defines.
 
 These project profiles can be edited manually and shared with other users.
 
