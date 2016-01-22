@@ -63,6 +63,7 @@ public class OpenBagHandler extends AbstractAction {
     }
     catch (Exception ex) {
       ApplicationContextUtil.addConsoleMessage("Failed to create bag: " + ex.getMessage());
+      log.error("Failed to create bag", ex);
       // showWarningErrorDialog("Warning - file not opened",
       // "Error trying to open file: " + file + "\n" + ex.getMessage());
       return;
