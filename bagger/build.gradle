@@ -59,17 +59,20 @@ startScripts {
   }
 }
 
-task updateVersion << {
-  File about = new File(project.projectDir, "src/main/resources/gov/loc/repository/bagger/about.txt")
-  String updatedAbout = about.text.replaceAll("Version: unspecified", "Version: ${project.version}")
-  about.text = updatedAbout
-  
-  File messageProperties = new File(project.projectDir, "src/main/resources/gov/loc/repository/bagger/ui/messages.properties")
-  String updatedMessageProperties = messageProperties.text.replaceAll("applicationDescriptor\\.title=.*","applicationDescriptor.title=Bagger ${project.version}")
-  messageProperties.text = updatedMessageProperties
+afterEvaluate {
+  configure(tasks.processResources) {
+    filter{ String line ->
+        if(line.startsWith("Version: unspecified")){
+          return "Version: ${project.version}"
+        } else if(line.startsWith("applicationDescriptor.title")){
+          return "applicationDescriptor.title=Bagger ${project.version}"
+        }
+        else{
+          return line
+        }
+    }
+  }
 }
-
-tasks.processResources.dependsOn updateVersion
 
 task srcZip(type: Zip) {
   classifier = 'src'
