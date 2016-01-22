@@ -89,10 +89,12 @@ The items in the profile file (i.e. JSON file) are listed in the Bag-Info tab of
 
 ##Bagger Build Process
 Bagger uses [Gradle](https://gradle.org/) for its build system. If you are unfamiliar with Gradle you should check out their [userguide](https://docs.gradle.org/current/userguide/userguide_single.html), especially the sections on [java-plugin](https://docs.gradle.org/current/userguide/userguide_single.html#java_plugin) and the [application-plugin](https://docs.gradle.org/current/userguide/userguide_single.html#application_plugin)
-To build the Bagger application, execute the following steps from the top level folder of the distribution:
-     `gradle distZip`
-After running successfully the bagger application will be zipped and located in bagger/build/distributions/bagger.zip
 
+To build the Bagger application, execute the following steps from the top level folder of the distribution:
+``` bash
+gradle distZip
+```
+After running successfully the bagger application will be zipped and located in bagger/build/distributions/bagger.zip. Simply unzip to install anywhere.
 
 ##Running Bagger on Windows
 To start the Bagger application, double-click on the bagger.bat file in the bin folder.
