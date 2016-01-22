@@ -1,7 +1,7 @@
 package gov.loc.repository.bagger.bag;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.ProfileField;
@@ -19,7 +19,7 @@ import gov.loc.repository.bagit.BagInfoTxt;
  * @author Jon Steinbach
  */
 public class BaggerSourceOrganization {
-  private static final Log log = LogFactory.getLog(BaggerSourceOrganization.class);
+  protected static final Logger log = LoggerFactory.getLogger(BaggerSourceOrganization.class);
 
   private String organizationName = "";
 

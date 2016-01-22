@@ -1,9 +1,5 @@
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.bag.BaggerProfile;
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
-
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 
@@ -13,14 +9,18 @@ import javax.swing.InputMap;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.form.HierarchicalFormModel;
 import org.springframework.richclient.form.FormModelHelper;
 
+import gov.loc.repository.bagger.bag.BaggerProfile;
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
+
 public class BagInfoInputPane extends JTabbedPane {
   private static final long serialVersionUID = 1L;
-  private static final Log logger = LogFactory.getLog(BagInfoInputPane.class);
+  protected static final Logger log = LoggerFactory.getLogger(BagInfoInputPane.class);
 
   private BagView bagView;
   private DefaultBag defaultBag;

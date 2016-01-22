@@ -18,14 +18,16 @@ package gov.loc.repository.bagger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.PropertyAccessException;
 import org.springframework.richclient.application.ApplicationLauncher;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Main driver that starts the Bagger spring rich client application.
  */
 public class BaggerApplication {
+  protected static final Logger log = LoggerFactory.getLogger(BaggerApplication.class);
 
   public static void main(String[] args) {
     String rootContextDirectoryClassPath = "/gov/loc/repository/bagger/ctx";
@@ -40,17 +42,17 @@ public class BaggerApplication {
       new ApplicationLauncher(startupContextPath, new String[] { richclientApplicationContextPath, businessLayerContextPath });
     }
     catch (IllegalStateException ex1) {
-      LogFactory.getLog(BaggerApplication.class).error("IllegalStateException during startup", ex1);
+      log.error("IllegalStateException during startup", ex1);
       JOptionPane.showMessageDialog(new JFrame(), "An illegal state error occured.\n", "Bagger startup error!", JOptionPane.ERROR_MESSAGE);
       System.exit(1);
     }
     catch (PropertyAccessException ex) {
-      LogFactory.getLog(BaggerApplication.class).error("PropertyAccessException during startup", ex);
+      log.error("PropertyAccessException during startup", ex);
       JOptionPane.showMessageDialog(new JFrame(), "An error occured loading properties.\n", "Bagger startup error!", JOptionPane.ERROR_MESSAGE);
       System.exit(1);
     }
     catch (RuntimeException e) {
-      LogFactory.getLog(BaggerApplication.class).error("RuntimeException during startup", e);
+      log.error("RuntimeException during startup", e);
       String msg = e.getMessage();
       if (msg.contains("SAXParseException")) {
         JOptionPane.showMessageDialog(new JFrame(), "An error occured parsing application context.  You may have no internet access.\n",

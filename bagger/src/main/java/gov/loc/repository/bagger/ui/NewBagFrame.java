@@ -15,9 +15,6 @@
  */
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.ui.util.LayoutUtil;
-import gov.loc.repository.bagit.BagFactory.Version;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -25,6 +22,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -32,8 +30,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationPage;
 import org.springframework.richclient.application.PageComponent;
@@ -44,8 +42,11 @@ import org.springframework.richclient.core.DefaultMessage;
 import org.springframework.richclient.dialog.TitlePane;
 import org.springframework.richclient.util.GuiStandardUtils;
 
+import gov.loc.repository.bagger.ui.util.LayoutUtil;
+import gov.loc.repository.bagit.BagFactory.Version;
+
 public class NewBagFrame extends JFrame implements ActionListener {
-  private static final Log log = LogFactory.getLog(NewBagFrame.class);
+  protected static final Logger log = LoggerFactory.getLogger(NewBagFrame.class);
   private static final long serialVersionUID = 1L;
   private BagView bagView;
   private JComboBox bagVersionList;

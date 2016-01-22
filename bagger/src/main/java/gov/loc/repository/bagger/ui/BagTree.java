@@ -1,10 +1,5 @@
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.bag.BaggerFileEntity;
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.ui.handlers.BagTreeTransferHandler;
-import gov.loc.repository.bagit.impl.AbstractBagConstants;
-
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
@@ -21,12 +16,17 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import gov.loc.repository.bagger.bag.BaggerFileEntity;
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.handlers.BagTreeTransferHandler;
+import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 public class BagTree extends JTree {
   private static final long serialVersionUID = -5361474872106399068L;
-  private static final Log log = LogFactory.getLog(BagTree.class);
+  protected static final Logger log = LoggerFactory.getLogger(BagTree.class);
   private int BAGTREE_WIDTH = 400;
   private int BAGTREE_HEIGHT = 160;
   private int BAGTREE_ROW_MODIFIER = 22;

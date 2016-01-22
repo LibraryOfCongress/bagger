@@ -1,10 +1,5 @@
 package gov.loc.repository.bagger.ui.handlers;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.ui.BagView;
-import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
-import gov.loc.repository.bagit.impl.AbstractBagConstants;
-
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -12,11 +7,16 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
+import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 public class OpenBagHandler extends AbstractAction {
-  private static final Log log = LogFactory.getLog(OpenBagHandler.class);
+  protected static final Logger log = LoggerFactory.getLogger(OpenBagHandler.class);
   private static final long serialVersionUID = 1L;
   BagView bagView;
 
@@ -62,7 +62,8 @@ public class OpenBagHandler extends AbstractAction {
       ApplicationContextUtil.addConsoleMessage("Opened the bag " + file.getAbsolutePath());
     }
     catch (Exception ex) {
-      ApplicationContextUtil.addConsoleMessage("Failed to create bag: " + ex.getMessage());
+      ApplicationContextUtil.addConsoleMessage("Failed to create bag message: " + ex.getMessage());
+      ApplicationContextUtil.addConsoleMessage("Failed to create bag exception: " + ex);
       log.error("Failed to create bag", ex);
       // showWarningErrorDialog("Warning - file not opened",
       // "Error trying to open file: " + file + "\n" + ex.getMessage());

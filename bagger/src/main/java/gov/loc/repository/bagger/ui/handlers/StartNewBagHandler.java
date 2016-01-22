@@ -1,5 +1,14 @@
 package gov.loc.repository.bagger.ui.handlers;
 
+import java.awt.event.ActionEvent;
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.swing.AbstractAction;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagTree;
@@ -8,18 +17,9 @@ import gov.loc.repository.bagger.ui.NewBagFrame;
 import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagit.BagFile;
 
-import java.awt.event.ActionEvent;
-import java.util.Collection;
-import java.util.Iterator;
-
-import javax.swing.AbstractAction;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class StartNewBagHandler extends AbstractAction {
   private static final long serialVersionUID = 1L;
-  private static final Log log = LogFactory.getLog(StartNewBagHandler.class);
+  protected static final Logger log = LoggerFactory.getLogger(StartNewBagHandler.class);
 
   BagView bagView;
 

@@ -4,14 +4,14 @@ import java.text.MessageFormat;
 
 import javax.swing.ProgressMonitor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gov.loc.repository.bagit.ProgressListener;
 
 public class LongTask implements ProgressListener {
 
-  private static final Log log = LogFactory.getLog(LongTask.class);
+  protected static final Logger log = LoggerFactory.getLogger(LongTask.class);
 
   private boolean done = false;
   private Progress progress;

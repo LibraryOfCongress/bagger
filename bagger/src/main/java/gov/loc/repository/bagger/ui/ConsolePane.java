@@ -1,9 +1,5 @@
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.model.BagStatus;
-import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
-import gov.loc.repository.bagger.ui.util.LayoutUtil;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -21,14 +17,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import gov.loc.repository.bagger.model.BagStatus;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
+import gov.loc.repository.bagger.ui.util.LayoutUtil;
 
 public class ConsolePane extends JPanel {
   private static final int MAX_CONSOLE_MESSAGE_LENGTH = 50000;
 
   private static final long serialVersionUID = -4290352509246639528L;
-  private static final Log log = LogFactory.getLog(ConsolePane.class);
+  protected static final Logger log = LoggerFactory.getLogger(ConsolePane.class);
 
   public static final String CONSOLE_PANE = "consolePane";
   private Dimension maxDimension = new Dimension(400, 300);
@@ -125,7 +125,7 @@ public class ConsolePane extends JPanel {
           consoleMessageDoc.remove(0, consoleMessageDoc.getLength() - MAX_CONSOLE_MESSAGE_LENGTH);
         }
         catch (BadLocationException e) {
-          log.error(e);
+          log.error("Could not remove message from console",e);
           throw new RuntimeException(e);
         }
       }

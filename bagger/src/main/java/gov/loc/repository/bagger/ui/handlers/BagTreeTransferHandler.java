@@ -16,13 +16,13 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BagTreeTransferHandler extends TransferHandler {
   private static final long serialVersionUID = 1L;
 
-  private static final Log log = LogFactory.getLog(BagTreeTransferHandler.class);
+  protected static final Logger log = LoggerFactory.getLogger(BagTreeTransferHandler.class);
   private static DataFlavor uriListFlavor = new DataFlavor("text/uri-list;class=java.lang.String", null);
   private static boolean debugImport = false;
   DataFlavor nodesFlavor;

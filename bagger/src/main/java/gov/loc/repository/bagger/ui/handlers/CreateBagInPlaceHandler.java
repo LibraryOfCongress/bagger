@@ -1,12 +1,5 @@
 package gov.loc.repository.bagger.ui.handlers;
 
-import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
-import gov.loc.repository.bagger.ui.BagView;
-import gov.loc.repository.bagger.ui.NewBagInPlaceFrame;
-import gov.loc.repository.bagger.ui.Progress;
-
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.HashMap;
@@ -14,12 +7,19 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import gov.loc.repository.bagger.Profile;
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
+import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagger.ui.NewBagInPlaceFrame;
+import gov.loc.repository.bagger.ui.Progress;
 
 public class CreateBagInPlaceHandler extends AbstractAction implements Progress {
   private static final long serialVersionUID = 1L;
-  private static final Log log = LogFactory.getLog(StartNewBagHandler.class);
+  protected static final Logger log = LoggerFactory.getLogger(StartNewBagHandler.class);
   private BagView bagView;
 
   public CreateBagInPlaceHandler(BagView bagView) {

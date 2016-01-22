@@ -1,10 +1,11 @@
 package gov.loc.repository.bagger.ui;
 
 import java.awt.Color;
-import javax.swing.JTextPane;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
@@ -13,13 +14,13 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BagTextPane extends JTextPane {
   private static final long serialVersionUID = -505900021814525136L;
 
-  private static final Log log = LogFactory.getLog(BagTextPane.class);
+  protected static final Logger log = LoggerFactory.getLogger(BagTextPane.class);
 
   private StyledDocument document;
   private String message = "";

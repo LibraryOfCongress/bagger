@@ -2,8 +2,8 @@ package gov.loc.repository.bagger.bag;
 
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jon Steinbach
@@ -11,7 +11,7 @@ import org.apache.commons.logging.LogFactory;
 public class BaggerFetch implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  private static final Log log = LogFactory.getLog(BaggerFetch.class);
+  protected static final Logger log = LoggerFactory.getLogger(BaggerFetch.class);
 
   private String baseURL;
   private String userName;

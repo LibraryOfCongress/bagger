@@ -16,11 +16,16 @@ dependencies {
        project(':bagger-core'),
        project(':bagger-business'),
        'org.springframework.richclient:spring-richclient-jdk5:1.0.0',
+       'org.springframework.boot:spring-boot-starter-logging:1.3.2.RELEASE',
        'com.vlsolutions:vldocking:2.1.4',
        'com.jgoodies:forms:1.0.7',
        'net.sf.nachocalendar:nachocalendar:0.23',
-       'commons-logging:commons-logging:1.1.1',
-       'log4j:log4j:1.2.14'
+       'org.codehaus.groovy:groovy-all:2.4.0',
+       files("${project.projectDir}/spring-richclient-1.1.0-jars/spring-richclient-resources-1.1.0.jar"),
+       files("${project.projectDir}/spring-richclient-1.1.0-jars/spring-richclient-core-1.1.0.jar"),
+       files("${project.projectDir}/spring-richclient-1.1.0-jars/spring-richclient-jdk6-1.1.0.jar"),
+       files("${project.projectDir}/spring-richclient-1.1.0-jars/spring-richclient-vldocking-1.1.0.jar"),
+       files("${project.projectDir}/spring-richclient-1.1.0-jars/swingx-0.9.3.jar")
      
     runtime 'com.jgoodies:looks:2.0.4'
 }
@@ -53,10 +58,8 @@ startScripts {
     applicationDefaultJvmArgs += ["-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n"]
   }
   
-  doLast{
-    String scriptText = windowsScript.text.replace("set JAVA_EXE=java.exe", "set JAVA_EXE=C:/Progra~2/Java/jre7/bin/java.exe")
-    windowsScript.text = scriptText
-  }
+  unixStartScriptGenerator.template = resources.text.fromFile(project.projectDir.path + '/customUnixStartScript.txt')
+  windowsStartScriptGenerator.template = resources.text.fromFile(project.projectDir.path + '/customWindowsStartScript.txt')
 }
 
 afterEvaluate {
@@ -91,32 +94,36 @@ task srcZip(type: Zip) {
 
 tasks.distZip.dependsOn srcZip
 
-//an ugly hack cause this project is basically dead...
-task resolveSpringRichClientDependencies() {
-  description "downloads the gz release of spring rich client and adds the needed dependencies into the build"
-  doLast{
-    File richClientFile = new File("${buildDir}", "downloads/spring-richclient-1.1.0-release.tar.gz")
-    
-    if(!richClientFile.exists()){
-      download {
-          src 'http://sourceforge.net/projects/spring-rich-c/files/spring-rich-c/1.1.0/spring-richclient-1.1.0-release.tar.gz'
-          dest richClientFile
-      }
-    }
-    copy { //un-gzip it
-      from tarTree(richClientFile)
-      into "${buildDir}/downloads"
-    }
-    
-    String baseJarDir = "${buildDir}/downloads/spring-richclient-1.1.0/lib"
-    def jarFiles = files("${baseJarDir}/spring-richclient-resources-1.1.0.jar", 
-      "${baseJarDir}/spring-richclient-core-1.1.0.jar", 
-      "${baseJarDir}/spring-richclient-jdk6-1.1.0.jar",
-      "${baseJarDir}/spring-richclient-vldocking-1.1.0.jar",
-      "${baseJarDir}/swingx-0.9.3.jar")
-    
-    project.dependencies.add("compile", jarFiles)
-  }
-}
-
-tasks.compileJava.dependsOn resolveSpringRichClientDependencies
+////an ugly hack cause this project is basically dead...
+//task resolveSpringRichClientDependencies() {
+//  description "downloads the gz release of spring rich client and adds the needed dependencies into the build"
+//  doLast{
+//    File richClientFile = new File("${buildDir}", "downloads/spring-richclient-1.1.0-release.tar.gz")
+//    
+//    if(!richClientFile.exists()){
+//      download {
+//          src 'http://sourceforge.net/projects/spring-rich-c/files/spring-rich-c/1.1.0/spring-richclient-1.1.0-release.tar.gz'
+//          dest richClientFile
+//      }
+//    }
+//    copy { //un-gzip it
+//      from tarTree(richClientFile)
+//      into "${buildDir}/downloads"
+//    }
+//    
+//    String baseJarDir = "${buildDir}/downloads/spring-richclient-1.1.0/lib"
+//    def jarFiles = files("${baseJarDir}/spring-richclient-resources-1.1.0.jar", 
+//      "${baseJarDir}/spring-richclient-core-1.1.0.jar", 
+//      "${baseJarDir}/spring-richclient-jdk6-1.1.0.jar",
+//      "${baseJarDir}/spring-richclient-vldocking-1.1.0.jar",
+//      "${baseJarDir}/swingx-0.9.3.jar")
+//    
+//    jarFiles.each{
+//      println("spring-richclient file: " + it)
+//    }
+//    
+//    project.dependencies.add("compile", jarFiles)
+//  }
+//}
+//
+//tasks.compileJava.dependsOn resolveSpringRichClientDependencies

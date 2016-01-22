@@ -7,16 +7,15 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.nio.channels.FileChannel;
 import java.util.Collection;
 import java.util.Vector;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileUtililties {
-  private static final Log log = LogFactory.getLog(FileUtililties.class);
+  protected static final Logger log = LoggerFactory.getLogger(FileUtililties.class);
 
   public static int BUFFER_SIZE = 10240;
 

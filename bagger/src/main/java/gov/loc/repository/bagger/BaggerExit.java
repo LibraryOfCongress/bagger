@@ -1,7 +1,7 @@
 package gov.loc.repository.bagger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.command.support.ExitCommand;
 
@@ -13,7 +13,7 @@ import org.springframework.richclient.command.support.ExitCommand;
  * @author Jon Steinbach
  */
 public class BaggerExit extends ExitCommand {
-  private static final Log log = LogFactory.getLog(BaggerExit.class);
+  protected static final Logger log = LoggerFactory.getLogger(BaggerExit.class);
 
   /**
    * Closes the single {@link Application} instance.

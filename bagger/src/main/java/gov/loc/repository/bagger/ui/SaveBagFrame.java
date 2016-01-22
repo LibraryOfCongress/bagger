@@ -15,9 +15,6 @@
  */
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagit.Manifest.Algorithm;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -44,8 +41,8 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.richclient.command.AbstractCommand;
 import org.springframework.richclient.command.ActionCommand;
 import org.springframework.richclient.command.CommandGroup;
@@ -53,8 +50,11 @@ import org.springframework.richclient.core.DefaultMessage;
 import org.springframework.richclient.dialog.TitlePane;
 import org.springframework.richclient.util.GuiStandardUtils;
 
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagit.Manifest.Algorithm;
+
 public class SaveBagFrame extends JFrame implements ActionListener {
-  private static final Log log = LogFactory.getLog(SaveBagFrame.class);
+  protected static final Logger log = LoggerFactory.getLogger(SaveBagFrame.class);
   private static final long serialVersionUID = 1L;
   BagView bagView;
   File bagFile;

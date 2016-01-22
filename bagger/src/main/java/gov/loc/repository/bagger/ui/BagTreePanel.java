@@ -2,12 +2,12 @@ package gov.loc.repository.bagger.ui;
 
 import javax.swing.JScrollPane;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BagTreePanel extends JScrollPane {
   private static final long serialVersionUID = 5134745573017768256L;
-  private static final Log log = LogFactory.getLog(BagTreePanel.class);
+  protected static final Logger log = LoggerFactory.getLogger(BagTreePanel.class);
   private BagTree bagTree;
 
   public BagTreePanel(BagTree bagTree) {

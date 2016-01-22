@@ -1,9 +1,5 @@
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.bag.BagInfoField;
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.ui.util.LayoutUtil;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -28,14 +24,18 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.form.AbstractForm;
 
+import gov.loc.repository.bagger.bag.BagInfoField;
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.util.LayoutUtil;
+
 public class BagInfoForm extends AbstractForm implements FocusListener {
   private static final long serialVersionUID = -3231249644435262577L;
-  private static final Log logger = LogFactory.getLog(BagInfoForm.class);
+  protected static final Logger log = LoggerFactory.getLogger(BagInfoForm.class);
 
   public static final String INFO_FORM_PAGE = "infoPage";
 

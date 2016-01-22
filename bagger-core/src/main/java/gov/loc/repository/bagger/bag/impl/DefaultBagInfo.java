@@ -1,5 +1,17 @@
 package gov.loc.repository.bagger.bag.impl;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gov.loc.repository.bagger.Contact;
 import gov.loc.repository.bagger.Organization;
 import gov.loc.repository.bagger.Profile;
@@ -11,22 +23,10 @@ import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class DefaultBagInfo implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  private static final Log log = LogFactory.getLog(DefaultBagInfo.class);
+  protected static final Logger log = LoggerFactory.getLogger(DefaultBagInfo.class);
 
   public static final String FIELD_LC_PROJECT = "Profile Name";
 

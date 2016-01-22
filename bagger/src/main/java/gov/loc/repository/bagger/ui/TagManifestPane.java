@@ -1,8 +1,5 @@
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagit.BagFile;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -16,12 +13,15 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagit.BagFile;
 
 public class TagManifestPane extends JTabbedPane {
   private static final long serialVersionUID = 1L;
-  private static final Log log = LogFactory.getLog(TagManifestPane.class);
+  protected static final Logger log = LoggerFactory.getLogger(TagManifestPane.class);
   public static final String TAGMANIFEST_PANE = "tagManifestPane";
   private String messages = new String();
   private BagView parentView;

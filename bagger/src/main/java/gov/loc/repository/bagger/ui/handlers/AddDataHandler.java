@@ -1,9 +1,5 @@
 package gov.loc.repository.bagger.ui.handlers;
 
-import gov.loc.repository.bagger.ui.BagView;
-import gov.loc.repository.bagger.ui.Progress;
-import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
-
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -11,13 +7,17 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.progress.BusyIndicator;
 
+import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagger.ui.Progress;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
+
 public class AddDataHandler extends AbstractAction implements Progress {
-  private static final Log log = LogFactory.getLog(AddDataHandler.class);
+  protected static final Logger log = LoggerFactory.getLogger(AddDataHandler.class);
   private static final long serialVersionUID = 1L;
   BagView bagView;
 

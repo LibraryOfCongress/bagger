@@ -1,5 +1,50 @@
 package gov.loc.repository.bagger.ui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
+import javax.swing.border.LineBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.richclient.application.Application;
+import org.springframework.richclient.application.ApplicationServices;
+import org.springframework.richclient.application.PageComponentContext;
+import org.springframework.richclient.application.event.LifecycleApplicationEvent;
+import org.springframework.richclient.application.support.AbstractView;
+import org.springframework.richclient.dialog.MessageDialog;
+import org.springframework.richclient.image.ImageSource;
+import org.springframework.richclient.progress.BusyIndicator;
+import org.springframework.util.Assert;
+
 import gov.loc.repository.bagger.Bagger;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
@@ -32,53 +77,8 @@ import gov.loc.repository.bagit.BagFile;
 import gov.loc.repository.bagit.Cancellable;
 import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTree;
-import javax.swing.ProgressMonitor;
-import javax.swing.SwingConstants;
-import javax.swing.Timer;
-import javax.swing.border.LineBorder;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.richclient.application.Application;
-import org.springframework.richclient.application.ApplicationServices;
-import org.springframework.richclient.application.PageComponentContext;
-import org.springframework.richclient.application.event.LifecycleApplicationEvent;
-import org.springframework.richclient.application.support.AbstractView;
-import org.springframework.richclient.dialog.MessageDialog;
-import org.springframework.richclient.image.ImageSource;
-import org.springframework.richclient.progress.BusyIndicator;
-import org.springframework.util.Assert;
-
 public class BagView extends AbstractView implements ApplicationListener {
-  private static final Log log = LogFactory.getLog(BagView.class);
+  protected static final Logger log = LoggerFactory.getLogger(BagView.class);
 
   public static BagView instance;
 
