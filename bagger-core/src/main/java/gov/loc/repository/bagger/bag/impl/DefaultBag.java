@@ -146,6 +146,7 @@ public class DefaultBag {
     // set profile
     String lcProject = bilBag.getBagInfoTxt().get(DefaultBagInfo.FIELD_LC_PROJECT);
     if (lcProject != null && !lcProject.isEmpty()) {
+      log.debug("Getting [{}] profile", lcProject);
       Profile localProfile = BaggerProfileStore.getInstance().getProfile(lcProject);
       setProfile(localProfile, newBag);
     }

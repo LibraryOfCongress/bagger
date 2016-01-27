@@ -24,7 +24,11 @@ public class BaggerProfileStore {
   }
 
   public Profile getProfile(String name) {
-    return this.userProfiles.get(name);
+    Profile profile = this.userProfiles.get(name);
+    if(profile == null){
+      throw new RuntimeException("Could not get profile [" + name + "]");
+    }
+    return profile;
   }
 
   private void initializeProfile(Bagger bagger) {
