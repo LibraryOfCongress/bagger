@@ -1,6 +1,9 @@
 subprojects{
   apply plugin: 'java'
   apply plugin: 'maven'
+  apply plugin: 'jacoco'
+  apply plugin: 'findbugs'
+  apply plugin: 'pmd'
   apply from: '../eclipse.gradle'
 
   group = 'loc-repository'
@@ -14,7 +17,29 @@ subprojects{
     mavenCentral()
   }
 
-//sign all the bagger jars
+  test { //show test output
+    testLogging.showStandardStreams = true
+  }
+
+  jacoco {
+    toolVersion = "0.7.5.201505241946"
+  }
+
+  jacocoTestReport.dependsOn test
+  build.dependsOn jacocoTestReport
+
+  findbugsTest.enabled = false
+
+  findbugs {
+    ignoreFailures = true //don't fail the gradle build if bugs are found
+  }
+
+  pmd {
+    ruleSets = ["java-basic", "java-braces"]
+    ignoreFailures = true //don't fail the gradle build if rules are broken
+  }
+
+  //sign all the bagger jars
   jar.doLast {
     ant.signjar(destDir: jar.destinationDir,
       jar: jar.archivePath, 
