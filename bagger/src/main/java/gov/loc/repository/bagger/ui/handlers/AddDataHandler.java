@@ -87,7 +87,7 @@ public class AddDataHandler extends AbstractAction implements Progress {
   public void addBagData(File[] files) {
     if (files != null) {
       for (int i = 0; i < files.length; i++) {
-        log.info("addBagData[" + i + "] " + files[i].getName());
+        log.info("addBagData[{}] {}", i, files[i].getName());
         if (i < files.length - 1)
           addBagData(files[i], false);
         else
@@ -106,7 +106,7 @@ public class AddDataHandler extends AbstractAction implements Progress {
       }
     }
     catch (Exception e) {
-      log.error("BagView.addBagData: " + e);
+      log.error("Failed to add bag file", e);
       bagView.showWarningErrorDialog("Error - file not added", "Error adding bag file: " + file + "\ndue to:\n" + e.getMessage());
     }
     BusyIndicator.clearAt(Application.instance().getActiveWindow().getControl());

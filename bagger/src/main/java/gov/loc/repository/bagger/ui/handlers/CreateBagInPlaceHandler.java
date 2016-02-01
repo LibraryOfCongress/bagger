@@ -45,7 +45,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
 
   public void createPreBag(File dataFile, String bagItVersion, final String profileName) {
     if (((dataFile != null) && (bagItVersion != null)) && (profileName != null))
-      log.info("Creating a new bag in place with data: " + dataFile.getName() + ", version: " + bagItVersion + ", profile: " + profileName);
+      log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), bagItVersion, profileName);
     bagView.clearBagHandler.clearExistingBag();
     try {
       bagView.getBag().createPreBag(dataFile, bagItVersion);
@@ -71,7 +71,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
    */
   public void createPreBagAddKeepFilesToEmptyFolders(File dataFile, String bagItVersion, final String profileName) {
     if (((dataFile != null) && (bagItVersion != null)) && (profileName != null))
-      log.info("Creating a new bag in place with data: " + dataFile.getName() + ", version: " + bagItVersion + ", profile: " + profileName);
+      log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), bagItVersion, profileName);
     bagView.clearBagHandler.clearExistingBag();
     try {
       bagView.getBag().createPreBagAddKeepFilesToEmptyFolders(dataFile, bagItVersion);
@@ -93,7 +93,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
 
   private void setProfile(String selected) {
     Profile profile = bagView.getProfileStore().getProfile(selected);
-    log.info("bagProject: " + profile.getName());
+    log.info("bagProject: {}", profile.getName());
 
     DefaultBag bag = bagView.getBag();
     bag.setProfile(profile, true);

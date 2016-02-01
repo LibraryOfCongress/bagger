@@ -455,7 +455,7 @@ public class DefaultBag {
           }
         }
         catch (Exception e) {
-          log.error("DefaultBag.getDataContent: " + e.getMessage());
+          log.error("Failed to get data content", e);
         }
       }
     }
@@ -644,7 +644,7 @@ public class DefaultBag {
     File parentDir = null;
     bagName = fileStripSuffix(getRootDir().getName());
     parentDir = getRootDir().getParentFile();
-    log.debug("DefaultBag.writeBag parentDir: " + parentDir + ", bagName: " + bagName);
+    log.debug("DefaultBag.writeBag parentDir: {}, bagName: {}", parentDir, bagName);
 
     this.setName(bagName);
     if (this.serialMode == NO_MODE) {
@@ -733,7 +733,7 @@ public class DefaultBag {
     }
     setBagFile(localBagFile);
 
-    log.info("Bag-Info to write: " + bilBag.getBagInfoTxt());
+    log.info("Bag-Info to write: {}", bilBag.getBagInfoTxt());
 
     this.isSerialized(false);
     Bag newBag = bw.write(bilBag, localBagFile);

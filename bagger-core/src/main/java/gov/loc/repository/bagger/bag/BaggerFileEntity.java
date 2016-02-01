@@ -162,7 +162,7 @@ public class BaggerFileEntity {
         else
           delta = 1;
         filenameWithoutBasePath = normFilename.substring(normBasePath.length() + delta);
-        // log.info("filenamewithoutbasepath: " + filenameWithoutBasePath);
+        log.trace("filenamewithoutbasepath: {}", filenameWithoutBasePath);
       }
     }
     log.debug(MessageFormat.format("Removing {0} from {1} resulted in {2}", basePath, filename, filenameWithoutBasePath));

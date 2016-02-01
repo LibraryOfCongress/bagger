@@ -120,12 +120,12 @@ public class AddFieldPanel extends JPanel {
           // overwritten
           if ((!DefaultBagInfo.isOrganizationContactField(standardFieldName))
               && ((standardFieldName.compareTo("Bag-Size") != 0) && (standardFieldName.compareTo("Payload-Oxum") != 0))) {
-            log.debug("adding standard field: " + standardFieldName);
+            log.debug("adding standard field: {}", standardFieldName);
             list.add(standardFieldName);
           }
         }
         catch (Exception e) {
-          log.error("Failed to get value for static field " + field.getName());
+          log.error("Failed to get value for static field {}", field.getName());
         }
       }
     }

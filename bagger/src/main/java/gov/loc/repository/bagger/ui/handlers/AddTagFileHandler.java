@@ -61,7 +61,6 @@ public class AddTagFileHandler extends AbstractAction {
     if (bagView.bagTagFileTree.isEnabled()) {
       if (files != null) {
         for (int i = 0; i < files.size(); i++) {
-          // log.info("addBagData[" + i + "] " + files.get(i).getName());
           bag.addTagFile(files.get(i));
         }
         bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);

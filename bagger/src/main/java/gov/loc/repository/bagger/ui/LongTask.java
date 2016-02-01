@@ -73,7 +73,7 @@ public class LongTask implements ProgressListener {
   @Override
   public synchronized void reportProgress(String activity, Object item, Long count, Long total) {
     if (count == null || total == null) {
-      log.error("reportProgress received null info: count=" + count + ", total=" + total);
+      log.error("reportProgress received null info: count={}, total={}", count, total);
     }
     else {
       if (activityMonitored == null || activityMonitored.equals(activity)) {

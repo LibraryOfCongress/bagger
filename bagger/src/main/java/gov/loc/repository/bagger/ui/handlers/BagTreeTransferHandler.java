@@ -39,7 +39,7 @@ public class BagTreeTransferHandler extends TransferHandler {
       flavors[0] = nodesFlavor;
     }
     catch (ClassNotFoundException e) {
-      log.error("ClassNotFound: " + e.getMessage());
+      log.error("Failed to construct a nodeFlavor", e);
     }
   }
 
@@ -85,7 +85,7 @@ public class BagTreeTransferHandler extends TransferHandler {
         return true;
       }
       if (debugImport) {
-        log.error("canImport " + i + " unknown import " + transferFlavors[i]);
+        log.error("canImport {} unknown import {}", i, transferFlavors[i]);
       }
     }
     if (debugImport) {

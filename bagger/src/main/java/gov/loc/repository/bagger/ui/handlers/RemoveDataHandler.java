@@ -43,20 +43,20 @@ public class RemoveDataHandler extends AbstractAction {
       for (int i = 0; i < paths.length; i++) {
         TreePath path = paths[i];
         Object node = path.getLastPathComponent();
-        log.debug("removeData: " + path.toString());
-        log.debug("removeData pathCount: " + path.getPathCount());
+        log.debug("removeData: {}", path.toString());
+        log.debug("removeData pathCount: {}", path.getPathCount());
         File filePath = null;
         String fileName = null;
         if (path.getPathCount() > 0) {
           filePath = new File("" + path.getPathComponent(0));
           for (int j = 1; j < path.getPathCount(); j++) {
             filePath = new File(filePath, "" + path.getPathComponent(j));
-            log.debug("\t" + filePath);
+            log.debug("filepath: {}", filePath);
           }
         }
         if (filePath != null)
           fileName = BaggerFileEntity.normalize(filePath.getPath());
-        log.debug("removeData filePath: " + fileName);
+        log.debug("removeData filePath: {}", fileName);
         if (fileName != null && !fileName.isEmpty()) {
           try {
             bag.removeBagFile(fileName);

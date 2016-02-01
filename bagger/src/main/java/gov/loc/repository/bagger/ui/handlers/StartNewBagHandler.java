@@ -39,7 +39,7 @@ public class StartNewBagHandler extends AbstractAction {
   }
 
   public void createNewBag(String bagItVersion, String profileName) {
-    log.info("Creating a new bag with version: " + bagItVersion + ", profile: " + profileName);
+    log.info("Creating a new bag with version: {}, profile: {}", bagItVersion, profileName);
 
     bagView.clearBagHandler.clearExistingBag();
     DefaultBag bag = bagView.getBag();
@@ -73,7 +73,7 @@ public class StartNewBagHandler extends AbstractAction {
   // TODO refactor
   private void changeProfile(String selected) {
     Profile profile = bagView.getProfileStore().getProfile(selected);
-    log.info("bagProject: " + profile.getName());
+    log.info("bagProject: {}", profile.getName());
     DefaultBag bag = bagView.getBag();
     bag.setProfile(profile, true);
     bagView.infoInputPane.bagInfoInputPane.updateProject(bagView);

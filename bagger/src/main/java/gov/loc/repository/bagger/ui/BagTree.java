@@ -104,10 +104,10 @@ public class BagTree extends JTree {
           if (!nodeAlreadyExists(filePath)) {
             this.addNode(filePath);
           }
-          log.error("BagTree.populateNodes: " + e.getMessage());
+          log.error("Failed to remove base path from {}", filePath, e);
         }
       }
-      log.debug("BagTree rows: " + payload.size());
+      log.debug("BagTree rows: {}", payload.size());
       BAGTREE_HEIGHT = BAGTREE_ROW_MODIFIER * (payload.size() + 1);
       setPreferredSize(getTreeSize());
       invalidate();
@@ -118,8 +118,6 @@ public class BagTree extends JTree {
     if (!nodeAlreadyExists(file.getName())) {
       DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
       rootNode = createNodeTree(null, null, file);
-      // log.info("buildNodes rootNode parent: " + rootNode.getParent());
-      // log.info("buildNodes getRoot: " + rootNode.getRoot());
       srcNodes.add(rootNode);
       if (isParent)
         parentNode = rootNode;
@@ -152,7 +150,6 @@ public class BagTree extends JTree {
 
   public void addNode(String filePath) {
     DefaultMutableTreeNode node = new DefaultMutableTreeNode(filePath);
-    // log.info("buildNodes getNode: " + node);
     srcNodes.add(node);
     parentNode.add(node);
     initialize();

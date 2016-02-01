@@ -634,7 +634,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
   @Override
   public void onApplicationEvent(ApplicationEvent e) {
-    log.info("BagView.onApplicationEvent: " + e);
+    log.info("BagView.onApplicationEvent: {}", e);
     if (e instanceof LifecycleApplicationEvent) {
       LifecycleApplicationEvent le = (LifecycleApplicationEvent) e;
       if (le.getEventType() == LifecycleApplicationEvent.CREATED && le.objectIs(Profile.class)) {
@@ -665,7 +665,7 @@ public class BagView extends AbstractView implements ApplicationListener {
         if (als.length > 0)
           timer.removeActionListener(als[0]);
         if (longRunningProcess != null && !task.isDone()) {
-          log.info("Trying to cancel the long running process: " + longRunningProcess);
+          log.info("Trying to cancel the long running process: {}", longRunningProcess);
           longRunningProcess.cancel();
         }
       }

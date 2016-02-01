@@ -101,7 +101,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
               }
               bagView.statusBarEnd();
               File bagFile = bag.getBagFile();
-              log.info("BagView.openExistingBag: " + bagFile);
+              log.info("BagView.openExistingBag: {}", bagFile);
               bagView.openBagHandler.openExistingBag(bagFile);
               bagView.updateSaveBag();
             }

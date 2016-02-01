@@ -193,7 +193,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
       urlField.setText(bag.getFetch().getBaseURL());
     }
     catch (Exception e) {
-      log.error("fetch baseURL: " + e.getMessage());
+      log.error("Failed to set url label", e);
     }
     urlField.setEnabled(false);
 

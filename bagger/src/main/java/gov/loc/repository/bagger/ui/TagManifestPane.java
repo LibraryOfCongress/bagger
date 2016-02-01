@@ -79,7 +79,7 @@ public class TagManifestPane extends JTabbedPane {
     Collection<BagFile> list = defaultBag.getTags();
     manifestPaneList = new ArrayList<BagTextPane>();
     manifestScrollPaneList = new ArrayList<JScrollPane>();
-    log.info("TagManifestPane.populateBagPane getTags: " + list.size());
+    log.info("TagManifestPane.populateBagPane getTags: {}", list.size());
     for (Iterator<BagFile> it = list.iterator(); it.hasNext();) {
       BagFile bf = it.next();
       String content = "";
@@ -87,7 +87,7 @@ public class TagManifestPane extends JTabbedPane {
         content = bf.toString();
       else
         content = tokenFormat(bf.toString());
-      log.debug("BagFile: " + bf.getFilepath() + "::" + content);
+      log.debug("BagFile: {}::{}", bf.getFilepath(), content);
       BagTextPane manifestPane = new BagTextPane(content);
       manifestPaneList.add(manifestPane);
       JScrollPane manifestScrollPane = new JScrollPane();
@@ -96,7 +96,7 @@ public class TagManifestPane extends JTabbedPane {
       manifestScrollPane.setForeground(selectedColor);
       manifestScrollPaneList.add(manifestScrollPane);
       String tabName = bf.getFilepath();
-      log.debug("manifestName: " + tabName);
+      log.debug("manifestName: {}", tabName);
       addTab(tabName, manifestScrollPane);
     }
 
