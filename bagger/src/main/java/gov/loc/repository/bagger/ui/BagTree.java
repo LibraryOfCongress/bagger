@@ -11,6 +11,8 @@ import java.util.Vector;
 import javax.swing.DropMode;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -44,7 +46,7 @@ public class BagTree extends JTree {
     basePath = path;
     parentNode = new DefaultMutableTreeNode(basePath);
     initialize();
-    // initListeners();
+    initListeners();
     JTextField nameTextField = new JTextField();
     int fieldHeight = nameTextField.getFontMetrics(nameTextField.getFont()).getHeight() + 5;
     BAGTREE_ROW_MODIFIER = fieldHeight;
@@ -75,15 +77,13 @@ public class BagTree extends JTree {
     log.debug("BagTree.populateNodes");
     if (bag.getPayload() != null && rootSrc.listFiles() != null) {
       addNodes(rootSrc, isParent);
-    }
-    else {
+    } else {
       log.debug("BagTree.populateNodes listFiles NULL:");
       List<String> payload = null;
       if (!bag.isHoley()) {
         log.debug("BagTree.populateNodes getPayloadPaths:");
         payload = bag.getPayloadPaths();
-      }
-      else {
+      } else {
         log.debug("BagTree.populateNodes getFetchPayload:");
         payload = bag.getPayloadPaths(); // bag.getFetchPayload();
         // basePath = bag.getFetch().getBaseURL();
@@ -94,15 +94,13 @@ public class BagTree extends JTree {
           String normalPath;
           if (bag.isHoley()) {
             normalPath = BaggerFileEntity.removeBasePath("data", filePath);
-          }
-          else {
+          } else {
             normalPath = BaggerFileEntity.removeBasePath(basePath, filePath);
           }
           if (!nodeAlreadyExists(normalPath)) {
             this.addNode(normalPath);
           }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           if (!nodeAlreadyExists(filePath)) {
             this.addNode(filePath);
           }
@@ -128,8 +126,7 @@ public class BagTree extends JTree {
       else
         parentNode.add(rootNode);
       initialize();
-    }
-    else {
+    } else {
       return true;
     }
     return false;
@@ -162,7 +159,8 @@ public class BagTree extends JTree {
   }
 
   /** Add nodes from under "dir" into curTop. Highly recursive. */
-  private DefaultMutableTreeNode createNodeTree(DefaultMutableTreeNode curTop, DefaultMutableTreeNode displayTop, File dir) {
+  private DefaultMutableTreeNode createNodeTree(DefaultMutableTreeNode curTop, DefaultMutableTreeNode displayTop,
+      File dir) {
     String curPath = dir.getPath();
     String displayPath = dir.getName();
     DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(curPath);
@@ -236,21 +234,22 @@ public class BagTree extends JTree {
     return new Dimension(BAGTREE_WIDTH, BAGTREE_HEIGHT);
   }
 
-  // private void initListeners() {
-  // addTreeExpansionListener(new TreeExpansionListener() {
-  // public void treeExpanded(TreeExpansionEvent e) {
-  // int rows = BAGTREE_ROW_MODIFIER * getRowCount();
-  // //log.info("BagTree rows: " + rows);
-  // setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
-  // invalidate();
-  // }
-  // public void treeCollapsed(TreeExpansionEvent e) {
-  // int rows = BAGTREE_ROW_MODIFIER * getRowCount();
-  // //log.info("BagTree rows: " + rows);
-  // setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
-  // invalidate();
-  // }
-  // });
-  // }
+  private void initListeners() {
+    addTreeExpansionListener(new TreeExpansionListener() {
+      public void treeExpanded(TreeExpansionEvent e) {
+        int rows = BAGTREE_ROW_MODIFIER * getRowCount();
+        log.trace("BagTree rows: {}", rows);
+        setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+        invalidate();
+      }
+
+      public void treeCollapsed(TreeExpansionEvent e) {
+        int rows = BAGTREE_ROW_MODIFIER * getRowCount();
+        log.trace("BagTree rows: {}", rows);
+        setPreferredSize(new Dimension(BAGTREE_WIDTH, rows));
+        invalidate();
+      }
+    });
+  }
 
 }
