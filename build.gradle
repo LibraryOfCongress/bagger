@@ -1,7 +1,6 @@
 subprojects{
   apply plugin: 'java'
   apply plugin: 'maven'
-  apply plugin: 'jacoco'
   apply plugin: 'findbugs'
   apply plugin: 'pmd'
   apply from: '../eclipse.gradle'
@@ -20,13 +19,6 @@ subprojects{
   test { //show test output
     testLogging.showStandardStreams = true
   }
-
-  jacoco {
-    toolVersion = "0.7.5.201505241946"
-  }
-
-  jacocoTestReport.dependsOn test
-  build.dependsOn jacocoTestReport
 
   findbugsTest.enabled = false
 
