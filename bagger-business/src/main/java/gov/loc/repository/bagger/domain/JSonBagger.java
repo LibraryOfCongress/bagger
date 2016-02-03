@@ -1,12 +1,5 @@
 package gov.loc.repository.bagger.domain;
 
-import gov.loc.repository.bagger.Bagger;
-import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.json.JSONException;
-import gov.loc.repository.bagger.json.JSONObject;
-import gov.loc.repository.bagger.json.JSONTokener;
-import gov.loc.repository.bagger.json.JSONWriter;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,6 +11,16 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import gov.loc.repository.bagger.Bagger;
+import gov.loc.repository.bagger.Profile;
+import gov.loc.repository.bagger.json.JSONException;
+import gov.loc.repository.bagger.json.JSONObject;
+import gov.loc.repository.bagger.json.JSONTokener;
+import gov.loc.repository.bagger.json.JSONWriter;
+
 /**
  * Provides JSONBagger business object.
  *
@@ -27,7 +30,7 @@ import java.util.List;
  *
  */
 public class JSonBagger implements Bagger {
-
+  protected static final Logger log = LoggerFactory.getLogger(JSonBagger.class);
   private File profilesFolder;
   
   private static final String BAGGER_PROFILES_HOME_PROPERTY = "BAGGER_PROFILES_HOME";
@@ -39,7 +42,10 @@ public class JSonBagger implements Bagger {
     if(System.getProperties().containsKey(BAGGER_PROFILES_HOME_PROPERTY)){
       homeDir = System.getProperty(BAGGER_PROFILES_HOME_PROPERTY);
     }
+    
     String profilesPath = homeDir + File.separator + "bagger";
+    log.info("Using profiles from {}", profilesPath);
+    
     profilesFolder = new File(profilesPath);
     String baggerJarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
     copyDefautprofilesToUserFolder(baggerJarPath, profilesFolder);
