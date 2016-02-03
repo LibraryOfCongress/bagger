@@ -10,7 +10,7 @@ The Bagger application creates and deposits bags. <br> Using the BagIt specifica
 <p>
 <b>Bagger Application</b>
 <p>
-Version: unspecified
+Version: @VERSION@
 <br>
 <p>
 <b>Bag It Library</b>

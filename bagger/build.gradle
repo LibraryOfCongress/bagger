@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: "application"
 
 mainClassName = "gov.loc.repository.bagger.BaggerApplication"
@@ -60,15 +62,10 @@ startScripts {
 
 afterEvaluate {
   configure(tasks.processResources) {
-    filter{ String line ->
-        if(line.startsWith("Version: unspecified")){
-          return "Version: ${project.version}"
-        } else if(line.startsWith("applicationDescriptor.title")){
-          return "applicationDescriptor.title=Bagger ${project.version}"
-        }
-        else{
-          return line
-        }
+    eachFile { copyDetails ->
+      if (copyDetails.name == 'about.txt' || copyDetails.name == 'messages.properties') {
+          filter(ReplaceTokens, tokens:[VERSION: project.version])
+      }
     }
   }
 }
