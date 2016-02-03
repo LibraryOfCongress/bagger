@@ -28,26 +28,29 @@ dependencies {
     runtime 'com.jgoodies:looks:2.0.4'
 }
 
-//include the docs and licenses into the distributable zip
-distZip {
-  String baseZipDirectory = archiveName - ("." + extension)
-
-  //include the various user guides
-  into("${baseZipDirectory}/doc") {
-    from "${rootDir.path}/bagger_distribution"
-    include "*.doc"
-    include "*.txt"
-  }
-  
-  //include the keystore used for signing jars
-  into("${baseZipDirectory}/keystore") {
-    from "${rootDir.path}/scripts"
-    include "bagger.ks"
-  }
-
-  into("${baseZipDirectory}/bin") {
-    from "${rootDir.path}/scripts"
-    include "discoverJavaVersions.py"
+//include the docs and licenses into the distributable zip/tar
+distributions {
+  main{
+    contents {
+      //include the various user guides
+      into("doc") {
+        from "${rootDir.path}/bagger_distribution"
+        include "*.doc"
+        include "*.txt"
+      }
+      
+      //include the keystore used for signing jars
+      into("keystore") {
+        from "${rootDir.path}/scripts"
+        include "bagger.ks"
+      }
+      
+      //include helpful scripts
+      into("bin") {
+        from "${rootDir.path}/scripts"
+        include "discoverJavaVersions.py"
+      }
+    }
   }
 }
 
@@ -69,20 +72,3 @@ afterEvaluate {
     }
   }
 }
-
-task srcZip(type: Zip) {
-  classifier = 'src'
-  from rootDir
-  include 'bagger-business/**'
-  include 'bagger-common/**'
-  include 'bagger-core/**'
-  include 'bagger-maven/**'
-  include 'bagger-package/**'
-  include 'bagger_distribution/**'
-  include 'README.txt'
-  include 'build.gradle'
-  include 'eclipse.gradle'
-  include 'settings.gradle'
-}
-
-tasks.distZip.dependsOn srcZip
