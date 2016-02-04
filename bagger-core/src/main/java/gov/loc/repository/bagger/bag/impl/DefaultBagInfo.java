@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +39,7 @@ public class DefaultBagInfo implements Serializable {
 
   private BaggerSourceOrganization sourceOrganization = new BaggerSourceOrganization();
   private Contact toContact = new Contact(true);
-  private HashMap<String, BagInfoField> fieldMap = new HashMap<String, BagInfoField>();
+  private LinkedHashMap<String, BagInfoField> fieldMap = new LinkedHashMap<>();
 
   public DefaultBagInfo(Bag bag) {
     log.debug("DefaultBagInfo");
@@ -228,7 +229,7 @@ public class DefaultBagInfo implements Serializable {
   }
 
   public void clearFields() {
-    fieldMap = new HashMap<String, BagInfoField>();
+    fieldMap = new LinkedHashMap<String, BagInfoField>();
   }
 
   public void removeField(String key) {

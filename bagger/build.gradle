@@ -18,6 +18,7 @@ dependencies {
        'com.jgoodies:forms:1.0.7',
        'net.sf.nachocalendar:nachocalendar:0.23',
        'org.codehaus.groovy:groovy-all:2.4.0',
+       //spring rich client is basically a dead project, so statically linking the jars
        files("${project.projectDir}/spring-richclient-1.1.0-jars/spring-richclient-resources-1.1.0.jar"),
        files("${project.projectDir}/spring-richclient-1.1.0-jars/spring-richclient-core-1.1.0.jar"),
        files("${project.projectDir}/spring-richclient-1.1.0-jars/spring-richclient-jdk6-1.1.0.jar"),
