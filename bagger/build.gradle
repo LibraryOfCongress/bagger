@@ -10,7 +10,6 @@ jar.baseName="bagger"
 
 dependencies {
      compile 'gov.loc:bagit:4.4',
-       project(':bagger-common'),
        project(':bagger-core'),
        project(':bagger-business'),
        'org.springframework.richclient:spring-richclient-jdk5:1.0.0',

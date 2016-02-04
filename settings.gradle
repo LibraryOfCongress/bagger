@@ -1,4 +1,3 @@
 include 'bagger-business',
-  'bagger-common',
   'bagger-core',
   'bagger'
