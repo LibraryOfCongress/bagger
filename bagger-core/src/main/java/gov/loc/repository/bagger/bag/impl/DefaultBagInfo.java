@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import gov.loc.repository.bagger.ProfileField;
 import gov.loc.repository.bagger.bag.BagInfoField;
 import gov.loc.repository.bagger.bag.BaggerSourceOrganization;
 import gov.loc.repository.bagger.profile.BaggerProfileStore;
-import gov.loc.repository.bagit.Bag;
 import gov.loc.repository.bagit.BagInfoTxt;
 import gov.loc.repository.bagit.impl.BagInfoTxtImpl;
 
@@ -40,10 +38,6 @@ public class DefaultBagInfo implements Serializable {
   private BaggerSourceOrganization sourceOrganization = new BaggerSourceOrganization();
   private Contact toContact = new Contact(true);
   private LinkedHashMap<String, BagInfoField> fieldMap = new LinkedHashMap<>();
-
-  public DefaultBagInfo(Bag bag) {
-    log.debug("DefaultBagInfo");
-  }
 
   public BaggerSourceOrganization getBagOrganization() {
     return this.sourceOrganization;
@@ -65,7 +59,7 @@ public class DefaultBagInfo implements Serializable {
       toContact.setContactName(ProfileField.createProfileField(Contact.FIELD_TO_CONTACT_NAME, bagInfoTxt.get(Contact.FIELD_TO_CONTACT_NAME)));
     }
     else {
-      ProfileField.createProfileField(Contact.FIELD_TO_CONTACT_NAME, "");
+      toContact.setContactName(ProfileField.createProfileField(Contact.FIELD_TO_CONTACT_NAME, ""));
     }
 
     if (bagInfoTxt.containsKey(Contact.FIELD_TO_CONTACT_PHONE)) {
@@ -96,14 +90,9 @@ public class DefaultBagInfo implements Serializable {
 
   private void updateBagInfoFieldMapFromBilBag(BagInfoTxt bagInfoTxt) {
     if (fieldMap != null) {
-      Set<String> keys = fieldMap.keySet();
-      for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-        String label = iter.next();
-        BagInfoField field = fieldMap.get(label);
-        String key = field.getLabel();
-        String value = bagInfoTxt.get(key);
-        field.setValue(value);
-        fieldMap.put(label, field);
+      for(Entry<String, BagInfoField> entry : fieldMap.entrySet()){
+        String value = bagInfoTxt.get(entry.getKey());
+        entry.getValue().setValue(value);
       }
     }
   }
@@ -133,14 +122,12 @@ public class DefaultBagInfo implements Serializable {
   }
 
   private void applyProfileToFieldMap(Profile profile) {
-    if (profile.isNoProfile()) {
-      if (fieldMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
-        fieldMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
-      }
-    }
-
     if (profile != null) {
-      if (!profile.isNoProfile()) {
+      if (profile.isNoProfile()) {
+        if (fieldMap.containsKey(DefaultBagInfo.FIELD_LC_PROJECT)) {
+          fieldMap.remove(DefaultBagInfo.FIELD_LC_PROJECT);
+        }
+      }else{
         BagInfoField field = new BagInfoField();
         field.setLabel(DefaultBagInfo.FIELD_LC_PROJECT);
         field.setName(DefaultBagInfo.FIELD_LC_PROJECT);
@@ -288,12 +275,10 @@ public class DefaultBagInfo implements Serializable {
   }
 
   public void update(Map<String, String> map) {
-    Set<String> keys = map.keySet();
-    for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-      String key = iter.next();
-      String value = map.get(key);
-      if (fieldMap.get(key) != null)
-        fieldMap.get(key).setValue(value);
+    for(Entry<String, String> entry : map.entrySet()){
+      if(fieldMap.get(entry.getKey()) != null){
+        fieldMap.get(entry.getKey()).setValue(entry.getValue());
+      }
     }
   }
 

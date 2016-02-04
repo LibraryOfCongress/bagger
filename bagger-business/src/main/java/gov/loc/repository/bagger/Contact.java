@@ -5,6 +5,7 @@ import gov.loc.repository.bagger.json.JSONObject;
 import gov.loc.repository.bagger.json.JSONTokener;
 import gov.loc.repository.bagger.json.JSONWriter;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 
 /**
@@ -15,7 +16,9 @@ import java.io.StringWriter;
  *
  * @author Jon Steinbach
  */
-public class Contact {
+public class Contact implements Serializable{
+  private static final long serialVersionUID = 1L;
+  
   private ProfileField contactName;
   private ProfileField telephone;
   private ProfileField email;

@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -77,7 +78,7 @@ public class DefaultBag {
   private boolean dirty = false;
 
   private File rootDir = null;
-  private String name = new String("bag_");
+  private String name = "bag_";
   private long size;
   private long totalSize = 0;
 
@@ -122,7 +123,7 @@ public class DefaultBag {
     }
     initializeBilBag();
 
-    bagInfo = new DefaultBagInfo(bilBag);
+    bagInfo = new DefaultBagInfo();
 
     FetchTxt fetchTxt = bilBag.getFetchTxt();
     if (fetchTxt != null && !fetchTxt.isEmpty()) {
@@ -377,7 +378,7 @@ public class DefaultBag {
   }
 
   public String getBagInfoContent() {
-    String bicontent = new String();
+    String bicontent = "";
     if (this.bagInfo != null) {
       bicontent = this.bagInfo.toString();
     }
@@ -425,15 +426,13 @@ public class DefaultBag {
     List<String> list = new ArrayList<String>();
 
     FetchTxt fetchTxt = this.bilBag.getFetchTxt();
-    if (fetchTxt == null)
-      return list;
-    if (fetchTxt != null) {
-      for (int i = 0; i < fetchTxt.size(); i++) {
-        FilenameSizeUrl localFetch = fetchTxt.get(i);
-        String s = localFetch.getFilename();
-        display("DefaultBag.getFetchPayload: " + localFetch.toString());
-        list.add(s);
-      }
+    if (fetchTxt == null){return list;}
+
+    for (int i = 0; i < fetchTxt.size(); i++) {
+      FilenameSizeUrl localFetch = fetchTxt.get(i);
+      String s = localFetch.getFilename();
+      display("DefaultBag.getFetchPayload: " + localFetch.toString());
+      list.add(s);
     }
     return list;
   }
@@ -472,7 +471,9 @@ public class DefaultBag {
   }
 
   public void clearProfile() {
-    setProfile(BaggerProfileStore.getInstance().getProfile(Profile.NO_PROFILE_NAME), false);
+    Profile noProfile = new Profile();
+    noProfile.setName(Profile.NO_PROFILE_NAME);
+    setProfile(profile, false);
   }
 
   public void setProfile(Profile profile, boolean newBag) {
@@ -753,18 +754,14 @@ public class DefaultBag {
     List<String> rulesList = new ArrayList<String>();
     HashMap<String, BagInfoField> fieldMap = this.getInfo().getFieldMap();
     if (fieldMap != null) {
-      Set<String> keys = fieldMap.keySet();
-      for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-        String label = iter.next();
-        BagInfoField field = fieldMap.get(label);
-        if (field.isRequired()) {
-          rulesList.add(field.getLabel());
+      
+      for(Entry<String, BagInfoField> entry : fieldMap.entrySet()){
+        if(entry.getValue().isRequired()){
+          rulesList.add(entry.getKey());
         }
       }
     }
-    String[] rules = new String[rulesList.size()];
-    for (int i = 0; i < rulesList.size(); i++)
-      rules[i] = new String(rulesList.get(i));
+    String[] rules = rulesList.toArray(new String[rulesList.size()]);
 
     Verifier strategy = new RequiredBagInfoTxtFieldsVerifier(rules);
 
@@ -789,12 +786,7 @@ public class DefaultBag {
       else {
         completer.setPayloadManifestAlgorithm(Algorithm.MD5);
       }
-      if (this.isHoley) {
-        completer.setClearExistingPayloadManifests(true);
-      }
-      else {
-        completer.setClearExistingPayloadManifests(true);
-      }
+      completer.setClearExistingPayloadManifests(true);
     }
     if (this.isBuildTagManifest) {
       completer.setClearExistingTagManifests(true);
