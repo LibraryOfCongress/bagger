@@ -38,7 +38,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationServices;
 import org.springframework.richclient.application.PageComponentContext;
-import org.springframework.richclient.application.event.LifecycleApplicationEvent;
 import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.dialog.MessageDialog;
 import org.springframework.richclient.image.ImageSource;
@@ -46,7 +45,6 @@ import org.springframework.richclient.progress.BusyIndicator;
 import org.springframework.util.Assert;
 
 import gov.loc.repository.bagger.Bagger;
-import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagger.profile.BaggerProfileStore;
@@ -635,13 +633,6 @@ public class BagView extends AbstractView implements ApplicationListener {
   @Override
   public void onApplicationEvent(ApplicationEvent e) {
     log.info("BagView.onApplicationEvent: {}", e);
-    if (e instanceof LifecycleApplicationEvent) {
-      LifecycleApplicationEvent le = (LifecycleApplicationEvent) e;
-      if (le.getEventType() == LifecycleApplicationEvent.CREATED && le.objectIs(Profile.class)) {
-        int i = 0;
-        i++;
-      }
-    }
   }
 
   /**
