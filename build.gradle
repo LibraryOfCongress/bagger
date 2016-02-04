@@ -36,7 +36,7 @@ subprojects{
     ant.signjar(destDir: jar.destinationDir,
       jar: jar.archivePath, 
       alias:"rdc",
-      keystore:"${rootDir.path}/scripts/bagger.ks",
+      keystore:"${rootDir.path}/keystore/bagger.ks",
       storepass:"bagger-rdc", 
       preservelastmodified:"true") 
   }

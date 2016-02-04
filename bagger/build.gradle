@@ -32,22 +32,18 @@ distributions {
   main{
     contents {
       //include the various user guides
-      into("doc") {
-        from "${rootDir.path}/bagger_distribution"
-        include "*.doc"
-        include "*.txt"
+      from("doc") {
+        into "doc"
       }
       
       //include the keystore used for signing jars
-      into("keystore") {
-        from "${rootDir.path}/scripts"
-        include "bagger.ks"
+      from("${rootDir.path}/keystore") {
+        into "keystore"
       }
       
       //include helpful scripts
-      into("bin") {
-        from "${rootDir.path}/scripts"
-        include "discoverJavaVersions.py"
+      from("scripts") {
+        into "bin"
       }
     }
   }
