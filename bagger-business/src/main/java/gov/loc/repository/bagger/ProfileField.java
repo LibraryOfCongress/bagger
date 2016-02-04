@@ -1,16 +1,18 @@
 package gov.loc.repository.bagger;
 
-import gov.loc.repository.bagger.json.JSONArray;
-import gov.loc.repository.bagger.json.JSONException;
-import gov.loc.repository.bagger.json.JSONObject;
-import gov.loc.repository.bagger.json.JSONWriter;
-
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileField {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONWriter;
 
+public class ProfileField implements Serializable{
+  private static final long serialVersionUID = 1L;
+  
   private String fieldName = "";
   private String fieldValue = "";
   private String fieldType = "";

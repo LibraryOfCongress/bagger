@@ -1,25 +1,30 @@
 package gov.loc.repository.bagger.domain;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import gov.loc.repository.bagger.Bagger;
 import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.json.JSONException;
-import gov.loc.repository.bagger.json.JSONObject;
-import gov.loc.repository.bagger.json.JSONTokener;
-import gov.loc.repository.bagger.json.JSONWriter;
 
 /**
  * Provides JSONBagger business object.
@@ -53,7 +58,8 @@ public class JSonBagger implements Bagger {
 
   public void copyDefautprofilesToUserFolder(String baggerJarPath, File folder) {
     if (!folder.exists()) {
-      folder.mkdirs();
+      boolean madeDirs = folder.mkdirs();
+      log.debug("Made directories {} ? {}", folder, madeDirs);
     }
     
     for(String profile : DEFAULT_PROFILES){
@@ -97,19 +103,21 @@ public class JSonBagger implements Bagger {
   public List<Profile> loadProfiles() {
     File[] profilesFiles = profilesFolder.listFiles();
     List<Profile> profilesToReturn = new ArrayList<Profile>();
-    for (File file : profilesFiles) {
-      try {
-        FileReader reader = new FileReader(file);
-        Profile profile = loadProfile(reader, file.getName());
-        profilesToReturn.add(profile);
-      }
-      catch (FileNotFoundException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      catch (JSONException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+    if(profilesFiles != null){
+      for (File file : profilesFiles) {
+        try {
+          InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "UTF-8");
+          Profile profile = loadProfile(reader, file.getName());
+          profilesToReturn.add(profile);
+        }
+        catch (FileNotFoundException e) {
+          log.error("Could not find profile file[{}]!", file, e);
+        }
+        catch (JSONException e) {
+          log.error("Error parsing json profile[{}]!", file, e);
+        } catch (UnsupportedEncodingException e) {
+          log.error("Expected UTF-8 encoded file for {}", file, e);
+        }
       }
     }
 
@@ -121,17 +129,11 @@ public class JSonBagger implements Bagger {
     return profilesToReturn;
   }
 
-  private Profile loadProfile(FileReader reader, String jsonFileName) throws JSONException {
+  private Profile loadProfile(Reader reader, String jsonFileName) throws JSONException {
     JSONTokener tokenizer = new JSONTokener(reader);
-    JSONObject jsonObject = null;
-    try {
-      jsonObject = new JSONObject(tokenizer);
-    }
-    catch (JSONException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    JSONObject jsonObject = new JSONObject(tokenizer);
     Profile profile = Profile.createProfile(jsonObject, getprofileName(jsonFileName));
+    
     return profile;
   }
 
@@ -141,7 +143,9 @@ public class JSonBagger implements Bagger {
       return;
     try {
       String fileName = getJsonFileName(profile.getName());
-      FileWriter writer = new FileWriter(profilesFolder.getAbsolutePath() + File.separator + fileName);
+      OutputStreamWriter writer = new OutputStreamWriter(
+          new FileOutputStream(profilesFolder.getAbsolutePath() + File.separator + fileName),
+          Charset.forName("UTF-8"));
       StringWriter stringWriter = new StringWriter();
       JSONWriter jsonWriter = new JSONWriter(stringWriter);
       profile.serialize(jsonWriter);
@@ -151,12 +155,10 @@ public class JSonBagger implements Bagger {
       writer.close();
     }
     catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log.error("Failed to write profile {}", profile.getName(), e);
     }
     catch (JSONException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log.error("Failed to write JSON", e);
     }
   }
 
@@ -181,8 +183,10 @@ public class JSonBagger implements Bagger {
     profilesFolder = new File(profilesPath);
     String profileFielName = getJsonFileName(profile.getName());
     File file = new File(profilesFolder, profileFielName);
-    if (file.exists())
-      file.delete();
+    if (file.exists()){
+      boolean wasDeleted = file.delete();
+      log.debug("File {} was deleted ? {}", file, wasDeleted);
+    }
   }
 
 }

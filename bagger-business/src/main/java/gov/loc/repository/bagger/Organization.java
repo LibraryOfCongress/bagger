@@ -1,18 +1,18 @@
 package gov.loc.repository.bagger;
 
-import gov.loc.repository.bagger.json.JSONException;
-import gov.loc.repository.bagger.json.JSONObject;
-import gov.loc.repository.bagger.json.JSONTokener;
-import gov.loc.repository.bagger.json.JSONWriter;
-
 import java.io.StringWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.JSONWriter;
 
 public class Organization {
   private ProfileField name;
   private ProfileField address;
 
-  public static String FIELD_SOURCE_ORGANIZATION = "Source-Organization";
-  public static String FIELD_ORGANIZATION_ADDRESS = "Organization-Address";
+  public static final String FIELD_SOURCE_ORGANIZATION = "Source-Organization";
+  public static final String FIELD_ORGANIZATION_ADDRESS = "Organization-Address";
 
   public Organization() {
     name = new ProfileField();

@@ -1,10 +1,5 @@
 package gov.loc.repository.bagger;
 
-import gov.loc.repository.bagger.json.JSONException;
-import gov.loc.repository.bagger.json.JSONObject;
-import gov.loc.repository.bagger.json.JSONTokener;
-import gov.loc.repository.bagger.json.JSONWriter;
-
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,15 +7,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Profile {
-  public static String NO_PROFILE_NAME = "<no profile>";
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.JSONWriter;
 
-  public static String FIELD_NAME = "name";
-  public static String FIELD_ORGANIZATION = "Organization";
-  public static String FIELD_SENDTO = "Send-To";
-  public static String FIELD_SENDFROM = "Send-From";
-  public static String FIELD_CUSTOM_INFO = "Custom-info";
-  public static String FIELD_STANDARD_INFO = "Standard-info";
+public class Profile {
+  public static final String NO_PROFILE_NAME = "<no profile>";
+
+  public static final String FIELD_NAME = "name";
+  public static final String FIELD_ORGANIZATION = "Organization";
+  public static final String FIELD_SENDTO = "Send-To";
+  public static final String FIELD_SENDFROM = "Send-From";
+  public static final String FIELD_CUSTOM_INFO = "Custom-info";
+  public static final String FIELD_STANDARD_INFO = "Standard-info";
 
   private Contact sendToContact = new Contact(true);
   private Contact sendFromContact = new Contact(false);
