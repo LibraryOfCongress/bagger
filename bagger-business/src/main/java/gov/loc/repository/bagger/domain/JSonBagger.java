@@ -52,11 +52,10 @@ public class JSonBagger implements Bagger {
     log.info("Using profiles from {}", profilesPath);
     
     profilesFolder = new File(profilesPath);
-    String baggerJarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-    copyDefautprofilesToUserFolder(baggerJarPath, profilesFolder);
+    copyDefautprofilesToUserFolder(profilesFolder);
   }
 
-  public void copyDefautprofilesToUserFolder(String baggerJarPath, File folder) {
+  public void copyDefautprofilesToUserFolder(File folder) {
     if (!folder.exists()) {
       boolean madeDirs = folder.mkdirs();
       log.debug("Made directories {} ? {}", folder, madeDirs);
