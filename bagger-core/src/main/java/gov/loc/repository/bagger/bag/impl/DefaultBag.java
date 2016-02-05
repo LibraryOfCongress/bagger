@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -77,7 +78,7 @@ public class DefaultBag {
   private boolean dirty = false;
 
   private File rootDir = null;
-  private String name = new String("bag_");
+  private String name = "bag_";
   private long size;
   private long totalSize = 0;
 
@@ -122,7 +123,7 @@ public class DefaultBag {
     }
     initializeBilBag();
 
-    bagInfo = new DefaultBagInfo(bilBag);
+    bagInfo = new DefaultBagInfo();
 
     FetchTxt fetchTxt = bilBag.getFetchTxt();
     if (fetchTxt != null && !fetchTxt.isEmpty()) {
@@ -234,8 +235,9 @@ public class DefaultBag {
 
   public void setName(String name) {
     String[] list = name.split("\\.");
-    if (list != null && list.length > 0)
+    if (list != null && list.length > 0){
       name = list[0];
+    }
     this.name = name;
   }
 
@@ -377,7 +379,7 @@ public class DefaultBag {
   }
 
   public String getBagInfoContent() {
-    String bicontent = new String();
+    String bicontent = "";
     if (this.bagInfo != null) {
       bicontent = this.bagInfo.toString();
     }
@@ -389,24 +391,23 @@ public class DefaultBag {
     String delimToken = "bagit";
     String baseUrl = "";
     try {
-      if (fetchTxt != null) {
-        if (!fetchTxt.isEmpty()) {
-          FilenameSizeUrl fsu = fetchTxt.get(0);
-          if (fsu != null) {
-            String url = fsu.getUrl();
-            baseUrl = url;
-            String[] list = url.split(delimToken);
-            for (int i = 0; i < list.length; i++) {
-              String s = list[i];
-              if (s.trim().startsWith(httpToken)) {
-                baseUrl = s;
-              }
+      if (fetchTxt != null && !fetchTxt.isEmpty()) {
+        FilenameSizeUrl fsu = fetchTxt.get(0);
+        if (fsu != null) {
+          String url = fsu.getUrl();
+          baseUrl = url;
+          String[] list = url.split(delimToken);
+          for (int i = 0; i < list.length; i++) {
+            String s = list[i];
+            if (s.trim().startsWith(httpToken)) {
+              baseUrl = s;
             }
           }
         }
       }
     }
     catch (Exception e) {
+      log.error("Failed to get base URL", e);
     }
     return baseUrl;
   }
@@ -416,8 +417,9 @@ public class DefaultBag {
   }
 
   public BaggerFetch getFetch() {
-    if (this.fetch == null)
+    if (this.fetch == null){
       this.fetch = new BaggerFetch();
+    }
     return this.fetch;
   }
 
@@ -425,15 +427,13 @@ public class DefaultBag {
     List<String> list = new ArrayList<String>();
 
     FetchTxt fetchTxt = this.bilBag.getFetchTxt();
-    if (fetchTxt == null)
-      return list;
-    if (fetchTxt != null) {
-      for (int i = 0; i < fetchTxt.size(); i++) {
-        FilenameSizeUrl localFetch = fetchTxt.get(i);
-        String s = localFetch.getFilename();
-        display("DefaultBag.getFetchPayload: " + localFetch.toString());
-        list.add(s);
-      }
+    if (fetchTxt == null){return list;}
+
+    for (int i = 0; i < fetchTxt.size(); i++) {
+      FilenameSizeUrl localFetch = fetchTxt.get(i);
+      String s = localFetch.getFilename();
+      display("DefaultBag.getFetchPayload: " + localFetch.toString());
+      list.add(s);
     }
     return list;
   }
@@ -472,7 +472,10 @@ public class DefaultBag {
   }
 
   public void clearProfile() {
-    setProfile(BaggerProfileStore.getInstance().getProfile(Profile.NO_PROFILE_NAME), false);
+    Profile noProfile = new Profile();
+    noProfile.setName(Profile.NO_PROFILE_NAME);
+    noProfile.setIsDefault(true);
+    setProfile(noProfile, false);
   }
 
   public void setProfile(Profile profile, boolean newBag) {
@@ -517,26 +520,24 @@ public class DefaultBag {
 
     generateManifestFiles();
 
-    if (this.isHoley) {
-      if (this.getFetch().getBaseURL() != null) {
-        BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
+    if (this.isHoley && this.getFetch().getBaseURL() != null) {
+      BagInfoTxt bagInfoTxt = bilBag.getBagInfoTxt();
 
-        List<Manifest> manifests = bilBag.getPayloadManifests();
-        List<Manifest> tags = bilBag.getTagManifests();
+      List<Manifest> manifests = bilBag.getPayloadManifests();
+      List<Manifest> tags = bilBag.getTagManifests();
 
-        HolePuncher puncher = new HolePuncherImpl(new BagFactory());
-        bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, true, false);
-        // makeHoley deletes baginfo so put back
-        bilBag.putBagFile(bagInfoTxt);
-        if (manifests != null) {
-          for (int i = 0; i < manifests.size(); i++) {
-            bilBag.putBagFile(manifests.get(i));
-          }
+      HolePuncher puncher = new HolePuncherImpl(new BagFactory());
+      bilBag = puncher.makeHoley(bilBag, this.getFetch().getBaseURL(), true, true, false);
+      // makeHoley deletes baginfo so put back
+      bilBag.putBagFile(bagInfoTxt);
+      if (manifests != null) {
+        for (int i = 0; i < manifests.size(); i++) {
+          bilBag.putBagFile(manifests.get(i));
         }
-        if (tags != null) {
-          for (int i = 0; i < tags.size(); i++) {
-            bilBag.putBagFile(tags.get(i));
-          }
+      }
+      if (tags != null) {
+        for (int i = 0; i < tags.size(); i++) {
+          bilBag.putBagFile(tags.get(i));
         }
       }
     }
@@ -552,7 +553,7 @@ public class DefaultBag {
   public String completeBag(CompleteVerifierImpl completeVerifier) {
     prepareBilBagInfoIfDirty();
 
-    String messages = null;
+    String messages = "";
     SimpleResult result = completeVerifier.verify(bilBag);
 
     if (completeVerifier.isCancelled()) {
@@ -569,19 +570,13 @@ public class DefaultBag {
       try {
         String msgs = validateMetadata();
         if (msgs != null) {
-          if (messages != null)
-            messages += msgs;
-          else
-            messages = msgs;
+          messages += msgs;
         }
       }
       catch (Exception ex) {
         ex.printStackTrace();
         String msgs = "ERROR validating bag: \n" + ex.getMessage() + "\n";
-        if (messages != null)
-          messages += msgs;
-        else
-          messages = msgs;
+        messages += msgs;
       }
     }
     return messages;
@@ -604,7 +599,7 @@ public class DefaultBag {
   public String validateBag(ValidVerifierImpl validVerifier) {
     prepareBilBagInfoIfDirty();
 
-    String messages = null;
+    String messages = "";
     SimpleResult result = validVerifier.verify(bilBag);
 
     if (validVerifier.isCancelled()) {
@@ -617,15 +612,13 @@ public class DefaultBag {
       messages += result.toString();
     }
     this.isValid(result.isSuccess() ? Status.PASS : Status.FAILURE);
-    if (result.isSuccess())
+    if (result.isSuccess()){
       isComplete(Status.PASS);
+    }
     if (!isNoProject()) {
       String msgs = validateMetadata();
       if (msgs != null) {
-        if (messages != null)
-          messages += msgs;
-        else
-          messages = msgs;
+        messages += msgs;
       }
     }
     return messages;
@@ -753,18 +746,14 @@ public class DefaultBag {
     List<String> rulesList = new ArrayList<String>();
     HashMap<String, BagInfoField> fieldMap = this.getInfo().getFieldMap();
     if (fieldMap != null) {
-      Set<String> keys = fieldMap.keySet();
-      for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-        String label = iter.next();
-        BagInfoField field = fieldMap.get(label);
-        if (field.isRequired()) {
-          rulesList.add(field.getLabel());
+      
+      for(Entry<String, BagInfoField> entry : fieldMap.entrySet()){
+        if(entry.getValue().isRequired()){
+          rulesList.add(entry.getKey());
         }
       }
     }
-    String[] rules = new String[rulesList.size()];
-    for (int i = 0; i < rulesList.size(); i++)
-      rules[i] = new String(rulesList.get(i));
+    String[] rules = rulesList.toArray(new String[rulesList.size()]);
 
     Verifier strategy = new RequiredBagInfoTxtFieldsVerifier(rules);
 
@@ -789,12 +778,7 @@ public class DefaultBag {
       else {
         completer.setPayloadManifestAlgorithm(Algorithm.MD5);
       }
-      if (this.isHoley) {
-        completer.setClearExistingPayloadManifests(true);
-      }
-      else {
-        completer.setClearExistingPayloadManifests(true);
-      }
+      completer.setClearExistingPayloadManifests(true);
     }
     if (this.isBuildTagManifest) {
       completer.setClearExistingTagManifests(true);
@@ -815,8 +799,9 @@ public class DefaultBag {
         completer.setTagManifestAlgorithm(Algorithm.MD5);
       }
     }
-    if (bilBag.getBagInfoTxt() != null)
+    if (bilBag.getBagInfoTxt() != null){
       completer.setGenerateBagInfoTxt(true);
+    }
     bilBag = completer.complete(bilBag);
   }
 

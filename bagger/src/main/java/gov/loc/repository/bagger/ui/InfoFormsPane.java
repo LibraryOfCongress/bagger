@@ -1,9 +1,5 @@
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.ui.handlers.UpdateBagHandler;
-import gov.loc.repository.bagger.ui.util.LayoutUtil;
-
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,14 +7,16 @@ import java.awt.Insets;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
+
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.handlers.UpdateBagHandler;
+import gov.loc.repository.bagger.ui.util.LayoutUtil;
 
 public class InfoFormsPane extends JScrollPane {
   private static final long serialVersionUID = -5988111446773491301L;
@@ -38,22 +36,18 @@ public class InfoFormsPane extends JScrollPane {
   public JLabel holeyValue;
   public JLabel serializeLabel;
   public JLabel serializeValue;
-  protected JComboBox bagVersionList;
   public JCheckBox defaultProject;
   public JRadioButton noneButton;
   public JRadioButton zipButton;
   public JRadioButton tarButton;
   public JRadioButton tarGzButton;
   public JRadioButton tarBz2Button;
-  public FileFilter noFilter;
-  public FileFilter zipFilter;
-  public FileFilter tarFilter;
 
   public InfoFormsPane(BagView bagView) {
     super();
     this.bagView = bagView;
     this.bag = bagView.getBag();
-    createUiComponent(false);
+    createUiComponent();
     updateBagHandler = new UpdateBagHandler(bagView);
   }
 
@@ -61,7 +55,7 @@ public class InfoFormsPane extends JScrollPane {
     bagProfileValue.setText(profileName);
   }
 
-  private void createUiComponent(boolean enabled) {
+  private void createUiComponent() {
     bagSettingsPanel = createSettingsPanel();
 
     infoPanel = new JPanel(new GridBagLayout());
@@ -72,7 +66,7 @@ public class InfoFormsPane extends JScrollPane {
     GridBagConstraints gbc = LayoutUtil.buildGridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
     infoPanel.add(bagSettingsPanel, gbc);
 
-    bagInfoInputPane = new BagInfoInputPane(bagView, false);
+    bagInfoInputPane = new BagInfoInputPane(bagView);
     bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
     bagInfoInputPane.setEnabled(false);
 
@@ -177,8 +171,9 @@ public class InfoFormsPane extends JScrollPane {
   }
 
   public void setBagName(String name) {
-    if (name == null || name.length() < 1)
+    if (name == null || name.length() < 1){
       return;
+    }
     bagNameValue.setText(name);
   }
 
@@ -187,17 +182,17 @@ public class InfoFormsPane extends JScrollPane {
   }
 
   public void updateInfoForms() {
-    bagInfoInputPane.populateForms(bag, false);
+    bagInfoInputPane.populateForms(bag);
     bagInfoInputPane.enableForms(false);
     bagInfoInputPane.invalidate();
   }
 
-  public void updateInfoFormsPane(boolean enabled) {
+  public void updateInfoFormsPane() {
     // need to remove something?
     infoPanel.remove(bagInfoInputPane);
     infoPanel.validate();
 
-    bagInfoInputPane = new BagInfoInputPane(bagView, enabled);
+    bagInfoInputPane = new BagInfoInputPane(bagView);
     bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
 
     GridBagConstraints gbc = LayoutUtil.buildGridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.WEST);

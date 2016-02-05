@@ -27,12 +27,10 @@ public class BagTreeTransferHandler extends TransferHandler {
   private static boolean debugImport = false;
   DataFlavor nodesFlavor;
   DataFlavor[] flavors = new DataFlavor[1];
-  private boolean isPayload;
   private DefaultMutableTreeNode[] nodesToRemove;
 
-  public BagTreeTransferHandler(boolean isPayload) {
+  public BagTreeTransferHandler() {
     super();
-    this.isPayload = isPayload;
     try {
       String mimeType = DataFlavor.javaJVMLocalObjectMimeType + ";class=\"" + javax.swing.tree.DefaultMutableTreeNode[].class.getName() + "\"";
       nodesFlavor = new DataFlavor(mimeType);
@@ -56,9 +54,9 @@ public class BagTreeTransferHandler extends TransferHandler {
   @Override
   public boolean canImport(JComponent comp, DataFlavor transferFlavors[]) {
     for (int i = 0; i < transferFlavors.length; i++) {
-      Class representationclass = transferFlavors[i].getRepresentationClass();
+      Class<?> representationclass = transferFlavors[i].getRepresentationClass();
       // URL from Explorer or Firefox, KDE
-      if ((representationclass != null) && URL.class.isAssignableFrom(representationclass)) {
+      if (representationclass != null && URL.class.isAssignableFrom(representationclass)) {
         if (debugImport) {
           display("canImport accepted " + transferFlavors[i]);
         }
@@ -137,7 +135,6 @@ public class BagTreeTransferHandler extends TransferHandler {
 
   @Override
   protected void exportDone(JComponent source, Transferable data, int action) {
-    // if((action & MOVE) == MOVE) {
     JTree tree = (JTree) source;
     DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
     // Remove nodes saved in nodesToRemove in createTransferable.
@@ -145,13 +142,6 @@ public class BagTreeTransferHandler extends TransferHandler {
       display("exportDonevnodesToRemove: " + nodesToRemove[i]);
       model.removeNodeFromParent(nodesToRemove[i]);
     }
-    if (this.isPayload) {
-      // bagView.removeDataHandler.removeData();
-    }
-    else {
-      // bagView.removeTagFileHandler.removeTagFile();
-    }
-    // }
   }
 
   public static String getCanonicalFileURL(File file) {
@@ -175,14 +165,16 @@ public class BagTreeTransferHandler extends TransferHandler {
     DefaultMutableTreeNode[] nodes;
 
     public NodesTransferable(DefaultMutableTreeNode[] nodes) {
-      this.nodes = nodes;
+      this.nodes = nodes.clone();
     }
 
     @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-      if (!isDataFlavorSupported(flavor))
+      if (!isDataFlavorSupported(flavor)){
         throw new UnsupportedFlavorException(flavor);
-      return nodes;
+      }
+      
+      return nodes.clone();
     }
 
     @Override

@@ -85,11 +85,11 @@ public class LongTask implements ProgressListener {
     }
   }
 
-  public String getActivityMonitored() {
+  public synchronized String getActivityMonitored() {
     return activityMonitored;
   }
 
-  public void setActivityMonitored(String activityMonitored) {
+  public synchronized void setActivityMonitored(String activityMonitored) {
     this.activityMonitored = activityMonitored;
   }
 

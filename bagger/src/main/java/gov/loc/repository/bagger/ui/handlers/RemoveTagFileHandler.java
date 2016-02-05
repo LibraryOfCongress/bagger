@@ -26,7 +26,6 @@ public class RemoveTagFileHandler extends AbstractAction {
   }
 
   public void removeTagFile() {
-    String message = "";
     DefaultBag bag = bagView.getBag();
 
     TreePath[] paths = bagView.bagTagFileTree.getSelectionPaths();
@@ -51,7 +50,6 @@ public class RemoveTagFileHandler extends AbstractAction {
           }
         }
         catch (Exception e) {
-          message += "Error trying to remove file: " + node + "\n";
           bagView.showWarningErrorDialog("Error - file not removed", "Error trying to remove file: " + node + "\n" + e.getMessage());
         }
       }

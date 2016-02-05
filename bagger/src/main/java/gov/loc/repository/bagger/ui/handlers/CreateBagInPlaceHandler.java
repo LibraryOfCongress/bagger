@@ -44,25 +44,30 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
   }
 
   public void createPreBag(File dataFile, String bagItVersion, final String profileName) {
-    if (((dataFile != null) && (bagItVersion != null)) && (profileName != null))
+    if (dataFile != null && bagItVersion != null && profileName != null){
       log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), bagItVersion, profileName);
-    bagView.clearBagHandler.clearExistingBag();
-    try {
-      bagView.getBag().createPreBag(dataFile, bagItVersion);
+      bagView.clearBagHandler.clearExistingBag();
+      try {
+        bagView.getBag().createPreBag(dataFile, bagItVersion);
+      }
+      catch (Exception e) {
+        bagView.showWarningErrorDialog("Error - bagging in place", e.getMessage());
+        return;
+      }
+      DefaultBag bag = bagView.getBag();
+
+      String bagFileName = dataFile.getName();
+      bag.setName(bagFileName);
+      bagView.infoInputPane.setBagName(bagFileName);
+
+      setProfile(profileName);
+
+      bagView.saveBagHandler.save(dataFile);
     }
-    catch (Exception e) {
-      bagView.showWarningErrorDialog("Error - bagging in place", e.getMessage());
-      return;
+    else{
+      log.warn("datafile is null? {} bagItVersion is null? {} profileName is null? {}", 
+          dataFile == null, bagItVersion == null, profileName == null);
     }
-    DefaultBag bag = bagView.getBag();
-
-    String bagFileName = dataFile.getName();
-    bag.setName(bagFileName);
-    bagView.infoInputPane.setBagName(bagFileName);
-
-    setProfile(profileName);
-
-    bagView.saveBagHandler.save(dataFile);
   }
 
   /*
@@ -70,25 +75,30 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
    * adding .keep files in Empty Pay load Folder(s)
    */
   public void createPreBagAddKeepFilesToEmptyFolders(File dataFile, String bagItVersion, final String profileName) {
-    if (((dataFile != null) && (bagItVersion != null)) && (profileName != null))
+    if (dataFile != null && bagItVersion != null && profileName != null){
       log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), bagItVersion, profileName);
-    bagView.clearBagHandler.clearExistingBag();
-    try {
-      bagView.getBag().createPreBagAddKeepFilesToEmptyFolders(dataFile, bagItVersion);
+      bagView.clearBagHandler.clearExistingBag();
+      try {
+        bagView.getBag().createPreBagAddKeepFilesToEmptyFolders(dataFile, bagItVersion);
+      }
+      catch (Exception e) {
+        bagView.showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
+        return;
+      }
+      DefaultBag bag = bagView.getBag();
+
+      String bagFileName = dataFile.getName();
+      bag.setName(bagFileName);
+      bagView.infoInputPane.setBagName(bagFileName);
+
+      setProfile(profileName);
+
+      bagView.saveBagHandler.save(dataFile);
     }
-    catch (Exception e) {
-      bagView.showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
-      return;
+    else{
+      log.warn("datafile is null? {} bagItVersion is null? {} profileName is null? {}", 
+          dataFile == null, bagItVersion == null, profileName == null);
     }
-    DefaultBag bag = bagView.getBag();
-
-    String bagFileName = dataFile.getName();
-    bag.setName(bagFileName);
-    bagView.infoInputPane.setBagName(bagFileName);
-
-    setProfile(profileName);
-
-    bagView.saveBagHandler.save(dataFile);
   }
 
   private void setProfile(String selected) {

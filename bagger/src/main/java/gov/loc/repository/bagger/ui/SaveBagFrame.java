@@ -56,7 +56,7 @@ import gov.loc.repository.bagit.Manifest.Algorithm;
 public class SaveBagFrame extends JFrame implements ActionListener {
   protected static final Logger log = LoggerFactory.getLogger(SaveBagFrame.class);
   private static final long serialVersionUID = 1L;
-  BagView bagView;
+  transient BagView bagView;
   File bagFile;
   String bagFileName = "";
   private Dimension preferredDimension = new Dimension(600, 400);
@@ -77,8 +77,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
   JCheckBox holeyCheckbox;
   JCheckBox isTagCheckbox;
   JCheckBox isPayloadCheckbox;
-  JComboBox tagAlgorithmList;
-  JComboBox payAlgorithmList;
+  JComboBox<String> tagAlgorithmList;
+  JComboBox<String> payAlgorithmList;
 
   public SaveBagFrame(BagView bagView, String title) {
     super(title);
@@ -141,9 +141,9 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
   protected static final String DEFAULT_CANCEL_COMMAND_ID = "cancelCommand";
 
-  private ActionCommand finishCommand;
+  private transient ActionCommand finishCommand;
 
-  private ActionCommand cancelCommand;
+  private transient ActionCommand cancelCommand;
 
   private JPanel createComponents() {
     Border border = new EmptyBorder(5, 5, 5, 5);
@@ -166,13 +166,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     browseButton.addActionListener(new SaveBagAsHandler());
     browseButton.setEnabled(true);
     browseButton.setToolTipText(getMessage("bag.button.browse.help"));
-    String fileName = "";
     DefaultBag bag = bagView.getBag();
-    if (bag != null) {
-      fileName = bag.getName();
-    }
-    bagNameField = new JTextField(fileName);
-    bagNameField.setCaretPosition(fileName.length());
     bagNameField.setEditable(false);
     bagNameField.setEnabled(false);
 
@@ -181,13 +175,11 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     holeyLabel.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
     holeyCheckbox = new JCheckBox(bagView.getPropertyMessage("bag.checkbox.isholey"));
     holeyCheckbox.setBorder(border);
-    holeyCheckbox.setSelected(bag.isHoley());
     holeyCheckbox.addActionListener(new HoleyBagHandler());
     holeyCheckbox.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
 
     urlLabel = new JLabel(bagView.getPropertyMessage("baseURL.label"));
     urlLabel.setToolTipText(bagView.getPropertyMessage("baseURL.description"));
-    urlLabel.setEnabled(bag.isHoley());
     urlField = new JTextField("");
     try {
       urlField.setText(bag.getFetch().getBaseURL());
@@ -231,7 +223,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
      * tarBz2Button.setToolTipText(getMessage("bag.serializetype.tarbz2.help"));
      */
 
-    short mode = bag.getSerialMode();
+    short mode = 2;
+    if(bag != null){mode = bag.getSerialMode();}
     if (mode == DefaultBag.NO_MODE) {
       this.noneButton.setEnabled(true);
     }
@@ -271,7 +264,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     tagLabel.setToolTipText(getMessage("bag.label.istag.help"));
     isTagCheckbox = new JCheckBox();
     isTagCheckbox.setBorder(border);
-    isTagCheckbox.setSelected(bag.isBuildTagManifest());
     isTagCheckbox.addActionListener(new TagManifestHandler());
     isTagCheckbox.setToolTipText(getMessage("bag.checkbox.istag.help"));
 
@@ -281,9 +273,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     for (Algorithm algorithm : Algorithm.values()) {
       listModel.add(algorithm.bagItAlgorithm);
     }
-    tagAlgorithmList = new JComboBox(listModel.toArray());
+    tagAlgorithmList = new JComboBox<String>(listModel.toArray(new String[listModel.size()]));
     tagAlgorithmList.setName(getMessage("bag.tagalgorithmlist"));
-    tagAlgorithmList.setSelectedItem(bag.getTagManifestAlgorithm());
     tagAlgorithmList.addActionListener(new TagAlgorithmListHandler());
     tagAlgorithmList.setToolTipText(getMessage("bag.tagalgorithmlist.help"));
 
@@ -291,17 +282,29 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     payloadLabel.setToolTipText(getMessage("bag.ispayload.help"));
     isPayloadCheckbox = new JCheckBox();
     isPayloadCheckbox.setBorder(border);
-    isPayloadCheckbox.setSelected(bag.isBuildPayloadManifest());
     isPayloadCheckbox.addActionListener(new PayloadManifestHandler());
     isPayloadCheckbox.setToolTipText(getMessage("bag.ispayload.help"));
 
     JLabel payAlgorithmLabel = new JLabel(bagView.getPropertyMessage("bag.label.payalgorithm"));
     payAlgorithmLabel.setToolTipText(getMessage("bag.payalgorithm.help"));
-    payAlgorithmList = new JComboBox(listModel.toArray());
+    payAlgorithmList = new JComboBox<String>(listModel.toArray(new String[listModel.size()]));
     payAlgorithmList.setName(getMessage("bag.payalgorithmlist"));
-    payAlgorithmList.setSelectedItem(bag.getPayloadManifestAlgorithm());
     payAlgorithmList.addActionListener(new PayAlgorithmListHandler());
     payAlgorithmList.setToolTipText(getMessage("bag.payalgorithmlist.help"));
+    
+    //only if bag is not null
+    if (bag != null) {
+      String fileName = bag.getName();
+      bagNameField = new JTextField(fileName);
+      bagNameField.setCaretPosition(fileName.length());
+
+      holeyCheckbox.setSelected(bag.isHoley());
+      urlLabel.setEnabled(bag.isHoley());
+      isTagCheckbox.setSelected(bag.isBuildTagManifest());
+      tagAlgorithmList.setSelectedItem(bag.getTagManifestAlgorithm());
+      isPayloadCheckbox.setSelected(bag.isBuildPayloadManifest());
+      payAlgorithmList.setSelectedItem(bag.getPayloadManifestAlgorithm());
+    }
 
     GridBagLayout layout = new GridBagLayout();
     GridBagConstraints glbc = new GridBagConstraints();
@@ -483,8 +486,6 @@ public class SaveBagFrame extends JFrame implements ActionListener {
       JFileChooser fs = new JFileChooser(selectFile);
       fs.setDialogType(JFileChooser.SAVE_DIALOG);
       fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
-      fs.addChoosableFileFilter(bagView.infoInputPane.noFilter);
-      fs.addChoosableFileFilter(bagView.infoInputPane.zipFilter);
       // fs.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
       fs.setDialogTitle("Save Bag As");
       DefaultBag bag = bagView.getBag();
@@ -493,23 +494,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
         String selectedName = bag.getName();
         if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
           selectedName += "." + DefaultBag.ZIP_LABEL;
-          fs.setFileFilter(bagView.infoInputPane.zipFilter);
-        }
-        /*
-         * else if (bag.getSerialMode() == DefaultBag.TAR_MODE ||
-         * bag.getSerialMode() == DefaultBag.TAR_GZ_MODE ||
-         * bag.getSerialMode() == DefaultBag.TAR_BZ2_MODE) {
-         * selectedName += "."+DefaultBag.TAR_LABEL;
-         * fs.setFileFilter(bagView.infoInputPane.tarFilter);
-         * }
-         */
-        else {
-          fs.setFileFilter(bagView.infoInputPane.noFilter);
         }
         fs.setSelectedFile(new File(selectedName));
-      }
-      else {
-        fs.setFileFilter(bagView.infoInputPane.noFilter);
       }
       int option = fs.showSaveDialog(frame);
 
@@ -542,9 +528,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
           bagView.showWarningErrorDialog("Error - bag not saved", "A holey bag must have a URL value.");
           return;
         }
-        else {
-          bagView.getBag().getFetch().setBaseURL(urlField.getText().trim());
-        }
+        bagView.getBag().getFetch().setBaseURL(urlField.getText().trim());
         bagView.infoInputPane.holeyValue.setText("true");
       }
       else {
@@ -589,7 +573,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      JComboBox jlist = (JComboBox) e.getSource();
+      JComboBox<?> jlist = (JComboBox<?>) e.getSource();
       String alg = (String) jlist.getSelectedItem();
       bagView.getBag().setTagManifestAlgorithm(alg);
     }
@@ -618,7 +602,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      JComboBox jlist = (JComboBox) e.getSource();
+      JComboBox<?> jlist = (JComboBox<?>) e.getSource();
       String alg = (String) jlist.getSelectedItem();
       bagView.getBag().setPayloadManifestAlgorithm(alg);
     }

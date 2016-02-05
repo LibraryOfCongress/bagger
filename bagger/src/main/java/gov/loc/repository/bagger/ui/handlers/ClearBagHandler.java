@@ -33,10 +33,12 @@ public class ClearBagHandler extends AbstractAction {
     // Closes Bag without popping up the Save Dialog Box for a Holey and
     // Serialized Bag
     // For all other types of Bags the Save Dialog Box pops up
-    if (bagView.getBag().isHoley() || bagView.getBag().isSerial())
+    if (bagView.getBag().isHoley() || bagView.getBag().isSerial()){
       clearExistingBag();
-    else
+    }
+    else{
       confirmCloseBag();
+    }
     if (isConfirmSaveFlag()) {
       bagView.saveBagHandler.setClearAfterSaving(true);
       bagView.saveBagAsHandler.openSaveBagAsFrame();
@@ -69,9 +71,9 @@ public class ClearBagHandler extends AbstractAction {
     DefaultBag bag = bagView.getBag();
     bag.clear();
     bagView.baggerRules.clear();
-    bagView.bagPayloadTree = new BagTree(bagView, AbstractBagConstants.DATA_DIRECTORY, true);
+    bagView.bagPayloadTree = new BagTree(bagView, AbstractBagConstants.DATA_DIRECTORY);
     bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
-    bagView.bagTagFileTree = new BagTree(bagView, ApplicationContextUtil.getMessage("bag.label.noname"), false);
+    bagView.bagTagFileTree = new BagTree(bagView, ApplicationContextUtil.getMessage("bag.label.noname"));
     bagView.bagTagFileTreePanel.refresh(bagView.bagTagFileTree);
     bagView.infoInputPane.setBagName(bag.getName());
     bagView.infoInputPane.updateInfoForms();

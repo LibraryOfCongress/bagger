@@ -55,16 +55,10 @@ public class SaveBagHandler extends AbstractAction implements Progress {
   public void execute() {
     DefaultBag bag = bagView.getBag();
 
-    Writer bagWriter = null;
     try {
       BagFactory bagFactory = new BagFactory();
-      short mode = bag.getSerialMode();
-      if (mode == DefaultBag.NO_MODE) {
-        bagWriter = new FileSystemWriter(bagFactory);
-      }
-      else if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
-        bagWriter = new ZipWriter(bagFactory);
-      } /*
+      Writer bagWriter = getWriter(bagFactory, bag);
+      /*
          * else if (mode == DefaultBag.TAR_MODE) {
          * bagWriter = new TarWriter(bagFactory);
          * } else if (mode == DefaultBag.TAR_GZ_MODE) {
@@ -73,15 +67,20 @@ public class SaveBagHandler extends AbstractAction implements Progress {
          * bagWriter = new TarBz2Writer(bagFactory);
          * }
          */
-      bagWriter.addProgressListener(bagView.task);
-      bagView.longRunningProcess = bagWriter;
-      messages = bag.write(bagWriter);
+      if(bagWriter != null){
+        bagWriter.addProgressListener(bagView.task);
+        bagView.longRunningProcess = bagWriter;
+        messages = bag.write(bagWriter);
 
-      if (messages != null && !messages.trim().isEmpty()) {
-        bagView.showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
+        if (messages != null && !messages.trim().isEmpty()) {
+          bagView.showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
+        }
+        else {
+          bagView.showWarningErrorDialog("Bag saved", "Bag saved successfully.\n");
+        }
       }
-      else {
-        bagView.showWarningErrorDialog("Bag saved", "Bag saved successfully.\n");
+      else{
+        bagView.showWarningErrorDialog("Warning - bag not saved", "Could not get writer for bag");
       }
 
       SwingUtilities.invokeLater(new Runnable() {
@@ -118,6 +117,16 @@ public class SaveBagHandler extends AbstractAction implements Progress {
       bagView.task.done();
       bagView.statusBarEnd();
     }
+  }
+  
+  protected Writer getWriter(BagFactory bagFactory, DefaultBag bag){
+    if (bag.getSerialMode() == DefaultBag.NO_MODE) {
+      return new FileSystemWriter(bagFactory);
+    }
+    else if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
+      return new ZipWriter(bagFactory);
+    }
+    return null;
   }
 
   public void setTmpRootPath(File f) {
@@ -200,8 +209,6 @@ public class SaveBagHandler extends AbstractAction implements Progress {
     JFileChooser fs = new JFileChooser(selectFile);
     fs.setDialogType(JFileChooser.SAVE_DIALOG);
     fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    fs.addChoosableFileFilter(bagView.infoInputPane.noFilter);
-    fs.addChoosableFileFilter(bagView.infoInputPane.zipFilter);
     // fs.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
     fs.setDialogTitle("Save Bag As");
     fs.setCurrentDirectory(bag.getRootDir());
@@ -209,16 +216,6 @@ public class SaveBagHandler extends AbstractAction implements Progress {
       String selectedName = bag.getName();
       if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
         selectedName += "." + DefaultBag.ZIP_LABEL;
-        fs.setFileFilter(bagView.infoInputPane.zipFilter);
-      }
-      /*
-       * else if (bag.getSerialMode() == DefaultBag.TAR_MODE) {
-       * selectedName += "."+DefaultBag.TAR_LABEL;
-       * fs.setFileFilter(bagView.infoInputPane.tarFilter);
-       * }
-       */
-      else {
-        fs.setFileFilter(bagView.infoInputPane.noFilter);
       }
       fs.setSelectedFile(new File(selectedName));
     }
@@ -232,8 +229,9 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 
   public void save(File file) {
     DefaultBag bag = bagView.getBag();
-    if (file == null)
+    if (file == null){
       file = bagView.getBagRootPath();
+    }
     bag.setName(file.getName());
     File bagFile = new File(file, bag.getName());
     if (bagFile.exists()) {

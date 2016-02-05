@@ -6,7 +6,6 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gov.loc.repository.bagit.impl.AbstractBagConstants;
 import gov.loc.repository.bagit.utilities.FilenameHelper;
 
 /**
@@ -40,33 +39,6 @@ public class BaggerFileEntity {
   private String normalizedName; // datadir\dir1\file1
   private boolean isInBag = false;
   private boolean isIncluded = true;
-
-  public BaggerFileEntity() {
-  }
-
-  public BaggerFileEntity(File f) {
-    this.rootSrc = f;
-  }
-
-  public BaggerFileEntity(File rootParent, File rootSrc, File bagParent) {
-    this.rootParent = rootParent;
-    this.rootSrc = rootSrc;
-    File bagDataDir = new File(bagParent, AbstractBagConstants.DATA_DIRECTORY);
-    this.normalizedName = removeBasePath(rootParent.getAbsolutePath(), rootSrc.getAbsolutePath());
-    this.bagSrc = new File(bagDataDir, normalizedName);
-    if (this.rootSrc.getAbsolutePath().equalsIgnoreCase(this.bagSrc.getAbsolutePath())) {
-      isInBag = true;
-    }
-  }
-
-  public BaggerFileEntity(File rootParent, File rootSrc, File bagParent, File bagSrc) {
-    this.rootParent = rootParent;
-    this.rootSrc = rootSrc;
-    this.bagSrc = bagSrc;
-    if (this.rootSrc.getAbsolutePath().equalsIgnoreCase(this.bagSrc.getAbsolutePath())) {
-      isInBag = true;
-    }
-  }
 
   @Override
   public String toString() {
@@ -157,10 +129,12 @@ public class BaggerFileEntity {
       }
       else {
         int delta;
-        if (normBasePath.endsWith("/") || normBasePath.endsWith("\\"))
+        if (normBasePath.endsWith("/") || normBasePath.endsWith("\\")){
           delta = 0;
-        else
+        }
+        else{
           delta = 1;
+        }
         filenameWithoutBasePath = normFilename.substring(normBasePath.length() + delta);
         log.trace("filenamewithoutbasepath: {}", filenameWithoutBasePath);
       }

@@ -35,10 +35,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationServices;
 import org.springframework.richclient.application.PageComponentContext;
-import org.springframework.richclient.application.event.LifecycleApplicationEvent;
 import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.dialog.MessageDialog;
 import org.springframework.richclient.image.ImageSource;
@@ -46,7 +46,6 @@ import org.springframework.richclient.progress.BusyIndicator;
 import org.springframework.util.Assert;
 
 import gov.loc.repository.bagger.Bagger;
-import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.domain.BaggerValidationRulesSource;
 import gov.loc.repository.bagger.profile.BaggerProfileStore;
@@ -79,8 +78,6 @@ import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 public class BagView extends AbstractView implements ApplicationListener {
   protected static final Logger log = LoggerFactory.getLogger(BagView.class);
-
-  public static BagView instance;
 
   private final static int ONE_SECOND = 1000;
   private int DEFAULT_WIDTH = 1024;
@@ -139,7 +136,7 @@ public class BagView extends AbstractView implements ApplicationListener {
   private JLabel removeTagFileToolbarAction;
 
   public BagView() {
-    instance = this;
+    ((ConfigurableApplicationContext)Application.instance().getApplicationContext()).getBeanFactory().registerSingleton("myBagView", this);
   }
 
   public void setBagger(Bagger bagger) {
@@ -260,7 +257,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     bagTagButtonPanel = createBagTagButtonPanel();
 
-    bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
+    bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY);
     bagPayloadTree.setEnabled(false);
 
     bagPayloadTreePanel = new BagTreePanel(bagPayloadTree);
@@ -268,7 +265,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     bagPayloadTreePanel.setBorder(border);
     bagPayloadTreePanel.setToolTipText(getMessage("bagTree.help"));
 
-    bagTagFileTree = new BagTree(this, getMessage("bag.label.noname"), false);
+    bagTagFileTree = new BagTree(this, getMessage("bag.label.noname"));
     bagTagFileTree.setEnabled(false);
     bagTagFileTreePanel = new BagTreePanel(bagTagFileTree);
     bagTagFileTreePanel.setEnabled(false);
@@ -344,8 +341,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (addDataToolBarAction.isEnabled())
+        if (addDataToolBarAction.isEnabled()){
           addDataHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -355,8 +353,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (addDataToolBarAction.isEnabled())
+        if (addDataToolBarAction.isEnabled()){
           addDataToolBarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
     buttonPanel.add(addDataToolBarAction);
@@ -372,8 +371,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (removeDataToolBarAction.isEnabled())
+        if (removeDataToolBarAction.isEnabled()){
           removeDataHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -383,8 +383,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (removeDataToolBarAction.isEnabled())
+        if (removeDataToolBarAction.isEnabled()){
           removeDataToolBarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
 
@@ -418,8 +419,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (viewTagFilesToolbarAction.isEnabled())
+        if (viewTagFilesToolbarAction.isEnabled()){
           showTageFileHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -429,8 +431,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (viewTagFilesToolbarAction.isEnabled())
+        if (viewTagFilesToolbarAction.isEnabled()){
           viewTagFilesToolbarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
     buttonPanel.add(viewTagFilesToolbarAction);
@@ -446,8 +449,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (addTagFileToolBarAction.isEnabled())
+        if (addTagFileToolBarAction.isEnabled()){
           addTagFileHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -457,8 +461,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (addTagFileToolBarAction.isEnabled())
+        if (addTagFileToolBarAction.isEnabled()){
           addTagFileToolBarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
     buttonPanel.add(addTagFileToolBarAction);
@@ -475,8 +480,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (removeTagFileToolbarAction.isEnabled())
+        if (removeTagFileToolbarAction.isEnabled()){
           removeTagFileHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -486,8 +492,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (removeTagFileToolbarAction.isEnabled())
+        if (removeTagFileToolbarAction.isEnabled()){
           removeTagFileToolbarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
 
@@ -509,7 +516,7 @@ public class BagView extends AbstractView implements ApplicationListener {
   }
 
   public String updateBaggerRules() {
-    baggerRules.init(!bag.isNoProject(), bag.isHoley());
+    baggerRules.init();
     String messages = "";
     bag.updateStrategy();
 
@@ -610,7 +617,7 @@ public class BagView extends AbstractView implements ApplicationListener {
   }
 
   public void updateManifestPane() {
-    bagTagFileTree = new BagTree(this, bag.getName(), false);
+    bagTagFileTree = new BagTree(this, bag.getName());
     Collection<BagFile> tags = bag.getTags();
     for (Iterator<BagFile> it = tags.iterator(); it.hasNext();) {
       BagFile bf = it.next();
@@ -635,13 +642,6 @@ public class BagView extends AbstractView implements ApplicationListener {
   @Override
   public void onApplicationEvent(ApplicationEvent e) {
     log.info("BagView.onApplicationEvent: {}", e);
-    if (e instanceof LifecycleApplicationEvent) {
-      LifecycleApplicationEvent le = (LifecycleApplicationEvent) e;
-      if (le.getEventType() == LifecycleApplicationEvent.CREATED && le.objectIs(Profile.class)) {
-        int i = 0;
-        i++;
-      }
-    }
   }
 
   /**
@@ -660,10 +660,11 @@ public class BagView extends AbstractView implements ApplicationListener {
         log.info("Stopped the timer");
         // getting an array of Action Listeners from Timer Listener (will have
         // only one element)
-        ActionListener[] als = (timer.getListeners(ActionListener.class));
+        ActionListener[] als = timer.getListeners(ActionListener.class);
         // Removing Action Listener from timer
-        if (als.length > 0)
+        if (als.length > 0){
           timer.removeActionListener(als[0]);
+        }
         if (longRunningProcess != null && !task.isDone()) {
           log.info("Trying to cancel the long running process: {}", longRunningProcess);
           longRunningProcess.cancel();
@@ -700,8 +701,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         public void valueChanged(TreeSelectionEvent e) {
 
           TreePath[] paths = tree.getSelectionPaths();
-          if (paths == null || paths.length == 0)
+          if (paths == null || paths.length == 0){
             return;
+          }
 
           for (TreePath path : paths) {
             if (path.getPathCount() == 1) {
@@ -721,8 +723,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         public void valueChanged(TreeSelectionEvent e) {
 
           TreePath[] paths = tree.getSelectionPaths();
-          if (paths == null || paths.length == 0)
+          if (paths == null || paths.length == 0){
             return;
+          }
 
           for (TreePath path : paths) {
             if (path.getPathCount() == 1) {
@@ -745,10 +748,6 @@ public class BagView extends AbstractView implements ApplicationListener {
     this.profileStore = profileStore;
   }
 
-  public static BagView getInstance() {
-    return instance;
-  }
-
   public String getPropertyMessage(String propertyName) {
     return getMessage(propertyName);
   }
@@ -759,9 +758,7 @@ public class BagView extends AbstractView implements ApplicationListener {
    * Returns false for all other types of Bags
    */
   private boolean checkFetchTxtFile() {
-    if (bag.getFetchTxt() != null)
-      return true;
-    return false;
+    return bag.getFetchTxt() != null;
   }
 
   /*
@@ -770,10 +767,10 @@ public class BagView extends AbstractView implements ApplicationListener {
    * The Validate Button is enabled for all other types of Bags
    */
   private void setCompleteExecutor() {
-    if (checkFetchTxtFile())
+    if (checkFetchTxtFile()){
       completeExecutor.setEnabled(false);
-    else
-      completeExecutor.setEnabled(true);
+    }
+    completeExecutor.setEnabled(true);
   }
 
   /*
@@ -782,10 +779,10 @@ public class BagView extends AbstractView implements ApplicationListener {
    * The Validate Button is enabled for all other types of Bags
    */
   private void setValidateExecutor() {
-    if (checkFetchTxtFile())
+    if (checkFetchTxtFile()){
       validateExecutor.setEnabled(false);
-    else
-      validateExecutor.setEnabled(true);
+    }
+    validateExecutor.setEnabled(true);
   }
 
 }

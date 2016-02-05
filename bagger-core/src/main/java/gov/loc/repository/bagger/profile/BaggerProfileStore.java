@@ -1,15 +1,14 @@
 package gov.loc.repository.bagger.profile;
 
-import gov.loc.repository.bagger.Bagger;
-import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.ProfileField;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map.Entry;
+
+import gov.loc.repository.bagger.Bagger;
+import gov.loc.repository.bagger.Profile;
+import gov.loc.repository.bagger.ProfileField;
 
 public class BaggerProfileStore {
 
@@ -56,12 +55,9 @@ public class BaggerProfileStore {
   }
 
   public Profile getDefaultProfile() {
-    Set<String> profileKeys = userProfiles.keySet();
-    for (Iterator<String> iter = profileKeys.iterator(); iter.hasNext();) {
-      String key = iter.next();
-      Profile bagProfile = userProfiles.get(key);
-      if (bagProfile.getIsDefault()) {
-        return bagProfile;
+    for(Entry<String, Profile> entry: userProfiles.entrySet()){
+      if(entry.getValue().getIsDefault()){
+        return entry.getValue();
       }
     }
     return null;

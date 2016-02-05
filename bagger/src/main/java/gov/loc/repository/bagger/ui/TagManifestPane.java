@@ -23,7 +23,7 @@ public class TagManifestPane extends JTabbedPane {
   private static final long serialVersionUID = 1L;
   protected static final Logger log = LoggerFactory.getLogger(TagManifestPane.class);
   public static final String TAGMANIFEST_PANE = "tagManifestPane";
-  private String messages = new String();
+  private String messages = "";
   private BagView parentView;
   private DefaultBag defaultBag;
   private BagTextPane dataPane;
@@ -83,10 +83,12 @@ public class TagManifestPane extends JTabbedPane {
     for (Iterator<BagFile> it = list.iterator(); it.hasNext();) {
       BagFile bf = it.next();
       String content = "";
-      if (bf.getFilepath().contains("manifest"))
+      if (bf.getFilepath().contains("manifest")){
         content = bf.toString();
-      else
+      }
+      else{
         content = tokenFormat(bf.toString());
+      }
       log.debug("BagFile: {}::{}", bf.getFilepath(), content);
       BagTextPane manifestPane = new BagTextPane(content);
       manifestPaneList.add(manifestPane);

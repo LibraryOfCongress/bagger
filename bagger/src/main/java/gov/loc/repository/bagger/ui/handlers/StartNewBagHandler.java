@@ -49,7 +49,7 @@ public class StartNewBagHandler extends AbstractAction {
     bag.setName(bagName);
     bagView.infoInputPane.setBagName(bagName);
 
-    bagView.bagTagFileTree = new BagTree(bagView, bag.getName(), false);
+    bagView.bagTagFileTree = new BagTree(bagView, bag.getName());
     Collection<BagFile> tags = bag.getTags();
     for (Iterator<BagFile> it = tags.iterator(); it.hasNext();) {
       BagFile bf = it.next();
@@ -59,7 +59,7 @@ public class StartNewBagHandler extends AbstractAction {
     bagView.updateBaggerRules();
     bag.setRootDir(bagView.getBagRootPath());
 
-    bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
+    bagView.infoInputPane.bagInfoInputPane.populateForms(bag);
     ApplicationContextUtil.addConsoleMessage("A new bag has been created in memory.");
     bagView.updateNewBag();
 

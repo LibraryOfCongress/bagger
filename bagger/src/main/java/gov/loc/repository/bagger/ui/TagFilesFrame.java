@@ -16,7 +16,6 @@
 package gov.loc.repository.bagger.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,7 +25,7 @@ import javax.swing.JTabbedPane;
 public class TagFilesFrame extends JFrame implements ActionListener {
   private static final long serialVersionUID = 1L;
 
-  public TagFilesFrame(Frame parent, String title) {
+  public TagFilesFrame(String title) {
     super(title);
   }
 

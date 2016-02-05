@@ -1,11 +1,12 @@
 package gov.loc.repository.bagger;
 
-import gov.loc.repository.bagger.json.JSONException;
-import gov.loc.repository.bagger.json.JSONObject;
-import gov.loc.repository.bagger.json.JSONTokener;
-import gov.loc.repository.bagger.json.JSONWriter;
-
+import java.io.Serializable;
 import java.io.StringWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.JSONWriter;
 
 /**
  *
@@ -15,22 +16,24 @@ import java.io.StringWriter;
  *
  * @author Jon Steinbach
  */
-public class Contact {
+public class Contact implements Serializable{
+  private static final long serialVersionUID = 1L;
+  
   private ProfileField contactName;
   private ProfileField telephone;
   private ProfileField email;
 
-  public static String FIELD_CONTACT_NAME = "Contact-Name";
-  public static String FIELD_CONTACT_PHONE = "Contact-Phone";
-  public static String FIELD_CONTACT_EMAIL = "Contact-Email";
+  public static final String FIELD_CONTACT_NAME = "Contact-Name";
+  public static final String FIELD_CONTACT_PHONE = "Contact-Phone";
+  public static final String FIELD_CONTACT_EMAIL = "Contact-Email";
 
-  public static String FIELD_TO_CONTACT_NAME = "To-Contact-Name";
-  public static String FIELD_TO_CONTACT_PHONE = "To-Contact-Phone";
-  public static String FIELD_TO_CONTACT_EMAIL = "To-Contact-Email";
+  public static final String FIELD_TO_CONTACT_NAME = "To-Contact-Name";
+  public static final String FIELD_TO_CONTACT_PHONE = "To-Contact-Phone";
+  public static final String FIELD_TO_CONTACT_EMAIL = "To-Contact-Email";
 
-  public static String FIELD_JSON_NAME = "name";
-  public static String FIELD_JSON_PHONE = "phone";
-  public static String FIELD_JSON_EMAIL = "email";
+  public static final String FIELD_JSON_NAME = "name";
+  public static final String FIELD_JSON_PHONE = "phone";
+  public static final String FIELD_JSON_EMAIL = "email";
 
   public Contact() {
   }
@@ -100,20 +103,23 @@ public class Contact {
     if (contactSendToJson != null) {
       if (contactSendToJson.has(FIELD_JSON_NAME)) {
         JSONObject nameJson = (JSONObject) contactSendToJson.get(FIELD_JSON_NAME);
-        if (nameJson != null)
+        if (nameJson != null){
           namefield = ProfileField.createProfileField(nameJson, name);
+        }
       }
 
       if (contactSendToJson.has(FIELD_JSON_PHONE)) {
         JSONObject phoneJson = (JSONObject) contactSendToJson.get(FIELD_JSON_PHONE);
-        if (phoneJson != null)
+        if (phoneJson != null){
           phonefield = ProfileField.createProfileField(phoneJson, phone);
+        }
       }
 
       if (contactSendToJson.has(FIELD_JSON_EMAIL)) {
         JSONObject emailJson = (JSONObject) contactSendToJson.get(FIELD_JSON_EMAIL);
-        if (emailJson != null)
+        if (emailJson != null){
           emailfield = ProfileField.createProfileField(emailJson, email);
+        }
       }
     }
 

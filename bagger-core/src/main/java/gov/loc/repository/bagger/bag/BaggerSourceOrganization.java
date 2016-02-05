@@ -1,5 +1,7 @@
 package gov.loc.repository.bagger.bag;
 
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +20,9 @@ import gov.loc.repository.bagit.BagInfoTxt;
  *
  * @author Jon Steinbach
  */
-public class BaggerSourceOrganization {
+public class BaggerSourceOrganization implements Serializable{
+  private static final long serialVersionUID = 1L;
+
   protected static final Logger log = LoggerFactory.getLogger(BaggerSourceOrganization.class);
 
   private String organizationName = "";

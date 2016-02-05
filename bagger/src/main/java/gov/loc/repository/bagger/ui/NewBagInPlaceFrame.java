@@ -50,22 +50,23 @@ import org.springframework.richclient.dialog.TitlePane;
 import org.springframework.richclient.util.GuiStandardUtils;
 
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagger.ui.util.LayoutUtil;
 import gov.loc.repository.bagit.BagFactory.Version;
 
 public class NewBagInPlaceFrame extends JFrame implements ActionListener {
   protected static final Logger log = LoggerFactory.getLogger(NewBagInPlaceFrame.class);
   private static final long serialVersionUID = 1L;
-  private BagView bagView;
-  private DefaultBag bag = null;
+  private transient BagView bagView;
+  private transient DefaultBag bag = null;
   private Dimension preferredDimension = new Dimension(400, 230);
   private JPanel createPanel;
   private JTextField bagNameField;
   private File bagFile;
   private String bagFileName = "";
   private JButton saveAsButton;
-  private JComboBox bagVersionList;
-  private JComboBox profileList;
+  private JComboBox<String> bagVersionList;
+  private JComboBox<String> profileList;
   private JCheckBox addKeepFilesToEmptyFoldersCheckBox;
 
   public NewBagInPlaceFrame(BagView bagView, String title) {
@@ -73,10 +74,12 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     Application app = Application.instance();
     ApplicationPage page = app.getActiveWindow().getPage();
     PageComponent component = page.getActiveComponent();
-    if (component != null)
-      this.bagView = BagView.instance;
-    else
+    if (component != null){
+      this.bagView = ApplicationContextUtil.getBagView();
+    }
+    else{
       this.bagView = bagView;
+    }
     if (bagView != null) {
       bag = bagView.getBag();
       getContentPane().removeAll();
@@ -132,8 +135,9 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     saveAsButton.setToolTipText(bagView.getPropertyMessage("bag.button.browse.help"));
 
     String fileName = "";
-    if (bag != null)
+    if (bag != null){
       fileName = bag.getName();
+    }
     bagNameField = new JTextField(fileName);
     bagNameField.setCaretPosition(fileName.length());
     bagNameField.setEditable(false);
@@ -143,12 +147,9 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     contentPanel.add(location, glbc);
 
     glbc = LayoutUtil.buildGridBagConstraints(2, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.EAST);
-    glbc.ipadx = 5;
-    glbc.ipadx = 0;
     contentPanel.add(saveAsButton, glbc);
 
     glbc = LayoutUtil.buildGridBagConstraints(1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-    glbc.ipadx = 5;
     glbc.ipadx = 0;
     contentPanel.add(bagNameField, glbc);
   }
@@ -164,7 +165,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
       versionModel.add(vals[i].versionString);
     }
 
-    bagVersionList = new JComboBox(versionModel.toArray());
+    bagVersionList = new JComboBox<String>(versionModel.toArray(new String[versionModel.size()]));
     bagVersionList.setName(bagView.getPropertyMessage("bag.label.versionlist"));
     bagVersionList.setSelectedItem(Version.V0_96.versionString);
     bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
@@ -181,7 +182,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     JLabel bagProfileLabel = new JLabel(bagView.getPropertyMessage("Select Profile:"));
     bagProfileLabel.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
 
-    profileList = new JComboBox(bagView.getProfileStore().getProfileNames());
+    profileList = new JComboBox<String>(bagView.getProfileStore().getProfileNames());
     profileList.setName(bagView.getPropertyMessage("bag.label.projectlist"));
     profileList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
     profileList.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
@@ -296,9 +297,9 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 
   protected static final String DEFAULT_CANCEL_COMMAND_ID = "cancelCommand";
 
-  private ActionCommand finishCommand;
+  private transient ActionCommand finishCommand;
 
-  private ActionCommand cancelCommand;
+  private transient ActionCommand cancelCommand;
 
   public void setBag(DefaultBag bag) {
     this.bag = bag;
@@ -322,33 +323,17 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
       JFileChooser fs = new JFileChooser(selectFile);
       fs.setDialogType(JFileChooser.OPEN_DIALOG);
       fs.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      fs.addChoosableFileFilter(bagView.infoInputPane.noFilter);
-      fs.setFileFilter(bagView.infoInputPane.noFilter);
       fs.setDialogTitle("Existing Data Location");
-      if (bagView.getBagRootPath() != null)
+      if (bagView.getBagRootPath() != null){
         fs.setCurrentDirectory(bagView.getBagRootPath().getParentFile());
+      }
       fs.setCurrentDirectory(bag.getRootDir());
       if (bag.getName() != null && !bag.getName().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
         String selectedName = bag.getName();
         if (bag.getSerialMode() == DefaultBag.ZIP_MODE) {
           selectedName += "." + DefaultBag.ZIP_LABEL;
-          fs.setFileFilter(bagView.infoInputPane.zipFilter);
-        }
-        /*
-         * else if (bag.getSerialMode() == DefaultBag.TAR_MODE ||
-         * bag.getSerialMode() == DefaultBag.TAR_GZ_MODE ||
-         * bag.getSerialMode() == DefaultBag.TAR_BZ2_MODE) {
-         * selectedName += "."+DefaultBag.TAR_LABEL;
-         * fs.setFileFilter(bagView.infoInputPane.tarFilter);
-         * }
-         */
-        else {
-          fs.setFileFilter(bagView.infoInputPane.noFilter);
         }
         fs.setSelectedFile(new File(selectedName));
-      }
-      else {
-        fs.setFileFilter(bagView.infoInputPane.noFilter);
       }
       int option = fs.showOpenDialog(frame);
 

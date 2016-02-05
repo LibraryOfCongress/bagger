@@ -33,10 +33,8 @@ public class BagTreePanel extends JScrollPane {
 
   public void refresh(BagTree tree) {
     this.bagTree = tree;
-    if (getComponentCount() > 0) {
-      if (bagTree != null && bagTree.isShowing()) {
-        bagTree.invalidate();
-      }
+    if (getComponentCount() > 0 && bagTree != null && bagTree.isShowing()) {
+      bagTree.invalidate();
     }
     init();
     invalidate();
