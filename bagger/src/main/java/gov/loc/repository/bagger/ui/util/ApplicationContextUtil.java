@@ -1,9 +1,5 @@
 package gov.loc.repository.bagger.ui.util;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
-import gov.loc.repository.bagger.ui.BagView;
-import gov.loc.repository.bagger.ui.ConsoleView;
-
 import java.awt.Image;
 import java.util.Locale;
 
@@ -13,6 +9,10 @@ import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationServices;
 import org.springframework.richclient.application.ApplicationServicesLocator;
 import org.springframework.richclient.image.ImageSource;
+
+import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.BagView;
+import gov.loc.repository.bagger.ui.ConsoleView;
 
 public class ApplicationContextUtil {
 
@@ -30,7 +30,8 @@ public class ApplicationContextUtil {
   }
 
   public static BagView getBagView() {
-    return BagView.getInstance();
+    BagView bagView = (BagView) Application.instance().getApplicationContext().getBean("myBagView");
+    return bagView;
   }
 
   public static DefaultBag getCurrentBag() {
@@ -42,12 +43,11 @@ public class ApplicationContextUtil {
   }
 
   public static void addConsoleMessage(String message) {
-    String[] beanNames = Application.instance().getApplicationContext().getBeanNamesForType(ConsoleView.class);
-    ConsoleView consoleView = (ConsoleView) Application.instance().getApplicationContext().getBean(beanNames[0]);
+    ConsoleView consoleView = (ConsoleView) Application.instance().getApplicationContext().getBean("myConsoleView");
     consoleView.addConsoleMessages(message);
   }
 
-  private static Object getService(Class serviceType) {
+  private static Object getService(Class<?> serviceType) {
     return getApplicationServices().getService(serviceType);
   }
 }

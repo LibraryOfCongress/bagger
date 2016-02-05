@@ -50,6 +50,7 @@ import org.springframework.richclient.dialog.TitlePane;
 import org.springframework.richclient.util.GuiStandardUtils;
 
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagger.ui.util.LayoutUtil;
 import gov.loc.repository.bagit.BagFactory.Version;
 
@@ -74,7 +75,7 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     ApplicationPage page = app.getActiveWindow().getPage();
     PageComponent component = page.getActiveComponent();
     if (component != null)
-      this.bagView = BagView.getInstance();
+      this.bagView = ApplicationContextUtil.getBagView();
     else
       this.bagView = bagView;
     if (bagView != null) {

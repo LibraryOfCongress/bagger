@@ -42,6 +42,7 @@ import org.springframework.richclient.core.DefaultMessage;
 import org.springframework.richclient.dialog.TitlePane;
 import org.springframework.richclient.util.GuiStandardUtils;
 
+import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagger.ui.util.LayoutUtil;
 import gov.loc.repository.bagit.BagFactory.Version;
 
@@ -49,8 +50,8 @@ public class NewBagFrame extends JFrame implements ActionListener {
   protected static final Logger log = LoggerFactory.getLogger(NewBagFrame.class);
   private static final long serialVersionUID = 1L;
   private transient BagView bagView;
-  private JComboBox bagVersionList;
-  private JComboBox profileList;
+  private JComboBox<String> bagVersionList;
+  private JComboBox<String> profileList;
 
   public NewBagFrame(BagView bagView, String title) {
     super(title);
@@ -60,7 +61,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
     PageComponent component = page.getActiveComponent();
 
     if (component != null)
-      this.bagView = BagView.getInstance();
+      this.bagView = ApplicationContextUtil.getBagView();
     else
       this.bagView = bagView;
     if (bagView != null) {
@@ -119,7 +120,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
       versionModel.add(vals[i].versionString);
     }
 
-    bagVersionList = new JComboBox(versionModel.toArray());
+    bagVersionList = new JComboBox<String>(versionModel.toArray(new String[versionModel.size()]));
     bagVersionList.setName(bagView.getPropertyMessage("bag.label.versionlist"));
     bagVersionList.setSelectedItem(Version.V0_96.versionString);
     bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
@@ -141,7 +142,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
     JLabel bagProfileLabel = new JLabel(bagView.getPropertyMessage("Select Profile:"));
     bagProfileLabel.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
 
-    profileList = new JComboBox(bagView.getProfileStore().getProfileNames());
+    profileList = new JComboBox<String>(bagView.getProfileStore().getProfileNames());
     profileList.setName(bagView.getPropertyMessage("bag.label.projectlist"));
     profileList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
     profileList.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
@@ -176,7 +177,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
       @Override
       public void doExecuteCommand() {
         log.info("BagVersionFrame.OkNewBagHandler");
-        this.setVisible(false);
+        hideNewBagFrame();
         bagView.startNewBagHandler.createNewBag((String) bagVersionList.getSelectedItem(), (String) profileList.getSelectedItem());
       }
     };
@@ -184,9 +185,13 @@ public class NewBagFrame extends JFrame implements ActionListener {
     cancelCommand = new ActionCommand(getCancelCommandId()) {
       @Override
       public void doExecuteCommand() {
-        this.setVisible(false);
+        hideNewBagFrame();
       }
     };
+  }
+  
+  protected void hideNewBagFrame(){
+    this.setVisible(false);
   }
 
   protected String getFinishCommandId() {

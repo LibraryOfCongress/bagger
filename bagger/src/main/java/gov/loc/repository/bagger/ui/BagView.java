@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationServices;
 import org.springframework.richclient.application.PageComponentContext;
@@ -77,8 +78,6 @@ import gov.loc.repository.bagit.impl.AbstractBagConstants;
 
 public class BagView extends AbstractView implements ApplicationListener {
   protected static final Logger log = LoggerFactory.getLogger(BagView.class);
-
-  private static BagView instance;
 
   private final static int ONE_SECOND = 1000;
   private int DEFAULT_WIDTH = 1024;
@@ -137,7 +136,7 @@ public class BagView extends AbstractView implements ApplicationListener {
   private JLabel removeTagFileToolbarAction;
 
   public BagView() {
-    instance = this;
+    ((ConfigurableApplicationContext)Application.instance().getApplicationContext()).getBeanFactory().registerSingleton("myBagView", this);
   }
 
   public void setBagger(Bagger bagger) {
@@ -734,10 +733,6 @@ public class BagView extends AbstractView implements ApplicationListener {
 
   public void setProfileStore(BaggerProfileStore profileStore) {
     this.profileStore = profileStore;
-  }
-
-  public static BagView getInstance() {
-    return instance;
   }
 
   public String getPropertyMessage(String propertyName) {
