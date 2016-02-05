@@ -257,7 +257,7 @@ public class BagView extends AbstractView implements ApplicationListener {
 
     bagTagButtonPanel = createBagTagButtonPanel();
 
-    bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY, true);
+    bagPayloadTree = new BagTree(this, AbstractBagConstants.DATA_DIRECTORY);
     bagPayloadTree.setEnabled(false);
 
     bagPayloadTreePanel = new BagTreePanel(bagPayloadTree);
@@ -265,7 +265,7 @@ public class BagView extends AbstractView implements ApplicationListener {
     bagPayloadTreePanel.setBorder(border);
     bagPayloadTreePanel.setToolTipText(getMessage("bagTree.help"));
 
-    bagTagFileTree = new BagTree(this, getMessage("bag.label.noname"), false);
+    bagTagFileTree = new BagTree(this, getMessage("bag.label.noname"));
     bagTagFileTree.setEnabled(false);
     bagTagFileTreePanel = new BagTreePanel(bagTagFileTree);
     bagTagFileTreePanel.setEnabled(false);
@@ -617,7 +617,7 @@ public class BagView extends AbstractView implements ApplicationListener {
   }
 
   public void updateManifestPane() {
-    bagTagFileTree = new BagTree(this, bag.getName(), false);
+    bagTagFileTree = new BagTree(this, bag.getName());
     Collection<BagFile> tags = bag.getTags();
     for (Iterator<BagFile> it = tags.iterator(); it.hasNext();) {
       BagFile bf = it.next();

@@ -27,12 +27,10 @@ public class BagTreeTransferHandler extends TransferHandler {
   private static boolean debugImport = false;
   DataFlavor nodesFlavor;
   DataFlavor[] flavors = new DataFlavor[1];
-  private boolean isPayload;
   private DefaultMutableTreeNode[] nodesToRemove;
 
-  public BagTreeTransferHandler(boolean isPayload) {
+  public BagTreeTransferHandler() {
     super();
-    this.isPayload = isPayload;
     try {
       String mimeType = DataFlavor.javaJVMLocalObjectMimeType + ";class=\"" + javax.swing.tree.DefaultMutableTreeNode[].class.getName() + "\"";
       nodesFlavor = new DataFlavor(mimeType);

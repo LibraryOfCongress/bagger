@@ -40,7 +40,7 @@ public class BagTree extends JTree {
   private DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(AbstractBagConstants.DATA_DIRECTORY);
   private ArrayList<DefaultMutableTreeNode> srcNodes = new ArrayList<DefaultMutableTreeNode>();
 
-  public BagTree(BagView bagView, String path, boolean isPayload) {
+  public BagTree(BagView bagView, String path) {
     super();
     this.setShowsRootHandles(true);
     basePath = path;
@@ -52,7 +52,7 @@ public class BagTree extends JTree {
     BAGTREE_ROW_MODIFIER = fieldHeight;
     this.setDragEnabled(true);
     this.setDropMode(DropMode.ON_OR_INSERT);
-    this.setTransferHandler(new BagTreeTransferHandler(isPayload));
+    this.setTransferHandler(new BagTreeTransferHandler());
     this.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
     bagView.registerTreeListener(path, this);
   }
