@@ -45,9 +45,6 @@ public class InfoFormsPane extends JScrollPane {
   public JRadioButton tarButton;
   public JRadioButton tarGzButton;
   public JRadioButton tarBz2Button;
-  public FileFilter noFilter;
-  public FileFilter zipFilter;
-  public FileFilter tarFilter;
 
   public InfoFormsPane(BagView bagView) {
     super();
@@ -72,7 +69,7 @@ public class InfoFormsPane extends JScrollPane {
     GridBagConstraints gbc = LayoutUtil.buildGridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
     infoPanel.add(bagSettingsPanel, gbc);
 
-    bagInfoInputPane = new BagInfoInputPane(bagView, false);
+    bagInfoInputPane = new BagInfoInputPane(bagView);
     bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
     bagInfoInputPane.setEnabled(false);
 
@@ -187,17 +184,17 @@ public class InfoFormsPane extends JScrollPane {
   }
 
   public void updateInfoForms() {
-    bagInfoInputPane.populateForms(bag, false);
+    bagInfoInputPane.populateForms(bag);
     bagInfoInputPane.enableForms(false);
     bagInfoInputPane.invalidate();
   }
 
-  public void updateInfoFormsPane(boolean enabled) {
+  public void updateInfoFormsPane() {
     // need to remove something?
     infoPanel.remove(bagInfoInputPane);
     infoPanel.validate();
 
-    bagInfoInputPane = new BagInfoInputPane(bagView, enabled);
+    bagInfoInputPane = new BagInfoInputPane(bagView);
     bagInfoInputPane.setToolTipText(bagView.getPropertyMessage("bagView.bagInfoInputPane.help"));
 
     GridBagConstraints gbc = LayoutUtil.buildGridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.WEST);

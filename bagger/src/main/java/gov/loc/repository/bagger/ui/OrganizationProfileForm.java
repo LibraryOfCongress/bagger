@@ -39,15 +39,10 @@ public class OrganizationProfileForm extends AbstractForm implements FocusListen
 
   protected JComponent createFormFields() {
     JComponent fieldForm;
-    ImageIcon requiredIcon = bagView.getPropertyImage("bag.required.image");
-    BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory(), requiredIcon);
-    int rowCount = 0;
-
+    BagTableFormBuilder formBuilder = new BagTableFormBuilder(getBindingFactory());
     formBuilder.row();
-    rowCount++;
     formBuilder.addSeparator("Send from Organization");
     formBuilder.row();
-    rowCount++;
     this.field = formBuilder.add("sourceOrganization")[1];
     Organization organization = bagView.getBag().getProfile().getOrganization();
     if (organization != null && organization.getName().isReadOnly()) {
@@ -55,7 +50,6 @@ public class OrganizationProfileForm extends AbstractForm implements FocusListen
     }
     this.field.addFocusListener(this);
     formBuilder.row();
-    rowCount++;
     JComponent orgAddress = formBuilder.add("organizationAddress")[1];
     if (organization != null && organization.getAddress().isReadOnly()) {
       field.setEnabled(false);
@@ -66,11 +60,9 @@ public class OrganizationProfileForm extends AbstractForm implements FocusListen
     Contact fromContact = bagView.getBag().getProfile().getSendFromContact();
 
     formBuilder.row();
-    rowCount++;
     formBuilder.addSeparator("Send from Contact");
     formBuilder.row();
 
-    rowCount++;
     this.contactName = formBuilder.add("srcContactName")[1];
 
     if (fromContact != null && fromContact.getContactName().isReadOnly()) {
@@ -79,14 +71,12 @@ public class OrganizationProfileForm extends AbstractForm implements FocusListen
 
     this.contactName.addFocusListener(this);
     formBuilder.row();
-    rowCount++;
     this.field = formBuilder.add("srcContactPhone")[1];
     if (fromContact != null && fromContact.getTelephone().isReadOnly()) {
       field.setEnabled(false);
     }
     this.field.addFocusListener(this);
     formBuilder.row();
-    rowCount++;
     this.field = formBuilder.add("srcContactEmail")[1];
 
     if (fromContact != null && fromContact.getEmail().isReadOnly()) {
@@ -95,10 +85,8 @@ public class OrganizationProfileForm extends AbstractForm implements FocusListen
 
     this.field.addFocusListener(this);
     formBuilder.row();
-    rowCount++;
     formBuilder.addSeparator("Send to Contact");
     formBuilder.row();
-    rowCount++;
     this.field = formBuilder.add("toContactName")[1];
     Contact contact = bagView.getBag().getProfile().getSendToContact();
     if (contact != null && contact.getContactName().isReadOnly()) {
@@ -106,7 +94,6 @@ public class OrganizationProfileForm extends AbstractForm implements FocusListen
     }
     this.field.addFocusListener(this);
     formBuilder.row();
-    rowCount++;
     this.field = formBuilder.add("toContactPhone")[1];
 
     if (contact != null && contact.getTelephone().isReadOnly()) {
@@ -114,20 +101,14 @@ public class OrganizationProfileForm extends AbstractForm implements FocusListen
     }
     this.field.addFocusListener(this);
     formBuilder.row();
-    rowCount++;
     this.field = formBuilder.add("toContactEmail")[1];
     if (contact != null && contact.getEmail().isReadOnly()) {
       field.setEnabled(false);
     }
     this.field.addFocusListener(this);
     formBuilder.row();
-    rowCount++;
-
     this.contactName.requestFocus();
     fieldForm = formBuilder.getForm();
-    rowCount++;
-    rowCount++;
-
     return fieldForm;
   }
 

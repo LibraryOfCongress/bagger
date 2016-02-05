@@ -6,6 +6,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -175,14 +176,15 @@ public class BagTreeTransferHandler extends TransferHandler {
     DefaultMutableTreeNode[] nodes;
 
     public NodesTransferable(DefaultMutableTreeNode[] nodes) {
-      this.nodes = nodes;
+      this.nodes = nodes.clone();
     }
 
     @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
       if (!isDataFlavorSupported(flavor))
         throw new UnsupportedFlavorException(flavor);
-      return nodes;
+      
+      return nodes.clone();
     }
 
     @Override

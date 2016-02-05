@@ -48,7 +48,7 @@ import gov.loc.repository.bagit.BagFactory.Version;
 public class NewBagFrame extends JFrame implements ActionListener {
   protected static final Logger log = LoggerFactory.getLogger(NewBagFrame.class);
   private static final long serialVersionUID = 1L;
-  private BagView bagView;
+  private transient BagView bagView;
   private JComboBox bagVersionList;
   private JComboBox profileList;
 
@@ -60,7 +60,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
     PageComponent component = page.getActiveComponent();
 
     if (component != null)
-      this.bagView = BagView.instance;
+      this.bagView = BagView.getInstance();
     else
       this.bagView = bagView;
     if (bagView != null) {
@@ -175,9 +175,8 @@ public class NewBagFrame extends JFrame implements ActionListener {
     finishCommand = new ActionCommand(getFinishCommandId()) {
       @Override
       public void doExecuteCommand() {
-
         log.info("BagVersionFrame.OkNewBagHandler");
-        NewBagFrame.this.setVisible(false);
+        this.setVisible(false);
         bagView.startNewBagHandler.createNewBag((String) bagVersionList.getSelectedItem(), (String) profileList.getSelectedItem());
       }
     };
@@ -185,7 +184,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
     cancelCommand = new ActionCommand(getCancelCommandId()) {
       @Override
       public void doExecuteCommand() {
-        NewBagFrame.this.setVisible(false);
+        this.setVisible(false);
       }
     };
   }
@@ -202,9 +201,9 @@ public class NewBagFrame extends JFrame implements ActionListener {
 
   protected static final String DEFAULT_CANCEL_COMMAND_ID = "cancelCommand";
 
-  private ActionCommand finishCommand;
+  private transient ActionCommand finishCommand;
 
-  private ActionCommand cancelCommand;
+  private transient ActionCommand cancelCommand;
 
   @Override
   public void actionPerformed(ActionEvent e) {

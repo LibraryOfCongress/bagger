@@ -116,8 +116,7 @@ public class BagTree extends JTree {
 
   public boolean addNodes(File file, boolean isParent) {
     if (!nodeAlreadyExists(file.getName())) {
-      DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-      rootNode = createNodeTree(null, null, file);
+      DefaultMutableTreeNode rootNode = createNodeTree(null, null, file);
       srcNodes.add(rootNode);
       if (isParent)
         parentNode = rootNode;

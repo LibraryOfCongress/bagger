@@ -33,10 +33,6 @@ public class ApplicationContextUtil {
     return BagView.getInstance();
   }
 
-  public static ConsoleView getConsoleView() {
-    return ConsoleView.getInstance();
-  }
-
   public static DefaultBag getCurrentBag() {
     return getBagView().getBag();
   }
@@ -45,12 +41,10 @@ public class ApplicationContextUtil {
     return ApplicationServicesLocator.services();
   }
 
-  public static void addConsoleMessageByProperty(String messagePropertyName) {
-    getConsoleView().addConsoleMessages(getMessage(messagePropertyName));
-  }
-
   public static void addConsoleMessage(String message) {
-    getConsoleView().addConsoleMessages(message);
+    String[] beanNames = Application.instance().getApplicationContext().getBeanNamesForType(ConsoleView.class);
+    ConsoleView consoleView = (ConsoleView) Application.instance().getApplicationContext().getBean(beanNames[0]);
+    consoleView.addConsoleMessages(message);
   }
 
   private static Object getService(Class serviceType) {

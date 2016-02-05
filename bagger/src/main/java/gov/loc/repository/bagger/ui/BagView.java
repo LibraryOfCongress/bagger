@@ -78,7 +78,7 @@ import gov.loc.repository.bagit.impl.AbstractBagConstants;
 public class BagView extends AbstractView implements ApplicationListener {
   protected static final Logger log = LoggerFactory.getLogger(BagView.class);
 
-  public static BagView instance;
+  private static BagView instance;
 
   private final static int ONE_SECOND = 1000;
   private int DEFAULT_WIDTH = 1024;
@@ -507,7 +507,7 @@ public class BagView extends AbstractView implements ApplicationListener {
   }
 
   public String updateBaggerRules() {
-    baggerRules.init(!bag.isNoProject(), bag.isHoley());
+    baggerRules.init();
     String messages = "";
     bag.updateStrategy();
 

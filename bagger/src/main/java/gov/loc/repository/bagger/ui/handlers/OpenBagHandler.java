@@ -35,10 +35,7 @@ public class OpenBagHandler extends AbstractAction {
     JFrame frame = new JFrame();
     JFileChooser fo = new JFileChooser(selectFile);
     fo.setDialogType(JFileChooser.OPEN_DIALOG);
-    fo.addChoosableFileFilter(bagView.infoInputPane.noFilter);
-    fo.addChoosableFileFilter(bagView.infoInputPane.zipFilter);
     // fo.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
-    fo.setFileFilter(bagView.infoInputPane.noFilter);
     fo.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     if (bagView.getBagRootPath() != null)
       fo.setCurrentDirectory(bagView.getBagRootPath().getParentFile());
@@ -147,7 +144,7 @@ public class OpenBagHandler extends AbstractAction {
     if (msgs != null) {
       ApplicationContextUtil.addConsoleMessage(msgs);
     }
-    bagView.infoInputPane.bagInfoInputPane.populateForms(bag, true);
+    bagView.infoInputPane.bagInfoInputPane.populateForms(bag);
     bagView.updateOpenBag();
     bagView.statusBarEnd();
   }

@@ -30,10 +30,10 @@ public class BagInfoInputPane extends JTabbedPane {
   private HierarchicalFormModel infoFormModel = null;
   private HierarchicalFormModel profileFormModel = null;
 
-  public BagInfoInputPane(BagView bagView, boolean b) {
+  public BagInfoInputPane(BagView bagView) {
     this.bagView = bagView;
     this.defaultBag = bagView.getBag();
-    populateForms(defaultBag, b);
+    populateForms(defaultBag);
 
     InputMap im = this.getInputMap();
     im.put(KeyStroke.getKeyStroke("F2"), "tabNext");
@@ -71,7 +71,7 @@ public class BagInfoInputPane extends JTabbedPane {
     this.invalidate();
   }
 
-  public void populateForms(DefaultBag bag, boolean enabled) {
+  public void populateForms(DefaultBag bag) {
 
     defaultBag = bag;
     DefaultBagInfo bagInfo = bag.getInfo();
@@ -87,7 +87,7 @@ public class BagInfoInputPane extends JTabbedPane {
     profileForm = new OrganizationProfileForm(FormModelHelper.createChildPageFormModel(profileFormModel, null), bagView);
 
     infoFormModel = FormModelHelper.createCompoundFormModel(bagInfo);
-    bagInfoForm = new BagInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), bagView, bagInfo.getFieldMap(), enabled);
+    bagInfoForm = new BagInfoForm(FormModelHelper.createChildPageFormModel(infoFormModel, null), bagView, bagInfo.getFieldMap());
 
     createTabbedUiComponentsWithForms();
   }
@@ -152,7 +152,7 @@ public class BagInfoInputPane extends JTabbedPane {
   }
 
   public void updateProject(BagView bagView) {
-    bagView.infoInputPane.updateInfoFormsPane(true);
+    bagView.infoInputPane.updateInfoFormsPane();
   }
 
   private void updateBagInfo(DefaultBag bag) {

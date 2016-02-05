@@ -23,7 +23,7 @@ public class TagManifestPane extends JTabbedPane {
   private static final long serialVersionUID = 1L;
   protected static final Logger log = LoggerFactory.getLogger(TagManifestPane.class);
   public static final String TAGMANIFEST_PANE = "tagManifestPane";
-  private String messages = new String();
+  private String messages = "";
   private BagView parentView;
   private DefaultBag defaultBag;
   private BagTextPane dataPane;
