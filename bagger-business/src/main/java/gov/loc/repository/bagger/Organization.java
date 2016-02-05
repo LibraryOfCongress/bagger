@@ -44,10 +44,12 @@ public class Organization {
 
   public String toString(boolean inline) {
     String delim;
-    if (inline)
+    if (inline){
       delim = ", ";
-    else
+    }
+    else{
       delim = "\n";
+    }
     StringBuffer sb = new StringBuffer();
     sb.append(this.getName());
     sb.append(delim);
@@ -63,14 +65,16 @@ public class Organization {
     if (organizationJson != null) {
       if (organizationJson.has(FIELD_SOURCE_ORGANIZATION)) {
         JSONObject jsonObjectOrgName = (JSONObject) organizationJson.get(FIELD_SOURCE_ORGANIZATION);
-        if (jsonObjectOrgName != null)
+        if (jsonObjectOrgName != null){
           name = ProfileField.createProfileField(jsonObjectOrgName, FIELD_SOURCE_ORGANIZATION);
+        }
       }
 
       if (organizationJson.has(FIELD_ORGANIZATION_ADDRESS)) {
         JSONObject jsonObjectOrgAddr = (JSONObject) organizationJson.get(FIELD_ORGANIZATION_ADDRESS);
-        if (jsonObjectOrgAddr != null)
+        if (jsonObjectOrgAddr != null){
           address = ProfileField.createProfileField(jsonObjectOrgAddr, FIELD_ORGANIZATION_ADDRESS);
+        }
       }
     }
 

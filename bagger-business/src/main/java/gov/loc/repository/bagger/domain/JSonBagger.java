@@ -138,8 +138,8 @@ public class JSonBagger implements Bagger {
 
   @Override
   public void saveProfile(Profile profile) {
-    if (profile.getName().equals("<no profile>"))
-      return;
+    if (profile.getName().equals("<no profile>")){ return; }
+    
     try {
       String fileName = getJsonFileName(profile.getName());
       OutputStreamWriter writer = new OutputStreamWriter(

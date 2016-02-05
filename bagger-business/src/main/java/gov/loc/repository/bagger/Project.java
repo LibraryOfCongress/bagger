@@ -39,10 +39,7 @@ public class Project {
     sb.append(this.getName());
     sb.append('\n');
     sb.append("Default?: ");
-    if (this.getIsDefault())
-      sb.append("true");
-    else
-      sb.append("false");
+    sb.append(getIsDefault());
     sb.append('\n');
 
     return sb.toString();

@@ -81,29 +81,33 @@ public class Profile {
     profile.setName(profileName);
 
     JSONObject organizationJson = null;
-    if (profileJson.has(Profile.FIELD_ORGANIZATION))
+    if (profileJson.has(Profile.FIELD_ORGANIZATION)){
       organizationJson = (JSONObject) profileJson.get(Profile.FIELD_ORGANIZATION);
+    }
 
     Organization organization = Organization.createOrganization(organizationJson);
     profile.setOrganization(organization);
 
     JSONObject contactSendToJson = null;
-    if (profileJson.has(Profile.FIELD_SENDTO))
+    if (profileJson.has(Profile.FIELD_SENDTO)){
       contactSendToJson = (JSONObject) profileJson.get(Profile.FIELD_SENDTO);
+    }
 
     Contact sendToContact = Contact.createContact(contactSendToJson, true);
     profile.setSendToContact(sendToContact);
 
     JSONObject contactSendFromJson = null;
-    if (profileJson.has(Profile.FIELD_SENDFROM))
+    if (profileJson.has(Profile.FIELD_SENDFROM)){
       contactSendFromJson = (JSONObject) profileJson.get(Profile.FIELD_SENDFROM);
+    }
 
     Contact sendFromContact = Contact.createContact(contactSendFromJson, false);
     profile.setSendFromContact(sendFromContact);
 
     JSONObject customInfoJson = null;
-    if (profileJson.has(Profile.FIELD_CUSTOM_INFO))
+    if (profileJson.has(Profile.FIELD_CUSTOM_INFO)){
       customInfoJson = (JSONObject) profileJson.get(Profile.FIELD_CUSTOM_INFO);
+    }
     HashMap<String, ProfileField> fields = getFields(customInfoJson);
     profile.setCustomFields(fields);
 
@@ -117,8 +121,9 @@ public class Profile {
     HashMap<String, ProfileField> profileFields = new HashMap<String, ProfileField>();
     if (fieldsJson != null) {
       String[] names = JSONObject.getNames(fieldsJson);
-      if (names == null)
+      if (names == null){
         return profileFields;
+      }
 
       for (String name : names) {
         JSONObject jsonObject = (JSONObject) fieldsJson.get(name);

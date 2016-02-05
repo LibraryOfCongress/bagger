@@ -59,10 +59,12 @@ public class Person {
     }
     if (tokens != null && !tokens.isEmpty()) {
       this.firstName = tokens.get(0);
-      if (tokens.size() > 1)
+      if (tokens.size() > 1){
         this.lastName = tokens.get(tokens.size() - 1);
-      if (tokens.size() > 2)
+      }
+      if (tokens.size() > 2){
         this.middleInit = tokens.get(1);
+      }
     }
   }
 

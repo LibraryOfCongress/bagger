@@ -149,8 +149,9 @@ public class ProfileField implements Serializable{
     profileWriter.key(FIELD_REQUIRED).value(getIsRequired());
     profileWriter.key(FIELD_TYPE).value(getFieldType());
     profileWriter.key(FIELD_READ_ONLY).value(isReadOnly());
-    if (this.getElements().size() > 0)
+    if (this.getElements().size() > 0){
       profileWriter.key(FIELD_VALUE_LIST).value(this.getElements());
+    }
     profileWriter.endObject();
     return writer.toString();
   }
