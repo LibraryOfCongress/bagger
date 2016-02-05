@@ -473,7 +473,8 @@ public class DefaultBag {
   public void clearProfile() {
     Profile noProfile = new Profile();
     noProfile.setName(Profile.NO_PROFILE_NAME);
-    setProfile(profile, false);
+    noProfile.setIsDefault(true);
+    setProfile(noProfile, false);
   }
 
   public void setProfile(Profile profile, boolean newBag) {
