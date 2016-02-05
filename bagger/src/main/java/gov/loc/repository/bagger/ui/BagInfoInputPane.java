@@ -129,16 +129,7 @@ public class BagInfoInputPane extends JTabbedPane {
 
     messages = verifyForms(bag);
     createTabbedUiComponentsWithForms();
-    update(bag);
-
-    return messages;
-  }
-
-  public boolean hasFormErrors(DefaultBag bag) {
-    return false;
-  }
-
-  public void update(DefaultBag bag) {
+    
     java.awt.Component[] components = bagInfoForm.getControl().getComponents();
     for (int i = 0; i < components.length; i++) {
       java.awt.Component c = components[i];
@@ -149,6 +140,8 @@ public class BagInfoInputPane extends JTabbedPane {
     profileForm.getControl().invalidate();
     invalidate();
     repaint();
+
+    return messages;
   }
 
   public void updateProject(BagView bagView) {

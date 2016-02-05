@@ -141,7 +141,7 @@ public class BagInfoForm extends AbstractForm implements FocusListener {
           lcomp.setEnabled(field.isEnabled());
           lcomp.addFocusListener(this);
           if (field.getValue() != null) {
-            ((JComboBox) lcomp).setSelectedItem(field.getValue().trim());
+            ((JComboBox<?>) lcomp).setSelectedItem(field.getValue().trim());
           }
           if (rowCount == 1)
             focusField = lcomp;
@@ -252,7 +252,7 @@ public class BagInfoForm extends AbstractForm implements FocusListener {
         value = ta.getText();
       }
       else if (c instanceof JComboBox) {
-        JComboBox tb = (JComboBox) c;
+        JComboBox<?> tb = (JComboBox<?>) c;
         value = (String) tb.getSelectedItem();
       }
       map.put(key, value);

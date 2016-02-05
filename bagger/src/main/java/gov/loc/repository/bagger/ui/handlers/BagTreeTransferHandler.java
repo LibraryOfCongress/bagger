@@ -6,7 +6,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -57,7 +56,7 @@ public class BagTreeTransferHandler extends TransferHandler {
   @Override
   public boolean canImport(JComponent comp, DataFlavor transferFlavors[]) {
     for (int i = 0; i < transferFlavors.length; i++) {
-      Class representationclass = transferFlavors[i].getRepresentationClass();
+      Class<?> representationclass = transferFlavors[i].getRepresentationClass();
       // URL from Explorer or Firefox, KDE
       if ((representationclass != null) && URL.class.isAssignableFrom(representationclass)) {
         if (debugImport) {

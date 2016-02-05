@@ -57,7 +57,7 @@ public class AddDataHandler extends AbstractAction implements Progress {
       }
       else {
         File file = fc.getSelectedFile();
-        addBagData(file, true);
+        addBagData(file);
         ApplicationContextUtil.addConsoleMessage(message + " " + file.getAbsolutePath());
       }
       bagView.bagPayloadTreePanel.refresh(bagView.bagPayloadTree);
@@ -88,15 +88,12 @@ public class AddDataHandler extends AbstractAction implements Progress {
     if (files != null) {
       for (int i = 0; i < files.length; i++) {
         log.info("addBagData[{}] {}", i, files[i].getName());
-        if (i < files.length - 1)
-          addBagData(files[i], false);
-        else
-          addBagData(files[i], true);
+        addBagData(files[i]);
       }
     }
   }
 
-  public void addBagData(File file, boolean lastFileFlag) {
+  public void addBagData(File file) {
     BusyIndicator.showAt(Application.instance().getActiveWindow().getControl());
     try {
       bagView.getBag().addFileToPayload(file);

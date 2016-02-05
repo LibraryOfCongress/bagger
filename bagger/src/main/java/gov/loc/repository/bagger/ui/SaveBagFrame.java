@@ -77,8 +77,8 @@ public class SaveBagFrame extends JFrame implements ActionListener {
   JCheckBox holeyCheckbox;
   JCheckBox isTagCheckbox;
   JCheckBox isPayloadCheckbox;
-  JComboBox tagAlgorithmList;
-  JComboBox payAlgorithmList;
+  JComboBox<String> tagAlgorithmList;
+  JComboBox<String> payAlgorithmList;
 
   public SaveBagFrame(BagView bagView, String title) {
     super(title);
@@ -528,9 +528,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
           bagView.showWarningErrorDialog("Error - bag not saved", "A holey bag must have a URL value.");
           return;
         }
-        else {
-          bagView.getBag().getFetch().setBaseURL(urlField.getText().trim());
-        }
+        bagView.getBag().getFetch().setBaseURL(urlField.getText().trim());
         bagView.infoInputPane.holeyValue.setText("true");
       }
       else {
@@ -575,7 +573,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      JComboBox jlist = (JComboBox) e.getSource();
+      JComboBox<?> jlist = (JComboBox<?>) e.getSource();
       String alg = (String) jlist.getSelectedItem();
       bagView.getBag().setTagManifestAlgorithm(alg);
     }
@@ -604,7 +602,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      JComboBox jlist = (JComboBox) e.getSource();
+      JComboBox<?> jlist = (JComboBox<?>) e.getSource();
       String alg = (String) jlist.getSelectedItem();
       bagView.getBag().setPayloadManifestAlgorithm(alg);
     }

@@ -43,9 +43,9 @@ public class NewItemFrame extends JFrame implements ActionListener {
   JButton cancelButton;
   JTextField itemName;
   JPanel itemPanel;
-  JComboBox itemList;
+  JComboBox<String> itemList;
 
-  public NewItemFrame(BagView bagView, JComboBox itemList, String title) {
+  public NewItemFrame(BagView bagView, JComboBox<String> itemList, String title) {
     super(title);
     this.bagView = bagView;
     this.itemList = itemList;
@@ -125,11 +125,9 @@ public class NewItemFrame extends JFrame implements ActionListener {
         bagView.showWarningErrorDialog("New Item Dialog", "Item already exists!");
         return;
       }
-      else {
-        itemList.addItem(name);
-        itemList.invalidate();
-        itemList.setSelectedItem(name);
-      }
+      itemList.addItem(name);
+      itemList.invalidate();
+      itemList.setSelectedItem(name);
     }
   }
 

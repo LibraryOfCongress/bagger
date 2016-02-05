@@ -1,18 +1,17 @@
 package gov.loc.repository.bagger.ui;
 
-import gov.loc.repository.bagger.Contact;
-import gov.loc.repository.bagger.Organization;
-
 import java.awt.BorderLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.form.AbstractForm;
+
+import gov.loc.repository.bagger.Contact;
+import gov.loc.repository.bagger.Organization;
 
 public class OrganizationProfileForm extends AbstractForm implements FocusListener {
   public static final String PROFILE_FORM_PAGE = "profilePage";
