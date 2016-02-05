@@ -6,11 +6,9 @@ import java.util.Locale;
 import javax.swing.UIManager;
 
 import org.springframework.richclient.application.Application;
-import org.springframework.richclient.application.ApplicationServices;
 import org.springframework.richclient.application.ApplicationServicesLocator;
 import org.springframework.richclient.image.ImageSource;
 
-import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagger.ui.ConsoleView;
 
@@ -25,7 +23,7 @@ public class ApplicationContextUtil {
   }
 
   public static Image getImage(String imageName) {
-    ImageSource source = (ImageSource) getService(ImageSource.class);
+    ImageSource source = (ImageSource) ApplicationServicesLocator.services().getService(ImageSource.class);
     return source.getImage(imageName);
   }
 
@@ -34,20 +32,9 @@ public class ApplicationContextUtil {
     return bagView;
   }
 
-  public static DefaultBag getCurrentBag() {
-    return getBagView().getBag();
-  }
-
-  private static ApplicationServices getApplicationServices() {
-    return ApplicationServicesLocator.services();
-  }
-
   public static void addConsoleMessage(String message) {
     ConsoleView consoleView = (ConsoleView) Application.instance().getApplicationContext().getBean("myConsoleView");
     consoleView.addConsoleMessages(message);
   }
 
-  private static Object getService(Class<?> serviceType) {
-    return getApplicationServices().getService(serviceType);
-  }
 }
