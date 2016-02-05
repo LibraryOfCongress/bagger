@@ -102,16 +102,18 @@ public class DefaultBagInfo implements Serializable {
       // if this is a new bag, populate organization and contacts with profile
       // info
       Contact person = profile.getSendToContact();
-      if (person == null)
+      if (person == null){
         person = new Contact(true);
+      }
       Contact contact = profile.getSendFromContact();
       if (contact == null) {
         contact = new Contact(false);
       }
       sourceOrganization.setContact(contact);
       Organization org = profile.getOrganization();
-      if (org == null)
+      if (org == null){
         org = new Organization();
+      }
       sourceOrganization.setOrganizationName(org.getName().getFieldValue());
       sourceOrganization.setOrganizationAddress(org.getAddress().getFieldValue());
 
@@ -147,8 +149,7 @@ public class DefaultBagInfo implements Serializable {
       if (fieldMap.size() > 0) {
         for (BagInfoField field : fieldMap.values()) {
           ProfileField projectProfile = profileFields.get(field.getLabel());
-          if (projectProfile == null)
-            continue;
+          if (projectProfile == null){ continue; }
 
           field.isEnabled(!projectProfile.isReadOnly());
           field.isEditable(!projectProfile.isReadOnly());
@@ -186,8 +187,7 @@ public class DefaultBagInfo implements Serializable {
             field.isRequired(projectProfile.getIsRequired());
             field.setValue(projectProfile.getFieldValue());
             // field.setValue("");
-            if (projectProfile.isReadOnly())
-              field.isEnabled(false);
+            if (projectProfile.isReadOnly()){ field.isEnabled(false); }
             field.buildElements(projectProfile.getElements());
             if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
               field.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
@@ -207,8 +207,9 @@ public class DefaultBagInfo implements Serializable {
 
   public HashMap<String, ProfileField> convertToMap(List<ProfileField> profileFields) {
     HashMap<String, ProfileField> filedsToReturn = new HashMap<String, ProfileField>();
-    if (profileFields == null)
+    if (profileFields == null){
       return filedsToReturn;
+    }
     for (ProfileField profileFiled : profileFields) {
       filedsToReturn.put(profileFiled.getFieldName(), profileFiled);
     }

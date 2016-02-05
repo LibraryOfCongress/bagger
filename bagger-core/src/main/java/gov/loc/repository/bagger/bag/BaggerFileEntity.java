@@ -129,10 +129,12 @@ public class BaggerFileEntity {
       }
       else {
         int delta;
-        if (normBasePath.endsWith("/") || normBasePath.endsWith("\\"))
+        if (normBasePath.endsWith("/") || normBasePath.endsWith("\\")){
           delta = 0;
-        else
+        }
+        else{
           delta = 1;
+        }
         filenameWithoutBasePath = normFilename.substring(normBasePath.length() + delta);
         log.trace("filenamewithoutbasepath: {}", filenameWithoutBasePath);
       }

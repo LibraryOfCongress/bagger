@@ -53,7 +53,7 @@ public class FlatteningIterator implements Iterator<Object> {
     /* Not implemented */}
 
   private void moveToNext() {
-    if ((next == blank) && !this.iterators.empty()) {
+    if (next == blank && !this.iterators.empty()) {
       if (!iterators.peek().hasNext()) {
         iterators.pop();
         moveToNext();
@@ -72,8 +72,9 @@ public class FlatteningIterator implements Iterator<Object> {
           iterators.push(Arrays.asList((Array) nextInInteration).iterator());
           moveToNext();
         }
-        else
+        else{
           this.next = nextInInteration;
+        }
       }
     }
   }
@@ -87,8 +88,10 @@ public class FlatteningIterator implements Iterator<Object> {
   public Object next() throws NoSuchElementException {
     moveToNext();
 
-    if (this.next == blank)
+    if (this.next == blank){
       throw new NoSuchElementException();
+    }
+    
     Object nextCopy = this.next;
     this.next = blank;
     return nextCopy;
@@ -102,6 +105,6 @@ public class FlatteningIterator implements Iterator<Object> {
   @Override
   public boolean hasNext() {
     moveToNext();
-    return (this.next != blank);
+    return this.next != blank;
   }
 }

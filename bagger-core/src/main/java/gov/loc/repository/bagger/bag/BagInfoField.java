@@ -40,8 +40,9 @@ public class BagInfoField implements Serializable {
     this.isRequired(projectProfile.getIsRequired());
     this.setValue(projectProfile.getFieldValue());
     // field.setValue("");
-    if (projectProfile.isReadOnly())
+    if (projectProfile.isReadOnly()){
       this.isEnabled(false);
+    }
     this.buildElements(projectProfile.getElements());
     if (projectProfile.getFieldType().equalsIgnoreCase(BagInfoField.TEXTFIELD_CODE)) {
       this.setComponentType(BagInfoField.TEXTFIELD_COMPONENT);
