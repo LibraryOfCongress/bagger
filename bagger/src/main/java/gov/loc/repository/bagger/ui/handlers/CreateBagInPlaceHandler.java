@@ -44,7 +44,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
   }
 
   public void createPreBag(File dataFile, String bagItVersion, final String profileName) {
-    if (((dataFile != null) && (bagItVersion != null)) && (profileName != null)){
+    if (dataFile != null && bagItVersion != null && profileName != null){
       log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), bagItVersion, profileName);
       bagView.clearBagHandler.clearExistingBag();
       try {
@@ -66,7 +66,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     }
     else{
       log.warn("datafile is null? {} bagItVersion is null? {} profileName is null? {}", 
-          (dataFile == null), (bagItVersion == null), (profileName == null));
+          dataFile == null, bagItVersion == null, profileName == null);
     }
   }
 
@@ -75,7 +75,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
    * adding .keep files in Empty Pay load Folder(s)
    */
   public void createPreBagAddKeepFilesToEmptyFolders(File dataFile, String bagItVersion, final String profileName) {
-    if (((dataFile != null) && (bagItVersion != null)) && (profileName != null)){
+    if (dataFile != null && bagItVersion != null && profileName != null){
       log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), bagItVersion, profileName);
       bagView.clearBagHandler.clearExistingBag();
       try {
@@ -97,7 +97,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     }
     else{
       log.warn("datafile is null? {} bagItVersion is null? {} profileName is null? {}", 
-          (dataFile == null), (bagItVersion == null), (profileName == null));
+          dataFile == null, bagItVersion == null, profileName == null);
     }
   }
 

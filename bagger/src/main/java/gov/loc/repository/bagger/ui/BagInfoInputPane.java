@@ -43,20 +43,16 @@ public class BagInfoInputPane extends JTabbedPane {
 
       @Override
       public void actionPerformed(ActionEvent evt) {
-        try {
-          int selected = getSelectedIndex();
-          int count = getComponentCount();
-          if (selected >= 0 && selected < count - 1) {
-            setSelectedIndex(selected + 1);
-          }
-          else {
-            setSelectedIndex(0);
-          }
-          invalidate();
-          repaint();
+        int selected = getSelectedIndex();
+        int count = getComponentCount();
+        if (selected >= 0 && selected < count - 1) {
+          setSelectedIndex(selected + 1);
         }
-        catch (Exception e) {
+        else {
+          setSelectedIndex(0);
         }
+        invalidate();
+        repaint();
       }
     });
     this.setActionMap(am);

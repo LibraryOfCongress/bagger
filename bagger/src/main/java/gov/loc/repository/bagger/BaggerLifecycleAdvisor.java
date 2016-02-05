@@ -33,11 +33,9 @@ public class BaggerLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor {
   @Override
   public void onPreStartup() {
     log.debug("BaggerLifeCycleAdvisor.onPreStartup");
-    if (useWizard) {
-      if (getApplication().getApplicationContext().containsBean("setupWizard")) {
-        SetupWizard setupWizard = (SetupWizard) getApplication().getApplicationContext().getBean("setupWizard", SetupWizard.class);
-        setupWizard.execute();
-      }
+    if (useWizard && getApplication().getApplicationContext().containsBean("setupWizard")) {
+      SetupWizard setupWizard = (SetupWizard) getApplication().getApplicationContext().getBean("setupWizard", SetupWizard.class);
+      setupWizard.execute();
     }
   }
 

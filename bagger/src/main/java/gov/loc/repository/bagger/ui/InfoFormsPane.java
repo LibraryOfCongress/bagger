@@ -171,8 +171,9 @@ public class InfoFormsPane extends JScrollPane {
   }
 
   public void setBagName(String name) {
-    if (name == null || name.length() < 1)
+    if (name == null || name.length() < 1){
       return;
+    }
     bagNameValue.setText(name);
   }
 

@@ -229,8 +229,9 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 
   public void save(File file) {
     DefaultBag bag = bagView.getBag();
-    if (file == null)
+    if (file == null){
       file = bagView.getBagRootPath();
+    }
     bag.setName(file.getName());
     File bagFile = new File(file, bag.getName());
     if (bagFile.exists()) {

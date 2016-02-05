@@ -37,15 +37,17 @@ public class OpenBagHandler extends AbstractAction {
     fo.setDialogType(JFileChooser.OPEN_DIALOG);
     // fo.addChoosableFileFilter(bagView.infoInputPane.tarFilter);
     fo.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-    if (bagView.getBagRootPath() != null)
+    if (bagView.getBagRootPath() != null){
       fo.setCurrentDirectory(bagView.getBagRootPath().getParentFile());
+    }
     fo.setDialogTitle("Existing Bag Location");
     int option = fo.showOpenDialog(frame);
 
     if (option == JFileChooser.APPROVE_OPTION) {
       File file = fo.getSelectedFile();
-      if (file == null)
+      if (file == null){
         file = bagView.getBagRootPath();
+      }
       openExistingBag(file);
     }
   }

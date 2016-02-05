@@ -74,10 +74,12 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     Application app = Application.instance();
     ApplicationPage page = app.getActiveWindow().getPage();
     PageComponent component = page.getActiveComponent();
-    if (component != null)
+    if (component != null){
       this.bagView = ApplicationContextUtil.getBagView();
-    else
+    }
+    else{
       this.bagView = bagView;
+    }
     if (bagView != null) {
       bag = bagView.getBag();
       getContentPane().removeAll();
@@ -133,8 +135,9 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     saveAsButton.setToolTipText(bagView.getPropertyMessage("bag.button.browse.help"));
 
     String fileName = "";
-    if (bag != null)
+    if (bag != null){
       fileName = bag.getName();
+    }
     bagNameField = new JTextField(fileName);
     bagNameField.setCaretPosition(fileName.length());
     bagNameField.setEditable(false);
@@ -321,8 +324,9 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
       fs.setDialogType(JFileChooser.OPEN_DIALOG);
       fs.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
       fs.setDialogTitle("Existing Data Location");
-      if (bagView.getBagRootPath() != null)
+      if (bagView.getBagRootPath() != null){
         fs.setCurrentDirectory(bagView.getBagRootPath().getParentFile());
+      }
       fs.setCurrentDirectory(bag.getRootDir());
       if (bag.getName() != null && !bag.getName().equalsIgnoreCase(bagView.getPropertyMessage("bag.label.noname"))) {
         String selectedName = bag.getName();

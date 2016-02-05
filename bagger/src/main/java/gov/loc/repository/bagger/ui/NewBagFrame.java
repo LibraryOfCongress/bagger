@@ -60,10 +60,12 @@ public class NewBagFrame extends JFrame implements ActionListener {
     ApplicationPage page = app.getActiveWindow().getPage();
     PageComponent component = page.getActiveComponent();
 
-    if (component != null)
+    if (component != null){
       this.bagView = ApplicationContextUtil.getBagView();
-    else
+    }
+    else{
       this.bagView = bagView;
+    }
     if (bagView != null) {
       getContentPane().removeAll();
       createPanel = createComponents();

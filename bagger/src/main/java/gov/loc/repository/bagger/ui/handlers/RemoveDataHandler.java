@@ -54,8 +54,9 @@ public class RemoveDataHandler extends AbstractAction {
             log.debug("filepath: {}", filePath);
           }
         }
-        if (filePath != null)
+        if (filePath != null){
           fileName = BaggerFileEntity.normalize(filePath.getPath());
+        }
         log.debug("removeData filePath: {}", fileName);
         if (fileName != null && !fileName.isEmpty()) {
           try {

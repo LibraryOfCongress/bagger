@@ -341,8 +341,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (addDataToolBarAction.isEnabled())
+        if (addDataToolBarAction.isEnabled()){
           addDataHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -352,8 +353,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (addDataToolBarAction.isEnabled())
+        if (addDataToolBarAction.isEnabled()){
           addDataToolBarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
     buttonPanel.add(addDataToolBarAction);
@@ -369,8 +371,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (removeDataToolBarAction.isEnabled())
+        if (removeDataToolBarAction.isEnabled()){
           removeDataHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -380,8 +383,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (removeDataToolBarAction.isEnabled())
+        if (removeDataToolBarAction.isEnabled()){
           removeDataToolBarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
 
@@ -415,8 +419,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (viewTagFilesToolbarAction.isEnabled())
+        if (viewTagFilesToolbarAction.isEnabled()){
           showTageFileHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -426,8 +431,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (viewTagFilesToolbarAction.isEnabled())
+        if (viewTagFilesToolbarAction.isEnabled()){
           viewTagFilesToolbarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
     buttonPanel.add(viewTagFilesToolbarAction);
@@ -443,8 +449,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (addTagFileToolBarAction.isEnabled())
+        if (addTagFileToolBarAction.isEnabled()){
           addTagFileHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -454,8 +461,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (addTagFileToolBarAction.isEnabled())
+        if (addTagFileToolBarAction.isEnabled()){
           addTagFileToolBarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
     buttonPanel.add(addTagFileToolBarAction);
@@ -472,8 +480,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (removeTagFileToolbarAction.isEnabled())
+        if (removeTagFileToolbarAction.isEnabled()){
           removeTagFileHandler.actionPerformed(null);
+        }
       }
 
       @Override
@@ -483,8 +492,9 @@ public class BagView extends AbstractView implements ApplicationListener {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (removeTagFileToolbarAction.isEnabled())
+        if (removeTagFileToolbarAction.isEnabled()){
           removeTagFileToolbarAction.setBorder(new LineBorder(Color.GRAY, 1));
+        }
       }
     });
 
@@ -650,10 +660,11 @@ public class BagView extends AbstractView implements ApplicationListener {
         log.info("Stopped the timer");
         // getting an array of Action Listeners from Timer Listener (will have
         // only one element)
-        ActionListener[] als = (timer.getListeners(ActionListener.class));
+        ActionListener[] als = timer.getListeners(ActionListener.class);
         // Removing Action Listener from timer
-        if (als.length > 0)
+        if (als.length > 0){
           timer.removeActionListener(als[0]);
+        }
         if (longRunningProcess != null && !task.isDone()) {
           log.info("Trying to cancel the long running process: {}", longRunningProcess);
           longRunningProcess.cancel();
@@ -690,8 +701,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         public void valueChanged(TreeSelectionEvent e) {
 
           TreePath[] paths = tree.getSelectionPaths();
-          if (paths == null || paths.length == 0)
+          if (paths == null || paths.length == 0){
             return;
+          }
 
           for (TreePath path : paths) {
             if (path.getPathCount() == 1) {
@@ -711,8 +723,9 @@ public class BagView extends AbstractView implements ApplicationListener {
         public void valueChanged(TreeSelectionEvent e) {
 
           TreePath[] paths = tree.getSelectionPaths();
-          if (paths == null || paths.length == 0)
+          if (paths == null || paths.length == 0){
             return;
+          }
 
           for (TreePath path : paths) {
             if (path.getPathCount() == 1) {
@@ -745,9 +758,7 @@ public class BagView extends AbstractView implements ApplicationListener {
    * Returns false for all other types of Bags
    */
   private boolean checkFetchTxtFile() {
-    if (bag.getFetchTxt() != null)
-      return true;
-    return false;
+    return bag.getFetchTxt() != null;
   }
 
   /*
@@ -756,10 +767,10 @@ public class BagView extends AbstractView implements ApplicationListener {
    * The Validate Button is enabled for all other types of Bags
    */
   private void setCompleteExecutor() {
-    if (checkFetchTxtFile())
+    if (checkFetchTxtFile()){
       completeExecutor.setEnabled(false);
-    else
-      completeExecutor.setEnabled(true);
+    }
+    completeExecutor.setEnabled(true);
   }
 
   /*
@@ -768,10 +779,10 @@ public class BagView extends AbstractView implements ApplicationListener {
    * The Validate Button is enabled for all other types of Bags
    */
   private void setValidateExecutor() {
-    if (checkFetchTxtFile())
+    if (checkFetchTxtFile()){
       validateExecutor.setEnabled(false);
-    else
-      validateExecutor.setEnabled(true);
+    }
+    validateExecutor.setEnabled(true);
   }
 
 }

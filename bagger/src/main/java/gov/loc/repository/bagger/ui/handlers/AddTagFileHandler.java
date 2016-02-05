@@ -36,8 +36,9 @@ public class AddTagFileHandler extends AbstractAction {
     JFileChooser fo = new JFileChooser(selectFile);
     fo.setDialogType(JFileChooser.OPEN_DIALOG);
     fo.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    if (bagView.getBagRootPath() != null)
+    if (bagView.getBagRootPath() != null){
       fo.setCurrentDirectory(bagView.getBagRootPath().getParentFile());
+    }
     fo.setDialogTitle("Tag File Chooser");
     int option = fo.showOpenDialog(frame);
 
