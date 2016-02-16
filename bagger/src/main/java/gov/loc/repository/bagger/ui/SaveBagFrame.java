@@ -167,9 +167,13 @@ public class SaveBagFrame extends JFrame implements ActionListener {
     browseButton.setEnabled(true);
     browseButton.setToolTipText(getMessage("bag.button.browse.help"));
     DefaultBag bag = bagView.getBag();
-    bagNameField.setEditable(false);
-    bagNameField.setEnabled(false);
-
+    if (bag != null) {
+      bagNameField = new JTextField(bag.getName());
+      bagNameField.setCaretPosition(bag.getName().length());
+      bagNameField.setEditable(false);
+      bagNameField.setEnabled(false);
+    }
+    
     // Holey bag control
     JLabel holeyLabel = new JLabel(bagView.getPropertyMessage("bag.label.isholey"));
     holeyLabel.setToolTipText(bagView.getPropertyMessage("bag.isholey.help"));
