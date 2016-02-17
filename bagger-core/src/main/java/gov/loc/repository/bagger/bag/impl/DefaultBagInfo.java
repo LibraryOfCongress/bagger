@@ -144,7 +144,7 @@ public class DefaultBagInfo implements Serializable {
       }
 
       List<ProfileField> list = BaggerProfileStore.getInstance().getProfileFields(profile.getName());
-      HashMap<String, ProfileField> profileFields = convertToMap(list);
+      LinkedHashMap<String, ProfileField> profileFields = convertToMap(list);
 
       if (fieldMap.size() > 0) {
         for (BagInfoField field : fieldMap.values()) {
@@ -205,8 +205,8 @@ public class DefaultBagInfo implements Serializable {
     }
   }
 
-  public HashMap<String, ProfileField> convertToMap(List<ProfileField> profileFields) {
-    HashMap<String, ProfileField> filedsToReturn = new HashMap<String, ProfileField>();
+  public LinkedHashMap<String, ProfileField> convertToMap(List<ProfileField> profileFields) {
+    LinkedHashMap<String, ProfileField> filedsToReturn = new LinkedHashMap<String, ProfileField>();
     if (profileFields == null){
       return filedsToReturn;
     }

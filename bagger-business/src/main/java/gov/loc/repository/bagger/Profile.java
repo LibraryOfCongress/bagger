@@ -3,7 +3,7 @@ package gov.loc.repository.bagger;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +27,8 @@ public class Profile {
   private Organization organization = new Organization();
   private String name;
   private boolean isDefault = false;
-  private HashMap<String, ProfileField> customFields = new HashMap<String, ProfileField>();
-  private HashMap<String, ProfileField> standardFields = new HashMap<String, ProfileField>();
+  private LinkedHashMap<String, ProfileField> customFields = new LinkedHashMap<String, ProfileField>();
+  private LinkedHashMap<String, ProfileField> standardFields = new LinkedHashMap<String, ProfileField>();
 
   public void setSendToContact(Contact sendToContact) {
     this.sendToContact = sendToContact;
@@ -62,11 +62,11 @@ public class Profile {
     return name;
   }
 
-  public void setCustomFields(HashMap<String, ProfileField> fields) {
+  public void setCustomFields(LinkedHashMap<String, ProfileField> fields) {
     this.customFields = fields;
   }
 
-  public HashMap<String, ProfileField> getCustomFields() {
+  public LinkedHashMap<String, ProfileField> getCustomFields() {
     return customFields;
   }
 
@@ -108,17 +108,17 @@ public class Profile {
     if (profileJson.has(Profile.FIELD_CUSTOM_INFO)){
       customInfoJson = (JSONObject) profileJson.get(Profile.FIELD_CUSTOM_INFO);
     }
-    HashMap<String, ProfileField> fields = getFields(customInfoJson);
+    LinkedHashMap<String, ProfileField> fields = getFields(customInfoJson);
     profile.setCustomFields(fields);
 
-    HashMap<String, ProfileField> profileFields = getFields(profileJson);
+    LinkedHashMap<String, ProfileField> profileFields = getFields(profileJson);
     profile.setStandardFields(profileFields);
 
     return profile;
   }
 
-  public static HashMap<String, ProfileField> getFields(JSONObject fieldsJson) throws JSONException {
-    HashMap<String, ProfileField> profileFields = new HashMap<String, ProfileField>();
+  public static LinkedHashMap<String, ProfileField> getFields(JSONObject fieldsJson) throws JSONException {
+    LinkedHashMap<String, ProfileField> profileFields = new LinkedHashMap<String, ProfileField>();
     if (fieldsJson != null) {
       String[] names = JSONObject.getNames(fieldsJson);
       if (names == null){
@@ -134,11 +134,11 @@ public class Profile {
     return profileFields;
   }
 
-  public void setStandardFields(HashMap<String, ProfileField> standardFields) {
+  public void setStandardFields(LinkedHashMap<String, ProfileField> standardFields) {
     this.standardFields = standardFields;
   }
 
-  public HashMap<String, ProfileField> getStandardFields() {
+  public LinkedHashMap<String, ProfileField> getStandardFields() {
     return standardFields;
   }
 

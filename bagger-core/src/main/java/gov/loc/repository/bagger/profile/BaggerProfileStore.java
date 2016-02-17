@@ -3,6 +3,7 @@ package gov.loc.repository.bagger.profile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -15,7 +16,7 @@ public class BaggerProfileStore {
   private static BaggerProfileStore instance;
 
   private HashMap<String, Profile> userProfiles = new HashMap<String, Profile>();
-  private HashMap<String, List<ProfileField>> profileFieldsMap = new HashMap<String, List<ProfileField>>();
+  private LinkedHashMap<String, List<ProfileField>> profileFieldsMap = new LinkedHashMap<String, List<ProfileField>>();
 
   public BaggerProfileStore(Bagger bagger) {
     initializeProfile(bagger);
@@ -33,13 +34,13 @@ public class BaggerProfileStore {
   private void initializeProfile(Bagger bagger) {
     Collection<Profile> profiles = bagger.loadProfiles();
     userProfiles = new HashMap<String, Profile>();
-    profileFieldsMap = new HashMap<String, List<ProfileField>>();
+    profileFieldsMap = new LinkedHashMap<String, List<ProfileField>>();
 
     for (Profile profile : profiles) {
       userProfiles.put(profile.getName(), profile);
-      HashMap<String, ProfileField> standardFields = profile.getStandardFields();
-      HashMap<String, ProfileField> customFields = profile.getCustomFields();
-      HashMap<String, ProfileField> mergedMap = new HashMap<String, ProfileField>();
+      LinkedHashMap<String, ProfileField> standardFields = profile.getStandardFields();
+      LinkedHashMap<String, ProfileField> customFields = profile.getCustomFields();
+      LinkedHashMap<String, ProfileField> mergedMap = new LinkedHashMap<String, ProfileField>();
       mergedMap.putAll(standardFields);
       mergedMap.putAll(customFields);
 
