@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -124,11 +125,20 @@ public class Profile {
       if (names == null){
         return profileFields;
       }
-
-      for (String name : names) {
-        JSONObject jsonObject = (JSONObject) fieldsJson.get(name);
-        ProfileField profileField = ProfileField.createProfileField(jsonObject, name);
-        profileFields.put(profileField.getFieldName(), profileField);
+      
+      if(fieldsJson.has("ordered")){
+        JSONArray orderedFields = (JSONArray) fieldsJson.get("ordered");
+        for(Object obj : orderedFields){
+          JSONObject field = (JSONObject) obj;
+          profileFields.putAll(getFields(field));
+        }
+      }
+      else{
+        for (String name : names) {
+          JSONObject jsonObject = (JSONObject) fieldsJson.get(name);
+          ProfileField profileField = ProfileField.createProfileField(jsonObject, name);
+          profileFields.put(profileField.getFieldName(), profileField);
+        }
       }
     }
     return profileFields;

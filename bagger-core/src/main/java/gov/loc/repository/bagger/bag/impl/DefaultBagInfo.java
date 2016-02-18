@@ -169,7 +169,7 @@ public class DefaultBagInfo implements Serializable {
         }
       }
 
-      HashMap<String, ProfileField> exclusiveProfileFields = new HashMap<String, ProfileField>();
+      LinkedHashMap<String, ProfileField> exclusiveProfileFields = new LinkedHashMap<>();
       exclusiveProfileFields.putAll(profileFields);
       exclusiveProfileFields.keySet().removeAll(fieldMap.keySet());
 
