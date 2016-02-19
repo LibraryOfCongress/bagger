@@ -1,7 +1,21 @@
 #Bagger
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Bagger](#)
+	- [Introduction](#)
+	- [License](#)
+		- [Project Profile](#)
+			- [Creating custom project profiles](#)
+			- [Profile format](#)
+			- [Ordering of fields](#)
+			- [Sample profile](#)
+	- [Bagger Build Process](#)
+	- [Running Bagger on Windows](#)
+	- [Running Bagger in Linux/Ubuntu](#)
+	- [Exceptions](#)
 
 ##Introduction
-The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit-05).
+The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit).
 
 The Bagger application is a graphical user interface to the BagIt specification. The latest Bagger release is available on GitHub at https://github.com/LibraryOfCongress/bagger/releases/latest
 
