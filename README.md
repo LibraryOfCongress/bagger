@@ -12,12 +12,13 @@ These project profiles can be edited manually and shared with other users.
 ##License
 License and other related information are listed in the LICENSE.txt file included with Bagger.
 
-##Project Profile
+###Project Profile
 Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specification.  When using Bagger to manage bags for a project or collection,
 it can be helpful to have a template of bag-info.txt fields and values that are filled out similarly for each bag in that project or collection.
 Profiles let users define a collection of bag metadata fields and default field values to be used with each bag in a consistent way. 
 Users can select a project profile when creating a bag, and that profile will determine the initial fields and values in the bag-info.txt file, and the profile used is identified by the "Profile Name" field. 
 
+####Creating custom project profiles
 User can create custom project profiles using a simple JSON-based format. When the bagger application is first started the bagger folder gets created in the user's home folder and contains some default profiles.
 Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger. 
 
@@ -30,6 +31,7 @@ export BAGGER_OPTS="-DBAGGER_PROFILES_HOME=/tmp"
 Also when using a new Bagger version please remove the bagger folder created by the previous Bagger version in the user's home folder.  
 This will insure that the new/updated profiles are created in the bagger folder after the new bagger version is started.
 
+####Profile format
 To support the use of profiles for bag-info.txt editing in the Bagger and in the various Transfer webapps, the following describes a JSON serialization of a profile:
 
 ``` python
@@ -53,7 +55,29 @@ The meanings of some field properties are explained here:
 
 The Project Profile format is subject to change in the future releases.
 
+####Ordering of fields
+Since version 2.5 you can now enforce the ordering in the display of the fields. You **MUST** use the keyword `ordered`. An example:
+```python
+{
+	"ordered": [{
+		"Send-To-Name": {
+			"requiredValue": "John Doe"
+		}
+	}, {
+		"Send-To-Phone": {
+			"requiredValue": "+0.000.000.0000"
+		}
+	}, {
+		"Send-To-Email": {
+			"requiredValue": "jdoe@foo.com"
+		}
+	}]
+}
+```
 
+For a ful example see [ordered-other-project-profile.json](bagger-business/src/main/resources/gov/loc/repository/bagger/profiles/ordered-other-project-profile.json)
+
+#### Sample profile
 Here is a sample profile (please ignore the comments (//) when creating a JSON profile, it is only for explaining the fields):
 
 ``` python
