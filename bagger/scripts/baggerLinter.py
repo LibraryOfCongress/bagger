@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
   Removes directories and files that match provided regexes
@@ -36,7 +36,7 @@ def createModifiedManifest(manifest, regexes):
         for line in original_manifest_file:
             file_entry = line.split(' ')[1]
             if matcher.match(file_entry):
-                print("Removing %s because it matches regex %s" % (line.rstrip(), regex))
+                print("Removing %s from manifest because it matches regex %s" % (line.rstrip(), regex))
                 modified = True
             else:
                 modified_manifest_file.write(line)
@@ -75,14 +75,44 @@ def updateTagmanifest(updated_manifest_hash):
             modified_tagmanifest.close()
             shutil.move(modified_tagmanifest_name, file)
 
+def removeMatching(regex, starting_dir, *, dryrun=False):
+    for dir_name, sub_dir_list, file_list in os.walk(starting_dir):
+        matcher = re.compile(regex)
+        if matcher.match(dir_name):
+            if dryrun:
+                print("Would have removed directory", dir_name, "cause it matches regex", regex)
+            elif os.path.islink(dir_name):
+                print("Removing link to directory", dir_name, "cause it matches regex", regex)
+                os.unlink(dir_name)
+            else:
+                print("Removing directory", dir_name, "cause it matches regex", regex)
+                shutil.rmtree(dir_name, ignore_errors=True)
+        else:
+            for filename in file_list:
+                if matcher.match(filename):
+                    if dryrun:
+                        print("Would have removed file", filename, "cause it matches regex", regex)
+                    elif os.path.islink(filename):
+                        print("Removing link to file", filename, "cause it matches regex", regex)
+                        os.unlink(filename)
+                    else:
+                        print("Removing file", filename, "cause it matches regex", regex)
+                        os.remove(os.path.join(dir_name, filename))
+
+def removeAllMatching(regexes, starting_dir, *, dryrun=False):
+    for regex in regexes:
+        removeMatching(regex, starting_dir, dryrun=dryrun)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.strip(), formatter_class=MyFormatter)
     parser.add_argument('regexes', help='Python regexes to match against in bag manifest.', nargs='+')
     parser.add_argument("-d", "--dryrun", help="Don't actually modify bag.", action="store_true")
+    parser.add_argument("-r", "--remove-matching", help="Also remove (delete) the matching file(s) from the filesystem.", action="store_false")
     args = parser.parse_args()
     
     found_manifest_file = False
-    for file in os.listdir('.'):
+    starting_dir = '.'
+    for file in os.listdir(starting_dir):
         if fnmatch.fnmatch(file, 'manifest-*.txt'):
             found_manifest_file = True
             new_manifest_file, differs = createModifiedManifest(file, args.regexes)
@@ -92,6 +122,7 @@ def main():
                 updateTagmanifest(hash)
             else:
                 os.remove(new_manifest_file)
+    removeAllMatching(args.regexes, starting_dir, dryrun=args.dryrun)
     
     if not found_manifest_file:
         print("Could not find any manifest file. Are you in the bag directory?")
