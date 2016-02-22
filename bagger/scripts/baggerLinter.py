@@ -25,7 +25,7 @@ def getHashAlgorithm(file):
     hash_algorithm = os.path.splitext(file)[0].split('-')[1]
     return hash_algorithm
 
-def createModifiedManifest(manifest, regexes):
+def createModifiedManifest(manifest, regexes, *, dryrun=False):
     hash_algorithm = getHashAlgorithm(manifest)
     original_manifest_file = open(manifest, 'r')
     modified_manifest_name = 'manifest-' + hash_algorithm + '.txt.tmp'
@@ -34,9 +34,12 @@ def createModifiedManifest(manifest, regexes):
     for regex in regexes:
         matcher = re.compile(regex)
         for line in original_manifest_file:
-            file_entry = line.split(' ')[1]
+            file_entry = line.split(' ', 1)[1]
             if matcher.match(file_entry):
-                print("Removing %s from manifest because it matches regex %s" % (line.rstrip(), regex))
+                if dryrun:
+                    print("Would have removed [%s] from manifest because it matches regex [%s]" % (line.rstrip(), regex))
+                else:
+                    print("Removing [%s] from manifest because it matches regex [%s]" % (line.rstrip(), regex))
                 modified = True
             else:
                 modified_manifest_file.write(line)
@@ -80,23 +83,23 @@ def removeMatching(regex, starting_dir, *, dryrun=False):
         matcher = re.compile(regex)
         if matcher.match(dir_name):
             if dryrun:
-                print("Would have removed directory", dir_name, "cause it matches regex", regex)
+                print("Would have removed directory[%s] from filesystem cause it matches regex [%s]"%(dir_name, regex))
             elif os.path.islink(dir_name):
-                print("Removing link to directory", dir_name, "cause it matches regex", regex)
+                print("Removing link to directory [%s] from filesystem cause it matches regex [%s]" % (dir_name, regex))
                 os.unlink(dir_name)
             else:
-                print("Removing directory", dir_name, "cause it matches regex", regex)
+                print("Removing directory [%s] from filesystem cause it matches regex [%s]" %(dir_name, regex))
                 shutil.rmtree(dir_name, ignore_errors=True)
         else:
             for filename in file_list:
                 if matcher.match(filename):
                     if dryrun:
-                        print("Would have removed file", filename, "cause it matches regex", regex)
+                        print("Would have removed file [%s] from filesystem cause it matches regex [%s]" % (filename, regex))
                     elif os.path.islink(filename):
-                        print("Removing link to file", filename, "cause it matches regex", regex)
+                        print("Removing link to file [%s] from filesystem cause it matches regex [%s]" %(filename, regex))
                         os.unlink(filename)
                     else:
-                        print("Removing file", filename, "cause it matches regex", regex)
+                        print("Removing file [%s] from filesystem cause it matches regex [%s]" % (filename, regex))
                         os.remove(os.path.join(dir_name, filename))
 
 def removeAllMatching(regexes, starting_dir, *, dryrun=False):
@@ -115,7 +118,7 @@ def main():
     for file in os.listdir(starting_dir):
         if fnmatch.fnmatch(file, 'manifest-*.txt'):
             found_manifest_file = True
-            new_manifest_file, differs = createModifiedManifest(file, args.regexes)
+            new_manifest_file, differs = createModifiedManifest(file, args.regexes, dryrun=args.dryrun)
             if differs and not args.dryrun:
                 shutil.move(new_manifest_file, file)
                 hash = calculateHash(file)
