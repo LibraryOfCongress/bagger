@@ -1,4 +1,6 @@
 #Bagger
+[![Dependency Status](https://www.versioneye.com/user/projects/56cc893e18b2710403dfef47/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56cc893e18b2710403dfef47)
+
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
 - [Bagger](#)
