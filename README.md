@@ -1,5 +1,9 @@
 #Bagger
-[![Dependency Status](https://www.versioneye.com/user/projects/56cc893e18b2710403dfef47/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56cc893e18b2710403dfef47)
+bagger [![Dependency Status](https://www.versioneye.com/user/projects/56cc88f018b27104252deceb/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56cc88f018b27104252deceb)
+
+bagger-business [![Dependency Status](https://www.versioneye.com/user/projects/56cc893e18b2710403dfef47/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56cc893e18b2710403dfef47)
+
+bagger-core [![Dependency Status](https://www.versioneye.com/user/projects/56cc88ef18b2710403dfef3c/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56cc88ef18b2710403dfef3c)
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
