@@ -114,7 +114,7 @@ def main():
     args = parser.parse_args()
     
     found_manifest_file = False
-    starting_dir = '.'
+    starting_dir = os.getcwd()
     for file in os.listdir(starting_dir):
         if fnmatch.fnmatch(file, 'manifest-*.txt'):
             found_manifest_file = True
