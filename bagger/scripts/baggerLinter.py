@@ -51,7 +51,7 @@ def createModifiedManifest(manifest, regexes, *, dryrun=False):
 
 def calculateHash(file):
     hash_algorithm = getHashAlgorithm(file)
-    file_handle = open(file, 'r')
+    file_handle = open(file, 'rb')
     hasher = hashlib.new(hash_algorithm)
     buf = file_handle.read()
     file_handle.close()
