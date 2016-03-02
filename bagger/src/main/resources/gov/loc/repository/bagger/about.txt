@@ -20,7 +20,7 @@ Version: 4.4
 <p>
 <b>Distribution Site</b>
 <p>
-<a href="http://sourceforge.net/projects/loc-xferutils/">http://sourceforge.net/projects/loc-xferutils/</a>
+<a href="https://github.com/LibraryOfCongress/bagger/releases">https://github.com/LibraryOfCongress/bagger/releases</a>
 </td>
 </tr>
 </table>
