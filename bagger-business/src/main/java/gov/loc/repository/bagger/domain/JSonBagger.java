@@ -40,7 +40,9 @@ public class JSonBagger implements Bagger {
   
   private static final String BAGGER_PROFILES_HOME_PROPERTY = "BAGGER_PROFILES_HOME";
   private static final String RESOURCE_DIR = "gov/loc/repository/bagger/profiles";
-  private static final String[] DEFAULT_PROFILES = new String[]{"eDeposit-profile.json", "ndiipp-profile.json", "ndnp-profile.json", "other-project-profile.json"};
+  private static final String[] DEFAULT_PROFILES = new String[]{"eDeposit-profile.json", "ndiipp-profile.json", 
+      "ndnp-profile.json", "other-project-profile.json", "Digital-Records-Accession-Generic-profile.json", 
+      "Digital-Records-Accession-IARA-Indiana-profile.json"};
 
   public JSonBagger() {
     String homeDir = System.getProperty("user.home");
@@ -66,8 +68,10 @@ public class JSonBagger implements Bagger {
       
       try{
         inputStream = this.getClass().getClassLoader().getResourceAsStream(RESOURCE_DIR + File.separator + profile);
+        log.debug("Checking if {} exists", profile);
         File target = new File(folder, profile);
         if(!target.exists()){
+          log.debug("Profile {} does not already exist on the filesystem. Copying it from jar", profile);
           Files.copy(inputStream, target.toPath());
         }
       }
