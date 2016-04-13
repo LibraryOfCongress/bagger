@@ -21,7 +21,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -44,13 +43,11 @@ import org.springframework.richclient.util.GuiStandardUtils;
 
 import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagger.ui.util.LayoutUtil;
-import gov.loc.repository.bagit.BagFactory.Version;
 
 public class NewBagFrame extends JFrame implements ActionListener {
   protected static final Logger log = LoggerFactory.getLogger(NewBagFrame.class);
   private static final long serialVersionUID = 1L;
   private transient BagView bagView;
-  private JComboBox<String> bagVersionList;
   private JComboBox<String> profileList;
 
   public NewBagFrame(BagView bagView, String title) {
@@ -113,27 +110,12 @@ public class NewBagFrame extends JFrame implements ActionListener {
 
   private void layoutBagVersionSelection(JPanel contentPane, int row) {
     // contents
-    // Bag version dropdown list
-    JLabel bagVersionLabel = new JLabel(bagView.getPropertyMessage("bag.label.version"));
-    bagVersionLabel.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
-    ArrayList<String> versionModel = new ArrayList<String>();
-    Version[] vals = Version.values();
-    for (int i = 0; i < vals.length; i++) {
-      versionModel.add(vals[i].versionString);
-    }
-
-    bagVersionList = new JComboBox<String>(versionModel.toArray(new String[versionModel.size()]));
-    bagVersionList.setName(bagView.getPropertyMessage("bag.label.versionlist"));
-    bagVersionList.setSelectedItem(Version.V0_96.versionString);
-    bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
 
     GridBagConstraints glbc = null;
 
     JLabel spacerLabel = new JLabel();
     glbc = LayoutUtil.buildGridBagConstraints(0, row, 1, 1, 5, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-    contentPane.add(bagVersionLabel, glbc);
     glbc = LayoutUtil.buildGridBagConstraints(1, row, 1, 1, 40, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
-    contentPane.add(bagVersionList, glbc);
     glbc = LayoutUtil.buildGridBagConstraints(2, row, 1, 1, 40, 50, GridBagConstraints.NONE, GridBagConstraints.EAST);
     contentPane.add(spacerLabel, glbc);
   }
@@ -180,7 +162,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
       public void doExecuteCommand() {
         log.info("BagVersionFrame.OkNewBagHandler");
         hideNewBagFrame();
-        bagView.startNewBagHandler.createNewBag((String) bagVersionList.getSelectedItem(), (String) profileList.getSelectedItem());
+        bagView.startNewBagHandler.createNewBag((String) profileList.getSelectedItem());
       }
     };
 

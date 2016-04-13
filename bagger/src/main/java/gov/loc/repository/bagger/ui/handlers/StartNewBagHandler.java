@@ -15,6 +15,7 @@ import gov.loc.repository.bagger.ui.BagTree;
 import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagger.ui.NewBagFrame;
 import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
+import gov.loc.repository.bagit.BagFactory;
 import gov.loc.repository.bagit.BagFile;
 
 public class StartNewBagHandler extends AbstractAction {
@@ -38,8 +39,8 @@ public class StartNewBagHandler extends AbstractAction {
     newBagFrame.setVisible(true);
   }
 
-  public void createNewBag(String bagItVersion, String profileName) {
-    log.info("Creating a new bag with version: {}, profile: {}", bagItVersion, profileName);
+  public void createNewBag(String profileName) {
+    log.info("Creating a new bag with version: {}, profile: {}", BagFactory.LATEST.versionString, profileName);
 
     bagView.clearBagHandler.clearExistingBag();
     DefaultBag bag = bagView.getBag();
@@ -64,7 +65,7 @@ public class StartNewBagHandler extends AbstractAction {
     bagView.updateNewBag();
 
     // set bagItVersion
-    bagView.infoInputPane.bagVersionValue.setText(bagItVersion);
+    bagView.infoInputPane.bagVersionValue.setText(BagFactory.LATEST.versionString);
 
     // change profile
     changeProfile(profileName);

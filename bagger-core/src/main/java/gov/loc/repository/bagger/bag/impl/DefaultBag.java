@@ -177,34 +177,22 @@ public class DefaultBag {
     }
   }
 
-  public void createPreBag(File data, String version) {
+  public void createPreBag(File data) {
     BagFactory bagFactory = new BagFactory();
     PreBag preBag = bagFactory.createPreBag(data);
-    if (version == null) {
-      Bag bag = preBag.makeBagInPlace(BagFactory.LATEST, false);
-      bilBag = bag;
-    }
-    else {
-      Bag bag = preBag.makeBagInPlace(Version.valueOfString(version), false);
-      bilBag = bag;
-    }
+    Bag bag = preBag.makeBagInPlace(BagFactory.LATEST, false);
+    bilBag = bag;
   }
 
   /*
    * Makes BIL API call to create Bag in place and
    * adding .keep files in empty Pay load folders
    */
-  public void createPreBagAddKeepFilesToEmptyFolders(File data, String version) {
+  public void createPreBagAddKeepFilesToEmptyFolders(File data) {
     BagFactory bagFactory = new BagFactory();
     PreBag preBag = bagFactory.createPreBag(data);
-    if (version == null) {
-      Bag bag = preBag.makeBagInPlace(BagFactory.LATEST, false, true);
-      bilBag = bag;
-    }
-    else {
-      Bag bag = preBag.makeBagInPlace(Version.valueOfString(version), false, true);
-      bilBag = bag;
-    }
+    Bag bag = preBag.makeBagInPlace(BagFactory.LATEST, false, true);
+    bilBag = bag;
   }
 
   public File getBagFile() {

@@ -16,6 +16,7 @@ import gov.loc.repository.bagger.bag.impl.DefaultBagInfo;
 import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagger.ui.NewBagInPlaceFrame;
 import gov.loc.repository.bagger.ui.Progress;
+import gov.loc.repository.bagit.BagFactory;
 
 public class CreateBagInPlaceHandler extends AbstractAction implements Progress {
   private static final long serialVersionUID = 1L;
@@ -43,12 +44,12 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     newBagInPlaceFrame.setVisible(true);
   }
 
-  public void createPreBag(File dataFile, String bagItVersion, final String profileName) {
-    if (dataFile != null && bagItVersion != null && profileName != null){
-      log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), bagItVersion, profileName);
+  public void createPreBag(File dataFile, final String profileName) {
+    if (dataFile != null && profileName != null){
+      log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), BagFactory.LATEST.versionString, profileName);
       bagView.clearBagHandler.clearExistingBag();
       try {
-        bagView.getBag().createPreBag(dataFile, bagItVersion);
+        bagView.getBag().createPreBag(dataFile);
       }
       catch (Exception e) {
         bagView.showWarningErrorDialog("Error - bagging in place", e.getMessage());
@@ -65,8 +66,8 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
       bagView.saveBagHandler.save(dataFile);
     }
     else{
-      log.warn("datafile is null? {} bagItVersion is null? {} profileName is null? {}", 
-          dataFile == null, bagItVersion == null, profileName == null);
+      log.warn("datafile is null? {} profileName is null? {}", 
+          dataFile == null, profileName == null);
     }
   }
 
@@ -74,12 +75,12 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
    * Prepares the call to Create Bag in Place and
    * adding .keep files in Empty Pay load Folder(s)
    */
-  public void createPreBagAddKeepFilesToEmptyFolders(File dataFile, String bagItVersion, final String profileName) {
-    if (dataFile != null && bagItVersion != null && profileName != null){
-      log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), bagItVersion, profileName);
+  public void createPreBagAddKeepFilesToEmptyFolders(File dataFile, final String profileName) {
+    if (dataFile != null && profileName != null){
+      log.info("Creating a new bag in place with data: {}, version: {}, profile: {}", dataFile.getName(), BagFactory.LATEST.versionString, profileName);
       bagView.clearBagHandler.clearExistingBag();
       try {
-        bagView.getBag().createPreBagAddKeepFilesToEmptyFolders(dataFile, bagItVersion);
+        bagView.getBag().createPreBagAddKeepFilesToEmptyFolders(dataFile);
       }
       catch (Exception e) {
         bagView.showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
@@ -96,8 +97,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
       bagView.saveBagHandler.save(dataFile);
     }
     else{
-      log.warn("datafile is null? {} bagItVersion is null? {} profileName is null? {}", 
-          dataFile == null, bagItVersion == null, profileName == null);
+      log.warn("datafile is null? {} profileName is null? {}", dataFile == null, profileName == null);
     }
   }
 

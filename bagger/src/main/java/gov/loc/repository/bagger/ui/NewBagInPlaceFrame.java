@@ -22,7 +22,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -52,7 +51,6 @@ import org.springframework.richclient.util.GuiStandardUtils;
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagger.ui.util.LayoutUtil;
-import gov.loc.repository.bagit.BagFactory.Version;
 
 public class NewBagInPlaceFrame extends JFrame implements ActionListener {
   protected static final Logger log = LoggerFactory.getLogger(NewBagInPlaceFrame.class);
@@ -65,7 +63,6 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
   private File bagFile;
   private String bagFileName = "";
   private JButton saveAsButton;
-  private JComboBox<String> bagVersionList;
   private JComboBox<String> profileList;
   private JCheckBox addKeepFilesToEmptyFoldersCheckBox;
 
@@ -111,7 +108,6 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
 
     int row = 0;
     layoutSelectDataContent(contentPanel, row++);
-    layoutBagVersionContent(contentPanel, row++);
     layoutProfileSelectionContent(contentPanel, row++);
     layoutAddKeepFilesToEmptyCheckBox(contentPanel, row++);
     layoutSpacer(contentPanel, row++);
@@ -152,28 +148,6 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
     glbc = LayoutUtil.buildGridBagConstraints(1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
     glbc.ipadx = 0;
     contentPanel.add(bagNameField, glbc);
-  }
-
-  private void layoutBagVersionContent(JPanel contentPanel, int row) {
-    GridBagConstraints glbc = new GridBagConstraints();
-
-    JLabel bagVersionLabel = new JLabel(bagView.getPropertyMessage("bag.label.version"));
-    bagVersionLabel.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
-    ArrayList<String> versionModel = new ArrayList<String>();
-    Version[] vals = Version.values();
-    for (int i = 0; i < vals.length; i++) {
-      versionModel.add(vals[i].versionString);
-    }
-
-    bagVersionList = new JComboBox<String>(versionModel.toArray(new String[versionModel.size()]));
-    bagVersionList.setName(bagView.getPropertyMessage("bag.label.versionlist"));
-    bagVersionList.setSelectedItem(Version.V0_96.versionString);
-    bagVersionList.setToolTipText(bagView.getPropertyMessage("bag.versionlist.help"));
-
-    glbc = LayoutUtil.buildGridBagConstraints(0, row, 1, 1, 1, 50, GridBagConstraints.NONE, GridBagConstraints.WEST);
-    contentPanel.add(bagVersionLabel, glbc);
-    glbc = LayoutUtil.buildGridBagConstraints(1, row, 1, 1, 80, 50, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-    contentPanel.add(bagVersionList, glbc);
   }
 
   private void layoutProfileSelectionContent(JPanel contentPane, int row) {
@@ -364,11 +338,10 @@ public class NewBagInPlaceFrame extends JFrame implements ActionListener {
       log.info("BagVersionFrame.OkNewBagHandler");
       setVisible(false);
       if (bagView.getBag().isAddKeepFilesToEmptyFolders()) {
-        bagView.createBagInPlaceHandler.createPreBagAddKeepFilesToEmptyFolders(bagFile, (String) bagVersionList.getSelectedItem(),
-            (String) profileList.getSelectedItem());
+        bagView.createBagInPlaceHandler.createPreBagAddKeepFilesToEmptyFolders(bagFile, (String) profileList.getSelectedItem());
       }
       else {
-        bagView.createBagInPlaceHandler.createPreBag(bagFile, (String) bagVersionList.getSelectedItem(), (String) profileList.getSelectedItem());
+        bagView.createBagInPlaceHandler.createPreBag(bagFile, (String) profileList.getSelectedItem());
       }
     }
   }
