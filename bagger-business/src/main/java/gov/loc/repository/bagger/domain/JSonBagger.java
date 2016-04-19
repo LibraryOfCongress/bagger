@@ -76,7 +76,7 @@ public class JSonBagger implements Bagger {
         }
       }
       catch(Exception e){
-        e.printStackTrace();
+        log.error("Failed to copy profile {}", profile, e);
         break;
       }
       finally{
