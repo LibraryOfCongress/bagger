@@ -66,7 +66,6 @@ public class BagTree extends JTree {
     makeVisible(rootPath);
     // getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE);
     setLargeModel(true);
-    setPreferredSize(getTreeSize());
     requestFocus();
     setScrollsOnExpand(true);
   }
