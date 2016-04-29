@@ -17,9 +17,11 @@ dependencies {
        'com.jgoodies:forms:1.0.7',
        'net.sf.nachocalendar:nachocalendar:0.23',
        'org.codehaus.groovy:groovy-all:2.4.0',
-       'org.springframework.richclient:spring-richclient-resources:1.1.0',
-       'org.springframework.richclient:spring-richclient-core:1.1.0',
-       'org.springframework.richclient:spring-richclient-jdk6:1.1.0',
+       'org.springframework.richclient:spring-richclient-resources:1.0.0',
+       'org.springframework.richclient:spring-richclient-docking:1.0.0',
+       'org.springframework.richclient:spring-richclient-sandbox:1.0.0',
+       'org.springframework.richclient:spring-richclient-core:1.0.0',
+       'org.springframework.richclient:spring-richclient-jdk6:1.0.0',
        'org.swinglabs:swingx:0.9.3',
        files("spring-richclient-1.1.0-jars/spring-richclient-vldocking-1.1.0.jar") //cause the maven repo doesn't have this version
      
