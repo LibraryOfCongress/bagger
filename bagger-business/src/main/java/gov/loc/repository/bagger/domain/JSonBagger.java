@@ -67,11 +67,16 @@ public class JSonBagger implements Bagger {
       InputStream inputStream = null;
       
       try{
-        inputStream = this.getClass().getClassLoader().getResourceAsStream(RESOURCE_DIR + File.separator + profile);
+        String resource = RESOURCE_DIR + File.separator + profile;
+        log.debug("Getting profile {} from jar", resource);
+        inputStream = this.getClass().getClassLoader().getResourceAsStream(resource);
+        if(inputStream == null){
+          log.error("Tried to read {} from jar file but failed!", resource);
+        }
         log.debug("Checking if {} exists", profile);
         File target = new File(folder, profile);
         if(!target.exists()){
-          log.debug("Profile {} does not already exist on the filesystem. Copying it from jar", profile);
+          log.debug("Profile {} does not already exist on the filesystem. Copying it from jar to {}", profile, target);
           Files.copy(inputStream, target.toPath());
         }
       }
