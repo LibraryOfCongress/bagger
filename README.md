@@ -124,8 +124,8 @@ After running successfully the bagger application will be zipped and located in 
 ##Running Bagger on Windows
 To start the Bagger application, double-click on the bagger.bat file in the bin folder.
 
-##Running Bagger in Linux/Ubuntu
-To start the Bagger application, execute the bagger shell script in the bin folder (i.e. ./bagger).
+##Running Bagger in Mac OS X/Linux/Ubuntu
+To start the Bagger application, double-click the bagger shell script in the bin folder (i.e. <Where you installed bagger>/bin/bagger).
 
 ##Exceptions
 There are a few common causes for the bagger application to fail which are:
