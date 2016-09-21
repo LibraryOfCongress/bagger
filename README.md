@@ -8,6 +8,18 @@ Bagger differs from the [java Bagit Library](https://github.com/LibraryOfCongres
 
 These project profiles can be edited manually and shared with other users.
 
+##Installing
+1. Download the latest release from https://github.com/LibraryOfCongress/bagger/releases/latest
+2. Unzip to a location. This will be known as <BAGGER_INSTALL_DIRECTORY> for the rest of the instructions
+
+##Running Bagger on Windows
+1. navigate to <BAGGER_INSTALL_DIRECTORY>/bin
+2. double-click on the bagger.bat file
+
+##Running Bagger in Mac OS X/Linux/Ubuntu
+1. Navigate to <BAGGER_INSTALL_DIRECTORY>/bin
+2. double-click the file named bagger
+
 ##License
 License and other related information are listed in the LICENSE.txt file included with Bagger.
 
@@ -120,12 +132,6 @@ To build the Bagger application, execute the following steps from the top level 
 gradle distZip
 ```
 After running successfully the bagger application will be zipped and located in bagger/build/distributions/bagger.zip. Simply unzip to install anywhere.
-
-##Running Bagger on Windows
-To start the Bagger application, double-click on the bagger.bat file in the bin folder.
-
-##Running Bagger in Mac OS X/Linux/Ubuntu
-To start the Bagger application, double-click the bagger shell script in the bin folder (i.e. <Where you installed bagger>/bin/bagger).
 
 ##Exceptions
 There are a few common causes for the bagger application to fail which are:
