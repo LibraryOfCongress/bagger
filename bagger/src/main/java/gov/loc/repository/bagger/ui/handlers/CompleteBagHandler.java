@@ -1,18 +1,22 @@
 package gov.loc.repository.bagger.ui.handlers;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.SwingUtilities;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gov.loc.repository.bagger.bag.impl.DefaultBag;
 import gov.loc.repository.bagger.ui.BagView;
 import gov.loc.repository.bagger.ui.Progress;
 import gov.loc.repository.bagger.ui.util.ApplicationContextUtil;
 import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.SwingUtilities;
-
 public class CompleteBagHandler extends AbstractAction implements Progress {
   private static final long serialVersionUID = 1L;
+  protected static final Logger log = LoggerFactory.getLogger(CompleteBagHandler.class);
   private BagView bagView;
   private String messages;
 
@@ -56,6 +60,7 @@ public class CompleteBagHandler extends AbstractAction implements Progress {
 
     }
     catch (Exception e) {
+      log.error("Error completing bag!", e);
       e.printStackTrace();
 
       if (bagView.longRunningProcess.isCancelled()) {

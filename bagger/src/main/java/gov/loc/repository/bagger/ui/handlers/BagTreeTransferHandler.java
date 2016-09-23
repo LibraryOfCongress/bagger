@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -37,6 +39,7 @@ public class BagTreeTransferHandler extends TransferHandler {
       flavors[0] = nodesFlavor;
     }
     catch (ClassNotFoundException e) {
+      JOptionPane.showMessageDialog(new JFrame(), "Error - Failed to construct a nodeFlavor to:\n" + e.getMessage(), "Error during transfer",JOptionPane.ERROR_MESSAGE);
       log.error("Failed to construct a nodeFlavor", e);
     }
   }

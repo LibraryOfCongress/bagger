@@ -11,10 +11,13 @@ import java.io.File;
 
 import javax.swing.AbstractAction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.richclient.dialog.CloseAction;
 import org.springframework.richclient.dialog.ConfirmationDialog;
 
 public class ClearBagHandler extends AbstractAction {
+  protected static final Logger log = LoggerFactory.getLogger(ClearBagHandler.class);
   private static final long serialVersionUID = 1L;
   BagView bagView;
   private boolean confirmSaveFlag = false;
@@ -87,6 +90,7 @@ public class ClearBagHandler extends AbstractAction {
       bag = new DefaultBag(f, bagView.infoInputPane.getBagVersion());
     }
     catch (Exception e) {
+      log.error("failed to create new bag with specified version, defaulting to using null", e);
       bag = new DefaultBag(f, null);
     }
     if (f == null) {

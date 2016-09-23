@@ -71,6 +71,7 @@ public class RemoveDataHandler extends AbstractAction {
             }
           }
           catch (Exception e) {
+            log.error("Failed to remove data, trying again", e);
             try {
               bag.removePayloadDirectory(fileName);
               if (node instanceof MutableTreeNode) {
@@ -84,6 +85,7 @@ public class RemoveDataHandler extends AbstractAction {
             catch (Exception ex) {
               message = "Error trying to remove: " + fileName + "\n";
               bagView.showWarningErrorDialog("Error - file not removed", message + ex.getMessage());
+              log.error("Failed to remove file {}", fileName, e);
             }
           }
         }

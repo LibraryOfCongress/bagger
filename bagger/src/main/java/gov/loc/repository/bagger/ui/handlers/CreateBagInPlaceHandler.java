@@ -52,6 +52,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
         bagView.getBag().createPreBag(dataFile);
       }
       catch (Exception e) {
+        log.error("Error - bagging in place", e);
         bagView.showWarningErrorDialog("Error - bagging in place", e.getMessage());
         return;
       }
@@ -83,6 +84,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
         bagView.getBag().createPreBagAddKeepFilesToEmptyFolders(dataFile);
       }
       catch (Exception e) {
+        log.error("Error creating pre bag", e);
         bagView.showWarningErrorDialog("Error - bagging in place", "No file or directory selection was made!\n");
         return;
       }

@@ -61,7 +61,7 @@ public class BagTextPane extends JTextPane {
       document.insertString(document.getLength(), message, style);
     }
     catch (BadLocationException badLocationException) {
-      log.error(badLocationException.getMessage());
+      log.error("failed to build document", badLocationException);
     }
 
     SimpleAttributeSet attributes = new SimpleAttributeSet();

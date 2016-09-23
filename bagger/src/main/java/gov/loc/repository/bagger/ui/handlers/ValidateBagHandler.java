@@ -13,8 +13,12 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.SwingUtilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ValidateBagHandler extends AbstractAction implements Progress {
   private static final long serialVersionUID = 1L;
+  protected static final Logger log = LoggerFactory.getLogger(ValidateBagHandler.class);
   private BagView bagView;
   private String messages;
 
@@ -61,7 +65,7 @@ public class ValidateBagHandler extends AbstractAction implements Progress {
       });
     }
     catch (Exception e) {
-      e.printStackTrace();
+      log.error("Failed to validate bag", e);
       if (bagView.longRunningProcess.isCancelled()) {
         bagView.showWarningErrorDialog("Validation cancelled", "Validation cancelled.");
       }

@@ -1,6 +1,11 @@
 package gov.loc.repository.bagger.ui;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the 3rd version of SwingWorker (also known as
@@ -15,6 +20,7 @@ import javax.swing.SwingUtilities;
  * creating it.
  */
 public abstract class SwingWorker {
+  protected static final Logger log = LoggerFactory.getLogger(SwingWorker.class);
   private Object value; // see getValue(), setValue()
   public LongTask longTask;
 
@@ -96,6 +102,7 @@ public abstract class SwingWorker {
         t.join();
       }
       catch (InterruptedException e) {
+        log.warn("worker was interrupted", e);
         Thread.currentThread().interrupt(); // propagate
         return null;
       }
@@ -119,6 +126,10 @@ public abstract class SwingWorker {
       public void run() {
         try {
           setValue(construct());
+        }
+        catch(Exception e){
+          JOptionPane.showMessageDialog(new JFrame(), "An error occured\n", "Error while doing task:\n" + e.getMessage(), JOptionPane.ERROR_MESSAGE);
+          log.error("Error constructing worker", e);
         }
         finally {
           threadVar.clear();
@@ -146,6 +157,10 @@ public abstract class SwingWorker {
       public void run() {
         try {
           setValue(construct());
+        }
+        catch(Exception e){
+          JOptionPane.showMessageDialog(new JFrame(), "An error occured\n", "Error while doing task:\n" + e.getMessage(), JOptionPane.ERROR_MESSAGE);
+          log.error("Error constructing worker", e);
         }
         finally {
           threadVar.clear();

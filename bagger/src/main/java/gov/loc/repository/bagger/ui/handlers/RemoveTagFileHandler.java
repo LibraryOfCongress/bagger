@@ -11,8 +11,12 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RemoveTagFileHandler extends AbstractAction {
   private static final long serialVersionUID = 1L;
+  protected static final Logger log = LoggerFactory.getLogger(RemoveTagFileHandler.class);
   BagView bagView;
 
   public RemoveTagFileHandler(BagView bagView) {
@@ -50,6 +54,7 @@ public class RemoveTagFileHandler extends AbstractAction {
           }
         }
         catch (Exception e) {
+          log.error("Failed to remove file {}", node, e);
           bagView.showWarningErrorDialog("Error - file not removed", "Error trying to remove file: " + node + "\n" + e.getMessage());
         }
       }

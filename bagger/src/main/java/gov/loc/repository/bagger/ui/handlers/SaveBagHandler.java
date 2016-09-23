@@ -113,6 +113,10 @@ public class SaveBagHandler extends AbstractAction implements Progress {
 
       });
     }
+    catch(Exception e){
+      log.error("Failed to save bag", e);
+      bagView.showWarningErrorDialog("Error - Failed to save bag", "Error trying to save bag due to:\n" + e.getMessage());
+    }
     finally {
       bagView.task.done();
       bagView.statusBarEnd();
