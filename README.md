@@ -1,4 +1,6 @@
 #Bagger
+[![License](https://img.shields.io/badge/License-Public--Domain-blue.svg)](https://github.com/LibraryOfCongress/bagger/blob/master/LICENSE.txt)
+
 ##Introduction
 The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit).
 
@@ -8,32 +10,38 @@ Bagger differs from the [java Bagit Library](https://github.com/LibraryOfCongres
 
 These project profiles can be edited manually and shared with other users.
 
+## Support
+1. The Digital Curation Google Group (https://groups.google.com/d/forum/digital-curation) is an open discussion list that reaches many of the contributors to and users of this open-source project
+2. If you have found a bug please create a new issue on [the issues page](https://github.com/LibraryOfCongress/bagger/issues)
+3. To contact a developer at the Library of Congress please email repo-dev@listserv.loc.gov
+4. If you would like to contribute, please submit a [pull request](https://help.github.com/articles/creating-a-pull-request/)
+
 ##Installing
-1. Download the latest release from https://github.com/LibraryOfCongress/bagger/releases/latest
-2. Unzip to a location. This will be known as <BAGGER_INSTALL_DIRECTORY> for the rest of the instructions
+1. Install Java from https://java.com
+2. Download the latest release from https://github.com/LibraryOfCongress/bagger/releases/latest
+3. Unzip to a location. This will be known as \<BAGGER_INSTALL_DIRECTORY> for the rest of the instructions
 
 ##Running Bagger on Windows
-1. navigate to <BAGGER_INSTALL_DIRECTORY>/bin
+1. navigate to \<BAGGER_INSTALL_DIRECTORY>\\bin
 2. double-click on the bagger.bat file
 
 ##Running Bagger in Mac OS X/Linux/Ubuntu
-1. Navigate to <BAGGER_INSTALL_DIRECTORY>/bin
+1. Navigate to \<BAGGER_INSTALL_DIRECTORY>/bin
 2. double-click the file named bagger
 
 ##License
 License and other related information are listed in the LICENSE.txt file included with Bagger.
 
 ###Project Profile
-Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specification.  When using Bagger to manage bags for a project or collection,
-it can be helpful to have a template of bag-info.txt fields and values that are filled out similarly for each bag in that project or collection.
+Bag metadata is stored in a 'bag-info.txt' file, as defined in the BagIt specification.  When using Bagger to manage bags for a project or collection, it can be helpful to have a template of bag-info.txt fields and values that are filled out similarly for each bag in that project or collection.
 Profiles let users define a collection of bag metadata fields and default field values to be used with each bag in a consistent way. 
 Users can select a project profile when creating a bag, and that profile will determine the initial fields and values in the bag-info.txt file, and the profile used is identified by the "Profile Name" field. 
 
 ####Creating custom project profiles
 User can create custom project profiles using a simple JSON-based format. When the bagger application is first started the bagger folder gets created in the user's home folder and contains some default profiles.
-Profile files should be named <profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger. 
+Profile files should be named \<profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger. 
 
-On Windows, it is C:\"Documents and Settings"\<user>\bagger. On Unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.
+On Windows, it is C:\"Documents and Settings"\\<user>\bagger. On Unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.
 Since [pull request #12](https://github.com/LibraryOfCongress/bagger/pull/12) you can now change where bagger looks for profiles by setting the system property `BAGGER_PROFILES_HOME`. This can be set using environment variable BAGGER_OPTS like this in bash:
 ``` bash
 export BAGGER_OPTS="-DBAGGER_PROFILES_HOME=/tmp"
@@ -125,7 +133,7 @@ The items in the profile file (i.e. JSON file) are listed in the Bag-Info tab of
 
 
 ##Bagger Build Process
-Bagger uses [Gradle](https://gradle.org/) for its build system. If you are unfamiliar with Gradle you should check out their [userguide](https://docs.gradle.org/current/userguide/userguide_single.html), especially the sections on [java-plugin](https://docs.gradle.org/current/userguide/userguide_single.html#java_plugin) and the [application-plugin](https://docs.gradle.org/current/userguide/userguide_single.html#application_plugin)
+Bagger uses uses [Gradle](https://gradle.org/) for its build system. Check out their great [documentation](https://docs.gradle.org/current/userguide/userguide_single.html) to learn more.
 
 To build the Bagger application, execute the following steps from the top level folder of the distribution:
 ``` bash
