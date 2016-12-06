@@ -1,8 +1,8 @@
 ## Welcome!
 
-We're so glad you're thinking about contributing to a Library of Congress open source project! We love all friendly contributions.
+We're so glad you're thinking about contributing to an Library of Congress open source project! We love all friendly contributions.
 
-We encourage you to read this project's CONTRIBUTING policy (you are here), its [LICENSE](LICENSE.txt), its [NOTICE](NOTICE.txt), and its [README](README.md).
+We encourage you to read this project's CONTRIBUTING policy (you are here), its [LICENSE](LICENSE.txt), and its [README](README.md).
 
 If you have any questions just [shoot us an email](mailto:REPO-DEV@LISTSERV.LOC.GOV).
 
