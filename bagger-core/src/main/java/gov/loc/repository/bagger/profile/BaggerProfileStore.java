@@ -7,12 +7,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gov.loc.repository.bagger.Bagger;
 import gov.loc.repository.bagger.Profile;
 import gov.loc.repository.bagger.ProfileField;
 
 public class BaggerProfileStore {
-
+  protected static final Logger log = LoggerFactory.getLogger(BaggerProfileStore.class);
   private static BaggerProfileStore instance;
 
   private HashMap<String, Profile> userProfiles = new HashMap<String, Profile>();
@@ -26,7 +29,8 @@ public class BaggerProfileStore {
   public Profile getProfile(String name) {
     Profile profile = this.userProfiles.get(name);
     if(profile == null){
-      throw new RuntimeException("Could not get profile [" + name + "]");
+      log.error("Could not load profile [{}]! Using default profile instead", name);
+      return getDefaultProfile();
     }
     return profile;
   }
