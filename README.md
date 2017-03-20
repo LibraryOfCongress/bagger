@@ -1,4 +1,4 @@
-#Bagger
+# Bagger
 [![License](https://img.shields.io/badge/License-Public--Domain-blue.svg)](https://github.com/LibraryOfCongress/bagger/blob/master/LICENSE.txt)
 
 ## Introduction
