@@ -22,7 +22,7 @@ These project profiles can be edited manually and shared with other users.
 3. Unzip to a location. This will be known as \<BAGGER_INSTALL_DIRECTORY> for the rest of the instructions
 
 ## Running Bagger on Windows
-1. navigate to `<BAGGER_INSTALL_DIRECTORY>\\bin`
+1. navigate to `<BAGGER_INSTALL_DIRECTORY>\bin`
 2. double-click on the bagger.bat file
 
 ## Running Bagger in Mac OS X/Linux/Ubuntu
@@ -41,7 +41,7 @@ Users can select a project profile when creating a bag, and that profile will de
 User can create custom project profiles using a simple JSON-based format. When the bagger application is first started the bagger folder gets created in the user's home folder and contains some default profiles.
 Profile files should be named \<profile name>-profile.json and stored in the bagger's home directory: <user-home-dir>/bagger.
 
-On Windows, it is `C:\\Documents and Settings\\<user>\bagger`. On Unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.
+On Windows, it is `C:\Documents and Settings\<user>\bagger`. On Unix-like operating system, it is ~/bagger.  Also when the bagger application is started it creates a few default profiles in the above bagger folder, which can be used as a guide to create custom profiles.
 Since [pull request #12](https://github.com/LibraryOfCongress/bagger/pull/12) you can now change where bagger looks for profiles by setting the system property `BAGGER_PROFILES_HOME`. This can be set using environment variable BAGGER_OPTS like this in bash:
 ``` bash
 export BAGGER_OPTS="-DBAGGER_PROFILES_HOME=/tmp"
