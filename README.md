@@ -99,7 +99,7 @@ For a full example see [ordered-other-project-profile.json](bagger-business/src/
 #### Sample profile
 Here is a sample profile (please ignore the comments (//) when creating a JSON profile, it is only for explaining the fields):
 
-``` python
+```
 {
    //Source-organization is required and may have any value
    "Source-organization" : {
