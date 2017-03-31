@@ -2,6 +2,11 @@ package gov.loc.repository.bagger.ui.handlers;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -71,6 +76,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
         bagWriter.addProgressListener(bagView.task);
         bagView.longRunningProcess = bagWriter;
         messages = bag.write(bagWriter);
+        deleteEmptyDirectories(bag.getRootDir());
 
         if (messages != null && !messages.trim().isEmpty()) {
           bagView.showWarningErrorDialog("Warning - bag not saved", "Problem saving bag:\n" + messages);
@@ -120,6 +126,25 @@ public class SaveBagHandler extends AbstractAction implements Progress {
     finally {
       bagView.task.done();
       bagView.statusBarEnd();
+    }
+  }
+
+  //we only delete the empty directories because bagit should have already deleted the files, 
+  //leaving just empty directories this causes the ui to display empty directories which causes 
+  //confusion since the user thought they deleted the directory and all its files
+  private void deleteEmptyDirectories(File rootDir) throws IOException{
+    Path dataDir = Paths.get(rootDir.toURI()).resolve("data");
+    FindDirectoriesVisitor visitor = new FindDirectoriesVisitor();
+    Files.walkFileTree(dataDir, visitor);
+    
+    //since the first visited path is at the top of the directory we need to reverse them so that we delete the inner most empty directory
+    visitor.getDirectories().sort(Collections.reverseOrder());
+    
+    for(Path path : visitor.getDirectories()){
+      System.err.println(path);
+      if(path.toFile().list().length == 0){
+        Files.delete(path); 
+      }
     }
   }
   

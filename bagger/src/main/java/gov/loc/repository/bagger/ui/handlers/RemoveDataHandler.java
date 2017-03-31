@@ -9,6 +9,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,9 +72,15 @@ public class RemoveDataHandler extends AbstractAction {
             }
           }
           catch (Exception e) {
-            log.error("Failed to remove data, trying again", e);
+            log.debug("Failed to remove {} as a file, assuming it is a directory and trying again", fileName, e);
             try {
               bag.removePayloadDirectory(fileName);
+              
+//              if(bag.getRootDir() != null){
+//                File directory = new File(bag.getRootDir(), fileName);
+//                FileUtils.deleteDirectory(directory);
+//              }
+              
               if (node instanceof MutableTreeNode) {
                 model.removeNodeFromParent((MutableTreeNode) node);
               }
