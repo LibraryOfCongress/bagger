@@ -222,10 +222,6 @@ public class DefaultBag {
   }
 
   public void setName(String name) {
-    String[] list = name.split("\\.");
-    if (list != null && list.length > 0){
-      name = list[0];
-    }
     this.name = name;
   }
 
@@ -613,9 +609,11 @@ public class DefaultBag {
   }
 
   private String fileStripSuffix(String filename) {
-    StringTokenizer st = new StringTokenizer(filename, ".");
-    String nextName = st.nextToken();
-    return nextName;
+    if(filename.toLowerCase().endsWith("zip")){
+      return filename.substring(0, filename.length() - 3);
+    }
+    
+    return filename;
   }
 
   private String writeBag(Writer bw) {
