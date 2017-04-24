@@ -77,8 +77,8 @@ public class TagManifestPane extends JTabbedPane {
 
   public void populateBagPane() {
     Collection<BagFile> list = defaultBag.getTags();
-    manifestPaneList = new ArrayList<BagTextPane>();
-    manifestScrollPaneList = new ArrayList<JScrollPane>();
+    manifestPaneList = new ArrayList<>();
+    manifestScrollPaneList = new ArrayList<>();
     log.info("TagManifestPane.populateBagPane getTags: {}", list.size());
     for (Iterator<BagFile> it = list.iterator(); it.hasNext();) {
       BagFile bf = it.next();

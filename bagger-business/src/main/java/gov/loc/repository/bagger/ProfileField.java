@@ -17,7 +17,7 @@ public class ProfileField implements Serializable{
   private String fieldValue = "";
   private String fieldType = "";
   private boolean isReadOnly = false;
-  private List<String> elements = new ArrayList<String>();
+  private List<String> elements = new ArrayList<>();
   private boolean isRequired;
   private boolean isValueRequired;
 
@@ -113,7 +113,7 @@ public class ProfileField implements Serializable{
 
       if (profileFieldJson.has(FIELD_VALUE_LIST)) {
         JSONArray jsonArray = (JSONArray) profileFieldJson.get(FIELD_VALUE_LIST);
-        List<String> valueList = new ArrayList<String>();
+        List<String> valueList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
           String value = (String) jsonArray.get(i);
           valueList.add(value);

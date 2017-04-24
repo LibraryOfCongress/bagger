@@ -273,11 +273,11 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
     JLabel tagAlgorithmLabel = new JLabel(getMessage("bag.label.tagalgorithm"));
     tagAlgorithmLabel.setToolTipText(getMessage("bag.label.tagalgorithm.help"));
-    ArrayList<String> listModel = new ArrayList<String>();
+    ArrayList<String> listModel = new ArrayList<>();
     for (Algorithm algorithm : Algorithm.values()) {
       listModel.add(algorithm.bagItAlgorithm);
     }
-    tagAlgorithmList = new JComboBox<String>(listModel.toArray(new String[listModel.size()]));
+    tagAlgorithmList = new JComboBox<>(listModel.toArray(new String[listModel.size()]));
     tagAlgorithmList.setName(getMessage("bag.tagalgorithmlist"));
     tagAlgorithmList.addActionListener(new TagAlgorithmListHandler());
     tagAlgorithmList.setToolTipText(getMessage("bag.tagalgorithmlist.help"));
@@ -291,7 +291,7 @@ public class SaveBagFrame extends JFrame implements ActionListener {
 
     JLabel payAlgorithmLabel = new JLabel(bagView.getPropertyMessage("bag.label.payalgorithm"));
     payAlgorithmLabel.setToolTipText(getMessage("bag.payalgorithm.help"));
-    payAlgorithmList = new JComboBox<String>(listModel.toArray(new String[listModel.size()]));
+    payAlgorithmList = new JComboBox<>(listModel.toArray(new String[listModel.size()]));
     payAlgorithmList.setName(getMessage("bag.payalgorithmlist"));
     payAlgorithmList.addActionListener(new PayAlgorithmListHandler());
     payAlgorithmList.setToolTipText(getMessage("bag.payalgorithmlist.help"));

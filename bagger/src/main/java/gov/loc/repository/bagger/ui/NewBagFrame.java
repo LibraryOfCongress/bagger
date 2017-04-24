@@ -126,7 +126,7 @@ public class NewBagFrame extends JFrame implements ActionListener {
     JLabel bagProfileLabel = new JLabel(bagView.getPropertyMessage("Select Profile:"));
     bagProfileLabel.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));
 
-    profileList = new JComboBox<String>(bagView.getProfileStore().getProfileNames());
+    profileList = new JComboBox<>(bagView.getProfileStore().getProfileNames());
     profileList.setName(bagView.getPropertyMessage("bag.label.projectlist"));
     profileList.setSelectedItem(bagView.getPropertyMessage("bag.project.noproject"));
     profileList.setToolTipText(bagView.getPropertyMessage("bag.projectlist.help"));

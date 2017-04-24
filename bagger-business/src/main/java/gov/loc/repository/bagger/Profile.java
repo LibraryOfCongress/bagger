@@ -28,8 +28,8 @@ public class Profile {
   private Organization organization = new Organization();
   private String name;
   private boolean isDefault = false;
-  private LinkedHashMap<String, ProfileField> customFields = new LinkedHashMap<String, ProfileField>();
-  private LinkedHashMap<String, ProfileField> standardFields = new LinkedHashMap<String, ProfileField>();
+  private LinkedHashMap<String, ProfileField> customFields = new LinkedHashMap<>();
+  private LinkedHashMap<String, ProfileField> standardFields = new LinkedHashMap<>();
 
   public void setSendToContact(Contact sendToContact) {
     this.sendToContact = sendToContact;
@@ -119,7 +119,7 @@ public class Profile {
   }
 
   public static LinkedHashMap<String, ProfileField> getFields(JSONObject fieldsJson) throws JSONException {
-    LinkedHashMap<String, ProfileField> profileFields = new LinkedHashMap<String, ProfileField>();
+    LinkedHashMap<String, ProfileField> profileFields = new LinkedHashMap<>();
     if (fieldsJson != null) {
       String[] names = JSONObject.getNames(fieldsJson);
       if (names == null){
@@ -193,7 +193,7 @@ public class Profile {
   }
 
   public List<ProfileField> getProfileFields() {
-    ArrayList<ProfileField> fields = new ArrayList<ProfileField>();
+    ArrayList<ProfileField> fields = new ArrayList<>();
 
     for (Map.Entry<String, ProfileField> entry : standardFields.entrySet()) {
       fields.add(entry.getValue());

@@ -110,7 +110,7 @@ public class CreateBagInPlaceHandler extends AbstractAction implements Progress 
     DefaultBag bag = bagView.getBag();
     bag.setProfile(profile, true);
 
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, String> map = new HashMap<>();
     map.put(DefaultBagInfo.FIELD_LC_PROJECT, profile.getName());
     bagView.getBag().updateBagInfo(map);
   }

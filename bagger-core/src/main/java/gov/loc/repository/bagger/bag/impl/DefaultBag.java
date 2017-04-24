@@ -1,32 +1,5 @@
 package gov.loc.repository.bagger.bag.impl;
 
-import gov.loc.repository.bagger.Profile;
-import gov.loc.repository.bagger.bag.BagInfoField;
-import gov.loc.repository.bagger.bag.BaggerFetch;
-import gov.loc.repository.bagger.model.BagStatus;
-import gov.loc.repository.bagger.model.Status;
-import gov.loc.repository.bagger.profile.BaggerProfileStore;
-import gov.loc.repository.bagit.Bag;
-import gov.loc.repository.bagit.BagFactory;
-import gov.loc.repository.bagit.BagFile;
-import gov.loc.repository.bagit.BagInfoTxt;
-import gov.loc.repository.bagit.BagItTxt;
-import gov.loc.repository.bagit.FetchTxt;
-import gov.loc.repository.bagit.Manifest;
-import gov.loc.repository.bagit.PreBag;
-import gov.loc.repository.bagit.BagFactory.Version;
-import gov.loc.repository.bagit.FetchTxt.FilenameSizeUrl;
-import gov.loc.repository.bagit.Manifest.Algorithm;
-import gov.loc.repository.bagit.transformer.HolePuncher;
-import gov.loc.repository.bagit.transformer.impl.DefaultCompleter;
-import gov.loc.repository.bagit.transformer.impl.HolePuncherImpl;
-import gov.loc.repository.bagit.utilities.SimpleResult;
-import gov.loc.repository.bagit.verify.Verifier;
-import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
-import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
-import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
-import gov.loc.repository.bagit.writer.Writer;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,10 +9,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import gov.loc.repository.bagger.Profile;
+import gov.loc.repository.bagger.bag.BagInfoField;
+import gov.loc.repository.bagger.bag.BaggerFetch;
+import gov.loc.repository.bagger.model.BagStatus;
+import gov.loc.repository.bagger.model.Status;
+import gov.loc.repository.bagger.profile.BaggerProfileStore;
+import gov.loc.repository.bagit.Bag;
+import gov.loc.repository.bagit.BagFactory;
+import gov.loc.repository.bagit.BagFactory.Version;
+import gov.loc.repository.bagit.BagFile;
+import gov.loc.repository.bagit.BagInfoTxt;
+import gov.loc.repository.bagit.BagItTxt;
+import gov.loc.repository.bagit.FetchTxt;
+import gov.loc.repository.bagit.FetchTxt.FilenameSizeUrl;
+import gov.loc.repository.bagit.Manifest;
+import gov.loc.repository.bagit.Manifest.Algorithm;
+import gov.loc.repository.bagit.PreBag;
+import gov.loc.repository.bagit.transformer.HolePuncher;
+import gov.loc.repository.bagit.transformer.impl.DefaultCompleter;
+import gov.loc.repository.bagit.transformer.impl.HolePuncherImpl;
+import gov.loc.repository.bagit.utilities.SimpleResult;
+import gov.loc.repository.bagit.verify.Verifier;
+import gov.loc.repository.bagit.verify.impl.CompleteVerifierImpl;
+import gov.loc.repository.bagit.verify.impl.RequiredBagInfoTxtFieldsVerifier;
+import gov.loc.repository.bagit.verify.impl.ValidVerifierImpl;
+import gov.loc.repository.bagit.writer.Writer;
 
 public class DefaultBag {
   protected static final Logger log = LoggerFactory.getLogger(DefaultBag.class);
@@ -408,7 +407,7 @@ public class DefaultBag {
   }
 
   public List<String> getFetchPayload() {
-    List<String> list = new ArrayList<String>();
+    List<String> list = new ArrayList<>();
 
     FetchTxt fetchTxt = this.bilBag.getFetchTxt();
     if (fetchTxt == null){return list;}
@@ -472,7 +471,7 @@ public class DefaultBag {
   }
 
   public List<String> getPayloadPaths() {
-    ArrayList<String> pathList = new ArrayList<String>();
+    ArrayList<String> pathList = new ArrayList<>();
     Collection<BagFile> payload = this.bilBag.getPayload();
     if (payload != null) {
       for (Iterator<BagFile> it = payload.iterator(); it.hasNext();) {
@@ -729,7 +728,7 @@ public class DefaultBag {
   }
 
   protected Verifier getBagInfoStrategy() {
-    List<String> rulesList = new ArrayList<String>();
+    List<String> rulesList = new ArrayList<>();
     HashMap<String, BagInfoField> fieldMap = this.getInfo().getFieldMap();
     if (fieldMap != null) {
       

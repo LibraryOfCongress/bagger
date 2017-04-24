@@ -14,7 +14,7 @@ public class BaggerValidationRulesSource extends DefaultRulesSource {
   }
 
   public void clear() {
-    java.util.List<Rules> empty = new java.util.ArrayList<Rules>();
+    java.util.List<Rules> empty = new java.util.ArrayList<>();
     setRules(empty);
   }
 

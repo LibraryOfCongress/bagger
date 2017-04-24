@@ -111,11 +111,10 @@ public class JSonBagger implements Bagger {
   @Override
   public List<Profile> loadProfiles() {
     File[] profilesFiles = profilesFolder.listFiles();
-    List<Profile> profilesToReturn = new ArrayList<Profile>();
+    List<Profile> profilesToReturn = new ArrayList<>();
     if(profilesFiles != null){
       for (File file : profilesFiles) {
-        try {
-          InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "UTF-8");
+        try(InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "UTF-8")) {
           Profile profile = loadProfile(reader, file.getName());
           profilesToReturn.add(profile);
         }
@@ -126,6 +125,8 @@ public class JSonBagger implements Bagger {
           log.error("Error parsing json profile[{}]!", file, e);
         } catch (UnsupportedEncodingException e) {
           log.error("Expected UTF-8 encoded file for {}", file, e);
+        } catch (IOException e) {
+          log.error("Problem closing reader", e);
         }
       }
     }
@@ -150,11 +151,10 @@ public class JSonBagger implements Bagger {
   public void saveProfile(Profile profile) {
     if (profile.getName().equals("<no profile>")){ return; }
     
-    try {
-      String fileName = getJsonFileName(profile.getName());
-      OutputStreamWriter writer = new OutputStreamWriter(
+    String fileName = getJsonFileName(profile.getName());
+    try(OutputStreamWriter writer = new OutputStreamWriter(
           new FileOutputStream(profilesFolder.getAbsolutePath() + File.separator + fileName),
-          Charset.forName("UTF-8"));
+          Charset.forName("UTF-8"))) {
       StringWriter stringWriter = new StringWriter();
       JSONWriter jsonWriter = new JSONWriter(stringWriter);
       profile.serialize(jsonWriter);

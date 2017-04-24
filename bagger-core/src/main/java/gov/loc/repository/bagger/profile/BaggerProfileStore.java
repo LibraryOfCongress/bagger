@@ -18,8 +18,8 @@ public class BaggerProfileStore {
   protected static final Logger log = LoggerFactory.getLogger(BaggerProfileStore.class);
   private static BaggerProfileStore instance;
 
-  private HashMap<String, Profile> userProfiles = new HashMap<String, Profile>();
-  private LinkedHashMap<String, List<ProfileField>> profileFieldsMap = new LinkedHashMap<String, List<ProfileField>>();
+  private HashMap<String, Profile> userProfiles = new HashMap<>();
+  private LinkedHashMap<String, List<ProfileField>> profileFieldsMap = new LinkedHashMap<>();
 
   public BaggerProfileStore(Bagger bagger) {
     initializeProfile(bagger);
@@ -37,21 +37,21 @@ public class BaggerProfileStore {
 
   private void initializeProfile(Bagger bagger) {
     Collection<Profile> profiles = bagger.loadProfiles();
-    userProfiles = new HashMap<String, Profile>();
-    profileFieldsMap = new LinkedHashMap<String, List<ProfileField>>();
+    userProfiles = new HashMap<>();
+    profileFieldsMap = new LinkedHashMap<>();
 
     for (Profile profile : profiles) {
       userProfiles.put(profile.getName(), profile);
       LinkedHashMap<String, ProfileField> standardFields = profile.getStandardFields();
       LinkedHashMap<String, ProfileField> customFields = profile.getCustomFields();
-      LinkedHashMap<String, ProfileField> mergedMap = new LinkedHashMap<String, ProfileField>();
+      LinkedHashMap<String, ProfileField> mergedMap = new LinkedHashMap<>();
       mergedMap.putAll(standardFields);
       mergedMap.putAll(customFields);
 
       for (ProfileField profileField : mergedMap.values()) {
         List<ProfileField> list = profileFieldsMap.get(profile.getName());
         if (list == null) {
-          list = new ArrayList<ProfileField>();
+          list = new ArrayList<>();
           profileFieldsMap.put(profile.getName(), list);
         }
         list.add(profileField);

@@ -38,7 +38,7 @@ public class BagTree extends JTree {
   private TreePath rootPath;
   private String basePath;
   private DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(AbstractBagConstants.DATA_DIRECTORY);
-  private ArrayList<DefaultMutableTreeNode> srcNodes = new ArrayList<DefaultMutableTreeNode>();
+  private ArrayList<DefaultMutableTreeNode> srcNodes = new ArrayList<>();
 
   public BagTree(BagView bagView, String path) {
     super();
@@ -166,7 +166,7 @@ public class BagTree extends JTree {
       curTop.add(curDir);
       displayTop.add(displayDir);
     }
-    Vector<String> ol = new Vector<String>();
+    Vector<String> ol = new Vector<>();
     // display("addNodes: " + dir.list());
     String[] tmp = dir.list();
     if (tmp != null && tmp.length > 0) {
@@ -177,7 +177,7 @@ public class BagTree extends JTree {
 
     Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
     File f;
-    Vector<String> files = new Vector<String>();
+    Vector<String> files = new Vector<>();
     // Make two passes, one for Dirs and one for Files. This is #1.
     for (int i = 0; i < ol.size(); i++) {
       String thisObject = ol.elementAt(i);

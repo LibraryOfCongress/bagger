@@ -39,14 +39,14 @@ public class BagTableFormBuilder extends TableFormBuilder {
 
   public JComponent[] addList(boolean isRequired, String label, Collection<String> elements, String defaultValue,
                               JComponent checkbox) {
-    ArrayList<String> listModel = new ArrayList<String>();
+    ArrayList<String> listModel = new ArrayList<>();
     for (Iterator<String> iter = elements.iterator(); iter.hasNext();) {
       String item = iter.next();
       listModel.add(item);
     }
 
     // Set default value selected from value list
-    JComboBox<String> dropDownTextField = new JComboBox<String>(listModel.toArray(new String[listModel.size()]));
+    JComboBox<String> dropDownTextField = new JComboBox<>(listModel.toArray(new String[listModel.size()]));
     dropDownTextField.setSelectedItem(defaultValue);
     Object obj = dropDownTextField.getSelectedItem();
     dropDownTextField.setSelectedItem(obj);

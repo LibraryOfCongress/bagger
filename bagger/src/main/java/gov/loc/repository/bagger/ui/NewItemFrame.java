@@ -114,7 +114,7 @@ public class NewItemFrame extends JFrame implements ActionListener {
       String name = itemName.getText().trim();
       boolean b = false;
       for (int i = 0; i < itemList.getItemCount(); i++) {
-        String s = (String) itemList.getItemAt(i);
+        String s = itemList.getItemAt(i);
         if (s != null && name.equalsIgnoreCase(s.trim())) {
           b = true;
           break;

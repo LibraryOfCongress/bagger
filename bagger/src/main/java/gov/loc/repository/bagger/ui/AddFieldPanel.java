@@ -53,7 +53,7 @@ public class AddFieldPanel extends JPanel {
 
     // standard field dropdown menu
     List<String> listModel = getStandardBagFields();
-    standardFieldsComboBox = new JComboBox<String>(listModel.toArray(new String[listModel.size()]));
+    standardFieldsComboBox = new JComboBox<>(listModel.toArray(new String[listModel.size()]));
     standardFieldsComboBox.setName(ApplicationContextUtil.getMessage("baginfo.field.fieldlist"));
     standardFieldsComboBox.setSelectedItem("");
     standardFieldsComboBox.setToolTipText(ApplicationContextUtil.getMessage("baginfo.field.fieldlist.help"));
@@ -103,7 +103,7 @@ public class AddFieldPanel extends JPanel {
   }
 
   private List<String> getStandardBagFields() {
-    ArrayList<String> list = new ArrayList<String>();
+    ArrayList<String> list = new ArrayList<>();
     list.add("");
 
     // Standard Fields from BagInfoTxt

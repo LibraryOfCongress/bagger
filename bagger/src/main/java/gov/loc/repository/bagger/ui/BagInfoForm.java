@@ -224,7 +224,7 @@ public class BagInfoForm extends AbstractForm implements FocusListener {
   }
 
   public HashMap<String, String> getBagInfoMap() {
-    HashMap<String, String> map = new HashMap<String, String>();
+    HashMap<String, String> map = new HashMap<>();
     String key = "";
     String value = "";
     java.awt.Component[] components = getFieldComponents();

@@ -18,7 +18,7 @@ public class BagInfoField implements Serializable {
   private String name = "";
   private String label = "";
   private String value = "";
-  private List<String> elements = new ArrayList<String>();
+  private List<String> elements = new ArrayList<>();
   private int componentType = TEXTFIELD_COMPONENT;
   private boolean isEnabled = true;
   private boolean isRequired = false;

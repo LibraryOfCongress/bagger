@@ -33,7 +33,7 @@ public class DefaultBagInfo implements Serializable {
       BagInfoTxtImpl.FIELD_CONTACT_NAME, BagInfoTxtImpl.FIELD_CONTACT_PHONE, BagInfoTxtImpl.FIELD_CONTACT_EMAIL, Contact.FIELD_TO_CONTACT_NAME,
       Contact.FIELD_TO_CONTACT_PHONE, Contact.FIELD_TO_CONTACT_EMAIL };
 
-  private static final HashSet<String> ORGANIZATION_CONTACT_FIELD_SET = new HashSet<String>(Arrays.asList(ORGANIZATION_CONTACT_FIELDS));
+  private static final HashSet<String> ORGANIZATION_CONTACT_FIELD_SET = new HashSet<>(Arrays.asList(ORGANIZATION_CONTACT_FIELDS));
 
   private BaggerSourceOrganization sourceOrganization = new BaggerSourceOrganization();
   private Contact toContact = new Contact(true);
@@ -206,7 +206,7 @@ public class DefaultBagInfo implements Serializable {
   }
 
   public LinkedHashMap<String, ProfileField> convertToMap(List<ProfileField> profileFields) {
-    LinkedHashMap<String, ProfileField> filedsToReturn = new LinkedHashMap<String, ProfileField>();
+    LinkedHashMap<String, ProfileField> filedsToReturn = new LinkedHashMap<>();
     if (profileFields == null){
       return filedsToReturn;
     }
@@ -217,7 +217,7 @@ public class DefaultBagInfo implements Serializable {
   }
 
   public void clearFields() {
-    fieldMap = new LinkedHashMap<String, BagInfoField>();
+    fieldMap = new LinkedHashMap<>();
   }
 
   public void removeField(String key) {
