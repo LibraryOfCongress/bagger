@@ -26,6 +26,13 @@ subprojects{
     ignoreFailures = true //don't fail the gradle build if bugs are found
   }
 
+  tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+  }
+
   pmd {
     ruleSets = ["java-basic", "java-braces"]
     ignoreFailures = true //don't fail the gradle build if rules are broken
