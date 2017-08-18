@@ -20,7 +20,7 @@ set DEFAULT_JVM_OPTS=${defaultJvmOpts}
 @rem Find java.exe
 if defined JAVA_HOME goto findJavaFromJavaHome
 
-set JAVA_EXE=C:/Progra~2/Java/jre7/bin/java.exe
+set JAVA_EXE=java.exe
 %JAVA_EXE% -version >NUL 2>&1
 if "%ERRORLEVEL%" == "0" goto init
 
@@ -73,7 +73,7 @@ set CMD_LINE_ARGS=%\$
 set CLASSPATH=$classpath
 
 @rem Execute ${applicationName}
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -Dapp.home=%APP_HOME% %${optsEnvironmentVar}% <% if ( appNameSystemProperty ) { %>"-D${appNameSystemProperty}=%APP_BASE_NAME%"<% } %> -classpath "%CLASSPATH%" ${mainClassName} --spring.config.location=file:%APP_HOME%/config/application.properties %CMD_LINE_ARGS%
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -Dapp.home="%APP_HOME%" %${optsEnvironmentVar}% <% if ( appNameSystemProperty ) { %>"-D${appNameSystemProperty}=%APP_BASE_NAME%"<% } %> -classpath "%CLASSPATH%" ${mainClassName} --spring.config.location=file:"%APP_HOME%/config/application.properties" %CMD_LINE_ARGS%
 
 :end
 @rem End local scope for the variables with windows NT shell
