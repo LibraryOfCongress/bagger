@@ -35,7 +35,7 @@ def createModifiedManifest(manifest, regexes, *, dryrun=False):
         matcher = re.compile(regex)
         for line in original_manifest_file:
             file_entry = line.split(' ', 1)[1]
-            if matcher.match(file_entry):
+            if matcher.search(file_entry):
                 if dryrun:
                     print("Would have removed [%s] from manifest because it matches regex [%s]" % (line.rstrip(), regex))
                 else:
@@ -81,7 +81,7 @@ def updateTagmanifest(updated_manifest_hash):
 def removeMatching(regex, starting_dir, *, dryrun=False):
     for dir_name, sub_dir_list, file_list in os.walk(starting_dir):
         matcher = re.compile(regex)
-        if matcher.match(dir_name):
+        if matcher.search(dir_name):
             if dryrun:
                 print("Would have removed directory[%s] from filesystem cause it matches regex [%s]"%(dir_name, regex))
             elif os.path.islink(dir_name):
@@ -92,7 +92,7 @@ def removeMatching(regex, starting_dir, *, dryrun=False):
                 shutil.rmtree(dir_name, ignore_errors=True)
         else:
             for filename in file_list:
-                if matcher.match(filename):
+                if matcher.search(filename):
                     if dryrun:
                         print("Would have removed file [%s] from filesystem cause it matches regex [%s]" % (filename, regex))
                     elif os.path.islink(filename):
