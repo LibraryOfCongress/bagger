@@ -138,7 +138,7 @@ public class SaveBagHandler extends AbstractAction implements Progress {
     Files.walkFileTree(dataDir, visitor);
     
     //since the first visited path is at the top of the directory we need to reverse them so that we delete the inner most empty directory
-    visitor.getDirectories().sort(Collections.reverseOrder());
+    Collections.sort(visitor.getDirectories(), Collections.reverseOrder());
     
     for(Path path : visitor.getDirectories()){
       System.err.println(path);
