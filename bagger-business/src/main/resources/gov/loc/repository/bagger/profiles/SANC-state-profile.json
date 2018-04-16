@@ -1,0 +1,120 @@
+{
+    "ordered": [
+        {
+            "itemNumber": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "rcNumber": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "transferringAgencyName": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "creatingAgencyName": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "creatingAgencySubdivision": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "transferringEmployee": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "receivingInstitution": {
+                "fieldRequired": true,
+                "defaultValue": "State Archives of North Carolina, Division of North Carolina Department of Natural and Cultural Resources"
+            }
+        },
+        {
+            "receivingInstitutionAddress": {
+                "fieldRequired": true,
+                "defaultValue": "109 E. Jones St. Raleigh, NC 27601"
+            }
+        },
+        {
+            "datesOfRecords (YYYY-MM-DD) - (YYYY-MM-DD)": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "digitalOriginality": {
+                "fieldRequired": true,
+                "defaultValue": "???",
+                "valueList": [
+                    "???",
+                    "Original (Born Digital)",
+                    "Original Surrogate (Digitized/Migrated & Physical/Original Destroyed)",
+                    "Surrogate (Digitized/Migrated & Physical/Original Kept)",
+                    "Not-Yet-Known"
+                ]
+            }
+        },
+        {
+            "Classification (for Access)": {
+                "fieldRequired": true,
+                "defaultValue": "???",
+                "valueList": [
+                    "???",
+                    "Open/Public",
+                    "Open/Redacted",
+                    "Contains Some Confidental Records",
+                    "Confidential/Sensitive",
+                    "Not-Yet-Known"
+                ]
+            }
+        },
+        {
+            "digitalContentStructure": {
+                "fieldRequired": true,
+                "defaultValue": "???",
+                "valueList": [
+                    "???",
+                    "Compound (Multiple Types)",
+                    "Word Processing",
+                    "Plain Text",
+                    "Text With Markup",
+                    "Spreadsheet",
+                    "Presentation",
+                    "Database",
+                    "AUDIO",
+                    "Audio: Mono",
+                    "Audio: Stereo",
+                    "VIDEO",
+                    "Video: High Quality/Professional",
+                    "Video: Medium Quality/Amateur",
+                    "Video: Animation/Interactive",
+                    "IMAGE",
+                    "Image: Raster (for Tiff,PNG,Jpeg,jpeg2000,etc.)",
+                    "Image: Vector/CAD ",
+                    "Image: Raw/Native ",
+                    "Image: Geospatial Raster ",
+                    "Image: Geospatial Vector ",
+                    "Email",
+                    "Web Content: Site/Page/SocialMedia/Blog/etc.",
+                    "Software: Game/Application/Virtual Machine/Code/etc.",
+                    "Disk Image/Forensic Image",
+                    "Archive: Zip/Tar/Arc/Warc/SIRF/VEO/etc.",
+                    "Encrypted (Key-Available/Accessible-Content)",
+                    "Encrypted (No-Key/Inaccessible-Content))",
+                    "Not-Yet-Known"
+                ]
+            }
+        },
+        {
+            "Notes": {
+                "fieldRequired": false
+            }
+        }
+    ]
+}
