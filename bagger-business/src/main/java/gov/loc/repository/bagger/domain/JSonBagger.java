@@ -42,7 +42,7 @@ public class JSonBagger implements Bagger {
   private static final String RESOURCE_DIR = "gov/loc/repository/bagger/profiles";
   private static final String[] DEFAULT_PROFILES = new String[]{"eDeposit-profile.json", "ndiipp-profile.json", 
       "ndnp-profile.json", "other-project-profile.json", "Digital-Records-Accession-Generic-profile.json", 
-      "Digital-Records-Accession-IARA-Indiana-profile.json"};
+      "Digital-Records-Accession-IARA-Indiana-profile.json", "SANC-local-profile.json", "SANC-state-profile.json"};
 
   public JSonBagger() {
     String homeDir = System.getProperty("user.home");
