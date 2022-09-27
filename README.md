@@ -1,6 +1,18 @@
 # Bagger
 [![License](https://img.shields.io/badge/License-Public--Domain-blue.svg)](https://github.com/LibraryOfCongress/bagger/blob/master/LICENSE.txt)
 
+## Contract opportunities to maintain Bagger
+
+The Library of Congress is pleased to offer a support and maintenance contract for Bagger. Thanks to the complexity of federal contracting, the SOURCES SOUGHT NOTICE (SSN) and SOW are only available through [GSA e-Buy](https://www.ebuy.gsa.gov/ebuy/) via RFQ ID: RFQ1591677. If you are registered under the IT Professional Services category, you should be able to find it. There isn’t a direct link we can share unfortunately.
+ 
+Selected from the SOW:
+
+> The contractor shall provide troubleshooting support, routine corrective and adaptive maintenance, feature development and documentation for the Bagger open source software. The Library of Congress Bagger GitHub repository will serve as the canonical resources for all Bagger issues, updates and documentation.
+>
+> The contractor shall provide support for Bagger for One (1) Base Period and Option Year 1 and Option Year 2, if exercised.”
+ 
+We cannot answer questions about the contract or SNN directly due to federal contracting rules but urge you to send questions in via the procedure outlined in GSA e-Buy by Wednesday October 12, 2022 at 17:00 Eastern Time! All questions and responses will be posted publicly. SSN responses are due no later than Wednesday October 26, 2022 at 17:00 Eastern Time.  
+
 ## Introduction
 The Bagger application was created for the U.S. Library of Congress as a tool to produce a package of data files according to the BagIt specification (http://tools.ietf.org/html/draft-kunze-bagit).
 
