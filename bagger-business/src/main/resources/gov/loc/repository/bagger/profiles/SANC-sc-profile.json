@@ -1,0 +1,159 @@
+{
+    "ordered": [
+        {
+            "collectionTitle": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "collection/CallNumber": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "accessionNumber": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "creatorName": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "donorName": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "Interviewer (oral histories)": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "Interviewee (oral histories)": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "Contributor": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "transferringArchivist": {
+                "fieldRequired": true
+            }
+        },
+        {
+            "receivingInstitution": {
+                "fieldRequired": true,
+                "defaultValue": "SANC - Raleigh",
+                "valueList": [
+                    "SANC - Raleigh",
+                    "SANC - Outer Banks History Center",
+                    "SANC - Western Regional Archives"
+                ]
+            }
+        },
+        {
+            "datesOfRecords (YYYY-MM-DD) - (YYYY-MM-DD)": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "dateCreated": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "embargoDate (oral histories)": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "digitalOriginality": {
+                "fieldRequired": true,
+                "defaultValue": "???",
+                "valueList": [
+                    "???",
+                    "Original (Born Digital)",
+                    "Original Surrogate (Digitized/Migrated & Physical/Original Destroyed)",
+                    "Surrogate (Digitized/Migrated & Physical/Original Kept)",
+                    "Not-Yet-Known"
+                ]
+            }
+        },
+        {
+            "Classification (for Access)": {
+                "fieldRequired": true,
+                "defaultValue": "???",
+                "valueList": [
+                    "???",
+                    "Open/Public",
+                    "Open/Redacted",
+                    "Contains Some Confidential Records",
+                    "Confidential/Sensitive",
+                    "Not-Yet-Known"
+                ]
+            }
+        },
+        {
+            "digitalContentStructure": {
+                "fieldRequired": true,
+                "defaultValue": "???",
+                "valueList": [
+                    "???",
+                    "Compound (Multiple Types)",
+                    "Word Processing",
+                    "Plain Text",
+                    "Text With Markup",
+                    "Spreadsheet",
+                    "Presentation",
+                    "Database",
+                    "AUDIO",
+                    "Audio: Mono",
+                    "Audio: Stereo",
+                    "VIDEO",
+                    "Video: High Quality/Professional",
+                    "Video: Medium Quality/Amateur",
+                    "Video: Animation/Interactive",
+                    "IMAGE",
+                    "Image: Raster (for Tiff,PNG,Jpeg,jpeg2000,etc.)",
+                    "Image: Vector/CAD ",
+                    "Image: Raw/Native ",
+                    "Image: Geospatial Raster ",
+                    "Image: Geospatial Vector ",
+                    "Email",
+                    "Web Content: Site/Page/SocialMedia/Blog/etc.",
+                    "Software: Game/Application/Virtual Machine/Code/etc.",
+                    "Disk Image/Forensic Image",
+                    "Archive: Zip/Tar/Arc/Warc/SIRF/VEO/etc.",
+                    "Encrypted (Key-Available/Accessible-Content)",
+                    "Encrypted (No-Key/Inaccessible-Content))",
+                    "Not-Yet-Known"
+                ]
+            }
+        },
+        {
+            "durationOfRecording (oral histories - HH:MM:SS)": {
+                "fieldRequired": false
+            }
+        },
+        {
+            "Transcription": {
+                "fieldRequired": false,
+                "defaultValue": "Yes",
+                "valueList": [
+                    "Yes",
+                    "No"
+                ]
+            }
+        },
+        {
+            "Notes": {
+                "fieldRequired": false
+            }
+        }
+    ]
+}
